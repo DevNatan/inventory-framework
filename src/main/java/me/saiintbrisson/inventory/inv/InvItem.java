@@ -44,7 +44,8 @@ public class InvItem {
         clickAction = (node, event) -> {
             event.setCancelled(true);
             event.getWhoClicked().closeInventory();
-            inv.createNode(object).show(((Player) event.getWhoClicked()));
+            Player player = (Player) event.getWhoClicked();
+            inv.createNode(player, object).show();
         };
 
         return this;
@@ -53,7 +54,7 @@ public class InvItem {
     public InvItem updateOnClick() {
         clickAction = (node, event) -> {
             event.setCancelled(true);
-            node.update(((Player) event.getWhoClicked()));
+            node.update();
         };
 
         return this;

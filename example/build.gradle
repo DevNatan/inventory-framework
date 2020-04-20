@@ -15,7 +15,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.github.SaiintBrisson:inventory-framework:9dfcc62d05'
+    implementation 'com.github.SaiintBrisson:inventory-framework:1f704c0155'
 
     compileOnly 'org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT'
 

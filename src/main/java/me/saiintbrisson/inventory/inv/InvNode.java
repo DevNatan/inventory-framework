@@ -14,14 +14,14 @@ import org.bukkit.plugin.Plugin;
 @RequiredArgsConstructor
 public class InvNode<T> {
 
-    private @NonNull Player player;
-    private @NonNull Inv<T> owner;
-    private @NonNull T object;
+    private final Player player;
+    private final Inv<T> owner;
+    private final T object;
 
     private InvItem[] items;
 
     private @NonNull @Setter String title;
-    private @NonNull int rows;
+    private final int rows;
 
     private void render() {
         items = owner.getItems();
