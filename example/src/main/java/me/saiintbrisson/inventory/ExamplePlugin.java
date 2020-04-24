@@ -1,8 +1,8 @@
 package me.saiintbrisson.inventory;
 
-import me.saiintbrisson.inventory.InventoryFrame;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -10,9 +10,11 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class ExamplePlugin extends JavaPlugin implements Listener {
 
+    private ExampleInventory inventory;
+
     @Override
     public void onEnable() {
-        super.onEnable();
+        inventory = new ExampleInventory(this);
 
         new InventoryFrame(this).registerListener();
         Bukkit.getPluginManager().registerEvents(this, this);
@@ -23,7 +25,8 @@ public class ExamplePlugin extends JavaPlugin implements Listener {
         if(event.getItem() == null) return;
         if(event.getItem().getType() != Material.COMPASS) return;
 
-         new me.saiintbrisson.inventory.example.ExampleInventory().createNode(event.getPlayer()).show(event.getPlayer());
+        Player player = event.getPlayer();
+        inventory.createNode(player, player).show();
     }
 
 }

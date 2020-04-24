@@ -13,11 +13,11 @@ public class Inv<T> {
 
     private Plugin owner;
 
-    private InvItem[] items;
+    private InvItem<T>[] items;
     private @Setter
-    InvAction<InventoryOpenEvent> openAction;
+    InvAction<T, InventoryOpenEvent> openAction;
     private @Setter
-    InvAction<InventoryCloseEvent> closeAction;
+    InvAction<T, InventoryCloseEvent> closeAction;
 
     private String title;
     private int rows;
@@ -30,13 +30,13 @@ public class Inv<T> {
         this.items = new InvItem[rows * 9];
     }
 
-    public InvItem getItem(int slot) {
+    public InvItem<T> getItem(int slot) {
         if(slot < 0 || slot >= items.length) return null;
 
         return items[slot];
     }
 
-    public void setItem(InvItem item) {
+    public void setItem(InvItem<T> item) {
         if(item == null) return;
 
         int slot = item.getSlot();

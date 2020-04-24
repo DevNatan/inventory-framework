@@ -18,7 +18,7 @@ public class InvNode<T> {
     private final Inv<T> owner;
     private final T object;
 
-    private InvItem[] items;
+    private InvItem<T>[] items;
 
     private @NonNull @Setter String title;
     private final int rows;
@@ -61,7 +61,7 @@ public class InvNode<T> {
         inventory.clear();
         render();
 
-        for (InvItem item : items) {
+        for (InvItem<T> item : items) {
             if(item == null) continue;
             inventory.setItem(item.getSlot(), item.getItemStack());
         }
@@ -78,13 +78,13 @@ public class InvNode<T> {
         InventoryHolder holder = event.getInventory().getHolder();
         if(!(holder instanceof InvHolder)) return;
 
-        InvItem item = getItem(event.getRawSlot());
-        if(item == null || item.getClickAction() == null) {
+        InvItem<T> item = getItem(event.getRawSlot());
+        if(item == null || item.getClickActions().size() == 0) {
             event.setCancelled(true);
             return;
         }
 
-        item.getClickAction().interact(this, event);
+        item.handleClick(this, event);
     }
 
     public void handleOpen(Plugin plugin, InventoryOpenEvent event) {
@@ -96,7 +96,7 @@ public class InvNode<T> {
         InventoryHolder holder = event.getInventory().getHolder();
         if(!(holder instanceof InvHolder)) return;
 
-        InvAction<InventoryOpenEvent> action = owner.getOpenAction();
+        InvAction<T, InventoryOpenEvent> action = owner.getOpenAction();
         if(action == null) return;
 
         action.interact(this, event);
@@ -111,19 +111,19 @@ public class InvNode<T> {
         InventoryHolder holder = event.getInventory().getHolder();
         if(!(holder instanceof InvHolder)) return;
 
-        InvAction<InventoryCloseEvent> action = owner.getCloseAction();
+        InvAction<T, InventoryCloseEvent> action = owner.getCloseAction();
         if(action == null) return;
 
         action.interact(this, event);
     }
 
-    public InvItem getItem(int slot) {
+    public InvItem<T> getItem(int slot) {
         if(slot < 0 || slot >= items.length) return null;
 
         return items[slot];
     }
 
-    public void setItem(InvItem item) {
+    public void setItem(InvItem<T> item) {
         int slot = item.getSlot();
         if(slot < 0 || slot >= items.length) return;
 

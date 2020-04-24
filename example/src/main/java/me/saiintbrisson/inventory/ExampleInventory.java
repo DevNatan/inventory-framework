@@ -1,6 +1,5 @@
 package me.saiintbrisson.inventory;
 
-import me.saiintbrisson.inventory.ItemBuilder;
 import me.saiintbrisson.inventory.inv.Inv;
 import me.saiintbrisson.inventory.inv.InvAction;
 import me.saiintbrisson.inventory.inv.InvItem;
@@ -9,30 +8,31 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 
 public class ExampleInventory extends Inv<Player> {
 
     private ExampleEmptyInventory inventory;
 
-    public ExampleInventory() {
-        super("Example Inventory", 5);
+    public ExampleInventory(Plugin plugin) {
+        super(plugin, "Example Inventory", 5);
 
-        inventory = new ExampleEmptyInventory();
+        inventory = new ExampleEmptyInventory(plugin);
 
         setItem(
-            new InvItem()
-                .withSlot(0, 4)
-                .updateOnClick()
-                .withItem(
-                    new ItemBuilder(Material.BARRIER)
-                    .name("§cUpdate")
-                    .lore(
-                        "",
-                        "§eClick here to update"
-                    )
-                    .amount(3)
-                    .build()
+          new InvItem<Player>()
+            .withSlot(0, 4)
+            .updateOnClick()
+            .withItem(
+              new ItemBuilder(Material.BARRIER)
+                .name("§cUpdate")
+                .lore(
+                  "",
+                  "§eClick here to update"
                 )
+                .amount(3)
+                .build()
+            )
         );
 
         setOpenAction((node, event) -> {
@@ -48,14 +48,14 @@ public class ExampleInventory extends Inv<Player> {
     protected void render(InvNode<Player> node, Player player) {
         if(player.hasPermission("inventory")) {
             node.setItem(
-                new InvItem()
+              new InvItem<Player>()
                 .withSlot(2, 4)
                 .withItem(trueItem())
                 .onClick(trueAction())
             );
         } else {
             node.setItem(
-                new InvItem()
+              new InvItem<Player>()
                 .withSlot(2, 4)
                 .withItem(falseItem())
                 .cancelClick()
@@ -63,14 +63,14 @@ public class ExampleInventory extends Inv<Player> {
         }
 
         node.setItem(
-            new InvItem()
+          new InvItem<Player>()
             .withSlot(4, 4)
             .withItem(emptyItem())
             .openInv(inventory, player)
         );
     }
 
-    private InvAction<InventoryClickEvent> trueAction() {
+    private InvAction<Player, InventoryClickEvent> trueAction() {
         return (node, event) -> {
             event.setCancelled(true);
             event.getWhoClicked().closeInventory();
@@ -80,26 +80,26 @@ public class ExampleInventory extends Inv<Player> {
 
     private ItemStack falseItem() {
         return new ItemBuilder(Material.WOOL)
-                .durability((short) 14)
-                .name("§cYou don't have enough permissions :/")
-                .lore("", "§7You need 'inventory' permission")
-                .build();
+          .durability((short) 14)
+          .name("§cYou don't have enough permissions :/")
+          .lore("", "§7You need 'inventory' permission")
+          .build();
     }
 
     private ItemStack trueItem() {
         return new ItemBuilder(Material.WOOL)
-                .durability((short) 5)
-                .name("§aNice!")
-                .lore("", "§eClick here to execute a function")
-                .build();
+          .durability((short) 5)
+          .name("§aNice!")
+          .lore("", "§eClick here to execute a function")
+          .build();
     }
 
     private ItemStack emptyItem() {
         return new ItemBuilder(Material.STAINED_GLASS_PANE)
-                .durability((short) 7)
-                .name("§cEmpty")
-                .lore("", "§eClick to open an empty inventory")
-                .build();
+          .durability((short) 7)
+          .name("§cEmpty")
+          .lore("", "§eClick to open an empty inventory")
+          .build();
     }
 
 }
