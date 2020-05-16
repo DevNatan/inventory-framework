@@ -1,7 +1,6 @@
 package me.saiintbrisson.inventory.inv;
 
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.bukkit.inventory.Inventory;
@@ -13,11 +12,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class InvHolder implements InventoryHolder {
 
-    @NonNull
-    private InvNode node;
-
-    @NonNull
-    private UUID id;
+    private final InvNode node;
+    private final UUID id;
 
     @Setter
     private Inventory inventory;

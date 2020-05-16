@@ -19,8 +19,6 @@ public class ItemBuilder {
     private ItemStack itemStack;
     private ItemMeta itemMeta;
 
-
-
     public ItemBuilder(Material material) {
         this.itemStack = new ItemStack(material);
         this.itemMeta = itemStack.getItemMeta();
@@ -34,6 +32,16 @@ public class ItemBuilder {
     public ItemBuilder(ItemStack otherItem) {
         this.itemStack = otherItem;
         this.itemMeta = otherItem.getItemMeta();
+    }
+
+    public ItemBuilder itemStack(ItemStack itemStack) {
+        this.itemStack = itemStack;
+        return this;
+    }
+
+    public ItemBuilder itemMeta(ItemMeta itemMeta) {
+        this.itemMeta = itemMeta;
+        return this;
     }
 
     public ItemBuilder material(Material material) {

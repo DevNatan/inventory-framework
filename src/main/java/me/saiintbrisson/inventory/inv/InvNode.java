@@ -29,7 +29,7 @@ public class InvNode<T> {
     }
 
     private Inventory mount() {
-        InvHolder holder = new InvHolder(this, player.getUniqueId());
+        InvHolder holder = owner.createHolder(this, player.getUniqueId());
         Inventory inventory = Bukkit.createInventory(holder, rows * 9, title);
 
         render();

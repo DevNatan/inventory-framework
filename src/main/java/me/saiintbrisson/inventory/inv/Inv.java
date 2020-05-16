@@ -8,16 +8,19 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.plugin.Plugin;
 
+import java.util.UUID;
+
 @Getter
 public class Inv<T> {
 
     private Plugin owner;
 
     private InvItem<T>[] items;
-    private @Setter
-    InvAction<T, InventoryOpenEvent> openAction;
-    private @Setter
-    InvAction<T, InventoryCloseEvent> closeAction;
+
+    @Setter
+    private InvAction<T, InventoryOpenEvent> openAction;
+    @Setter
+    private InvAction<T, InventoryCloseEvent> closeAction;
 
     private String title;
     private int rows;
@@ -45,8 +48,7 @@ public class Inv<T> {
         items[slot] = item;
     }
 
-    protected void render(InvNode<T> node, T object) {
-    }
+    protected void render(InvNode<T> node, T object) {}
 
     public InvNode<T> createNode(Player player, T object) {
         return new InvNode<>(
@@ -56,6 +58,10 @@ public class Inv<T> {
           title,
           rows
         );
+    }
+
+    public InvHolder createHolder(InvNode<T> node, UUID id) {
+        return new InvHolder(node, id);
     }
 
 }
