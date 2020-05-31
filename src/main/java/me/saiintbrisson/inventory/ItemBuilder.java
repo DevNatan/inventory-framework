@@ -70,7 +70,7 @@ public class ItemBuilder {
     }
 
     public ItemBuilder addLoreLine(String... line) {
-        List<String> lore = itemMeta.getLore();
+        List<String> lore = itemMeta.getLore() == null ? new ArrayList() : itemMeta.getLore();
         lore.addAll(Arrays.asList(line));
         itemMeta.setLore(lore);
         return this;
