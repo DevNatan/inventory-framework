@@ -9,6 +9,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.material.MaterialData;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
@@ -70,7 +71,11 @@ public class ItemBuilder {
     }
 
     public ItemBuilder addLoreLine(String... line) {
-        List<String> lore = itemMeta.getLore() == null ? new ArrayList() : itemMeta.getLore();
+        List<String> lore = itemMeta.getLore();
+        if (lore == null) {
+            lore = new ArrayList<>();
+        }
+
         lore.addAll(Arrays.asList(line));
         itemMeta.setLore(lore);
         return this;
