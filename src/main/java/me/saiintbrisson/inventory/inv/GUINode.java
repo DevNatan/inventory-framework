@@ -12,15 +12,17 @@ import org.bukkit.plugin.Plugin;
 
 @Getter
 @RequiredArgsConstructor
-public class InvNode<T> {
+public class GUINode<T> {
 
-    private final Player player;
-    private final Inv<T> owner;
+    private final GUI<T> owner;
     private final T object;
 
-    private InvItem<T>[] items;
+    private final Player player;
 
-    private @NonNull @Setter String title;
+    private GUIItem<T>[] items;
+
+    @NonNull @Setter
+    private String title;
     private final int rows;
 
     private void render() {
@@ -29,12 +31,12 @@ public class InvNode<T> {
     }
 
     private Inventory mount() {
-        InvHolder holder = owner.createHolder(this, player.getUniqueId());
+        GUIHolder holder = owner.createHolder(this, player.getUniqueId());
         Inventory inventory = Bukkit.createInventory(holder, rows * 9, title);
 
         render();
 
-        for (InvItem item : items) {
+        for (GUIItem item : items) {
             if(item == null) continue;
             inventory.setItem(item.getSlot(), item.getItemStack());
         }
@@ -55,13 +57,13 @@ public class InvNode<T> {
         Inventory inventory = player.getOpenInventory().getTopInventory();
 
         InventoryHolder holder = inventory.getHolder();
-        if(!(holder instanceof InvHolder)) return;
-        if(!((InvHolder) holder).getId().equals(player.getUniqueId())) return;
+        if(!(holder instanceof GUIHolder)) return;
+        if(!((GUIHolder) holder).getId().equals(player.getUniqueId())) return;
 
         inventory.clear();
         render();
 
-        for (InvItem<T> item : items) {
+        for (GUIItem<T> item : items) {
             if(item == null) continue;
             inventory.setItem(item.getSlot(), item.getItemStack());
         }
@@ -70,15 +72,15 @@ public class InvNode<T> {
     }
 
     public void handleClick(Plugin plugin, InventoryClickEvent event) {
-        if(plugin != owner.getOwner()) return;
+        if(!plugin.equals(owner.getOwner())) return;
         if(!(event.getWhoClicked() instanceof Player)) return;
 
         if(!event.getWhoClicked().getUniqueId().equals(player.getUniqueId())) return;
 
         InventoryHolder holder = event.getInventory().getHolder();
-        if(!(holder instanceof InvHolder)) return;
+        if(!(holder instanceof GUIHolder)) return;
 
-        InvItem<T> item = getItem(event.getRawSlot());
+        GUIItem<T> item = getItem(event.getRawSlot());
         if(item == null || item.getClickActions().size() == 0) {
             event.setCancelled(true);
             return;
@@ -88,42 +90,42 @@ public class InvNode<T> {
     }
 
     public void handleOpen(Plugin plugin, InventoryOpenEvent event) {
-        if(plugin != owner.getOwner()) return;
+        if(!plugin.equals(owner.getOwner())) return;
         if(!(event.getPlayer() instanceof Player)) return;
 
-        if(!event.getPlayer().getUniqueId().equals(player.getUniqueId())) return;
+        if(!event.getPlayer().equals(player)) return;
 
         InventoryHolder holder = event.getInventory().getHolder();
-        if(!(holder instanceof InvHolder)) return;
+        if(!(holder instanceof GUIHolder)) return;
 
-        InvAction<T, InventoryOpenEvent> action = owner.getOpenAction();
+        GUIAction<T, InventoryOpenEvent> action = owner.getOpenAction();
         if(action == null) return;
 
-        action.interact(this, event);
+        action.interact(this, player, event);
     }
 
     public void handleClose(Plugin plugin, InventoryCloseEvent event) {
-        if(plugin != owner.getOwner()) return;
+        if(!plugin.equals(owner.getOwner())) return;
         if(!(event.getPlayer() instanceof Player)) return;
 
-        if(!event.getPlayer().getUniqueId().equals(player.getUniqueId())) return;
+        if(!event.getPlayer().equals(player)) return;
 
         InventoryHolder holder = event.getInventory().getHolder();
-        if(!(holder instanceof InvHolder)) return;
+        if(!(holder instanceof GUIHolder)) return;
 
-        InvAction<T, InventoryCloseEvent> action = owner.getCloseAction();
+        GUIAction<T, InventoryCloseEvent> action = owner.getCloseAction();
         if(action == null) return;
 
-        action.interact(this, event);
+        action.interact(this, player, event);
     }
 
-    public InvItem<T> getItem(int slot) {
+    public GUIItem<T> getItem(int slot) {
         if(slot < 0 || slot >= items.length) return null;
 
         return items[slot];
     }
 
-    public void setItem(InvItem<T> item) {
+    public void appendItem(GUIItem<T> item) {
         int slot = item.getSlot();
         if(slot < 0 || slot >= items.length) return;
 

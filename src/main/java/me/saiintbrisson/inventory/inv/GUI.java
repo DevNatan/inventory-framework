@@ -11,35 +11,35 @@ import org.bukkit.plugin.Plugin;
 import java.util.UUID;
 
 @Getter
-public class Inv<T> {
+public class GUI<T> {
 
     private Plugin owner;
 
-    private InvItem<T>[] items;
+    private GUIItem<T>[] items;
 
     @Setter
-    private InvAction<T, InventoryOpenEvent> openAction;
+    private GUIAction<T, InventoryOpenEvent> openAction;
     @Setter
-    private InvAction<T, InventoryCloseEvent> closeAction;
+    private GUIAction<T, InventoryCloseEvent> closeAction;
 
     private String title;
     private int rows;
 
-    public Inv(@NonNull Plugin owner, String title, int rows) {
+    public GUI(@NonNull Plugin owner, String title, int rows) {
         this.owner = owner;
         this.title = title;
         this.rows = rows;
 
-        this.items = new InvItem[rows * 9];
+        this.items = new GUIItem[rows * 9];
     }
 
-    public InvItem<T> getItem(int slot) {
+    public GUIItem<T> getItem(int slot) {
         if(slot < 0 || slot >= items.length) return null;
 
         return items[slot];
     }
 
-    public void setItem(InvItem<T> item) {
+    public void appendItem(GUIItem<T> item) {
         if(item == null) return;
 
         int slot = item.getSlot();
@@ -48,20 +48,14 @@ public class Inv<T> {
         items[slot] = item;
     }
 
-    protected void render(InvNode<T> node, T object) {}
+    protected void render(GUINode<T> node, T object) {}
 
-    public InvNode<T> createNode(Player player, T object) {
-        return new InvNode<>(
-          player,
-          this,
-          object,
-          title,
-          rows
-        );
+    public GUINode<T> createNode(Player player, T object) {
+        return new GUINode<>(this, object, player, title, rows);
     }
 
-    public InvHolder createHolder(InvNode<T> node, UUID id) {
-        return new InvHolder(node, id);
+    public GUIHolder createHolder(GUINode<T> node, UUID id) {
+        return new GUIHolder(node, id);
     }
 
 }

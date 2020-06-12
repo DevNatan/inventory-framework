@@ -1,8 +1,8 @@
 package me.saiintbrisson.inventory;
 
 import lombok.AllArgsConstructor;
-import me.saiintbrisson.inventory.inv.InvHolder;
-import me.saiintbrisson.inventory.paginator.PaginatedInvHolder;
+import me.saiintbrisson.inventory.inv.GUIHolder;
+import me.saiintbrisson.inventory.paginator.PaginatedViewHolder;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -20,11 +20,11 @@ public class InventoryListener implements Listener {
     public void handleClick(InventoryClickEvent event) {
         InventoryHolder holder = event.getInventory().getHolder();
 
-        if(holder instanceof InvHolder) {
-            ((InvHolder) holder).getNode().handleClick(plugin, event);
-        } else if(holder instanceof PaginatedInvHolder) {
-            ((PaginatedInvHolder) holder).getOwner()
-              .handleClick(plugin, ((PaginatedInvHolder) holder), event);
+        if(holder instanceof GUIHolder) {
+            ((GUIHolder) holder).getNode().handleClick(plugin, event);
+        } else if(holder instanceof PaginatedViewHolder) {
+            ((PaginatedViewHolder) holder).getOwner()
+              .handleClick(plugin, ((PaginatedViewHolder) holder), event);
         }
     }
 
@@ -32,8 +32,8 @@ public class InventoryListener implements Listener {
     public void handleOpen(InventoryOpenEvent event) {
         InventoryHolder holder = event.getInventory().getHolder();
 
-        if(holder instanceof InvHolder) {
-            ((InvHolder) holder).getNode().handleOpen(plugin, event);
+        if(holder instanceof GUIHolder) {
+            ((GUIHolder) holder).getNode().handleOpen(plugin, event);
         }
     }
 
@@ -41,8 +41,8 @@ public class InventoryListener implements Listener {
     public void handleClose(InventoryCloseEvent event) {
         InventoryHolder holder = event.getInventory().getHolder();
 
-        if(holder instanceof InvHolder) {
-            ((InvHolder) holder).getNode().handleClose(plugin, event);
+        if(holder instanceof GUIHolder) {
+            ((GUIHolder) holder).getNode().handleClose(plugin, event);
         }
     }
 

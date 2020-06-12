@@ -10,9 +10,9 @@ import java.util.UUID;
 
 @Getter
 @RequiredArgsConstructor
-public class InvHolder implements InventoryHolder {
+public class GUIHolder implements InventoryHolder {
 
-    private final InvNode node;
+    private final GUINode node;
     private final UUID id;
 
     @Setter

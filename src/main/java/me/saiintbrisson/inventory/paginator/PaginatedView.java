@@ -4,7 +4,8 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import me.saiintbrisson.inventory.ItemBuilder;
-import me.saiintbrisson.inventory.inv.InvItem;
+import me.saiintbrisson.inventory.View;
+import me.saiintbrisson.inventory.inv.GUIItem;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -19,20 +20,21 @@ import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
-public class PaginatedInv<T extends PaginatedItem> {
+public class PaginatedView<T extends PaginatedItem> implements View {
 
     private final Plugin owner;
 
+    @Getter
     private final String title;
     private final int size;
 
     private int[] slotsIndex;
     private final Paginator<T> paginator;
 
-    private InvItem<T>[] items;
+    private GUIItem<T>[] items;
     @Getter
     @Setter
-    private InvItem<T> previousButton, nextButton;
+    private GUIItem<T> previousButton, nextButton;
 
     @Setter
     private boolean updateAfterClick = true;
@@ -40,9 +42,8 @@ public class PaginatedInv<T extends PaginatedItem> {
     @Setter
     private BiConsumer<Player, T> itemProcessor;
 
-    public PaginatedInv(@NonNull Plugin owner,
-                        String title, int rows,
-                        @NonNull Paginator<T> paginator) {
+    public PaginatedView(@NonNull Plugin owner, String title, int rows,
+                         @NonNull Paginator<T> paginator) {
         if(rows < 2 || rows > 6) {
             throw new IllegalArgumentException("Rows must be greater than one and inferior to six");
         }
@@ -56,28 +57,28 @@ public class PaginatedInv<T extends PaginatedItem> {
         this.title = title;
         this.size = rows * 9;
 
-        this.items = new InvItem[size];
+        this.items = new GUIItem[size];
 
         this.paginator = paginator;
 
-        previousButton = new InvItem<T>()
+        previousButton = new GUIItem<T>()
           .withItem(new ItemBuilder(Material.ARROW).name("§aPrevious page").build())
           .withSlot(size - 9 + 3)
-          .onClick((node, event) -> {
-              ((PaginatedInvHolder) event.getInventory().getHolder()).decreasePage();
+          .onClick((node, player, event) -> {
+              ((PaginatedViewHolder) event.getInventory().getHolder()).decreasePage();
           });
 
-        nextButton = new InvItem<T>()
+        nextButton = new GUIItem<T>()
           .withItem(new ItemBuilder(Material.ARROW).name("§aNext page").build())
           .withSlot(size - 9 + 5)
-          .onClick((node, event) -> {
-              ((PaginatedInvHolder) event.getInventory().getHolder()).increasePage();
+          .onClick((node, player, event) -> {
+              ((PaginatedViewHolder) event.getInventory().getHolder()).increasePage();
           });
     }
 
-    public PaginatedInv(Plugin owner,
-                        String title, String[] layout,
-                        Supplier<List<T>> listSupplier) {
+    public PaginatedView(Plugin owner,
+                         String title, String[] layout,
+                         Supplier<List<T>> listSupplier) {
         int length = layout.length;
         if(length < 2 || length > 6) {
             throw new IllegalArgumentException("Layout rows must be greater than one and inferior to seven");
@@ -138,7 +139,7 @@ public class PaginatedInv<T extends PaginatedItem> {
         this.title = title;
         this.size = slotsIndex.length;
 
-        this.items = new InvItem[size];
+        this.items = new GUIItem[size];
 
         this.paginator = new Paginator<T>(pageSize) {
             @Override
@@ -148,27 +149,26 @@ public class PaginatedInv<T extends PaginatedItem> {
         };
 
         if(previousIndex != -1) {
-            previousButton = new InvItem<T>()
+            previousButton = new GUIItem<T>()
               .withItem(new ItemBuilder(Material.ARROW).name("§aPrevious page").build())
               .withSlot(previousIndex)
-              .onClick((node, event) -> {
-                  ((PaginatedInvHolder) event.getInventory().getHolder()).decreasePage();
+              .onClick((node, player, event) -> {
+                  ((PaginatedViewHolder) event.getInventory().getHolder()).decreasePage();
               });
         }
 
         if(nextIndex != -1) {
-            nextButton = new InvItem<T>()
+            nextButton = new GUIItem<T>()
               .withItem(new ItemBuilder(Material.ARROW).name("§aNext page").build())
               .withSlot(nextIndex)
-              .onClick((node, event) -> {
-                  ((PaginatedInvHolder) event.getInventory().getHolder()).increasePage();
+              .onClick((node, player, event) -> {
+                  ((PaginatedViewHolder) event.getInventory().getHolder()).increasePage();
               });
         }
     }
 
-    public PaginatedInv(Plugin owner,
-                        String title, int rows,
-                        int pageSize, Supplier<List<T>> listSupplier) {
+    public PaginatedView(Plugin owner, String title, int rows,
+                         int pageSize, Supplier<List<T>> listSupplier) {
         this(owner, title, rows, new Paginator<T>(pageSize) {
             @Override
             protected List<T> getBackingList() {
@@ -177,7 +177,12 @@ public class PaginatedInv<T extends PaginatedItem> {
         });
     }
 
-    public void addItem(InvItem<T> item) {
+    @Override
+    public int getRows() {
+        return size / 9;
+    }
+
+    public void addItem(GUIItem<T> item) {
         if(slotsIndex != null && slotsIndex[item.getSlot()] != -1) {
             throw new IllegalArgumentException("Slot " + item.getSlot() + " must be reserved");
         }
@@ -185,7 +190,7 @@ public class PaginatedInv<T extends PaginatedItem> {
         items[item.getSlot()] = item;
     }
 
-    public boolean updateInventory(Player player, Inventory inventory, PaginatedInvHolder holder) {
+    public boolean updateInventory(Player player, Inventory inventory, PaginatedViewHolder holder) {
         int index = holder.getCurrentPage();
 
         if(!paginator.hasPage(index)) {
@@ -232,7 +237,7 @@ public class PaginatedInv<T extends PaginatedItem> {
 
         inventory.clear();
 
-        PaginatedInvHolder holder = (PaginatedInvHolder) inventory.getHolder();
+        PaginatedViewHolder holder = (PaginatedViewHolder) inventory.getHolder();
 
         int current = 0;
         if(slotsIndex != null) {
@@ -257,7 +262,7 @@ public class PaginatedInv<T extends PaginatedItem> {
             }
         }
 
-        for(InvItem<T> item : items) {
+        for(GUIItem<T> item : items) {
             if(item == null) continue;
             inventory.setItem(item.getSlot(), item.getItemStack());
         }
@@ -273,7 +278,7 @@ public class PaginatedInv<T extends PaginatedItem> {
         return inventory;
     }
 
-    public void handleClick(Plugin plugin, PaginatedInvHolder holder, InventoryClickEvent event) {
+    public void handleClick(Plugin plugin, PaginatedViewHolder holder, InventoryClickEvent event) {
         if(!plugin.equals(owner)) return;
 
         event.setCancelled(true);
@@ -293,7 +298,7 @@ public class PaginatedInv<T extends PaginatedItem> {
             return;
         }
 
-        InvItem<T> item = items[slot];
+        GUIItem<T> item = items[slot];
         if(item != null) {
             item.handleClick(null, event);
 
@@ -316,15 +321,17 @@ public class PaginatedInv<T extends PaginatedItem> {
         T t = paginator.get(slot);
         if(t == null) return;
 
-        itemProcessor.accept(((Player) event.getWhoClicked()), t);
+        if (itemProcessor != null) {
+            itemProcessor.accept(((Player) event.getWhoClicked()), t);
+        }
 
         if(updateAfterClick) {
             updateInventory(((Player) event.getWhoClicked()), event.getInventory(), holder);
         }
     }
 
-    public PaginatedInvHolder createHolder(UUID id) {
-        return new PaginatedInvHolder(this, id);
+    public PaginatedViewHolder createHolder(UUID id) {
+        return new PaginatedViewHolder(this, id);
     }
 
 }

@@ -11,10 +11,10 @@ import java.util.UUID;
 
 @Getter
 @RequiredArgsConstructor
-public class PaginatedInvHolder implements InventoryHolder {
+public class PaginatedViewHolder implements InventoryHolder {
 
     @NonNull
-    private final PaginatedInv<?> owner;
+    private final PaginatedView<?> owner;
     private final UUID id;
 
     @Setter

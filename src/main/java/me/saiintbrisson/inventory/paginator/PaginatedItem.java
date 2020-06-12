@@ -5,6 +5,6 @@ import org.bukkit.inventory.ItemStack;
 
 public interface PaginatedItem {
 
-    ItemStack toItemStack(Player viewer, PaginatedInvHolder holder);
+    ItemStack toItemStack(Player viewer, PaginatedViewHolder holder);
 
 }
