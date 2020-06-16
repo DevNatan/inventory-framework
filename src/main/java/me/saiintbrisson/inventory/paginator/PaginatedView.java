@@ -40,7 +40,7 @@ public class PaginatedView<T extends PaginatedItem> implements View {
     private boolean updateAfterClick = true;
 
     @Setter
-    private BiConsumer<Player, T> itemProcessor;
+    private PaginatedItemConsumer<T> itemProcessor;
 
     public PaginatedView(@NonNull Plugin owner, String title, int rows,
                          @NonNull Paginator<T> paginator) {
@@ -322,7 +322,7 @@ public class PaginatedView<T extends PaginatedItem> implements View {
         if(t == null) return;
 
         if (itemProcessor != null) {
-            itemProcessor.accept(((Player) event.getWhoClicked()), t);
+            itemProcessor.process(((Player) event.getWhoClicked()), t, event);
         }
 
         if(updateAfterClick) {
