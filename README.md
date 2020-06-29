@@ -1,4 +1,4 @@
-# CommandFramework
+# InventoryFramework
 [![](https://jitpack.io/v/SaiintBrisson/inventory-framework.svg)](https://jitpack.io/#SaiintBrisson/command-framework)
 
 A simple framework to help you create GUIs. Take a look [here](https://github.com/SaiintBrisson/inventory-framework/tree/master/example).
