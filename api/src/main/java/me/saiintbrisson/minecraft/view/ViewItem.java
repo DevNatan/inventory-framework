@@ -1,8 +1,8 @@
-package me.saiintbrisson.inventory.inv;
+package me.saiintbrisson.minecraft.view;
 
 import lombok.Getter;
-import me.saiintbrisson.inventory.paginator.PaginatedItem;
-import me.saiintbrisson.inventory.paginator.PaginatedView;
+import me.saiintbrisson.minecraft.paginator.PaginatedItem;
+import me.saiintbrisson.minecraft.paginator.PaginatedView;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -12,32 +12,32 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Getter
-public class GUIItem<T> {
+public class ViewItem<T> {
 
     private int slot;
     private ItemStack itemStack;
-    private final List<GUIAction<T, InventoryClickEvent>> clickActions = new LinkedList<>();
+    private final List<ViewAction<T, InventoryClickEvent>> clickActions = new LinkedList<>();
 
-    public GUIItem<T> withSlot(int slot) {
+    public ViewItem<T> withSlot(int slot) {
         this.slot = slot;
         return this;
     }
 
-    public GUIItem<T> withSlot(int row, int column) {
+    public ViewItem<T> withSlot(int row, int column) {
         return withSlot((row * 9) + column);
     }
 
-    public GUIItem<T> onClick(GUIAction<T, InventoryClickEvent> clickAction) {
+    public ViewItem<T> onClick(ViewAction<T, InventoryClickEvent> clickAction) {
         clickActions.add(clickAction);
         return this;
     }
 
-    public GUIItem<T> cancelClick() {
+    public ViewItem<T> cancelClick() {
         clickActions.add((node, player, event) -> event.setCancelled(true));
         return this;
     }
 
-    public GUIItem<T> closeOnClick() {
+    public ViewItem<T> closeOnClick() {
         clickActions.add((node, player, event) -> {
             event.setCancelled(true);
             player.closeInventory();
@@ -46,17 +46,16 @@ public class GUIItem<T> {
         return this;
     }
 
-    public <N> GUIItem<T> openGUI(GUI<N> gui, N object) {
+    public <N> ViewItem<T> openView(View<N> view, N object) {
         clickActions.add((node, player, event) -> {
             event.setCancelled(true);
-            player.closeInventory();
-            gui.createNode(player, object).show();
+            view.createNode(object).show(player);
         });
 
         return this;
     }
 
-    public <N extends PaginatedItem> GUIItem<T> openPaginatedView(PaginatedView<N> view) {
+    public <N extends PaginatedItem> ViewItem<T> openPaginatedView(PaginatedView<N> view) {
         clickActions.add((node, player, event) -> {
             event.setCancelled(true);
             player.closeInventory();
@@ -66,16 +65,16 @@ public class GUIItem<T> {
         return this;
     }
 
-    public GUIItem<T> updateOnClick() {
+    public ViewItem<T> updateOnClick() {
         clickActions.add((node, player, event) -> {
             event.setCancelled(true);
-            node.update();
+            node.update(player);
         });
 
         return this;
     }
 
-    public GUIItem<T> messageOnClick(String message, Object... objects) {
+    public ViewItem<T> messageOnClick(String message, Object... objects) {
         clickActions.add((node, player, event) -> {
             event.setCancelled(true);
             player.sendMessage(String.format(message, objects));
@@ -84,7 +83,7 @@ public class GUIItem<T> {
         return this;
     }
 
-    public GUIItem<T> playSoundOnClick(Sound sound, float volume, float pitch) {
+    public ViewItem<T> playSoundOnClick(Sound sound, float volume, float pitch) {
         clickActions.add((node, player, event) -> {
             event.setCancelled(true);
             player.playSound(player.getLocation(), sound, volume, pitch);
@@ -93,13 +92,13 @@ public class GUIItem<T> {
         return this;
     }
 
-    public GUIItem<T> withItem(ItemStack itemStack) {
+    public ViewItem<T> withItem(ItemStack itemStack) {
         this.itemStack = itemStack;
         return this;
     }
 
-    public void handleClick(GUINode<T> node, InventoryClickEvent event) {
-        for(GUIAction<T, InventoryClickEvent> action : clickActions) {
+    public void handleClick(ViewNode<T> node, InventoryClickEvent event) {
+        for(ViewAction<T, InventoryClickEvent> action : clickActions) {
             action.interact(node, ((Player) event.getWhoClicked()), event);
         }
     }

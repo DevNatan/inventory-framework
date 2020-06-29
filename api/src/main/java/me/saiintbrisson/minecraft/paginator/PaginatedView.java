@@ -1,11 +1,11 @@
-package me.saiintbrisson.inventory.paginator;
+package me.saiintbrisson.minecraft.paginator;
 
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
-import me.saiintbrisson.inventory.ItemBuilder;
-import me.saiintbrisson.inventory.View;
-import me.saiintbrisson.inventory.inv.GUIItem;
+import me.saiintbrisson.minecraft.ItemBuilder;
+import me.saiintbrisson.minecraft.View;
+import me.saiintbrisson.minecraft.view.ViewItem;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -17,7 +17,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
-import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
 public class PaginatedView<T extends PaginatedItem> implements View {
@@ -31,10 +30,10 @@ public class PaginatedView<T extends PaginatedItem> implements View {
     private int[] slotsIndex;
     private final Paginator<T> paginator;
 
-    private GUIItem<T>[] items;
+    private ViewItem<T>[] items;
     @Getter
     @Setter
-    private GUIItem<T> previousButton, nextButton;
+    private ViewItem<T> previousButton, nextButton;
 
     @Setter
     private boolean updateAfterClick = true;
@@ -57,18 +56,18 @@ public class PaginatedView<T extends PaginatedItem> implements View {
         this.title = title;
         this.size = rows * 9;
 
-        this.items = new GUIItem[size];
+        this.items = new ViewItem[size];
 
         this.paginator = paginator;
 
-        previousButton = new GUIItem<T>()
+        previousButton = new ViewItem<T>()
           .withItem(new ItemBuilder(Material.ARROW).name("§aPrevious page").build())
           .withSlot(size - 9 + 3)
           .onClick((node, player, event) -> {
               ((PaginatedViewHolder) event.getInventory().getHolder()).decreasePage();
           });
 
-        nextButton = new GUIItem<T>()
+        nextButton = new ViewItem<T>()
           .withItem(new ItemBuilder(Material.ARROW).name("§aNext page").build())
           .withSlot(size - 9 + 5)
           .onClick((node, player, event) -> {
@@ -139,7 +138,7 @@ public class PaginatedView<T extends PaginatedItem> implements View {
         this.title = title;
         this.size = slotsIndex.length;
 
-        this.items = new GUIItem[size];
+        this.items = new ViewItem[size];
 
         this.paginator = new Paginator<T>(pageSize) {
             @Override
@@ -149,7 +148,7 @@ public class PaginatedView<T extends PaginatedItem> implements View {
         };
 
         if(previousIndex != -1) {
-            previousButton = new GUIItem<T>()
+            previousButton = new ViewItem<T>()
               .withItem(new ItemBuilder(Material.ARROW).name("§aPrevious page").build())
               .withSlot(previousIndex)
               .onClick((node, player, event) -> {
@@ -158,7 +157,7 @@ public class PaginatedView<T extends PaginatedItem> implements View {
         }
 
         if(nextIndex != -1) {
-            nextButton = new GUIItem<T>()
+            nextButton = new ViewItem<T>()
               .withItem(new ItemBuilder(Material.ARROW).name("§aNext page").build())
               .withSlot(nextIndex)
               .onClick((node, player, event) -> {
@@ -182,7 +181,7 @@ public class PaginatedView<T extends PaginatedItem> implements View {
         return size / 9;
     }
 
-    public void addItem(GUIItem<T> item) {
+    public void addItem(ViewItem<T> item) {
         if(slotsIndex != null && slotsIndex[item.getSlot()] != -1) {
             throw new IllegalArgumentException("Slot " + item.getSlot() + " must be reserved");
         }
@@ -262,7 +261,7 @@ public class PaginatedView<T extends PaginatedItem> implements View {
             }
         }
 
-        for(GUIItem<T> item : items) {
+        for(ViewItem<T> item : items) {
             if(item == null) continue;
             inventory.setItem(item.getSlot(), item.getItemStack());
         }
@@ -298,7 +297,7 @@ public class PaginatedView<T extends PaginatedItem> implements View {
             return;
         }
 
-        GUIItem<T> item = items[slot];
+        ViewItem<T> item = items[slot];
         if(item != null) {
             item.handleClick(null, event);
 

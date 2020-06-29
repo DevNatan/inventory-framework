@@ -1,10 +1,9 @@
-package me.saiintbrisson.inventory.example;
+package me.saiintbrisson.minecraft;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import me.saiintbrisson.inventory.ItemBuilder;
-import me.saiintbrisson.inventory.paginator.PaginatedItem;
-import me.saiintbrisson.inventory.paginator.PaginatedViewHolder;
+import me.saiintbrisson.minecraft.paginator.PaginatedItem;
+import me.saiintbrisson.minecraft.paginator.PaginatedViewHolder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;

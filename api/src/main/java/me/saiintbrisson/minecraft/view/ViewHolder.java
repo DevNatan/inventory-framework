@@ -1,4 +1,4 @@
-package me.saiintbrisson.inventory.inv;
+package me.saiintbrisson.minecraft.view;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -10,9 +10,9 @@ import java.util.UUID;
 
 @Getter
 @RequiredArgsConstructor
-public class GUIHolder implements InventoryHolder {
+public class ViewHolder implements InventoryHolder {
 
-    private final GUINode node;
+    private final ViewNode node;
     private final UUID id;
 
     @Setter

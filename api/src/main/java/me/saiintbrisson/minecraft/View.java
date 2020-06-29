@@ -1,4 +1,4 @@
-package me.saiintbrisson.inventory;
+package me.saiintbrisson.minecraft;
 
 public interface View {
 

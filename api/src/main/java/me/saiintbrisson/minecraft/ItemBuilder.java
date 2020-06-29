@@ -1,4 +1,4 @@
-package me.saiintbrisson.inventory;
+package me.saiintbrisson.minecraft;
 
 import lombok.Getter;
 import org.bukkit.Material;

@@ -1,4 +1,4 @@
-package me.saiintbrisson.inventory.paginator;
+package me.saiintbrisson.minecraft.paginator;
 
 import lombok.Getter;
 import lombok.NonNull;

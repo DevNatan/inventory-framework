@@ -1,4 +1,4 @@
-package me.saiintbrisson.inventory;
+package me.saiintbrisson.minecraft;
 
 import lombok.AllArgsConstructor;
 import org.bukkit.Bukkit;
@@ -7,7 +7,7 @@ import org.bukkit.plugin.Plugin;
 @AllArgsConstructor
 public class InventoryFrame {
 
-    private Plugin owner;
+    private final Plugin owner;
 
     public void registerListener() {
         Bukkit.getPluginManager().registerEvents(new InventoryListener(owner), owner);

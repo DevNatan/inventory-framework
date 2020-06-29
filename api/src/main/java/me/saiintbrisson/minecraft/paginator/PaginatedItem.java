@@ -1,4 +1,4 @@
-package me.saiintbrisson.inventory.paginator;
+package me.saiintbrisson.minecraft.paginator;
 
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
