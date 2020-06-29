@@ -38,8 +38,13 @@ public class View<T> {
         return items[slot] = new ViewItem<>();
     }
 
+    /**
+     * @param row the row starting from one
+     * @param column the column starting from one
+     * @return the item created
+     */
     public ViewItem<T> slot(int row, int column) {
-        return slot((row * 9) + column);
+        return slot(((row - 1) * 9) + (column - 1));
     }
 
     public ViewItem<T> getItem(int slot) {
