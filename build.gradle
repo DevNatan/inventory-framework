@@ -8,16 +8,20 @@ version '1.0-SNAPSHOT'
 
 sourceCompatibility = 1.8
 
-subprojects {
+repositories {
+    maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
+    maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' }
 
-    afterEvaluate {
-        tasks.withType(JavaCompile) {
-            options.encoding = 'UTF-8'
-        }
+    mavenCentral()
+}
 
-        tasks.withType(Jar) {
-            destinationDir = file("$rootDir/out/")
-        }
-    }
+dependencies {
+    compileOnly 'org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT'
 
+    compileOnly 'org.projectlombok:lombok:1.18.12'
+    annotationProcessor 'org.projectlombok:lombok:1.18.12'
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
 }
