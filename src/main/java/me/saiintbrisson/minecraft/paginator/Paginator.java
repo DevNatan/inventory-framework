@@ -2,6 +2,7 @@ package me.saiintbrisson.minecraft.paginator;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.bukkit.entity.Player;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -14,52 +15,52 @@ public abstract class Paginator<T> {
 
     private final int pageSize;
 
-    protected abstract List<T> getBackingList();
+    protected abstract List<T> getBackingList(Player player);
 
-    public int size() {
-        return getBackingList().size();
+    public int size(Player player) {
+        return getBackingList(player).size();
     }
-    public int getPagesCount() {
-        return (int) Math.ceil((double) size() / getPageSize());
-    }
-
-    public int getPagesCount(int pageSize) {
-        return (int) Math.ceil((double) size() / pageSize);
+    public int getPagesCount(Player player) {
+        return (int) Math.ceil((double) size(player) / getPageSize());
     }
 
-    public T get(int index) {
-        return getBackingList().get(index);
+    public int getPagesCount(Player player, int pageSize) {
+        return (int) Math.ceil((double) size(player) / pageSize);
     }
 
-    public boolean hasPrevious(int index) {
-        return getPagesCount() > 0 && index > 0;
+    public T get(Player player, int index) {
+        return getBackingList(player).get(index);
     }
-    public Collection<T> previous(int currentIndex) {
-        if(!hasPrevious(currentIndex)) {
+
+    public boolean hasPrevious(Player player, int index) {
+        return getPagesCount(player) > 0 && index > 0;
+    }
+    public Collection<T> previous(Player player, int currentIndex) {
+        if(!hasPrevious(player, currentIndex)) {
             throw new NoSuchElementException();
         }
 
-        return getPage(currentIndex - 1);
+        return getPage(player, currentIndex - 1);
     }
 
-    public boolean hasNext(int index) {
-        return index < getPagesCount() - 1;
+    public boolean hasNext(Player player, int index) {
+        return index < getPagesCount(player) - 1;
     }
-    public Collection<T> next(int currentIndex) {
-        if(!hasNext(currentIndex)) {
+    public Collection<T> next(Player player, int currentIndex) {
+        if(!hasNext(player, currentIndex)) {
             throw new NoSuchElementException();
         }
 
-        return getPage(currentIndex + 1);
+        return getPage(player, currentIndex + 1);
     }
 
-    public boolean hasPage(int currentIndex) {
-        return currentIndex >= 0 && currentIndex < getPagesCount();
+    public boolean hasPage(Player player, int currentIndex) {
+        return currentIndex >= 0 && currentIndex < getPagesCount(player);
     }
 
-    public Collection<T> getPage(int index) {
-        if(index < 0 || index >= getPagesCount()) {
-            throw new ArrayIndexOutOfBoundsException("Index must be between the range of 0 and " + (getPagesCount() - 1));
+    public Collection<T> getPage(Player player, int index) {
+        if(index < 0 || index >= getPagesCount(player)) {
+            throw new ArrayIndexOutOfBoundsException("Index must be between the range of 0 and " + (getPagesCount(player) - 1));
         }
 
         List<T> page = new LinkedList<>();
@@ -67,10 +68,10 @@ public abstract class Paginator<T> {
         int base = index * getPageSize();
         int until = base + getPageSize();
 
-        if(until > size()) until = size();
+        if(until > size(player)) until = size(player);
 
         for(int i = base; i < until; i++) {
-            page.add(get(i));
+            page.add(get(player, i));
         }
 
         return page;

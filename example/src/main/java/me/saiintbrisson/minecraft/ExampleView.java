@@ -48,7 +48,7 @@ public class ExampleView extends View<ExampleObject> {
           "OXXXXXXXO",
           "OOOOOOOOO",
           "OOO<O>OOO",
-        }, this::getSugarList);
+        }, player -> sugarList);
 
         view.setItemProcessor((player, item, event) -> {
             player.sendMessage("§aSelected sugar: §f" + item.getIndex());

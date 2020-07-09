@@ -17,7 +17,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
-import java.util.function.Supplier;
+import java.util.function.Function;
 
 public class PaginatedView<T extends PaginatedItem> implements View {
 
@@ -30,7 +30,7 @@ public class PaginatedView<T extends PaginatedItem> implements View {
     private int[] slotsIndex;
     private final Paginator<T> paginator;
 
-    private ViewItem<T>[] items;
+    private final ViewItem<T>[] items;
     @Getter
     @Setter
     private ViewItem<T> previousButton, nextButton;
@@ -77,7 +77,7 @@ public class PaginatedView<T extends PaginatedItem> implements View {
 
     public PaginatedView(Plugin owner,
                          String title, String[] layout,
-                         Supplier<List<T>> listSupplier) {
+                         Function<Player, List<T>> listFunction) {
         int length = layout.length;
         if(length < 2 || length > 6) {
             throw new IllegalArgumentException("Layout rows must be greater than one and inferior to seven");
@@ -142,8 +142,8 @@ public class PaginatedView<T extends PaginatedItem> implements View {
 
         this.paginator = new Paginator<T>(pageSize) {
             @Override
-            protected List<T> getBackingList() {
-                return listSupplier.get();
+            protected List<T> getBackingList(Player player) {
+                return listFunction.apply(player);
             }
         };
 
@@ -167,11 +167,11 @@ public class PaginatedView<T extends PaginatedItem> implements View {
     }
 
     public PaginatedView(Plugin owner, String title, int rows,
-                         int pageSize, Supplier<List<T>> listSupplier) {
+                         int pageSize, Function<Player, List<T>> listFunction) {
         this(owner, title, rows, new Paginator<T>(pageSize) {
             @Override
-            protected List<T> getBackingList() {
-                return listSupplier.get();
+            protected List<T> getBackingList(Player player) {
+                return listFunction.apply(player);
             }
         });
     }
@@ -192,13 +192,13 @@ public class PaginatedView<T extends PaginatedItem> implements View {
     public boolean updateInventory(Player player, Inventory inventory, PaginatedViewHolder holder) {
         int index = holder.getCurrentPage();
 
-        if(!paginator.hasPage(index)) {
-            if(!paginator.hasPrevious(index)) return false;
+        if(!paginator.hasPage(player, index)) {
+            if(!paginator.hasPrevious(player, index)) return false;
             holder.decreasePage();
             index--;
         }
 
-        Collection<T> page = paginator.getPage(index);
+        Collection<T> page = paginator.getPage(player, index);
 
         if(buildToInventory(player, inventory, page) == null) {
             return false;
@@ -214,14 +214,14 @@ public class PaginatedView<T extends PaginatedItem> implements View {
     }
 
     public boolean showInventory(Player player, int index) {
-        if(!paginator.hasPage(index)) return false;
+        if(!paginator.hasPage(player, index)) return false;
 
         Inventory inventory = Bukkit.createInventory(
           createHolder(player.getUniqueId()),
           size, title
         );
 
-        if(buildToInventory(player, inventory, paginator.getPage(index)) == null) {
+        if(buildToInventory(player, inventory, paginator.getPage(player, index)) == null) {
             return false;
         }
 
@@ -266,11 +266,11 @@ public class PaginatedView<T extends PaginatedItem> implements View {
             inventory.setItem(item.getSlot(), item.getItemStack());
         }
 
-        if(previousButton != null && paginator.hasPrevious(holder.getCurrentPage())) {
+        if(previousButton != null && paginator.hasPrevious(player, holder.getCurrentPage())) {
             inventory.setItem(previousButton.getSlot(), previousButton.getItemStack());
         }
 
-        if(nextButton != null && paginator.hasNext(holder.getCurrentPage())) {
+        if(nextButton != null && paginator.hasNext(player, holder.getCurrentPage())) {
             inventory.setItem(nextButton.getSlot(), nextButton.getItemStack());
         }
 
@@ -280,20 +280,21 @@ public class PaginatedView<T extends PaginatedItem> implements View {
     public void handleClick(Plugin plugin, PaginatedViewHolder holder, InventoryClickEvent event) {
         if(!plugin.equals(owner)) return;
 
+        Player player = (Player) event.getWhoClicked();
         event.setCancelled(true);
 
         int slot = event.getRawSlot();
         if(slot < 0 || slot > size) return;
 
-        if(previousButton != null && previousButton.getSlot() == slot && paginator.hasPrevious(holder.getCurrentPage())) {
+        if(previousButton != null && previousButton.getSlot() == slot && paginator.hasPrevious(player, holder.getCurrentPage())) {
             previousButton.handleClick(null, event);
-            updateInventory(((Player) event.getWhoClicked()), event.getInventory(), holder);
+            updateInventory(player, event.getInventory(), holder);
             return;
         }
 
-        if(nextButton != null && nextButton.getSlot() == slot && paginator.hasNext(holder.getCurrentPage())) {
+        if(nextButton != null && nextButton.getSlot() == slot && paginator.hasNext(player, holder.getCurrentPage())) {
             nextButton.handleClick(null, event);
-            updateInventory(((Player) event.getWhoClicked()), event.getInventory(), holder);
+            updateInventory(player, event.getInventory(), holder);
             return;
         }
 
@@ -302,7 +303,7 @@ public class PaginatedView<T extends PaginatedItem> implements View {
             item.handleClick(null, event);
 
             if(updateAfterClick) {
-                updateInventory(((Player) event.getWhoClicked()), event.getInventory(), holder);
+                updateInventory(player, event.getInventory(), holder);
             }
             return;
         }
@@ -315,17 +316,17 @@ public class PaginatedView<T extends PaginatedItem> implements View {
             slot = (paginator.getPageSize() * holder.getCurrentPage()) + slot;
         }
 
-        if(slot >= paginator.size()) return;
+        if(slot >= paginator.size(player)) return;
 
-        T t = paginator.get(slot);
+        T t = paginator.get(player,slot);
         if(t == null) return;
 
         if (itemProcessor != null) {
-            itemProcessor.process(((Player) event.getWhoClicked()), t, event);
+            itemProcessor.process(player, t, event);
         }
 
         if(updateAfterClick) {
-            updateInventory(((Player) event.getWhoClicked()), event.getInventory(), holder);
+            updateInventory(player, event.getInventory(), holder);
         }
     }
 
