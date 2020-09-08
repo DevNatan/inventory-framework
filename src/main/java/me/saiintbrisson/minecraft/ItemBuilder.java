@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 @Getter
-public class ItemBuilder {
+public class ItemBuilder implements Cloneable {
 
     private ItemStack itemStack;
     private ItemMeta itemMeta;
@@ -33,6 +33,11 @@ public class ItemBuilder {
     public ItemBuilder(ItemStack otherItem) {
         this.itemStack = otherItem;
         this.itemMeta = otherItem.getItemMeta();
+    }
+
+    public ItemBuilder(ItemStack itemStack, ItemMeta itemMeta) {
+        this.itemStack = itemStack;
+        this.itemMeta = itemMeta;
     }
 
     public ItemBuilder itemStack(ItemStack itemStack) {
@@ -128,6 +133,10 @@ public class ItemBuilder {
         itemStack.setDurability((short) 3);
         skull.setOwner(owner);
         return this;
+    }
+
+    public ItemBuilder clone() {
+        return new ItemBuilder(itemStack.clone(), itemMeta.clone());
     }
 
     public ItemStack build() {
