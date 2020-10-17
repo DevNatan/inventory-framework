@@ -73,6 +73,10 @@ public class View implements InventoryHolder, Closeable {
     }
 
     public void open(Player player) {
+        open(player, null);
+    }
+
+    public void open(Player player, Map<String, Object> data) {
         if (nodes.containsKey(player))
             throw new IllegalStateException("Inventory already opened");
 
@@ -87,6 +91,8 @@ public class View implements InventoryHolder, Closeable {
                 setData(player, entry.getKey(), entry.getValue());
         }
 
+        onRender(context);
+        render(context);
         nodes.put(player, inventory);
         player.openInventory(inventory);
     }
