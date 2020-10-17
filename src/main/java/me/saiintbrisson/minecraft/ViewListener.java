@@ -5,7 +5,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.server.PluginDisableEvent;
@@ -47,7 +46,7 @@ public class ViewListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onViewClick(InventoryClickEvent e) {
-        if (!(e.getWhoClicked() instanceof Player))
+        if (!(e.getWhoClicked() instanceof Player) || e.getCurrentItem() == null)
             return;
 
         View view = getView(e.getClickedInventory());
@@ -87,7 +86,7 @@ public class ViewListener implements Listener {
             return;
 
         Player player = (Player) e.getPlayer();
-        view.onClose(new ViewContext.NonCancellable(view, player, e.getInventory()));
+        view.onClose(new ViewContext(view, player, e.getInventory()));
         view.remove(player);
     }
 

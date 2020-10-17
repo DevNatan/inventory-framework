@@ -7,6 +7,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 
 import java.io.Closeable;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.WeakHashMap;
 
@@ -20,6 +21,7 @@ public class View implements InventoryHolder, Closeable {
     final Map<Player, Inventory> nodes;
     private boolean cancelOnClick = true;
     private final ViewItem[] items;
+    private final Map<Player, Map<String, Object>> data;
 
     public View(int rows, String title) {
         this(null, rows, title);
@@ -31,6 +33,7 @@ public class View implements InventoryHolder, Closeable {
         this.frame = frame;
         this.title = title;
         nodes = new WeakHashMap<>();
+        data = new WeakHashMap<>();
 
         // self registration, must be singleton
         if ((frame != null) && frame.isSelfRegister())
@@ -74,18 +77,14 @@ public class View implements InventoryHolder, Closeable {
             throw new IllegalStateException("Inventory already opened");
 
         Inventory inventory = getInventory();
-        ViewContext.NonCancellable ctx = new ViewContext.NonCancellable(this, player, inventory);
-        onOpen(ctx);
-        if (ctx.isCancelled())
+        ViewContext context = new ViewContext(this, player, inventory);
+        onOpen(context);
+        if (context.isCancelled())
             return;
 
-        onRender(new ViewContext.NonCancellable(this, player, inventory));
-        for (int i = 0; i < items.length; i++) {
-            ViewItem item = items[i];
-            if (item == null)
-                continue;
-
-            inventory.setItem(i, item.getItem() == null ? null : item.getItem().clone());
+        if (data != null) {
+            for (Map.Entry<String, Object> entry : data.entrySet())
+                setData(player, entry.getKey(), entry.getValue());
         }
 
         nodes.put(player, inventory);
@@ -122,13 +121,14 @@ public class View implements InventoryHolder, Closeable {
 
     private void close0(Player player, Inventory inventory) {
         player.closeInventory();
-        onClose(new ViewContext.NonCancellable(this, player, inventory));
+        onClose(new ViewContext(this, player, inventory));
     }
 
     Inventory remove(Player player) {
         if (!nodes.containsKey(player))
             throw new IllegalStateException("Inventory not yet opened");
 
+        clearData(player);
         return nodes.remove(player);
     }
 
@@ -149,6 +149,36 @@ public class View implements InventoryHolder, Closeable {
     @Override
     public Inventory getInventory() {
         return Bukkit.createInventory(this, INVENTORY_ROW_SIZE * rows, title);
+    }
+
+    public void clearData(Player player) {
+        data.remove(player);
+    }
+
+    public Map<String, Object> getData(Player player) {
+        return data.get(player);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T getData(Player player, String key) {
+        if (!data.containsKey(player))
+            return null;
+        return (T) data.get(player).get(key);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T getData(Player player, String key, T defaultValue) {
+        if (!data.containsKey(player))
+            return defaultValue;
+        return (T) data.get(player).getOrDefault(key, defaultValue);
+    }
+
+    public void setData(Player player, String key, Object value) {
+        data.computeIfAbsent(player, $ -> new HashMap<>()).put(key, value);
+    }
+
+    public boolean hasData(Player player, String key) {
+        return data.containsKey(player) && data.get(player).containsKey(key);
     }
 
     protected void onRender(ViewContext context) {

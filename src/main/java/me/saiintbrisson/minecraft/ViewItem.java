@@ -5,6 +5,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class ViewItem {
 
+    private final int slot;
     private ItemStack item;
 
     // fast path handlers
@@ -14,6 +15,18 @@ public class ViewItem {
     private ViewItemHandler<InventoryClickEvent> clickHandler;
     private ViewItemHandler<Void> renderHandler;
     private ViewItemHandler<Void> updateHandler;
+
+    public ViewItem() {
+        this(0);
+    }
+
+    public ViewItem(int slot) {
+        this.slot = slot;
+    }
+
+    public int getSlot() {
+        return slot;
+    }
 
     public ItemStack getItem() {
         return item;
@@ -67,6 +80,16 @@ public class ViewItem {
     public ViewItem cancelOnClick() {
         cancelOnClick = !cancelOnClick;
         return this;
+    }
+
+    @Override
+    public String toString() {
+        return "ViewItem{" +
+                "slot=" + slot +
+                ", item=" + item +
+                ", closeOnClick=" + closeOnClick +
+                ", cancelOnClick=" + cancelOnClick +
+                '}';
     }
 
 }

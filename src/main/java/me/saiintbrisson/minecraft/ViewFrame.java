@@ -72,11 +72,15 @@ public final class ViewFrame {
     }
 
     public <T extends View> T open(Class<T> view, Player player) {
+        return open(view, player, null);
+    }
+
+    public <T extends View> T open(Class<T> view, Player player, Map<String, Object> data) {
         T openedView = createView(view);
         if (openedView == null)
             throw new IllegalArgumentException("View " + view.getSimpleName() + " is not registered");
 
-        openedView.open(player);
+        openedView.open(player, data);
         return openedView;
     }
 
