@@ -5,19 +5,6 @@ import org.bukkit.inventory.Inventory;
 
 public class ViewContext {
 
-    public static class NonCancellable extends ViewContext {
-
-        public NonCancellable(View view, Player player, Inventory inventory) {
-            super(view, player, inventory);
-        }
-
-        @Override
-        public void cancel() {
-            throw new UnsupportedOperationException();
-        }
-
-    }
-
     private final View view;
     private final Player player;
     private final Inventory inventory;
