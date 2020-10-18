@@ -54,7 +54,7 @@ public class ViewSlotContext extends ViewContext {
     }
 
     public void updateSlot() {
-        getView().updateSlot(getPlayer(), slot);
+        updateSlot(this, slot);
     }
 
 }

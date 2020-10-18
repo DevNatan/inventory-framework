@@ -44,7 +44,7 @@ public class ViewContext extends VirtualView {
     }
 
     public void update() {
-        view.updateSlot(player);
+        view.update(player);
     }
 
     public void open(Class<? extends View> view) {

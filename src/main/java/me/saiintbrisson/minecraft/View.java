@@ -94,34 +94,33 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
         player.openInventory(inventory);
     }
 
-    public void updateSlot(Player player) {
-        Inventory inventory = contexts.get(player).getInventory();
-        Preconditions.checkNotNull(inventory, "Player inventory cannot be null");
+    public void update(Player player) {
+        ViewContext context = contexts.get(player);
+        Preconditions.checkNotNull(context, "Context cannot be null");
 
         for (int i = 0; i < getItems().length; i++) {
-            updateSlot(player, inventory, i);
+            updateSlot(context, i);
         }
     }
 
-    public void updateSlot(Player player, int slot) {
-        Inventory inventory = contexts.get(player).getInventory();
+    @Override
+    public void updateSlot(ViewContext context, int slot) {
+        Preconditions.checkNotNull(context, "Context cannot be null");
+
+        Inventory inventory = context.getInventory();
         Preconditions.checkNotNull(inventory, "Player inventory cannot be null");
 
-        updateSlot(player, inventory, slot);
-    }
-
-    public void updateSlot(Player player, Inventory inventory, int slot) {
         ViewItem item = getItem(slot);
         if (item == null) {
             return;
         }
 
-        ViewSlotContext context = new ViewSlotContext(this, player, inventory, slot, inventory.getItem(slot));
+        ViewSlotContext slotContext = new SynchronizedViewContext(context, slot, inventory.getItem(slot));
         if (item.getUpdateHandler() != null) {
-            item.getUpdateHandler().handle(context, null);
-            inventory.setItem(slot, context.getItem());
+            item.getUpdateHandler().handle(slotContext, null);
+            inventory.setItem(slot, slotContext.getItem());
         } else
-            renderSlot(context, item, slot);
+            renderSlot(slotContext, item, slot);
     }
 
     public void close(Player player) {

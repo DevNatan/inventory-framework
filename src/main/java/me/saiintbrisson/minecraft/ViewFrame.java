@@ -27,6 +27,11 @@ public final class ViewFrame {
         registeredViews = new HashMap<>();
     }
 
+    public ViewFrame(Plugin owner, View... views) {
+        this(owner);
+        addView(views);
+    }
+
     public Plugin getOwner() {
         return owner;
     }
@@ -47,17 +52,16 @@ public final class ViewFrame {
         return registeredViews;
     }
 
-    public <T extends View> ViewFrame addView(T... views) {
-        for (T view : views) {
-            if (view.getFrame() == null)
-                view.setFrame(this);
+    public final void addView(View view) {
+        if (view.getFrame() == null)
+            view.setFrame(this);
+        registeredViews.put(view.getClass(), view);
+    }
 
-            owner.getLogger().info("View " + view.getClass().getSimpleName() + " registered.");
-            registeredViews.put(view.getClass(), view);
+    public void addView(View... views) {
+        for (View view : views) {
+            addView(view);
         }
-
-        owner.getLogger().info("Registered " + registeredViews.size() + " views.");
-        return this;
     }
 
     public void register() {

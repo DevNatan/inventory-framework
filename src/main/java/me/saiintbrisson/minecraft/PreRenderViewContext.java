@@ -38,4 +38,17 @@ public class PreRenderViewContext {
         this.cancelled = cancelled;
     }
 
+    @SuppressWarnings("unchecked")
+    public <T> T get(String key) {
+        return (T) view.getData(player).get(key);
+    }
+
+    public void set(String key, Object value) {
+        view.setData(player, key, value);
+    }
+
+    public boolean has(String key) {
+        return view.hasData(player, key);
+    }
+
 }

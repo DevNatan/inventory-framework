@@ -1,8 +1,10 @@
 package me.saiintbrisson.minecraft;
 
+import com.google.common.base.Preconditions;
 import me.saiintbrisson.minecraft.pagination.PaginatedView;
 import me.saiintbrisson.minecraft.pagination.PaginatedViewContext;
 import me.saiintbrisson.minecraft.utils.Paginator;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 public abstract class VirtualView {
@@ -60,7 +62,6 @@ public abstract class VirtualView {
         context.getInventory().setItem(slot, result);
     }
 
-
     protected void renderSlot(ViewContext context, int slot) {
         ViewItem item = getItem(slot);
         if (item == null)
@@ -87,6 +88,24 @@ public abstract class VirtualView {
             viewContext.switchTo(0);
         }
 
+    }
+
+    public void updateSlot(ViewContext context, int slot) {
+        Preconditions.checkNotNull(context, "Context cannot be null");
+
+        Inventory inventory = context.getInventory();
+        Preconditions.checkNotNull(inventory, "Player inventory cannot be null");
+
+        ViewItem item = getItem(slot);
+        if (item == null)
+            return;
+
+        ViewSlotContext slotContext = new SynchronizedViewContext(context, slot, inventory.getItem(slot));
+        if (item.getUpdateHandler() != null) {
+            item.getUpdateHandler().handle(slotContext, null);
+            inventory.setItem(slot, slotContext.getItem());
+        } else
+            renderSlot(slotContext, item, slot);
     }
 
     public abstract int getLastSlot();
