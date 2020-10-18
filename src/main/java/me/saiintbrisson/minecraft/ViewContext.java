@@ -5,7 +5,7 @@ import org.bukkit.inventory.Inventory;
 
 import java.util.Map;
 
-public class ViewContext {
+public class ViewContext extends VirtualView {
 
     private final View view;
     private final Player player;
@@ -13,6 +13,7 @@ public class ViewContext {
     private boolean cancelled;
 
     public ViewContext(View view, Player player, Inventory inventory) {
+        super(new ViewItem[View.INVENTORY_ROW_SIZE * (inventory.getSize() / 9)]);
         this.view = view;
         this.player = player;
         this.inventory = inventory;
@@ -69,6 +70,11 @@ public class ViewContext {
 
     public boolean has(String key) {
         return view.hasData(player, key);
+    }
+
+    @Override
+    public int getLastSlot() {
+        return inventory.getSize() - 1;
     }
 
 }

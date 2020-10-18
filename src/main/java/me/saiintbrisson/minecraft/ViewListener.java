@@ -46,34 +46,42 @@ public class ViewListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onViewClick(InventoryClickEvent e) {
-        if (!(e.getWhoClicked() instanceof Player) || e.getCurrentItem() == null)
+        if (!(e.getWhoClicked() instanceof Player))
             return;
 
         View view = getView(e.getClickedInventory());
         if (view == null)
             return;
 
+        e.setCancelled(view.isCancelOnClick());
+
         Player player = (Player) e.getWhoClicked();
         int clickedSlot = e.getSlot();
-        ViewSlotContext context = new ViewSlotContext(view, player, e.getClickedInventory(), clickedSlot, e.getCurrentItem());
+        ViewSlotContext context = new SynchronizedViewContext(view.getContext(player), clickedSlot, e.getCurrentItem());
 
         // moved to another inventory, not yet supported
         if (clickedSlot != e.getRawSlot()) {
-            if (!context.isCancelled())
-                e.setCancelled(true);
+            e.setCancelled(true);
             return;
         }
 
-        e.setCancelled(view.isCancelOnClick() || context.isCancelled());
-
-        view.onClick(context, e);
         ViewItem item = view.getItem(clickedSlot);
-        if (item != null) {
-            if (item.getClickHandler() != null)
-                item.getClickHandler().handle(context, e);
-
-            e.setCancelled(item.isCancelOnClick());
+        if (item == null) {
+            item = context.getItem(clickedSlot);
+            if (item == null) {
+                view.onClick(context);
+                e.setCancelled(context.isCancelled());
+                return;
+            }
         }
+
+        if (item.getClickHandler() != null)
+            item.getClickHandler().handle(context, e);
+
+        e.setCancelled(item.isCancelOnClick());
+
+        if (item.isCloseOnClick())
+            player.closeInventory();
     }
 
     @EventHandler

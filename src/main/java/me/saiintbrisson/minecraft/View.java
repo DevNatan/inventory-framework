@@ -1,31 +1,25 @@
 package me.saiintbrisson.minecraft;
 
 import com.google.common.base.Preconditions;
-import me.saiintbrisson.minecraft.pagination.PaginatedView;
-import me.saiintbrisson.minecraft.pagination.PaginatedViewContext;
-import me.saiintbrisson.minecraft.utils.Paginator;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
-import org.bukkit.inventory.ItemStack;
 
 import java.io.Closeable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.WeakHashMap;
 
-public class View implements InventoryHolder, Closeable {
+public class View extends VirtualView implements InventoryHolder, Closeable {
 
     public static final int INVENTORY_ROW_SIZE = 9;
 
     private ViewFrame frame;
     private final String title;
     private final int rows;
-    final Map<Player, Inventory> nodes;
+    final Map<Player, ViewContext> contexts;
     private boolean cancelOnClick = true;
-    private final ViewItem[] items;
     private final Map<Player, Map<String, Object>> data;
 
     public View(int rows, String title) {
@@ -33,11 +27,11 @@ public class View implements InventoryHolder, Closeable {
     }
 
     public View(ViewFrame frame, int rows, String title) {
-        this.items = new ViewItem[INVENTORY_ROW_SIZE * rows];
+        super(new ViewItem[INVENTORY_ROW_SIZE * rows]);
         this.rows = rows;
         this.frame = frame;
         this.title = title;
-        nodes = new WeakHashMap<>();
+        contexts = new WeakHashMap<>();
         data = new WeakHashMap<>();
 
         // self registration, must be singleton
@@ -45,32 +39,13 @@ public class View implements InventoryHolder, Closeable {
             frame.addView(this);
     }
 
-    public ViewItem getItem(int slot) {
-        return items[slot];
-    }
-
-    public ViewItem slot(int slot) {
-        int max = INVENTORY_ROW_SIZE * rows;
-        if (slot > max)
-            throw new IllegalArgumentException("Slot exceeds the inventory limit (expected: < " + max + ", given: " + slot + ")");
-
-        return items[slot] = new ViewItem(slot);
-    }
-
-    public ViewItem slot(int row, int column) {
-        return slot((Math.max((row - 1), 0) * 9) + Math.max((column - 1), 0));
-    }
-
-    public ViewItem firstSlot() {
-        return slot(0);
-    }
-
-    public ViewItem lastSlot() {
-        return slot(getLastSlot());
-    }
-
+    @Override
     public int getLastSlot() {
         return INVENTORY_ROW_SIZE * rows - 1;
+    }
+
+    public ViewContext getContext(Player player) {
+        return contexts.get(player);
     }
 
     public ViewFrame getFrame() {
@@ -94,7 +69,7 @@ public class View implements InventoryHolder, Closeable {
     }
 
     public void open(Player player, Map<String, Object> data) {
-        if (nodes.containsKey(player))
+        if (contexts.containsKey(player))
             throw new IllegalStateException("Inventory already opened");
 
         Inventory inventory = getInventory();
@@ -108,73 +83,31 @@ public class View implements InventoryHolder, Closeable {
                 setData(player, entry.getKey(), entry.getValue());
         }
 
-        nodes.put(player, inventory);
+        contexts.put(player, context);
         onRender(context);
         render(context);
+        context.render(context); // render virtual view
         player.openInventory(inventory);
     }
 
-    protected void renderSlot(ViewContext context, ViewItem item, int slot) {
-        ItemStack result = item.getItem();
-        if (item.getRenderHandler() != null) {
-            ViewSlotContext slotContext = new ViewSlotContext(this, context.getPlayer(), context.getInventory(), slot, result);
-            item.getRenderHandler().handle(slotContext, null);
-            if (!slotContext.hasChanged())
-                return;
-
-            result = slotContext.getItem();
-        } else if (result != null)
-            result = result.clone();
-
-        context.getInventory().setItem(slot, result);
-    }
-
-    protected void renderSlot(ViewContext context, int slot) {
-        ViewItem item = items[slot];
-        if (item == null)
-            return;
-
-        renderSlot(context, item, slot);
-    }
-
-    private void render(ViewContext context) {
-        for (int i = 0; i < items.length; i++) {
-            renderSlot(context, i);
-        }
-
-        if (this instanceof PaginatedView) {
-            PaginatedView<?> paginated = (PaginatedView<?>) this;
-            if (paginated.getPaginationSource().isEmpty())
-                return;
-
-            Paginator<?> paginator = new Paginator<>(paginated.getLimit() - paginated.getOffset(), paginated.getPaginationSource());
-            paginated.setPaginator(paginator);
-
-            PaginatedViewContext viewContext = new PaginatedViewContext(paginated, context.getPlayer(), context.getInventory(), 0, paginator);
-            paginated.updateNavigation(viewContext);
-            viewContext.switchTo(0);
-        }
-
-    }
-
     public void updateSlot(Player player) {
-        Inventory inventory = nodes.get(player);
+        Inventory inventory = contexts.get(player).getInventory();
         Preconditions.checkNotNull(inventory, "Player inventory cannot be null");
 
-        for (int i = 0; i < items.length; i++) {
+        for (int i = 0; i < getItems().length; i++) {
             updateSlot(player, inventory, i);
         }
     }
 
     public void updateSlot(Player player, int slot) {
-        Inventory inventory = nodes.get(player);
+        Inventory inventory = contexts.get(player).getInventory();
         Preconditions.checkNotNull(inventory, "Player inventory cannot be null");
 
         updateSlot(player, inventory, slot);
     }
 
     public void updateSlot(Player player, Inventory inventory, int slot) {
-        ViewItem item = items[slot];
+        ViewItem item = getItem(slot);
         if (item == null) {
             return;
         }
@@ -197,16 +130,20 @@ public class View implements InventoryHolder, Closeable {
     }
 
     Inventory remove(Player player) {
-        if (!nodes.containsKey(player))
+        if (!contexts.containsKey(player))
             throw new IllegalStateException("Inventory not yet opened");
 
         clearData(player);
-        return nodes.remove(player);
+        ViewContext context = contexts.remove(player);
+        if (context == null)
+            return null;
+
+        return context.getInventory();
     }
 
     public void close() {
-        for (Map.Entry<Player, Inventory> playerInventoryEntry : nodes.entrySet()) {
-            playerInventoryEntry.getKey().closeInventory();
+        for (Player player : contexts.keySet()) {
+            player.closeInventory();
         }
     }
 
@@ -262,7 +199,7 @@ public class View implements InventoryHolder, Closeable {
     protected void onClose(ViewContext context) {
     }
 
-    protected void onClick(ViewContext context, InventoryClickEvent event) {
+    protected void onClick(ViewSlotContext context) {
     }
 
 }
