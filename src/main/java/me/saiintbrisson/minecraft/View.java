@@ -22,6 +22,10 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
     private boolean cancelOnClick = true;
     private final Map<Player, Map<String, Object>> data;
 
+    public View(int rows) {
+        this(null, rows, "");
+    }
+
     public View(int rows, String title) {
         this(null, rows, title);
     }
@@ -72,10 +76,9 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
         if (contexts.containsKey(player))
             throw new IllegalStateException("Inventory already opened");
 
-        Inventory inventory = getInventory();
-        ViewContext context = new ViewContext(this, player, inventory);
-        onOpen(context);
-        if (context.isCancelled())
+        ClosedViewContext preOpenContext = new ClosedViewContext(this, player);
+        onOpen(preOpenContext);
+        if (preOpenContext.isCancelled())
             return;
 
         if (data != null) {
@@ -83,6 +86,8 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
                 setData(player, entry.getKey(), entry.getValue());
         }
 
+        Inventory inventory = getInventory(preOpenContext.getInventoryTitle());
+        ViewContext context = new ViewContext(this, player, inventory);
         contexts.put(player, context);
         onRender(context);
         render(context);
@@ -157,7 +162,11 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 
     @Override
     public Inventory getInventory() {
-        return Bukkit.createInventory(this, INVENTORY_ROW_SIZE * rows, title);
+        return getInventory(title);
+    }
+
+    private Inventory getInventory(String title) {
+        return Bukkit.createInventory(this, INVENTORY_ROW_SIZE * rows, title == null ? this.title : title);
     }
 
     public void clearData(Player player) {
@@ -193,7 +202,7 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
     protected void onRender(ViewContext context) {
     }
 
-    protected void onOpen(ViewContext context) {
+    protected void onOpen(ClosedViewContext context) {
     }
 
     protected void onClose(ViewContext context) {
