@@ -2,14 +2,14 @@ package me.saiintbrisson.minecraft;
 
 import org.bukkit.entity.Player;
 
-public class ClosedViewContext {
+public class PreRenderViewContext {
 
     private final View view;
     private final Player player;
     private String inventoryTitle;
     private boolean cancelled;
 
-    public ClosedViewContext(View view, Player player) {
+    public PreRenderViewContext(View view, Player player) {
         this.view = view;
         this.player = player;
     }

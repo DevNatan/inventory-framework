@@ -76,14 +76,13 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
         if (contexts.containsKey(player))
             throw new IllegalStateException("Inventory already opened");
 
-        ClosedViewContext preOpenContext = new ClosedViewContext(this, player);
-        onOpen(preOpenContext);
-        if (preOpenContext.isCancelled())
-            return;
+        PreRenderViewContext preOpenContext = new PreRenderViewContext(this, player);
+        if (data != null) setData(player, data);
 
-        if (data != null) {
-            for (Map.Entry<String, Object> entry : data.entrySet())
-                setData(player, entry.getKey(), entry.getValue());
+        onOpen(preOpenContext);
+        if (preOpenContext.isCancelled()) {
+            if (data != null) clearData(player);
+            return;
         }
 
         Inventory inventory = getInventory(preOpenContext.getInventoryTitle());
@@ -126,24 +125,15 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
     }
 
     public void close(Player player) {
-        close0(player, remove(player));
-    }
-
-    private void close0(Player player, Inventory inventory) {
         player.closeInventory();
-        onClose(new ViewContext(this, player, inventory));
     }
 
-    Inventory remove(Player player) {
+    void remove(Player player) {
         if (!contexts.containsKey(player))
             throw new IllegalStateException("Inventory not yet opened");
 
         clearData(player);
-        ViewContext context = contexts.remove(player);
-        if (context == null)
-            return null;
-
-        return context.getInventory();
+        contexts.remove(player);
     }
 
     public void close() {
@@ -191,6 +181,10 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
         return (T) data.get(player).getOrDefault(key, defaultValue);
     }
 
+    public void setData(Player player, Map<String, Object> data) {
+        this.data.put(player, data);
+    }
+
     public void setData(Player player, String key, Object value) {
         data.computeIfAbsent(player, $ -> new HashMap<>()).put(key, value);
     }
@@ -202,7 +196,7 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
     protected void onRender(ViewContext context) {
     }
 
-    protected void onOpen(ClosedViewContext context) {
+    protected void onOpen(PreRenderViewContext context) {
     }
 
     protected void onClose(ViewContext context) {
