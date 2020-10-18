@@ -3,6 +3,8 @@ package me.saiintbrisson.minecraft;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
+import java.util.Map;
+
 public class ViewContext {
 
     private final View view;
@@ -41,11 +43,19 @@ public class ViewContext {
     }
 
     public void update() {
-        view.update(player);
+        view.updateSlot(player);
     }
 
     public void open(Class<? extends View> view) {
         this.view.getFrame().open(view, player);
+    }
+
+    public void open(Class<? extends View> view, Map<String, Object> data) {
+        this.view.getFrame().open(view, player, data);
+    }
+
+    public Map<String, Object> data() {
+        return view.getData(player);
     }
 
     @SuppressWarnings("unchecked")
