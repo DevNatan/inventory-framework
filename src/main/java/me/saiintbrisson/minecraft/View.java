@@ -1,5 +1,6 @@
 package me.saiintbrisson.minecraft;
 
+import com.google.common.base.Preconditions;
 import me.saiintbrisson.minecraft.pagination.PaginatedView;
 import me.saiintbrisson.minecraft.pagination.PaginatedViewContext;
 import me.saiintbrisson.minecraft.utils.Paginator;
@@ -8,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.ItemStack;
 
 import java.io.Closeable;
 import java.util.HashMap;
@@ -106,14 +108,25 @@ public class View implements InventoryHolder, Closeable {
                 setData(player, entry.getKey(), entry.getValue());
         }
 
+        nodes.put(player, inventory);
         onRender(context);
         render(context);
-        nodes.put(player, inventory);
         player.openInventory(inventory);
     }
 
     protected void renderSlot(ViewContext context, ViewItem item, int slot) {
-        context.getInventory().setItem(slot, item.getItem() == null ? null : item.getItem().clone());
+        ItemStack result = item.getItem();
+        if (item.getRenderHandler() != null) {
+            ViewSlotContext slotContext = new ViewSlotContext(this, context.getPlayer(), context.getInventory(), slot, result);
+            item.getRenderHandler().handle(slotContext, null);
+            if (!slotContext.hasChanged())
+                return;
+
+            result = slotContext.getItem();
+        } else if (result != null)
+            result = result.clone();
+
+        context.getInventory().setItem(slot, result);
     }
 
     protected void renderSlot(ViewContext context, int slot) {
@@ -144,34 +157,34 @@ public class View implements InventoryHolder, Closeable {
 
     }
 
-    public void update(Player player) {
-        if (!nodes.containsKey(player))
-            throw new IllegalStateException("Inventory not yet opened");
-
+    public void updateSlot(Player player) {
         Inventory inventory = nodes.get(player);
+        Preconditions.checkNotNull(inventory, "Player inventory cannot be null");
+
         for (int i = 0; i < items.length; i++) {
-            update(player, inventory, i);
+            updateSlot(player, inventory, i);
         }
     }
 
-    public void update(Player player, int slot) {
-        update(player, nodes.get(player), slot);
+    public void updateSlot(Player player, int slot) {
+        Inventory inventory = nodes.get(player);
+        Preconditions.checkNotNull(inventory, "Player inventory cannot be null");
+
+        updateSlot(player, inventory, slot);
     }
 
-    public void update(Player player, Inventory inventory, int slot) {
+    public void updateSlot(Player player, Inventory inventory, int slot) {
         ViewItem item = items[slot];
-        if (item == null || item.getUpdateHandler() == null)
+        if (item == null) {
             return;
+        }
 
-        ViewSlotContext context = new ViewSlotContext(this, player, inventory, slot, item.getItem());
-        item.getUpdateHandler().handle(context, null);
-        inventory.setItem(slot, context.getItem());
-    }
-
-    public void update(ViewSlotContext context, ViewItem item, int slot) {
-        if (item.getUpdateHandler() != null)
+        ViewSlotContext context = new ViewSlotContext(this, player, inventory, slot, inventory.getItem(slot));
+        if (item.getUpdateHandler() != null) {
             item.getUpdateHandler().handle(context, null);
-        context.getInventory().setItem(slot, context.getItem());
+            inventory.setItem(slot, context.getItem());
+        } else
+            renderSlot(context, item, slot);
     }
 
     public void close(Player player) {

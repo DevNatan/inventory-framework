@@ -10,11 +10,12 @@ public class ViewSlotContext extends ViewContext {
 
     private final int slot;
     private ItemStack item;
+    private boolean changed;
 
     public ViewSlotContext(View view, Player player, Inventory inventory, int slot, ItemStack item) {
         super(view, player, inventory);
         this.slot = slot;
-        this.item = item.clone();
+        this.item = item == null ? null : item.clone();
     }
 
     public int getSlot() {
@@ -27,6 +28,17 @@ public class ViewSlotContext extends ViewContext {
 
     public void setItem(ItemStack item) {
         this.item = item;
+        changed = true;
+    }
+
+    public void setItemDisplayName(String displayName) {
+        if (item == null || !item.hasItemMeta())
+            return;
+
+        ItemMeta meta = item.getItemMeta();
+        meta.setDisplayName(displayName);
+        item.setItemMeta(meta);
+        changed = true;
     }
 
     public boolean hasItem() {
@@ -37,17 +49,12 @@ public class ViewSlotContext extends ViewContext {
         return hasItem() && item.getType() == Material.AIR;
     }
 
-    public void setItemDisplayName(String displayName) {
-        if (item == null || !item.hasItemMeta())
-            return;
-
-        ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(displayName);
-        item.setItemMeta(meta);
+    boolean hasChanged() {
+        return changed;
     }
 
     public void updateSlot() {
-        getView().update(getPlayer(), slot);
+        getView().updateSlot(getPlayer(), slot);
     }
 
 }
