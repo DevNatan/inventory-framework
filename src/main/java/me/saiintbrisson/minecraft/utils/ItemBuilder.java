@@ -98,7 +98,7 @@ public class ItemBuilder {
     public ItemBuilder skull(String owner) {
         material = Material.SKULL_ITEM;
         durability = 3;
-        SkullMeta meta = (SkullMeta) this.meta;
+        SkullMeta meta = (SkullMeta) Bukkit.getItemFactory().asMetaFor(this.meta, material);
         meta.setOwner(owner);
         this.meta = meta;
         return this;
