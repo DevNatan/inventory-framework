@@ -1,9 +1,6 @@
 package me.saiintbrisson.minecraft;
 
 import com.google.common.base.Preconditions;
-import me.saiintbrisson.minecraft.pagination.PaginatedView;
-import me.saiintbrisson.minecraft.pagination.PaginatedViewContext;
-import me.saiintbrisson.minecraft.utils.Paginator;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -47,11 +44,15 @@ public abstract class VirtualView {
         return slot(getLastSlot());
     }
 
+    protected void renderSlot(ViewContext context, ViewItem item) {
+        renderSlot(context, item, item.getSlot());
+    }
+
     protected void renderSlot(ViewContext context, ViewItem item, int slot) {
         ItemStack result = item.getItem();
         if (item.getRenderHandler() != null) {
             ViewSlotContext slotContext = new SynchronizedViewContext(context, slot, result);
-            item.getRenderHandler().handle(slotContext, null);
+            item.getRenderHandler().handle(slotContext);
             if (!slotContext.hasChanged())
                 return;
 
@@ -74,20 +75,6 @@ public abstract class VirtualView {
         for (int i = 0; i < getItems().length; i++) {
             renderSlot(context, i);
         }
-
-        if (this instanceof PaginatedView) {
-            PaginatedView<?> paginated = (PaginatedView<?>) this;
-            if (paginated.getPaginationSource().isEmpty())
-                return;
-
-            Paginator<?> paginator = new Paginator<>(paginated.getLimit() - paginated.getOffset(), paginated.getPaginationSource());
-            paginated.setPaginator(paginator);
-
-            PaginatedViewContext viewContext = new PaginatedViewContext(paginated, context.getPlayer(), context.getInventory(), 0, paginator);
-            paginated.updateNavigation(viewContext);
-            viewContext.switchTo(0);
-        }
-
     }
 
     public void updateSlot(ViewContext context, int slot) {
@@ -102,7 +89,7 @@ public abstract class VirtualView {
 
         ViewSlotContext slotContext = new SynchronizedViewContext(context, slot, inventory.getItem(slot));
         if (item.getUpdateHandler() != null) {
-            item.getUpdateHandler().handle(slotContext, null);
+            item.getUpdateHandler().handle(slotContext);
             inventory.setItem(slot, slotContext.getItem());
         } else
             renderSlot(slotContext, item, slot);

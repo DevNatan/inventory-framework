@@ -40,7 +40,7 @@ public class ViewContext extends VirtualView {
     }
 
     public void close() {
-        view.close(player);
+        player.closeInventory();
     }
 
     public void update() {

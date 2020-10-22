@@ -1,7 +1,5 @@
-package me.saiintbrisson.minecraft.pagination;
+package me.saiintbrisson.minecraft;
 
-import me.saiintbrisson.minecraft.View;
-import me.saiintbrisson.minecraft.ViewContext;
 import me.saiintbrisson.minecraft.utils.Paginator;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -10,6 +8,8 @@ public class PaginatedViewContext extends ViewContext {
 
     private int page;
     private final Paginator<?> paginator;
+    private int previousPageItemSlot = -1;
+    private int nextPageItemSlot = -1;
 
     public PaginatedViewContext(View view, Player player, Inventory inventory, int page, Paginator<?> paginator) {
         super(view, player, inventory);
@@ -37,14 +37,40 @@ public class PaginatedViewContext extends ViewContext {
         return Math.min(paginator.count(), page + 1);
     }
 
+    int getPreviousPageItemSlot() {
+        return previousPageItemSlot;
+    }
+
+    void setPreviousPageItemSlot(int previousPageItemSlot) {
+        this.previousPageItemSlot = previousPageItemSlot;
+    }
+
+    int getNextPageItemSlot() {
+        return nextPageItemSlot;
+    }
+
+    void setNextPageItemSlot(int nextPageItemSlot) {
+        this.nextPageItemSlot = nextPageItemSlot;
+    }
+
     public boolean isFirstPage() {
-        System.out.println("#isFirstPage (page = " + page + ", count = " + paginator.count());
         return page == 0;
     }
 
+    public boolean hasNextPage() {
+        return paginator.hasPage(page + 1);
+    }
+
     public boolean isLastPage() {
-        System.out.println("#isLastPage (page = " + page + ", count = " + paginator.count());
-        return page != paginator.count();
+        return !hasNextPage();
+    }
+
+    public void switchToPreviousPage() {
+        switchTo(page - 1);
+    }
+
+    public void switchToNextPage() {
+        switchTo(page + 1);
     }
 
     public void switchTo(int page) {

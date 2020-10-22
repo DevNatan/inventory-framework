@@ -86,12 +86,16 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
         }
 
         Inventory inventory = getInventory(preOpenContext.getInventoryTitle());
-        ViewContext context = new ViewContext(this, player, inventory);
+        ViewContext context = createContext(this, player, inventory);
         contexts.put(player, context);
         onRender(context);
         render(context);
         context.render(context); // render virtual view
         player.openInventory(inventory);
+    }
+
+    protected ViewContext createContext(View view, Player player, Inventory inventory) {
+        return new ViewContext(view, player, inventory);
     }
 
     public void update(Player player) {
@@ -117,14 +121,10 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 
         ViewSlotContext slotContext = new SynchronizedViewContext(context, slot, inventory.getItem(slot));
         if (item.getUpdateHandler() != null) {
-            item.getUpdateHandler().handle(slotContext, null);
+            item.getUpdateHandler().handle(slotContext);
             inventory.setItem(slot, slotContext.getItem());
         } else
             renderSlot(slotContext, item, slot);
-    }
-
-    public void close(Player player) {
-        player.closeInventory();
     }
 
     void remove(Player player) {
@@ -155,7 +155,7 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
     }
 
     private Inventory getInventory(String title) {
-        return Bukkit.createInventory(this, INVENTORY_ROW_SIZE * rows, title == null ? this.title : title);
+        return Bukkit.createInventory(this, getLastSlot() + 1, title == null ? this.title : title);
     }
 
     public void clearData(Player player) {

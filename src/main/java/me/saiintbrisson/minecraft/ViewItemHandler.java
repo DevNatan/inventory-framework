@@ -1,8 +1,8 @@
 package me.saiintbrisson.minecraft;
 
 @FunctionalInterface
-public interface ViewItemHandler< T> {
+public interface ViewItemHandler {
 
-    void handle(ViewSlotContext context, T event);
+    void handle(ViewSlotContext context);
 
 }

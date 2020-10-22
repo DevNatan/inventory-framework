@@ -49,7 +49,7 @@ public class ViewListener implements Listener {
         if (!(e.getWhoClicked() instanceof Player))
             return;
 
-        View view = getView(e.getClickedInventory());
+        View view = getView(e.getInventory());
         if (view == null)
             return;
 
@@ -76,12 +76,14 @@ public class ViewListener implements Listener {
         }
 
         if (item.getClickHandler() != null)
-            item.getClickHandler().handle(context, e);
+            item.getClickHandler().handle(context);
 
         e.setCancelled(item.isCancelOnClick());
 
-        if (item.isCloseOnClick())
+        if (item.isCloseOnClick()) {
+            view.remove(player);
             player.closeInventory();
+        }
     }
 
     @EventHandler

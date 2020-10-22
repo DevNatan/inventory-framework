@@ -1,6 +1,5 @@
 package me.saiintbrisson.minecraft;
 
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class ViewItem {
@@ -12,9 +11,9 @@ public class ViewItem {
     private boolean closeOnClick;
     private boolean cancelOnClick;
 
-    private ViewItemHandler<InventoryClickEvent> clickHandler;
-    private ViewItemHandler<Void> renderHandler;
-    private ViewItemHandler<Void> updateHandler;
+    private ViewItemHandler clickHandler;
+    private ViewItemHandler renderHandler;
+    private ViewItemHandler updateHandler;
 
     public ViewItem() {
         this(0);
@@ -37,29 +36,29 @@ public class ViewItem {
         return this;
     }
 
-    public ViewItemHandler<InventoryClickEvent> getClickHandler() {
+    public ViewItemHandler getClickHandler() {
         return clickHandler;
     }
 
-    public ViewItemHandler<Void> getRenderHandler() {
+    public ViewItemHandler getRenderHandler() {
         return renderHandler;
     }
 
-    public ViewItemHandler<Void> getUpdateHandler() {
+    public ViewItemHandler getUpdateHandler() {
         return updateHandler;
     }
 
-    public ViewItem onClick(ViewItemHandler<InventoryClickEvent> clickHandler) {
+    public ViewItem onClick(ViewItemHandler clickHandler) {
         this.clickHandler = clickHandler;
         return this;
     }
 
-    public ViewItem onRender(ViewItemHandler<Void> renderHandler) {
+    public ViewItem onRender(ViewItemHandler renderHandler) {
         this.renderHandler = renderHandler;
         return this;
     }
 
-    public ViewItem onUpdate(ViewItemHandler<Void> updateHandler) {
+    public ViewItem onUpdate(ViewItemHandler updateHandler) {
         this.updateHandler = updateHandler;
         return this;
     }
@@ -73,12 +72,13 @@ public class ViewItem {
     }
 
     public ViewItem closeOnClick() {
-        closeOnClick = !closeOnClick;
+        cancelOnClick = true;
+        closeOnClick = true;
         return this;
     }
 
     public ViewItem cancelOnClick() {
-        cancelOnClick = !cancelOnClick;
+        cancelOnClick = true;
         return this;
     }
 

@@ -1,7 +1,5 @@
 package me.saiintbrisson.minecraft;
 
-import me.saiintbrisson.minecraft.pagination.PaginatedView;
-import me.saiintbrisson.minecraft.pagination.PaginatedViewContext;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
@@ -11,7 +9,7 @@ import org.bukkit.plugin.Plugin;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.function.BiFunction;
+import java.util.function.Function;
 
 public final class ViewFrame {
 
@@ -19,8 +17,8 @@ public final class ViewFrame {
     private Listener listener;
     private final Map<Class<? extends View>, View> registeredViews;
     private boolean selfRegister = true;
-    private BiFunction<PaginatedView<?>, PaginatedViewContext, ViewItem> defaultPreviousPageItem;
-    private BiFunction<PaginatedView<?>, PaginatedViewContext, ViewItem> defaultNextPageItem;
+    private Function<PaginatedViewContext, ViewItem> defaultPreviousPageItem;
+    private Function<PaginatedViewContext, ViewItem> defaultNextPageItem;
 
     public ViewFrame(Plugin owner) {
         this.owner = owner;
@@ -105,19 +103,19 @@ public final class ViewFrame {
             throw new IllegalStateException("Listener already registered.");
     }
 
-    public BiFunction<PaginatedView<?>, PaginatedViewContext, ViewItem> getDefaultPreviousPageItem() {
+    public Function<PaginatedViewContext, ViewItem> getDefaultPreviousPageItem() {
         return defaultPreviousPageItem;
     }
 
-    public BiFunction<PaginatedView<?>, PaginatedViewContext, ViewItem> getDefaultNextPageItem() {
+    public Function<PaginatedViewContext, ViewItem> getDefaultNextPageItem() {
         return defaultNextPageItem;
     }
 
-    public void setDefaultPreviousPageItem(BiFunction<PaginatedView<?>, PaginatedViewContext, ViewItem> defaultPreviousPageItem) {
+    public void setDefaultPreviousPageItem(Function<PaginatedViewContext, ViewItem> defaultPreviousPageItem) {
         this.defaultPreviousPageItem = defaultPreviousPageItem;
     }
 
-    public void setDefaultNextPageItem(BiFunction<PaginatedView<?>, PaginatedViewContext, ViewItem> defaultNextPageItem) {
+    public void setDefaultNextPageItem(Function<PaginatedViewContext, ViewItem> defaultNextPageItem) {
         this.defaultNextPageItem = defaultNextPageItem;
     }
 
