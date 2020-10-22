@@ -80,10 +80,8 @@ public class ViewListener implements Listener {
 
         e.setCancelled(item.isCancelOnClick());
 
-        if (item.isCloseOnClick()) {
-            view.remove(player);
+        if (item.isCloseOnClick())
             player.closeInventory();
-        }
     }
 
     @EventHandler
