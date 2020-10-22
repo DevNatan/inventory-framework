@@ -38,10 +38,9 @@ public abstract class PaginatedView<T> extends View {
         return source;
     }
 
-    @SuppressWarnings("unchecked")
     public void setPaginationSource(List<T> source) {
         this.source = source;
-        this.paginator = new Paginator(getPageSize(), source);
+        this.paginator = new Paginator<>(getPageSize(), source);
     }
 
     public int getPageSize() {
@@ -82,7 +81,6 @@ public abstract class PaginatedView<T> extends View {
         if (item != null)
             context.setPreviousPageItemSlot(item.getSlot());
 
-        context.getPlayer().sendMessage("Prev item: " + item);
         return item;
     }
 
