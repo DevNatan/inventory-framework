@@ -129,7 +129,7 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 
     void remove(Player player) {
         if (!contexts.containsKey(player))
-            throw new IllegalStateException("Inventory not yet opened");
+            return;
 
         clearData(player);
         contexts.remove(player);
