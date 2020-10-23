@@ -1,9 +1,8 @@
 package me.saiintbrisson.minecraft.utils;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.NoSuchElementException;
+import com.google.common.collect.Lists;
+
+import java.util.*;
 
 public class Paginator<T> {
 
@@ -52,15 +51,24 @@ public class Paginator<T> {
     }
 
     public List<T> getPage(int index) {
+        if (src.isEmpty())
+            return Collections.emptyList();
+
+        int size = size();
+
+        // fast path
+        if (size < pageSize)
+            return Lists.newArrayList(src);
+
         if (index < 0 || index >= count())
-            throw new ArrayIndexOutOfBoundsException("Index must be between the range of 0 and " + (count() - 1));
+            throw new ArrayIndexOutOfBoundsException("Index must be between the range of 0 and " + (count() - 1) + ", given: " + index);
 
         List<T> page = new LinkedList<>();
 
         int base = index * pageSize;
         int until = base + pageSize;
 
-        if (until > size()) until = size();
+        if (until > size()) until = size;
 
         for (int i = base; i < until; i++) {
             page.add(get(i));

@@ -124,6 +124,9 @@ public abstract class PaginatedView<T> extends View {
         Paginator<T> paginator = context.getPaginator();
         if (paginator == null) {
             paginator = this.paginator;
+            if (paginator == null)
+                throw new IllegalArgumentException("No pagination source provided.");
+
             context.setPaginator(paginator);
         }
 
