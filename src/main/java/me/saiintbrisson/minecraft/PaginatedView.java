@@ -125,19 +125,20 @@ public abstract class PaginatedView<T> extends View {
         if (paginator == null || paginator.getSource().isEmpty())
             paginator = this.paginator;
 
-        List<?> elements = paginator.getPage(page);
-        for (int i = 0; i < elements.size(); i++) {
-            final int slot = offset + i;
-            Object value = elements.get(i);
+        final List<T> elements = paginator.getPage(page);
+        final int size = elements.size();
+        for (int i = 0; i < size; i++) {
+            T value = elements.get(i);
             if (value == null)
                 continue;
 
-            ViewItem item = new ViewItem(slot);
-            onPaginationItemRender(context, item, (T) value);
+            final int slot = offset + i;
+            final ViewItem item = new ViewItem(slot);
+            onPaginationItemRender(context, item, value);
             renderSlot(context, item, slot);
         }
 
-        for (int i = elements.size() + 1; i < limit; i++) {
+        for (int i = size + 1; i < limit; i++) {
             clearSlot(context, i);
         }
 
@@ -150,12 +151,12 @@ public abstract class PaginatedView<T> extends View {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected void render(ViewContext context) {
         // render all non-virtual items first
         super.render(context);
 
-        PaginatedViewContext<T> paginatedCtx = (PaginatedViewContext<T>) context;
-        updateContext(paginatedCtx, 0);
+        updateContext((PaginatedViewContext<T>) context, 0);
     }
 
     protected abstract void onPaginationItemRender(PaginatedViewContext<T> context, ViewItem item, T value);
