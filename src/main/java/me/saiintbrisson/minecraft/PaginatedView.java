@@ -122,8 +122,10 @@ public abstract class PaginatedView<T> extends View {
     final void updateContext(PaginatedViewContext<T> context, int page) {
         context.setPage(page);
         Paginator<T> paginator = context.getPaginator();
-        if (paginator == null || paginator.getSource().isEmpty())
+        if (paginator == null) {
             paginator = this.paginator;
+            context.setPaginator(paginator);
+        }
 
         final List<T> elements = paginator.getPage(page);
         final int size = elements.size();
@@ -134,11 +136,18 @@ public abstract class PaginatedView<T> extends View {
 
             final int slot = offset + i;
             final ViewItem item = new ViewItem(slot);
+            item.setCancelOnClick(context.getView().isCancelOnClick());
             onPaginationItemRender(context, item, value);
             renderSlot(context, item, slot);
         }
 
         for (int i = size + 1; i < limit; i++) {
+            ViewItem item = getItem(i);
+
+            // check if a non-virtual item has been defined in that slot
+            if (item != null)
+                continue;
+
             clearSlot(context, i);
         }
 
@@ -155,7 +164,6 @@ public abstract class PaginatedView<T> extends View {
     protected void render(ViewContext context) {
         // render all non-virtual items first
         super.render(context);
-
         updateContext((PaginatedViewContext<T>) context, 0);
     }
 

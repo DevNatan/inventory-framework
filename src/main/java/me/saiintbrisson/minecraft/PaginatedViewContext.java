@@ -30,6 +30,10 @@ public class PaginatedViewContext<T> extends ViewContext {
         return paginator;
     }
 
+    void setPaginator(Paginator<T> paginator) {
+        this.paginator = paginator;
+    }
+
     public void setPaginationSource(List<T> source) {
         this.paginator = new Paginator<>(((PaginatedView<T>) getView()).getPageSize(), source);
     }

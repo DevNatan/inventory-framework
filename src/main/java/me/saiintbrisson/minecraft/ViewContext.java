@@ -13,7 +13,7 @@ public class ViewContext extends VirtualView {
     private boolean cancelled;
 
     public ViewContext(View view, Player player, Inventory inventory) {
-        super(new ViewItem[View.INVENTORY_ROW_SIZE * (inventory.getSize() / 9)]);
+        super(inventory == null ? null : new ViewItem[View.INVENTORY_ROW_SIZE * (inventory.getSize() / 9)]);
         this.view = view;
         this.player = player;
         this.inventory = inventory;

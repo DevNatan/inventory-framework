@@ -49,14 +49,17 @@ public class ViewListener implements Listener {
         if (!(e.getWhoClicked() instanceof Player))
             return;
 
-        View view = getView(e.getInventory());
+        int clickedSlot = e.getSlot();
+        Inventory inv = e.getClickedInventory();
+        // array index out of bounds: -999???!
+        if (clickedSlot >= inv.getSize())
+            return;
+
+        View view = getView(inv);
         if (view == null)
             return;
 
-        e.setCancelled(view.isCancelOnClick());
-
         Player player = (Player) e.getWhoClicked();
-        int clickedSlot = e.getSlot();
         ViewSlotContext context = new SynchronizedViewContext(view.getContext(player), clickedSlot, e.getCurrentItem());
 
         // moved to another inventory, not yet supported
@@ -65,6 +68,7 @@ public class ViewListener implements Listener {
             return;
         }
 
+        e.setCancelled(view.isCancelOnClick());
         ViewItem item = view.getItem(clickedSlot);
         if (item == null) {
             item = context.getItem(clickedSlot);
