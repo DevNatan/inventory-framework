@@ -28,8 +28,16 @@ public abstract class VirtualView {
         return getItems()[slot] = new ViewItem(slot);
     }
 
+    public ViewItem slot(int slot, ItemStack item) {
+        return slot(slot).withItem(item);
+    }
+
     public ViewItem slot(int row, int column) {
         return slot((Math.max((row - 1), 0) * 9) + Math.max((column - 1), 0));
+    }
+
+    public ViewItem slot(int row, int column, ItemStack item) {
+        return slot(row, column).withItem(item);
     }
 
     public int getFirstSlot() {
@@ -40,8 +48,16 @@ public abstract class VirtualView {
         return slot(getFirstSlot());
     }
 
+    public ViewItem firstSlot(ItemStack item) {
+        return slot(getFirstSlot(), item);
+    }
+
     public ViewItem lastSlot() {
         return slot(getLastSlot());
+    }
+
+    public ViewItem lastSlot(ItemStack item) {
+        return slot(getLastSlot(), item);
     }
 
     protected void renderSlot(ViewContext context, ViewItem item) {

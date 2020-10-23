@@ -9,8 +9,7 @@ import java.util.function.Function;
 
 public abstract class PaginatedView<T> extends View {
 
-    private List<T> source;
-    private Paginator<?> paginator;
+    private Paginator<T> paginator;
     private final int offset;
     private final int limit;
 
@@ -34,12 +33,7 @@ public abstract class PaginatedView<T> extends View {
         this.limit = limit;
     }
 
-    public List<T> getPaginationSource() {
-        return source;
-    }
-
     public void setPaginationSource(List<T> source) {
-        this.source = source;
         this.paginator = new Paginator<>(getPageSize(), source);
     }
 
@@ -51,7 +45,7 @@ public abstract class PaginatedView<T> extends View {
         return paginator;
     }
 
-    public void setPaginator(Paginator<?> paginator) {
+    public void setPaginator(Paginator<T> paginator) {
         this.paginator = paginator;
     }
 
@@ -63,17 +57,12 @@ public abstract class PaginatedView<T> extends View {
         return limit;
     }
 
-    @Override
-    public ViewItem slot(int slot) {
-        return super.slot(slot);
-    }
-
-    public ViewItem getPreviousPageItem(PaginatedViewContext context) {
+    public ViewItem getPreviousPageItem(PaginatedViewContext<T> context) {
         ViewFrame frame = getFrame();
         if (frame == null)
             throw new IllegalArgumentException("View frame is null and the previous page item has not been defined");
 
-        Function<PaginatedViewContext, ViewItem> previous = getFrame().getDefaultPreviousPageItem();
+        Function<PaginatedViewContext<?>, ViewItem> previous = getFrame().getDefaultPreviousPageItem();
         if (previous == null)
             return null;
 
@@ -84,12 +73,12 @@ public abstract class PaginatedView<T> extends View {
         return item;
     }
 
-    public ViewItem getNextPageItem(PaginatedViewContext context) {
+    public ViewItem getNextPageItem(PaginatedViewContext<?> context) {
         ViewFrame frame = getFrame();
         if (frame == null)
             throw new IllegalArgumentException("View frame is null and the next page item has not been defined");
 
-        Function<PaginatedViewContext, ViewItem> next = getFrame().getDefaultNextPageItem();
+        Function<PaginatedViewContext<?>, ViewItem> next = getFrame().getDefaultNextPageItem();
         if (next == null)
             return null;
 
@@ -100,7 +89,7 @@ public abstract class PaginatedView<T> extends View {
         return item;
     }
 
-    final void updateNavigation(PaginatedViewContext context) {
+    final void updateNavigation(PaginatedViewContext<T> context) {
         ViewItem prev = getPreviousPageItem(context);
         if (prev != null) {
             renderSlot(context, prev.cancelOnClick().onClick($ -> context.switchToPreviousPage()));
@@ -130,9 +119,13 @@ public abstract class PaginatedView<T> extends View {
         context.getInventory().setItem(slot, null);
     }
 
-    final void updateContext(PaginatedViewContext context, int page) {
+    final void updateContext(PaginatedViewContext<T> context, int page) {
         context.setPage(page);
-        List<?> elements = context.getPaginator().getPage(page);
+        Paginator<T> paginator = context.getPaginator();
+        if (paginator == null || paginator.getSource().isEmpty())
+            paginator = this.paginator;
+
+        List<?> elements = paginator.getPage(page);
         for (int i = 0; i < elements.size(); i++) {
             final int slot = offset + i;
             Object value = elements.get(i);
@@ -153,7 +146,7 @@ public abstract class PaginatedView<T> extends View {
 
     @Override
     protected ViewContext createContext(View view, Player player, Inventory inventory) {
-        return new PaginatedViewContext(this, player, inventory, 0, paginator);
+        return new PaginatedViewContext<>(this, player, inventory, 0);
     }
 
     @Override
@@ -161,10 +154,10 @@ public abstract class PaginatedView<T> extends View {
         // render all non-virtual items first
         super.render(context);
 
-        PaginatedViewContext paginatedCtx = (PaginatedViewContext) context;
+        PaginatedViewContext<T> paginatedCtx = (PaginatedViewContext<T>) context;
         updateContext(paginatedCtx, 0);
     }
 
-    protected abstract void onPaginationItemRender(PaginatedViewContext context, ViewItem item, T value);
+    protected abstract void onPaginationItemRender(PaginatedViewContext<T> context, ViewItem item, T value);
 
 }

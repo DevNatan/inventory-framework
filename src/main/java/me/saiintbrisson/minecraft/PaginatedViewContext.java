@@ -4,17 +4,18 @@ import me.saiintbrisson.minecraft.utils.Paginator;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
-public class PaginatedViewContext extends ViewContext {
+import java.util.List;
+
+public class PaginatedViewContext<T> extends ViewContext {
 
     private int page;
-    private final Paginator<?> paginator;
+    private Paginator<T> paginator;
     private int previousPageItemSlot = -1;
     private int nextPageItemSlot = -1;
 
-    public PaginatedViewContext(View view, Player player, Inventory inventory, int page, Paginator<?> paginator) {
+    public PaginatedViewContext(View view, Player player, Inventory inventory, int page) {
         super(view, player, inventory);
         this.page = page;
-        this.paginator = paginator;
     }
 
     public int getPage() {
@@ -25,8 +26,16 @@ public class PaginatedViewContext extends ViewContext {
         this.page = page;
     }
 
-    public Paginator<?> getPaginator() {
+    public Paginator<T> getPaginator() {
         return paginator;
+    }
+
+    public void setPaginationSource(List<T> source) {
+        this.paginator = new Paginator<>(((PaginatedView<T>) getView()).getPageSize(), source);
+    }
+
+    public boolean hasPaginationSource() {
+        return paginator != null;
     }
 
     public int getPreviousPage() {

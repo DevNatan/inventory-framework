@@ -15,6 +15,10 @@ public class Paginator<T> {
         this.src = src;
     }
 
+    public List<T> getSource() {
+        return src;
+    }
+
     public int size() {
         return src.size();
     }

@@ -67,19 +67,28 @@ public class ViewItem {
         return closeOnClick;
     }
 
+    public ViewItem closeOnClick() {
+        closeOnClick = !closeOnClick;
+        if (closeOnClick)
+            cancelOnClick = true;
+        return this;
+    }
+
+    public void setCloseOnClick(boolean closeOnClick) {
+        this.closeOnClick = closeOnClick;
+    }
+
     public boolean isCancelOnClick() {
         return cancelOnClick;
     }
 
-    public ViewItem closeOnClick() {
-        cancelOnClick = true;
-        closeOnClick = true;
+    public ViewItem cancelOnClick() {
+        this.cancelOnClick = !cancelOnClick;
         return this;
     }
 
-    public ViewItem cancelOnClick() {
-        cancelOnClick = true;
-        return this;
+    public void setCancelOnClick(boolean cancelOnClick) {
+        this.cancelOnClick = cancelOnClick;
     }
 
     @Override

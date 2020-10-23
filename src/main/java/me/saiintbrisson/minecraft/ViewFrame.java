@@ -17,8 +17,8 @@ public final class ViewFrame {
     private Listener listener;
     private final Map<Class<? extends View>, View> registeredViews;
     private boolean selfRegister = true;
-    private Function<PaginatedViewContext, ViewItem> defaultPreviousPageItem;
-    private Function<PaginatedViewContext, ViewItem> defaultNextPageItem;
+    private Function<PaginatedViewContext<?>, ViewItem> defaultPreviousPageItem;
+    private Function<PaginatedViewContext<?>, ViewItem> defaultNextPageItem;
 
     public ViewFrame(Plugin owner) {
         this.owner = owner;
@@ -103,19 +103,19 @@ public final class ViewFrame {
             throw new IllegalStateException("Listener already registered.");
     }
 
-    public Function<PaginatedViewContext, ViewItem> getDefaultPreviousPageItem() {
+    public Function<PaginatedViewContext<?>, ViewItem> getDefaultPreviousPageItem() {
         return defaultPreviousPageItem;
     }
 
-    public Function<PaginatedViewContext, ViewItem> getDefaultNextPageItem() {
+    public Function<PaginatedViewContext<?>, ViewItem> getDefaultNextPageItem() {
         return defaultNextPageItem;
     }
 
-    public void setDefaultPreviousPageItem(Function<PaginatedViewContext, ViewItem> defaultPreviousPageItem) {
+    public void setDefaultPreviousPageItem(Function<PaginatedViewContext<?>, ViewItem> defaultPreviousPageItem) {
         this.defaultPreviousPageItem = defaultPreviousPageItem;
     }
 
-    public void setDefaultNextPageItem(Function<PaginatedViewContext, ViewItem> defaultNextPageItem) {
+    public void setDefaultNextPageItem(Function<PaginatedViewContext<?>, ViewItem> defaultNextPageItem) {
         this.defaultNextPageItem = defaultNextPageItem;
     }
 

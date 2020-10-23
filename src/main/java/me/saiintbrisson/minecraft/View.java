@@ -44,6 +44,13 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
     }
 
     @Override
+    public ViewItem slot(int slot) {
+        ViewItem item = super.slot(slot);
+        item.setCancelOnClick(cancelOnClick);
+        return item;
+    }
+
+    @Override
     public int getLastSlot() {
         return INVENTORY_ROW_SIZE * rows - 1;
     }

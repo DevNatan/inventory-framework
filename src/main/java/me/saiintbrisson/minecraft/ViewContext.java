@@ -19,6 +19,13 @@ public class ViewContext extends VirtualView {
         this.inventory = inventory;
     }
 
+    @Override
+    public ViewItem slot(int slot) {
+        ViewItem item = super.slot(slot);
+        item.setCancelOnClick(view.isCancelOnClick());
+        return item;
+    }
+
     public View getView() {
         return view;
     }
