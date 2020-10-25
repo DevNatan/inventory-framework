@@ -2,6 +2,7 @@ package me.saiintbrisson.minecraft;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -9,6 +10,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 public class ViewSlotContext extends ViewContext {
 
     private final int slot;
+    private InventoryClickEvent clickOrigin;
     private ItemStack item;
     private boolean changed;
 
@@ -16,6 +18,14 @@ public class ViewSlotContext extends ViewContext {
         super(view, player, inventory);
         this.slot = slot;
         this.item = item == null ? null : item.clone();
+    }
+
+    public InventoryClickEvent getClickOrigin() {
+        return clickOrigin;
+    }
+
+    void setClickOrigin(InventoryClickEvent clickOrigin) {
+        this.clickOrigin = clickOrigin;
     }
 
     public int getSlot() {

@@ -117,16 +117,15 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
     @Override
     public void updateSlot(ViewContext context, int slot) {
         Preconditions.checkNotNull(context, "Context cannot be null");
+        Preconditions.checkNotNull(context.getInventory(), "Player inventory cannot be null");
 
-        Inventory inventory = context.getInventory();
-        Preconditions.checkNotNull(inventory, "Player inventory cannot be null");
-
-        ViewItem item = getItem(slot);
+        final ViewItem item = getItem(slot);
         if (item == null) {
             return;
         }
 
-        ViewSlotContext slotContext = new SynchronizedViewContext(context, slot, inventory.getItem(slot));
+        final Inventory inventory = context.getInventory();
+        final ViewSlotContext slotContext = context instanceof ViewSlotContext ? (ViewSlotContext) context : new SynchronizedViewContext(context, slot, inventory.getItem(slot));
         if (item.getUpdateHandler() != null) {
             item.getUpdateHandler().handle(slotContext);
             inventory.setItem(slot, slotContext.getItem());
@@ -134,7 +133,7 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
             renderSlot(slotContext, item, slot);
     }
 
-    void remove(Player player) {
+    void remove(final Player player) {
         if (!contexts.containsKey(player))
             return;
 

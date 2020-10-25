@@ -15,4 +15,5 @@ public class SynchronizedViewContext extends ViewSlotContext {
     public ViewItem[] getItems() {
         return delegate.getItems();
     }
+
 }

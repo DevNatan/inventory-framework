@@ -6,7 +6,7 @@ import org.bukkit.inventory.ItemStack;
 
 public abstract class VirtualView {
 
-    private ViewItem[] items;
+    private final ViewItem[] items;
 
     public VirtualView(ViewItem[] items) {
         this.items = items;
@@ -67,7 +67,11 @@ public abstract class VirtualView {
     protected void renderSlot(ViewContext context, ViewItem item, int slot) {
         ItemStack result = item.getItem();
         if (item.getRenderHandler() != null) {
-            ViewSlotContext slotContext = new SynchronizedViewContext(context, slot, result);
+            // can be called in `update`, so we need to check the context type to avoid duplication
+            ViewSlotContext slotContext = context instanceof ViewSlotContext ?
+                    (ViewSlotContext) context :
+                    new SynchronizedViewContext(context, slot, result);
+
             item.getRenderHandler().handle(slotContext);
             if (!slotContext.hasChanged())
                 return;
@@ -103,7 +107,9 @@ public abstract class VirtualView {
         if (item == null)
             return;
 
-        ViewSlotContext slotContext = new SynchronizedViewContext(context, slot, inventory.getItem(slot));
+        ViewSlotContext slotContext = context instanceof ViewSlotContext ?
+                (ViewSlotContext) context :
+                new SynchronizedViewContext(context, slot, inventory.getItem(slot));
         if (item.getUpdateHandler() != null) {
             item.getUpdateHandler().handle(slotContext);
             inventory.setItem(slot, slotContext.getItem());

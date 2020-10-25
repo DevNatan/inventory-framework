@@ -15,20 +15,20 @@ public class ViewListener implements Listener {
 
     private final ViewFrame frame;
 
-    public ViewListener(ViewFrame frame) {
+    public ViewListener(final ViewFrame frame) {
         this.frame = frame;
     }
 
-    private View getView(Inventory inventory) {
+    private View getView(final Inventory inventory) {
         // check for Player#getTopInventory
         if (inventory == null)
             return null;
 
-        InventoryHolder holder = inventory.getHolder();
+        final InventoryHolder holder = inventory.getHolder();
         if (!(holder instanceof View))
             return null;
 
-        View view = (View) holder;
+        final View view = (View) holder;
         if (inventory.getType() != InventoryType.CHEST)
             throw new UnsupportedOperationException("Views is only supported on chest-type inventory.");
 
@@ -36,7 +36,7 @@ public class ViewListener implements Listener {
     }
 
     @EventHandler
-    public void onViewPluginDisable(PluginDisableEvent e) {
+    public void onViewPluginDisable(final PluginDisableEvent e) {
         if (frame.getListener() == null || !frame.getOwner().equals(e.getPlugin()))
             return;
 
@@ -45,11 +45,11 @@ public class ViewListener implements Listener {
     }
 
     @EventHandler(ignoreCancelled = true)
-    public void onViewClick(InventoryClickEvent e) {
+    public void onViewClick(final InventoryClickEvent e) {
         if (!(e.getWhoClicked() instanceof Player))
             return;
 
-        Inventory inv = e.getClickedInventory();
+        final Inventory inv = e.getClickedInventory();
         if (inv == null)
             return; // clicked to the outside
 
@@ -57,12 +57,9 @@ public class ViewListener implements Listener {
         if (clickedSlot >= inv.getSize())
             return;  // array index out of bounds: -999???!
 
-        View view = getView(inv);
+        final View view = getView(inv);
         if (view == null)
             return;
-
-        Player player = (Player) e.getWhoClicked();
-        ViewSlotContext context = new SynchronizedViewContext(view.getContext(player), clickedSlot, e.getCurrentItem());
 
         // moved to another inventory, not yet supported
         if (clickedSlot != e.getRawSlot()) {
@@ -71,18 +68,27 @@ public class ViewListener implements Listener {
         }
 
         e.setCancelled(view.isCancelOnClick());
+
+        final Player player = (Player) e.getWhoClicked();
+        final ViewContext context = view.getContext(player);
         ViewItem item = view.getItem(clickedSlot);
+
         if (item == null) {
             item = context.getItem(clickedSlot);
             if (item == null) {
-                view.onClick(context);
+                ViewSlotContext slotContext = new SynchronizedViewContext(context, clickedSlot, e.getCurrentItem());
+                slotContext.setClickOrigin(e);
+                view.onClick(slotContext);
                 e.setCancelled(context.isCancelled());
                 return;
             }
         }
 
-        if (item.getClickHandler() != null)
-            item.getClickHandler().handle(context);
+        if (item.getClickHandler() != null) {
+            ViewSlotContext slotContext = new SynchronizedViewContext(context, clickedSlot, e.getCurrentItem());
+            slotContext.setClickOrigin(e);
+            item.getClickHandler().handle(slotContext);
+        }
 
         e.setCancelled(item.isCancelOnClick());
 
@@ -91,22 +97,22 @@ public class ViewListener implements Listener {
     }
 
     @EventHandler
-    public void onViewClose(InventoryCloseEvent e) {
+    public void onViewClose(final InventoryCloseEvent e) {
         if (!(e.getPlayer() instanceof Player))
             return;
 
-        View view = getView(e.getInventory());
+        final View view = getView(e.getInventory());
         if (view == null)
             return;
 
-        Player player = (Player) e.getPlayer();
+        final Player player = (Player) e.getPlayer();
         view.onClose(new ViewContext(view, player, e.getInventory()));
         view.remove(player);
     }
 
     @EventHandler(ignoreCancelled = true)
-    public void onPickupItemOnView(PlayerPickupItemEvent e) {
-        View view = getView(e.getPlayer().getOpenInventory().getTopInventory());
+    public void onPickupItemOnView(final PlayerPickupItemEvent e) {
+        final View view = getView(e.getPlayer().getOpenInventory().getTopInventory());
         if (view == null)
             return;
 
