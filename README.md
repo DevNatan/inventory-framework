@@ -127,7 +127,7 @@ protected void onOpen(final PreRenderViewContext context) {
 
 ### Close Handler
 This handler is called when a player closes the inventory, it is not cancelable.
-```
+```java
 public final class PlaySoundOnCloseView extends View {
         
     public PlaySoundOnCloseView() {
