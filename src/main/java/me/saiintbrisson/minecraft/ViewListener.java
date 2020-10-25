@@ -49,11 +49,13 @@ public class ViewListener implements Listener {
         if (!(e.getWhoClicked() instanceof Player))
             return;
 
-        int clickedSlot = e.getSlot();
         Inventory inv = e.getClickedInventory();
-        // array index out of bounds: -999???!
+        if (inv == null)
+            return; // clicked to the outside
+
+        int clickedSlot = e.getSlot();
         if (clickedSlot >= inv.getSize())
-            return;
+            return;  // array index out of bounds: -999???!
 
         View view = getView(inv);
         if (view == null)
