@@ -112,6 +112,8 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
         for (int i = 0; i < getItems().length; i++) {
             updateSlot(context, i);
         }
+
+        onUpdate(context);
     }
 
     @Override
@@ -199,6 +201,9 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
     }
 
     protected void onRender(ViewContext context) {
+    }
+
+    protected void onUpdate(ViewContext context) {
     }
 
     protected void onOpen(PreRenderViewContext context) {
