@@ -81,7 +81,7 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 
     public void open(Player player, Map<String, Object> data) {
         if (contexts.containsKey(player))
-            throw new IllegalStateException("Inventory already opened");
+            return;
 
         PreRenderViewContext preOpenContext = new PreRenderViewContext(this, player);
         if (data != null) setData(player, data);
@@ -105,8 +105,7 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
         return new ViewContext(view, player, inventory);
     }
 
-    public void update(Player player) {
-        ViewContext context = contexts.get(player);
+    public void update(ViewContext context) {
         Preconditions.checkNotNull(context, "Context cannot be null");
 
         for (int i = 0; i < getItems().length; i++) {
@@ -116,14 +115,20 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
         onUpdate(context);
     }
 
+    public void update(Player player) {
+        update(contexts.get(player));
+    }
+
     @Override
     public void updateSlot(ViewContext context, int slot) {
         Preconditions.checkNotNull(context, "Context cannot be null");
         Preconditions.checkNotNull(context.getInventory(), "Player inventory cannot be null");
 
-        final ViewItem item = getItem(slot);
+        ViewItem item = getItem(slot);
         if (item == null) {
-            return;
+            item = context.getItem(slot);
+            if (item == null)
+                return;
         }
 
         final Inventory inventory = context.getInventory();
