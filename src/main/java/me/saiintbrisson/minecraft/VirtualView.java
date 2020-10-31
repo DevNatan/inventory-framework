@@ -1,122 +1,230 @@
 package me.saiintbrisson.minecraft;
 
 import com.google.common.base.Preconditions;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-public abstract class VirtualView {
+public class VirtualView {
 
-    private final ViewItem[] items;
+    protected final ViewItem[] items;
 
     public VirtualView(ViewItem[] items) {
         this.items = items;
     }
 
+    /**
+     * Returns all registered {@link ViewItem}s.
+     */
     public ViewItem[] getItems() {
         return items;
     }
 
+    /**
+     * Returns a {@link ViewItem} that is in the specified slot or {@code null} if not defined.
+     *
+     * @param slot the item slot.
+     */
     public ViewItem getItem(int slot) {
-        return getItems()[slot];
+        return items[slot];
     }
 
-    public ViewItem slot(int slot) {
-        int max = getLastSlot() + 1;
-        if (slot > max)
-            throw new IllegalArgumentException("Slot exceeds the inventory limit (expected: < " + max + ", given: " + slot + ")");
-
-        return getItems()[slot] = new ViewItem(slot);
-    }
-
-    public ViewItem slot(int slot, ItemStack item) {
-        return slot(slot).withItem(item);
-    }
-
-    public ViewItem slot(int row, int column) {
-        return slot((Math.max((row - 1), 0) * 9) + Math.max((column - 1), 0));
-    }
-
-    public ViewItem slot(int row, int column, ItemStack item) {
-        return slot(row, column).withItem(item);
-    }
-
+    /**
+     * Returns the number of the first slot available or not.
+     */
     public int getFirstSlot() {
         return 0;
     }
 
+    /**
+     * Returns the number of the last slot available or not.
+     */
+    public int getLastSlot() {
+        return items.length - 1;
+    }
+
+    /**
+     * Registers a {@link ViewItem} in the specified slot.
+     *
+     * @param slot the item slot.
+     */
+    public ViewItem slot(int slot) {
+        final int max = getLastSlot() + 1;
+        if (slot > max)
+            throw new IllegalArgumentException("Slot exceeds the inventory limit (expected: < " + max + ", given: " + slot + ").");
+
+        return items[slot] = new ViewItem(slot);
+    }
+
+    /**
+     * Registers a {@link ViewItem} with a {@link ItemStack} in the specified slot.
+     *
+     * @param slot the item slot.
+     * @param item the item to be set.
+     */
+    public ViewItem slot(int slot, ItemStack item) {
+        return slot(slot).withItem(item);
+    }
+
+    /**
+     * Registers a {@link ViewItem} in the specified row and column.
+     *
+     * @param row    the item slot row.
+     * @param column the item slot column.
+     */
+    public ViewItem slot(int row, int column) {
+        return slot((Math.max((row - 1), 0) * 9) + Math.max((column - 1), 0));
+    }
+
+    /**
+     * Registers a {@link ViewItem} with a {@link ItemStack} in the specified row and column.
+     *
+     * @param row    the item slot row.
+     * @param column the item slot column.
+     * @param item   the item to be set.
+     */
+    public ViewItem slot(int row, int column, ItemStack item) {
+        return slot(row, column).withItem(item);
+    }
+
+    /**
+     * Registers a {@link ViewItem} in the first slot.
+     *
+     * @see #getFirstSlot()
+     */
     public ViewItem firstSlot() {
         return slot(getFirstSlot());
     }
 
+    /**
+     * Registers a {@link ViewItem} with a {@link ItemStack} in the first slot.
+     *
+     * @param item the item to be set.
+     * @see #getFirstSlot()
+     */
     public ViewItem firstSlot(ItemStack item) {
         return slot(getFirstSlot(), item);
     }
 
+    /**
+     * Registers a {@link ViewItem} in the last slot.
+     *
+     * @see #getLastSlot()
+     */
     public ViewItem lastSlot() {
         return slot(getLastSlot());
     }
 
+    /**
+     * Registers a {@link ViewItem} with a {@link ItemStack} in the last slot.
+     *
+     * @param item the item to be set.
+     * @see #getLastSlot()
+     */
     public ViewItem lastSlot(ItemStack item) {
         return slot(getLastSlot(), item);
     }
 
-    protected void renderSlot(ViewContext context, ViewItem item) {
-        renderSlot(context, item, item.getSlot());
-    }
+    /**
+     * Render all items in this view to the specified context.
+     *
+     * @param context the target context.
+     */
+    public void render(ViewContext context) {
+        Preconditions.checkNotNull(context, "Context cannot be null.");
 
-    protected void renderSlot(ViewContext context, ViewItem item, int slot) {
-        ItemStack result = item.getItem();
-        if (item.getRenderHandler() != null) {
-            // can be called in `update`, so we need to check the context type to avoid duplication
-            ViewSlotContext slotContext = context instanceof ViewSlotContext ?
-                    (ViewSlotContext) context :
-                    new SynchronizedViewContext(context, slot, result);
-
-            item.getRenderHandler().handle(slotContext);
-            if (!slotContext.hasChanged())
-                return;
-
-            result = slotContext.getItem();
-        } else if (result != null)
-            result = result.clone();
-
-        context.getInventory().setItem(slot, result);
-    }
-
-    protected void renderSlot(ViewContext context, int slot) {
-        ViewItem item = getItem(slot);
-        if (item == null)
-            return;
-
-        renderSlot(context, item, slot);
-    }
-
-    protected void render(ViewContext context) {
-        for (int i = 0; i < getItems().length; i++) {
-            renderSlot(context, i);
+        for (int i = 0; i < items.length; i++) {
+            render(context, i);
         }
     }
 
-    public void updateSlot(ViewContext context, int slot) {
-        Preconditions.checkNotNull(context, "Context cannot be null");
-
-        Inventory inventory = context.getInventory();
-        Preconditions.checkNotNull(inventory, "Player inventory cannot be null");
-
-        ViewItem item = getItem(slot);
+    public void render(ViewContext context, int slot) {
+        final ViewItem item = resolve(context, slot);
         if (item == null)
             return;
 
-        ViewSlotContext slotContext = context instanceof ViewSlotContext ?
-                (ViewSlotContext) context :
-                new SynchronizedViewContext(context, slot, inventory.getItem(slot));
-        if (item.getUpdateHandler() != null) {
-            item.getUpdateHandler().handle(slotContext);
-            inventory.setItem(slot, slotContext.getItem());
-        } else
-            renderSlot(slotContext, item, slot);
+        render(context, item, slot);
     }
 
-    public abstract int getLastSlot();
+    /**
+     * Renders a {@link ViewItem} for the specified context.
+     *
+     * @param context the target context.
+     * @param slot    the slot that the item will be rendered.
+     */
+    public void render(ViewContext context, ViewItem item, int slot) {
+        Preconditions.checkNotNull(item, "Render item cannot be null");
+
+        final ItemStack fallback = item.getItem();
+        if (item.getRenderHandler() != null) {
+            final ViewSlotContext render = context instanceof ViewSlotContext ?
+                    (ViewSlotContext) context :
+                    new DelegatedViewContext(context, slot, fallback);
+            item.getRenderHandler().handle(render);
+            if (render.hasChanged()) {
+                context.getInventory().setItem(slot, render.getItem());
+                return;
+            }
+        }
+
+        if (fallback == null)
+            throw new IllegalArgumentException("No item were provided and the rendering function was not defined at slot " + slot + ".");
+
+        context.getInventory().setItem(slot, fallback);
+    }
+
+    /**
+     * Updates the specified {@link ViewContext} according to this view.
+     *
+     * @param context the target context.
+     */
+    public void update(ViewContext context) {
+        Preconditions.checkNotNull(context, "Context cannot be null");
+        for (int i = 0; i < items.length; i++) {
+            update(context, i);
+        }
+    }
+
+    /**
+     * Updates only one {@link ViewItem} in that view to the specified {@link ViewContext}.
+     *
+     * @param context the target context.
+     * @param slot    the slot that the item will be updated.
+     */
+    public void update(ViewContext context, int slot) {
+        Preconditions.checkNotNull(context, "Context cannot be null");
+
+        final ViewItem item = resolve(context, slot);
+        if (item == null)
+            return;
+
+        if (item.getUpdateHandler() != null) {
+            final ViewSlotContext update = context instanceof ViewSlotContext ?
+                    (ViewSlotContext) context :
+                    new DelegatedViewContext(context, slot, item.getItem());
+
+            item.getUpdateHandler().handle(update);
+            render(update, item, slot);
+            return;
+        }
+
+        // update handler can be used as a void function so
+        // we must fallback to the render handler to update the item
+        render(context, item, slot);
+    }
+
+    private ViewItem resolve(ViewContext context, int slot) {
+        if (this instanceof ViewContext)
+            throw new IllegalArgumentException("Context can't resolve items itself");
+
+        final ViewItem item = items[slot];
+        if (item == null) {
+            final ViewItem virtual = context.getItem(slot);
+            if (virtual == null)
+                return null;
+
+            return virtual;
+        }
+
+        return item;
+    }
 
 }

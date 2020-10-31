@@ -1,11 +1,11 @@
 package me.saiintbrisson.minecraft;
 
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
+
+import java.util.function.Supplier;
 
 public class ViewSlotContext extends ViewContext {
 
@@ -18,14 +18,6 @@ public class ViewSlotContext extends ViewContext {
         super(view, player, inventory);
         this.slot = slot;
         this.item = item == null ? null : item.clone();
-    }
-
-    public InventoryClickEvent getClickOrigin() {
-        return clickOrigin;
-    }
-
-    void setClickOrigin(InventoryClickEvent clickOrigin) {
-        this.clickOrigin = clickOrigin;
     }
 
     public int getSlot() {
@@ -41,22 +33,12 @@ public class ViewSlotContext extends ViewContext {
         changed = true;
     }
 
-    public void setItemDisplayName(String displayName) {
-        if (item == null || !item.hasItemMeta())
-            return;
-
-        ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(displayName);
-        item.setItemMeta(meta);
-        changed = true;
+    public InventoryClickEvent getClickOrigin() {
+        return clickOrigin;
     }
 
-    public boolean hasItem() {
-        return item != null;
-    }
-
-    public boolean isEmpty() {
-        return hasItem() && item.getType() == Material.AIR;
+    void setClickOrigin(InventoryClickEvent clickOrigin) {
+        this.clickOrigin = clickOrigin;
     }
 
     boolean hasChanged() {
@@ -64,7 +46,33 @@ public class ViewSlotContext extends ViewContext {
     }
 
     public void updateSlot() {
-        updateSlot(this, slot);
+        view.update(this, slot);
+    }
+
+    public <T> T getSlotData(String key) {
+        return getSlotData(slot, key);
+    }
+
+    public <T> T getSlotData(String key, Supplier<T> defaultValue) {
+        return getSlotData(slot, key, defaultValue);
+    }
+
+    public void setSlotData(String key, Object value) {
+        setSlotData(slot, key, value);
+    }
+
+    public boolean hasSlotData(String key) {
+        return hasSlotData(slot, key);
+    }
+
+    @Override
+    public String toString() {
+        return "ViewSlotContext{" +
+                "slot=" + slot +
+                ", clickOrigin=" + clickOrigin +
+                ", item=" + item +
+                ", changed=" + changed +
+                "} " + super.toString();
     }
 
 }

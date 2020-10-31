@@ -67,38 +67,36 @@ public class ViewItem {
         return closeOnClick;
     }
 
-    public ViewItem closeOnClick() {
-        closeOnClick = !closeOnClick;
-        if (closeOnClick)
-            cancelOnClick = true;
-        return this;
-    }
-
     public void setCloseOnClick(boolean closeOnClick) {
         this.closeOnClick = closeOnClick;
+        if (this.closeOnClick)
+            setCancelOnClick(true);
+    }
+
+    public ViewItem closeOnClick() {
+        return withCloseOnClick(!closeOnClick);
+    }
+
+    public ViewItem withCloseOnClick(boolean closeOnClick) {
+        setCloseOnClick(closeOnClick);
+        return this;
     }
 
     public boolean isCancelOnClick() {
         return cancelOnClick;
     }
 
-    public ViewItem cancelOnClick() {
-        this.cancelOnClick = !cancelOnClick;
-        return this;
-    }
-
     public void setCancelOnClick(boolean cancelOnClick) {
         this.cancelOnClick = cancelOnClick;
     }
 
-    @Override
-    public String toString() {
-        return "ViewItem{" +
-                "slot=" + slot +
-                ", item=" + item +
-                ", closeOnClick=" + closeOnClick +
-                ", cancelOnClick=" + cancelOnClick +
-                '}';
+    public ViewItem withCancelOnClick(boolean cancelOnClick) {
+        setCancelOnClick(cancelOnClick);
+        return this;
+    }
+
+    public ViewItem cancelOnClick() {
+        return withCancelOnClick(!cancelOnClick);
     }
 
 }

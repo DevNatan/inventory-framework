@@ -37,7 +37,7 @@ public class ViewListener implements Listener {
 
     @EventHandler
     public void onViewPluginDisable(final PluginDisableEvent e) {
-        if (frame.getListener() == null || !frame.getOwner().equals(e.getPlugin()))
+        if (!frame.getOwner().equals(e.getPlugin()))
             return;
 
         // if the plugin is disabled it will not be possible to handle events
@@ -67,25 +67,18 @@ public class ViewListener implements Listener {
             return;
         }
 
-        e.setCancelled(view.isCancelOnClick());
-
         final Player player = (Player) e.getWhoClicked();
         final ViewContext context = view.getContext(player);
         ViewItem item = view.getItem(clickedSlot);
 
         if (item == null) {
             item = context.getItem(clickedSlot);
-            if (item == null) {
-                ViewSlotContext slotContext = new SynchronizedViewContext(context, clickedSlot, e.getCurrentItem());
-                slotContext.setClickOrigin(e);
-                view.onClick(slotContext);
-                e.setCancelled(context.isCancelled());
+            if (item == null)
                 return;
-            }
         }
 
         if (item.getClickHandler() != null) {
-            ViewSlotContext slotContext = new SynchronizedViewContext(context, clickedSlot, e.getCurrentItem());
+            ViewSlotContext slotContext = new DelegatedViewContext(context, clickedSlot, e.getCurrentItem());
             slotContext.setClickOrigin(e);
             item.getClickHandler().handle(slotContext);
         }

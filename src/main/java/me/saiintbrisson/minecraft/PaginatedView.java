@@ -10,8 +10,9 @@ import java.util.function.Function;
 public abstract class PaginatedView<T> extends View {
 
     private Paginator<T> paginator;
-    private final int offset;
-    private final int limit;
+    private int offset;
+    private int limit;
+    private boolean layered;
 
     public PaginatedView(int rows, String title) {
         this(null, rows, title);
@@ -53,8 +54,24 @@ public abstract class PaginatedView<T> extends View {
         return offset;
     }
 
+    public void setOffset(int offset) {
+        this.offset = offset;
+    }
+
     public int getLimit() {
         return limit;
+    }
+
+    public void setLimit(int limit) {
+        this.limit = limit;
+    }
+
+    public boolean isLayered() {
+        return layered;
+    }
+
+    public void setLayered(boolean layered) {
+        this.layered = layered;
     }
 
     public ViewItem getPreviousPageItem(PaginatedViewContext<T> context) {
@@ -92,7 +109,7 @@ public abstract class PaginatedView<T> extends View {
     final void updateNavigation(PaginatedViewContext<T> context) {
         ViewItem prev = getPreviousPageItem(context);
         if (prev != null) {
-            renderSlot(context, prev.cancelOnClick().onClick($ -> context.switchToPreviousPage()));
+            render(context, prev.withCancelOnClick(true).onClick($ -> context.switchToPreviousPage()), prev.getSlot());
         } else if (context.getPreviousPageItemSlot() != -1) {
             clearSlot(context, context.getPreviousPageItemSlot());
             context.setPreviousPageItemSlot(-1);
@@ -100,18 +117,17 @@ public abstract class PaginatedView<T> extends View {
 
         ViewItem next = getNextPageItem(context);
         if (next != null) {
-            renderSlot(context, next.cancelOnClick().onClick($ -> context.switchToNextPage()));
+            render(context, next.withCancelOnClick(true).onClick($ -> context.switchToNextPage()), next.getSlot());
         } else if (context.getNextPageItemSlot() != -1) {
             clearSlot(context, context.getNextPageItemSlot());
             context.setNextPageItemSlot(-1);
         }
     }
 
-    @Override
-    protected void renderSlot(ViewContext context, ViewItem item, int slot) {
+    public void render(ViewContext context, ViewItem item, int slot) {
         // ensure that the item is available in the virtual context
         context.getItems()[slot] = item;
-        super.renderSlot(context, item, slot);
+        super.render(context, item, slot);
     }
 
     private void clearSlot(ViewContext context, int slot) {
@@ -120,17 +136,15 @@ public abstract class PaginatedView<T> extends View {
     }
 
     final void updateContext(PaginatedViewContext<T> context, int page) {
-        context.setPage(page);
-        Paginator<T> paginator = context.getPaginator();
-        if (paginator == null) {
-            paginator = this.paginator;
-            if (paginator == null)
+        if (context.getPaginator() == null) {
+            if (this.paginator == null)
                 throw new IllegalArgumentException("No pagination source provided.");
 
-            context.setPaginator(paginator);
+            context.setPaginator(this.paginator);
         }
 
-        final List<T> elements = paginator.getPage(page);
+        context.setPage(page);
+        final List<T> elements = context.getPaginator().getPage(page);
         final int size = elements.size();
         for (int i = 0; i < size; i++) {
             T value = elements.get(i);
@@ -141,7 +155,7 @@ public abstract class PaginatedView<T> extends View {
             final ViewItem item = new ViewItem(slot);
             item.setCancelOnClick(context.getView().isCancelOnClick());
             onPaginationItemRender(context, item, value);
-            renderSlot(context, item, slot);
+            render(context, item, slot);
         }
 
         for (int i = size + 1; i < limit; i++) {
@@ -164,7 +178,7 @@ public abstract class PaginatedView<T> extends View {
 
     @Override
     @SuppressWarnings("unchecked")
-    protected void render(ViewContext context) {
+    public void render(ViewContext context) {
         // render all non-virtual items first
         super.render(context);
         updateContext((PaginatedViewContext<T>) context, 0);

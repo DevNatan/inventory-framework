@@ -1,6 +1,5 @@
 package me.saiintbrisson.minecraft;
 
-import com.google.common.base.Preconditions;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -10,6 +9,7 @@ import java.io.Closeable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.WeakHashMap;
+import java.util.function.Supplier;
 
 public class View extends VirtualView implements InventoryHolder, Closeable {
 
@@ -75,6 +75,10 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
         return title;
     }
 
+    protected ViewContext createContext(View view, Player player, Inventory inventory) {
+        return new ViewContext(view, player, inventory);
+    }
+
     public void open(Player player) {
         open(player, null);
     }
@@ -83,7 +87,7 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
         if (contexts.containsKey(player))
             return;
 
-        PreRenderViewContext preOpenContext = new PreRenderViewContext(this, player);
+        final OpenViewContext preOpenContext = new OpenViewContext(this, player);
         if (data != null) setData(player, data);
 
         onOpen(preOpenContext);
@@ -92,52 +96,19 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
             return;
         }
 
-        Inventory inventory = getInventory(preOpenContext.getInventoryTitle());
-        ViewContext context = createContext(this, player, inventory);
+        final Inventory inventory = getInventory(preOpenContext.getInventoryTitle());
+        final ViewContext context = createContext(this, player, inventory);
+        context.setData(preOpenContext.data());
         contexts.put(player, context);
         onRender(context);
         render(context);
-        context.render(context); // render virtual view
         player.openInventory(inventory);
     }
 
-    protected ViewContext createContext(View view, Player player, Inventory inventory) {
-        return new ViewContext(view, player, inventory);
-    }
-
-    public void update(ViewContext context) {
-        Preconditions.checkNotNull(context, "Context cannot be null");
-
-        for (int i = 0; i < getItems().length; i++) {
-            updateSlot(context, i);
-        }
-
-        onUpdate(context);
-    }
-
-    public void update(Player player) {
-        update(contexts.get(player));
-    }
-
     @Override
-    public void updateSlot(ViewContext context, int slot) {
-        Preconditions.checkNotNull(context, "Context cannot be null");
-        Preconditions.checkNotNull(context.getInventory(), "Player inventory cannot be null");
-
-        ViewItem item = getItem(slot);
-        if (item == null) {
-            item = context.getItem(slot);
-            if (item == null)
-                return;
-        }
-
-        final Inventory inventory = context.getInventory();
-        final ViewSlotContext slotContext = context instanceof ViewSlotContext ? (ViewSlotContext) context : new SynchronizedViewContext(context, slot, inventory.getItem(slot));
-        if (item.getUpdateHandler() != null) {
-            item.getUpdateHandler().handle(slotContext);
-            inventory.setItem(slot, slotContext.getItem());
-        } else
-            renderSlot(slotContext, item, slot);
+    public void update(ViewContext context) {
+        onUpdate(context);
+        super.update(context);
     }
 
     void remove(final Player player) {
@@ -145,7 +116,9 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
             return;
 
         clearData(player);
-        contexts.remove(player);
+        final ViewContext context = contexts.remove(player);
+        if (context != null)
+            context.invalidate();
     }
 
     public void close() {
@@ -187,10 +160,11 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T getData(Player player, String key, T defaultValue) {
-        if (!data.containsKey(player))
-            return defaultValue;
-        return (T) data.get(player).getOrDefault(key, defaultValue);
+    public <T> T getData(Player player, String key, Supplier<T> defaultValue) {
+        if (!data.containsKey(player) || !data.get(player).containsKey(key))
+            return defaultValue.get();
+
+        return (T) data.get(player).get(key);
     }
 
     public void setData(Player player, Map<String, Object> data) {
@@ -205,19 +179,19 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
         return data.containsKey(player) && data.get(player).containsKey(key);
     }
 
+    protected void onOpen(OpenViewContext context) {
+    }
+
     protected void onRender(ViewContext context) {
-    }
-
-    protected void onUpdate(ViewContext context) {
-    }
-
-    protected void onOpen(PreRenderViewContext context) {
     }
 
     protected void onClose(ViewContext context) {
     }
 
     protected void onClick(ViewSlotContext context) {
+    }
+
+    protected void onUpdate(ViewContext context) {
     }
 
 }

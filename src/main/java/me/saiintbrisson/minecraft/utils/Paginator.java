@@ -2,63 +2,41 @@ package me.saiintbrisson.minecraft.utils;
 
 import com.google.common.collect.Lists;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 public class Paginator<T> {
 
     private final int pageSize;
-    private final List<T> src;
+    private final List<T> source;
 
-    public Paginator(int pageSize, List<T> src) {
+    public Paginator(int pageSize, List<T> source) {
         this.pageSize = pageSize;
-        this.src = src;
-    }
-
-    public List<T> getSource() {
-        return src;
+        this.source = source;
     }
 
     public int size() {
-        return src.size();
+        return source.size();
     }
 
     public T get(int index) {
-        return src.get(index);
+        return source.get(index);
     }
 
     public int count() {
         return (int) Math.ceil((double) size() / pageSize);
     }
 
-    public int count(int pageSize) {
-        return (int) Math.ceil((double) size() / pageSize);
-    }
-
-    public Collection<T> getPrevious(int currentIndex) {
-        if (!hasPrevious(currentIndex)) {
-            throw new NoSuchElementException();
-        }
-
-        return getPage(currentIndex - 1);
-    }
-
-    public Collection<T> getNext(int currentIndex) {
-        if (!hasNext(currentIndex)) {
-            throw new NoSuchElementException();
-        }
-
-        return getPage(currentIndex + 1);
-    }
-
     public List<T> getPage(int index) {
-        if (src.isEmpty())
+        if (source.isEmpty())
             return Collections.emptyList();
 
         int size = size();
 
         // fast path
         if (size < pageSize)
-            return Lists.newArrayList(src);
+            return Lists.newArrayList(source);
 
         if (index < 0 || index >= count())
             throw new ArrayIndexOutOfBoundsException("Index must be between the range of 0 and " + (count() - 1) + ", given: " + index);
@@ -77,14 +55,6 @@ public class Paginator<T> {
         return page;
     }
 
-    public boolean hasPrevious(int index) {
-        return count() > 0 && index > 0;
-    }
-
-    public boolean hasNext(int index) {
-        return index < count() - 1;
-    }
-
     public boolean hasPage(int currentIndex) {
         return currentIndex >= 0 && currentIndex < count();
     }
@@ -93,8 +63,8 @@ public class Paginator<T> {
     public String toString() {
         return "Paginator{" +
                 "pageSize=" + pageSize +
-                ", src=" + src +
-                ", elements=" + src.size() +
+                ", src=" + source +
+                ", elements=" + source.size() +
                 ", count=" +  count() +
                 '}';
     }
