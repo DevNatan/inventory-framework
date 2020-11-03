@@ -5,6 +5,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.server.PluginDisableEvent;
@@ -44,28 +45,35 @@ public class ViewListener implements Listener {
         frame.unregister();
     }
 
+    @EventHandler
+    public void onViewDrag(final InventoryDragEvent e) {
+        e.getWhoClicked().sendMessage("drag");
+    }
+
     @EventHandler(ignoreCancelled = true)
     public void onViewClick(final InventoryClickEvent e) {
         if (!(e.getWhoClicked() instanceof Player))
             return;
 
-        final Inventory inv = e.getClickedInventory();
-        if (inv == null)
+        final Inventory clickedInv = e.getClickedInventory();
+        if (clickedInv == null)
             return; // clicked to the outside
 
-        int clickedSlot = e.getSlot();
-        if (clickedSlot >= inv.getSize())
-            return;  // array index out of bounds: -999???!
-
-        final View view = getView(inv);
+        final View view = getView(clickedInv);
         if (view == null)
             return;
 
+        int clickedSlot = e.getSlot();
+        int rawSlot = e.getRawSlot();
+
         // moved to another inventory, not yet supported
-        if (clickedSlot != e.getRawSlot()) {
+        if (clickedSlot != rawSlot) {
             e.setCancelled(true);
             return;
         }
+
+        if (clickedSlot >= clickedInv.getSize())
+            return;  // array index out of bounds: -999???!
 
         final Player player = (Player) e.getWhoClicked();
         final ViewContext context = view.getContext(player);
@@ -109,7 +117,7 @@ public class ViewListener implements Listener {
         if (view == null)
             return;
 
-        e.setCancelled(true);
+        e.setCancelled(view.isCancelOnPickup());
     }
 
 }

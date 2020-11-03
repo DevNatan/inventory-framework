@@ -47,6 +47,7 @@ public class ViewSlotContext extends ViewContext {
 
     public void updateSlot() {
         view.update(this, slot);
+        System.out.println("[" + slot + "] [update]: call");
     }
 
     public <T> T getSlotData(String key) {

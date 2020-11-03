@@ -100,7 +100,7 @@ public class ViewContext extends VirtualView {
 
     @SuppressWarnings("unchecked")
     public <T> T get(String key) {
-        return (T) data().get(key);
+        return (T) view.getData(player, key);
     }
 
     public <T> T get(String key, Supplier<T> defaultValue) {
@@ -136,7 +136,7 @@ public class ViewContext extends VirtualView {
     }
 
     public boolean has(String key) {
-        return data().containsKey(key);
+        return view.hasData(player, key);
     }
 
     public boolean hasSlotData(int slot, String key) {
@@ -144,7 +144,7 @@ public class ViewContext extends VirtualView {
     }
 
     void invalidate() {
-        data().clear();
+        view.clearData(player);
         slotData().clear();
     }
 

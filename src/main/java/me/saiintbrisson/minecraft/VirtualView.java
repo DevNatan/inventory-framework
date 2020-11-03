@@ -3,6 +3,10 @@ package me.saiintbrisson.minecraft;
 import com.google.common.base.Preconditions;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
 public class VirtualView {
 
     protected final ViewItem[] items;
@@ -168,7 +172,9 @@ public class VirtualView {
         if (fallback == null)
             throw new IllegalArgumentException("No item were provided and the rendering function was not defined at slot " + slot + ".");
 
-        context.getInventory().setItem(slot, fallback);
+        // prevent skulls from flickering
+        if (!(context instanceof ViewSlotContext))
+            context.getInventory().setItem(slot, fallback);
     }
 
     /**
@@ -216,15 +222,17 @@ public class VirtualView {
             throw new IllegalArgumentException("Context can't resolve items itself");
 
         final ViewItem item = items[slot];
-        if (item == null) {
-            final ViewItem virtual = context.getItem(slot);
-            if (virtual == null)
-                return null;
-
-            return virtual;
-        }
+        if (item == null)
+            return context.getItem(slot);
 
         return item;
+    }
+
+    @Override
+    public String toString() {
+        return "VirtualView{" +
+                "items=" + Arrays.stream(items).filter(Objects::nonNull).map(ViewItem::toString).collect(Collectors.joining()) +
+                '}';
     }
 
 }

@@ -99,4 +99,17 @@ public class ViewItem {
         return withCancelOnClick(!cancelOnClick);
     }
 
+    @Override
+    public String toString() {
+        return "ViewItem{" +
+                "slot=" + slot +
+                ", item=" + item +
+                ", closeOnClick=" + closeOnClick +
+                ", cancelOnClick=" + cancelOnClick +
+                ", clickHandler=" + clickHandler +
+                ", renderHandler=" + renderHandler +
+                ", updateHandler=" + updateHandler +
+                '}';
+    }
+
 }

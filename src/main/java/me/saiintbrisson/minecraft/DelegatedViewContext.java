@@ -19,6 +19,11 @@ public class DelegatedViewContext extends ViewSlotContext {
     }
 
     @Override
+    public ViewItem getItem(int slot) {
+        return delegate.getItem(slot);
+    }
+
+    @Override
     public Map<Integer, Map<String, Object>> slotData() {
         return delegate.slotData();
     }

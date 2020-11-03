@@ -19,7 +19,8 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
     private final String title;
     private final int rows;
     final Map<Player, ViewContext> contexts;
-    private boolean cancelOnClick = true;
+    private boolean cancelOnClick;
+    private boolean cancelOnPickup;
     private final Map<Player, Map<String, Object>> data;
 
     public View(int rows) {
@@ -127,12 +128,20 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
         }
     }
 
+    public boolean isCancelOnClick() {
+        return cancelOnClick;
+    }
+
     public void setCancelOnClick(boolean cancelOnClick) {
         this.cancelOnClick = cancelOnClick;
     }
 
-    public boolean isCancelOnClick() {
-        return cancelOnClick;
+    public boolean isCancelOnPickup() {
+        return cancelOnPickup;
+    }
+
+    public void setCancelOnPickup(boolean cancelOnPickup) {
+        this.cancelOnPickup = cancelOnPickup;
     }
 
     @Override
