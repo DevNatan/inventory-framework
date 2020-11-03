@@ -98,17 +98,20 @@ public class ViewContext extends VirtualView {
         this.view.getFrame().open(view, player, data);
     }
 
-    @SuppressWarnings("unchecked")
     public <T> T get(String key) {
-        return (T) view.getData(player, key);
+        return view.getData(player, key);
     }
 
     public <T> T get(String key, Supplier<T> defaultValue) {
-        T value = get(key);
-        if (value == null)
-            return defaultValue.get();
+        return view.getData(player, key, defaultValue);
+    }
 
-        return value;
+    public void set(String key, Object value) {
+        view.setData(player, key, value);
+    }
+
+    public boolean has(String key) {
+        return view.hasData(player, key);
     }
 
     @SuppressWarnings("unchecked")
@@ -127,16 +130,8 @@ public class ViewContext extends VirtualView {
         return value;
     }
 
-    public void set(String key, Object value) {
-        data().put(key, value);
-    }
-
     public void setSlotData(int slot, String key, Object value) {
         slotData().computeIfAbsent(slot, ($) -> Maps.newHashMap()).put(key, value);
-    }
-
-    public boolean has(String key) {
-        return view.hasData(player, key);
     }
 
     public boolean hasSlotData(int slot, String key) {
