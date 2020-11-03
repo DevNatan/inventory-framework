@@ -89,17 +89,16 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
             return;
 
         final OpenViewContext preOpenContext = new OpenViewContext(this, player);
-        if (data != null) setData(player, data);
+        if (data != null) setData(player, new HashMap<>(data));
 
         onOpen(preOpenContext);
         if (preOpenContext.isCancelled()) {
-            if (data != null) clearData(player);
+            clearData(player);
             return;
         }
 
         final Inventory inventory = getInventory(preOpenContext.getInventoryTitle());
         final ViewContext context = createContext(this, player, inventory);
-        context.setData(preOpenContext.data());
         contexts.put(player, context);
         onRender(context);
         render(context);
@@ -116,10 +115,7 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
         if (!contexts.containsKey(player))
             return;
 
-        clearData(player);
-        final ViewContext context = contexts.remove(player);
-        if (context != null)
-            context.invalidate();
+        contexts.remove(player).invalidate();
     }
 
     public void close() {
