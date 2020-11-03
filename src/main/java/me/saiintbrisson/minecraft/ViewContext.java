@@ -14,7 +14,6 @@ public class ViewContext extends VirtualView {
     protected final Player player;
     protected final Inventory inventory;
     protected boolean cancelled;
-    private Map<String, Object> data;
     private Map<Integer, Map<String, Object>> slotData;
 
     public ViewContext(View view, Player player, Inventory inventory) {
@@ -22,7 +21,6 @@ public class ViewContext extends VirtualView {
         this.view = view;
         this.player = player;
         this.inventory = inventory;
-        data = new HashMap<>();
         slotData = new HashMap<>();
     }
 
@@ -47,11 +45,11 @@ public class ViewContext extends VirtualView {
     }
 
     public Map<String, Object> data() {
-        return data;
+        return view.getData(player);
     }
 
     public void setData(Map<String, Object> data) {
-        this.data = data;
+        view.setData(player, data);
     }
 
     public Map<Integer, Map<String, Object>> slotData() {
