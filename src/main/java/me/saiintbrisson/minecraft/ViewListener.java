@@ -5,7 +5,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.server.PluginDisableEvent;
@@ -43,11 +42,6 @@ public class ViewListener implements Listener {
 
         // if the plugin is disabled it will not be possible to handle events
         frame.unregister();
-    }
-
-    @EventHandler
-    public void onViewDrag(final InventoryDragEvent e) {
-        e.getWhoClicked().sendMessage("drag");
     }
 
     @EventHandler(ignoreCancelled = true)
