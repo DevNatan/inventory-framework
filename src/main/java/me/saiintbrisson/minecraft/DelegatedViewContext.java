@@ -7,6 +7,7 @@ import java.util.Map;
 public class DelegatedViewContext extends ViewSlotContext {
 
     private final ViewContext delegate;
+    private boolean cancelled;
 
     public DelegatedViewContext(ViewContext delegate, int slot, ItemStack item) {
         super(delegate.getView(), delegate.getPlayer(), delegate.getInventory(), slot, item);
@@ -24,6 +25,16 @@ public class DelegatedViewContext extends ViewSlotContext {
     }
 
     @Override
+    public boolean isCancelled() {
+        return cancelled;
+    }
+
+    @Override
+    public void setCancelled(boolean cancelled) {
+        this.cancelled = cancelled;
+    }
+
+    @Override
     public Map<Integer, Map<String, Object>> slotData() {
         return delegate.slotData();
     }
@@ -36,7 +47,8 @@ public class DelegatedViewContext extends ViewSlotContext {
     @Override
     public String toString() {
         return "DelegatedViewContext{" +
-                "delegate=" + delegate +
+                "cancelled=" + cancelled +
+                ", delegate=" + delegate +
                 "} " + super.toString();
     }
 
