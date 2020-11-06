@@ -231,7 +231,7 @@ public class VirtualView {
     @Override
     public String toString() {
         return "VirtualView{" +
-                "items=" + Arrays.stream(items).filter(Objects::nonNull).map(ViewItem::toString).collect(Collectors.joining()) +
+                "items=" + items == null ? "null" : Arrays.stream(items).filter(Objects::nonNull).map(ViewItem::toString).collect(Collectors.joining()) +
                 '}';
     }
 

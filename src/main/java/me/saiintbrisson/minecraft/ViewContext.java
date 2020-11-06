@@ -40,6 +40,11 @@ public class ViewContext extends VirtualView {
         return cancelled;
     }
 
+    public void setCancelled(boolean cancelled) {
+        this.cancelled = cancelled;
+    }
+
+    @Deprecated
     public void cancel() {
         this.cancelled = true;
     }

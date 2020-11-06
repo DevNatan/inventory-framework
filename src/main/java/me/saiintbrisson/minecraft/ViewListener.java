@@ -6,6 +6,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.inventory.Inventory;
@@ -49,40 +50,44 @@ public class ViewListener implements Listener {
         if (!(e.getWhoClicked() instanceof Player))
             return;
 
-        final Inventory clickedInv = e.getClickedInventory();
-        if (clickedInv == null)
-            return; // clicked to the outside
-
-        final View view = getView(clickedInv);
+        final Player player = (Player) e.getWhoClicked();
+        final Inventory inventory = e.getInventory();
+        final View view = getView(inventory);
         if (view == null)
             return;
 
-        int clickedSlot = e.getSlot();
-        int rawSlot = e.getRawSlot();
-
-        // moved to another inventory, not yet supported
-        if (clickedSlot != rawSlot) {
+        if (e.getSlotType() == InventoryType.SlotType.OUTSIDE || e.getClick().isShiftClick()) {
             e.setCancelled(true);
             return;
         }
 
-        if (clickedSlot >= clickedInv.getSize())
-            return;  // array index out of bounds: -999???!
+        if (!(e.getRawSlot() < inventory.getSize()))
+            return;
 
-        final Player player = (Player) e.getWhoClicked();
         final ViewContext context = view.getContext(player);
-        ViewItem item = view.getItem(clickedSlot);
+        final int slot = e.getSlot();
+        final ViewSlotContext globalClick = new DelegatedViewContext(context, slot, e.getCurrentItem());
+        view.onClick(globalClick);
+        if (globalClick.isCancelled()) {
+            e.setCancelled(true);
+            return;
+        }
 
+        ViewItem item = view.getItem(slot);
         if (item == null) {
-            item = context.getItem(clickedSlot);
-            if (item == null)
+            item = context.getItem(slot);
+            if (item == null) {
+                // cancel empty item place/pickup
+                e.setCancelled(view.isCancelOnClick());
                 return;
+            }
         }
 
         if (item.getClickHandler() != null) {
-            ViewSlotContext slotContext = new DelegatedViewContext(context, clickedSlot, e.getCurrentItem());
-            slotContext.setClickOrigin(e);
-            item.getClickHandler().handle(slotContext);
+            ViewSlotContext click = new DelegatedViewContext(context, slot, e.getCurrentItem());
+            click.setClickOrigin(e);
+            item.getClickHandler().handle(click);
+            e.setCancelled(click.isCancelled());
         }
 
         e.setCancelled(item.isCancelOnClick());
@@ -103,6 +108,15 @@ public class ViewListener implements Listener {
         final Player player = (Player) e.getPlayer();
         view.onClose(new ViewContext(view, player, e.getInventory()));
         view.remove(player);
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onDropItemOnView(final PlayerDropItemEvent e) {
+        final View view = getView(e.getPlayer().getOpenInventory().getTopInventory());
+        if (view == null)
+            return;
+
+        e.setCancelled(true);
     }
 
     @EventHandler(ignoreCancelled = true)
