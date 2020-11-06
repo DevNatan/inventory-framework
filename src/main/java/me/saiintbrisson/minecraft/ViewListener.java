@@ -67,6 +67,7 @@ public class ViewListener implements Listener {
         final ViewContext context = view.getContext(player);
         final int slot = e.getSlot();
         final ViewSlotContext globalClick = new DelegatedViewContext(context, slot, e.getCurrentItem());
+        globalClick.setClickOrigin(e);
         view.onClick(globalClick);
         if (globalClick.isCancelled()) {
             e.setCancelled(true);
