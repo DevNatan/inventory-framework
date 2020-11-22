@@ -3,6 +3,7 @@ package me.saiintbrisson.minecraft;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,7 @@ public class ViewContext extends VirtualView {
     protected boolean cancelled;
     private final List<View> history;
     private int historyIndex;
+    private final Map<Integer, Map<String, Object>> slotData = new HashMap<>();
 
     public ViewContext(View view, Player player, Inventory inventory) {
         super(inventory == null ? null : new ViewItem[View.INVENTORY_ROW_SIZE * (inventory.getSize() / 9)]);
@@ -53,7 +55,6 @@ public class ViewContext extends VirtualView {
     public Map<String, Object> getData() {
         return view.getData(player);
     }
-
 
     @Override
     public ViewItem slot(int slot) {
@@ -107,6 +108,38 @@ public class ViewContext extends VirtualView {
 
     public boolean has(String key) {
         return view.hasData(player, key);
+    }
+
+    public Map<Integer, Map<String, Object>> slotData() {
+        return slotData;
+    }
+
+    public Map<String, Object> getSlotData(int slot) {
+        return slotData.computeIfAbsent(slot, $ -> new HashMap<>());
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T getSlotData(int slot, String key) {
+        if (!getSlotData(slot).containsKey(key))
+            return null;
+
+        return (T) getSlotData(slot).get(key);
+    }
+
+    public <T> T getSlotData(int slot, String key, Supplier<T> defaultValue) {
+        T value = getSlotData(slot, key);
+        if (value == null)
+            return defaultValue.get();
+
+        return value;
+    }
+
+    public void setSlotData(int slot, String key, Object value) {
+        getSlotData(slot).put(key, value);
+    }
+
+    public boolean hasSlotData(int slot, String key) {
+        return getSlotData(slot).containsKey(key);
     }
 
     public List<View> getHistory() {

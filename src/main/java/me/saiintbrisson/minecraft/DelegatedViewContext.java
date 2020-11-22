@@ -1,6 +1,5 @@
 package me.saiintbrisson.minecraft;
 
-import com.google.common.collect.ImmutableMap;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Map;
@@ -36,8 +35,8 @@ public class DelegatedViewContext extends ViewSlotContext {
     }
 
     @Override
-    public Map<String, Object> getSlotData() {
-        return delegate instanceof ViewSlotContext ? ((ViewSlotContext) delegate).getSlotData() : ImmutableMap.of();
+    public Map<Integer, Map<String, Object>> slotData() {
+        return delegate.slotData();
     }
 
     @Override
