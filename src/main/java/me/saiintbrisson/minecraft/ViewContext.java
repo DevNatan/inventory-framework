@@ -1,10 +1,10 @@
 package me.saiintbrisson.minecraft;
 
-import com.google.common.collect.Maps;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
-import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -14,14 +14,15 @@ public class ViewContext extends VirtualView {
     protected final Player player;
     protected final Inventory inventory;
     protected boolean cancelled;
-    private Map<Integer, Map<String, Object>> slotData;
+    private final List<View> history;
+    private int historyIndex;
 
     public ViewContext(View view, Player player, Inventory inventory) {
         super(inventory == null ? null : new ViewItem[View.INVENTORY_ROW_SIZE * (inventory.getSize() / 9)]);
         this.view = view;
         this.player = player;
         this.inventory = inventory;
-        slotData = new HashMap<>();
+        history = new LinkedList<>();
     }
 
     public View getView() {
@@ -49,21 +50,10 @@ public class ViewContext extends VirtualView {
         this.cancelled = true;
     }
 
-    public Map<String, Object> data() {
+    public Map<String, Object> getData() {
         return view.getData(player);
     }
 
-    public void setData(Map<String, Object> data) {
-        view.setData(player, data);
-    }
-
-    public Map<Integer, Map<String, Object>> slotData() {
-        return slotData;
-    }
-
-    public void setSlotData(Map<Integer, Map<String, Object>> slotData) {
-        this.slotData = slotData;
-    }
 
     @Override
     public ViewItem slot(int slot) {
@@ -119,33 +109,13 @@ public class ViewContext extends VirtualView {
         return view.hasData(player, key);
     }
 
-    @SuppressWarnings("unchecked")
-    public <T> T getSlotData(int slot, String key) {
-        if (!slotData().containsKey(slot))
-            return null;
-
-        return (T) slotData().get(slot).get(key);
-    }
-
-    public <T> T getSlotData(int slot, String key, Supplier<T> defaultValue) {
-        T value = getSlotData(slot, key);
-        if (value == null)
-            return defaultValue.get();
-
-        return value;
-    }
-
-    public void setSlotData(int slot, String key, Object value) {
-        slotData().computeIfAbsent(slot, ($) -> Maps.newHashMap()).put(key, value);
-    }
-
-    public boolean hasSlotData(int slot, String key) {
-        return slotData().containsKey(slot) && slotData().get(slot).containsKey(key);
+    public List<View> getHistory() {
+        return history;
     }
 
     void invalidate() {
         view.clearData(player);
-        slotData().clear();
+        getHistory().clear();
     }
 
     @Override
@@ -160,8 +130,7 @@ public class ViewContext extends VirtualView {
                 ", player=" + player +
                 ", inventory=" + inventory +
                 ", cancelled=" + cancelled +
-                ", data=" + data() +
-                ", slotData=" + slotData() +
+                ", data=" + getData() +
                 "} " + super.toString();
     }
 

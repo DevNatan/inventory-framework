@@ -5,6 +5,8 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Supplier;
 
 public class ViewSlotContext extends ViewContext {
@@ -13,11 +15,13 @@ public class ViewSlotContext extends ViewContext {
     private InventoryClickEvent clickOrigin;
     private ItemStack item;
     private boolean changed;
+    private final Map<String, Object> slotData;
 
     public ViewSlotContext(View view, Player player, Inventory inventory, int slot, ItemStack item) {
         super(view, player, inventory);
         this.slot = slot;
         this.item = item == null ? null : item.clone();
+        slotData = new HashMap<>();
     }
 
     public int getSlot() {
@@ -31,6 +35,34 @@ public class ViewSlotContext extends ViewContext {
     public void setItem(ItemStack item) {
         this.item = item;
         changed = true;
+    }
+
+    public Map<String, Object> getSlotData() {
+        return slotData;
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T getSlotData(String key) {
+        if (!slotData.containsKey(key))
+            return null;
+
+        return (T) slotData.get(key);
+    }
+
+    public <T> T getSlotData(String key, Supplier<T> defaultValue) {
+        T value = getSlotData(key);
+        if (value == null)
+            return defaultValue.get();
+
+        return value;
+    }
+
+    public void setSlotData(String key, Object value) {
+        slotData.put(key, value);
+    }
+
+    public boolean hasSlotData(String key) {
+        return slotData.containsKey(key);
     }
 
     public InventoryClickEvent getClickOrigin() {
@@ -47,22 +79,6 @@ public class ViewSlotContext extends ViewContext {
 
     public void updateSlot() {
         view.update(this, slot);
-    }
-
-    public <T> T getSlotData(String key) {
-        return getSlotData(slot, key);
-    }
-
-    public <T> T getSlotData(String key, Supplier<T> defaultValue) {
-        return getSlotData(slot, key, defaultValue);
-    }
-
-    public void setSlotData(String key, Object value) {
-        setSlotData(slot, key, value);
-    }
-
-    public boolean hasSlotData(String key) {
-        return hasSlotData(slot, key);
     }
 
     @Override
