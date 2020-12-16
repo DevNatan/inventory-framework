@@ -20,7 +20,7 @@ public abstract class PaginatedView<T> extends View {
 
     public PaginatedView(ViewFrame frame, int rows, String title) {
         super(frame, rows, title);
-        this.offset = getFirstSlot() + 1;
+        this.offset = getFirstSlot();
         this.limit = getLastSlot();
     }
 
@@ -90,7 +90,7 @@ public abstract class PaginatedView<T> extends View {
         return item;
     }
 
-    public ViewItem getNextPageItem(PaginatedViewContext<?> context) {
+    public ViewItem getNextPageItem(PaginatedViewContext<T> context) {
         ViewFrame frame = getFrame();
         if (frame == null)
             throw new IllegalArgumentException("View frame is null and the next page item has not been defined");
