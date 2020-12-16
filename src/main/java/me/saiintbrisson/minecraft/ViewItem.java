@@ -2,6 +2,8 @@ package me.saiintbrisson.minecraft;
 
 import org.bukkit.inventory.ItemStack;
 
+import static me.saiintbrisson.minecraft.View.UNSET_SLOT;
+
 public class ViewItem {
 
     private final int slot;
@@ -16,7 +18,7 @@ public class ViewItem {
     private ViewItemHandler updateHandler;
 
     public ViewItem() {
-        this(0);
+        this(UNSET_SLOT);
     }
 
     public ViewItem(int slot) {

@@ -14,6 +14,7 @@ import java.util.function.Supplier;
 public class View extends VirtualView implements InventoryHolder, Closeable {
 
     public static final int INVENTORY_ROW_SIZE = 9;
+    public static final int UNSET_SLOT = -1;
 
     private ViewFrame frame;
     private final String title;
@@ -97,7 +98,7 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
             return;
         }
 
-        final Inventory inventory = getInventory(preOpenContext.getInventoryTitle());
+        final Inventory inventory = getInventory(preOpenContext.getInventoryTitle(), preOpenContext.getInventorySize());
         final ViewContext context = createContext(this, player, inventory);
         contexts.put(player, context);
         onRender(context);
@@ -142,11 +143,11 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 
     @Override
     public Inventory getInventory() {
-        return getInventory(title);
+        throw new UnsupportedOperationException();
     }
 
-    private Inventory getInventory(String title) {
-        return Bukkit.createInventory(this, getLastSlot() + 1, title == null ? this.title : title);
+    private Inventory getInventory(String title, int size) {
+        return Bukkit.createInventory(this, size, title == null ? this.title : title);
     }
 
     public void clearData(Player player) {

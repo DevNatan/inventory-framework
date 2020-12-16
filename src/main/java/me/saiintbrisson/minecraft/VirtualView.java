@@ -10,9 +10,27 @@ import java.util.stream.Collectors;
 public class VirtualView {
 
     protected final ViewItem[] items;
+    protected String[] layout;
 
     public VirtualView(ViewItem[] items) {
         this.items = items;
+    }
+
+    /**
+     * Returns the layout of items for this view.
+     */
+    public String[] getLayout() {
+        return layout;
+    }
+
+    /**
+     * Sets the layout of items for this view.
+     * The layout must respect the size and length of the inventory.
+     * @param layout the layout.
+     */
+    public void setLayout(String... layout) {
+        Preconditions.checkNotNull(layout, "Layout cannot be null.");
+        this.layout = layout;
     }
 
     /**

@@ -1,12 +1,10 @@
 package me.saiintbrisson.minecraft;
 
+import me.saiintbrisson.minecraft.utils.Paginator;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Supplier;
 
 public class ViewContext extends VirtualView {
@@ -15,47 +13,20 @@ public class ViewContext extends VirtualView {
     protected final Player player;
     protected final Inventory inventory;
     protected boolean cancelled;
-    private final List<View> history;
-    private int historyIndex;
     private final Map<Integer, Map<String, Object>> slotData = new HashMap<>();
+    boolean checkedLayerSignature;
+    Stack<Integer> filledLayer;
 
     public ViewContext(View view, Player player, Inventory inventory) {
         super(inventory == null ? null : new ViewItem[View.INVENTORY_ROW_SIZE * (inventory.getSize() / 9)]);
         this.view = view;
         this.player = player;
         this.inventory = inventory;
-        history = new LinkedList<>();
     }
 
-    public View getView() {
-        return view;
-    }
-
-    public Player getPlayer() {
-        return player;
-    }
-
-    public Inventory getInventory() {
-        return inventory;
-    }
-
-    public boolean isCancelled() {
-        return cancelled;
-    }
-
-    public void setCancelled(boolean cancelled) {
-        this.cancelled = cancelled;
-    }
-
-    @Deprecated
-    public void cancel() {
-        this.cancelled = true;
-    }
-
-    public Map<String, Object> getData() {
-        return view.getData(player);
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ViewItem slot(int slot) {
         final ViewItem item = super.slot(slot);
@@ -63,16 +34,76 @@ public class ViewContext extends VirtualView {
         return item;
     }
 
-    public void close() {
-        player.closeInventory();
+    @Override
+    public void setLayout(String... layout) {
+        super.setLayout(layout);
+
+        // force layout re-order
+        checkedLayerSignature = false;
+    }
+
+    /**
+     * Returns the {@link View} of that context.
+     */
+    public View getView() {
+        return view;
+    }
+
+    /**
+     * Returns the {@link Player} of that context.
+     */
+    public Player getPlayer() {
+        return player;
+    }
+
+    /**
+     * Returns the {@link Inventory} of that context.
+     */
+    public Inventory getInventory() {
+        return inventory;
+    }
+
+    /**
+     * Returns `true` if the action in that context was canceled or `false` otherwise.
+     */
+    public boolean isCancelled() {
+        return cancelled;
+    }
+
+    /**
+     * Defines whether the action that is taking place in that context should be canceled.
+     * @param cancelled should be canceled.
+     */
+    public void setCancelled(boolean cancelled) {
+        this.cancelled = cancelled;
+    }
+
+    /**
+     * Cancels the action that is taking place in that context.
+     * @deprecated Use {@link #setCancelled(boolean)} instead.
+     */
+    @Deprecated
+    public void cancel() {
+        this.cancelled = true;
+    }
+
+    /**
+     * Returns the current data of the player tied to that context.
+     */
+    public Map<String, Object> getData() {
+        return view.getData(player);
+    }
+
+    public void render() {
+        view.render(this);
     }
 
     public void update() {
         view.update(this);
     }
 
-    public void render() {
-        view.render(this);
+    public void close() {
+        player.closeInventory();
     }
 
     public void clear(int slot) {
@@ -142,18 +173,32 @@ public class ViewContext extends VirtualView {
         return getSlotData(slot).containsKey(key);
     }
 
-    public List<View> getHistory() {
-        return history;
-    }
-
     void invalidate() {
         view.clearData(player);
-        getHistory().clear();
     }
 
     @Override
     public int getLastSlot() {
         return inventory.getSize() - 1;
+    }
+
+    public void setSource(List<?> source) {
+        if (!(this instanceof PaginatedViewContext))
+            throw new IllegalArgumentException("Only paginated views can have a source.");
+
+        ((PaginatedViewContext<?>) this).setPaginator(new Paginator(((PaginatedView<?>) view).getPageSize(), source));
+    }
+
+    /**
+     * Updates the current context by jumping to the specified page.
+     * @param page the new page.
+     */
+    @SuppressWarnings("unchecked")
+    public void switchTo(int page) {
+        if (!(this instanceof PaginatedViewContext))
+            throw new IllegalArgumentException("Only paginated views can switch between pages.");
+
+        ((PaginatedView<?>) view).updateContext((PaginatedViewContext) this, page);
     }
 
     @Override

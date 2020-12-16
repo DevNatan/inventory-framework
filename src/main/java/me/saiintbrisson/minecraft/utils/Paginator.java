@@ -8,12 +8,16 @@ import java.util.List;
 
 public class Paginator<T> {
 
-    private final int pageSize;
-    private final List<T> source;
+    private int pageSize;
+    private List<T> source;
 
     public Paginator(int pageSize, List<T> source) {
         this.pageSize = pageSize;
         this.source = source;
+    }
+
+    public void setPageSize(int pageSize) {
+        this.pageSize = pageSize;
     }
 
     public int size() {
