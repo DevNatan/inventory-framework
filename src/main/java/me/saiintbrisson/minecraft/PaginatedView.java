@@ -215,7 +215,7 @@ public abstract class PaginatedView<T> extends View {
                             }
                             case NEXT_PAGE_CHAR: {
                                 final int slot = context.getNextPageItemSlot();
-                                if (getFrame().getDefaultNextPageItem() == null && slot == UNSET_SLOT && getPreviousPageItem(context) == null)
+                                if (getFrame().getDefaultNextPageItem() == null && slot == UNSET_SLOT && getNextPageItem(context) == null)
                                     throw new IllegalArgumentException("Found next page item character (" + NEXT_PAGE_CHAR + ") but no item was defined.");
 
                                 context.setNextPageItemSlot(targetSlot);
