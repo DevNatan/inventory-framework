@@ -33,7 +33,7 @@ public class PaginatedViewContext<T> extends ViewContext {
      * Sets the current page in that context.
      * @param page the new page numbering.
      */
-    public void setPage(int page) {
+    void setPage(int page) {
         this.page = page;
     }
 

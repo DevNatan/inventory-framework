@@ -94,10 +94,6 @@ public class ViewContext extends VirtualView {
         return view.getData(player);
     }
 
-    public void render() {
-        view.render(this);
-    }
-
     public void update() {
         view.update(this);
     }
