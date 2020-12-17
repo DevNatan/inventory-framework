@@ -117,7 +117,9 @@ public abstract class PaginatedView<T> extends View {
         // check it for layered views
         final int defaultSlot = context.getPreviousPageItemSlot();
         if (item == null) {
-            clearSlot(context, defaultSlot);
+            if (defaultSlot != UNSET_SLOT)
+                clearSlot(context, defaultSlot);
+
             context.setPreviousPageItemSlot(UNSET_SLOT);
         } else {
             if (defaultSlot == UNSET_SLOT) {
@@ -137,7 +139,9 @@ public abstract class PaginatedView<T> extends View {
         // check it for layered views
         final int defaultSlot = context.getNextPageItemSlot();
         if (item == null) {
-            clearSlot(context, context.getNextPageItemSlot());
+            if (defaultSlot != UNSET_SLOT)
+                clearSlot(context, defaultSlot);
+
             context.setNextPageItemSlot(UNSET_SLOT);
         } else {
             if (defaultSlot == UNSET_SLOT) {
@@ -147,8 +151,7 @@ public abstract class PaginatedView<T> extends View {
                 context.setNextPageItemSlot(item.getSlot());
             }
 
-            render(context, item.withCancelOnClick(true).onClick($ -> context.switchToNextPage()),
-                    item.getSlot() == UNSET_SLOT ? context.getNextPageItemSlot() : item.getSlot());
+            render(context, item.withCancelOnClick(true).onClick($ -> context.switchToNextPage()), context.getNextPageItemSlot());
         }
     }
 
