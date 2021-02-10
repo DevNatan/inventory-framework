@@ -168,6 +168,7 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
     public <T> T getData(Player player, String key) {
         if (!data.containsKey(player))
             return null;
+
         return (T) data.get(player).get(key);
     }
 
