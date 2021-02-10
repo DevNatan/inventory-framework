@@ -50,20 +50,26 @@ public final class ViewFrame {
         return registeredViews;
     }
 
+    @Deprecated
     public final void addView(View view) {
         if (view.getFrame() == null)
             view.setFrame(this);
         registeredViews.put(view.getClass(), view);
     }
 
+    @Deprecated
     public void addView(View... views) {
         for (View view : views) {
             addView(view);
         }
     }
 
-    public void register() {
+    public void register(View... views) {
         checkUnregistered();
+
+        for (final View view : views)
+            addView(view);
+
         this.listener = new ViewListener(this);
         Bukkit.getPluginManager().registerEvents(listener, owner);
     }
@@ -77,6 +83,7 @@ public final class ViewFrame {
 
         if (listener != null)
             HandlerList.unregisterAll(listener);
+
         listener = null;
     }
 

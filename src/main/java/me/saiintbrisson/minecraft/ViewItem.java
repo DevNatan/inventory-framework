@@ -2,6 +2,8 @@ package me.saiintbrisson.minecraft;
 
 import org.bukkit.inventory.ItemStack;
 
+import static me.saiintbrisson.minecraft.View.UNSET_SLOT;
+
 public class ViewItem {
 
     private final int slot;
@@ -16,7 +18,7 @@ public class ViewItem {
     private ViewItemHandler updateHandler;
 
     public ViewItem() {
-        this(0);
+        this(UNSET_SLOT);
     }
 
     public ViewItem(int slot) {
@@ -67,28 +69,36 @@ public class ViewItem {
         return closeOnClick;
     }
 
-    public ViewItem closeOnClick() {
-        closeOnClick = !closeOnClick;
-        if (closeOnClick)
-            cancelOnClick = true;
-        return this;
-    }
-
     public void setCloseOnClick(boolean closeOnClick) {
         this.closeOnClick = closeOnClick;
+        if (this.closeOnClick)
+            setCancelOnClick(true);
+    }
+
+    public ViewItem closeOnClick() {
+        return withCloseOnClick(!closeOnClick);
+    }
+
+    public ViewItem withCloseOnClick(boolean closeOnClick) {
+        setCloseOnClick(closeOnClick);
+        return this;
     }
 
     public boolean isCancelOnClick() {
         return cancelOnClick;
     }
 
-    public ViewItem cancelOnClick() {
-        this.cancelOnClick = !cancelOnClick;
+    public void setCancelOnClick(boolean cancelOnClick) {
+        this.cancelOnClick = cancelOnClick;
+    }
+
+    public ViewItem withCancelOnClick(boolean cancelOnClick) {
+        setCancelOnClick(cancelOnClick);
         return this;
     }
 
-    public void setCancelOnClick(boolean cancelOnClick) {
-        this.cancelOnClick = cancelOnClick;
+    public ViewItem cancelOnClick() {
+        return withCancelOnClick(!cancelOnClick);
     }
 
     @Override
@@ -98,6 +108,9 @@ public class ViewItem {
                 ", item=" + item +
                 ", closeOnClick=" + closeOnClick +
                 ", cancelOnClick=" + cancelOnClick +
+                ", clickHandler=" + clickHandler +
+                ", renderHandler=" + renderHandler +
+                ", updateHandler=" + updateHandler +
                 '}';
     }
 

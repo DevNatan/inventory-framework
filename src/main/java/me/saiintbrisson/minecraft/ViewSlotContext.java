@@ -1,14 +1,17 @@
 package me.saiintbrisson.minecraft;
 
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
+
+import java.util.Map;
+import java.util.function.Supplier;
 
 public class ViewSlotContext extends ViewContext {
 
     private final int slot;
+    private InventoryClickEvent clickOrigin;
     private ItemStack item;
     private boolean changed;
 
@@ -31,22 +34,32 @@ public class ViewSlotContext extends ViewContext {
         changed = true;
     }
 
-    public void setItemDisplayName(String displayName) {
-        if (item == null || !item.hasItemMeta())
-            return;
-
-        ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(displayName);
-        item.setItemMeta(meta);
-        changed = true;
+    public Map<String, Object> getSlotData() {
+        return getSlotData(slot);
     }
 
-    public boolean hasItem() {
-        return item != null;
+    public <T> T getSlotData(String key) {
+        return getSlotData(slot, key);
     }
 
-    public boolean isEmpty() {
-        return hasItem() && item.getType() == Material.AIR;
+    public <T> T getSlotData(String key, Supplier<T> defaultValue) {
+        return getSlotData(slot, key, defaultValue);
+    }
+
+    public void setSlotData(String key, Object value) {
+        setSlotData(slot, key, value);
+    }
+
+    public boolean hasSlotData(String key) {
+        return hasSlotData(slot, key);
+    }
+
+    public InventoryClickEvent getClickOrigin() {
+        return clickOrigin;
+    }
+
+    void setClickOrigin(InventoryClickEvent clickOrigin) {
+        this.clickOrigin = clickOrigin;
     }
 
     boolean hasChanged() {
@@ -54,7 +67,17 @@ public class ViewSlotContext extends ViewContext {
     }
 
     public void updateSlot() {
-        updateSlot(this, slot);
+        view.update(this, slot);
+    }
+
+    @Override
+    public String toString() {
+        return "ViewSlotContext{" +
+                "slot=" + slot +
+                ", clickOrigin=" + clickOrigin +
+                ", item=" + item +
+                ", changed=" + changed +
+                "} " + super.toString();
     }
 
 }

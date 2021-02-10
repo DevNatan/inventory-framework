@@ -1,6 +1,5 @@
 package me.saiintbrisson.minecraft;
 
-import com.google.common.base.Preconditions;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -10,16 +9,19 @@ import java.io.Closeable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.WeakHashMap;
+import java.util.function.Supplier;
 
 public class View extends VirtualView implements InventoryHolder, Closeable {
 
     public static final int INVENTORY_ROW_SIZE = 9;
+    public static final int UNSET_SLOT = -1;
 
     private ViewFrame frame;
     private final String title;
     private final int rows;
     final Map<Player, ViewContext> contexts;
-    private boolean cancelOnClick = true;
+    private boolean cancelOnClick;
+    private boolean cancelOnPickup;
     private final Map<Player, Map<String, Object>> data;
 
     public View(int rows) {
@@ -75,71 +77,46 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
         return title;
     }
 
+    protected ViewContext createContext(View view, Player player, Inventory inventory) {
+        return new ViewContext(view, player, inventory);
+    }
+
     public void open(Player player) {
         open(player, null);
     }
 
     public void open(Player player, Map<String, Object> data) {
         if (contexts.containsKey(player))
-            throw new IllegalStateException("Inventory already opened");
+            return;
 
-        PreRenderViewContext preOpenContext = new PreRenderViewContext(this, player);
-        if (data != null) setData(player, data);
+        final OpenViewContext preOpenContext = new OpenViewContext(this, player);
+        if (data != null) setData(player, new HashMap<>(data));
 
         onOpen(preOpenContext);
         if (preOpenContext.isCancelled()) {
-            if (data != null) clearData(player);
+            clearData(player);
             return;
         }
 
-        Inventory inventory = getInventory(preOpenContext.getInventoryTitle());
-        ViewContext context = createContext(this, player, inventory);
+        final Inventory inventory = getInventory(preOpenContext.getInventoryTitle(), preOpenContext.getInventorySize());
+        final ViewContext context = createContext(this, player, inventory);
         contexts.put(player, context);
         onRender(context);
         render(context);
-        context.render(context); // render virtual view
         player.openInventory(inventory);
     }
 
-    protected ViewContext createContext(View view, Player player, Inventory inventory) {
-        return new ViewContext(view, player, inventory);
-    }
-
-    public void update(Player player) {
-        ViewContext context = contexts.get(player);
-        Preconditions.checkNotNull(context, "Context cannot be null");
-
-        for (int i = 0; i < getItems().length; i++) {
-            updateSlot(context, i);
-        }
-    }
-
     @Override
-    public void updateSlot(ViewContext context, int slot) {
-        Preconditions.checkNotNull(context, "Context cannot be null");
-
-        Inventory inventory = context.getInventory();
-        Preconditions.checkNotNull(inventory, "Player inventory cannot be null");
-
-        ViewItem item = getItem(slot);
-        if (item == null) {
-            return;
-        }
-
-        ViewSlotContext slotContext = new SynchronizedViewContext(context, slot, inventory.getItem(slot));
-        if (item.getUpdateHandler() != null) {
-            item.getUpdateHandler().handle(slotContext);
-            inventory.setItem(slot, slotContext.getItem());
-        } else
-            renderSlot(slotContext, item, slot);
+    public void update(ViewContext context) {
+        onUpdate(context);
+        super.update(context);
     }
 
-    void remove(Player player) {
+    void remove(final Player player) {
         if (!contexts.containsKey(player))
             return;
 
-        clearData(player);
-        contexts.remove(player);
+        contexts.remove(player).invalidate();
     }
 
     public void close() {
@@ -148,21 +125,29 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
         }
     }
 
-    public void setCancelOnClick(boolean cancelOnClick) {
-        this.cancelOnClick = cancelOnClick;
-    }
-
     public boolean isCancelOnClick() {
         return cancelOnClick;
     }
 
-    @Override
-    public Inventory getInventory() {
-        return getInventory(title);
+    public void setCancelOnClick(boolean cancelOnClick) {
+        this.cancelOnClick = cancelOnClick;
     }
 
-    private Inventory getInventory(String title) {
-        return Bukkit.createInventory(this, getLastSlot() + 1, title == null ? this.title : title);
+    public boolean isCancelOnPickup() {
+        return cancelOnPickup;
+    }
+
+    public void setCancelOnPickup(boolean cancelOnPickup) {
+        this.cancelOnPickup = cancelOnPickup;
+    }
+
+    @Override
+    public Inventory getInventory() {
+        throw new UnsupportedOperationException();
+    }
+
+    private Inventory getInventory(String title, int size) {
+        return Bukkit.createInventory(this, size, title == null ? this.title : title);
     }
 
     public void clearData(Player player) {
@@ -181,10 +166,11 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T getData(Player player, String key, T defaultValue) {
-        if (!data.containsKey(player))
-            return defaultValue;
-        return (T) data.get(player).getOrDefault(key, defaultValue);
+    public <T> T getData(Player player, String key, Supplier<T> defaultValue) {
+        if (!data.containsKey(player) || !data.get(player).containsKey(key))
+            return defaultValue.get();
+
+        return (T) data.get(player).get(key);
     }
 
     public void setData(Player player, Map<String, Object> data) {
@@ -196,19 +182,25 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
     }
 
     public boolean hasData(Player player, String key) {
-        return data.containsKey(player) && data.get(player).containsKey(key);
+        if (!data.containsKey(player))
+            return false;
+
+        return data.get(player).containsKey(key);
+    }
+
+    protected void onOpen(OpenViewContext context) {
     }
 
     protected void onRender(ViewContext context) {
-    }
-
-    protected void onOpen(PreRenderViewContext context) {
     }
 
     protected void onClose(ViewContext context) {
     }
 
     protected void onClick(ViewSlotContext context) {
+    }
+
+    protected void onUpdate(ViewContext context) {
     }
 
 }
