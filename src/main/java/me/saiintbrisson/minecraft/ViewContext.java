@@ -104,7 +104,6 @@ public class ViewContext extends VirtualView {
 
     public void clear(int slot) {
         getItems()[slot] = null;
-        inventory.setItem(slot, null);
     }
 
     public void clear() {
