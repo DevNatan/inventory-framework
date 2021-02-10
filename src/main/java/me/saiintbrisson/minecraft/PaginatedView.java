@@ -3,7 +3,6 @@ package me.saiintbrisson.minecraft;
 import me.saiintbrisson.minecraft.utils.Paginator;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 import java.util.Stack;
@@ -42,7 +41,15 @@ public abstract class PaginatedView<T> extends View {
         this.limit = limit;
     }
 
+    /**
+     * @deprecated Use {@link #setSource(List)} instead.
+     */
+    @Deprecated
     public void setPaginationSource(List<T> source) {
+        setSource(source);
+    }
+
+    public void setSource(List<T> source) {
         this.paginator = new Paginator<>(getPageSize(), source);
     }
 
@@ -54,6 +61,11 @@ public abstract class PaginatedView<T> extends View {
         return paginator;
     }
 
+    /**
+     * This method will not be available in the next versions.
+     * @param paginator
+     */
+    @Deprecated
     public void setPaginator(Paginator<T> paginator) {
         this.paginator = paginator;
     }
@@ -183,13 +195,6 @@ public abstract class PaginatedView<T> extends View {
     }
 
     final void updateContext(PaginatedViewContext<T> context, int page) {
-        if (context.getPaginator() == null) {
-            if (this.paginator == null)
-                throw new IllegalArgumentException("No pagination source was provided.");
-
-            context.setPaginator(this.paginator);
-        }
-
         // AIOOBE
         if (!context.getPaginator().hasPage(page))
             return;

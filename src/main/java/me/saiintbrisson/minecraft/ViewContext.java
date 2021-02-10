@@ -201,11 +201,16 @@ public class ViewContext extends VirtualView {
         return inventory.getSize() - 1;
     }
 
+    /**
+     * @deprecated Use {@link #paginated()} and {@link PaginatedViewContext#setSource(List)} instead.
+     */
+    @Deprecated
+    @SuppressWarnings("unchecked")
     public void setSource(List<?> source) {
         if (!(this instanceof PaginatedViewContext))
             throw new IllegalArgumentException("Only paginated views can have a source.");
 
-        ((PaginatedViewContext<?>) this).setPaginator(new Paginator(((PaginatedView<?>) view).getPageSize(), source));
+        ((PaginatedView<?>) view).setPaginator(new Paginator(((PaginatedView<?>) view).getPageSize(), source));
     }
 
     /**

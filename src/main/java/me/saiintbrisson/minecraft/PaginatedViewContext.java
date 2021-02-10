@@ -42,7 +42,7 @@ public class PaginatedViewContext<T> extends ViewContext {
      * @return the total page count.
      */
     public int getPagesCount() {
-        return paginator.count();
+        return getPaginator().count();
     }
 
     /**
@@ -50,7 +50,7 @@ public class PaginatedViewContext<T> extends ViewContext {
      * @return the items count.
      */
     public int getPageSize() {
-        return paginator.getPageSize();
+        return getPaginator().getPageSize();
     }
 
     /**
@@ -64,14 +64,14 @@ public class PaginatedViewContext<T> extends ViewContext {
      * Returns the number of the next page with the maximum value of the number of available pages.
      */
     public int getNextPage() {
-        return Math.min(paginator.count(), page + 1);
+        return Math.min(getPaginator().count(), page + 1);
     }
 
     /**
      * Returns `true` if there are more pages than the current one available or `false` otherwise.
      */
     public boolean hasNextPage() {
-        return paginator.hasPage(page + 1);
+        return getPaginator().hasPage(page + 1);
     }
 
     /**
@@ -114,7 +114,14 @@ public class PaginatedViewContext<T> extends ViewContext {
      * Returns the {@link Paginator} of that context.
      */
     Paginator<T> getPaginator() {
-        return paginator;
+        if (paginator != null)
+            return paginator;
+
+        final Paginator<T> paginator = (Paginator<T>) ((PaginatedView<T>) view).getPaginator();
+        if (paginator != null)
+            return paginator;
+
+        throw new IllegalArgumentException("No pagination source was provided.");
     }
 
     /**
@@ -128,11 +135,17 @@ public class PaginatedViewContext<T> extends ViewContext {
     /**
      * Defines the source of the {@link Paginator} for this context.
      * @param source the pagination source.
-     * @deprecated Use {@link ViewContext#setSource(List)} instead.
+     * @deprecated Use {@link #setSource(List)} instead.
      */
     @Deprecated
+    @SuppressWarnings("unchecked")
     public void setPaginationSource(List<?> source) {
-        this.paginator = new Paginator(((PaginatedView<T>) getView()).getPageSize(), source);
+        ((PaginatedView<T>) getView()).setSource((List<T>) source);
+    }
+
+    @SuppressWarnings("unchecked")
+    public void setSource(List<?> source) {
+        ((PaginatedView<?>) view).setPaginator(new Paginator(((PaginatedView<?>) view).getPageSize(), source));
     }
 
     /**
