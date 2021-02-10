@@ -16,7 +16,6 @@ public final class ViewFrame {
     private final Plugin owner;
     private Listener listener;
     private final Map<Class<? extends View>, View> registeredViews;
-    private boolean selfRegister = true;
     private Function<PaginatedViewContext<?>, ViewItem> defaultPreviousPageItem;
     private Function<PaginatedViewContext<?>, ViewItem> defaultNextPageItem;
 
@@ -38,14 +37,6 @@ public final class ViewFrame {
         return listener;
     }
 
-    public boolean isSelfRegister() {
-        return selfRegister;
-    }
-
-    public void setSelfRegister(boolean selfRegister) {
-        this.selfRegister = selfRegister;
-    }
-
     public Map<Class<? extends View>, View> getRegisteredViews() {
         return registeredViews;
     }
@@ -54,6 +45,7 @@ public final class ViewFrame {
     public final void addView(View view) {
         if (view.getFrame() == null)
             view.setFrame(this);
+
         registeredViews.put(view.getClass(), view);
     }
 
@@ -81,10 +73,10 @@ public final class ViewFrame {
             iterator.remove();
         }
 
-        if (listener != null)
+        if (listener != null) {
             HandlerList.unregisterAll(listener);
-
-        listener = null;
+            listener = null;
+        }
     }
 
     public <T extends View> T open(Class<T> view, Player player) {

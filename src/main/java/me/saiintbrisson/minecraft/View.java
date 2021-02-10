@@ -39,10 +39,6 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
         this.title = title;
         contexts = new WeakHashMap<>();
         data = new WeakHashMap<>();
-
-        // self registration, must be singleton
-        if ((frame != null) && frame.isSelfRegister())
-            frame.addView(this);
     }
 
     @Override
