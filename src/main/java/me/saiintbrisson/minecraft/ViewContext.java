@@ -15,7 +15,7 @@ public class ViewContext extends VirtualView {
     protected boolean cancelled;
     private final Map<Integer, Map<String, Object>> slotData = new HashMap<>();
     boolean checkedLayerSignature;
-    Stack<Integer> filledLayer;
+    Stack<Integer> itemsLayer;
 
     public ViewContext(View view, Player player, Inventory inventory) {
         super(inventory == null ? null : new ViewItem[View.INVENTORY_ROW_SIZE * (inventory.getSize() / 9)]);
@@ -94,28 +94,52 @@ public class ViewContext extends VirtualView {
         return view.getData(player);
     }
 
+    /**
+     * Updates the current view to that context.
+     */
     public void update() {
         view.update(this);
     }
 
+    /**
+     * Closes the current view for that context.
+     */
     public void close() {
         player.closeInventory();
     }
 
+    /**
+     * Clear a slot from that view for that context.
+     * It is necessary to use `update` to apply the action.
+     * @param slot the slot to be cleared.
+     */
     public void clear(int slot) {
         getItems()[slot] = null;
     }
 
+    /**
+     * Clears all slots from that view for that context.
+     * It is necessary to use `update` to apply the action.
+     */
     public void clear() {
         for (int i = 0; i < getItems().length; i++) {
             clear(i);
         }
     }
 
+    /**
+     * Opens the specified view for users in that context.
+     * @param view the view to be open.
+     */
     public void open(Class<? extends View> view) {
         this.view.getFrame().open(view, player);
     }
 
+    /**
+     * Opens the specified view for users in that context with the specified data.
+     * @param view the view to be open.
+     * @param data custom data.
+     */
     public void open(Class<? extends View> view, Map<String, Object> data) {
         this.view.getFrame().open(view, player, data);
     }
@@ -187,13 +211,28 @@ public class ViewContext extends VirtualView {
     /**
      * Updates the current context by jumping to the specified page.
      * @param page the new page.
+     * @deprecated Use {@link #paginated()} and {@link PaginatedViewContext#switchTo(int)} instead.
      */
+    @Deprecated
     @SuppressWarnings("unchecked")
     public void switchTo(int page) {
         if (!(this instanceof PaginatedViewContext))
             throw new IllegalArgumentException("Only paginated views can switch between pages.");
 
         ((PaginatedView<?>) view).updateContext((PaginatedViewContext) this, page);
+    }
+
+    /**
+     * Returns the current context as the context of a paged view.
+     * @param <T> view type parameter.
+     * @return this
+     */
+    @SuppressWarnings("unchecked")
+    public <T> PaginatedViewContext<T> paginated() {
+        if (!(view instanceof PaginatedView))
+            throw new IllegalArgumentException("Only paginated views can enforce paginated view context.");
+
+        return (PaginatedViewContext<T>) this;
     }
 
     @Override
