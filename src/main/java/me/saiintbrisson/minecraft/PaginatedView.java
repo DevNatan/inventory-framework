@@ -3,6 +3,7 @@ package me.saiintbrisson.minecraft;
 import me.saiintbrisson.minecraft.utils.Paginator;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 import java.util.Stack;
@@ -15,7 +16,7 @@ public abstract class PaginatedView<T> extends View {
     private static final char PREVIOUS_PAGE_CHAR = '<';
     private static final char NEXT_PAGE_CHAR = '>';
     private static final char EMPTY_SLOT_CHAR = 'X';
-    private static final char FILLED_SLOT_CHAR = 'O';
+    private static final char ITEM_SLOT_CHAR = 'O';
 
     private Paginator<T> paginator;
     private int offset;
@@ -129,7 +130,12 @@ public abstract class PaginatedView<T> extends View {
                 context.setPreviousPageItemSlot(item.getSlot());
             }
 
-            render(context, item.withCancelOnClick(true).onClick($ -> context.switchToPreviousPage()), context.getPreviousPageItemSlot());
+            // checking if the item already has a native click handler
+            // will make it possible to have custom handlers.
+            if (item.getClickHandler() == null)
+                item.onClick(ctx -> ctx.paginated().switchToNextPage());
+
+            render(context, item.withCancelOnClick(true), context.getPreviousPageItemSlot());
         }
     }
 
@@ -146,12 +152,17 @@ public abstract class PaginatedView<T> extends View {
         } else {
             if (defaultSlot == UNSET_SLOT) {
                 if (item.getSlot() == UNSET_SLOT)
-                    throw new IllegalArgumentException("No slot has been provided for previous page item.");
+                    throw new IllegalArgumentException("No slot has been provided for next page item.");
 
                 context.setNextPageItemSlot(item.getSlot());
             }
 
-            render(context, item.withCancelOnClick(true).onClick($ -> context.switchToNextPage()), context.getNextPageItemSlot());
+            // checking if the item already has a native click handler
+            // will make it possible to have custom handlers.
+            if (item.getClickHandler() == null)
+                item.onClick(ctx -> ctx.paginated().switchToNextPage());
+
+            render(context, item.withCancelOnClick(true), context.getNextPageItemSlot());
         }
     }
 
@@ -192,7 +203,7 @@ public abstract class PaginatedView<T> extends View {
                 if (len != columnsLimit)
                     throw new IllegalArgumentException("Layout columns must respect the size of the inventory (" + len + " != " + columnsLimit + ")");
 
-                context.filledLayer = new Stack<>();
+                context.itemsLayer = new Stack<>();
                 for (int row = 0; row < len; row++) {
                     final String layer = layout[row];
                     if (layer.length() != INVENTORY_ROW_SIZE)
@@ -204,8 +215,8 @@ public abstract class PaginatedView<T> extends View {
                         switch (c) {
                             case EMPTY_SLOT_CHAR:
                                 break;
-                            case FILLED_SLOT_CHAR: {
-                                context.filledLayer.push(targetSlot);
+                            case ITEM_SLOT_CHAR: {
+                                context.itemsLayer.push(targetSlot);
                                 break;
                             }
                             case PREVIOUS_PAGE_CHAR: {
@@ -230,7 +241,7 @@ public abstract class PaginatedView<T> extends View {
                     }
                 }
 
-                context.getPaginator().setPageSize(context.filledLayer.size());
+                context.getPaginator().setPageSize(context.itemsLayer.size());
             }
 
             context.checkedLayerSignature = true;
@@ -239,12 +250,12 @@ public abstract class PaginatedView<T> extends View {
         context.setPage(page);
         final List<T> elements = context.getPaginator().getPage(page);
         final int size = elements.size();
-        final int lastSlot = layout == null ? limit : context.filledLayer.peek();
+        final int lastSlot = layout == null ? limit : context.itemsLayer.peek();
         for (int i = 0; i < lastSlot; i++) {
-            if (layout != null && i >= context.filledLayer.size())
+            if (layout != null && i < context.itemsLayer.size())
                 break;
 
-            final int targetSlot = layout == null ? offset + i : context.filledLayer.elementAt(i);
+            final int targetSlot = layout == null ? offset + i : context.itemsLayer.elementAt(i);
             if (i < size)
                 renderPaginatedItemAt(context, targetSlot, elements.get(i));
             else {

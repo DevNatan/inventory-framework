@@ -38,6 +38,22 @@ public class PaginatedViewContext<T> extends ViewContext {
     }
 
     /**
+     * Returns the number of pages available in that context.
+     * @return the total page count.
+     */
+    public int getPagesCount() {
+        return paginator.count();
+    }
+
+    /**
+     * Returns the total maximum number of fixed elements that a page can contain.
+     * @return the items count.
+     */
+    public int getPageSize() {
+        return paginator.getPageSize();
+    }
+
+    /**
      * Returns the number of the previous page with a minimum value of {@link #FIRST_PAGE}.
      */
     public int getPreviousPage() {
@@ -70,6 +86,14 @@ public class PaginatedViewContext<T> extends ViewContext {
      */
     public boolean isLastPage() {
         return !hasNextPage();
+    }
+
+    /**
+     * Updates the current context by jumping to the specified page.
+     * @param page the new page.
+     */
+    public void switchTo(int page) {
+        super.switchTo(page);
     }
 
     /**
