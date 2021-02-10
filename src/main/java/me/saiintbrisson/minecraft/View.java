@@ -19,7 +19,7 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
     private ViewFrame frame;
     private final String title;
     private final int rows;
-    final Map<Player, ViewContext> contexts;
+    private final Map<Player, ViewContext> contexts;
     private boolean cancelOnClick;
     private boolean cancelOnPickup;
     private final Map<Player, Map<String, Object>> data;
@@ -51,6 +51,10 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
     @Override
     public int getLastSlot() {
         return INVENTORY_ROW_SIZE * rows - 1;
+    }
+
+    public Map<Player, ViewContext> getContexts() {
+        return contexts;
     }
 
     public ViewContext getContext(Player player) {
@@ -86,7 +90,12 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
             return;
 
         final OpenViewContext preOpenContext = new OpenViewContext(this, player);
-        if (data != null) setData(player, new HashMap<>(data));
+        if (data != null)
+            setData(player, new HashMap<>(data));
+        else {
+            // ensure non-transitive data on view switch
+            clearData(player);
+        }
 
         onOpen(preOpenContext);
         if (preOpenContext.isCancelled()) {
@@ -108,11 +117,12 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
         super.update(context);
     }
 
-    void remove(final Player player) {
-        if (!contexts.containsKey(player))
-            return;
+    ViewContext remove(Player player) {
+        final ViewContext context = contexts.remove(player);
+        if (context != null)
+            context.invalidate();
 
-        contexts.remove(player).invalidate();
+        return context;
     }
 
     public void close() {
