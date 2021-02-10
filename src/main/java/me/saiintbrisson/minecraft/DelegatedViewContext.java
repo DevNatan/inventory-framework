@@ -55,6 +55,11 @@ public class DelegatedViewContext extends ViewSlotContext {
     }
 
     @Override
+    public <T> PaginatedViewContext<T> paginated() {
+        return delegate.paginated();
+    }
+
+    @Override
     public String toString() {
         return "DelegatedViewContext{" +
                 "cancelled=" + cancelled +
