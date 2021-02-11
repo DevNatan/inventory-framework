@@ -210,7 +210,7 @@ public class ViewContext extends VirtualView {
         if (!(this instanceof PaginatedViewContext))
             throw new IllegalArgumentException("Only paginated views can have a source.");
 
-        ((PaginatedView<?>) view).setPaginator(new Paginator(((PaginatedView<?>) view).getPageSize(), source));
+        ((PaginatedViewContext<?>) this).setSource(source);
     }
 
     /**

@@ -13,7 +13,6 @@ public class PaginatedViewContext<T> extends ViewContext {
     public static final int FIRST_PAGE = 0;
 
     private int page;
-    private Paginator<T> paginator;
     private int previousPageItemSlot = UNSET_SLOT;
     private int nextPageItemSlot = UNSET_SLOT;
 
@@ -114,22 +113,11 @@ public class PaginatedViewContext<T> extends ViewContext {
      * Returns the {@link Paginator} of that context.
      */
     Paginator<T> getPaginator() {
-        if (paginator != null)
-            return paginator;
-
         final Paginator<T> paginator = (Paginator<T>) ((PaginatedView<T>) view).getPaginator();
         if (paginator != null)
             return paginator;
 
         throw new IllegalArgumentException("No pagination source was provided.");
-    }
-
-    /**
-     * Defines the {@link Paginator} of that context.
-     * @param paginator the new paginator.
-     */
-    void setPaginator(Paginator<T> paginator) {
-        this.paginator = paginator;
     }
 
     /**
@@ -140,7 +128,7 @@ public class PaginatedViewContext<T> extends ViewContext {
     @Deprecated
     @SuppressWarnings("unchecked")
     public void setPaginationSource(List<?> source) {
-        ((PaginatedView<T>) getView()).setSource((List<T>) source);
+        setSource(source);
     }
 
     @SuppressWarnings("unchecked")
@@ -148,26 +136,19 @@ public class PaginatedViewContext<T> extends ViewContext {
         ((PaginatedView<?>) view).setPaginator(new Paginator(((PaginatedView<?>) view).getPageSize(), source));
     }
 
-    /**
-     * Returns `true` if a source has been set for pagination or `false`, otherwise.
-     */
-    public boolean hasPaginationSource() {
-        return paginator != null;
-    }
-
-    public int getPreviousPageItemSlot() {
+    int getPreviousPageItemSlot() {
         return previousPageItemSlot;
     }
 
-    public void setPreviousPageItemSlot(int previousPageItemSlot) {
+    void setPreviousPageItemSlot(int previousPageItemSlot) {
         this.previousPageItemSlot = previousPageItemSlot;
     }
 
-    public int getNextPageItemSlot() {
+    int getNextPageItemSlot() {
         return nextPageItemSlot;
     }
 
-    public void setNextPageItemSlot(int nextPageItemSlot) {
+    void setNextPageItemSlot(int nextPageItemSlot) {
         this.nextPageItemSlot = nextPageItemSlot;
     }
 
