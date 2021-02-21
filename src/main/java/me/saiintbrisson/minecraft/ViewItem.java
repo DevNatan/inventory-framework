@@ -76,7 +76,7 @@ public class ViewItem {
     }
 
     public ViewItem closeOnClick() {
-        return withCloseOnClick(!closeOnClick);
+        return withCloseOnClick(true);
     }
 
     public ViewItem withCloseOnClick(boolean closeOnClick) {
@@ -98,7 +98,7 @@ public class ViewItem {
     }
 
     public ViewItem cancelOnClick() {
-        return withCancelOnClick(!cancelOnClick);
+        return withCancelOnClick(true);
     }
 
     @Override
