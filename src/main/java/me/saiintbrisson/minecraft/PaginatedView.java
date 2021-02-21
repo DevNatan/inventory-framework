@@ -251,7 +251,7 @@ public abstract class PaginatedView<T> extends View {
         final List<T> elements = context.getPaginator().getPage(page);
         final int size = elements.size();
         final int lastSlot = layout == null ? limit : context.itemsLayer.peek();
-        final int layerSize = context.itemsLayer.size();
+        final int layerSize = layout == null ? 0 /* ignored */ : context.itemsLayer.size();
         for (int i = 0; i < lastSlot; i++) {
             if (layout != null && i >= layerSize)
                 break;
