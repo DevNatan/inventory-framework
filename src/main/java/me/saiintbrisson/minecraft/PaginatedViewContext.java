@@ -13,7 +13,6 @@ public class PaginatedViewContext<T> extends ViewContext {
     public static final int FIRST_PAGE = 0;
 
     private int page;
-    private Paginator<T> paginator;
     private int previousPageItemSlot = UNSET_SLOT;
     private int nextPageItemSlot = UNSET_SLOT;
 
@@ -38,6 +37,22 @@ public class PaginatedViewContext<T> extends ViewContext {
     }
 
     /**
+     * Returns the number of pages available in that context.
+     * @return the total page count.
+     */
+    public int getPagesCount() {
+        return getPaginator().count();
+    }
+
+    /**
+     * Returns the total maximum number of fixed elements that a page can contain.
+     * @return the items count.
+     */
+    public int getPageSize() {
+        return getPaginator().getPageSize();
+    }
+
+    /**
      * Returns the number of the previous page with a minimum value of {@link #FIRST_PAGE}.
      */
     public int getPreviousPage() {
@@ -48,14 +63,14 @@ public class PaginatedViewContext<T> extends ViewContext {
      * Returns the number of the next page with the maximum value of the number of available pages.
      */
     public int getNextPage() {
-        return Math.min(paginator.count(), page + 1);
+        return Math.min(getPaginator().count(), page + 1);
     }
 
     /**
      * Returns `true` if there are more pages than the current one available or `false` otherwise.
      */
     public boolean hasNextPage() {
-        return paginator.hasPage(page + 1);
+        return getPaginator().hasPage(page + 1);
     }
 
     /**
@@ -70,6 +85,14 @@ public class PaginatedViewContext<T> extends ViewContext {
      */
     public boolean isLastPage() {
         return !hasNextPage();
+    }
+
+    /**
+     * Updates the current context by jumping to the specified page.
+     * @param page the new page.
+     */
+    public void switchTo(int page) {
+        super.switchTo(page);
     }
 
     /**
@@ -90,47 +113,42 @@ public class PaginatedViewContext<T> extends ViewContext {
      * Returns the {@link Paginator} of that context.
      */
     Paginator<T> getPaginator() {
-        return paginator;
-    }
+        final Paginator<T> paginator = (Paginator<T>) ((PaginatedView<T>) view).getPaginator();
+        if (paginator != null)
+            return paginator;
 
-    /**
-     * Defines the {@link Paginator} of that context.
-     * @param paginator the new paginator.
-     */
-    void setPaginator(Paginator<T> paginator) {
-        this.paginator = paginator;
+        throw new IllegalArgumentException("No pagination source was provided.");
     }
 
     /**
      * Defines the source of the {@link Paginator} for this context.
      * @param source the pagination source.
-     * @deprecated Use {@link ViewContext#setSource(List)} instead.
+     * @deprecated Use {@link #setSource(List)} instead.
      */
     @Deprecated
+    @SuppressWarnings("unchecked")
     public void setPaginationSource(List<?> source) {
-        this.paginator = new Paginator(((PaginatedView<T>) getView()).getPageSize(), source);
+        setSource(source);
     }
 
-    /**
-     * Returns `true` if a source has been set for pagination or `false`, otherwise.
-     */
-    public boolean hasPaginationSource() {
-        return paginator != null;
+    @SuppressWarnings("unchecked")
+    public void setSource(List<?> source) {
+        ((PaginatedView<?>) view).setPaginator(new Paginator(((PaginatedView<?>) view).getPageSize(), source));
     }
 
-    public int getPreviousPageItemSlot() {
+    int getPreviousPageItemSlot() {
         return previousPageItemSlot;
     }
 
-    public void setPreviousPageItemSlot(int previousPageItemSlot) {
+    void setPreviousPageItemSlot(int previousPageItemSlot) {
         this.previousPageItemSlot = previousPageItemSlot;
     }
 
-    public int getNextPageItemSlot() {
+    int getNextPageItemSlot() {
         return nextPageItemSlot;
     }
 
-    public void setNextPageItemSlot(int nextPageItemSlot) {
+    void setNextPageItemSlot(int nextPageItemSlot) {
         this.nextPageItemSlot = nextPageItemSlot;
     }
 

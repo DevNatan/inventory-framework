@@ -107,8 +107,9 @@ public class ViewListener implements Listener {
             return;
 
         final Player player = (Player) e.getPlayer();
-        view.onClose(new ViewContext(view, player, e.getInventory()));
-        view.remove(player);
+        final ViewContext context = view.remove(player);
+        if (context != null)
+            view.onClose(context);
     }
 
     @EventHandler(ignoreCancelled = true)

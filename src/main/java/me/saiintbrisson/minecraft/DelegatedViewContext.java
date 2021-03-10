@@ -55,6 +55,21 @@ public class DelegatedViewContext extends ViewSlotContext {
     }
 
     @Override
+    public void close() {
+        delegate.close();
+    }
+
+    @Override
+    public void clear(int slot) {
+        delegate.clear(slot);
+    }
+
+    @Override
+    public <T> PaginatedViewContext<T> paginated() {
+        return delegate.paginated();
+    }
+
+    @Override
     public String toString() {
         return "DelegatedViewContext{" +
                 "cancelled=" + cancelled +
