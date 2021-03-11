@@ -194,6 +194,8 @@ public class ViewContext extends VirtualView {
 
     void invalidate() {
         view.clearData(player);
+        checkedLayerSignature = false;
+        itemsLayer = null;
     }
 
     @Override
