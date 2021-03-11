@@ -24,16 +24,6 @@ public class ViewContext extends VirtualView {
         this.inventory = inventory;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ViewItem slot(int slot) {
-        final ViewItem item = super.slot(slot);
-        item.setCancelOnClick(view.isCancelOnClick());
-        return item;
-    }
-
     @Override
     public void setLayout(String... layout) {
         super.setLayout(layout);
