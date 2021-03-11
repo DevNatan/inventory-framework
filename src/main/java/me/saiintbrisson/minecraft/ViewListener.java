@@ -45,7 +45,30 @@ public class ViewListener implements Listener {
         frame.unregister();
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler
+    public void onViewItemDrag(final InventoryDragEvent e) {
+        if (!(e.getWhoClicked() instanceof Player))
+            return;
+
+        final Inventory inventory = e.getInventory();
+        final View view = getView(inventory);
+        if (view == null)
+            return;
+
+        if (!view.isCancelOnClick())
+            return;
+
+        final int size = inventory.getSize();
+        for (int slot : e.getRawSlots()) {
+            if (!(slot < size))
+                continue;
+
+            e.setCancelled(true);
+            break;
+        }
+    }
+
+    @EventHandler
     public void onViewClick(final InventoryClickEvent e) {
         if (!(e.getWhoClicked() instanceof Player))
             return;
