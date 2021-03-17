@@ -1,10 +1,12 @@
 package me.saiintbrisson.minecraft;
 
-import me.saiintbrisson.minecraft.utils.Paginator;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Stack;
 import java.util.function.Supplier;
 
 public class ViewContext extends VirtualView {
@@ -197,7 +199,6 @@ public class ViewContext extends VirtualView {
      * @deprecated Use {@link #paginated()} and {@link PaginatedViewContext#setSource(List)} instead.
      */
     @Deprecated
-    @SuppressWarnings("unchecked")
     public void setSource(List<?> source) {
         if (!(this instanceof PaginatedViewContext))
             throw new IllegalArgumentException("Only paginated views can have a source.");

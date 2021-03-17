@@ -235,7 +235,7 @@ public class VirtualView {
         render(context, item, slot);
     }
 
-    private ViewItem resolve(ViewContext context, int slot) {
+    ViewItem resolve(ViewContext context, int slot) {
         if (this instanceof ViewContext)
             throw new IllegalArgumentException("Context can't resolve items itself");
 

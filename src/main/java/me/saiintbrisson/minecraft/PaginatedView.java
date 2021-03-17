@@ -274,7 +274,6 @@ public abstract class PaginatedView<T> extends View {
 
     private void renderPaginatedItemAt(PaginatedViewContext<T> context, int slot, T value) {
         final ViewItem item = new ViewItem(slot);
-        item.setCancelOnClick(context.getView().isCancelOnClick());
         onPaginationItemRender(context, item, value);
         render(context, item, slot);
     }

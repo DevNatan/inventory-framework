@@ -2,6 +2,7 @@ package me.saiintbrisson.minecraft;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.DragType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 
@@ -22,6 +23,8 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
     private final Map<Player, ViewContext> contexts;
     private boolean cancelOnClick;
     private boolean cancelOnPickup;
+    private boolean cancelOnDrop;
+    private boolean cancelOnDrag;
     private final Map<Player, Map<String, Object>> data;
 
     public View(int rows) {
@@ -39,6 +42,9 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
         this.title = title;
         contexts = new WeakHashMap<>();
         data = new WeakHashMap<>();
+        cancelOnPickup = true;
+        cancelOnDrop = true;
+        cancelOnDrag = true;
     }
 
     @Override
@@ -138,6 +144,22 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 
     public void setCancelOnPickup(boolean cancelOnPickup) {
         this.cancelOnPickup = cancelOnPickup;
+    }
+
+    public boolean isCancelOnDrop() {
+        return cancelOnDrop;
+    }
+
+    public void setCancelOnDrop(boolean cancelOnDrop) {
+        this.cancelOnDrop = cancelOnDrop;
+    }
+
+    public boolean isCancelOnDrag() {
+        return cancelOnDrag;
+    }
+
+    public void setCancelOnDrag(boolean cancelOnDrag) {
+        this.cancelOnDrag = cancelOnDrag;
     }
 
     @Override

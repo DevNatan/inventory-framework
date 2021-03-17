@@ -3,14 +3,13 @@ package me.saiintbrisson.minecraft;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.inventory.*;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.ItemStack;
 
 public class ViewListener implements Listener {
 
@@ -41,7 +40,6 @@ public class ViewListener implements Listener {
         if (!frame.getOwner().equals(e.getPlugin()))
             return;
 
-        // if the plugin is disabled it will not be possible to handle events
         frame.unregister();
     }
 
@@ -55,16 +53,15 @@ public class ViewListener implements Listener {
         if (view == null)
             return;
 
-        if (!view.isCancelOnClick())
-            return;
-
         final int size = inventory.getSize();
         for (int slot : e.getRawSlots()) {
             if (!(slot < size))
                 continue;
 
-            e.setCancelled(true);
-            break;
+            if (view.isCancelOnDrag()) {
+                e.setCancelled(true);
+                break;
+            }
         }
     }
 
@@ -87,34 +84,28 @@ public class ViewListener implements Listener {
         if (!(e.getRawSlot() < inventory.getSize()))
             return;
 
+        e.setCancelled(view.isCancelOnClick());
+
+        final ItemStack stack = e.getCurrentItem();
         final ViewContext context = view.getContext(player);
         final int slot = e.getSlot();
-        final ViewSlotContext globalClick = new DelegatedViewContext(context, slot, e.getCurrentItem());
+        final ViewItem item = view.resolve(context, slot);
+        final ViewSlotContext globalClick = new DelegatedViewContext(context, slot, stack);
         globalClick.setClickOrigin(e);
         view.onClick(globalClick);
-        if (globalClick.isCancelled()) {
-            e.setCancelled(true);
+
+        if (item == null) {
+            e.setCancelled(e.isCancelled() || globalClick.isCancelled());
             return;
         }
 
-        ViewItem item = view.getItem(slot);
-        if (item == null) {
-            item = context.getItem(slot);
-            if (item == null) {
-                // cancel empty item place/pickup
-                e.setCancelled(view.isCancelOnClick());
-                return;
-            }
-        }
-
         if (item.getClickHandler() != null) {
-            ViewSlotContext click = new DelegatedViewContext(context, slot, e.getCurrentItem());
-            click.setClickOrigin(e);
-            item.getClickHandler().handle(click);
-            e.setCancelled(click.isCancelled());
+            final ViewSlotContext internalClick = new DelegatedViewContext(context, slot, stack);
+            item.getClickHandler().handle(internalClick);
+            e.setCancelled(e.isCancelled() || internalClick.isCancelled());
         }
 
-        e.setCancelled(item.isCancelOnClick());
+        e.setCancelled(e.isCancelled() || item.isCancelOnClick());
 
         if (item.isCloseOnClick())
             player.closeInventory();
@@ -129,22 +120,21 @@ public class ViewListener implements Listener {
         if (view == null)
             return;
 
-        final Player player = (Player) e.getPlayer();
-        final ViewContext context = view.remove(player);
+        final ViewContext context = view.remove((Player) e.getPlayer());
         if (context != null)
             view.onClose(context);
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler
     public void onDropItemOnView(final PlayerDropItemEvent e) {
         final View view = getView(e.getPlayer().getOpenInventory().getTopInventory());
         if (view == null)
             return;
 
-        e.setCancelled(true);
+        e.setCancelled(view.isCancelOnDrop());
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler
     public void onPickupItemOnView(final PlayerPickupItemEvent e) {
         final View view = getView(e.getPlayer().getOpenInventory().getTopInventory());
         if (view == null)
