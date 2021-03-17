@@ -183,6 +183,7 @@ public class VirtualView {
             item.getRenderHandler().handle(render);
             if (render.hasChanged()) {
                 context.getInventory().setItem(slot, render.getItem());
+                render.setChanged(false);
                 return;
             }
         }
@@ -226,7 +227,11 @@ public class VirtualView {
                     new DelegatedViewContext(context, slot, item.getItem());
 
             item.getUpdateHandler().handle(update);
-            render(update, item, slot);
+
+            if (update.hasChanged()) {
+                render(update, item, slot);
+                update.setChanged(false);
+            }
             return;
         }
 
@@ -248,9 +253,7 @@ public class VirtualView {
 
     @Override
     public String toString() {
-        return "VirtualView{" +
-                "items=" + items == null ? "null" : Arrays.stream(items).filter(Objects::nonNull).map(ViewItem::toString).collect(Collectors.joining()) +
-                '}';
+        return Arrays.stream(items).filter(Objects::nonNull).map(ViewItem::toString).collect(Collectors.joining());
     }
 
 }
