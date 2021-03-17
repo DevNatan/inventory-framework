@@ -9,18 +9,29 @@ import static me.saiintbrisson.minecraft.View.UNSET_SLOT;
 
 public class ViewItem {
 
+    public enum State {
+
+        UNDEFINED,
+
+        HOLDING,
+
+    }
+
     private final int slot;
     private ItemStack item;
 
     // fast path handlers
     private boolean closeOnClick;
     private boolean cancelOnClick;
+    private boolean overrideCancelOnClick;
+    private boolean preserveSlotSwapState = true;
 
     private ViewItemHandler clickHandler;
     private ViewItemHandler renderHandler;
     private ViewItemHandler updateHandler;
 
     private Map<String, Object> staticData;
+    private State state = State.UNDEFINED;
 
     public ViewItem() {
         this(UNSET_SLOT);
@@ -28,6 +39,14 @@ public class ViewItem {
 
     public ViewItem(int slot) {
         this.slot = slot;
+    }
+
+    State getState() {
+        return state;
+    }
+
+    void setState(State state) {
+        this.state = state;
     }
 
     public int getSlot() {
@@ -89,12 +108,17 @@ public class ViewItem {
         return this;
     }
 
+    public boolean isOverrideCancelOnClick() {
+        return overrideCancelOnClick;
+    }
+
     public boolean isCancelOnClick() {
         return cancelOnClick;
     }
 
     public void setCancelOnClick(boolean cancelOnClick) {
         this.cancelOnClick = cancelOnClick;
+        overrideCancelOnClick = true;
     }
 
     public ViewItem withCancelOnClick(boolean cancelOnClick) {
@@ -104,6 +128,15 @@ public class ViewItem {
 
     public ViewItem cancelOnClick() {
         return withCancelOnClick(true);
+    }
+
+    public boolean isPreserveSlotSwapState() {
+        return preserveSlotSwapState;
+    }
+
+    public ViewItem withPreserveSlotSwapState(boolean preserveSlotSwapState) {
+        this.preserveSlotSwapState = preserveSlotSwapState;
+        return this;
     }
 
     Object getData(String key) {
@@ -125,6 +158,8 @@ public class ViewItem {
                 ", item=" + item +
                 ", closeOnClick=" + closeOnClick +
                 ", cancelOnClick=" + cancelOnClick +
+                ", overrideCancelOnClick=" + overrideCancelOnClick +
+                ", preserveSlotSwapState=" + preserveSlotSwapState +
                 ", clickHandler=" + clickHandler +
                 ", renderHandler=" + renderHandler +
                 ", updateHandler=" + updateHandler +

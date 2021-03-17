@@ -31,7 +31,7 @@ public class ViewSlotContext extends ViewContext {
 
     public void setItem(ItemStack item) {
         this.item = item;
-        changed = true;
+        setChanged(true);
     }
 
     public Map<String, Object> getSlotData() {
@@ -69,6 +69,10 @@ public class ViewSlotContext extends ViewContext {
 
     void setClickOrigin(InventoryClickEvent clickOrigin) {
         this.clickOrigin = clickOrigin;
+    }
+
+    void setChanged(boolean changed) {
+        this.changed = changed;
     }
 
     boolean hasChanged() {

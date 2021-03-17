@@ -1,5 +1,7 @@
 package me.saiintbrisson.minecraft;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -76,20 +78,68 @@ public class ViewListener implements Listener {
         if (view == null)
             return;
 
+        // TODO: properly handle shift click
         if (e.getSlotType() == InventoryType.SlotType.OUTSIDE || e.getClick().isShiftClick()) {
             e.setCancelled(true);
             return;
         }
 
-        if (!(e.getRawSlot() < inventory.getSize()))
+        final InventoryAction action = e.getAction();
+        if (action == InventoryAction.NOTHING)
             return;
+
+        // player.sendMessage("Event: click=" + e.getClick() + ", action=" + action + ", item=" + e.getCurrentItem() + ", cursor=" + e.getCursor());
+        final ItemStack cursor = e.getCursor();
+        final int slot = e.getSlot();
+
+        // bottom inventory click
+        if (!(e.getRawSlot() < inventory.getSize())) {
+            if (action != InventoryAction.PLACE_ALL && action != InventoryAction.PLACE_ONE && action != InventoryAction.PLACE_SOME && action != InventoryAction.SWAP_WITH_CURSOR)
+                return;
+
+            // unable to handle move out since item move not possible
+            if (view.isCancelOnClick())
+                return;
+
+            final ViewContext context = view.getContext(player);
+            for (int i = view.getFirstSlot(); i <= view.getLastSlot(); i++) {
+                final ViewItem item = view.resolve(context, i);
+                if (item == null)
+                    continue;
+
+                if (item.getState() != ViewItem.State.HOLDING)
+                    continue;
+
+                ItemStack swappedItem = null;
+                if (action == InventoryAction.SWAP_WITH_CURSOR)
+                    swappedItem = e.getCurrentItem();
+
+                final ViewSlotMoveContext moveOutContext = new ViewSlotMoveContext(context, item.getSlot(), cursor, e.getView().getBottomInventory(), swappedItem, slot);
+                view.onMoveOut(moveOutContext);
+                item.setState(ViewItem.State.UNDEFINED);
+
+                if (moveOutContext.isCancelled())
+                    e.setCancelled(true);
+
+                if (moveOutContext.isMarkedToClose())
+                    Bukkit.getScheduler().runTask(frame.getOwner(), moveOutContext::closeNow);
+                break;
+            }
+            return;
+        }
+
+        if (action == InventoryAction.CLONE_STACK && view.isCancelOnClone()) {
+            e.setCancelled(true);
+            return;
+        }
 
         e.setCancelled(view.isCancelOnClick());
 
-        final ItemStack stack = e.getCurrentItem();
         final ViewContext context = view.getContext(player);
-        final int slot = e.getSlot();
+        final ItemStack stack = e.getCurrentItem();
         final ViewItem item = view.resolve(context, slot);
+
+        // global click handling
         final ViewSlotContext globalClick = new DelegatedViewContext(context, slot, stack);
         globalClick.setClickOrigin(e);
         view.onClick(globalClick);
@@ -99,15 +149,19 @@ public class ViewListener implements Listener {
             return;
         }
 
+        final ViewSlotContext slotContext = new DelegatedViewContext(context, slot, stack);
+        if (action.name().startsWith("PICKUP") || action == InventoryAction.CLONE_STACK)
+            item.setState(ViewItem.State.HOLDING);
+
         if (item.getClickHandler() != null) {
-            final ViewSlotContext internalClick = new DelegatedViewContext(context, slot, stack);
-            item.getClickHandler().handle(internalClick);
-            e.setCancelled(e.isCancelled() || internalClick.isCancelled());
+            item.getClickHandler().handle(slotContext);
+            e.setCancelled(e.isCancelled() || slotContext.isCancelled());
         }
 
-        e.setCancelled(e.isCancelled() || item.isCancelOnClick());
+        if (item.isOverrideCancelOnClick())
+            e.setCancelled(item.isCancelOnClick());
 
-        if (item.isCloseOnClick())
+        if (item.isCloseOnClick() || slotContext.isMarkedToClose())
             player.closeInventory();
     }
 
@@ -124,7 +178,7 @@ public class ViewListener implements Listener {
         final ViewContext context = view.remove(player);
         if (context != null) {
             final ItemStack cursor = player.getItemOnCursor();
-            if (cursor != null)
+            if (cursor != null && cursor.getType() != Material.AIR)
                 player.setItemOnCursor(null);
 
             view.onClose(context);

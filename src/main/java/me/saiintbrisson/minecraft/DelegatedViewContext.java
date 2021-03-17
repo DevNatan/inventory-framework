@@ -6,12 +6,17 @@ import java.util.Map;
 
 public class DelegatedViewContext extends ViewSlotContext {
 
-    private final ViewContext delegate;
+    protected final ViewContext delegate;
     private boolean cancelled;
 
     public DelegatedViewContext(ViewContext delegate, int slot, ItemStack item) {
         super(delegate.getView(), delegate.getPlayer(), delegate.getInventory(), slot, item);
         this.delegate = delegate;
+    }
+
+    @Override
+    public boolean isMarkedToClose() {
+        return delegate.isMarkedToClose();
     }
 
     @Override
@@ -57,6 +62,16 @@ public class DelegatedViewContext extends ViewSlotContext {
     @Override
     public void close() {
         delegate.close();
+    }
+
+    @Override
+    public void closeNow() {
+        delegate.closeNow();
+    }
+
+    @Override
+    public void cancelAndClose() {
+        delegate.cancelAndClose();
     }
 
     @Override

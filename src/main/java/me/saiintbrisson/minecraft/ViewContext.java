@@ -15,6 +15,7 @@ public class ViewContext extends VirtualView {
     protected final Player player;
     protected final Inventory inventory;
     protected boolean cancelled;
+    protected boolean markedToClose;
     private final Map<Integer, Map<String, Object>> slotData = new HashMap<>();
     boolean checkedLayerSignature;
     Stack<Integer> itemsLayer;
@@ -24,6 +25,10 @@ public class ViewContext extends VirtualView {
         this.view = view;
         this.player = player;
         this.inventory = inventory;
+    }
+
+    public boolean isMarkedToClose() {
+        return markedToClose;
     }
 
     @Override
@@ -71,15 +76,6 @@ public class ViewContext extends VirtualView {
     }
 
     /**
-     * Cancels the action that is taking place in that context.
-     * @deprecated Use {@link #setCancelled(boolean)} instead.
-     */
-    @Deprecated
-    public void cancel() {
-        this.cancelled = true;
-    }
-
-    /**
      * Returns the current data of the player tied to that context.
      */
     public Map<String, Object> getData() {
@@ -94,10 +90,28 @@ public class ViewContext extends VirtualView {
     }
 
     /**
-     * Closes the current view for that context.
+     * Close this context in the next tick.
      */
     public void close() {
+        this.markedToClose = true;
+    }
+
+    /**
+     * Immediately closes the current view for that context.
+     */
+    public void closeNow() {
         player.closeInventory();
+    }
+
+    /**
+     * Cancel the current context event and marks the context
+     * to be closed in the next event.
+     * @see #setCancelled(boolean)
+     * @see #close()
+     */
+    public void cancelAndClose() {
+        setCancelled(true);
+        close();
     }
 
     /**

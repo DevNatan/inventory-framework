@@ -2,7 +2,6 @@ package me.saiintbrisson.minecraft;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.DragType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 
@@ -25,6 +24,7 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
     private boolean cancelOnPickup;
     private boolean cancelOnDrop;
     private boolean cancelOnDrag;
+    private boolean cancelOnClone;
     private final Map<Player, Map<String, Object>> data;
 
     public View(int rows) {
@@ -45,6 +45,7 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
         cancelOnPickup = true;
         cancelOnDrop = true;
         cancelOnDrag = true;
+        cancelOnClone = true;
     }
 
     @Override
@@ -162,6 +163,14 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
         this.cancelOnDrag = cancelOnDrag;
     }
 
+    public boolean isCancelOnClone() {
+        return cancelOnClone;
+    }
+
+    public void setCancelOnClone(boolean cancelOnClone) {
+        this.cancelOnClone = cancelOnClone;
+    }
+
     @Override
     public Inventory getInventory() {
         throw new UnsupportedOperationException();
@@ -223,6 +232,9 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
     }
 
     protected void onUpdate(ViewContext context) {
+    }
+
+    protected void onMoveOut(ViewSlotMoveContext context) {
     }
 
 }
