@@ -38,12 +38,21 @@ public class ViewSlotContext extends ViewContext {
         return getSlotData(slot);
     }
 
+    @SuppressWarnings("unchecked")
     public <T> T getSlotData(String key) {
-        return getSlotData(slot, key);
+        final T value = getSlotData(slot, key);
+        if (value == null)
+            return (T) getItem(slot).getData(key);
+
+        return value;
     }
 
     public <T> T getSlotData(String key, Supplier<T> defaultValue) {
-        return getSlotData(slot, key, defaultValue);
+        final T value = getSlotData(key);
+        if (value == null)
+            return defaultValue.get();
+
+        return value;
     }
 
     public void setSlotData(String key, Object value) {

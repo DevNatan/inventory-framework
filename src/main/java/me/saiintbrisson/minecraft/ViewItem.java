@@ -2,6 +2,9 @@ package me.saiintbrisson.minecraft;
 
 import org.bukkit.inventory.ItemStack;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static me.saiintbrisson.minecraft.View.UNSET_SLOT;
 
 public class ViewItem {
@@ -16,6 +19,8 @@ public class ViewItem {
     private ViewItemHandler clickHandler;
     private ViewItemHandler renderHandler;
     private ViewItemHandler updateHandler;
+
+    private Map<String, Object> staticData;
 
     public ViewItem() {
         this(UNSET_SLOT);
@@ -101,6 +106,18 @@ public class ViewItem {
         return withCancelOnClick(true);
     }
 
+    Object getData(String key) {
+        return staticData == null ? null : staticData.get(key);
+    }
+
+    public ViewItem withData(String key, Object value) {
+        if (staticData == null)
+            staticData = new HashMap<>();
+
+        staticData.put(key, value);
+        return this;
+    }
+
     @Override
     public String toString() {
         return "ViewItem{" +
@@ -111,6 +128,7 @@ public class ViewItem {
                 ", clickHandler=" + clickHandler +
                 ", renderHandler=" + renderHandler +
                 ", updateHandler=" + updateHandler +
+                ", staticData=" + staticData +
                 '}';
     }
 
