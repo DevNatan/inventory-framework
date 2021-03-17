@@ -120,9 +120,15 @@ public class ViewListener implements Listener {
         if (view == null)
             return;
 
-        final ViewContext context = view.remove((Player) e.getPlayer());
-        if (context != null)
+        final Player player = (Player) e.getPlayer();
+        final ViewContext context = view.remove(player);
+        if (context != null) {
+            final ItemStack cursor = player.getItemOnCursor();
+            if (cursor != null)
+                player.setItemOnCursor(null);
+
             view.onClose(context);
+        }
     }
 
     @EventHandler
