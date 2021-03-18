@@ -17,22 +17,26 @@ public class ViewItem {
 
     }
 
-    private final int slot;
+    private int slot;
     private ItemStack item;
 
     // fast path handlers
     private boolean closeOnClick;
     private boolean cancelOnClick;
     private boolean overrideCancelOnClick;
-    private boolean preserveSlotSwapState = true;
 
     private ViewItemHandler clickHandler;
     private ViewItemHandler renderHandler;
     private ViewItemHandler updateHandler;
 
-    private Map<String, Object> staticData;
+    private Map<String, Object> data;
     private State state = State.UNDEFINED;
+    private boolean isPaginationItem;
 
+    /**
+     * @deprecated Use {@link ViewItem(int)} instead.
+     */
+    @Deprecated
     public ViewItem() {
         this(UNSET_SLOT);
     }
@@ -51,6 +55,10 @@ public class ViewItem {
 
     public int getSlot() {
         return slot;
+    }
+
+    void setSlot(int slot) {
+        this.slot = slot;
     }
 
     public ItemStack getItem() {
@@ -130,25 +138,29 @@ public class ViewItem {
         return withCancelOnClick(true);
     }
 
-    public boolean isPreserveSlotSwapState() {
-        return preserveSlotSwapState;
+    @SuppressWarnings("unchecked")
+    public <T> T getData(String key) {
+        return data == null ? null : (T) data.get(key);
     }
 
-    public ViewItem withPreserveSlotSwapState(boolean preserveSlotSwapState) {
-        this.preserveSlotSwapState = preserveSlotSwapState;
-        return this;
-    }
-
-    Object getData(String key) {
-        return staticData == null ? null : staticData.get(key);
+    public void setData(String key, Object value) {
+        withData(key, value);
     }
 
     public ViewItem withData(String key, Object value) {
-        if (staticData == null)
-            staticData = new HashMap<>();
+        if (data == null)
+            data = new HashMap<>();
 
-        staticData.put(key, value);
+        data.put(key, value);
         return this;
+    }
+
+    public boolean isPaginationItem() {
+        return isPaginationItem;
+    }
+
+    void setPaginationItem(boolean paginationItem) {
+        isPaginationItem = paginationItem;
     }
 
     @Override
@@ -159,11 +171,11 @@ public class ViewItem {
                 ", closeOnClick=" + closeOnClick +
                 ", cancelOnClick=" + cancelOnClick +
                 ", overrideCancelOnClick=" + overrideCancelOnClick +
-                ", preserveSlotSwapState=" + preserveSlotSwapState +
                 ", clickHandler=" + clickHandler +
                 ", renderHandler=" + renderHandler +
                 ", updateHandler=" + updateHandler +
-                ", staticData=" + staticData +
+                ", staticData=" + data +
+                ", isPaginationItem=" + isPaginationItem +
                 '}';
     }
 

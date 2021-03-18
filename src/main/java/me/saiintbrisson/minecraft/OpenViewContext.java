@@ -60,4 +60,12 @@ public final class OpenViewContext extends ViewContext {
         this.inventorySize = inventorySize < 9 ? inventorySize * INVENTORY_ROW_SIZE : inventorySize;
     }
 
+    @Override
+    public String toString() {
+        return "OpenViewContext{" +
+                "inventoryTitle='" + inventoryTitle + '\'' +
+                ", inventorySize=" + inventorySize +
+                "} " + super.toString();
+    }
+
 }

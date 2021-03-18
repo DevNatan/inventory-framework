@@ -87,95 +87,80 @@ public abstract class PaginatedView<T> extends View {
         this.limit = limit;
     }
 
-    public ViewItem getPreviousPageItem(PaginatedViewContext<T> context) {
+    protected final ViewItem resolvePreviousPageItem(PaginatedViewContext<T> context) {
         final ViewFrame frame = getFrame();
         if (frame == null)
-            throw new IllegalArgumentException("View frame is null and the previous page item has not been defined");
+            throw new IllegalArgumentException("View frame cannot be null");
 
-        final Function<PaginatedViewContext<?>, ViewItem> previous = getFrame().getDefaultPreviousPageItem();
-        if (previous == null)
-            return null;
+        ViewItem item = getPreviousPageItem(context);
+        if (item == null) {
+            final Function<PaginatedViewContext<?>, ViewItem> fallback = getFrame().getDefaultPreviousPageItem();
+            if (fallback == null)
+                return null;
 
-        final ViewItem item = previous.apply(context);
-        if (item != null && context.getPreviousPageItemSlot() == UNSET_SLOT)
-            context.setPreviousPageItemSlot(item.getSlot());
+            item = fallback.apply(context);
+        }
 
         return item;
     }
 
-    public ViewItem getNextPageItem(PaginatedViewContext<T> context) {
+    protected final ViewItem resolveNextPageItem(PaginatedViewContext<T> context) {
         final ViewFrame frame = getFrame();
         if (frame == null)
-            throw new IllegalArgumentException("View frame is null and the next page item has not been defined");
+            throw new IllegalArgumentException("View frame cannot be null");
 
-        final Function<PaginatedViewContext<?>, ViewItem> next = getFrame().getDefaultNextPageItem();
-        if (next == null)
-            return null;
+        ViewItem item = getNextPageItem(context);
+        if (item == null) {
+            final Function<PaginatedViewContext<?>, ViewItem> fallback = getFrame().getDefaultNextPageItem();
+            if (fallback == null)
+                return null;
 
-        final ViewItem item = next.apply(context);
-        if (item != null && context.getNextPageItemSlot() == UNSET_SLOT)
-            context.setNextPageItemSlot(item.getSlot());
+            item = fallback.apply(context);
+        }
 
         return item;
     }
 
     private void updateNavigationPreviousItem(PaginatedViewContext<T> context) {
-        final ViewItem item = getPreviousPageItem(context);
+        if (context.getPreviousPageItemSlot() == UNSET_SLOT)
+            throw new IllegalArgumentException("Previous page item not yet resolved.");
 
-        // check it for layered views
-        int defaultSlot = context.getPreviousPageItemSlot();
+        final ViewItem item = resolvePreviousPageItem(context);
         if (item == null) {
-            if (defaultSlot != UNSET_SLOT)
-                clearSlot(context, defaultSlot);
-
-            context.setPreviousPageItemSlot(UNSET_SLOT);
-        } else {
-            if (defaultSlot == UNSET_SLOT) {
-                if (item.getSlot() == UNSET_SLOT)
-                    throw new IllegalArgumentException("No slot has been provided for previous page item.");
-
-                context.setPreviousPageItemSlot(defaultSlot = item.getSlot());
-            }
-
-            // checking if the item already has a native click handler
-            // will make it possible to have custom handlers.
-            if (item.getClickHandler() == null)
-                item.onClick(ctx -> ctx.paginated().switchToPreviousPage());
-
-            render(context, item.withCancelOnClick(true), defaultSlot);
+            clearSlot(context, context.getPreviousPageItemSlot());
+            return;
         }
+
+        // checking if the item already has a native click handler
+        // will make it possible to have custom handlers.
+        if (item.getClickHandler() == null)
+            item.onClick(ctx -> ctx.paginated().switchToPreviousPage());
+
+        render(context, item.withCancelOnClick(true), context.getPreviousPageItemSlot());
     }
 
     private void updateNavigationNextItem(PaginatedViewContext<T> context) {
-        final ViewItem item = getNextPageItem(context);
+        if (context.getNextPageItemSlot() == UNSET_SLOT)
+            throw new IllegalArgumentException("Next page item not yet resolved.");
 
-        // check it for layered views
-        int defaultSlot = context.getNextPageItemSlot();
+        final ViewItem item = resolveNextPageItem(context);
         if (item == null) {
-            if (defaultSlot != UNSET_SLOT)
-                clearSlot(context, defaultSlot);
-
-            context.setNextPageItemSlot(UNSET_SLOT);
-        } else {
-            if (defaultSlot == UNSET_SLOT) {
-                if (item.getSlot() == UNSET_SLOT)
-                    throw new IllegalArgumentException("No slot has been provided for next page item.");
-
-                context.setNextPageItemSlot(defaultSlot = item.getSlot());
-            }
-
-            // checking if the item already has a native click handler
-            // will make it possible to have custom handlers.
-            if (item.getClickHandler() == null)
-                item.onClick(ctx -> ctx.paginated().switchToNextPage());
-
-            render(context, item.withCancelOnClick(true), defaultSlot);
+            clearSlot(context, context.getNextPageItemSlot());
+            return;
         }
+
+        // checking if the item already has a native click handler
+        // will make it possible to have custom handlers.
+        if (item.getClickHandler() == null)
+            item.onClick(ctx -> ctx.paginated().switchToNextPage());
+
+        render(context, item.withCancelOnClick(true), context.getNextPageItemSlot());
     }
 
-    final void updateNavigation(PaginatedViewContext<T> context) {
+    private void updateNavigation(PaginatedViewContext<T> context) {
         updateNavigationPreviousItem(context);
         updateNavigationNextItem(context);
+
     }
 
     public void render(ViewContext context, ViewItem item, int slot) {
@@ -189,66 +174,44 @@ public abstract class PaginatedView<T> extends View {
         context.getInventory().setItem(slot, null);
     }
 
+    private String[] useLayout(PaginatedViewContext<T> context) {
+        return context.getLayout() == null ? this.layout : context.getLayout();
+    }
+
     final void updateContext(PaginatedViewContext<T> context, int page) {
-        // AIOOBE
+        // check index
         if (!context.getPaginator().hasPage(page))
             return;
 
-        if (layout != null) {
-            if (!context.checkedLayerSignature) {
-                // since the layout is only defined once, we cache it
-                // to avoid unnecessary processing every time we update the context.
-                final int len = layout.length;
-                final int columnsLimit = context.getInventory().getSize() / INVENTORY_ROW_SIZE;
-                if (len != columnsLimit)
-                    throw new IllegalArgumentException("Layout columns must respect the size of the inventory (" + len + " != " + columnsLimit + ")");
-
-                context.itemsLayer = new Stack<>();
-                for (int row = 0; row < len; row++) {
-                    final String layer = layout[row];
-                    if (layer.length() != INVENTORY_ROW_SIZE)
-                        throw new IllegalArgumentException("The layer located at " + row + " must contain " + INVENTORY_ROW_SIZE + " characters.");
-
-                    for (int col = 0; col < INVENTORY_ROW_SIZE; col++) {
-                        final int targetSlot = col + (row * INVENTORY_ROW_SIZE);
-                        final char c = layer.charAt(col);
-                        switch (c) {
-                            case EMPTY_SLOT_CHAR:
-                                break;
-                            case ITEM_SLOT_CHAR: {
-                                context.itemsLayer.push(targetSlot);
-                                break;
-                            }
-                            case PREVIOUS_PAGE_CHAR: {
-                                final int slot = context.getPreviousPageItemSlot();
-                                if (getFrame().getDefaultPreviousPageItem() == null && slot == UNSET_SLOT && getPreviousPageItem(context) == null)
-                                    throw new IllegalArgumentException("Found previous page item character (" + PREVIOUS_PAGE_CHAR + ") but no item was defined.");
-
-                                context.setPreviousPageItemSlot(targetSlot);
-                                break;
-                            }
-                            case NEXT_PAGE_CHAR: {
-                                final int slot = context.getNextPageItemSlot();
-                                if (getFrame().getDefaultNextPageItem() == null && slot == UNSET_SLOT && getNextPageItem(context) == null)
-                                    throw new IllegalArgumentException("Found next page item character (" + NEXT_PAGE_CHAR + ") but no item was defined.");
-
-                                context.setNextPageItemSlot(targetSlot);
-                                break;
-                            }
-                            default:
-                                throw new IllegalArgumentException("Invalid layer character: " + c);
-                        }
-                    }
-                }
-
-                context.getPaginator().setPageSize(context.itemsLayer.size());
-            }
-
-            context.checkedLayerSignature = true;
-        }
+        final String[] layout = useLayout(context);
+        if (layout != null && !context.isCheckedLayerSignature())
+            resolveLayout(context, layout);
 
         context.setPage(page);
-        final List<T> elements = context.getPaginator().getPage(page);
+        renderLayout(context, layout, null);
+        updateNavigation(context);
+    }
+
+    private void renderPaginatedItemAt(PaginatedViewContext<T> context, int slot, T value, ViewItem override) {
+        final ViewItem item = override == null ? new ViewItem(slot) : override;
+
+        if (override == null) {
+            item.setPaginationItem(true);
+            onPaginationItemRender(context, item, value);
+            render(context, item, slot);
+        } else {
+            override.setSlot(slot);
+            context.getItems()[slot] = override;
+        }
+    }
+
+    @Override
+    protected ViewContext createContext(View view, Player player, Inventory inventory) {
+        return new PaginatedViewContext<>(this, player, inventory, FIRST_PAGE);
+    }
+
+    private void renderLayout(PaginatedViewContext<T> context, String[] layout, ViewItem[] preservedItems) {
+        final List<T> elements = context.getPaginator().getPage(context.getPage());
         final int size = elements.size();
         final int lastSlot = layout == null ? limit : context.itemsLayer.peek();
         final int layerSize = layout == null ? 0 /* ignored */ : context.itemsLayer.size();
@@ -257,9 +220,10 @@ public abstract class PaginatedView<T> extends View {
                 break;
 
             final int targetSlot = layout == null ? offset + i : context.itemsLayer.elementAt(i);
-            if (i < size)
-                renderPaginatedItemAt(context, targetSlot, elements.get(i));
-            else {
+            if (i < size) {
+                final ViewItem preserved = preservedItems == null || preservedItems.length <= i ? null : preservedItems[i];
+                renderPaginatedItemAt(context, targetSlot, elements.get(i), preserved);
+            } else {
                 final ViewItem item = getItem(targetSlot);
                 // check if a non-virtual item has been defined in that slot
                 if (item != null)
@@ -268,19 +232,86 @@ public abstract class PaginatedView<T> extends View {
                 clearSlot(context, targetSlot);
             }
         }
-
-        updateNavigation(context);
     }
 
-    private void renderPaginatedItemAt(PaginatedViewContext<T> context, int slot, T value) {
-        final ViewItem item = new ViewItem(slot);
-        onPaginationItemRender(context, item, value);
-        render(context, item, slot);
+    private void resolveLayout(PaginatedViewContext<T> context, String[] layout) {
+        // since the layout is only defined once, we cache it
+        // to avoid unnecessary processing every time we update the context.
+        final int len = layout.length;
+        final int columnsLimit = context.getInventory().getSize() / INVENTORY_ROW_SIZE;
+        if (len != columnsLimit)
+            throw new IllegalArgumentException("Layout columns must respect the size of the inventory (" + len + " != " + columnsLimit + ")");
+
+        context.itemsLayer = new Stack<>();
+        for (int row = 0; row < len; row++) {
+            final String layer = layout[row];
+            if (layer.length() != INVENTORY_ROW_SIZE)
+                throw new IllegalArgumentException("The layer located at " + row + " must contain " + INVENTORY_ROW_SIZE + " characters.");
+
+            for (int col = 0; col < INVENTORY_ROW_SIZE; col++) {
+                final int targetSlot = col + (row * INVENTORY_ROW_SIZE);
+                final char c = layer.charAt(col);
+                switch (c) {
+                    case EMPTY_SLOT_CHAR:
+                        break;
+                    case ITEM_SLOT_CHAR: {
+                        context.itemsLayer.push(targetSlot);
+                        break;
+                    }
+                    case PREVIOUS_PAGE_CHAR: {
+                        resolvePreviousPageItem(context);
+                        context.setPreviousPageItemSlot(targetSlot);
+                        break;
+                    }
+                    case NEXT_PAGE_CHAR: {
+                        resolveNextPageItem(context);
+                        context.setNextPageItemSlot(targetSlot);
+                        break;
+                    }
+                    default:
+                        throw new IllegalArgumentException("Invalid layer character: " + c);
+                }
+            }
+        }
+
+        context.getPaginator().setPageSize(context.itemsLayer.size());
+        context.setCheckedLayerSignature(true);
     }
 
-    @Override
-    protected ViewContext createContext(View view, Player player, Inventory inventory) {
-        return new PaginatedViewContext<>(this, player, inventory, FIRST_PAGE);
+    private ViewItem[] clearLayout(PaginatedViewContext<T> context, String[] layout) {
+        final int size = context.getPaginator().getPage(context.getPage()).size();
+        final int layerSize = layout == null ? 0 /* ignored */ : context.itemsLayer.size();
+        final ViewItem[] preservedItems = new ViewItem[layerSize + 1];
+        for (int i = 0; i < (layout == null ? limit : context.itemsLayer.peek()); i++) {
+            if (layout != null && i >= layerSize)
+                break;
+
+            final int targetSlot = layout == null ? offset + i : context.itemsLayer.elementAt(i);
+            final ViewItem item;
+            if (i < size)
+                preservedItems[i] = context.getItem(targetSlot);
+            else {
+                item = getItem(targetSlot);
+                if (item != null)
+                    continue;
+            }
+
+            clearSlot(context, targetSlot);
+        }
+
+        return preservedItems;
+    }
+
+    void updateLayout(PaginatedViewContext<T> context, String[] layout) {
+        /*
+            what we will do: first, use the old defined
+            layout to preserve the actual item slot state and then
+            reorder this items with the new slots of the new layout
+            on different positions but with the same preserved state
+         */
+        final ViewItem[] items = clearLayout(context, useLayout(context));
+        resolveLayout(context, layout);
+        renderLayout(context, layout, items);
     }
 
     @Override
@@ -291,6 +322,18 @@ public abstract class PaginatedView<T> extends View {
         updateContext((PaginatedViewContext<T>) context, FIRST_PAGE);
     }
 
-    protected abstract void onPaginationItemRender(PaginatedViewContext<T> context, ViewItem item, T value);
+    public ViewItem getPreviousPageItem(PaginatedViewContext<T> context) {
+        return null;
+    }
+
+    public ViewItem getNextPageItem(PaginatedViewContext<T> context) {
+        return null;
+    }
+
+    protected abstract void onPaginationItemRender(
+            final PaginatedViewContext<T> context,
+            final ViewItem item,
+            final T value
+    );
 
 }

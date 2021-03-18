@@ -11,7 +11,6 @@ import static me.saiintbrisson.minecraft.View.UNSET_SLOT;
 public class PaginatedViewContext<T> extends ViewContext {
 
     public static final int FIRST_PAGE = 0;
-
     private int page;
     private int previousPageItemSlot = UNSET_SLOT;
     private int nextPageItemSlot = UNSET_SLOT;
@@ -19,6 +18,17 @@ public class PaginatedViewContext<T> extends ViewContext {
     public PaginatedViewContext(View view, Player player, Inventory inventory, int page) {
         super(view, player, inventory);
         this.page = page;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public void setLayout(String... layout) {
+        // dynamic layout update
+        if (checkedLayerSignature) {
+            ((PaginatedView<T>) view).updateLayout(this, layout);
+            this.layout = layout;
+        } else
+            super.setLayout(layout);
     }
 
     /**
@@ -91,8 +101,9 @@ public class PaginatedViewContext<T> extends ViewContext {
      * Updates the current context by jumping to the specified page.
      * @param page the new page.
      */
+    @SuppressWarnings("unchecked")
     public void switchTo(int page) {
-        super.switchTo(page);
+        ((PaginatedView<T>) view).updateContext(this, page);
     }
 
     /**
@@ -112,6 +123,7 @@ public class PaginatedViewContext<T> extends ViewContext {
     /**
      * Returns the {@link Paginator} of that context.
      */
+    @SuppressWarnings("unchecked")
     Paginator<T> getPaginator() {
         final Paginator<T> paginator = (Paginator<T>) ((PaginatedView<T>) view).getPaginator();
         if (paginator != null)
@@ -136,7 +148,7 @@ public class PaginatedViewContext<T> extends ViewContext {
         ((PaginatedView<?>) view).setPaginator(new Paginator(((PaginatedView<?>) view).getPageSize(), source));
     }
 
-    int getPreviousPageItemSlot() {
+    public int getPreviousPageItemSlot() {
         return previousPageItemSlot;
     }
 
@@ -144,7 +156,7 @@ public class PaginatedViewContext<T> extends ViewContext {
         this.previousPageItemSlot = previousPageItemSlot;
     }
 
-    int getNextPageItemSlot() {
+    public int getNextPageItemSlot() {
         return nextPageItemSlot;
     }
 

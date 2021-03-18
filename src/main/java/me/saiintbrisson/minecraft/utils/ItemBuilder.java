@@ -13,6 +13,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * @deprecated Will be removed in 2.1.
+ */
 @Deprecated
 public class ItemBuilder {
 
