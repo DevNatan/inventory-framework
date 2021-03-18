@@ -121,7 +121,7 @@ public class ViewListener implements Listener {
                 view.onMoveOut(moveOutContext);
                 item.setState(ViewItem.State.UNDEFINED);
 
-                if (moveOutContext.isCancelled())
+                if (view.isCancelOnMoveOut() ||moveOutContext.isCancelled())
                     e.setCancelled(true);
 
                 if (moveOutContext.isMarkedToClose())
@@ -153,7 +153,7 @@ public class ViewListener implements Listener {
             final ViewSlotMoveContext moveOutContext = new ViewSlotMoveContext(context, slot, stack, targetInventory, targetItem, slot, false);
             view.onMoveOut(moveOutContext);
 
-            if (moveOutContext.isCancelled())
+            if (view.isCancelOnMoveOut() || moveOutContext.isCancelled())
                 e.setCancelled(true);
 
             if (moveOutContext.isMarkedToClose())
