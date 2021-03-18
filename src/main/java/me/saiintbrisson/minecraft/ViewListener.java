@@ -94,7 +94,10 @@ public class ViewListener implements Listener {
 
         // bottom inventory click
         if (!(e.getRawSlot() < inventory.getSize())) {
-            if (action != InventoryAction.PLACE_ALL && action != InventoryAction.PLACE_ONE && action != InventoryAction.PLACE_SOME && action != InventoryAction.SWAP_WITH_CURSOR)
+            if (action != InventoryAction.PLACE_ALL &&
+                    action != InventoryAction.PLACE_ONE &&
+                    action != InventoryAction.PLACE_SOME &&
+                    action != InventoryAction.SWAP_WITH_CURSOR)
                 return;
 
             // unable to handle move out since item move not possible
@@ -114,7 +117,7 @@ public class ViewListener implements Listener {
                 if (action == InventoryAction.SWAP_WITH_CURSOR)
                     swappedItem = e.getCurrentItem();
 
-                final ViewSlotMoveContext moveOutContext = new ViewSlotMoveContext(context, item.getSlot(), cursor, e.getView().getBottomInventory(), swappedItem, slot);
+                final ViewSlotMoveContext moveOutContext = new ViewSlotMoveContext(context, item.getSlot(), cursor, e.getView().getBottomInventory(), swappedItem, slot, swappedItem != null);
                 view.onMoveOut(moveOutContext);
                 item.setState(ViewItem.State.UNDEFINED);
 
@@ -137,6 +140,27 @@ public class ViewListener implements Listener {
 
         final ViewContext context = view.getContext(player);
         final ItemStack stack = e.getCurrentItem();
+
+        final ClickType click = e.getClick();
+        if (action == InventoryAction.HOTBAR_SWAP || action == InventoryAction.HOTBAR_MOVE_AND_READD ||
+                click == ClickType.DROP ||
+                click == ClickType.CONTROL_DROP) {
+            ItemStack targetItem = null;
+            final Inventory targetInventory = e.getView().getBottomInventory();
+            if (action == InventoryAction.HOTBAR_MOVE_AND_READD)
+                targetItem = targetInventory.getItem(e.getHotbarButton());
+
+            final ViewSlotMoveContext moveOutContext = new ViewSlotMoveContext(context, slot, stack, targetInventory, targetItem, slot, false);
+            view.onMoveOut(moveOutContext);
+
+            if (moveOutContext.isCancelled())
+                e.setCancelled(true);
+
+            if (moveOutContext.isMarkedToClose())
+                Bukkit.getScheduler().runTask(frame.getOwner(), moveOutContext::closeNow);
+            return;
+        }
+
         final ViewItem item = view.resolve(context, slot);
 
         // global click handling
@@ -149,10 +173,10 @@ public class ViewListener implements Listener {
             return;
         }
 
-        final ViewSlotContext slotContext = new DelegatedViewContext(context, slot, stack);
         if (action.name().startsWith("PICKUP") || action == InventoryAction.CLONE_STACK)
             item.setState(ViewItem.State.HOLDING);
 
+        final ViewSlotContext slotContext = new DelegatedViewContext(context, slot, stack);
         if (item.getClickHandler() != null) {
             item.getClickHandler().handle(slotContext);
             e.setCancelled(e.isCancelled() || slotContext.isCancelled());
