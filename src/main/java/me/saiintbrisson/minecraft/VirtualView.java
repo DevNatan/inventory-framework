@@ -208,7 +208,6 @@ public class VirtualView {
         if (fallback == null)
             throw new IllegalArgumentException("No item were provided and the rendering function was not defined at slot " + slot + ".");
 
-        // prevent skulls from flickering
         if (!(context instanceof ViewSlotContext))
             context.getInventory().setItem(slot, fallback);
     }
@@ -235,8 +234,10 @@ public class VirtualView {
         Preconditions.checkNotNull(context, "Context cannot be null");
 
         final ViewItem item = resolve(context, slot);
-        if (item == null)
+        if (item == null) {
+            context.getInventory().setItem(slot, null);
             return;
+        }
 
         if (item.getUpdateHandler() != null) {
             final ViewSlotContext update = context instanceof ViewSlotContext ?
