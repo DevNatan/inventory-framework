@@ -40,11 +40,7 @@ public class ViewSlotContext extends ViewContext {
 
     @SuppressWarnings("unchecked")
     public <T> T getSlotData(String key) {
-        final T value = getSlotData(slot, key);
-        if (value == null)
-            return (T) getItem(slot).getData(key);
-
-        return value;
+        return getSlotData(slot, key);
     }
 
     public <T> T getSlotData(String key, Supplier<T> defaultValue) {
