@@ -7,6 +7,8 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static me.saiintbrisson.minecraft.View.UNSET_SLOT;
+
 public class VirtualView {
 
     protected final ViewItem[] items;
@@ -61,6 +63,21 @@ public class VirtualView {
      */
     public int getLastSlot() {
         return items.length - 1;
+    }
+
+    /**
+     * Returns a new {@link ViewItem}.
+     */
+    public ViewItem item() {
+        return new ViewItem(UNSET_SLOT);
+    }
+
+    /**
+     * Returns a new {@link ViewItem} with a {@link ItemStack}.
+     * @param item the item.
+     */
+    public ViewItem item(final ItemStack item) {
+        return new ViewItem(UNSET_SLOT).withItem(item);
     }
 
     /**
