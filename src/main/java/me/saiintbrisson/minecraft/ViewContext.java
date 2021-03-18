@@ -31,6 +31,14 @@ public class ViewContext extends VirtualView {
         return markedToClose;
     }
 
+    boolean isCheckedLayerSignature() {
+        return checkedLayerSignature;
+    }
+
+    void setCheckedLayerSignature(boolean checkedLayerSignature) {
+        this.checkedLayerSignature = checkedLayerSignature;
+    }
+
     @Override
     public void setLayout(String... layout) {
         super.setLayout(layout);
@@ -87,6 +95,10 @@ public class ViewContext extends VirtualView {
      */
     public void update() {
         view.update(this);
+    }
+
+    public void update(int slot) {
+        view.update(this, slot);
     }
 
     /**
@@ -166,6 +178,10 @@ public class ViewContext extends VirtualView {
         return view.hasData(player, key);
     }
 
+    public void clear(String key) {
+        view.clearData(player, key);
+    }
+
     public Map<Integer, Map<String, Object>> slotData() {
         return slotData;
     }
@@ -200,6 +216,7 @@ public class ViewContext extends VirtualView {
 
     void invalidate() {
         view.clearData(player);
+        slotData.clear();
         checkedLayerSignature = false;
         itemsLayer = null;
     }
@@ -207,31 +224,6 @@ public class ViewContext extends VirtualView {
     @Override
     public int getLastSlot() {
         return inventory.getSize() - 1;
-    }
-
-    /**
-     * @deprecated Use {@link #paginated()} and {@link PaginatedViewContext#setSource(List)} instead.
-     */
-    @Deprecated
-    public void setSource(List<?> source) {
-        if (!(this instanceof PaginatedViewContext))
-            throw new IllegalArgumentException("Only paginated views can have a source.");
-
-        ((PaginatedViewContext<?>) this).setSource(source);
-    }
-
-    /**
-     * Updates the current context by jumping to the specified page.
-     * @param page the new page.
-     * @deprecated Use {@link #paginated()} and {@link PaginatedViewContext#switchTo(int)} instead.
-     */
-    @Deprecated
-    @SuppressWarnings("unchecked")
-    public void switchTo(int page) {
-        if (!(this instanceof PaginatedViewContext))
-            throw new IllegalArgumentException("Only paginated views can switch between pages.");
-
-        ((PaginatedView<?>) view).updateContext((PaginatedViewContext) this, page);
     }
 
     /**
