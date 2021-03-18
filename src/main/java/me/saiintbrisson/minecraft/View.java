@@ -20,11 +20,7 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
     private final String title;
     private final int rows;
     private final Map<Player, ViewContext> contexts;
-    private boolean cancelOnClick;
-    private boolean cancelOnPickup;
-    private boolean cancelOnDrop;
-    private boolean cancelOnDrag;
-    private boolean cancelOnClone;
+    private boolean cancelOnClick, cancelOnPickup, cancelOnDrop, cancelOnDrag, cancelOnClone, cancelOnMoveOut;
     private final Map<Player, Map<String, Object>> data;
 
     public View(final int rows) {
@@ -46,6 +42,7 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
         cancelOnDrop = true;
         cancelOnDrag = true;
         cancelOnClone = true;
+        cancelOnMoveOut = true;
     }
 
     @Override
@@ -205,6 +202,14 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
         this.cancelOnClone = cancelOnClone;
     }
 
+    public boolean isCancelOnMoveOut() {
+        return cancelOnMoveOut;
+    }
+
+    public void setCancelOnMoveOut(boolean cancelOnMoveOut) {
+        this.cancelOnMoveOut = cancelOnMoveOut;
+    }
+
     @Override
     public Inventory getInventory() {
         throw new UnsupportedOperationException();
@@ -274,7 +279,7 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 
     protected void onUpdate(final ViewContext context) {
     }
-    
+
     protected void onMoveOut(final ViewSlotMoveContext context) {
     }
 
