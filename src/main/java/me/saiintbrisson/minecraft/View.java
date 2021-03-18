@@ -27,15 +27,15 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
     private boolean cancelOnClone;
     private final Map<Player, Map<String, Object>> data;
 
-    public View(int rows) {
+    public View(final int rows) {
         this(null, rows, "");
     }
 
-    public View(int rows, String title) {
+    public View(final int rows, final String title) {
         this(null, rows, title);
     }
 
-    public View(ViewFrame frame, int rows, String title) {
+    public View(final ViewFrame frame, final int rows, final String title) {
         super(new ViewItem[INVENTORY_ROW_SIZE * rows]);
         this.rows = rows;
         this.frame = frame;
@@ -57,7 +57,7 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
         return contexts;
     }
 
-    public ViewContext getContext(Player player) {
+    public ViewContext getContext(final Player player) {
         return contexts.get(player);
     }
 
@@ -65,7 +65,7 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
         return frame;
     }
 
-    void setFrame(ViewFrame frame) {
+    void setFrame(final ViewFrame frame) {
         this.frame = frame;
     }
 
@@ -77,15 +77,15 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
         return title;
     }
 
-    protected ViewContext createContext(View view, Player player, Inventory inventory) {
+    protected ViewContext createContext(final View view, final Player player, final Inventory inventory) {
         return new ViewContext(view, player, inventory);
     }
 
-    public void open(Player player) {
+    public void open(final Player player) {
         open(player, null);
     }
 
-    public void open(Player player, Map<String, Object> data) {
+    public void open(final Player player, final Map<String, Object> data) {
         if (contexts.containsKey(player))
             return;
 
@@ -112,21 +112,55 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
     }
 
     @Override
-    public void update(ViewContext context) {
+    public void update(final ViewContext context) {
+        frame.debug("[context]: update");
         onUpdate(context);
         super.update(context);
     }
 
-    ViewContext remove(Player player) {
+    @Override
+    public void update(final ViewContext context, final int slot) {
+        frame.debug("[slot " + slot + "]: update");
+        super.update(context, slot);
+    }
+
+    @Override
+    public void render(final ViewContext context) {
+        frame.debug("[context]: render");
+        super.render(context);
+    }
+
+    @Override
+    public void render(final ViewContext context, final int slot) {
+        frame.debug("[slot " + slot + "]: render");
+        super.render(context, slot);
+    }
+
+    @Override
+    public void render(final ViewContext context, final ViewItem item, final int slot) {
+        frame.debug("[slot " + slot + "]: render with item");
+        super.render(context, item, slot);
+    }
+
+    @Override
+    ViewItem resolve(final ViewContext context, final int slot) {
+        frame.debug("[slot " + slot + "]: resolve item");
+        return super.resolve(context, slot);
+    }
+
+    ViewContext remove(final Player player) {
+        frame.debug("[context]: remove");
         final ViewContext context = contexts.remove(player);
-        if (context != null)
+        if (context != null) {
             context.invalidate();
+            frame.debug("[context]: invalidate");
+        }
 
         return context;
     }
 
     public void close() {
-        for (Player player : contexts.keySet()) {
+        for (final Player player : contexts.keySet()) {
             player.closeInventory();
         }
     }
@@ -135,7 +169,7 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
         return cancelOnClick;
     }
 
-    public void setCancelOnClick(boolean cancelOnClick) {
+    public void setCancelOnClick(final boolean cancelOnClick) {
         this.cancelOnClick = cancelOnClick;
     }
 
@@ -143,7 +177,7 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
         return cancelOnPickup;
     }
 
-    public void setCancelOnPickup(boolean cancelOnPickup) {
+    public void setCancelOnPickup(final boolean cancelOnPickup) {
         this.cancelOnPickup = cancelOnPickup;
     }
 
@@ -151,7 +185,7 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
         return cancelOnDrop;
     }
 
-    public void setCancelOnDrop(boolean cancelOnDrop) {
+    public void setCancelOnDrop(final boolean cancelOnDrop) {
         this.cancelOnDrop = cancelOnDrop;
     }
 
@@ -159,7 +193,7 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
         return cancelOnDrag;
     }
 
-    public void setCancelOnDrag(boolean cancelOnDrag) {
+    public void setCancelOnDrag(final boolean cancelOnDrag) {
         this.cancelOnDrag = cancelOnDrag;
     }
 
@@ -167,7 +201,7 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
         return cancelOnClone;
     }
 
-    public void setCancelOnClone(boolean cancelOnClone) {
+    public void setCancelOnClone(final boolean cancelOnClone) {
         this.cancelOnClone = cancelOnClone;
     }
 
@@ -176,20 +210,27 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
         throw new UnsupportedOperationException();
     }
 
-    private Inventory getInventory(String title, int size) {
+    private Inventory getInventory(final String title, final int size) {
         return Bukkit.createInventory(this, size, title == null ? this.title : title);
     }
 
-    public void clearData(Player player) {
+    public void clearData(final Player player) {
         data.remove(player);
     }
 
-    public Map<String, Object> getData(Player player) {
+    public void clearData(final Player player, final String key) {
+        if (!data.containsKey(player))
+            return;
+
+        data.get(player).remove(key);
+    }
+
+    public Map<String, Object> getData(final Player player) {
         return data.get(player);
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T getData(Player player, String key) {
+    public <T> T getData(final Player player, final String key) {
         if (!data.containsKey(player))
             return null;
 
@@ -197,44 +238,44 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T getData(Player player, String key, Supplier<T> defaultValue) {
+    public <T> T getData(final Player player, final String key, final Supplier<T> defaultValue) {
         if (!data.containsKey(player) || !data.get(player).containsKey(key))
             return defaultValue.get();
 
         return (T) data.get(player).get(key);
     }
 
-    public void setData(Player player, Map<String, Object> data) {
+    public void setData(final Player player, final Map<String, Object> data) {
         this.data.put(player, data);
     }
 
-    public void setData(Player player, String key, Object value) {
+    public void setData(final Player player, final String key, final Object value) {
         data.computeIfAbsent(player, $ -> new HashMap<>()).put(key, value);
     }
 
-    public boolean hasData(Player player, String key) {
+    public boolean hasData(final Player player, final String key) {
         if (!data.containsKey(player))
             return false;
 
         return data.get(player).containsKey(key);
     }
 
-    protected void onOpen(OpenViewContext context) {
+    protected void onOpen(final OpenViewContext context) {
     }
 
-    protected void onRender(ViewContext context) {
+    protected void onRender(final ViewContext context) {
     }
 
-    protected void onClose(ViewContext context) {
+    protected void onClose(final ViewContext context) {
     }
 
-    protected void onClick(ViewSlotContext context) {
+    protected void onClick(final ViewSlotContext context) {
     }
 
-    protected void onUpdate(ViewContext context) {
+    protected void onUpdate(final ViewContext context) {
     }
-
-    protected void onMoveOut(ViewSlotMoveContext context) {
+    
+    protected void onMoveOut(final ViewSlotMoveContext context) {
     }
 
 }
