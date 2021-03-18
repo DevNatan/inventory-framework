@@ -15,6 +15,21 @@ public class DelegatedViewContext extends ViewSlotContext {
     }
 
     @Override
+    public String[] getLayout() {
+        return delegate.getLayout();
+    }
+
+    @Override
+    boolean isCheckedLayerSignature() {
+        return delegate.isCheckedLayerSignature();
+    }
+
+    @Override
+    void setCheckedLayerSignature(boolean checkedLayerSignature) {
+        delegate.setCheckedLayerSignature(checkedLayerSignature);
+    }
+
+    @Override
     public boolean isMarkedToClose() {
         return delegate.isMarkedToClose();
     }
