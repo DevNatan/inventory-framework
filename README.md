@@ -1,65 +1,98 @@
 # inventory-framework
-[![](https://jitpack.io/v/DevNatan/inventory-framework.svg)](https://jitpack.io/#DevNatan/inventory-framework/43074d61ba)
 
-## Contents
-* [Project Setup](#project-setup)
-* [Basic view](#basic-view)
+* [Virtual View](#virtual-view)
+* [View](#view)
+  * [Creating items](#creating-items)
+  * [You need to know](#you-need-to-know)
+    * [Straight changes](#straight-changes)
+    * [Staticity](#staticity)
 * [Player data](#player-data)
-* Virtual Context
 * [Menu handlers](#menu-handlers)
   * [Open handler](#open-handler)
   * [Close handler](#close-handler)
-  * Render handler
-* Item handlers
-  * Click handler
-  * Render handler
-  * Update handler
+* [Hooking Into](#hooking-into)
+* [Recommended Use](#recommended-use)
 
-## Project Setup
-##### Gradle
-```groovy
-repositories {
-    maven { url 'https://jitpack.io' }
-}
+## Virtual View
+A [VirtualView](https://github.com/SaiintBrisson/inventory-framework/blob/master/src/main/java/me/saiintbrisson/minecraft/VirtualView.java) represents a set of items in any form of ordering with no specific designation.\
+It serves as a basis for creating other views and deals with basic functions for rendering and updating items.
 
-dependencies {
-    implementation 'com.github.DevNatan.inventory-framework:api:VERSION'
-}
-```
+Hidden for the end user, he cannot manipulate it directly, only through handlers.
 
-##### Maven
-```xml
-<repositories>
-    <repository>
-        <id>jitpack.io</id>
-        <url>https://jitpack.io</url>
-    </repository>
-</repositories>
-    
-<dependency>
-    <groupId>com.github.DevNatan</groupId>
-    <artifactId>inventory-framework</artifactId>
-    <version>VERSION</version>
-</dependency>
-```
-
-## Basic View
-This is a basic view, it only displays one item in row 3 of column 4 and is 6 lines in size (the size of the inventory).\
-When the player opens an item will be displayed and if clicked the **event will be canceled**
-preventing the player from removing it from the inventory or moving it, through `cancelOnClick`.
+## View
+[View](https://github.com/SaiintBrisson/inventory-framework/blob/master/src/main/java/me/saiintbrisson/minecraft/View.java) is the first [VirtualView](https://github.com/SaiintBrisson/inventory-framework/blob/master/src/main/java/me/saiintbrisson/minecraft/VirtualView.java) implementation containing everything it has in addition to a container with slots (inventory) for defining items, title, sizing, handlers and other features. To use, just create a new class and extend it.
 ```java
-public final class BasicView extends View {
+public final class MyView extends View {
         
     public MyView() {
-        super(6, "Basic view title");
-        slot(4, 3).withItem(ItemBuilder.create(Material.DIAMOND)
-            .name("This is a basic view.")
-            .build()
-        ).cancelOnClick();
+        super(size, title);
     }
 
 }
 ```
+
+In the `size` parameter of the constructor you can specify the number of lines of the container or its total size, **the total size must be a multiple of 9**.
+
+### Creating items
+To create items for your container is very easy, you just need to know what position it should be in.
+Available for any [VirtualView](https://github.com/SaiintBrisson/inventory-framework/blob/master/src/main/java/me/saiintbrisson/minecraft/VirtualView.java) implementation.
+```java
+public final class MyView extends View {
+        
+    public MyView() {
+        super(size, title);
+        
+        slot(3, new ItemStack(Material.DIAMOND));
+    }
+
+}
+```
+
+You can also use row-column orientation if you want it to be easier.
+```java
+// row 6 – column 1
+slot(6, 1, new ItemStack(Material.DIAMOND));
+```
+
+Or use the [*`firstSlot(item)`*](https://github.com/SaiintBrisson/inventory-framework/blob/94cf20a57c53a874c77e8bd71a668d6573c3e005/src/main/java/me/saiintbrisson/minecraft/VirtualView.java#L115) and [*`lastSlot(item)`*](https://github.com/SaiintBrisson/inventory-framework/blob/94cf20a57c53a874c77e8bd71a668d6573c3e005/src/main/java/me/saiintbrisson/minecraft/VirtualView.java#L134) shortcuts to use positions based on the size of your inventory without needing to know how much it is.
+```java
+firstSlot(new ItemStack(Material.DIAMOND));
+lastSlot(new ItemStack(Material.PAPER));
+```
+
+### You need to know
+#### Straight changes
+From the moment you create a new [View](https://github.com/SaiintBrisson/inventory-framework/blob/master/src/main/java/me/saiintbrisson/minecraft/View.java), it becomes just one. Everyone who has access to it has shared the same status, that is, any changes you make to it will apply to everyone who has it active at that time.
+
+**For example**:\
+You have 5 players and they all opened the same View and will leave it open for a certain period of time.
+You have the need to change an item in your container, you want to change its quantity from 10 to 8.
+```java
+public final class MyView extends View {
+        
+    public MyView() {
+        super(size, title);
+        
+        firstSlot(new ItemStack(Material.DIAMOND, 10));
+    }
+    
+    @Override
+    public void onClick(final ViewSlotContext context) {
+        // this was a direct modification to the item without updating the contextual view.
+        // in the contextual view, this item does not exist so using `context.update()` will not work, 
+        // changing it referentially in this way will apply the change to its origin.
+        context.getItem().setAmount(8);
+    }
+
+}
+```
+
+When you apply this change, **the item for those who open the container again** will be 8.
+
+#### Staticity
+Before starting your creations, understand that, [View](https://github.com/SaiintBrisson/inventory-framework/blob/master/src/main/java/me/saiintbrisson/minecraft/View.java) is a **static view** of your inventory, any item defined in the builder is automatically static in relation to the container but changeable in relation to the item itself.
+
+Once defined, the item's position cannot be updated but you can still change its nature such as type and quantity.
 
 ## Player data
 It is possible to define player data, this data was available within the menus, for example:
@@ -143,3 +176,38 @@ public final class PlaySoundOnCloseView extends View {
 
 }
 ```
+
+## Hooking into
+You can get the latest version available on [JitPack](https://jitpack.io/#SaiintBrisson/inventory-framework).
+
+### Gradle
+```groovy
+repositories {
+    maven { url 'https://jitpack.io' }
+}
+
+dependencies {
+    compileOnly 'com.github.SaiintBrisson.inventory-framework:api:VERSION'
+}
+```
+
+### Maven
+```xml
+<repositories>
+    <repository>
+        <id>jitpack.io</id>
+        <url>https://jitpack.io</url>
+    </repository>
+</repositories>
+    
+<dependency>
+    <groupId>com.github.SaiintBrisson</groupId>
+    <artifactId>inventory-framework</artifactId>
+    <version>VERSION</version>
+    <scope>provided</scope>
+</dependency>
+```
+
+## Recommended Use
+We strongly recommend that you **do not shading the inventory-framework** and use it as a plugin, as a dependency on your plug-ins.
+You can download a stable version from the [releases](https://github.com/SaiintBrisson/inventory-framework/releases) tab.
