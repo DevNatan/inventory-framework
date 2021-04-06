@@ -178,18 +178,25 @@ public abstract class PaginatedView<T> extends View {
         return context.getLayout() == null ? this.layout : context.getLayout();
     }
 
-    final void updateContext(PaginatedViewContext<T> context, int page) {
-        // check index
-        if (!context.getPaginator().hasPage(page))
-            return;
+    final void updateContext(PaginatedViewContext<T> context, int page, boolean pageChecking) {
+        if (pageChecking) {
+            // index check
+            if (!context.getPaginator().hasPage(page))
+                return;
 
-        final String[] layout = useLayout(context);
-        if (layout != null && !context.isCheckedLayerSignature())
-            resolveLayout(context, layout);
+            final String[] layout = useLayout(context);
+            if (layout != null && !context.isCheckedLayerSignature())
+                resolveLayout(context, layout);
 
-        context.setPage(page);
+            context.setPage(page);
+        }
+
         renderLayout(context, layout, null);
         updateNavigation(context);
+    }
+
+    final void updateContext(PaginatedViewContext<T> context, int page) {
+        updateContext(context, page, true);
     }
 
     private void renderPaginatedItemAt(PaginatedViewContext<T> context, int slot, T value, ViewItem override) {
@@ -278,7 +285,7 @@ public abstract class PaginatedView<T> extends View {
         context.setCheckedLayerSignature(true);
     }
 
-    private ViewItem[] clearLayout(PaginatedViewContext<T> context, String[] layout) {
+    final ViewItem[] clearLayout(PaginatedViewContext<T> context, String[] layout) {
         final int size = context.getPaginator().getPage(context.getPage()).size();
         final int layerSize = layout == null ? 0 /* ignored */ : context.itemsLayer.size();
         final ViewItem[] preservedItems = new ViewItem[layerSize + 1];
@@ -302,6 +309,18 @@ public abstract class PaginatedView<T> extends View {
         return preservedItems;
     }
 
+    final void updateLayoutSlot(PaginatedViewContext<T> context, int slot) {
+        final int size = context.getPaginator().getPage(context.getPage()).size();
+
+        // TOOD: shift left ALL paginated items
+        if (slot >= size) {
+            clearSlot(context, slot);
+            return;
+        }
+
+        System.out.println("[updateLayoutSlot] passed -> " + slot + " < " + size);
+    }
+
     void updateLayout(PaginatedViewContext<T> context, String[] layout) {
         /*
             what we will do: first, use the old defined
@@ -320,6 +339,23 @@ public abstract class PaginatedView<T> extends View {
         // render all non-virtual items first
         super.render(context);
         updateContext((PaginatedViewContext<T>) context, FIRST_PAGE);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public void update(ViewContext context) {
+        // call global onUpdate
+        super.update(context);
+
+        PaginatedViewContext<T> paginated = (PaginatedViewContext<T>) context;
+        updateContext(paginated, paginated.getPage(), false /* avoid intensive page checking */);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public void update(ViewContext context, int slot) {
+        super.update(context, slot);
+        updateLayoutSlot((PaginatedViewContext<T>) context, slot);
     }
 
     public ViewItem getPreviousPageItem(PaginatedViewContext<T> context) {
