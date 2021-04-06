@@ -313,12 +313,8 @@ public abstract class PaginatedView<T> extends View {
         final int size = context.getPaginator().getPage(context.getPage()).size();
 
         // TOOD: shift left ALL paginated items
-        if (slot >= size) {
+        if (slot >= size)
             clearSlot(context, slot);
-            return;
-        }
-
-        System.out.println("[updateLayoutSlot] passed -> " + slot + " < " + size);
     }
 
     void updateLayout(PaginatedViewContext<T> context, String[] layout) {
@@ -367,9 +363,9 @@ public abstract class PaginatedView<T> extends View {
     }
 
     protected abstract void onPaginationItemRender(
-            final PaginatedViewContext<T> context,
-            final ViewItem item,
-            final T value
+          final PaginatedViewContext<T> context,
+          final ViewItem item,
+          final T value
     );
 
 }
