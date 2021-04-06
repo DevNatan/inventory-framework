@@ -177,6 +177,8 @@ public class ViewListener implements Listener {
             item.setState(ViewItem.State.HOLDING);
 
         final ViewSlotContext slotContext = new DelegatedViewContext(context, slot, stack);
+        slotContext.setClickOrigin(e);
+
         if (item.getClickHandler() != null) {
             item.getClickHandler().handle(slotContext);
             e.setCancelled(e.isCancelled() || slotContext.isCancelled());
