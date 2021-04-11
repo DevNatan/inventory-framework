@@ -121,7 +121,7 @@ public class ViewListener implements Listener {
                 view.onMoveOut(moveOutContext);
                 item.setState(ViewItem.State.UNDEFINED);
 
-                if (view.isCancelOnMoveOut() ||moveOutContext.isCancelled())
+                if (view.isCancelOnMoveOut() || moveOutContext.isCancelled())
                     e.setCancelled(true);
 
                 if (moveOutContext.isMarkedToClose())
@@ -188,7 +188,7 @@ public class ViewListener implements Listener {
             e.setCancelled(item.isCancelOnClick());
 
         if (item.isCloseOnClick() || slotContext.isMarkedToClose())
-            player.closeInventory();
+            Bukkit.getScheduler().runTask(frame.getOwner(), slotContext::closeNow);
     }
 
     @EventHandler

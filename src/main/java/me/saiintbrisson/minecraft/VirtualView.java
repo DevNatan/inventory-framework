@@ -253,6 +253,17 @@ public class VirtualView {
             return;
         }
 
+        if (context instanceof ViewSlotContext) {
+            final ViewSlotContext slotContext = (ViewSlotContext) context;
+
+            // can be global click/move (in/out) handler
+            if (slotContext.hasChanged()) {
+                context.getInventory().setItem(slot, slotContext.getItem());
+                slotContext.setChanged(false);
+                return;
+            }
+        }
+
         // update handler can be used as a void function so
         // we must fallback to the render handler to update the item
         render(context, item, slot);
