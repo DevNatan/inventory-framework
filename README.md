@@ -1,3 +1,7 @@
+I strongly advise against using this project.
+---
+This lib is not stable nor completed, there aren't any plans to finish it.
+
 # inventory-framework
 
 * [Virtual View](#virtual-view)
