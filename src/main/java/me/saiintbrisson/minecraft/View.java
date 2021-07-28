@@ -108,6 +108,11 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
         player.openInventory(inventory);
     }
 
+    public void update() {
+        for (final ViewContext ctx : contexts.values())
+            ctx.update();
+    }
+
     @Override
     public void update(final ViewContext context) {
         frame.debug("[context]: update");
