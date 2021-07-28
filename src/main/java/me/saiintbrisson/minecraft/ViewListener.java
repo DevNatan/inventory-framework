@@ -12,6 +12,7 @@ import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class ViewListener implements Listener {
 
@@ -205,11 +206,16 @@ public class ViewListener implements Listener {
         if (context == null)
             return;
 
-        view.onClose(context);
+        final ViewContext close = new CloseViewContext(view, player, e.getInventory());
+        view.onClose(close);
 
         final ItemStack cursor = player.getItemOnCursor();
-        if (context.isCancelled()) {
-            player.openInventory(context.getInventory());
+        if (close.isCancelled()) {
+            new BukkitRunnable() {
+                public void run() {
+                    player.openInventory(close.getInventory());
+                }
+            }.runTaskLater(frame.getOwner(), 1L);
 
             // set the old cursor item
             if (cursor != null && cursor.getType() != Material.AIR)
@@ -217,9 +223,7 @@ public class ViewListener implements Listener {
             return;
         }
 
-        if (cursor != null && cursor.getType() != Material.AIR)
-            player.setItemOnCursor(null);
-
+        player.setItemOnCursor(null);
         view.remove(context);
     }
 
