@@ -161,6 +161,13 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
         return context;
     }
 
+    void remove(final ViewContext context) {
+        frame.debug("[context]: remove");
+        contexts.remove(context.getPlayer());
+        context.invalidate();
+        frame.debug("[context]: invalidate");
+    }
+
     public void close() {
         for (final Player player : contexts.keySet()) {
             player.closeInventory();

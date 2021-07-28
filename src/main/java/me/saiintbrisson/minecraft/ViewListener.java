@@ -201,14 +201,26 @@ public class ViewListener implements Listener {
             return;
 
         final Player player = (Player) e.getPlayer();
-        final ViewContext context = view.remove(player);
-        if (context != null) {
-            final ItemStack cursor = player.getItemOnCursor();
-            if (cursor != null && cursor.getType() != Material.AIR)
-                player.setItemOnCursor(null);
+        final ViewContext context = view.getContext(player);
+        if (context == null)
+            return;
 
-            view.onClose(context);
+        view.onClose(context);
+
+        final ItemStack cursor = player.getItemOnCursor();
+        if (context.isCancelled()) {
+            player.openInventory(context.getInventory());
+
+            // set the old cursor item
+            if (cursor != null && cursor.getType() != Material.AIR)
+                player.setItemOnCursor(cursor);
+            return;
         }
+
+        if (cursor != null && cursor.getType() != Material.AIR)
+            player.setItemOnCursor(null);
+
+        view.remove(context);
     }
 
     @EventHandler
