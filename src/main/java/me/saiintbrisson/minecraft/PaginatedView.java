@@ -172,6 +172,7 @@ public abstract class PaginatedView<T> extends View {
     private void clearSlot(ViewContext context, int slot) {
         context.getItems()[slot] = null;
         context.getInventory().setItem(slot, null);
+        getFrame().debug("[slot " + slot + " (paginated)]: cleared");
     }
 
     private String[] useLayout(PaginatedViewContext<T> context) {
