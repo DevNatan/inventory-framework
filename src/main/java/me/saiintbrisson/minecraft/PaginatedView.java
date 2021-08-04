@@ -351,7 +351,10 @@ public abstract class PaginatedView<T> extends View {
     @SuppressWarnings("unchecked")
     public void update(ViewContext context, int slot) {
         super.update(context, slot);
-        updateLayoutSlot((PaginatedViewContext<T>) context, slot);
+        updateLayoutSlot(context instanceof DelegatedViewContext
+                        ? (PaginatedViewContext<T>) ((DelegatedViewContext) context).getDelegate()
+                        : (PaginatedViewContext<T>) context,
+                slot);
     }
 
     public ViewItem getPreviousPageItem(PaginatedViewContext<T> context) {

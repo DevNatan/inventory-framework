@@ -14,6 +14,10 @@ public class DelegatedViewContext extends ViewSlotContext {
         this.delegate = delegate;
     }
 
+    ViewContext getDelegate() {
+        return delegate;
+    }
+
     @Override
     public String[] getLayout() {
         return delegate.getLayout();
