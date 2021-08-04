@@ -310,14 +310,6 @@ public abstract class PaginatedView<T> extends View {
         return preservedItems;
     }
 
-    final void updateLayoutSlot(PaginatedViewContext<T> context, int slot) {
-        final int size = context.getPaginator().getPage(context.getPage()).size();
-
-        // TOOD: shift left ALL paginated items
-        if (slot >= size)
-            clearSlot(context, slot);
-    }
-
     void updateLayout(PaginatedViewContext<T> context, String[] layout) {
         /*
             what we will do: first, use the old defined
@@ -348,16 +340,6 @@ public abstract class PaginatedView<T> extends View {
         updateContext(paginated, paginated.getPage(), false /* avoid intensive page checking */);
     }
 
-    @Override
-    @SuppressWarnings("unchecked")
-    public void update(ViewContext context, int slot) {
-        super.update(context, slot);
-        updateLayoutSlot(context instanceof DelegatedViewContext
-                        ? (PaginatedViewContext<T>) ((DelegatedViewContext) context).getDelegate()
-                        : (PaginatedViewContext<T>) context,
-                slot);
-    }
-
     public ViewItem getPreviousPageItem(PaginatedViewContext<T> context) {
         return null;
     }
@@ -367,9 +349,9 @@ public abstract class PaginatedView<T> extends View {
     }
 
     protected abstract void onPaginationItemRender(
-          final PaginatedViewContext<T> context,
-          final ViewItem item,
-          final T value
+            final PaginatedViewContext<T> context,
+            final ViewItem item,
+            final T value
     );
 
 }
