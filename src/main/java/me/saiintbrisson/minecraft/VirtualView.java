@@ -199,7 +199,7 @@ public class VirtualView {
                     new DelegatedViewContext(context, slot, fallback);
             item.getRenderHandler().handle(render);
             if (render.hasChanged()) {
-                context.getInventory().setItem(slot, render.getItem());
+                render.getInventory().setItem(slot, render.getItem());
                 render.setChanged(false);
                 return;
             }
@@ -245,7 +245,6 @@ public class VirtualView {
                     new DelegatedViewContext(context, slot, item.getItem());
 
             item.getUpdateHandler().handle(update);
-
             if (update.hasChanged()) {
                 render(update, item, slot);
                 update.setChanged(false);
@@ -256,16 +255,20 @@ public class VirtualView {
         if (context instanceof ViewSlotContext) {
             final ViewSlotContext slotContext = (ViewSlotContext) context;
 
+            // when using #updateSlot() inside a onClick
+            if (item.getRenderHandler() != null)
+                item.getRenderHandler().handle(slotContext);
+
             // can be global click/move (in/out) handler
             if (slotContext.hasChanged()) {
-                context.getInventory().setItem(slot, slotContext.getItem());
+                slotContext.getInventory().setItem(slot, slotContext.getItem());
                 slotContext.setChanged(false);
                 return;
             }
         }
 
-        // update handler can be used as a void function so
-        // we must fallback to the render handler to update the item
+        // update handler can be used as a void function, so
+        // we must fall back to the render handler to update the item
         render(context, item, slot);
     }
 
