@@ -59,6 +59,10 @@ public class ViewSlotContext extends ViewContext {
         return hasSlotData(slot, key);
     }
 
+    public void clearSlotData(String key) {
+        getSlotData().remove(key);
+    }
+
     public InventoryClickEvent getClickOrigin() {
         return clickOrigin;
     }
