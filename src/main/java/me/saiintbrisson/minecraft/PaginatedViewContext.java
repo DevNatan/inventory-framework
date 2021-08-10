@@ -70,6 +70,13 @@ public class PaginatedViewContext<T> extends ViewContext {
     }
 
     /**
+     * Returns `false` if the current page is the first page of the available pages or `true` otherwise
+     */
+    public boolean hasPreviousPage() {
+        return !isFirstPage();
+    }
+
+    /**
      * Returns the number of the next page with the maximum value of the number of available pages.
      */
     public int getNextPage() {
