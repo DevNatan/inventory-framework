@@ -23,6 +23,10 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
     private boolean cancelOnClick, cancelOnPickup, cancelOnDrop, cancelOnDrag, cancelOnClone, cancelOnMoveOut;
     private final Map<Player, Map<String, Object>> data;
 
+    public View() {
+        this(1);
+    }
+
     public View(final int rows) {
         this(null, rows, "");
     }

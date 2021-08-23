@@ -145,12 +145,11 @@ public class PaginatedViewContext<T> extends ViewContext {
      * @deprecated Use {@link #setSource(List)} instead.
      */
     @Deprecated
-    @SuppressWarnings("unchecked")
     public void setPaginationSource(List<?> source) {
         setSource(source);
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public void setSource(List<?> source) {
         ((PaginatedView<?>) view).setPaginator(new Paginator(((PaginatedView<?>) view).getPageSize(), source));
     }

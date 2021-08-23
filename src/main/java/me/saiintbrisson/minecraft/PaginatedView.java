@@ -21,6 +21,10 @@ public abstract class PaginatedView<T> extends View {
     private int offset;
     private int limit;
 
+    public PaginatedView() {
+        this(null, 3, "");
+    }
+
     public PaginatedView(int rows, String title) {
         this(null, rows, title);
     }
@@ -200,13 +204,15 @@ public abstract class PaginatedView<T> extends View {
         updateContext(context, page, true);
     }
 
-    private void renderPaginatedItemAt(PaginatedViewContext<T> context, int slot, T value, ViewItem override) {
+    private void renderPaginatedItemAt(PaginatedViewContext<T> context, int index, int slot, T value,
+                                       ViewItem override) {
         final ViewItem item = override == null ? new ViewItem(slot) : override;
 
         if (override == null) {
+            final PaginatedViewSlotContext<T> slotContext = new PaginatedViewSlotContext<>(context, index, slot);
             item.setPaginationItem(true);
-            onPaginationItemRender(context, item, value);
-            render(context, item, slot);
+            onPaginationItemRender(slotContext, item, value);
+            render(slotContext, item, slot);
         } else {
             override.setSlot(slot);
             context.getItems()[slot] = override;
@@ -230,7 +236,7 @@ public abstract class PaginatedView<T> extends View {
             final int targetSlot = layout == null ? offset + i : context.itemsLayer.elementAt(i);
             if (i < size) {
                 final ViewItem preserved = preservedItems == null || preservedItems.length <= i ? null : preservedItems[i];
-                renderPaginatedItemAt(context, targetSlot, elements.get(i), preserved);
+                renderPaginatedItemAt(context, i, targetSlot, elements.get(i), preserved);
             } else {
                 final ViewItem item = getItem(targetSlot);
                 // check if a non-virtual item has been defined in that slot
@@ -348,10 +354,30 @@ public abstract class PaginatedView<T> extends View {
         return null;
     }
 
-    protected abstract void onPaginationItemRender(
+    /**
+     * @deprecated Use {@link #onItemRender(PaginatedViewSlotContext, ViewItem, Object)} instead.
+     */
+    @Deprecated
+    protected void onPaginationItemRender(
             final PaginatedViewContext<T> context,
             final ViewItem item,
             final T value
-    );
+    ) {
+    }
+
+
+    /**
+     * Called when a paginated item is rendered.
+     *
+     * @param context - the pagination context.
+     * @param item    - the rendered item.
+     * @param value   - the paginated value.
+     */
+    protected void onItemRender(
+            final PaginatedViewSlotContext<T> context,
+            final ViewItem item,
+            final T value
+    ) {
+    }
 
 }
