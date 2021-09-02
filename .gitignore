@@ -2,7 +2,3 @@
 .idea/
 build/
 libs/
-gradle/
-
-gradlew
-gradlew.bat
