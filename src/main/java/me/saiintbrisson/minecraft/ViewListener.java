@@ -16,233 +16,233 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class ViewListener implements Listener {
 
-    private final ViewFrame frame;
+	private final ViewFrame frame;
 
-    public ViewListener(final ViewFrame frame) {
-        this.frame = frame;
-    }
+	public ViewListener(final ViewFrame frame) {
+		this.frame = frame;
+	}
 
-    private View getView(final Inventory inventory) {
-        // check for Player#getTopInventory
-        if (inventory == null)
-            return null;
+	private View getView(final Inventory inventory) {
+		// check for Player#getTopInventory
+		if (inventory == null)
+			return null;
 
-        final InventoryHolder holder = inventory.getHolder();
-        if (!(holder instanceof View))
-            return null;
+		final InventoryHolder holder = inventory.getHolder();
+		if (!(holder instanceof View))
+			return null;
 
-        final View view = (View) holder;
-        if (inventory.getType() != InventoryType.CHEST)
-            throw new UnsupportedOperationException("Views is only supported on chest-type inventory.");
+		final View view = (View) holder;
+		if (inventory.getType() != InventoryType.CHEST)
+			throw new UnsupportedOperationException("Views is only supported on chest-type inventory.");
 
-        return view;
-    }
+		return view;
+	}
 
-    @EventHandler
-    public void onViewPluginDisable(final PluginDisableEvent e) {
-        if (!frame.getOwner().equals(e.getPlugin()))
-            return;
+	@EventHandler
+	public void onViewPluginDisable(final PluginDisableEvent e) {
+		if (!frame.getOwner().equals(e.getPlugin()))
+			return;
 
-        frame.unregister();
-    }
+		frame.unregister();
+	}
 
-    @EventHandler
-    public void onViewItemDrag(final InventoryDragEvent e) {
-        if (!(e.getWhoClicked() instanceof Player))
-            return;
+	@EventHandler
+	public void onViewItemDrag(final InventoryDragEvent e) {
+		if (!(e.getWhoClicked() instanceof Player))
+			return;
 
-        final Inventory inventory = e.getInventory();
-        final View view = getView(inventory);
-        if (view == null)
-            return;
+		final Inventory inventory = e.getInventory();
+		final View view = getView(inventory);
+		if (view == null)
+			return;
 
-        final int size = inventory.getSize();
-        for (int slot : e.getRawSlots()) {
-            if (!(slot < size))
-                continue;
+		final int size = inventory.getSize();
+		for (int slot : e.getRawSlots()) {
+			if (!(slot < size))
+				continue;
 
-            if (view.isCancelOnDrag()) {
-                e.setCancelled(true);
-                break;
-            }
-        }
-    }
+			if (view.isCancelOnDrag()) {
+				e.setCancelled(true);
+				break;
+			}
+		}
+	}
 
-    @EventHandler
-    public void onViewClick(final InventoryClickEvent e) {
-        if (!(e.getWhoClicked() instanceof Player))
-            return;
+	@EventHandler
+	public void onViewClick(final InventoryClickEvent e) {
+		if (!(e.getWhoClicked() instanceof Player))
+			return;
 
-        final Player player = (Player) e.getWhoClicked();
-        final Inventory inventory = e.getInventory();
-        final View view = getView(inventory);
-        if (view == null)
-            return;
+		final Player player = (Player) e.getWhoClicked();
+		final Inventory inventory = e.getInventory();
+		final View view = getView(inventory);
+		if (view == null)
+			return;
 
-        // TODO: properly handle shift click
-        if (e.getSlotType() == InventoryType.SlotType.OUTSIDE || e.getClick().isShiftClick()) {
-            e.setCancelled(true);
-            return;
-        }
+		// TODO: properly handle shift click
+		if (e.getSlotType() == InventoryType.SlotType.OUTSIDE || e.getClick().isShiftClick()) {
+			e.setCancelled(true);
+			return;
+		}
 
-        final InventoryAction action = e.getAction();
-        if (action == InventoryAction.NOTHING)
-            return;
+		final InventoryAction action = e.getAction();
+		if (action == InventoryAction.NOTHING)
+			return;
 
-        // player.sendMessage("Event: click=" + e.getClick() + ", action=" + action + ", item=" + e.getCurrentItem() + ", cursor=" + e.getCursor());
-        final ItemStack cursor = e.getCursor();
-        final int slot = e.getSlot();
+		// player.sendMessage("Event: click=" + e.getClick() + ", action=" + action + ", item=" + e.getCurrentItem() + ", cursor=" + e.getCursor());
+		final ItemStack cursor = e.getCursor();
+		final int slot = e.getSlot();
 
-        // bottom inventory click
-        if (!(e.getRawSlot() < inventory.getSize())) {
-            if (action != InventoryAction.PLACE_ALL &&
-                    action != InventoryAction.PLACE_ONE &&
-                    action != InventoryAction.PLACE_SOME &&
-                    action != InventoryAction.SWAP_WITH_CURSOR)
-                return;
+		// bottom inventory click
+		if (!(e.getRawSlot() < inventory.getSize())) {
+			if (action != InventoryAction.PLACE_ALL &&
+				action != InventoryAction.PLACE_ONE &&
+				action != InventoryAction.PLACE_SOME &&
+				action != InventoryAction.SWAP_WITH_CURSOR)
+				return;
 
-            // unable to handle move out since item move not possible
-            if (view.isCancelOnClick())
-                return;
+			// unable to handle move out since item move not possible
+			if (view.isCancelOnClick())
+				return;
 
-            final ViewContext context = view.getContext(player);
-            for (int i = view.getFirstSlot(); i <= view.getLastSlot(); i++) {
-                final ViewItem item = view.resolve(context, i);
-                if (item == null)
-                    continue;
+			final ViewContext context = view.getContext(player);
+			for (int i = view.getFirstSlot(); i <= view.getLastSlot(); i++) {
+				final ViewItem item = view.resolve(context, i);
+				if (item == null)
+					continue;
 
-                if (item.getState() != ViewItem.State.HOLDING)
-                    continue;
+				if (item.getState() != ViewItem.State.HOLDING)
+					continue;
 
-                ItemStack swappedItem = null;
-                if (action == InventoryAction.SWAP_WITH_CURSOR)
-                    swappedItem = e.getCurrentItem();
+				ItemStack swappedItem = null;
+				if (action == InventoryAction.SWAP_WITH_CURSOR)
+					swappedItem = e.getCurrentItem();
 
-                final ViewSlotMoveContext moveOutContext = new ViewSlotMoveContext(context, item.getSlot(), cursor, e.getView().getBottomInventory(), swappedItem, slot, swappedItem != null);
-                view.onMoveOut(moveOutContext);
-                item.setState(ViewItem.State.UNDEFINED);
+				final ViewSlotMoveContext moveOutContext = new ViewSlotMoveContext(context, item.getSlot(), cursor, e.getView().getBottomInventory(), swappedItem, slot, swappedItem != null);
+				view.onMoveOut(moveOutContext);
+				item.setState(ViewItem.State.UNDEFINED);
 
-                if (view.isCancelOnMoveOut() || moveOutContext.isCancelled())
-                    e.setCancelled(true);
+				if (view.isCancelOnMoveOut() || moveOutContext.isCancelled())
+					e.setCancelled(true);
 
-                if (moveOutContext.isMarkedToClose())
-                    Bukkit.getScheduler().runTask(frame.getOwner(), moveOutContext::closeNow);
-                break;
-            }
-            return;
-        }
+				if (moveOutContext.isMarkedToClose())
+					Bukkit.getScheduler().runTask(frame.getOwner(), moveOutContext::closeNow);
+				break;
+			}
+			return;
+		}
 
-        if (action == InventoryAction.CLONE_STACK && view.isCancelOnClone()) {
-            e.setCancelled(true);
-            return;
-        }
+		if (action == InventoryAction.CLONE_STACK && view.isCancelOnClone()) {
+			e.setCancelled(true);
+			return;
+		}
 
-        e.setCancelled(view.isCancelOnClick());
+		e.setCancelled(view.isCancelOnClick());
 
-        final ViewContext context = view.getContext(player);
-        final ItemStack stack = e.getCurrentItem();
+		final ViewContext context = view.getContext(player);
+		final ItemStack stack = e.getCurrentItem();
 
-        final ClickType click = e.getClick();
-        if (action == InventoryAction.HOTBAR_SWAP || action == InventoryAction.HOTBAR_MOVE_AND_READD ||
-                click == ClickType.DROP ||
-                click == ClickType.CONTROL_DROP) {
-            ItemStack targetItem = null;
-            final Inventory targetInventory = e.getView().getBottomInventory();
-            if (action == InventoryAction.HOTBAR_MOVE_AND_READD)
-                targetItem = targetInventory.getItem(e.getHotbarButton());
+		final ClickType click = e.getClick();
+		if (action == InventoryAction.HOTBAR_SWAP || action == InventoryAction.HOTBAR_MOVE_AND_READD ||
+			click == ClickType.DROP ||
+			click == ClickType.CONTROL_DROP) {
+			ItemStack targetItem = null;
+			final Inventory targetInventory = e.getView().getBottomInventory();
+			if (action == InventoryAction.HOTBAR_MOVE_AND_READD)
+				targetItem = targetInventory.getItem(e.getHotbarButton());
 
-            final ViewSlotMoveContext moveOutContext = new ViewSlotMoveContext(context, slot, stack, targetInventory, targetItem, slot, false);
-            view.onMoveOut(moveOutContext);
+			final ViewSlotMoveContext moveOutContext = new ViewSlotMoveContext(context, slot, stack, targetInventory, targetItem, slot, false);
+			view.onMoveOut(moveOutContext);
 
-            if (view.isCancelOnMoveOut() || moveOutContext.isCancelled())
-                e.setCancelled(true);
+			if (view.isCancelOnMoveOut() || moveOutContext.isCancelled())
+				e.setCancelled(true);
 
-            if (moveOutContext.isMarkedToClose())
-                Bukkit.getScheduler().runTask(frame.getOwner(), moveOutContext::closeNow);
-            return;
-        }
+			if (moveOutContext.isMarkedToClose())
+				Bukkit.getScheduler().runTask(frame.getOwner(), moveOutContext::closeNow);
+			return;
+		}
 
-        final ViewItem item = view.resolve(context, slot);
+		final ViewItem item = view.resolve(context, slot);
 
-        // global click handling
-        final ViewSlotContext globalClick = new DelegatedViewContext(context, slot, stack);
-        globalClick.setClickOrigin(e);
-        view.onClick(globalClick);
+		// global click handling
+		final ViewSlotContext globalClick = new DelegatedViewContext(context, slot, stack);
+		globalClick.setClickOrigin(e);
+		view.onClick(globalClick);
 
-        if (item == null) {
-            e.setCancelled(e.isCancelled() || globalClick.isCancelled());
-            return;
-        }
+		if (item == null) {
+			e.setCancelled(e.isCancelled() || globalClick.isCancelled());
+			return;
+		}
 
-        if (action.name().startsWith("PICKUP") || action == InventoryAction.CLONE_STACK)
-            item.setState(ViewItem.State.HOLDING);
+		if (action.name().startsWith("PICKUP") || action == InventoryAction.CLONE_STACK)
+			item.setState(ViewItem.State.HOLDING);
 
-        final ViewSlotContext slotContext = new DelegatedViewContext(context, slot, stack);
-        slotContext.setClickOrigin(e);
+		final ViewSlotContext slotContext = new DelegatedViewContext(context, slot, stack);
+		slotContext.setClickOrigin(e);
 
-        if (item.getClickHandler() != null) {
-            item.getClickHandler().handle(slotContext);
-            e.setCancelled(e.isCancelled() || slotContext.isCancelled());
-        }
+		if (item.getClickHandler() != null) {
+			item.getClickHandler().handle(slotContext);
+			e.setCancelled(e.isCancelled() || slotContext.isCancelled());
+		}
 
-        if (item.isOverrideCancelOnClick())
-            e.setCancelled(item.isCancelOnClick());
+		if (item.isOverrideCancelOnClick())
+			e.setCancelled(item.isCancelOnClick());
 
-        if (item.isCloseOnClick() || slotContext.isMarkedToClose())
-            Bukkit.getScheduler().runTask(frame.getOwner(), slotContext::closeNow);
-    }
+		if (item.isCloseOnClick() || slotContext.isMarkedToClose())
+			Bukkit.getScheduler().runTask(frame.getOwner(), slotContext::closeNow);
+	}
 
-    @EventHandler
-    public void onViewClose(final InventoryCloseEvent e) {
-        if (!(e.getPlayer() instanceof Player))
-            return;
+	@EventHandler
+	public void onViewClose(final InventoryCloseEvent e) {
+		if (!(e.getPlayer() instanceof Player))
+			return;
 
-        final View view = getView(e.getInventory());
-        if (view == null)
-            return;
+		final View view = getView(e.getInventory());
+		if (view == null)
+			return;
 
-        final Player player = (Player) e.getPlayer();
-        final ViewContext context = view.getContext(player);
-        if (context == null)
-            return;
+		final Player player = (Player) e.getPlayer();
+		final ViewContext context = view.getContext(player);
+		if (context == null)
+			return;
 
-        final ViewContext close = new CloseViewContext(view, player, e.getInventory());
-        view.onClose(close);
+		final ViewContext close = new CloseViewContext(view, player, e.getInventory());
+		view.onClose(close);
 
-        final ItemStack cursor = player.getItemOnCursor();
-        if (close.isCancelled()) {
-            new BukkitRunnable() {
-                public void run() {
-                    player.openInventory(close.getInventory());
-                }
-            }.runTaskLater(frame.getOwner(), 1L);
+		final ItemStack cursor = player.getItemOnCursor();
+		if (close.isCancelled()) {
+			new BukkitRunnable() {
+				public void run() {
+					player.openInventory(close.getInventory());
+				}
+			}.runTaskLater(frame.getOwner(), 1L);
 
-            // set the old cursor item
-            if (cursor != null && cursor.getType() != Material.AIR)
-                player.setItemOnCursor(cursor);
-            return;
-        }
+			// set the old cursor item
+			if (cursor != null && cursor.getType() != Material.AIR)
+				player.setItemOnCursor(cursor);
+			return;
+		}
 
-        player.setItemOnCursor(null);
-        view.remove(context);
-    }
+		player.setItemOnCursor(null);
+		view.remove(context);
+	}
 
-    @EventHandler
-    public void onDropItemOnView(final PlayerDropItemEvent e) {
-        final View view = getView(e.getPlayer().getOpenInventory().getTopInventory());
-        if (view == null)
-            return;
+	@EventHandler
+	public void onDropItemOnView(final PlayerDropItemEvent e) {
+		final View view = getView(e.getPlayer().getOpenInventory().getTopInventory());
+		if (view == null)
+			return;
 
-        e.setCancelled(view.isCancelOnDrop());
-    }
+		e.setCancelled(view.isCancelOnDrop());
+	}
 
-    @EventHandler
-    public void onPickupItemOnView(final PlayerPickupItemEvent e) {
-        final View view = getView(e.getPlayer().getOpenInventory().getTopInventory());
-        if (view == null)
-            return;
+	@EventHandler
+	public void onPickupItemOnView(final PlayerPickupItemEvent e) {
+		final View view = getView(e.getPlayer().getOpenInventory().getTopInventory());
+		if (view == null)
+			return;
 
-        e.setCancelled(view.isCancelOnPickup());
-    }
+		e.setCancelled(view.isCancelOnPickup());
+	}
 
 }

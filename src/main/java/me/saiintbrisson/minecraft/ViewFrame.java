@@ -13,128 +13,128 @@ import java.util.function.Function;
 
 public final class ViewFrame {
 
-    private final Plugin owner;
-    private Listener listener;
-    private final Map<Class<? extends View>, View> registeredViews;
-    private Function<PaginatedViewContext<?>, ViewItem> defaultPreviousPageItem;
-    private Function<PaginatedViewContext<?>, ViewItem> defaultNextPageItem;
-    private boolean debugEnabled;
+	private final Plugin owner;
+	private Listener listener;
+	private final Map<Class<? extends View>, View> registeredViews;
+	private Function<PaginatedViewContext<?>, ViewItem> defaultPreviousPageItem;
+	private Function<PaginatedViewContext<?>, ViewItem> defaultNextPageItem;
+	private boolean debugEnabled;
 
-    public ViewFrame(Plugin owner) {
-        this.owner = owner;
-        registeredViews = new HashMap<>();
-    }
+	public ViewFrame(Plugin owner) {
+		this.owner = owner;
+		registeredViews = new HashMap<>();
+	}
 
-    public ViewFrame(Plugin owner, View... views) {
-        this(owner);
-        addView(views);
-    }
+	public ViewFrame(Plugin owner, View... views) {
+		this(owner);
+		addView(views);
+	}
 
-    public Plugin getOwner() {
-        return owner;
-    }
+	public Plugin getOwner() {
+		return owner;
+	}
 
-    public Listener getListener() {
-        return listener;
-    }
+	public Listener getListener() {
+		return listener;
+	}
 
-    public Map<Class<? extends View>, View> getRegisteredViews() {
-        return registeredViews;
-    }
+	public Map<Class<? extends View>, View> getRegisteredViews() {
+		return registeredViews;
+	}
 
-    public boolean isDebugEnabled() {
-        return debugEnabled;
-    }
+	public boolean isDebugEnabled() {
+		return debugEnabled;
+	}
 
-    public void setDebugEnabled(boolean debugEnabled) {
-        this.debugEnabled = debugEnabled;
-    }
+	public void setDebugEnabled(boolean debugEnabled) {
+		this.debugEnabled = debugEnabled;
+	}
 
-    public final void addView(final View view) {
-        if (view.getFrame() == null)
-            view.setFrame(this);
+	public final void addView(final View view) {
+		if (view.getFrame() == null)
+			view.setFrame(this);
 
-        registeredViews.put(view.getClass(), view);
-        debug("[view] \"" + view.getClass().getSimpleName() + "\" registered.");
-    }
+		registeredViews.put(view.getClass(), view);
+		debug("[view] \"" + view.getClass().getSimpleName() + "\" registered.");
+	}
 
-    public void addView(final View... views) {
-        for (final View view : views) {
-            addView(view);
-        }
-    }
+	public void addView(final View... views) {
+		for (final View view : views) {
+			addView(view);
+		}
+	}
 
-    public void register(final View... views) {
-        checkUnregistered();
+	public void register(final View... views) {
+		checkUnregistered();
 
-        for (final View view : views)
-            addView(view);
+		for (final View view : views)
+			addView(view);
 
-        this.listener = new ViewListener(this);
-        Bukkit.getPluginManager().registerEvents(listener, owner);
-        debug("[frame] registered to " + owner.getName());
-    }
+		this.listener = new ViewListener(this);
+		Bukkit.getPluginManager().registerEvents(listener, owner);
+		debug("[frame] registered to " + owner.getName());
+	}
 
-    public void unregister() {
-        Iterator<View> iterator = registeredViews.values().iterator();
-        while (iterator.hasNext()) {
-            final View view = iterator.next();
-            view.close();
-            iterator.remove();
-            debug("[view] \"" + view.getClass().getSimpleName() + "\" unregistered.");
-        }
+	public void unregister() {
+		Iterator<View> iterator = registeredViews.values().iterator();
+		while (iterator.hasNext()) {
+			final View view = iterator.next();
+			view.close();
+			iterator.remove();
+			debug("[view] \"" + view.getClass().getSimpleName() + "\" unregistered.");
+		}
 
-        if (listener != null) {
-            HandlerList.unregisterAll(listener);
-            listener = null;
-            debug("[frame] unregistered from " + owner.getName());
-        }
-    }
+		if (listener != null) {
+			HandlerList.unregisterAll(listener);
+			listener = null;
+			debug("[frame] unregistered from " + owner.getName());
+		}
+	}
 
-    public <T extends View> T open(Class<T> view, Player player) {
-        return open(view, player, null);
-    }
+	public <T extends View> T open(Class<T> view, Player player) {
+		return open(view, player, null);
+	}
 
-    public <T extends View> T open(Class<T> view, Player player, Map<String, Object> data) {
-        final T openedView = getView(view);
-        if (openedView == null)
-            throw new IllegalArgumentException("View " + view.getSimpleName() + " is not registered");
+	public <T extends View> T open(Class<T> view, Player player, Map<String, Object> data) {
+		final T openedView = getView(view);
+		if (openedView == null)
+			throw new IllegalArgumentException("View " + view.getSimpleName() + " is not registered");
 
-        openedView.open(player, data);
-        return openedView;
-    }
+		openedView.open(player, data);
+		return openedView;
+	}
 
-    @SuppressWarnings("unchecked")
-    public <T extends View> T getView(Class<T> view) {
-        return (T) getRegisteredViews().get(view);
-    }
+	@SuppressWarnings("unchecked")
+	public <T extends View> T getView(Class<T> view) {
+		return (T) getRegisteredViews().get(view);
+	}
 
-    private void checkUnregistered() {
-        if (listener != null)
-            throw new IllegalStateException("Listener already registered.");
-    }
+	private void checkUnregistered() {
+		if (listener != null)
+			throw new IllegalStateException("Listener already registered.");
+	}
 
-    public Function<PaginatedViewContext<?>, ViewItem> getDefaultPreviousPageItem() {
-        return defaultPreviousPageItem;
-    }
+	public Function<PaginatedViewContext<?>, ViewItem> getDefaultPreviousPageItem() {
+		return defaultPreviousPageItem;
+	}
 
-    public void setDefaultPreviousPageItem(final Function<PaginatedViewContext<?>, ViewItem> defaultPreviousPageItem) {
-        this.defaultPreviousPageItem = defaultPreviousPageItem;
-    }
+	public void setDefaultPreviousPageItem(final Function<PaginatedViewContext<?>, ViewItem> defaultPreviousPageItem) {
+		this.defaultPreviousPageItem = defaultPreviousPageItem;
+	}
 
-    public Function<PaginatedViewContext<?>, ViewItem> getDefaultNextPageItem() {
-        return defaultNextPageItem;
-    }
+	public Function<PaginatedViewContext<?>, ViewItem> getDefaultNextPageItem() {
+		return defaultNextPageItem;
+	}
 
-    public void setDefaultNextPageItem(final Function<PaginatedViewContext<?>, ViewItem> defaultNextPageItem) {
-        this.defaultNextPageItem = defaultNextPageItem;
-    }
+	public void setDefaultNextPageItem(final Function<PaginatedViewContext<?>, ViewItem> defaultNextPageItem) {
+		this.defaultNextPageItem = defaultNextPageItem;
+	}
 
-    public void debug(String message) {
-        if (!debugEnabled)
-            return;
+	public void debug(String message) {
+		if (!debugEnabled)
+			return;
 
-        getOwner().getLogger().info("[IF DEBUG] " + message);
-    }
+		getOwner().getLogger().info("[IF DEBUG] " + message);
+	}
 
 }

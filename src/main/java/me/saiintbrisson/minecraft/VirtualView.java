@@ -11,7 +11,7 @@ import static me.saiintbrisson.minecraft.View.UNSET_SLOT;
 
 public class VirtualView {
 
-    protected final ViewItem[] items;
+    protected ViewItem[] items;
     protected String[] layout;
 
     public VirtualView(ViewItem[] items) {
