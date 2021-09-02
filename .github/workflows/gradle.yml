@@ -18,7 +18,7 @@ jobs:
       - name: Build gradle project
         run: |
           chmod +x ./gradlew
-          ./gradlew clean shadowJar
+          ./gradlew clean jar
       - name: Setup project version
         run: |
           export PROJECT_VERSION=$(./gradlew properties --no-daemon --console=plain -q | grep "^version:" | awk '{printf $2}')
