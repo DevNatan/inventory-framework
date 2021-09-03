@@ -1,8 +1,10 @@
 package me.saiintbrisson.minecraft;
 
 import com.google.common.base.Preconditions;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -16,6 +18,10 @@ public abstract class VirtualView {
 
     protected ViewItem[] items;
     protected String[] layout;
+
+    // SCHEDULE
+	private BukkitTask updateTask;
+	private long updateInterval = 1;
 
     public VirtualView(ViewItem[] items) {
         this.items = items;
@@ -292,7 +298,38 @@ public abstract class VirtualView {
 
     public abstract Collection<ViewContext> getViewers();
 
-    @Override
+	public void setUpdateInterval(long updateInterval) {
+		this.updateInterval = updateInterval;
+
+		if (this.updateInterval > 0 && updateTask != null)
+			resumeUpdateJob();
+	}
+
+	private void setupUpdateJob() {
+		if (updateInterval <= 0)
+			return;
+
+		if (!getViewers().isEmpty())
+			return;
+
+		updateTask = Bukkit.getScheduler().runTaskTimer(getContainer().getOwner(), this::update, 0, updateInterval);
+	}
+
+	protected void resumeUpdateJob() {
+		if (updateTask != null)
+			return;
+
+		setupUpdateJob();
+	}
+
+	protected void cancelUpdateJob() {
+		if (updateTask != null)
+			updateTask.cancel();
+
+		updateTask = null;
+	}
+
+	@Override
     public String toString() {
         return Arrays.stream(items).filter(Objects::nonNull).map(ViewItem::toString).collect(Collectors.joining());
     }
