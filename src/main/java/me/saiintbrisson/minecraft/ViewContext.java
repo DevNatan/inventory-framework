@@ -239,6 +239,9 @@ public class ViewContext extends VirtualView {
         if (!(view instanceof PaginatedView))
             throw new IllegalArgumentException("Only paginated views can enforce paginated view context.");
 
+        if (this instanceof DelegatedViewContext)
+        	return (PaginatedViewContext<T>) ((DelegatedViewContext) this).getDelegate();
+
         return (PaginatedViewContext<T>) this;
     }
 

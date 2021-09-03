@@ -342,7 +342,7 @@ public abstract class PaginatedView<T> extends View {
 		// call global onUpdate
 		super.update(context);
 
-		PaginatedViewContext<T> paginated = (PaginatedViewContext<T>) context;
+		PaginatedViewContext<T> paginated = context.paginated();
 		updateContext(paginated, paginated.getPage(), false /* avoid intensive page checking */);
 	}
 
