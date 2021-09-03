@@ -25,6 +25,11 @@ jobs:
           export PROJECT_VERSION=$(./gradlew properties --no-daemon --console=plain -q | grep "^version:" | awk '{printf $2}')
           echo "Debug gradle version ${PROJECT_VERSION}"
           echo "PROJECT_VERSION=${PROJECT_VERSION}" >> $GITHUB_ENV
+      - name: Build Changelog
+        id: github_release
+        uses: mikepenz/release-changelog-builder-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -33,9 +38,7 @@ jobs:
         with:
           tag_name: ${{ env.PROJECT_VERSION }}
           release_name: "${{ format('{0} [Release #{1}]', github.event.head_commit.message, github.run_id) }}"
-          body: |
-            open in [jitpack.io][jitpack-url]
-            [jitpack-url]: https://jitpack.io/#${{ github.repository }}/${{ env.PROJECT_VERSION }}
+          body: ${{ steps.github_release.outputs.changelog }}
           draft: false
           prerelease: false
 
