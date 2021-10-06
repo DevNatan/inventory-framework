@@ -6,7 +6,9 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 
 import java.io.Closeable;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
@@ -302,10 +304,6 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 	protected void onMoveOut(final ViewSlotMoveContext context) {
 	}
 
-	@Override
-	Collection<ViewContext> getViewers() {
-		return contexts.values();
-	}
 
 	private void expandItemsArray(int newLength) {
 		ViewItem[] newItems = new ViewItem[items.length + 1];

@@ -1,18 +1,15 @@
 package me.saiintbrisson.minecraft;
 
 import com.google.common.base.Preconditions;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static me.saiintbrisson.minecraft.View.UNSET_SLOT;
 
-public abstract class VirtualView {
+public class VirtualView {
 
     protected ViewItem[] items;
     protected String[] layout;
@@ -285,8 +282,6 @@ public abstract class VirtualView {
 
         return item;
     }
-
-    abstract Collection<ViewContext> getViewers();
 
     @Override
     public String toString() {

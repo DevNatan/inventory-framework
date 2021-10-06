@@ -3,7 +3,10 @@ package me.saiintbrisson.minecraft;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Stack;
 import java.util.function.Supplier;
 
 public class ViewContext extends VirtualView {
@@ -239,12 +242,7 @@ public class ViewContext extends VirtualView {
         return (PaginatedViewContext<T>) this;
     }
 
-	@Override
-	Collection<ViewContext> getViewers() {
-		return Collections.singleton(this);
-	}
-
-	@Override
+    @Override
     public String toString() {
         return "ViewContext{" +
                 "view=" + view +
