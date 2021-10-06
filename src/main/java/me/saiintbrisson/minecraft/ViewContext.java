@@ -90,7 +90,6 @@ public class ViewContext extends VirtualView {
     /**
      * Updates the current view to that context.
      */
-    @Override
     public void update() {
         view.update(this);
     }
@@ -224,12 +223,7 @@ public class ViewContext extends VirtualView {
         return inventory.getSize() - 1;
     }
 
-	@Override
-	public ViewFrame getContainer() {
-		return view.getFrame();
-	}
-
-	/**
+    /**
      * Returns the current context as the context of a paged view.
      * @param <T> view type parameter.
      * @return this
@@ -246,7 +240,7 @@ public class ViewContext extends VirtualView {
     }
 
 	@Override
-	public Collection<ViewContext> getViewers() {
+	Collection<ViewContext> getViewers() {
 		return Collections.singleton(this);
 	}
 

@@ -286,11 +286,7 @@ public abstract class VirtualView {
         return item;
     }
 
-    public abstract ViewFrame getContainer();
-
-    public abstract void update();
-
-    public abstract Collection<ViewContext> getViewers();
+    abstract Collection<ViewContext> getViewers();
 
     @Override
     public String toString() {

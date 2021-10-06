@@ -6,9 +6,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 
 import java.io.Closeable;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
@@ -118,7 +116,6 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 		player.openInventory(inventory);
 	}
 
-	@Override
 	public void update() {
 		for (final ViewContext ctx : contexts.values())
 			ctx.update();
@@ -159,11 +156,6 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 	ViewItem resolve(final ViewContext context, final int slot) {
 		frame.debug("[slot " + slot + "]: resolve item");
 		return super.resolve(context, slot);
-	}
-
-	@Override
-	public ViewFrame getContainer() {
-		return frame;
 	}
 
 	ViewContext remove(final Player player) {
@@ -311,7 +303,7 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 	}
 
 	@Override
-	public Collection<ViewContext> getViewers() {
+	Collection<ViewContext> getViewers() {
 		return contexts.values();
 	}
 
