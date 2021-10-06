@@ -9,7 +9,6 @@ import java.io.Closeable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.WeakHashMap;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
 public class View extends VirtualView implements InventoryHolder, Closeable {
@@ -41,8 +40,8 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 		this.rows = rows;
 		this.frame = frame;
 		this.title = title;
-		contexts = new ConcurrentHashMap<>();
-		data = new ConcurrentHashMap<>();
+		contexts = new WeakHashMap<>();
+		data = new WeakHashMap<>();
 		cancelOnPickup = true;
 		cancelOnDrop = true;
 		cancelOnDrag = true;
@@ -179,8 +178,9 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 	}
 
 	public void close() {
-		for (final Player player : contexts.keySet())
+		for (final Player player : contexts.keySet()) {
 			player.closeInventory();
+		}
 	}
 
 	public boolean isCancelOnClick() {
