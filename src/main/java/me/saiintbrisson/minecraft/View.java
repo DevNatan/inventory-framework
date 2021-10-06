@@ -1,6 +1,5 @@
 package me.saiintbrisson.minecraft;
 
-import com.google.common.collect.Lists;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -9,7 +8,6 @@ import org.bukkit.inventory.InventoryHolder;
 import java.io.Closeable;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
@@ -25,7 +23,6 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 	private final Map<Player, ViewContext> contexts;
 	private boolean cancelOnClick, cancelOnPickup, cancelOnDrop, cancelOnDrag, cancelOnClone, cancelOnMoveOut;
 	private final Map<Player, Map<String, Object>> data;
-	private final Map<HandlerType, List<Handler<?>>> handlers;
 
 	public View() {
 		this(1);
@@ -46,15 +43,11 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 		this.title = title;
 		contexts = new ConcurrentHashMap<>();
 		data = new ConcurrentHashMap<>();
-		handlers = new HashMap<>();
 		cancelOnPickup = true;
 		cancelOnDrop = true;
 		cancelOnDrag = true;
 		cancelOnClone = true;
 		cancelOnMoveOut = true;
-
-		addHandler(HandlerType.OPEN, $ -> this.resumeUpdateJob());
-		addHandler(HandlerType.CLOSE, $ -> this.cancelUpdateJob());
 	}
 
 	@Override
@@ -327,23 +320,6 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 		System.arraycopy(items, 0, newItems, 0, items.length);
 
 		items = newItems;
-	}
-
-	<T extends ViewContext> void addHandler(HandlerType type, Handler<T> handler) {
-		handlers.computeIfAbsent(type, $ -> Lists.newArrayList()).add(handler);
-	}
-
-	@SuppressWarnings("unchecked")
-	<T extends ViewContext> void callHandlers(HandlerType type, T context) {
-		final List<Handler<?>> all = handlers.get(type);
-		if (all == null || all.isEmpty())
-			return;
-
-		if (all.size() == 1)
-			((Handler<T>) all.get(0)).handle(context);
-
-		for (final Handler<?> handler : all)
-			((Handler<T>) handler).handle(context);
 	}
 
 }

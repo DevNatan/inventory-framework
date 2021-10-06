@@ -3,10 +3,6 @@ package me.saiintbrisson.minecraft;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitTask;
 
-/**
- * Use {@link VirtualView#setUpdateInterval(long)} instead.
- */
-@Deprecated
 public abstract class ScheduledPaginatedView<T> extends PaginatedView<T> {
 
 	private long delay = 1L;
@@ -28,21 +24,6 @@ public abstract class ScheduledPaginatedView<T> extends PaginatedView<T> {
 
 	protected void setPeriod(long period) {
 		this.period = period;
-	}
-
-	@Override
-	public void setUpdateInterval(long updateInterval) {
-		throw new IllegalArgumentException("#setUpdateInterval(long) cannot be used with ScheduledPaginatedView");
-	}
-
-	@Override
-	protected void resumeUpdateJob() {
-		throw new IllegalArgumentException("#resumeUpdateJob(long) cannot be used with ScheduledPaginatedView");
-	}
-
-	@Override
-	protected void cancelUpdateJob() {
-		throw new IllegalArgumentException("#cancelUpdateJob(long) cannot be used with ScheduledPaginatedView");
 	}
 
 	@Override
