@@ -22,7 +22,7 @@ public class ViewListener implements Listener {
 		this.frame = frame;
 	}
 
-	private View getView(final Inventory inventory) {
+	private View getView(final Inventory inventory, final Player player) {
 		// check for Player#getTopInventory
 		if (inventory == null)
 			return null;
@@ -34,6 +34,14 @@ public class ViewListener implements Listener {
 		final View view = (View) holder;
 		if (inventory.getType() != InventoryType.CHEST)
 			throw new UnsupportedOperationException("Views is only supported on chest-type inventory.");
+
+		final ViewContext context = view.getContext(player);
+
+		// for some reason I haven't figured out which one yet,
+		// it's possible that the View's inventory is open and the context doesn't exist,
+		// so we check to see if it's null
+		if (context == null)
+			return null;
 
 		return view;
 	}
@@ -52,7 +60,7 @@ public class ViewListener implements Listener {
 			return;
 
 		final Inventory inventory = e.getInventory();
-		final View view = getView(inventory);
+		final View view = getView(inventory, (Player) e.getWhoClicked());
 		if (view == null)
 			return;
 
@@ -75,7 +83,7 @@ public class ViewListener implements Listener {
 
 		final Player player = (Player) e.getWhoClicked();
 		final Inventory inventory = e.getInventory();
-		final View view = getView(inventory);
+		final View view = getView(inventory, player);
 		if (view == null)
 			return;
 
@@ -106,6 +114,13 @@ public class ViewListener implements Listener {
 				return;
 
 			final ViewContext context = view.getContext(player);
+
+			// for some reason I haven't figured out which one yet,
+			// it's possible that the View's inventory is open and the context doesn't exist,
+			// so we check to see if it's null
+			if (context == null)
+				return;
+
 			for (int i = view.getFirstSlot(); i <= view.getLastSlot(); i++) {
 				final ViewItem item = view.resolve(context, i);
 				if (item == null)
@@ -137,9 +152,16 @@ public class ViewListener implements Listener {
 			return;
 		}
 
-		e.setCancelled(view.isCancelOnClick());
-
 		final ViewContext context = view.getContext(player);
+
+		// for some reason I haven't figured out which one yet,
+		// it's possible that the View's inventory is open and the context doesn't exist,
+		// so we check to see if it's null
+		if (context == null) {
+			return;
+		}
+
+		e.setCancelled(view.isCancelOnClick());
 		final ItemStack stack = e.getCurrentItem();
 
 		final ClickType click = e.getClick();
@@ -197,7 +219,7 @@ public class ViewListener implements Listener {
 		if (!(e.getPlayer() instanceof Player))
 			return;
 
-		final View view = getView(e.getInventory());
+		final View view = getView(e.getInventory(), (Player) e.getPlayer());
 		if (view == null)
 			return;
 
@@ -229,7 +251,7 @@ public class ViewListener implements Listener {
 
 	@EventHandler
 	public void onDropItemOnView(final PlayerDropItemEvent e) {
-		final View view = getView(e.getPlayer().getOpenInventory().getTopInventory());
+		final View view = getView(e.getPlayer().getOpenInventory().getTopInventory(), e.getPlayer());
 		if (view == null)
 			return;
 
@@ -238,7 +260,7 @@ public class ViewListener implements Listener {
 
 	@EventHandler
 	public void onPickupItemOnView(final PlayerPickupItemEvent e) {
-		final View view = getView(e.getPlayer().getOpenInventory().getTopInventory());
+		final View view = getView(e.getPlayer().getOpenInventory().getTopInventory(), e.getPlayer());
 		if (view == null)
 			return;
 
