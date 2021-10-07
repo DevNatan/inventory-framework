@@ -1,5 +1,5 @@
 main: me.saiintbrisson.minecraft.InventoryFramework
 name: InventoryFramework
 version: @version@
-authors: [SaiintBrisson, DevNatan]
+authors: [SaiintBrisson, DevNatan, sasuked]
 website: https://github.com/saiintbrisson/inventory-framework
