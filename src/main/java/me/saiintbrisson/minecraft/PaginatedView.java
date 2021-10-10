@@ -127,7 +127,7 @@ public abstract class PaginatedView<T> extends View {
 
     private void updateNavigationPreviousItem(PaginatedViewContext<T> context) {
         if (context.getPreviousPageItemSlot() == UNSET_SLOT)
-            throw new IllegalArgumentException("Previous page item not yet resolved.");
+            return;
 
         final ViewItem item = resolvePreviousPageItem(context);
         if (item == null) {
@@ -145,7 +145,7 @@ public abstract class PaginatedView<T> extends View {
 
     private void updateNavigationNextItem(PaginatedViewContext<T> context) {
         if (context.getNextPageItemSlot() == UNSET_SLOT)
-            throw new IllegalArgumentException("Next page item not yet resolved.");
+			return;
 
         final ViewItem item = resolveNextPageItem(context);
         if (item == null) {
