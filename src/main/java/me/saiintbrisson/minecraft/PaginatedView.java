@@ -212,6 +212,7 @@ public abstract class PaginatedView<T> extends View {
             final PaginatedViewSlotContext<T> slotContext = new PaginatedViewSlotContext<>(context, index, slot);
             item.setPaginationItem(true);
             onPaginationItemRender(slotContext, item, value);
+			onItemRender(slotContext, item, value);
             render(slotContext, item, slot);
         } else {
             override.setSlot(slot);
