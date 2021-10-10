@@ -183,21 +183,29 @@ public abstract class PaginatedView<T> extends View {
         return context.getLayout() == null ? this.layout : context.getLayout();
     }
 
+	final void updateContext(PaginatedViewContext<T> context, int page, boolean pageChecking, boolean render) {
+		if (pageChecking) {
+			// index check
+			if (render && !context.getPaginator().hasPage(page))
+				return;
+
+			final String[] layout = useLayout(context);
+			if (layout != null && !context.isCheckedLayerSignature())
+				resolveLayout(context, layout);
+
+			if (render)
+				context.setPage(page);
+		}
+
+		if (!render)
+			return;
+
+		renderLayout(context, layout, null);
+		updateNavigation(context);
+	}
+
     final void updateContext(PaginatedViewContext<T> context, int page, boolean pageChecking) {
-        if (pageChecking) {
-            // index check
-            if (!context.getPaginator().hasPage(page))
-                return;
-
-            final String[] layout = useLayout(context);
-            if (layout != null && !context.isCheckedLayerSignature())
-                resolveLayout(context, layout);
-
-            context.setPage(page);
-        }
-
-        renderLayout(context, layout, null);
-        updateNavigation(context);
+        updateContext(context, page, pageChecking, true);
     }
 
     final void updateContext(PaginatedViewContext<T> context, int page) {
@@ -222,7 +230,10 @@ public abstract class PaginatedView<T> extends View {
 
     @Override
     protected ViewContext createContext(View view, Player player, Inventory inventory) {
-        return new PaginatedViewContext<>(this, player, inventory, FIRST_PAGE);
+        final PaginatedViewContext<T> context = new PaginatedViewContext<>(this, player, inventory, FIRST_PAGE);
+        updateContext(context, FIRST_PAGE, true, false);
+
+        return context;
     }
 
     private void renderLayout(PaginatedViewContext<T> context, String[] layout, ViewItem[] preservedItems) {
