@@ -1,5 +1,7 @@
 package me.saiintbrisson.minecraft;
 
+import java.util.Stack;
+
 public class PaginatedViewSlotContext<T> extends PaginatedViewContext<T> {
 
     private final PaginatedViewContext<T> delegate;
@@ -13,7 +15,12 @@ public class PaginatedViewSlotContext<T> extends PaginatedViewContext<T> {
         this.slot = slot;
     }
 
-    /**
+	@Override
+	protected Stack<Integer> getItemsLayer() {
+		return delegate.getItemsLayer();
+	}
+
+	/**
      * Returns the item pagination index.
      *
      * @return the item pagination.
