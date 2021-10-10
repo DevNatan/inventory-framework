@@ -1,5 +1,6 @@
 package me.saiintbrisson.minecraft;
 
+import com.google.common.collect.Sets;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -9,7 +10,9 @@ import java.io.Closeable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.WeakHashMap;
+import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 public class View extends VirtualView implements InventoryHolder, Closeable {
 
@@ -19,7 +22,7 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 	private ViewFrame frame;
 	private final String title;
 	private final int rows;
-	private final Map<Player, ViewContext> contexts;
+	private final Map<String, ViewContext> contexts;
 	private boolean cancelOnClick, cancelOnPickup, cancelOnDrop, cancelOnDrag, cancelOnClone, cancelOnMoveOut;
 	private final Map<Player, Map<String, Object>> data;
 
@@ -55,11 +58,14 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 	}
 
 	public Map<Player, ViewContext> getContexts() {
-		return contexts;
+		return contexts.entrySet().stream().collect(Collectors.toMap(e -> Bukkit.getPlayerExact(e.getKey()), Map.Entry::getValue));
 	}
 
 	public ViewContext getContext(final Player player) {
-		return contexts.get(player);
+		final ViewContext context = contexts.get(player.getName());
+		if (context == null)
+			Bukkit.broadcastMessage("Null context");
+		return context;
 	}
 
 	public ViewFrame getFrame() {
@@ -87,8 +93,8 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 	}
 
 	public void open(final Player player, final Map<String, Object> data) {
-		if (contexts.containsKey(player))
-			return;
+		if (contexts.containsKey(player.getName()))
+			throw new IllegalStateException("Context cannot be created twice");
 
 		final OpenViewContext preOpenContext = new OpenViewContext(this, player);
 		if (data != null)
@@ -111,7 +117,7 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 
 		final Inventory inventory = getInventory(preOpenContext.getInventoryTitle(), inventorySize);
 		final ViewContext context = createContext(this, player, inventory);
-		contexts.put(player, context);
+		contexts.put(player.getName(), context);
 		onRender(context);
 		render(context);
 		player.openInventory(inventory);
@@ -178,7 +184,7 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 	}
 
 	public void close() {
-		for (final Player player : contexts.keySet()) {
+		for (final Player player : Sets.newHashSet(getContexts().keySet())) {
 			player.closeInventory();
 		}
 	}
