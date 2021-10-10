@@ -48,7 +48,7 @@ public class VirtualView {
      * @param slot the item slot.
      */
     public ViewItem getItem(int slot) {
-        return items[slot];
+        return getItems()[slot];
     }
 
     /**
@@ -285,7 +285,10 @@ public class VirtualView {
 
     @Override
     public String toString() {
-        return Arrays.stream(items).filter(Objects::nonNull).map(ViewItem::toString).collect(Collectors.joining());
+        return "VirtualView{" +
+			"items=" + Arrays.stream(items).filter(Objects::nonNull)
+			.map(ViewItem::toString)
+			.collect(Collectors.joining()) + "}";
     }
 
 }

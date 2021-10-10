@@ -44,11 +44,6 @@ public class DelegatedViewContext extends ViewSlotContext {
     }
 
     @Override
-    public ViewItem getItem(int slot) {
-        return delegate.getItem(slot);
-    }
-
-    @Override
     public boolean isCancelled() {
         return cancelled;
     }

@@ -170,4 +170,11 @@ public class PaginatedViewContext<T> extends ViewContext {
         this.nextPageItemSlot = nextPageItemSlot;
     }
 
+    @Override
+    public String toString() {
+        return "PaginatedViewContext{" +
+                "page=" + page +
+                "} " + super.toString();
+    }
+
 }

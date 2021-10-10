@@ -370,12 +370,12 @@ public abstract class PaginatedView<T> extends View {
     /**
      * Called when a paginated item is rendered.
      *
-     * @param context - the pagination context.
+     * @param render  - the pagination context.
      * @param item    - the rendered item.
      * @param value   - the paginated value.
      */
     protected void onItemRender(
-            final PaginatedViewSlotContext<T> context,
+            final PaginatedViewSlotContext<T> render,
             final ViewItem item,
             final T value
     ) {

@@ -312,4 +312,12 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 		items = newItems;
 	}
 
+	@Override
+	public String toString() {
+		return "View{" +
+			"title='" + title + '\'' +
+			", rows=" + rows +
+			"} " + super.toString();
+	}
+
 }
