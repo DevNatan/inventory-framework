@@ -62,6 +62,17 @@ public class PaginatedViewContext<T> extends ViewContext {
         return getPaginator().getPageSize();
     }
 
+	/**
+	 * Returns the total maximum number of items that a page in a layered context can contain.
+	 * @return the max items count.
+	 */
+    public int getPageMaxItemsCount() {
+    	if (!checkedLayerSignature)
+    		throw new IllegalStateException("layout not resolved");
+
+    	return itemsLayer.size();
+	}
+
     /**
      * Returns the number of the previous page with a minimum value of {@link #FIRST_PAGE}.
      */
