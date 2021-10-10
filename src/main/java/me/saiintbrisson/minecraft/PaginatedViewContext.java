@@ -67,7 +67,7 @@ public class PaginatedViewContext<T> extends ViewContext {
 	 * @return the max items count.
 	 */
     public int getPageMaxItemsCount() {
-    	if (!checkedLayerSignature)
+    	if (itemsLayer == null)
     		throw new IllegalStateException("layout not resolved");
 
     	return itemsLayer.size();
