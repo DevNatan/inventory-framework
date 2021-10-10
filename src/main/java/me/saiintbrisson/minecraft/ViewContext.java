@@ -27,7 +27,11 @@ public class ViewContext extends VirtualView {
         this.inventory = inventory;
     }
 
-    public boolean isMarkedToClose() {
+	protected Stack<Integer> getItemsLayer() {
+		return itemsLayer;
+	}
+
+	public boolean isMarkedToClose() {
         return markedToClose;
     }
 

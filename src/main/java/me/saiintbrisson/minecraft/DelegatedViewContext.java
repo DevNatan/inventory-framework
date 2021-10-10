@@ -3,6 +3,7 @@ package me.saiintbrisson.minecraft;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Map;
+import java.util.Stack;
 
 public class DelegatedViewContext extends ViewSlotContext {
 
@@ -18,7 +19,12 @@ public class DelegatedViewContext extends ViewSlotContext {
         return delegate;
     }
 
-    @Override
+	@Override
+	protected Stack<Integer> getItemsLayer() {
+		return delegate.getItemsLayer();
+	}
+
+	@Override
     public String[] getLayout() {
         return delegate.getLayout();
     }
