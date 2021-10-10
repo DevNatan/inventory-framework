@@ -191,7 +191,7 @@ public abstract class PaginatedView<T> extends View {
 
 			final String[] layout = useLayout(context);
 			if (layout != null && !context.isCheckedLayerSignature())
-				resolveLayout(context, layout);
+				resolveLayout(context, layout, render);
 
 			if (render)
 				context.setPage(page);
@@ -260,7 +260,11 @@ public abstract class PaginatedView<T> extends View {
         }
     }
 
-    private void resolveLayout(PaginatedViewContext<T> context, String[] layout) {
+	private void resolveLayout(PaginatedViewContext<T> context, String[] layout) {
+    	resolveLayout(context, layout, true);
+	}
+
+    private void resolveLayout(PaginatedViewContext<T> context, String[] layout, boolean render) {
         // since the layout is only defined once, we cache it
         // to avoid unnecessary processing every time we update the context.
         final int len = layout.length;
@@ -285,13 +289,17 @@ public abstract class PaginatedView<T> extends View {
                         break;
                     }
                     case PREVIOUS_PAGE_CHAR: {
-                        resolvePreviousPageItem(context);
-                        context.setPreviousPageItemSlot(targetSlot);
+                    	if (render) {
+							resolvePreviousPageItem(context);
+							context.setPreviousPageItemSlot(targetSlot);
+						}
                         break;
                     }
                     case NEXT_PAGE_CHAR: {
-                        resolveNextPageItem(context);
-                        context.setNextPageItemSlot(targetSlot);
+                        if (render) {
+							resolveNextPageItem(context);
+							context.setNextPageItemSlot(targetSlot);
+						}
                         break;
                     }
                     default:
@@ -300,8 +308,11 @@ public abstract class PaginatedView<T> extends View {
             }
         }
 
-        context.getPaginator().setPageSize(context.itemsLayer.size());
-        context.setCheckedLayerSignature(true);
+        if (!render)
+        	return;
+
+		context.getPaginator().setPageSize(context.itemsLayer.size());
+		context.setCheckedLayerSignature(true);
     }
 
     final ViewItem[] clearLayout(PaginatedViewContext<T> context, String[] layout) {
