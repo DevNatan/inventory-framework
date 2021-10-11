@@ -239,13 +239,13 @@ public abstract class PaginatedView<T> extends View {
     private void renderLayout(PaginatedViewContext<T> context, String[] layout, ViewItem[] preservedItems) {
         final List<T> elements = context.getPaginator().getPage(context.getPage());
         final int size = elements.size();
-        final int lastSlot = layout == null ? limit : context.itemsLayer.peek();
-        final int layerSize = layout == null ? 0 /* ignored */ : context.itemsLayer.size();
+        final int lastSlot = layout == null ? limit : context.getItemsLayer().peek();
+        final int layerSize = layout == null ? 0 /* ignored */ : context.getItemsLayer().size();
         for (int i = 0; i < lastSlot; i++) {
             if (layout != null && i >= layerSize)
                 break;
 
-            final int targetSlot = layout == null ? offset + i : context.itemsLayer.elementAt(i);
+            final int targetSlot = layout == null ? offset + i : context.getItemsLayer().elementAt(i);
             if (i < size) {
                 final ViewItem preserved = preservedItems == null || preservedItems.length <= i ? null : preservedItems[i];
                 renderPaginatedItemAt(context, i, targetSlot, elements.get(i), preserved);
@@ -317,13 +317,13 @@ public abstract class PaginatedView<T> extends View {
 
     final ViewItem[] clearLayout(PaginatedViewContext<T> context, String[] layout) {
         final int size = context.getPaginator().getPage(context.getPage()).size();
-        final int layerSize = layout == null ? 0 /* ignored */ : context.itemsLayer.size();
+        final int layerSize = layout == null ? 0 /* ignored */ : context.getItemsLayer().size();
         final ViewItem[] preservedItems = new ViewItem[layerSize + 1];
-        for (int i = 0; i < (layout == null ? limit : context.itemsLayer.peek()); i++) {
+        for (int i = 0; i < (layout == null ? limit : context.getItemsLayer().peek()); i++) {
             if (layout != null && i >= layerSize)
                 break;
 
-            final int targetSlot = layout == null ? offset + i : context.itemsLayer.elementAt(i);
+            final int targetSlot = layout == null ? offset + i : context.getItemsLayer().elementAt(i);
             final ViewItem item;
             if (i < size)
                 preservedItems[i] = context.getItem(targetSlot);
