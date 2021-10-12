@@ -62,10 +62,7 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 	}
 
 	public ViewContext getContext(final Player player) {
-		final ViewContext context = contexts.get(player.getName());
-		if (context == null)
-			Bukkit.broadcastMessage("Null context");
-		return context;
+		return contexts.get(player.getName());
 	}
 
 	public ViewFrame getFrame() {
