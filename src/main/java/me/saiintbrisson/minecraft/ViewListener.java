@@ -82,6 +82,7 @@ public class ViewListener implements Listener {
 			return;
 
 		final Player player = (Player) e.getWhoClicked();
+
 		final Inventory inventory = e.getInventory();
 		final View view = getView(inventory, player);
 		if (view == null)
@@ -191,10 +192,12 @@ public class ViewListener implements Listener {
 		globalClick.setClickOrigin(e);
 		view.onClick(globalClick);
 
-		if (item == null) {
-			e.setCancelled(e.isCancelled() || globalClick.isCancelled());
+		e.setCancelled(e.isCancelled() || globalClick.isCancelled());
+		if (item == null)
 			return;
-		}
+
+		if (globalClick.isCancelled())
+			return;
 
 		if (action.name().startsWith("PICKUP") || action == InventoryAction.CLONE_STACK)
 			item.setState(ViewItem.State.HOLDING);
