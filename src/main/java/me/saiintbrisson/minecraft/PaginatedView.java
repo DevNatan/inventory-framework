@@ -17,6 +17,7 @@ public abstract class PaginatedView<T> extends View {
     private static final char NEXT_PAGE_CHAR = '>';
     private static final char EMPTY_SLOT_CHAR = 'X';
     private static final char ITEM_SLOT_CHAR = 'O';
+	private static final char FILL_PAGE_CHAR = 'F';
 
     private Paginator<T> paginator;
     private int offset, limit;
@@ -266,6 +267,19 @@ public abstract class PaginatedView<T> extends View {
                 clearSlot(context, targetSlot);
             }
         }
+
+        if (layout == null || context.getFillLayer() == null)
+        	return;
+
+        for (final int slot : context.getFillLayer()) {
+			final PaginatedViewSlotContext<T> slotFillContext = new PaginatedViewSlotContext<>(context, -1, slot);
+        	final ViewItem item = onFillItemRender(slotFillContext);
+        	if (item == null)
+        		continue;
+
+			item.setSlot(slot);
+        	render(slotFillContext, item, slot);
+		}
     }
 
 	private void resolveLayout(PaginatedViewContext<T> context, String[] layout) {
@@ -282,7 +296,6 @@ public abstract class PaginatedView<T> extends View {
         if (len != columnsLimit)
             throw new IllegalArgumentException("Layout columns must respect the size of the inventory (" + len + " != " + columnsLimit + ")");
 
-        context.itemsLayer = new Stack<>();
         for (int row = 0; row < len; row++) {
             final String layer = layout[row];
             if (layer.length() != INVENTORY_ROW_SIZE)
@@ -295,9 +308,19 @@ public abstract class PaginatedView<T> extends View {
                     case EMPTY_SLOT_CHAR:
                         break;
                     case ITEM_SLOT_CHAR: {
+						if (context.itemsLayer == null)
+							context.itemsLayer = new Stack<>();
+
                         context.itemsLayer.push(targetSlot);
                         break;
                     }
+					case FILL_PAGE_CHAR: {
+						if (context.fillLayer == null)
+							context.fillLayer = new Stack<>();
+
+						context.fillLayer.push(targetSlot);
+						break;
+					}
                     case PREVIOUS_PAGE_CHAR: {
                     	if (render) {
 							resolvePreviousPageItem(context);
@@ -416,6 +439,10 @@ public abstract class PaginatedView<T> extends View {
             final T value
     ) {
     }
+
+    protected ViewItem onFillItemRender(final PaginatedViewSlotContext<T> render) {
+    	return null;
+	}
 
     protected void onPageSwitch(final PaginatedViewContext<T> context) {
 	}

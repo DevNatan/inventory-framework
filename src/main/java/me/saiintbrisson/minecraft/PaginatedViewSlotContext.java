@@ -20,6 +20,11 @@ public class PaginatedViewSlotContext<T> extends PaginatedViewContext<T> {
 		return delegate.getItemsLayer();
 	}
 
+	@Override
+	protected Stack<Integer> getFillLayer() {
+		return delegate.getFillLayer();
+	}
+
 	/**
      * Returns the item pagination index.
      *

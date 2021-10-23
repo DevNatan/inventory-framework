@@ -1,6 +1,7 @@
 package me.saiintbrisson.minecraft;
 
 import com.google.common.base.Preconditions;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
@@ -79,6 +80,34 @@ public class VirtualView {
     public ViewItem item(final ItemStack item) {
         return new ViewItem(UNSET_SLOT).withItem(item);
     }
+
+	/**
+	 * Returns a new {@link ViewItem} with a {@link ItemStack}.
+	 */
+	public ViewItem item(final Material material) {
+		return item(new ItemStack(material));
+	}
+
+	/**
+	 * Returns a new {@link ViewItem} with a {@link ItemStack}.
+	 */
+	public ViewItem item(final Material material, final short durability) {
+		return item(new ItemStack(material, 1, durability));
+	}
+
+	/**
+	 * Returns a new {@link ViewItem} with a {@link ItemStack}.
+	 */
+	public ViewItem item(final Material material, final int amount) {
+		return item(new ItemStack(material, amount));
+	}
+
+	/**
+	 * Returns a new {@link ViewItem} with a {@link ItemStack}.
+	 */
+	public ViewItem item(final Material material, final int amount, final short durability) {
+		return item(new ItemStack(material, amount, durability));
+	}
 
     /**
      * Registers a {@link ViewItem} in the specified slot.

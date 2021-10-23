@@ -25,6 +25,11 @@ public class DelegatedViewContext extends ViewSlotContext {
 	}
 
 	@Override
+	protected Stack<Integer> getFillLayer() {
+		return delegate.getFillLayer();
+	}
+
+	@Override
     public String[] getLayout() {
         return delegate.getLayout();
     }
