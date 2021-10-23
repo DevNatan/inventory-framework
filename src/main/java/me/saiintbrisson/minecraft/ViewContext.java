@@ -1,5 +1,6 @@
 package me.saiintbrisson.minecraft;
 
+import me.matsubara.roulette.util.InventoryUpdate;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
@@ -19,6 +20,7 @@ public class ViewContext extends VirtualView {
     private final Map<Integer, Map<String, Object>> slotData = new HashMap<>();
     boolean checkedLayerSignature;
     Stack<Integer> itemsLayer;
+    private boolean invalidated;
 
     public ViewContext(View view, Player player, Inventory inventory) {
         super(inventory == null ? null : new ViewItem[View.INVENTORY_ROW_SIZE * (inventory.getSize() / 9)]);
@@ -219,10 +221,14 @@ public class ViewContext extends VirtualView {
     }
 
     void invalidate() {
+    	if (invalidated)
+    		throw new IllegalStateException("Not valid");
+
         view.clearData(player);
         slotData.clear();
         checkedLayerSignature = false;
         itemsLayer = null;
+        invalidated = true;
     }
 
     @Override
@@ -245,6 +251,18 @@ public class ViewContext extends VirtualView {
 
         return (PaginatedViewContext<T>) this;
     }
+
+    public void updateTitle(String title) {
+		InventoryUpdate.updateInventory(getPlayer(), title);
+	}
+
+	public void resetTitle() {
+		InventoryUpdate.updateInventory(getPlayer(), inventory.getTitle());
+	}
+
+	public boolean isValid() {
+    	return !invalidated;
+	}
 
     @Override
     public String toString() {

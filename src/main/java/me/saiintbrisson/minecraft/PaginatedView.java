@@ -184,6 +184,8 @@ public abstract class PaginatedView<T> extends View {
     }
 
 	final void updateContext(PaginatedViewContext<T> context, int page, boolean pageChecking, boolean render) {
+		getFrame().debug("[context] paginated update");
+
     	final String[] layout = useLayout(context);
 		if (pageChecking) {
 			// index check
@@ -237,6 +239,7 @@ public abstract class PaginatedView<T> extends View {
     }
 
     private void renderLayout(PaginatedViewContext<T> context, String[] layout, ViewItem[] preservedItems) {
+    	getFrame().debug("[context] rendering layout");
         final List<T> elements = context.getPaginator().getPage(context.getPage());
         final int size = elements.size();
         final int lastSlot = layout == null ? limit : context.getItemsLayer().peek();
@@ -265,6 +268,8 @@ public abstract class PaginatedView<T> extends View {
 	}
 
     private void resolveLayout(PaginatedViewContext<T> context, String[] layout, boolean render) {
+		getFrame().debug("[context] resolving layout (render=" + render + ")");
+
         // since the layout is only defined once, we cache it
         // to avoid unnecessary processing every time we update the context.
         final int len = layout.length;
@@ -308,6 +313,7 @@ public abstract class PaginatedView<T> extends View {
             }
         }
 
+		getFrame().debug("[context] layout resolved with " + context.itemsLayer.size() + " items");
         if (!render)
         	return;
 
@@ -316,6 +322,7 @@ public abstract class PaginatedView<T> extends View {
     }
 
     final ViewItem[] clearLayout(PaginatedViewContext<T> context, String[] layout) {
+		getFrame().debug("[context] clearing layout");
         final int size = context.getPaginator().getPage(context.getPage()).size();
         final int layerSize = layout == null ? 0 /* ignored */ : context.getItemsLayer().size();
         final ViewItem[] preservedItems = new ViewItem[layerSize + 1];
@@ -340,6 +347,8 @@ public abstract class PaginatedView<T> extends View {
     }
 
     void updateLayout(PaginatedViewContext<T> context, String[] layout) {
+		getFrame().debug("[context] updating layout");
+
         /*
             what we will do: first, use the old defined
             layout to preserve the actual item slot state and then

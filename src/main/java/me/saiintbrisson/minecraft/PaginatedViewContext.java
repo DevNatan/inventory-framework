@@ -25,10 +25,13 @@ public class PaginatedViewContext<T> extends ViewContext {
     public void setLayout(String... layout) {
         // dynamic layout update
         if (checkedLayerSignature) {
+        	getView().getFrame().debug("[context] layout updated");
+			this.layout = layout;
             ((PaginatedView<T>) view).updateLayout(this, layout);
-            this.layout = layout;
-        } else
-            super.setLayout(layout);
+        } else {
+			getView().getFrame().debug("[context] layout set");
+			super.setLayout(layout);
+		}
     }
 
     /**
