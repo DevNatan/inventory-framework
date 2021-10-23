@@ -90,8 +90,10 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 	}
 
 	public void open(final Player player, final Map<String, Object> data) {
-		if (contexts.containsKey(player.getName()))
-			throw new IllegalStateException("Context cannot be created twice");
+		contexts.computeIfPresent(player.getName(), ($, context) -> {
+			context.invalidate();
+			return null;
+		});
 
 		final OpenViewContext preOpenContext = new OpenViewContext(this, player);
 		if (data != null)
