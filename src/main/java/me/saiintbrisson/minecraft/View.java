@@ -321,6 +321,9 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 	protected void onMoveOut(final ViewSlotMoveContext context) {
 	}
 
+	protected void onItemHold(final ViewSlotContext context) {
+	}
+
 	private void expandItemsArray(int newLength) {
 		ViewItem[] newItems = new ViewItem[items.length + 1];
 		System.arraycopy(items, 0, newItems, 0, items.length);

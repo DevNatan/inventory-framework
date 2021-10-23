@@ -197,12 +197,14 @@ public class ViewListener implements Listener {
 		if (globalClick.isCancelled())
 			return;
 
-		if (action.name().startsWith("PICKUP") || action == InventoryAction.CLONE_STACK)
-			item.setState(ViewItem.State.HOLDING);
-
 		final ViewSlotContext slotContext = new DelegatedViewContext(context, slot, stack);
 		slotContext.setClickOrigin(e);
 
+		if (action.name().startsWith("PICKUP") || action == InventoryAction.CLONE_STACK) {
+			item.setState(ViewItem.State.HOLDING);
+			view.onItemHold(slotContext);
+		}
+		
 		if (item.getClickHandler() != null) {
 			item.getClickHandler().handle(slotContext);
 			e.setCancelled(e.isCancelled() || slotContext.isCancelled());
