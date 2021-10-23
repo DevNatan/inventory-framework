@@ -19,7 +19,7 @@ public abstract class PaginatedView<T> extends View {
     private static final char ITEM_SLOT_CHAR = 'O';
 
     private Paginator<T> paginator;
-    private int offset, limit, _pageSize;
+    private int offset, limit;
 
     public PaginatedView() {
         this(null, 3, "");
@@ -58,7 +58,7 @@ public abstract class PaginatedView<T> extends View {
     }
 
     public int getPageSize() {
-        return _pageSize == -1 ? limit - offset : _pageSize;
+        return limit - offset;
     }
 
     public Paginator<?> getPaginator() {
