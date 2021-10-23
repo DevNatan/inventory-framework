@@ -1,6 +1,7 @@
 package me.saiintbrisson.minecraft;
 
 import me.matsubara.roulette.util.InventoryUpdate;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
@@ -253,11 +254,12 @@ public class ViewContext extends VirtualView {
     }
 
     public void updateTitle(String title) {
-		InventoryUpdate.updateInventory(getPlayer(), title);
+		Bukkit.getScheduler().runTaskLater(getView().getFrame().getOwner(),
+			() -> InventoryUpdate.updateInventory(getPlayer(), title), 2L);
 	}
 
 	public void resetTitle() {
-		InventoryUpdate.updateInventory(getPlayer(), inventory.getTitle());
+		updateTitle(inventory.getTitle());
 	}
 
 	public boolean isValid() {

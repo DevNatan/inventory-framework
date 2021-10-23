@@ -276,6 +276,10 @@ public class VirtualView {
         if (this instanceof ViewContext)
             throw new IllegalArgumentException("Context can't resolve items itself");
 
+        // fast path -- ArrayIndexOutOfBoundsException
+        if (slot > items.length)
+        	return null;
+
         final ViewItem item = items[slot];
         if (item == null)
             return context.getItem(slot);

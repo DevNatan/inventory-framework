@@ -7,6 +7,7 @@ import org.bukkit.inventory.Inventory;
 import java.util.List;
 import java.util.Stack;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static me.saiintbrisson.minecraft.PaginatedViewContext.FIRST_PAGE;
 
@@ -18,8 +19,7 @@ public abstract class PaginatedView<T> extends View {
     private static final char ITEM_SLOT_CHAR = 'O';
 
     private Paginator<T> paginator;
-    private int offset;
-    private int limit;
+    private int offset, limit, _pageSize;
 
     public PaginatedView() {
         this(null, 3, "");
@@ -58,7 +58,7 @@ public abstract class PaginatedView<T> extends View {
     }
 
     public int getPageSize() {
-        return limit - offset;
+        return _pageSize == -1 ? limit - offset : _pageSize;
     }
 
     public Paginator<?> getPaginator() {
@@ -189,8 +189,13 @@ public abstract class PaginatedView<T> extends View {
     	final String[] layout = useLayout(context);
 		if (pageChecking) {
 			// index check
-			if (render && !context.getPaginator().hasPage(page))
+			if (render && !context.getPaginator().hasPage(page)) {
+				getFrame().debug("[context] paginated update - no page " + page + " available");
+				getFrame().debug("[context] paginated update - items: " + context.getPaginator().getSource().stream().map(Object::toString).collect(Collectors.joining(", ")));
+				getFrame().debug("[context] paginated update - count: " + context.getPaginator().count());
+				getFrame().debug("[context] paginated update - page size: " + context.getPaginator().getPageSize());
 				return;
+			}
 
 			if (layout != null && !context.isCheckedLayerSignature())
 				resolveLayout(context, layout, render);

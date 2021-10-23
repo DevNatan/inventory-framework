@@ -133,9 +133,15 @@ public class ViewListener implements Listener {
 					swappedItem = e.getCurrentItem();
 
 				final ViewSlotMoveContext moveOutContext = new ViewSlotMoveContext(context, item.getSlot(), cursor, e.getView().getBottomInventory(), swappedItem, slot, swappedItem != null);
-				view.onItemRelease(moveOutContext);
 				view.onMoveOut(moveOutContext);
-				item.setState(ViewItem.State.UNDEFINED);
+
+				for (final ViewItem holdingItem : view.getItems()) {
+					if (holdingItem == null || holdingItem.getState() != ViewItem.State.HOLDING)
+						continue;
+
+					releaseAt(new DelegatedViewContext(context, slot, swappedItem == null ?
+						e.getCurrentItem() : swappedItem), slot, cursor, e.getView().getBottomInventory());
+				}
 
 				if (view.isCancelOnMoveOut() || moveOutContext.isCancelled())
 					e.setCancelled(true);
@@ -192,8 +198,15 @@ public class ViewListener implements Listener {
 		view.onClick(globalClick);
 
 		e.setCancelled(e.isCancelled() || globalClick.isCancelled());
-		if (item == null)
+		if (item == null) {
+			for (final ViewItem holdingItem : view.getItems()) {
+				if (holdingItem == null || holdingItem.getState() != ViewItem.State.HOLDING)
+					continue;
+
+				releaseAt(new DelegatedViewContext(context, holdingItem.getSlot(), stack), slot, cursor, e.getClickedInventory());
+			}
 			return;
+		}
 
 		if (globalClick.isCancelled())
 			return;
@@ -216,12 +229,38 @@ public class ViewListener implements Listener {
 			if (action.name().startsWith("PICKUP") || action == InventoryAction.CLONE_STACK) {
 				item.setState(ViewItem.State.HOLDING);
 				view.onItemHold(slotContext);
-			} else if (item.getState() != ViewItem.State.HOLDING)
-				view.onItemRelease(slotContext);
+			} else if (item.getState() == ViewItem.State.HOLDING) {
+				for (final ViewItem holdingItem : view.getItems()) {
+					if (holdingItem == null || holdingItem.getState() != ViewItem.State.HOLDING)
+						continue;
+
+					releaseAt(slotContext, slot, cursor, e.getClickedInventory());
+				}
+			}
 		}
 
 		if (item.isCloseOnClick() || slotContext.isMarkedToClose())
 			Bukkit.getScheduler().runTask(frame.getOwner(), slotContext::closeNow);
+	}
+
+	private void releaseAt(ViewSlotContext context, int slot, ItemStack cursor, Inventory inventory) {
+		context.getView().onItemRelease(context, new ViewSlotContext(context.getView(), context.getPlayer(),
+			inventory, slot, cursor));
+
+		final int currentSlot = context.getSlot();
+		final ViewItem currentItem = context.getView().resolve(context, context.getSlot());
+		context.getItems()[currentSlot] = null;
+
+		if (currentItem == null)
+			return;
+
+		currentItem.setState(ViewItem.State.UNDEFINED);
+
+		// outside top inventory
+		if (slot > context.getInventory().getSize())
+			return;
+
+		context.getItems()[slot] = currentItem;
 	}
 
 	@EventHandler

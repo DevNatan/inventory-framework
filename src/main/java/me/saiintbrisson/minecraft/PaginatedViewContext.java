@@ -167,7 +167,9 @@ public class PaginatedViewContext<T> extends ViewContext {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     public void setSource(List<?> source) {
-        ((PaginatedView<?>) view).setPaginator(new Paginator(((PaginatedView<?>) view).getPageSize(), source));
+        ((PaginatedView<?>) view).setPaginator(new Paginator(checkedLayerSignature ?
+			itemsLayer.size() :
+			((PaginatedView<?>) view).getPageSize(), source));
     }
 
     public int getPreviousPageItemSlot() {
