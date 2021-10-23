@@ -21,6 +21,7 @@ public abstract class PaginatedView<T> extends View {
 
     private Paginator<T> paginator;
     private int offset, limit;
+    private Function<PaginatedViewContext<T>, ViewItem> _fillItemFn;
 
     public PaginatedView() {
         this(null, 3, "");
@@ -45,6 +46,10 @@ public abstract class PaginatedView<T> extends View {
         this.offset = offset;
         this.limit = limit;
     }
+
+    public void setFillItem(final Function<PaginatedViewContext<T>, ViewItem> fillItemFunction) {
+    	this._fillItemFn = fillItemFunction;
+	}
 
     /**
      * @deprecated Use {@link #setSource(List)} instead.
@@ -268,12 +273,12 @@ public abstract class PaginatedView<T> extends View {
             }
         }
 
-        if (layout == null || context.getFillLayer() == null)
+        if (layout == null || context.getFillLayer() == null || _fillItemFn == null)
         	return;
 
         for (final int slot : context.getFillLayer()) {
 			final PaginatedViewSlotContext<T> slotFillContext = new PaginatedViewSlotContext<>(context, -1, slot);
-        	final ViewItem item = onFillItemRender(slotFillContext);
+        	final ViewItem item = _fillItemFn.apply(slotFillContext);
         	if (item == null)
         		continue;
 
@@ -439,10 +444,6 @@ public abstract class PaginatedView<T> extends View {
             final T value
     ) {
     }
-
-    protected ViewItem onFillItemRender(final PaginatedViewSlotContext<T> render) {
-    	return null;
-	}
 
     protected void onPageSwitch(final PaginatedViewContext<T> context) {
 	}
