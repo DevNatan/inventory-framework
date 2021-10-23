@@ -184,12 +184,12 @@ public abstract class PaginatedView<T> extends View {
     }
 
 	final void updateContext(PaginatedViewContext<T> context, int page, boolean pageChecking, boolean render) {
+    	final String[] layout = useLayout(context);
 		if (pageChecking) {
 			// index check
 			if (render && !context.getPaginator().hasPage(page))
 				return;
 
-			final String[] layout = useLayout(context);
 			if (layout != null && !context.isCheckedLayerSignature())
 				resolveLayout(context, layout, render);
 
