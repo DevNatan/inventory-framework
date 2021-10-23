@@ -178,12 +178,13 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 	}
 
 	void remove(final ViewContext context) {
-		frame.debug("[context]: remove");
-		synchronized (contexts) {
-			contexts.remove(context.getPlayer().getName());
-		}
 		context.invalidate();
 		frame.debug("[context]: invalidate");
+
+		synchronized (contexts) {
+			contexts.remove(context.getPlayer().getName());
+			frame.debug("[context]: remove");
+		}
 	}
 
 	public void close() {
@@ -328,7 +329,7 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 	}
 
 	private void expandItemsArray(int newLength) {
-		ViewItem[] newItems = new ViewItem[newLength + 1];
+		ViewItem[] newItems = new ViewItem[newLength];
 		System.arraycopy(items, 0, newItems, 0, items.length);
 
 		items = newItems;
