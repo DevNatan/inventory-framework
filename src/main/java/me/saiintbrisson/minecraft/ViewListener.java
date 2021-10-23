@@ -133,6 +133,7 @@ public class ViewListener implements Listener {
 					swappedItem = e.getCurrentItem();
 
 				final ViewSlotMoveContext moveOutContext = new ViewSlotMoveContext(context, item.getSlot(), cursor, e.getView().getBottomInventory(), swappedItem, slot, swappedItem != null);
+				view.onItemRelease(moveOutContext);
 				view.onMoveOut(moveOutContext);
 				item.setState(ViewItem.State.UNDEFINED);
 
@@ -203,8 +204,9 @@ public class ViewListener implements Listener {
 		if (action.name().startsWith("PICKUP") || action == InventoryAction.CLONE_STACK) {
 			item.setState(ViewItem.State.HOLDING);
 			view.onItemHold(slotContext);
-		}
-		
+		} else if (item.getState() != ViewItem.State.HOLDING)
+			view.onItemRelease(slotContext);
+
 		if (item.getClickHandler() != null) {
 			item.getClickHandler().handle(slotContext);
 			e.setCancelled(e.isCancelled() || slotContext.isCancelled());
