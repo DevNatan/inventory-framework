@@ -14,6 +14,7 @@ public class PaginatedViewContext<T> extends ViewContext {
     private int page;
     private int previousPageItemSlot = UNSET_SLOT;
     private int nextPageItemSlot = UNSET_SLOT;
+    private Paginator<T> paginator;
 
     public PaginatedViewContext(View view, Player player, Inventory inventory, int page) {
         super(view, player, inventory);
@@ -148,6 +149,9 @@ public class PaginatedViewContext<T> extends ViewContext {
      */
     @SuppressWarnings("unchecked")
     Paginator<T> getPaginator() {
+    	if (this.paginator != null)
+    		return this.paginator;
+
         final Paginator<T> paginator = (Paginator<T>) ((PaginatedView<T>) view).getPaginator();
         if (paginator != null)
             return paginator;
@@ -167,9 +171,16 @@ public class PaginatedViewContext<T> extends ViewContext {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     public void setSource(List<?> source) {
-        ((PaginatedView<?>) view).setPaginator(new Paginator(checkedLayerSignature ?
+    	// force layout resolving but do not render
+    	if (!checkedLayerSignature && layout != null) {
+			((PaginatedView<T>) view).resolveLayout(this, layout, false);
+			checkedLayerSignature = true;
+		}
+
+    	this.paginator = new Paginator(checkedLayerSignature ?
 			itemsLayer.size() :
-			((PaginatedView<?>) view).getPageSize(), source));
+			((PaginatedView<T>) view).getPageSize(), source
+		);
     }
 
     public int getPreviousPageItemSlot() {

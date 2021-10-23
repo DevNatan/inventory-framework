@@ -272,7 +272,7 @@ public abstract class PaginatedView<T> extends View {
     	resolveLayout(context, layout, true);
 	}
 
-    private void resolveLayout(PaginatedViewContext<T> context, String[] layout, boolean render) {
+    void resolveLayout(PaginatedViewContext<T> context, String[] layout, boolean render) {
 		getFrame().debug("[context] resolving layout (render=" + render + ")");
 
         // since the layout is only defined once, we cache it
