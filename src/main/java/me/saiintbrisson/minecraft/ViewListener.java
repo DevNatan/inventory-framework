@@ -88,8 +88,7 @@ public class ViewListener implements Listener {
 		if (view == null)
 			return;
 
-		// TODO: properly handle shift click
-		if (e.getSlotType() == InventoryType.SlotType.OUTSIDE || e.getClick().isShiftClick()) {
+		if (e.getSlotType() == InventoryType.SlotType.OUTSIDE || (e.getClick().isShiftClick() && view.isCancelOnShiftClick())) {
 			e.setCancelled(true);
 			return;
 		}
@@ -98,7 +97,6 @@ public class ViewListener implements Listener {
 		if (action == InventoryAction.NOTHING)
 			return;
 
-		// player.sendMessage("Event: click=" + e.getClick() + ", action=" + action + ", item=" + e.getCurrentItem() + ", cursor=" + e.getCursor());
 		final ItemStack cursor = e.getCursor();
 		final int slot = e.getSlot();
 
@@ -212,6 +210,9 @@ public class ViewListener implements Listener {
 
 		if (item.isOverrideCancelOnClick())
 			e.setCancelled(item.isCancelOnClick());
+
+		if (item.isOverrideCancelOnShiftClick() && click.isShiftClick())
+			e.setCancelled(item.isCancelOnShiftClick());
 
 		if (item.isCloseOnClick() || slotContext.isMarkedToClose())
 			Bukkit.getScheduler().runTask(frame.getOwner(), slotContext::closeNow);
