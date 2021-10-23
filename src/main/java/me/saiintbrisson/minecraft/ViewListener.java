@@ -201,12 +201,6 @@ public class ViewListener implements Listener {
 		final ViewSlotContext slotContext = new DelegatedViewContext(context, slot, stack);
 		slotContext.setClickOrigin(e);
 
-		if (action.name().startsWith("PICKUP") || action == InventoryAction.CLONE_STACK) {
-			item.setState(ViewItem.State.HOLDING);
-			view.onItemHold(slotContext);
-		} else if (item.getState() != ViewItem.State.HOLDING)
-			view.onItemRelease(slotContext);
-
 		if (item.getClickHandler() != null) {
 			item.getClickHandler().handle(slotContext);
 			e.setCancelled(e.isCancelled() || slotContext.isCancelled());
@@ -217,6 +211,14 @@ public class ViewListener implements Listener {
 
 		if (item.isOverrideCancelOnShiftClick() && click.isShiftClick())
 			e.setCancelled(item.isCancelOnShiftClick());
+
+		if (!e.isCancelled()) {
+			if (action.name().startsWith("PICKUP") || action == InventoryAction.CLONE_STACK) {
+				item.setState(ViewItem.State.HOLDING);
+				view.onItemHold(slotContext);
+			} else if (item.getState() != ViewItem.State.HOLDING)
+				view.onItemRelease(slotContext);
+		}
 
 		if (item.isCloseOnClick() || slotContext.isMarkedToClose())
 			Bukkit.getScheduler().runTask(frame.getOwner(), slotContext::closeNow);
