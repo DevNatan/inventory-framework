@@ -412,4 +412,7 @@ public abstract class PaginatedView<T> extends View {
     ) {
     }
 
+    protected void onPageSwitch(final PaginatedViewContext<T> context) {
+	}
+
 }

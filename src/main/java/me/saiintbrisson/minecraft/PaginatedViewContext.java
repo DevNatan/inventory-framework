@@ -124,7 +124,9 @@ public class PaginatedViewContext<T> extends ViewContext {
      */
     @SuppressWarnings("unchecked")
     public void switchTo(int page) {
-        ((PaginatedView<T>) view).updateContext(this, page);
+    	final PaginatedView<T> paginatedView = ((PaginatedView<T>) view);
+        paginatedView.updateContext(this, page);
+        paginatedView.onPageSwitch(this);
     }
 
     /**
