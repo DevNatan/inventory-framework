@@ -190,7 +190,6 @@ public class VirtualView {
      * @param slot    the slot that the item will be rendered.
      */
     public void render(ViewContext context, ViewItem item, int slot) {
-		System.out.println("[slot " + slot + "]: " + context.getClass().getName());
         Preconditions.checkNotNull(item, "Render item cannot be null");
 
         final ItemStack fallback = item.getItem();
