@@ -234,8 +234,13 @@ public abstract class PaginatedView<T> extends View {
 			// when we get to the rendering stage of the overlaid item,
 			// the overlaid item's rendering function will be called first
 			// and will render the wrong item.
-			override.setRenderHandler(null);
 			override.setUpdateHandler(null);
+
+			// only if there's a fallback item available, clearing it without checking will cause
+			// "No item were provided and the rendering function was not defined at slot..."
+			if (override.getItem() != null)
+				override.setRenderHandler(null);
+
             override.setSlot(slot);
             context.getItems()[slot] = override;
         }
