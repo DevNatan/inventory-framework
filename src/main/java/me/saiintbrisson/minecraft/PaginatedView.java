@@ -268,7 +268,8 @@ public abstract class PaginatedView<T> extends View {
 				final ViewItem preserved = preservedItems == null || preservedItems.length <= i ? null : preservedItems[i];
 				renderPaginatedItemAt(context, i, targetSlot, elements.get(i), preserved);
 			} else {
-				final ViewItem item = resolve(context, targetSlot);
+				final ViewItem item = getItem(targetSlot);
+
 				// check if a non-virtual item has been defined in that slot
 				if (item != null)
 					continue;
