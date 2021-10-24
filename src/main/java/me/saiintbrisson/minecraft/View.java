@@ -168,7 +168,7 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 
 	ViewContext remove(final Player player) {
 		frame.debug("[context]: remove");
-		final ViewContext context = contexts.remove(player);
+		final ViewContext context = contexts.remove(player.getName());
 		if (context != null) {
 			context.invalidate();
 			frame.debug("[context]: invalidate");

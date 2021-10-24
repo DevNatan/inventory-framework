@@ -20,7 +20,7 @@ public class ViewContext extends VirtualView {
     protected boolean markedToClose;
     private final Map<Integer, Map<String, Object>> slotData = new HashMap<>();
     boolean checkedLayerSignature;
-    Stack<Integer> itemsLayer;
+    Stack<Integer> itemsLayer, fillLayer;
     private boolean invalidated;
 
     public ViewContext(View view, Player player, Inventory inventory) {
@@ -32,6 +32,10 @@ public class ViewContext extends VirtualView {
 
 	protected Stack<Integer> getItemsLayer() {
 		return itemsLayer;
+	}
+
+	protected Stack<Integer> getFillLayer() {
+		return fillLayer;
 	}
 
 	public boolean isMarkedToClose() {
