@@ -20,6 +20,16 @@ public class PaginatedViewSlotContext<T> extends PaginatedViewContext<T> {
 		return delegate.getItemsLayer();
 	}
 
+	@Override
+	boolean isCheckedLayerSignature() {
+		return delegate.isCheckedLayerSignature();
+	}
+
+	@Override
+	void setCheckedLayerSignature(boolean checkedLayerSignature) {
+		delegate.setCheckedLayerSignature(checkedLayerSignature);
+	}
+
 	/**
      * Returns the item pagination index.
      *

@@ -179,7 +179,7 @@ public abstract class PaginatedView<T> extends View {
         getFrame().debug("[slot " + slot + " (paginated)]: cleared");
     }
 
-    private String[] useLayout(PaginatedViewContext<T> context) {
+    String[] useLayout(PaginatedViewContext<T> context) {
         return context.getLayout() == null ? this.layout : context.getLayout();
     }
 

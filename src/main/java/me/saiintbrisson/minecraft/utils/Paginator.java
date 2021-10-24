@@ -77,7 +77,7 @@ public class Paginator<T> {
                 "pageSize=" + pageSize +
                 ", src=" + source +
                 ", elements=" + source.size() +
-                ", count=" +  count() +
+                ", count=" + count() +
                 '}';
     }
 }
