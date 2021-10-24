@@ -230,6 +230,12 @@ public abstract class PaginatedView<T> extends View {
 			onItemRender(slotContext, item, value);
             render(slotContext, item, slot);
         } else {
+        	// we need to reset the initial rendering function of the overlaid item if not,
+			// when we get to the rendering stage of the overlaid item,
+			// the overlaid item's rendering function will be called first
+			// and will render the wrong item.
+			override.setRenderHandler(null);
+			override.setUpdateHandler(null);
             override.setSlot(slot);
             context.getItems()[slot] = override;
         }

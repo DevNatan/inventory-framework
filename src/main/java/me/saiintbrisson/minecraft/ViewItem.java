@@ -74,8 +74,16 @@ public class ViewItem {
 		return renderHandler;
 	}
 
+	void setRenderHandler(ViewItemHandler renderHandler) {
+		this.renderHandler = renderHandler;
+	}
+
 	public ViewItemHandler getUpdateHandler() {
 		return updateHandler;
+	}
+
+	void setUpdateHandler(ViewItemHandler updateHandler) {
+		this.updateHandler = updateHandler;
 	}
 
 	public ViewItem onClick(ViewItemHandler clickHandler) {
