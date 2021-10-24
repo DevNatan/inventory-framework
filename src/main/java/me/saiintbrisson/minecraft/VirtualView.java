@@ -219,6 +219,7 @@ public class VirtualView {
      * @param slot    the slot that the item will be rendered.
      */
     public void render(ViewContext context, ViewItem item, int slot) {
+		System.out.println("[slot " + slot + "]: " + context.getClass().getName());
         Preconditions.checkNotNull(item, "Render item cannot be null");
 
         final ItemStack fallback = item.getItem();
@@ -237,7 +238,7 @@ public class VirtualView {
         if (fallback == null)
             throw new IllegalArgumentException("No item were provided and the rendering function was not defined at slot " + slot + ".");
 
-        if (!(context instanceof ViewSlotContext))
+        if (!(context instanceof ViewSlotContext) && !(context instanceof PaginatedViewSlotContext))
             context.getInventory().setItem(slot, fallback);
     }
 
