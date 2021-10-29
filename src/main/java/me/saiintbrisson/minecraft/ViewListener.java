@@ -88,7 +88,7 @@ public class ViewListener implements Listener {
 		if (view == null)
 			return;
 
-		if (e.getSlotType() == InventoryType.SlotType.OUTSIDE || (e.getClick().isShiftClick() && view.isCancelOnShiftClick())) {
+		if (e.getSlotType() == InventoryType.SlotType.OUTSIDE) {
 			e.setCancelled(true);
 			return;
 		}
@@ -222,8 +222,8 @@ public class ViewListener implements Listener {
 		if (item.isOverrideCancelOnClick())
 			e.setCancelled(item.isCancelOnClick());
 
-		if (item.isOverrideCancelOnShiftClick() && click.isShiftClick())
-			e.setCancelled(item.isCancelOnShiftClick());
+		if ((view.isCancelOnShiftClick() || item.isOverrideCancelOnShiftClick()) && click.isShiftClick())
+			e.setCancelled(view.isCancelOnShiftClick() || item.isCancelOnShiftClick());
 
 		if (!e.isCancelled()) {
 			if (action.name().startsWith("PICKUP") || action == InventoryAction.CLONE_STACK) {
