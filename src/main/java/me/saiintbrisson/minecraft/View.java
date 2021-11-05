@@ -24,7 +24,8 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 	private final int rows;
 	private final Map<String, ViewContext> contexts;
 	private boolean cancelOnClick, cancelOnPickup, cancelOnDrop, cancelOnDrag, cancelOnClone, cancelOnMoveOut,
-		cancelOnShiftClick;
+		cancelOnShiftClick , clearCursorOnClose;
+
 	private final Map<Player, Map<String, Object>> data;
 
 	public View() {
@@ -247,6 +248,14 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 
 	public void setCancelOnShiftClick(boolean cancelOnShiftClick) {
 		this.cancelOnShiftClick = cancelOnShiftClick;
+	}
+
+	public void setClearCursorOnClose(boolean clearCursorOnClose) {
+		this.clearCursorOnClose = clearCursorOnClose;
+	}
+
+	public boolean isClearCursorOnClose() {
+		return clearCursorOnClose;
 	}
 
 	@Override
