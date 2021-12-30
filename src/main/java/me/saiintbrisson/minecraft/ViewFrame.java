@@ -64,6 +64,10 @@ public final class ViewFrame {
 		}
 	}
 
+	public void registerUpdateTask(long delay, long period) {
+		new ViewUpdateRunnable(this).runTaskTimer(owner, delay, period);
+	}
+
 	public void register(final View... views) {
 		checkUnregistered();
 

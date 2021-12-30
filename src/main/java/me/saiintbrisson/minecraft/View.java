@@ -24,7 +24,7 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 	private final int rows;
 	private final Map<String, ViewContext> contexts;
 	private boolean cancelOnClick, cancelOnPickup, cancelOnDrop, cancelOnDrag, cancelOnClone, cancelOnMoveOut,
-		cancelOnShiftClick , clearCursorOnClose;
+		cancelOnShiftClick , clearCursorOnClose, autoUpdate;
 
 	private final Map<Player, Map<String, Object>> data;
 
@@ -53,6 +53,7 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 		cancelOnClone = true;
 		cancelOnMoveOut = true;
 		cancelOnShiftClick = true;
+		autoUpdate = false;
 	}
 
 	@Override
@@ -192,6 +193,14 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 		for (final Player player : Sets.newHashSet(getContexts().keySet())) {
 			player.closeInventory();
 		}
+	}
+
+	public boolean isAutoUpdate() {
+		return autoUpdate;
+	}
+
+	public void setAutoUpdate(final boolean autoUpdate) {
+		this.autoUpdate = autoUpdate;
 	}
 
 	public boolean isCancelOnClick() {
