@@ -18,7 +18,7 @@ public abstract class ScheduledPaginatedView<T> extends PaginatedView<T> impleme
 		if (delay == null) delay = 1L;
 		if (period == null) period = 1L;
 
-		task = Bukkit.getScheduler().runTaskTimer(plugin, this, 1L, 1L);
+		task = Bukkit.getScheduler().runTaskTimer(plugin, this, delay, period);
 	}
 
 	@Override
