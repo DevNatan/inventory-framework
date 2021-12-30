@@ -73,6 +73,13 @@ public class ViewContext extends VirtualView {
     }
 
     /**
+     * Returns the rows count of that context.
+     */
+    public int getRows() {
+        return inventory.getSize() / 9;
+    }
+
+    /**
      * Returns the {@link Inventory} of that context.
      */
     public Inventory getInventory() {

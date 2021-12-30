@@ -10,7 +10,6 @@ import java.io.Closeable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.WeakHashMap;
-import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -18,6 +17,7 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 
 	public static final int INVENTORY_ROW_SIZE = 9;
 	public static final int UNSET_SLOT = -1;
+	public static final int INVENTORY_ROW_COUNT = 3;
 
 	private final String title;
 	private final int rows;
@@ -32,7 +32,7 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 	private final Map<Player, Map<String, Object>> data;
 
 	public View() {
-		this(1);
+		this(0);
 	}
 
 	public View(final int rows) {
@@ -44,7 +44,7 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 	}
 
 	public View(final ViewFrame frame, final int rows, final String title) {
-		super(new ViewItem[INVENTORY_ROW_SIZE * rows]);
+		super(new ViewItem[INVENTORY_ROW_SIZE * rows == 0 ? INVENTORY_ROW_COUNT : rows]);
 		this.rows = rows;
 		this.frame = frame;
 		this.title = title;
@@ -79,6 +79,11 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 		this.frame = frame;
 	}
 
+	/**
+	 * Use ViewContext#getRows() instead of this method if you're using dynamic rows.
+	 * @return the number of rows in this view
+	 */
+	@Deprecated
 	public int getRows() {
 		return rows;
 	}
