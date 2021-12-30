@@ -263,7 +263,7 @@ public class ViewContext extends VirtualView {
 	}
 
 	public void resetTitle() {
-		updateTitle(inventory.getTitle());
+		updateTitle(player.getOpenInventory().getTitle());
 	}
 
 	public boolean isValid() {

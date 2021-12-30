@@ -19,12 +19,15 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 	public static final int INVENTORY_ROW_SIZE = 9;
 	public static final int UNSET_SLOT = -1;
 
-	private ViewFrame frame;
 	private final String title;
 	private final int rows;
+
 	private final Map<String, ViewContext> contexts;
-	private boolean cancelOnClick, cancelOnPickup, cancelOnDrop, cancelOnDrag, cancelOnClone, cancelOnMoveOut,
-		cancelOnShiftClick , clearCursorOnClose;
+
+	private ViewFrame frame;
+
+	private boolean cancelOnClick, cancelOnPickup, cancelOnDrop, cancelOnDrag, cancelOnClone;
+	private boolean cancelOnMoveOut, cancelOnShiftClick , clearCursorOnClose;
 
 	private final Map<Player, Map<String, Object>> data;
 
