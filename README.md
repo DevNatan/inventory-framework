@@ -1,19 +1,22 @@
 # inventory-framework
+![badge](https://jitpack.io/v/DevNatan/inventory-framework.svg)
 
 Bukkit inventory framework used in some of my projects, feel free to use it. Learn by yourself.
 
-### Gradle
+## Setup
+
+#### Gradle
 ```groovy
 repositories {
     maven { url 'https://jitpack.io' }
 }
 
 dependencies {
-    compileOnly 'com.github.SaiintBrisson.inventory-framework:api:VERSION'
+    compileOnly 'com.github.DevNatan.inventory-framework:VERSION'
 }
 ```
 
-### Maven
+#### Maven
 ```xml
 <repositories>
     <repository>
@@ -23,7 +26,7 @@ dependencies {
 </repositories>
 
 <dependency>
-    <groupId>com.github.SaiintBrisson</groupId>
+    <groupId>com.github.DevNatan</groupId>
     <artifactId>inventory-framework</artifactId>
     <version>VERSION</version>
     <scope>provided</scope>
