@@ -4,7 +4,6 @@
 Bukkit inventory framework used in some of my projects, feel free to use it. Learn by yourself.
 
 ## Setup
-
 #### Gradle
 ```groovy
 repositories {
