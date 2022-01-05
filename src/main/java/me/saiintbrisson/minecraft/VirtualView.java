@@ -141,7 +141,7 @@ public class VirtualView {
 	 * @param column the item slot column.
 	 */
 	public ViewItem slot(int row, int column) {
-		return slot((Math.max((row - 1), 0) * 9) + Math.max((column - 1), 0));
+		return slot(toSlot(row, column));
 	}
 
 	/**
@@ -301,6 +301,19 @@ public class VirtualView {
 		// update handler can be used as a void function, so
 		// we must fall back to the render handler to update the item
 		render(context, item, slot);
+	}
+
+	/**
+	 * Returns the slot associated with the specified row and column.
+	 * @param row the row.
+	 * @param column the column.
+	 * @return the slot.
+	 */
+	public int toSlot(int row, int column) {
+		Preconditions.checkArgument(row < 6, "Row must be greater than 6");
+		Preconditions.checkArgument(column < 9, "Column must be greater than 9");
+
+		return Math.max(row - 1, 0) * 9 + Math.max(column - 1, 0);
 	}
 
 	ViewItem resolve(ViewContext context, int slot) {
