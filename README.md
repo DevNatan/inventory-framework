@@ -21,14 +21,14 @@ Before get started, make sure you have the [JitPack repository](https://jitpack.
 Gradle
 ```groovy
 dependencies {
-    compileOnly 'com.github.DevNatan.inventory-framework:2.3.1'
+    compileOnly 'com.github.DevNatan:inventory-framework:2.3.1'
 }
 ```
 
 Gradle (Kotlin)
 ```kotlin
 dependencies {
-    compileOnly("com.github.DevNatan.inventory-framework:2.3.1")
+    compileOnly("com.github.DevNatan:inventory-framework:2.3.1")
 }
 ```
 
