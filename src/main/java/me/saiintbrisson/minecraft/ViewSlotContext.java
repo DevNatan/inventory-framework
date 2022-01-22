@@ -11,15 +11,20 @@ import java.util.function.Supplier;
 public class ViewSlotContext extends ViewContext {
 
     private final int slot;
-    private InventoryClickEvent clickOrigin;
+    private final InventoryClickEvent clickOrigin;
     private ItemStack item;
     private boolean changed;
 
     public ViewSlotContext(View view, Player player, Inventory inventory, int slot, ItemStack item) {
-        super(view, player, inventory);
-        this.slot = slot;
-        this.item = item == null ? null : item.clone();
+        this(view, player, inventory, slot, item, null);
     }
+
+	public ViewSlotContext(View view, Player player, Inventory inventory, int slot, ItemStack item, InventoryClickEvent clickOrigin) {
+		super(view, player, inventory);
+		this.slot = slot;
+		this.item = item == null ? null : item.clone();
+		this.clickOrigin = clickOrigin;
+	}
 
     public int getSlot() {
         return slot;
@@ -65,10 +70,6 @@ public class ViewSlotContext extends ViewContext {
 
     public InventoryClickEvent getClickOrigin() {
         return clickOrigin;
-    }
-
-    void setClickOrigin(InventoryClickEvent clickOrigin) {
-        this.clickOrigin = clickOrigin;
     }
 
     void setChanged(boolean changed) {

@@ -194,7 +194,6 @@ public class ViewListener implements Listener {
 
 		// global click handling
 		final ViewSlotContext globalClick = new DelegatedViewContext(context, slot, stack);
-		globalClick.setClickOrigin(e);
 		view.onClick(globalClick);
 
 		e.setCancelled(e.isCancelled() || globalClick.isCancelled());
@@ -212,7 +211,6 @@ public class ViewListener implements Listener {
 			return;
 
 		final ViewSlotContext slotContext = new DelegatedViewContext(context, slot, stack);
-		slotContext.setClickOrigin(e);
 
 		if (item.getClickHandler() != null) {
 			item.getClickHandler().handle(slotContext);
@@ -280,7 +278,6 @@ public class ViewListener implements Listener {
 		final ViewContext close = new CloseViewContext(view, player, e.getInventory());
 		view.onClose(close);
 
-		final ItemStack cursor = player.getItemOnCursor();
 		if (close.isCancelled()) {
 			new BukkitRunnable() {
 				public void run() {
@@ -289,7 +286,8 @@ public class ViewListener implements Listener {
 			}.runTaskLater(frame.getOwner(), 1L);
 
 			// set the old cursor item
-			if (cursor != null && cursor.getType() != Material.AIR)
+			final ItemStack cursor = player.getItemOnCursor();
+			if ((cursor != null) && cursor.getType() != Material.AIR)
 				player.setItemOnCursor(cursor);
 			return;
 		}
