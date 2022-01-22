@@ -3,3 +3,4 @@ name: InventoryFramework
 version: @version@
 authors: [SaiintBrisson, DevNatan, sasuked]
 website: https://github.com/saiintbrisson/inventory-framework
+description: Bukkit Inventory API framework

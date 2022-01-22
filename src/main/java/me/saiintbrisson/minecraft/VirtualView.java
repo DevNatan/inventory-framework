@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static me.saiintbrisson.minecraft.View.INVENTORY_ROW_SIZE;
 import static me.saiintbrisson.minecraft.View.UNSET_SLOT;
 
 public class VirtualView {
@@ -141,7 +142,7 @@ public class VirtualView {
 	 * @param column the item slot column.
 	 */
 	public ViewItem slot(int row, int column) {
-		return slot((Math.max((row - 1), 0) * 9) + Math.max((column - 1), 0));
+		return slot(toSlot(row, column));
 	}
 
 	/**
@@ -301,6 +302,34 @@ public class VirtualView {
 		// update handler can be used as a void function, so
 		// we must fall back to the render handler to update the item
 		render(context, item, slot);
+	}
+
+	/**
+	 * Returns the slot associated with the specified row and column.
+	 * @param row the row.
+	 * @param column the column.
+	 * @return the slot.
+	 */
+	public static int toSlot(int row, int column) {
+		Preconditions.checkArgument(row < 6, "Row cannot be greater than 6");
+		Preconditions.checkArgument(column < INVENTORY_ROW_SIZE, "Column cannot be greater than " + INVENTORY_ROW_SIZE);
+
+		return Math.max(row - 1, 0) * INVENTORY_ROW_SIZE + Math.max(column - 1, 0);
+	}
+
+	ViewItem resolve(ViewContext context, int slot) {
+		if (this instanceof ViewContext)
+			throw new IllegalArgumentException("Context can't resolve items itself");
+
+		// fast path -- ArrayIndexOutOfBoundsException
+		if (slot > items.length)
+			return null;
+
+		final ViewItem item = items[slot];
+		if (item == null)
+			return context.getItem(slot);
+
+		return item;
 	}
 
 	@Override
