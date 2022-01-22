@@ -59,16 +59,21 @@ public final class ViewFrame {
 	}
 
 	public void addView(final View... views) {
+		tryRegister(views);
+	}
+
+	private void tryRegister(final View... views) {
 		for (final View view : views) {
+			if (registeredViews.containsKey(view.getClass()))
+				throw new IllegalArgumentException("View " + view.getClass().getName() + " already registered, try to" +
+					" use `addView` before `register`.");
 			addView(view);
 		}
 	}
 
 	public void register(final View... views) {
 		checkUnregistered();
-
-		for (final View view : views)
-			addView(view);
+		tryRegister(views);
 
 		this.listener = new ViewListener(this);
 		Bukkit.getPluginManager().registerEvents(listener, owner);
