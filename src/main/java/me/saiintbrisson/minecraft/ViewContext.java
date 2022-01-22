@@ -62,6 +62,8 @@ public class ViewContext extends VirtualView {
 
 	/**
 	 * Returns the {@link View} of that context.
+	 *
+	 * @return The View who owns this context.
 	 */
 	public View getView() {
 		return view;
@@ -69,6 +71,8 @@ public class ViewContext extends VirtualView {
 
 	/**
 	 * Returns the {@link Player} of that context.
+	 *
+	 * @return The player who owns this context.
 	 */
 	public Player getPlayer() {
 		return player;
@@ -76,6 +80,8 @@ public class ViewContext extends VirtualView {
 
 	/**
 	 * Returns the rows count of that context.
+	 *
+	 * @return The inventory rows count of this context.
 	 */
 	public int getRows() {
 		return inventory.getSize() / 9;
@@ -83,13 +89,17 @@ public class ViewContext extends VirtualView {
 
 	/**
 	 * Returns the {@link Inventory} of that context.
+	 *
+	 * @return The inventory of this context.
 	 */
 	public Inventory getInventory() {
 		return inventory;
 	}
 
 	/**
-	 * Returns `true` if the action in that context was canceled or `false` otherwise.
+	 * Returns if the action was canceled.
+	 *
+	 * @return <tt>true</tt> if the action in that context was canceled or <tt>false</tt> otherwise.
 	 */
 	public boolean isCancelled() {
 		return cancelled;
@@ -276,14 +286,16 @@ public class ViewContext extends VirtualView {
 	 * Updates the title of the inventory for the client of the player who owns this context.
 	 * <p>
 	 * Notes:
-	 * <li>
-	 * This is not to be used before the inventory is opened, if you need to set the **initial title** use
-	 * {@link OpenViewContext#setInventoryTitle(String)} on {@link View#onOpen(OpenViewContext)}.
-	 * </li>
-	 * <li>
-	 * This function is not agnostic, so it may be that your server version is not yet supported,
-	 * if you try to use this function and fail, report it to the IF developers to add support to your version.
-	 * </li>
+	 * <ul>
+	 *     <li>
+	 * 	 This is not to be used before the inventory is opened, if you need to set the **initial title** use
+	 *     {@link OpenViewContext#setInventoryTitle(String)} on {@link View#onOpen(OpenViewContext)}.
+	 * 	 </li>
+	 * 	 <li>
+	 * 	 This function is not agnostic, so it may be that your server version is not yet supported,
+	 * 	 if you try to use this function and fail, report it to the IF developers to add support to your version.
+	 * 	 </li>
+	 * </ul>
 	 *
 	 * @param title The new inventory title.
 	 */

@@ -2,6 +2,7 @@ import org.apache.tools.ant.filters.ReplaceTokens
 
 plugins {
     id 'java'
+    id 'maven-publish'
 }
 
 group 'me.saiintbrisson.minecraft'
@@ -27,5 +28,29 @@ processResources {
     from(sourceSets.main.resources.srcDirs) {
         duplicatesStrategy DuplicatesStrategy.INCLUDE
         filter ReplaceTokens, tokens: [version: version]
+    }
+}
+
+java {
+    withSourcesJar()
+    withJavadocJar()
+}
+
+javadoc {
+    exclude 'me/matsubara/**'
+    exclude 'com/cryptomorin/xseries/**'
+    exclude 'me/saiintbrisson/minecraft/utils/**'
+}
+
+project.afterEvaluate {
+    publishing {
+        publications {
+            jitpack(MavenPublication) {
+                groupId = 'com.github.DevNatan'
+                artifactId = 'inventory-framework'
+
+                from components.java
+            }
+        }
     }
 }
