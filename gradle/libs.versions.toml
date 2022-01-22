@@ -1,0 +1,11 @@
+[versions]
+jetbrains-annotations = "22.0.0"
+spigot-api = "1.16.5-R0.1-SNAPSHOT"
+
+[libraries.spigot-api]
+module = "org.spigotmc:spigot-api"
+version.ref = "spigot-api"
+
+[libraries.jetbrains-annotations]
+module = "org.jetbrains:annotations"
+version.ref = "jetbrains-annotations"
