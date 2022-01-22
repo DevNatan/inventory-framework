@@ -1,18 +1,20 @@
 # inventory-framework
-![badge](https://jitpack.io/v/DevNatan/inventory-framework.svg)
+[![badge](https://jitpack.io/v/DevNatan/inventory-framework.svg)](https://jitpack.io/#DevNatan/inventory-framework)
 
 Bukkit inventory framework used in some of my projects, feel free to use it. Learn by yourself.
 
-inventory-framework was first developed on 1.8.8, but you can use it with any version.\
+inventory-framework was first developed on 1.8.8, but you can use it with any supported version.\
 If there's any issue with an different version, please report it in [Issue Reporting](https://github.com/DevNatan/inventory-framework/issues) section.
 
 * [Setup](#setup)
+* [Preventing Library Conflicts](#preventing-library-conflicts)
 * [How to use](#how-to-use)
   * [Click handler](#click-handler)
   * [Rendering function](#rendering-function)
   * [Context data](#context-data)
   * [Close](#close)
 * [Registering our views](#registering-our-views)
+* [Version Compatibility](#version-compatibility)
 * [Examples](#examples)
 
 ## Setup
@@ -21,14 +23,14 @@ Before get started, make sure you have the [JitPack repository](https://jitpack.
 Gradle
 ```groovy
 dependencies {
-    compileOnly 'com.github.DevNatan:inventory-framework:2.3.1'
+    compileOnly 'com.github.DevNatan:inventory-framework:2.3.2'
 }
 ```
 
 Gradle (Kotlin)
 ```kotlin
 dependencies {
-    compileOnly("com.github.DevNatan:inventory-framework:2.3.1")
+    compileOnly("com.github.DevNatan:inventory-framework:2.3.2")
 }
 ```
 
@@ -37,10 +39,24 @@ Maven
 <dependency>
     <groupId>com.github.DevNatan</groupId>
     <artifactId>inventory-framework</artifactId>
-    <version>2.3.1</version>
+    <version>2.3.2</version>
     <scope>provided</scope>
 </dependency>
 ```
+
+## Preventing Library Conflicts
+There is a good chance that the inventory-framework library will be used in different plugins within your server, 
+these plugins share the same classpath, if a plugin is using a different version of the IF compared to the others 
+there will be a **version conflict because it has been shaded** inside that plugin.
+
+To prevent this, we always provide the library in plugin format (.jar) to be placed in your plugins folder and used by all your plugins.
+
+Add the inventory framework as a dependency of your plugin to be able to access it.
+```yaml
+depend: [InventoryFramework]
+```
+
+**You can install the latest version of the InventoryFramework on the [Releases tab](https://github.com/DevNatan/inventory-framework/releases) on Github.**
 
 ## How to use
 Our view is a simple inventory, with a title and a list of items.
@@ -204,6 +220,19 @@ You can only close the inventory given to a player if you have his context in ha
 ```java
 context.close();
 ```
+
+## Version Compatibility
+InventoryFramework was initially developed only for version 1.8.8, but over time support for newer versions has been added.
+
+Here is the compatibility table, see if your version is compatible before trying to use the library.
+
+| Minecraft version | Supported since | Status        | Notes |
+|-------------------|-----------------|---------------|-------|
+| 1.8               | v1.0            | ✅ Supported   |       |
+| 1.9–1.15          |                 | ⚠️ Not tested |       |
+| 1.16              | v2.3            | ✅ Supported   |       |
+| 1.17              | v2.3.2          | ✅ Supported   |       |
+| 1.18              | v2.3.2          | ✅ Supported   |       |
 
 ## Examples
 #### View using rendering function and click handler
