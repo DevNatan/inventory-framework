@@ -5,6 +5,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -20,11 +22,15 @@ public final class ViewFrame {
 	private Function<PaginatedViewContext<?>, ViewItem> defaultNextPageItem;
 	private boolean debugEnabled;
 
-	public ViewFrame(Plugin owner) {
+	public ViewFrame(@NotNull Plugin owner) {
 		this.owner = owner;
 		registeredViews = new HashMap<>();
 	}
 
+	/**
+	 * @deprecated Use the main constructor and then register your views.
+	 */
+	@Deprecated
 	public ViewFrame(Plugin owner, View... views) {
 		this(owner);
 		addView(views);
@@ -34,10 +40,18 @@ public final class ViewFrame {
 		return owner;
 	}
 
+	/**
+	 * @deprecated This is an internal API and will be removed soon.
+	 */
+	@ApiStatus.Internal
 	public Listener getListener() {
 		return listener;
 	}
 
+	/**
+	 * @deprecated This is an internal API and will be removed soon.
+	 */
+	@ApiStatus.Internal
 	public Map<Class<? extends View>, View> getRegisteredViews() {
 		return registeredViews;
 	}
@@ -80,6 +94,10 @@ public final class ViewFrame {
 		debug("[frame] registered to " + owner.getName());
 	}
 
+	/**
+	 * @deprecated Will become private soon.
+	 */
+	@Deprecated
 	public void unregister() {
 		Iterator<View> iterator = registeredViews.values().iterator();
 		while (iterator.hasNext()) {
@@ -109,6 +127,10 @@ public final class ViewFrame {
 		return openedView;
 	}
 
+	/**
+	 * @deprecated Will become private soon.
+	 */
+	@Deprecated
 	@SuppressWarnings("unchecked")
 	public <T extends View> T getView(Class<T> view) {
 		return (T) getRegisteredViews().get(view);
@@ -119,6 +141,10 @@ public final class ViewFrame {
 			throw new IllegalStateException("Listener already registered.");
 	}
 
+	/**
+	 * @deprecated Will become internal soon.
+	 */
+	@Deprecated
 	public Function<PaginatedViewContext<?>, ViewItem> getDefaultPreviousPageItem() {
 		return defaultPreviousPageItem;
 	}
@@ -127,6 +153,10 @@ public final class ViewFrame {
 		this.defaultPreviousPageItem = defaultPreviousPageItem;
 	}
 
+	/**
+	 * @deprecated Will become internal soon.
+	 */
+	@Deprecated
 	public Function<PaginatedViewContext<?>, ViewItem> getDefaultNextPageItem() {
 		return defaultNextPageItem;
 	}
@@ -135,6 +165,10 @@ public final class ViewFrame {
 		this.defaultNextPageItem = defaultNextPageItem;
 	}
 
+	/**
+	 * @deprecated Will become internal soon.
+	 */
+	@Deprecated
 	public void debug(String message) {
 		if (!debugEnabled)
 			return;
