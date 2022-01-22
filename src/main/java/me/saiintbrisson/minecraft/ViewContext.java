@@ -99,7 +99,7 @@ public class ViewContext extends VirtualView {
 	/**
 	 * Returns if the action was canceled.
 	 *
-	 * @return <tt>true</tt> if the action in that context was canceled or <tt>false</tt> otherwise.
+	 * @return <code>true</code> if the action in that context was canceled or <code>false</code> otherwise.
 	 */
 	public boolean isCancelled() {
 		return cancelled;
