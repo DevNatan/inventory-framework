@@ -4,3 +4,7 @@ version: @version@
 authors: [SaiintBrisson, DevNatan, sasuked]
 website: https://github.com/DevNatan/inventory-framework
 description: Bukkit Inventory API framework
+
+commands:
+  if:
+    description: Opens the if
