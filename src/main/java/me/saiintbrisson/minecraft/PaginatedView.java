@@ -45,7 +45,8 @@ public abstract class PaginatedView<T> extends View {
         this.limit = limit;
     }
 
-    /**
+
+	/**
      * @deprecated Use {@link #setSource(List)} instead.
      */
     @Deprecated
@@ -167,7 +168,7 @@ public abstract class PaginatedView<T> extends View {
 
     }
 
-    public void render(ViewContext context, ViewItem item, int slot) {
+	public void render(ViewContext context, ViewItem item, int slot) {
         // ensure that the item is available in the virtual context
         context.getItems()[slot] = item;
         super.render(context, item, slot);

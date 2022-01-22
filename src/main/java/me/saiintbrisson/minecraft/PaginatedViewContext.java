@@ -34,7 +34,7 @@ public class PaginatedViewContext<T> extends ViewContext {
 		}
     }
 
-    /**
+	/**
      * Returns the current page for that context.
      */
     public int getPage() {

@@ -198,12 +198,10 @@ public class ViewListener implements Listener {
 
 		e.setCancelled(e.isCancelled() || globalClick.isCancelled());
 		if (item == null) {
-			for (final ViewItem holdingItem : view.getItems()) {
-				if (holdingItem == null || holdingItem.getState() != ViewItem.State.HOLDING)
-					continue;
-
+			final ViewItem holdingItem = resolveReleasableItem(view, context);
+			if (holdingItem != null)
 				releaseAt(new DelegatedViewContext(context, holdingItem.getSlot(), stack), slot, cursor, e.getClickedInventory());
-			}
+
 			return;
 		}
 
@@ -228,17 +226,30 @@ public class ViewListener implements Listener {
 				item.setState(ViewItem.State.HOLDING);
 				view.onItemHold(slotContext);
 			} else if (item.getState() == ViewItem.State.HOLDING) {
-				for (final ViewItem holdingItem : view.getItems()) {
-					if (holdingItem == null || holdingItem.getState() != ViewItem.State.HOLDING)
-						continue;
-
+				final ViewItem holdingItem = resolveReleasableItem(view, slotContext);
+				if (holdingItem != null)
 					releaseAt(slotContext, slot, cursor, e.getClickedInventory());
-				}
 			}
 		}
 
 		if (item.isCloseOnClick() || slotContext.isMarkedToClose())
 			Bukkit.getScheduler().runTask(frame.getOwner(), slotContext::closeNow);
+	}
+
+	private ViewItem resolveReleasableItem(View view, ViewContext context) {
+		// we can't use `view.getRows()` here because the inventory size can be set dynamically
+		// the items array size is updated when view is dynamic, so we can use this safely
+		for (int i = 0; i < view.getItems().length; i++) {
+			// must use resolve to works with context-defined items (not only items defined on View constructor)
+			final ViewItem holdingItem = view.resolve(context, i);
+
+			if (holdingItem == null || holdingItem.getState() != ViewItem.State.HOLDING)
+				continue;
+
+			return holdingItem;
+		}
+
+		return null;
 	}
 
 	private void releaseAt(ViewSlotContext context, int slot, ItemStack cursor, Inventory inventory) {

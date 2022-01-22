@@ -169,10 +169,18 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 		super.render(context, item, slot);
 	}
 
-	@Override
-	ViewItem resolve(final ViewContext context, final int slot) {
+	ViewItem resolve(ViewContext context, int slot) {
 		frame.debug("[slot " + slot + "]: resolve item");
-		return super.resolve(context, slot);
+
+		// fast path -- ArrayIndexOutOfBoundsException
+		if (slot > items.length)
+			return null;
+
+		final ViewItem item = items[slot];
+		if (item == null)
+			return context.getItem(slot);
+
+		return item;
 	}
 
 	ViewContext remove(final Player player) {

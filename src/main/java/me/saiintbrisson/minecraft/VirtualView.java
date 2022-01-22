@@ -207,7 +207,7 @@ public class VirtualView {
 	}
 
 	public void render(ViewContext context, int slot) {
-		final ViewItem item = resolve(context, slot);
+		final ViewItem item = context.getView().resolve(context, slot);
 		if (item == null)
 			return;
 
@@ -264,7 +264,7 @@ public class VirtualView {
 	public void update(ViewContext context, int slot) {
 		Preconditions.checkNotNull(context, "Context cannot be null");
 
-		final ViewItem item = resolve(context, slot);
+		final ViewItem item = context.getView().resolve(context, slot);
 		if (item == null) {
 			context.getInventory().setItem(slot, null);
 			return;
@@ -301,21 +301,6 @@ public class VirtualView {
 		// update handler can be used as a void function, so
 		// we must fall back to the render handler to update the item
 		render(context, item, slot);
-	}
-
-	ViewItem resolve(ViewContext context, int slot) {
-		if (this instanceof ViewContext)
-			throw new IllegalArgumentException("Context can't resolve items itself");
-
-		// fast path -- ArrayIndexOutOfBoundsException
-		if (slot > items.length)
-			return null;
-
-		final ViewItem item = items[slot];
-		if (item == null)
-			return context.getItem(slot);
-
-		return item;
 	}
 
 	@Override
