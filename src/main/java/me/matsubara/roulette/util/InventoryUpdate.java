@@ -27,13 +27,17 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.InventoryView;
+import org.bukkit.plugin.java.JavaPlugin;
 
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
+import java.util.Arrays;
 
 /**
- * An utility class for update the inventory of a player.
+ * A utility class for update the inventory of a player.
  * This is useful to change the title of an inventory.
  */
 
@@ -50,9 +54,8 @@ public final class InventoryUpdate {
 	private final static Class<?> CONTAINER_CLASS;
 
 	// Methods.
-	private static Method getHandle;
-	private static Method getBukkitView;
-	private static Method updateInventory;
+	private final static MethodHandle getHandle;
+	private final static MethodHandle getBukkitView;
 
 	// Constructors.
 	private static Constructor<?> chatMessageConstructor;
@@ -65,19 +68,23 @@ public final class InventoryUpdate {
 	static {
 		// Initialize classes.
 		CRAFT_PLAYER_CLASS = ReflectionUtils.getCraftClass("entity.CraftPlayer");
-		CHAT_MESSAGE_CLASS = ReflectionUtils.getNMSClass("ChatMessage");
-		PACKET_PLAY_OUT_OPEN_WINDOW_CLASS = ReflectionUtils.getNMSClass("PacketPlayOutOpenWindow");
-		I_CHAT_BASE_COMPONENT_CLASS = ReflectionUtils.getNMSClass("IChatBaseComponent");
-		// Check if use containers, otherwise, can throw errors on older versions.
-		CONTAINERS_CLASS = useContainers() ? ReflectionUtils.getNMSClass("Containers") : null;
-		ENTITY_PLAYER_CLASS = ReflectionUtils.getNMSClass("EntityPlayer");
-		CONTAINER_CLASS = ReflectionUtils.getNMSClass("Container");
+		CHAT_MESSAGE_CLASS = ReflectionUtils.getNMSClass("network.chat", "ChatMessage");
+		PACKET_PLAY_OUT_OPEN_WINDOW_CLASS = ReflectionUtils.getNMSClass("network.protocol.game", "PacketPlayOutOpenWindow");
+		I_CHAT_BASE_COMPONENT_CLASS = ReflectionUtils.getNMSClass("network.chat", "IChatBaseComponent");
+		// Check if we use containers, otherwise, can throw errors on older versions.
+		CONTAINERS_CLASS = useContainers() ? ReflectionUtils.getNMSClass("world.inventory", "Containers") : null;
+		ENTITY_PLAYER_CLASS = ReflectionUtils.getNMSClass("server.level", "EntityPlayer");
+		CONTAINER_CLASS = ReflectionUtils.getNMSClass("world.inventory", "Container");
+
+		MethodHandle handle = null, bukkitView = null;
 
 		try {
+			int version = ReflectionUtils.VER;
+			MethodHandles.Lookup lookup = MethodHandles.lookup();
+
 			// Initialize methods.
-			getHandle = CRAFT_PLAYER_CLASS.getMethod("getHandle");
-			getBukkitView = CONTAINER_CLASS.getMethod("getBukkitView");
-			updateInventory = ENTITY_PLAYER_CLASS.getMethod("updateInventory", CONTAINER_CLASS);
+			handle = lookup.findVirtual(CRAFT_PLAYER_CLASS, "getHandle", MethodType.methodType(ENTITY_PLAYER_CLASS));
+			bukkitView = lookup.findVirtual(CONTAINER_CLASS, "getBukkitView", MethodType.methodType(InventoryView.class));
 
 			// Initialize constructors.
 			chatMessageConstructor = CHAT_MESSAGE_CLASS.getConstructor(String.class, Object[].class);
@@ -88,11 +95,17 @@ public final class InventoryUpdate {
 					PACKET_PLAY_OUT_OPEN_WINDOW_CLASS.getConstructor(int.class, String.class, I_CHAT_BASE_COMPONENT_CLASS, int.class);
 
 			// Initialize fields.
-			activeContainerField = ENTITY_PLAYER_CLASS.getField("activeContainer");
-			windowIdField = CONTAINER_CLASS.getField("windowId");
+			activeContainerField = (version == 17) ?
+				ENTITY_PLAYER_CLASS.getField("bV") : (version == 18) ?
+				ENTITY_PLAYER_CLASS.getField("bW") :
+				ENTITY_PLAYER_CLASS.getField("activeContainer");
+			windowIdField = (version > 16) ? CONTAINER_CLASS.getField("j") : CONTAINER_CLASS.getField("windowId");
 		} catch (ReflectiveOperationException exception) {
 			exception.printStackTrace();
 		}
+
+		getHandle = handle;
+		getBukkitView = bukkitView;
 	}
 
 	/**
@@ -102,7 +115,7 @@ public final class InventoryUpdate {
 	 * @param newTitle the new title for the inventory.
 	 */
 
-	public static void updateInventory(Player player, String newTitle) {
+	public static void updateInventory(JavaPlugin plugin, Player player, String newTitle) {
 		Validate.notNull(player, "Cannot update inventory to null player.");
 
 		try {
@@ -134,8 +147,7 @@ public final class InventoryUpdate {
 			if ((type == InventoryType.WORKBENCH || type == InventoryType.ANVIL) && !useContainers()) return;
 
 			// You can't reopen crafting, creative and player inventory.
-			if (type == InventoryType.CRAFTING || type == InventoryType.CREATIVE || type == InventoryType.PLAYER)
-				return;
+			if (Arrays.asList("CRAFTING", "CREATIVE", "PLAYER").contains(type.name())) return;
 
 			int size = view.getTopInventory().getSize();
 
@@ -144,8 +156,10 @@ public final class InventoryUpdate {
 			if (container == null) return;
 
 			// If the container was added in a newer versions than the current, return.
-			if (container.getContainerVersion() > getVersion() && useContainers()) {
-				Bukkit.getLogger().warning("This container doesn't work on your current version.");
+			if (container.getContainerVersion() > ReflectionUtils.VER && useContainers()) {
+				Bukkit.getLogger().warning(String.format(
+					"[%s] This container doesn't work on your current version.",
+					plugin.getDescription().getName()));
 				return;
 			}
 
@@ -163,38 +177,28 @@ public final class InventoryUpdate {
 					packetPlayOutOpenWindowConstructor.newInstance(windowId, object, title) :
 					packetPlayOutOpenWindowConstructor.newInstance(windowId, object, title, size);
 
-			// Send packet.
+			// Send packet sync.
 			ReflectionUtils.sendPacketSync(player, packet);
 
 			// Update inventory.
-			updateInventory.invoke(entityPlayer, activeContainer);
-		} catch (ReflectiveOperationException exception) {
-			exception.printStackTrace();
+			player.updateInventory();
+		} catch (Throwable throwable) {
+			throwable.printStackTrace();
 		}
 	}
 
 	/**
 	 * Containers were added in 1.14, a String were used in previous versions.
 	 *
-	 * @return whether or not to use containers.
+	 * @return whether to use containers.
 	 */
 	private static boolean useContainers() {
-		return getVersion() > 13;
-	}
-
-	/**
-	 * Get the current version of the server.
-	 *
-	 * @return version of the server.
-	 */
-	private static int getVersion() {
-		return Integer.parseInt(ReflectionUtils.VERSION.split("_")[1]);
+		return ReflectionUtils.VER > 13;
 	}
 
 	/**
 	 * An enum class for the necessaries containers.
 	 */
-	@SuppressWarnings("unused")
 	private enum Containers {
 		GENERIC_9X1(14, "minecraft:chest", "CHEST"),
 		GENERIC_9X2(14, "minecraft:chest", "CHEST"),
@@ -231,6 +235,8 @@ public final class InventoryUpdate {
 		private final String minecraftName;
 		private final String[] inventoryTypesNames;
 
+		private final static char[] alphabet = "abcdefghijklmnopqrstuvwxyz".toCharArray();
+
 		Containers(int containerVersion, String minecraftName, String... inventoryTypesNames) {
 			this.containerVersion = containerVersion;
 			this.minecraftName = minecraftName;
@@ -244,11 +250,14 @@ public final class InventoryUpdate {
 		 * @return the container.
 		 */
 		public static Containers getType(InventoryType type, int size) {
-			if (type == InventoryType.CHEST) return Containers.valueOf("GENERIC_9X" + size / 9);
-
+			if (type == InventoryType.CHEST) {
+				return Containers.valueOf("GENERIC_9X" + size / 9);
+			}
 			for (Containers container : Containers.values()) {
 				for (String bukkitName : container.getInventoryTypesNames()) {
-					if (bukkitName.equalsIgnoreCase(type.toString())) return container;
+					if (bukkitName.equalsIgnoreCase(type.toString())) {
+						return container;
+					}
 				}
 			}
 			return null;
@@ -257,12 +266,15 @@ public final class InventoryUpdate {
 		/**
 		 * Get the object from the container enum.
 		 *
-		 * @return a Containers object if 1.14, otherwise, a String.
+		 * @return a Containers object if 1.14+, otherwise, a String.
 		 */
 		public Object getObject() {
 			try {
 				if (!useContainers()) return getMinecraftName();
-				String name = (getVersion() == 14 && this == CARTOGRAPHY_TABLE) ? "CARTOGRAPHY" : name();
+				int version = ReflectionUtils.VER;
+				String name = (version == 14 && this == CARTOGRAPHY_TABLE) ? "CARTOGRAPHY" : name();
+				// Since 1.17, containers go from "a" to "x".
+				if (version > 16) name = String.valueOf(alphabet[ordinal()]);
 				Field field = CONTAINERS_CLASS.getField(name);
 				return field.get(null);
 			} catch (ReflectiveOperationException exception) {

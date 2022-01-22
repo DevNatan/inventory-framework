@@ -9,13 +9,14 @@ version '2.3.1'
 
 repositories {
     mavenCentral()
+    mavenLocal()
     maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
     maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' }
 }
 
 dependencies {
-    compileOnly 'org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT'
-    compileOnly 'org.jetbrains:annotations:22.0.0'
+    compileOnly libs.spigot.api
+    compileOnly libs.jetbrains.annotations
 }
 
 tasks.withType(JavaCompile) {
@@ -24,6 +25,7 @@ tasks.withType(JavaCompile) {
 
 processResources {
     from(sourceSets.main.resources.srcDirs) {
+        duplicatesStrategy DuplicatesStrategy.INCLUDE
         filter ReplaceTokens, tokens: [version: version]
     }
 }
