@@ -5,6 +5,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.Closeable;
 import java.util.HashMap;
@@ -23,13 +24,10 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 	private final int rows;
 
 	private final Map<String, ViewContext> contexts;
-
-	private ViewFrame frame;
-
-	private boolean cancelOnClick, cancelOnPickup, cancelOnDrop, cancelOnDrag, cancelOnClone;
-	private boolean cancelOnMoveOut, cancelOnShiftClick , clearCursorOnClose;
-
 	private final Map<Player, Map<String, Object>> data;
+	private ViewFrame frame;
+	private boolean cancelOnClick, cancelOnPickup, cancelOnDrop, cancelOnDrag, cancelOnClone;
+	private boolean cancelOnMoveOut, cancelOnShiftClick, clearCursorOnClose;
 
 	public View() {
 		this(0);
@@ -81,6 +79,7 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 
 	/**
 	 * Use ViewContext#getRows() instead of this method if you're using dynamic rows.
+	 *
 	 * @return the number of rows in this view
 	 */
 	@Deprecated
@@ -93,7 +92,9 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 	}
 
 	protected ViewContext createContext(final View view, final Player player, final Inventory inventory) {
-		return new ViewContext(view, player, inventory);
+		return isScheduledToUpdate()
+			? new ScheduledViewContext(view, player, inventory)
+			: new ViewContext(view, player, inventory);
 	}
 
 	public void open(final Player player) {
@@ -266,12 +267,12 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 		this.cancelOnShiftClick = cancelOnShiftClick;
 	}
 
-	public void setClearCursorOnClose(boolean clearCursorOnClose) {
-		this.clearCursorOnClose = clearCursorOnClose;
-	}
-
 	public boolean isClearCursorOnClose() {
 		return clearCursorOnClose;
+	}
+
+	public void setClearCursorOnClose(boolean clearCursorOnClose) {
+		this.clearCursorOnClose = clearCursorOnClose;
 	}
 
 	@Override
@@ -329,28 +330,28 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 		return data.get(player).containsKey(key);
 	}
 
-	protected void onOpen(final OpenViewContext context) {
+	protected void onOpen(@NotNull OpenViewContext context) {
 	}
 
-	protected void onRender(final ViewContext context) {
+	protected void onRender(@NotNull ViewContext context) {
 	}
 
-	protected void onClose(final ViewContext context) {
+	protected void onClose(@NotNull ViewContext context) {
 	}
 
-	protected void onClick(final ViewSlotContext context) {
+	protected void onClick(@NotNull ViewSlotContext context) {
 	}
 
-	protected void onUpdate(final ViewContext context) {
+	protected void onUpdate(@NotNull ViewContext context) {
 	}
 
-	protected void onMoveOut(final ViewSlotMoveContext context) {
+	protected void onMoveOut(@NotNull ViewSlotMoveContext context) {
 	}
 
-	protected void onItemHold(final ViewSlotContext context) {
+	protected void onItemHold(@NotNull ViewSlotContext context) {
 	}
 
-	protected void onItemRelease(final ViewSlotContext from, final ViewSlotContext to) {
+	protected void onItemRelease(@NotNull ViewSlotContext from, @NotNull ViewSlotContext to) {
 	}
 
 	private void expandItemsArray(int newLength) {

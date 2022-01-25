@@ -4,11 +4,16 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
 
+/**
+ * @deprecated Use {@link VirtualView#scheduleUpdate(long, long)} instead.
+ */
+@Deprecated
 public abstract class ScheduledView extends View implements Runnable {
 
 	private final Plugin plugin = getFrame().getOwner();
 
-	private BukkitTask task;
+	BukkitTask _task;
+	final BukkitTask task = _task;
 	private Long delay, period;
 
 	@Override
@@ -18,7 +23,7 @@ public abstract class ScheduledView extends View implements Runnable {
 		if (delay == null) delay = 1L;
 		if (period == null) period = 1L;
 
-		this.task = Bukkit.getScheduler().runTaskTimer(plugin, this, delay, period);
+		this._task = Bukkit.getScheduler().runTaskTimer(plugin, this, delay, period);
 	}
 
 	@Override
@@ -26,17 +31,13 @@ public abstract class ScheduledView extends View implements Runnable {
 		if (getContexts().size() != 1) return;
 
 		task.cancel();
-		task = null;
+		_task = null;
 	}
 
 	@Override
 	public void run() {
 		update();
 	}
-
-	/*
-	Delay & period
-	 */
 
 	public void setDelay(long delay) {
 		this.delay = delay;

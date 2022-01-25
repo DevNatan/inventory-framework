@@ -88,6 +88,7 @@ public class ViewListener implements Listener {
 		if (view == null)
 			return;
 
+		// TODO add option to close View on outside click
 		if (e.getSlotType() == InventoryType.SlotType.OUTSIDE) {
 			e.setCancelled(true);
 			return;
@@ -298,6 +299,9 @@ public class ViewListener implements Listener {
 
 			// set the old cursor item
 			final ItemStack cursor = player.getItemOnCursor();
+
+			// cursor can be null in legacy versions
+			//noinspection ConstantConditions
 			if ((cursor != null) && cursor.getType() != Material.AIR)
 				player.setItemOnCursor(cursor);
 			return;

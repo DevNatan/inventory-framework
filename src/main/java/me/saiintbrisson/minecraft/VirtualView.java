@@ -16,8 +16,24 @@ public class VirtualView {
 	protected ViewItem[] items;
 	protected String[] layout;
 
+	ViewUpdateJob updateJob;
+
 	public VirtualView(ViewItem[] items) {
 		this.items = items;
+	}
+
+	/**
+	 * Returns the slot associated with the specified row and column.
+	 *
+	 * @param row    the row.
+	 * @param column the column.
+	 * @return the slot.
+	 */
+	public static int toSlot(int row, int column) {
+		Preconditions.checkArgument(row < 6, "Row cannot be greater than 6");
+		Preconditions.checkArgument(column < INVENTORY_ROW_SIZE, "Column cannot be greater than " + INVENTORY_ROW_SIZE);
+
+		return Math.max(row - 1, 0) * INVENTORY_ROW_SIZE + Math.max(column - 1, 0);
 	}
 
 	/**
@@ -195,6 +211,12 @@ public class VirtualView {
 	}
 
 	/**
+	 * Render all items in this view.
+	 */
+	public void render() {
+	}
+
+	/**
 	 * Render all items in this view to the specified context.
 	 *
 	 * @param context the target context.
@@ -242,6 +264,12 @@ public class VirtualView {
 
 		if (!(context instanceof ViewSlotContext))
 			context.getInventory().setItem(slot, fallback);
+	}
+
+	/**
+	 * Updates this view for all viewers who's viewing it.
+	 */
+	public void update() {
 	}
 
 	/**
@@ -304,19 +332,6 @@ public class VirtualView {
 		render(context, item, slot);
 	}
 
-	/**
-	 * Returns the slot associated with the specified row and column.
-	 * @param row the row.
-	 * @param column the column.
-	 * @return the slot.
-	 */
-	public static int toSlot(int row, int column) {
-		Preconditions.checkArgument(row < 6, "Row cannot be greater than 6");
-		Preconditions.checkArgument(column < INVENTORY_ROW_SIZE, "Column cannot be greater than " + INVENTORY_ROW_SIZE);
-
-		return Math.max(row - 1, 0) * INVENTORY_ROW_SIZE + Math.max(column - 1, 0);
-	}
-
 	ViewItem resolve(ViewContext context, int slot) {
 		if (this instanceof ViewContext)
 			throw new IllegalArgumentException("Context can't resolve items itself");
@@ -330,6 +345,47 @@ public class VirtualView {
 			return context.getItem(slot);
 
 		return item;
+	}
+
+	/**
+	 * Defines the automatic update interval time for this view.
+	 *
+	 * @param interval The ticks to wait between runs.
+	 */
+	protected final void scheduleUpdate(long interval) {
+		scheduleUpdate(-1, interval);
+	}
+
+	/**
+	 * Defines the automatic update interval time for this view.
+	 *
+	 * @param delay    The ticks to wait before running the task.
+	 * @param interval The ticks to wait between runs.
+	 */
+	protected final void scheduleUpdate(long delay, long interval) {
+		// initialize only when needed
+		if (updateJob == null) {
+			updateJob = new ViewUpdateJob(this, delay, interval);
+			return;
+		}
+
+		// fast path -- do not schedule if delay and interval are the same
+		if (updateJob.delay == delay && updateJob.interval == interval)
+			return;
+
+		// cancel the old update job to prevent leaks and
+		// schedule again with the new delay and interval values
+		updateJob.cancel();
+		scheduleUpdate(delay, interval);
+	}
+
+	/**
+	 * Checks if this view is set to update automatically.
+	 *
+	 * @return <code>true</code> if it will update automatically or <code>false</code> otherwise.
+	 */
+	public final boolean isScheduledToUpdate() {
+		return updateJob != null;
 	}
 
 	@Override
