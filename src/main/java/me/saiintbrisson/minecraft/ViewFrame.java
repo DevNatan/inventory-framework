@@ -119,6 +119,9 @@ public final class ViewFrame {
 	}
 
 	public <T extends View> T open(Class<T> view, Player player, Map<String, Object> data) {
+		if (listener == null)
+			throw new IllegalStateException("Attempt to open a View without having registered the ViewFrame");
+
 		final T openedView = getView(view);
 		if (openedView == null)
 			throw new IllegalArgumentException("View " + view.getSimpleName() + " is not registered");
