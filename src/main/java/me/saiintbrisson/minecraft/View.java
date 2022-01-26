@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.Closeable;
 import java.util.HashMap;
@@ -61,19 +62,19 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 		return INVENTORY_ROW_SIZE * rows - 1;
 	}
 
-	public Map<Player, ViewContext> getContexts() {
+	public final Map<Player, ViewContext> getContexts() {
 		return contexts.entrySet().stream().collect(Collectors.toMap(e -> Bukkit.getPlayerExact(e.getKey()), Map.Entry::getValue));
 	}
 
-	public ViewContext getContext(final Player player) {
+	public final ViewContext getContext(final Player player) {
 		return contexts.get(player.getName());
 	}
 
-	public ViewFrame getFrame() {
+	public final ViewFrame getFrame() {
 		return frame;
 	}
 
-	void setFrame(final ViewFrame frame) {
+	final void setFrame(final ViewFrame frame) {
 		this.frame = frame;
 	}
 
@@ -83,11 +84,11 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 	 * @return the number of rows in this view
 	 */
 	@Deprecated
-	public int getRows() {
+	public final int getRows() {
 		return rows;
 	}
 
-	public String getTitle() {
+	public final String getTitle() {
 		return title;
 	}
 
@@ -97,11 +98,11 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 			: new ViewContext(view, player, inventory);
 	}
 
-	public void open(final Player player) {
+	public final void open(final Player player) {
 		open(player, null);
 	}
 
-	public void open(final Player player, final Map<String, Object> data) {
+	public final void open(final Player player, final Map<String, Object> data) {
 		contexts.computeIfPresent(player.getName(), ($, context) -> {
 			context.invalidate();
 			return null;
@@ -170,7 +171,7 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 		super.render(context, item, slot);
 	}
 
-	ViewItem resolve(ViewContext context, int slot) {
+	final ViewItem resolve(ViewContext context, int slot) {
 		frame.debug("[slot " + slot + "]: resolve item");
 
 		// fast path -- ArrayIndexOutOfBoundsException
@@ -205,73 +206,73 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 		}
 	}
 
-	public void close() {
+	public final void close() {
 		for (final Player player : Sets.newHashSet(getContexts().keySet())) {
 			player.closeInventory();
 		}
 	}
 
-	public boolean isCancelOnClick() {
+	public final boolean isCancelOnClick() {
 		return cancelOnClick;
 	}
 
-	public void setCancelOnClick(final boolean cancelOnClick) {
+	public final void setCancelOnClick(final boolean cancelOnClick) {
 		this.cancelOnClick = cancelOnClick;
 	}
 
-	public boolean isCancelOnPickup() {
+	public final boolean isCancelOnPickup() {
 		return cancelOnPickup;
 	}
 
-	public void setCancelOnPickup(final boolean cancelOnPickup) {
+	public final void setCancelOnPickup(final boolean cancelOnPickup) {
 		this.cancelOnPickup = cancelOnPickup;
 	}
 
-	public boolean isCancelOnDrop() {
+	public final boolean isCancelOnDrop() {
 		return cancelOnDrop;
 	}
 
-	public void setCancelOnDrop(final boolean cancelOnDrop) {
+	public final void setCancelOnDrop(final boolean cancelOnDrop) {
 		this.cancelOnDrop = cancelOnDrop;
 	}
 
-	public boolean isCancelOnDrag() {
+	public final boolean isCancelOnDrag() {
 		return cancelOnDrag;
 	}
 
-	public void setCancelOnDrag(final boolean cancelOnDrag) {
+	public final void setCancelOnDrag(final boolean cancelOnDrag) {
 		this.cancelOnDrag = cancelOnDrag;
 	}
 
-	public boolean isCancelOnClone() {
+	public final boolean isCancelOnClone() {
 		return cancelOnClone;
 	}
 
-	public void setCancelOnClone(final boolean cancelOnClone) {
+	public final void setCancelOnClone(final boolean cancelOnClone) {
 		this.cancelOnClone = cancelOnClone;
 	}
 
-	public boolean isCancelOnMoveOut() {
+	public final boolean isCancelOnMoveOut() {
 		return cancelOnMoveOut;
 	}
 
-	public void setCancelOnMoveOut(boolean cancelOnMoveOut) {
+	public final void setCancelOnMoveOut(boolean cancelOnMoveOut) {
 		this.cancelOnMoveOut = cancelOnMoveOut;
 	}
 
-	public boolean isCancelOnShiftClick() {
+	public final boolean isCancelOnShiftClick() {
 		return cancelOnShiftClick;
 	}
 
-	public void setCancelOnShiftClick(boolean cancelOnShiftClick) {
+	public final void setCancelOnShiftClick(boolean cancelOnShiftClick) {
 		this.cancelOnShiftClick = cancelOnShiftClick;
 	}
 
-	public boolean isClearCursorOnClose() {
+	public final boolean isClearCursorOnClose() {
 		return clearCursorOnClose;
 	}
 
-	public void setClearCursorOnClose(boolean clearCursorOnClose) {
+	public final void setClearCursorOnClose(boolean clearCursorOnClose) {
 		this.clearCursorOnClose = clearCursorOnClose;
 	}
 
@@ -284,23 +285,23 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 		return Bukkit.createInventory(this, size, title == null ? this.title : title);
 	}
 
-	public void clearData(final Player player) {
+	public final void clearData(@NotNull Player player) {
 		data.remove(player);
 	}
 
-	public void clearData(final Player player, final String key) {
+	public final void clearData(@NotNull Player player, @NotNull String key) {
 		if (!data.containsKey(player))
 			return;
 
 		data.get(player).remove(key);
 	}
 
-	public Map<String, Object> getData(final Player player) {
+	public final Map<String, Object> getData(@NotNull Player player) {
 		return data.get(player);
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T> T getData(final Player player, final String key) {
+	public final <T> T getData(@NotNull Player player, @NotNull String key) {
 		if (!data.containsKey(player))
 			return null;
 
@@ -308,22 +309,22 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T> T getData(final Player player, final String key, final Supplier<T> defaultValue) {
+	public final <T> T getData(@NotNull Player player, @NotNull String key, @NotNull Supplier<@Nullable T> defaultValue) {
 		if (!data.containsKey(player) || !data.get(player).containsKey(key))
 			return defaultValue.get();
 
 		return (T) data.get(player).get(key);
 	}
 
-	public void setData(final Player player, final Map<String, Object> data) {
+	public final void setData(@NotNull Player player, @NotNull Map<String, Object> data) {
 		this.data.put(player, data);
 	}
 
-	public void setData(final Player player, final String key, final Object value) {
+	public final void setData(@NotNull Player player, @NotNull String key, @Nullable Object value) {
 		data.computeIfAbsent(player, $ -> new HashMap<>()).put(key, value);
 	}
 
-	public boolean hasData(final Player player, final String key) {
+	public final boolean hasData(@NotNull Player player, @NotNull String key) {
 		if (!data.containsKey(player))
 			return false;
 

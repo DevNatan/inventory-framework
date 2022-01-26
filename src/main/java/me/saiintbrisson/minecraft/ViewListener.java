@@ -307,9 +307,8 @@ public class ViewListener implements Listener {
 			return;
 		}
 
-		if(view.isClearCursorOnClose()){
+		if (view.isClearCursorOnClose())
 			player.setItemOnCursor(null);
-		}
 
 		view.remove(context);
 	}
