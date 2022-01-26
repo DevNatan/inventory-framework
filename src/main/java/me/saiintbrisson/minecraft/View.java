@@ -57,11 +57,6 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 		cancelOnShiftClick = true;
 	}
 
-	@Override
-	public int getLastSlot() {
-		return INVENTORY_ROW_SIZE * rows - 1;
-	}
-
 	public final Map<Player, ViewContext> getContexts() {
 		return contexts.entrySet().stream().collect(Collectors.toMap(e -> Bukkit.getPlayerExact(e.getKey()), Map.Entry::getValue));
 	}
