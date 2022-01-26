@@ -18,7 +18,7 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 
 	public static final int INVENTORY_ROW_SIZE = 9;
 	public static final int UNSET_SLOT = -1;
-	public static final int INVENTORY_ROW_COUNT = 3;
+	public static final int DEFAULT_INVENTORY_ROW_COUNT = 3;
 
 	private final String title;
 	private final int rows;
@@ -42,7 +42,7 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 	}
 
 	public View(final ViewFrame frame, final int rows, final String title) {
-		super(new ViewItem[INVENTORY_ROW_SIZE * rows == 0 ? INVENTORY_ROW_COUNT : rows]);
+		super(new ViewItem[rows * (rows == 0 ? DEFAULT_INVENTORY_ROW_COUNT : INVENTORY_ROW_SIZE)]);
 		this.rows = rows;
 		this.frame = frame;
 		this.title = title;

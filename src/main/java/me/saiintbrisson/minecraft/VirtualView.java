@@ -25,13 +25,40 @@ public class VirtualView {
 	/**
 	 * Returns the slot associated with the specified row and column.
 	 *
-	 * @param row    the row.
-	 * @param column the column.
-	 * @return the slot.
+	 * @param row    The rows count.
+	 * @param column The columns count.
+	 * @return The slot position based in specified row and column.
+	 */
+	int toSlot0(int row, int column) {
+		return toSlot(row, column, getItems().length / INVENTORY_ROW_SIZE);
+	}
+
+	/**
+	 * Returns the slot associated with the specified row and column.
+	 *
+	 * @param row    The rows count.
+	 * @param column The columns count.
+	 * @return The slot position based in specified row and column.
 	 */
 	public static int toSlot(int row, int column) {
-		Preconditions.checkArgument(row < 6, "Row cannot be greater than 6");
-		Preconditions.checkArgument(column < INVENTORY_ROW_SIZE, "Column cannot be greater than " + INVENTORY_ROW_SIZE);
+		return toSlot(row, column, 6 /* inventory rows count */);
+	}
+
+	/**
+	 * Returns the slot associated with the specified row and column.
+	 *
+	 * @param row    The rows count.
+	 * @param column The columns count.
+	 * @param minRowsCount The minimum rows count.
+	 * @return The slot position based in specified row and column.
+	 */
+	private static int toSlot(int row, int column, int minRowsCount) {
+		Preconditions.checkArgument(row <= minRowsCount,
+			"Row cannot be greater than " + minRowsCount + " (given: " + row + ")"
+		);
+		Preconditions.checkArgument(column <= INVENTORY_ROW_SIZE,
+			"Column cannot be greater than " + INVENTORY_ROW_SIZE + " (given: " + column + ")"
+		);
 
 		return Math.max(row - 1, 0) * INVENTORY_ROW_SIZE + Math.max(column - 1, 0);
 	}
@@ -158,7 +185,7 @@ public class VirtualView {
 	 * @param column the item slot column.
 	 */
 	public ViewItem slot(int row, int column) {
-		return slot(toSlot(row, column));
+		return slot(toSlot0(row, column));
 	}
 
 	/**
