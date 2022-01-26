@@ -18,6 +18,14 @@ repositories {
 dependencies {
     compileOnly libs.spigot.api
     compileOnly libs.jetbrains.annotations
+    testImplementation libs.junit.api
+    testRuntimeOnly libs.junit.engine
+    testImplementation libs.spigot.api
+    testCompileOnly libs.jetbrains.annotations
+}
+
+test {
+    useJUnitPlatform()
 }
 
 tasks.withType(JavaCompile) {

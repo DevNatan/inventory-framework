@@ -1,6 +1,7 @@
 [versions]
 jetbrains-annotations = "22.0.0"
 spigot-api = "1.16.5-R0.1-SNAPSHOT"
+junit = "5.8.2"
 
 [libraries.spigot-api]
 module = "org.spigotmc:spigot-api"
@@ -9,3 +10,11 @@ version.ref = "spigot-api"
 [libraries.jetbrains-annotations]
 module = "org.jetbrains:annotations"
 version.ref = "jetbrains-annotations"
+
+[libraries.junit-api]
+module = "org.junit.jupiter:junit-jupiter-api"
+version.ref = "junit"
+
+[libraries.junit-engine]
+module = "org.junit.jupiter:junit-jupiter-engine"
+version.ref = "junit"
