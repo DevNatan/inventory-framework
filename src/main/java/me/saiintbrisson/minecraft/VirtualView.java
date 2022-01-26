@@ -85,7 +85,7 @@ public class VirtualView {
 	/**
 	 * Returns all registered {@link ViewItem}s.
 	 */
-	public ViewItem[] getItems() {
+	ViewItem[] getItems() {
 		return items;
 	}
 
@@ -94,28 +94,28 @@ public class VirtualView {
 	 *
 	 * @param slot the item slot.
 	 */
-	public ViewItem getItem(int slot) {
+	final ViewItem getItem(int slot) {
 		return getItems()[slot];
 	}
 
 	/**
-	 * Returns the number of the first slot available or not.
+	 * Returns the number of the first slot of this view.
 	 */
-	public int getFirstSlot() {
+	public final int getFirstSlot() {
 		return 0;
 	}
 
 	/**
-	 * Returns the number of the last slot available or not.
+	 * Returns the number of the last slot of this view.
 	 */
-	public int getLastSlot() {
+	public final int getLastSlot() {
 		return items.length - 1;
 	}
 
 	/**
 	 * Returns a new {@link ViewItem}.
 	 */
-	public ViewItem item() {
+	public final ViewItem item() {
 		return new ViewItem(UNSET_SLOT);
 	}
 
@@ -124,7 +124,7 @@ public class VirtualView {
 	 *
 	 * @param item the item.
 	 */
-	public ViewItem item(@NotNull ItemStack item) {
+	public final ViewItem item(@NotNull ItemStack item) {
 		return new ViewItem(UNSET_SLOT).withItem(item);
 	}
 
@@ -133,7 +133,7 @@ public class VirtualView {
 	 * @deprecated Use {@link #item(ItemStack)} instead.
 	 */
 	@Deprecated
-	public ViewItem item(@NotNull Material material) {
+	public final ViewItem item(@NotNull Material material) {
 		return item(new ItemStack(material));
 	}
 
@@ -142,7 +142,7 @@ public class VirtualView {
 	 * @deprecated Use {@link #item(ItemStack)} instead.
 	 */
 	@Deprecated
-	public ViewItem item(@NotNull Material material, short durability) {
+	public final ViewItem item(@NotNull Material material, short durability) {
 		return item(new ItemStack(material, 1, durability));
 	}
 
@@ -151,7 +151,7 @@ public class VirtualView {
 	 * @deprecated Use {@link #item(ItemStack)} instead.
 	 */
 	@Deprecated
-	public ViewItem item(@NotNull Material material, int amount) {
+	public final ViewItem item(@NotNull Material material, int amount) {
 		return item(new ItemStack(material, amount));
 	}
 
@@ -160,7 +160,7 @@ public class VirtualView {
 	 * @deprecated Use {@link #item(ItemStack)} instead.
 	 */
 	@Deprecated
-	public ViewItem item(@NotNull Material material, int amount, short durability) {
+	public final ViewItem item(@NotNull Material material, int amount, short durability) {
 		return item(new ItemStack(material, amount, durability));
 	}
 
@@ -169,7 +169,7 @@ public class VirtualView {
 	 *
 	 * @param slot the item slot.
 	 */
-	public ViewItem slot(int slot) {
+	public final ViewItem slot(int slot) {
 		final int max = getLastSlot() + 1;
 		if (slot > max)
 			throw new IllegalArgumentException("Slot exceeds the inventory limit (expected: < " + max + ", given: " + slot + ").");
@@ -183,7 +183,7 @@ public class VirtualView {
 	 * @param slot the item slot.
 	 * @param item the item to be set.
 	 */
-	public ViewItem slot(int slot, ItemStack item) {
+	public final ViewItem slot(int slot, ItemStack item) {
 		return slot(slot).withItem(item);
 	}
 
@@ -193,7 +193,7 @@ public class VirtualView {
 	 * @param row    the item slot row.
 	 * @param column the item slot column.
 	 */
-	public ViewItem slot(int row, int column) {
+	public final ViewItem slot(int row, int column) {
 		return slot(toSlot0(row, column));
 	}
 
@@ -204,7 +204,7 @@ public class VirtualView {
 	 * @param column the item slot column.
 	 * @param item   the item to be set.
 	 */
-	public ViewItem slot(int row, int column, ItemStack item) {
+	public final ViewItem slot(int row, int column, ItemStack item) {
 		return slot(row, column).withItem(item);
 	}
 
@@ -213,7 +213,7 @@ public class VirtualView {
 	 *
 	 * @see #getFirstSlot()
 	 */
-	public ViewItem firstSlot() {
+	public final ViewItem firstSlot() {
 		return slot(getFirstSlot());
 	}
 
@@ -223,7 +223,7 @@ public class VirtualView {
 	 * @param item the item to be set.
 	 * @see #getFirstSlot()
 	 */
-	public ViewItem firstSlot(ItemStack item) {
+	public final ViewItem firstSlot(ItemStack item) {
 		return slot(getFirstSlot(), item);
 	}
 
@@ -232,7 +232,7 @@ public class VirtualView {
 	 *
 	 * @see #getLastSlot()
 	 */
-	public ViewItem lastSlot() {
+	public final ViewItem lastSlot() {
 		return slot(getLastSlot());
 	}
 
@@ -242,7 +242,7 @@ public class VirtualView {
 	 * @param item the item to be set.
 	 * @see #getLastSlot()
 	 */
-	public ViewItem lastSlot(ItemStack item) {
+	public final ViewItem lastSlot(ItemStack item) {
 		return slot(getLastSlot(), item);
 	}
 
