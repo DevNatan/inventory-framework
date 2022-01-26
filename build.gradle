@@ -46,7 +46,6 @@ java {
 
 javadoc {
     exclude 'me/matsubara/**'
-    exclude 'com/cryptomorin/xseries/**'
     exclude 'me/saiintbrisson/minecraft/utils/**'
 }
 
