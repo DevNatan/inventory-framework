@@ -101,26 +101,42 @@ public class ViewListener implements Listener {
 		final ItemStack cursor = e.getCursor();
 		final int slot = e.getSlot();
 
-		// bottom inventory click
-		if (!(e.getRawSlot() < inventory.getSize())) {
+		final boolean bottomInventoryClick = !(e.getRawSlot() < inventory.getSize());
+		if (!bottomInventoryClick && action == InventoryAction.CLONE_STACK && view.isCancelOnClone()) {
+			e.setCancelled(true);
+			return;
+		}
+
+		final ViewContext context = view.getContext(player);
+
+		// for some reason I haven't figured out which one yet, it's possible that the View's inventory is open and
+		// the context doesn't exist, so we check to see if it's null
+		if (context == null) {
+			return;
+		}
+
+		// move in and out handling
+		if (bottomInventoryClick) {
 			if (action != InventoryAction.PLACE_ALL &&
 				action != InventoryAction.PLACE_ONE &&
 				action != InventoryAction.PLACE_SOME &&
 				action != InventoryAction.SWAP_WITH_CURSOR)
 				return;
 
-			// unable to handle move out since item move not possible
-			if (view.isCancelOnClick())
+			// cannot to handle move in/out since item move not possible
+			if (view.isCancelOnClick()) {
+				e.setCancelled(true);
 				return;
+			}
 
-			final ViewContext context = view.getContext(player);
+			ItemStack swappedItem = null;
+			if (action == InventoryAction.SWAP_WITH_CURSOR)
+				swappedItem = e.getCurrentItem();
 
-			// for some reason I haven't figured out which one yet,
-			// it's possible that the View's inventory is open and the context doesn't exist,
-			// so we check to see if it's null
-			if (context == null)
-				return;
+			System.out.println("Current item: " + e.getCurrentItem());
+			System.out.println("Cursor item:" + e.getCursor());
 
+			// detect the item was being moved
 			for (int i = view.getFirstSlot(); i <= view.getLastSlot(); i++) {
 				final ViewItem item = view.resolve(context, i);
 				if (item == null)
@@ -128,10 +144,6 @@ public class ViewListener implements Listener {
 
 				if (item.getState() != ViewItem.State.HOLDING)
 					continue;
-
-				ItemStack swappedItem = null;
-				if (action == InventoryAction.SWAP_WITH_CURSOR)
-					swappedItem = e.getCurrentItem();
 
 				final ViewSlotMoveContext moveOutContext = new ViewSlotMoveContext(context, item.getSlot(), cursor, e.getView().getBottomInventory(), swappedItem, slot, swappedItem != null);
 				view.onMoveOut(moveOutContext);
@@ -151,20 +163,6 @@ public class ViewListener implements Listener {
 					Bukkit.getScheduler().runTask(frame.getOwner(), moveOutContext::closeNow);
 				break;
 			}
-			return;
-		}
-
-		if (action == InventoryAction.CLONE_STACK && view.isCancelOnClone()) {
-			e.setCancelled(true);
-			return;
-		}
-
-		final ViewContext context = view.getContext(player);
-
-		// for some reason I haven't figured out which one yet,
-		// it's possible that the View's inventory is open and the context doesn't exist,
-		// so we check to see if it's null
-		if (context == null) {
 			return;
 		}
 
