@@ -3,6 +3,7 @@ package me.saiintbrisson.minecraft;
 import com.google.common.base.Preconditions;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -77,7 +78,7 @@ public class VirtualView {
 	 * @param layout the layout.
 	 */
 	public void setLayout(String... layout) {
-		Preconditions.checkNotNull(layout, "Layout cannot be null.");
+		Preconditions.checkNotNull(layout, "Layout cannot be null");
 		this.layout = layout;
 	}
 
@@ -123,35 +124,43 @@ public class VirtualView {
 	 *
 	 * @param item the item.
 	 */
-	public ViewItem item(final ItemStack item) {
+	public ViewItem item(@NotNull ItemStack item) {
 		return new ViewItem(UNSET_SLOT).withItem(item);
 	}
 
 	/**
 	 * Returns a new {@link ViewItem} with a {@link ItemStack}.
+	 * @deprecated Use {@link #item(ItemStack)} instead.
 	 */
-	public ViewItem item(final Material material) {
+	@Deprecated
+	public ViewItem item(@NotNull Material material) {
 		return item(new ItemStack(material));
 	}
 
 	/**
 	 * Returns a new {@link ViewItem} with a {@link ItemStack}.
+	 * @deprecated Use {@link #item(ItemStack)} instead.
 	 */
-	public ViewItem item(final Material material, final short durability) {
+	@Deprecated
+	public ViewItem item(@NotNull Material material, short durability) {
 		return item(new ItemStack(material, 1, durability));
 	}
 
 	/**
 	 * Returns a new {@link ViewItem} with a {@link ItemStack}.
+	 * @deprecated Use {@link #item(ItemStack)} instead.
 	 */
-	public ViewItem item(final Material material, final int amount) {
+	@Deprecated
+	public ViewItem item(@NotNull Material material, int amount) {
 		return item(new ItemStack(material, amount));
 	}
 
 	/**
 	 * Returns a new {@link ViewItem} with a {@link ItemStack}.
+	 * @deprecated Use {@link #item(ItemStack)} instead.
 	 */
-	public ViewItem item(final Material material, final int amount, final short durability) {
+	@Deprecated
+	public ViewItem item(@NotNull Material material, int amount, short durability) {
 		return item(new ItemStack(material, amount, durability));
 	}
 
