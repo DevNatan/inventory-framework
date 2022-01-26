@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -77,8 +78,7 @@ public class VirtualView {
 	 *
 	 * @param layout the layout.
 	 */
-	public void setLayout(String... layout) {
-		Preconditions.checkNotNull(layout, "Layout cannot be null");
+	public void setLayout(@Nullable String... layout) {
 		this.layout = layout;
 	}
 
