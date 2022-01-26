@@ -238,19 +238,19 @@ public class MyView extends View {
     
     @Override
     public final void onRender(final ViewContext context) {
-        // We can get the player from inventory.
+        // We can get the player from inventory
         Player player = context.getPlayer();
         
-        // We put the Stone in slot 14. (we written 14 because our slots starts at 1)
+        // We put the Stone in slot 14
         context.slot(14, new ItemStack(Material.STONE));
         
-        // Also, we can put the Stone in row 1, column 5.
+        // Also, we can put the Stone in row 1, column 5
         context.slot(1, 5, new ItemStack(Material.STONE));
         
-        // We can also put the Stone in row 3, column 5.
+        // We can also put the Stone in row 3, column 5
         ViewItem myItem = context.slot(3, 5, new ItemStack(Material.STONE));
         
-        // We can add a click event.
+        // We can add a click event
         myItem.onClick(() -> {
             player.sendMessage("You clicked on the stone!");
         });
