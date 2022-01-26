@@ -20,21 +20,14 @@ If there's any issue with a different minecraft version, please report it in [Is
 ## Setup
 Before get started, make sure you have the [JitPack repository](https://jitpack.io) included in your build configuration.
 
-Gradle
+**Gradle (build.gradle)**
 ```groovy
 dependencies {
     compileOnly 'com.github.DevNatan:inventory-framework:2.3.2'
 }
 ```
 
-Gradle (Kotlin)
-```kotlin
-dependencies {
-    compileOnly("com.github.DevNatan:inventory-framework:2.3.2")
-}
-```
-
-Maven
+**Maven (pom.xml)**
 ```xml
 <dependency>
     <groupId>com.github.DevNatan</groupId>
