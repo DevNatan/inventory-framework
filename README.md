@@ -3,8 +3,8 @@
 
 Bukkit inventory framework used in some of my projects, feel free to use it. Learn by yourself.
 
-inventory-framework was first developed on 1.8.8, but you can use it with any supported version.\
-If there's any issue with an different version, please report it in [Issue Reporting](https://github.com/DevNatan/inventory-framework/issues) section.
+Currently, inventory-framework should support any minecraft versions due to its compatibility with Bukkit.\
+If there's any issue with a different minecraft version, please report it in [Issue Reporting](https://github.com/DevNatan/inventory-framework/issues) section.
 
 * [Setup](#setup)
 * [Preventing Library Conflicts](#preventing-library-conflicts)
