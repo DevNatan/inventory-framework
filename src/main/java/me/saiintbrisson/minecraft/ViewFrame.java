@@ -5,6 +5,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.ServicePriority;
+import org.bukkit.plugin.ServicesManager;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -90,8 +92,13 @@ public final class ViewFrame {
 		tryRegister(views);
 
 		this.listener = new ViewListener(this);
-		Bukkit.getPluginManager().registerEvents(listener, owner);
-		debug("[frame] registered to " + owner.getName());
+
+		if (ensureProvider()) {
+			Bukkit.getPluginManager().registerEvents(listener, owner);
+			debug("[frame] registered to " + owner.getName());
+		} else {
+			debug("[frame] provider already registered, we will not register again the View Listener. ");
+		}
 	}
 
 	/**
@@ -177,6 +184,18 @@ public final class ViewFrame {
 			return;
 
 		getOwner().getLogger().info("[IF DEBUG] " + message);
+	}
+
+	private boolean ensureProvider() {
+		ServicesManager servicesManager = Bukkit.getServicesManager();
+
+		if (!servicesManager.isProvidedFor(ViewProvider.class)) {
+			servicesManager.register(ViewProvider.class, new DelegatedViewProvider(this), owner, ServicePriority.Normal);
+
+			return true;
+		}
+
+		return false;
 	}
 
 }
