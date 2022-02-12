@@ -4,6 +4,7 @@ import me.matsubara.roulette.util.InventoryUpdate;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
@@ -12,6 +13,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 import java.util.function.Supplier;
+
+import static me.saiintbrisson.minecraft.View.INVENTORY_ROW_SIZE;
 
 public class ViewContext extends VirtualView {
 
@@ -25,11 +28,19 @@ public class ViewContext extends VirtualView {
 	Stack<Integer> itemsLayer, fillLayer;
 	private boolean invalidated;
 
-	public ViewContext(View view, Player player, Inventory inventory) {
-		super(inventory == null ? null : new ViewItem[View.INVENTORY_ROW_SIZE * (inventory.getSize() / 9)]);
+	public ViewContext(@NotNull View view, @NotNull Player player, @NotNull Inventory inventory) {
+		super(new ViewItem[INVENTORY_ROW_SIZE * (inventory.getSize() / INVENTORY_ROW_SIZE)]);
 		this.view = view;
 		this.player = player;
 		this.inventory = inventory;
+	}
+
+	// allow static item placement on OpenViewContext
+	ViewContext(@NotNull View view, @NotNull Player player, int inventorySize) {
+		super(new ViewItem[inventorySize]);
+		this.view = view;
+		this.player = player;
+		this.inventory = null;
 	}
 
 	protected Stack<Integer> getItemsLayer() {
@@ -251,18 +262,13 @@ public class ViewContext extends VirtualView {
 
 	void invalidate() {
 		if (invalidated)
-			throw new IllegalStateException("Not valid");
+			throw new IllegalStateException("This context has been invalidated and cannot be reused");
 
 		view.clearData(player);
 		slotData.clear();
 		checkedLayerSignature = false;
 		itemsLayer = null;
 		invalidated = true;
-	}
-
-	@Override
-	public int getLastSlot() {
-		return inventory.getSize() - 1;
 	}
 
 	/**
@@ -315,6 +321,47 @@ public class ViewContext extends VirtualView {
 
 	public boolean isValid() {
 		return !invalidated;
+	}
+
+	SlotFindResult findNextAvailableSlot(@NotNull ItemStack currentItem) {
+		int moveTo = -1;
+		boolean stacked = false;
+
+		int idx = 0;
+		do {
+			// first we try to get a static item from the view
+			final ViewItem item = getItem(idx);
+			if (item != null) {
+				final ItemStack staticItem = item.getItem();
+
+				// we can determine if slot is available only with fallback item items rendered
+				// through the rendering function cannot be accessed
+				if (staticItem != null) {
+					// TODO stack detection
+					if (staticItem.isSimilar(currentItem)) {
+						stacked = true;
+						break;
+					}
+				}
+
+				continue;
+			}
+
+			// checks if there is an item in that slot that was "manually" to the inventory, like
+			// another move in
+			final ItemStack actualItem = getInventory().getItem(idx);
+			if (actualItem != null) {
+				if (actualItem.isSimilar(currentItem)) {
+					// TODO stack detection
+					stacked = true;
+					break;
+				}
+
+				continue;
+			}
+		} while (idx++ <= getLastSlot());
+
+		return new SlotFindResult(idx, moveTo, stacked);
 	}
 
 	@Override

@@ -9,9 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.Closeable;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.WeakHashMap;
+import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -28,7 +26,8 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 	private final Map<Player, Map<String, Object>> data;
 	private ViewFrame frame;
 	private boolean cancelOnClick, cancelOnPickup, cancelOnDrop, cancelOnDrag, cancelOnClone;
-	private boolean cancelOnMoveOut, cancelOnShiftClick, clearCursorOnClose;
+	private boolean cancelOnMoveOut, cancelOnShiftClick, clearCursorOnClose, closeOnOutsideClick;
+	private static final Set<String> ENABLED_FEATURES = new HashSet<>();
 
 	public View() {
 		this(0);
@@ -118,9 +117,14 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 		}
 
 		int inventorySize = preOpenContext.getInventorySize();
-		if (inventorySize != items.length) {
+		if (inventorySize != items.length)
 			this.expandItemsArray(inventorySize);
+
+		// it is possible to set static items to the context through onOpen.
+		if (preOpenContext.getItems().length > 0) {
+			// TODO
 		}
+
 
 		final Inventory inventory = getInventory(preOpenContext.getInventoryTitle(), inventorySize);
 		final ViewContext context = createContext(this, player, inventory);
@@ -271,6 +275,14 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 		this.clearCursorOnClose = clearCursorOnClose;
 	}
 
+	public final boolean isCloseOnOutsideClick() {
+		return closeOnOutsideClick;
+	}
+
+	public final void setCloseOnOutsideClick(boolean closeOnOutsideClick) {
+		this.closeOnOutsideClick = closeOnOutsideClick;
+	}
+
 	@Override
 	public Inventory getInventory() {
 		throw new UnsupportedOperationException();
@@ -344,6 +356,9 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 	protected void onMoveOut(@NotNull ViewSlotMoveContext context) {
 	}
 
+	protected void onMoveIn(@NotNull ViewSlotMoveContext context) {
+	}
+
 	protected void onItemHold(@NotNull ViewSlotContext context) {
 	}
 
@@ -355,6 +370,14 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 		System.arraycopy(items, 0, newItems, 0, items.length);
 
 		items = newItems;
+	}
+
+	public static void enableFeaturePreview(@NotNull String feature) {
+		ENABLED_FEATURES.add(feature);
+	}
+
+	static boolean isFeatureEnabled(@NotNull String feature) {
+		return ENABLED_FEATURES.contains(feature);
 	}
 
 	@Override

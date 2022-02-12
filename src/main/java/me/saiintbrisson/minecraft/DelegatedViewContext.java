@@ -8,10 +8,16 @@ import java.util.Stack;
 public class DelegatedViewContext extends ViewSlotContext {
 
 	protected final ViewContext delegate;
-	private boolean cancelled;
+
+	public DelegatedViewContext(ViewContext delegate) {
+		super(delegate.getView(), delegate.getPlayer(), delegate.getInventory(), -1, null,
+			delegate instanceof ViewSlotContext ? ((ViewSlotContext) delegate).getClickOrigin() : null);
+		this.delegate = delegate;
+	}
 
 	public DelegatedViewContext(ViewContext delegate, int slot, ItemStack item) {
-		super(delegate.getView(), delegate.getPlayer(), delegate.getInventory(), slot, item, delegate instanceof ViewSlotContext ? ((ViewSlotContext) delegate).getClickOrigin() : null);
+		super(delegate.getView(), delegate.getPlayer(), delegate.getInventory(), slot, item,
+			delegate instanceof ViewSlotContext ? ((ViewSlotContext) delegate).getClickOrigin() : null);
 		this.delegate = delegate;
 	}
 
@@ -52,16 +58,6 @@ public class DelegatedViewContext extends ViewSlotContext {
 	@Override
 	public ViewItem[] getItems() {
 		return delegate.getItems();
-	}
-
-	@Override
-	public boolean isCancelled() {
-		return cancelled;
-	}
-
-	@Override
-	public void setCancelled(boolean cancelled) {
-		this.cancelled = cancelled;
 	}
 
 	@Override

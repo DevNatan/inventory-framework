@@ -2,6 +2,7 @@ package me.saiintbrisson.minecraft;
 
 import com.google.common.base.Preconditions;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import static me.saiintbrisson.minecraft.View.INVENTORY_ROW_SIZE;
 
@@ -11,61 +12,55 @@ import static me.saiintbrisson.minecraft.View.INVENTORY_ROW_SIZE;
  */
 public final class OpenViewContext extends ViewContext {
 
-    private String inventoryTitle;
-    private int inventorySize;
+	private String inventoryTitle;
+	private int inventorySize;
 
-    public OpenViewContext(View view, Player player) {
-        super(view, player, null);
-        inventorySize = view.getLastSlot() + 1;
-    }
+	public OpenViewContext(@NotNull View view, @NotNull Player player) {
+		super(view, player, view.getLastSlot() + 1);
+		inventorySize = view.getItems().length;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ViewItem slot(int slot) {
-        throw new UnsupportedOperationException("Cannot define items before the inventory is opened.");
-    }
+	/**
+	 * Returns the custom inventory title if it has been defined.
+	 */
+	public String getInventoryTitle() {
+		return inventoryTitle;
+	}
 
-    /**
-     * Returns the custom inventory title if it has been defined.
-     */
-    public String getInventoryTitle() {
-        return inventoryTitle;
-    }
+	/**
+	 * Defines the title of the inventory that will be created
+	 * for the new specified title according to the context.
+	 *
+	 * @param title the new inventory title.
+	 */
+	public void setInventoryTitle(String title) {
+		Preconditions.checkNotNull(title, "Inventory title cannot be null");
+		this.inventoryTitle = title;
+	}
 
-    /**
-     * Defines the title of the inventory that will be created
-     * for the new specified title according to the context.
-     * @param title the new inventory title.
-     */
-    public void setInventoryTitle(String title) {
-        Preconditions.checkNotNull(title, "Inventory title cannot be null");
-        this.inventoryTitle = title;
-    }
+	/**
+	 * Returns the size of the inventory.
+	 */
+	public int getInventorySize() {
+		return inventorySize;
+	}
 
-    /**
-     * Returns the size of the inventory.
-     */
-    public int getInventorySize() {
-        return inventorySize;
-    }
+	/**
+	 * Defines the new size for the inventory.
+	 *
+	 * @param inventorySize the new inventory size.
+	 */
+	public void setInventorySize(int inventorySize) {
+		// is less than nine, probably the person thought it was to put the row so we convert at once
+		this.inventorySize = inventorySize < INVENTORY_ROW_SIZE ? inventorySize * INVENTORY_ROW_SIZE : inventorySize;
+	}
 
-    /**
-     * Defines the new size for the inventory.
-     * @param inventorySize the new inventory size.
-     */
-    public void setInventorySize(int inventorySize) {
-        // is less than nine, probably the person thought it was to put the row so we convert at once
-        this.inventorySize = inventorySize < 9 ? inventorySize * INVENTORY_ROW_SIZE : inventorySize;
-    }
-
-    @Override
-    public String toString() {
-        return "OpenViewContext{" +
-                "inventoryTitle='" + inventoryTitle + '\'' +
-                ", inventorySize=" + inventorySize +
-                "} " + super.toString();
-    }
+	@Override
+	public String toString() {
+		return "OpenViewContext{" +
+			"inventoryTitle='" + inventoryTitle + '\'' +
+			", inventorySize=" + inventorySize +
+			"} " + super.toString();
+	}
 
 }

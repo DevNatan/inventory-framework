@@ -31,17 +31,6 @@ public class VirtualView {
 	 * @param column The columns count.
 	 * @return The slot position based in specified row and column.
 	 */
-	int toSlot0(int row, int column) {
-		return toSlot(row, column, getItems().length / INVENTORY_ROW_SIZE);
-	}
-
-	/**
-	 * Returns the slot associated with the specified row and column.
-	 *
-	 * @param row    The rows count.
-	 * @param column The columns count.
-	 * @return The slot position based in specified row and column.
-	 */
 	public static int toSlot(int row, int column) {
 		return toSlot(row, column, 6 /* inventory rows count */);
 	}
@@ -49,8 +38,8 @@ public class VirtualView {
 	/**
 	 * Returns the slot associated with the specified row and column.
 	 *
-	 * @param row    The rows count.
-	 * @param column The columns count.
+	 * @param row          The rows count.
+	 * @param column       The columns count.
 	 * @param minRowsCount The minimum rows count.
 	 * @return The slot position based in specified row and column.
 	 */
@@ -63,6 +52,17 @@ public class VirtualView {
 		);
 
 		return Math.max(row - 1, 0) * INVENTORY_ROW_SIZE + Math.max(column - 1, 0);
+	}
+
+	/**
+	 * Returns the slot associated with the specified row and column.
+	 *
+	 * @param row    The rows count.
+	 * @param column The columns count.
+	 * @return The slot position based in specified row and column.
+	 */
+	int toSlot0(int row, int column) {
+		return toSlot(row, column, getItems().length / INVENTORY_ROW_SIZE);
 	}
 
 	/**
@@ -130,6 +130,7 @@ public class VirtualView {
 
 	/**
 	 * Returns a new {@link ViewItem} with a {@link ItemStack}.
+	 *
 	 * @deprecated Use {@link #item(ItemStack)} instead.
 	 */
 	@Deprecated
@@ -139,6 +140,7 @@ public class VirtualView {
 
 	/**
 	 * Returns a new {@link ViewItem} with a {@link ItemStack}.
+	 *
 	 * @deprecated Use {@link #item(ItemStack)} instead.
 	 */
 	@Deprecated
@@ -148,6 +150,7 @@ public class VirtualView {
 
 	/**
 	 * Returns a new {@link ViewItem} with a {@link ItemStack}.
+	 *
 	 * @deprecated Use {@link #item(ItemStack)} instead.
 	 */
 	@Deprecated
@@ -157,6 +160,7 @@ public class VirtualView {
 
 	/**
 	 * Returns a new {@link ViewItem} with a {@link ItemStack}.
+	 *
 	 * @deprecated Use {@link #item(ItemStack)} instead.
 	 */
 	@Deprecated
@@ -172,7 +176,9 @@ public class VirtualView {
 	public final ViewItem slot(int slot) {
 		final int max = getLastSlot() + 1;
 		if (slot > max)
-			throw new IllegalArgumentException("Slot exceeds the inventory limit (expected: < " + max + ", given: " + slot + ").");
+			throw new IllegalArgumentException(
+				"Slot exceeds the view limit (limit: " + max + ", given: " + slot + ")"
+			);
 
 		return items[slot] = new ViewItem(slot);
 	}

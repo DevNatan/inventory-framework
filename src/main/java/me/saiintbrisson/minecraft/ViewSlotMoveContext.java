@@ -9,13 +9,17 @@ public class ViewSlotMoveContext extends DelegatedViewContext {
     private final ItemStack targetItem;
     private final int targetSlot;
     private final boolean swap;
+	private final boolean stack;
 
-    public ViewSlotMoveContext(final ViewContext delegate, final int slot, final ItemStack item, final Inventory targetInventory, final ItemStack targetItem, final int targetSlot, final boolean swap) {
+    public ViewSlotMoveContext(final ViewContext delegate, final int slot, final ItemStack item,
+							   final Inventory targetInventory, final ItemStack targetItem, final int targetSlot,
+							   final boolean swap, final boolean stack) {
         super(delegate, slot, item);
         this.targetInventory = targetInventory;
         this.targetItem = targetItem;
         this.targetSlot = targetSlot;
         this.swap = swap;
+		this.stack = stack;
     }
 
     @Override
@@ -50,5 +54,9 @@ public class ViewSlotMoveContext extends DelegatedViewContext {
     public boolean isSwap() {
         return swap;
     }
+
+	public boolean isStack() {
+		return stack;
+	}
 
 }

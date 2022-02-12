@@ -14,6 +14,8 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.Objects;
+
 public class ViewListener implements Listener {
 
 	private final ViewFrame frame;
@@ -88,9 +90,17 @@ public class ViewListener implements Listener {
 		if (view == null)
 			return;
 
-		// TODO add option to close View on outside click
 		if (e.getSlotType() == InventoryType.SlotType.OUTSIDE) {
 			e.setCancelled(true);
+
+			if (view.isCloseOnOutsideClick())
+				view.close();
+
+			final ViewContext context = view.getContext(player);
+			if (context == null)
+				return;
+
+			context.close();
 			return;
 		}
 
@@ -117,6 +127,14 @@ public class ViewListener implements Listener {
 
 		// move in and out handling
 		if (bottomInventoryClick) {
+			// context.getPlayer().sendMessage("Action: " + e.getAction());
+			// context.getPlayer().sendMessage("Current item: " + e
+			// .getCurrentItem());
+			// context.getPlayer().sendMessage("Cursor item:" + e.getCursor());
+
+			if (handleMoveIn(view, context, e))
+				return;
+
 			if (action != InventoryAction.PLACE_ALL &&
 				action != InventoryAction.PLACE_ONE &&
 				action != InventoryAction.PLACE_SOME &&
@@ -133,9 +151,6 @@ public class ViewListener implements Listener {
 			if (action == InventoryAction.SWAP_WITH_CURSOR)
 				swappedItem = e.getCurrentItem();
 
-			System.out.println("Current item: " + e.getCurrentItem());
-			System.out.println("Cursor item:" + e.getCursor());
-
 			// detect the item was being moved
 			for (int i = view.getFirstSlot(); i <= view.getLastSlot(); i++) {
 				final ViewItem item = view.resolve(context, i);
@@ -145,7 +160,8 @@ public class ViewListener implements Listener {
 				if (item.getState() != ViewItem.State.HOLDING)
 					continue;
 
-				final ViewSlotMoveContext moveOutContext = new ViewSlotMoveContext(context, item.getSlot(), cursor, e.getView().getBottomInventory(), swappedItem, slot, swappedItem != null);
+				final ViewSlotMoveContext moveOutContext = new ViewSlotMoveContext(context, item.getSlot(), cursor,
+					e.getView().getBottomInventory(), swappedItem, slot, swappedItem != null, false);
 				view.onMoveOut(moveOutContext);
 
 				for (final ViewItem holdingItem : view.getItems()) {
@@ -178,7 +194,8 @@ public class ViewListener implements Listener {
 			if (action == InventoryAction.HOTBAR_MOVE_AND_READD)
 				targetItem = targetInventory.getItem(e.getHotbarButton());
 
-			final ViewSlotMoveContext moveOutContext = new ViewSlotMoveContext(context, slot, stack, targetInventory, targetItem, slot, false);
+			final ViewSlotMoveContext moveOutContext = new ViewSlotMoveContext(context, slot, stack, targetInventory,
+				targetItem, slot, false, false);
 			view.onMoveOut(moveOutContext);
 
 			if (view.isCancelOnMoveOut() || moveOutContext.isCancelled())
@@ -235,42 +252,6 @@ public class ViewListener implements Listener {
 			Bukkit.getScheduler().runTask(frame.getOwner(), slotContext::closeNow);
 	}
 
-	private ViewItem resolveReleasableItem(View view, ViewContext context) {
-		// we can't use `view.getRows()` here because the inventory size can be set dynamically
-		// the items array size is updated when view is dynamic, so we can use this safely
-		for (int i = 0; i < view.getItems().length; i++) {
-			// must use resolve to works with context-defined items (not only items defined on View constructor)
-			final ViewItem holdingItem = view.resolve(context, i);
-
-			if (holdingItem == null || holdingItem.getState() != ViewItem.State.HOLDING)
-				continue;
-
-			return holdingItem;
-		}
-
-		return null;
-	}
-
-	private void releaseAt(ViewSlotContext context, int slot, ItemStack cursor, Inventory inventory) {
-		context.getView().onItemRelease(context, new ViewSlotContext(context.getView(), context.getPlayer(),
-			inventory, slot, cursor));
-
-		final int currentSlot = context.getSlot();
-		final ViewItem currentItem = context.getView().resolve(context, context.getSlot());
-		context.getItems()[currentSlot] = null;
-
-		if (currentItem == null)
-			return;
-
-		currentItem.setState(ViewItem.State.UNDEFINED);
-
-		// outside top inventory
-		if (slot > context.getInventory().getSize())
-			return;
-
-		context.getItems()[slot] = currentItem;
-	}
-
 	@EventHandler
 	public void onViewClose(final InventoryCloseEvent e) {
 		if (!(e.getPlayer() instanceof Player))
@@ -285,7 +266,7 @@ public class ViewListener implements Listener {
 		if (context == null)
 			return;
 
-		final ViewContext close = new CloseViewContext(view, player, e.getInventory());
+		final ViewContext close = new CloseViewContext(context);
 		view.onClose(close);
 
 		if (close.isCancelled()) {
@@ -327,6 +308,95 @@ public class ViewListener implements Listener {
 			return;
 
 		e.setCancelled(view.isCancelOnPickup());
+	}
+
+	private ViewItem resolveReleasableItem(View view, ViewContext context) {
+		// we can't use `view.getRows()` here because the inventory size can be set dynamically
+		// the items array size is updated when view is dynamic, so we can use this safely
+		for (int i = 0; i < view.getItems().length; i++) {
+			// must use resolve to works with context-defined items (not only items defined on View constructor)
+			final ViewItem holdingItem = view.resolve(context, i);
+
+			if (holdingItem == null || holdingItem.getState() != ViewItem.State.HOLDING)
+				continue;
+
+			return holdingItem;
+		}
+
+		return null;
+	}
+
+	private void releaseAt(ViewSlotContext context, int slot, ItemStack cursor, Inventory inventory) {
+		context.getView().onItemRelease(context, new ViewSlotContext(context.getView(), context.getPlayer(),
+			inventory, slot, cursor));
+
+		final int currentSlot = context.getSlot();
+		final ViewItem currentItem = context.getView().resolve(context, context.getSlot());
+		context.getItems()[currentSlot] = null;
+
+		if (currentItem == null)
+			return;
+
+		currentItem.setState(ViewItem.State.UNDEFINED);
+
+		// outside top inventory
+		if (slot > context.getInventory().getSize())
+			return;
+
+		context.getItems()[slot] = currentItem;
+	}
+
+	/**
+	 * Handles the action of moving an item from the player's inventory to the view's inventory.
+	 *
+	 * @param view The view itself.
+	 * @param context The current player context.
+	 * @param event The event related to the movement.
+	 */
+	private boolean handleMoveIn(final View view, final ViewContext context, final InventoryClickEvent event) {
+		if (!View.isFeatureEnabled(ViewFeature.MOVE_IN))
+			return false;
+
+		final InventoryAction action = event.getAction();
+
+		// no need to handle hotbar swap
+		if (action == InventoryAction.HOTBAR_SWAP)
+			return false;
+
+		// shift-clicked the item and moved it to the view's inventory
+		if (action == InventoryAction.MOVE_TO_OTHER_INVENTORY) {
+			final ItemStack item = Objects.requireNonNull(event.getCurrentItem(),
+				"Item cannot be null on move to other inventory action"
+			);
+
+			final SlotFindResult availableSlot = context.findNextAvailableSlot(item);
+
+			// there is no slot available for the item to be moved, the event must be canceled and we return the method
+			// as successful it is not possible to proceed but the move in was handled.
+			if (!availableSlot.isAvailable()) {
+				event.setCancelled(true);
+				return true;
+			}
+
+			final ViewSlotMoveContext moveInContext = new ViewSlotMoveContext(context, event.getSlot(), item,
+				event.getView().getTopInventory(), null, availableSlot.getValue(), false, false);
+			view.onMoveIn(moveInContext);
+
+			if (moveInContext.isCancelled()) {
+				event.setCancelled(true);
+				return true;
+			}
+
+			// in some cases the item must be moved, like PaginatedView with a defined layout
+			// the slot that the item will be moved will be the slot that respects the conditions of that view
+			if (availableSlot.shouldBeMoved()) {
+				// TODO item should be moved to "move to"
+			}
+
+			return true;
+		}
+
+		return false;
 	}
 
 }

@@ -1,12 +1,11 @@
 package me.saiintbrisson.minecraft;
 
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
+import org.jetbrains.annotations.NotNull;
 
-public final class CloseViewContext extends ViewContext {
+public final class CloseViewContext extends DelegatedViewContext {
 
-    public CloseViewContext(View view, Player player, Inventory inventory) {
-        super(view, player, inventory);
-    }
+	public CloseViewContext(@NotNull ViewContext delegate) {
+		super(delegate);
+	}
 
 }

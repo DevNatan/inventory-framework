@@ -3,6 +3,8 @@ package me.saiintbrisson.minecraft;
 import me.saiintbrisson.minecraft.utils.Paginator;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -205,7 +207,17 @@ public class PaginatedViewContext<T> extends ViewContext {
         this.nextPageItemSlot = nextPageItemSlot;
     }
 
-    @Override
+	@Override
+	SlotFindResult findNextAvailableSlot(@NotNull ItemStack currentItem) {
+		// the next slot must respect the layout order and move the item to the target slot
+		if (getLayout() != null) {
+			// TODO
+		}
+
+		return super.findNextAvailableSlot(currentItem);
+	}
+
+	@Override
     public String toString() {
         return "PaginatedViewContext{" +
                 "page=" + page +
