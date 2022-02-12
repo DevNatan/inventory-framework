@@ -13,6 +13,7 @@
 * Now is allowed to set items in the `OpenViewContext` they will be static items but only visible for that context.
 * Added `setCloseOnClickOutside` option to close View if player clicks outside the inventory screen.
 * `CloseViewContext` now delegates the original context (thanks to @zAlyson).
+* An exception will be thrown when an inventory tries to be modified in the `onOpen` View handler.
 
 # 2.3.2
 * Dynamic title update (`ViewContext#updateTitle`) support on 1.17 and 1.18 ([#25][p25]).

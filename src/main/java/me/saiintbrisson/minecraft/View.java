@@ -338,6 +338,12 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 		return data.get(player).containsKey(key);
 	}
 
+	/**
+	 *
+	 *
+	 *
+	 * @param context The player opening view context.
+	 */
 	protected void onOpen(@NotNull OpenViewContext context) {
 	}
 

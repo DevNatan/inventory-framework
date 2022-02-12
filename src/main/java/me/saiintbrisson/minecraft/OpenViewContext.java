@@ -56,6 +56,15 @@ public final class OpenViewContext extends ViewContext {
 	}
 
 	@Override
+	protected void inventoryModificationTriggered() {
+		throw new IllegalStateException(
+			"It is not allowed to modify the inventory " +
+			"in the opening context as the inventory was not even created. " +
+			"Use the onRender() rendering function for this."
+		);
+	}
+
+	@Override
 	public String toString() {
 		return "OpenViewContext{" +
 			"inventoryTitle='" + inventoryTitle + '\'' +

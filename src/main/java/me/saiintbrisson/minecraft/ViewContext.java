@@ -136,10 +136,12 @@ public class ViewContext extends VirtualView {
 	 * Updates the current view to that context.
 	 */
 	public void update() {
+		inventoryModificationTriggered();
 		view.update(this);
 	}
 
 	public void update(int slot) {
+		inventoryModificationTriggered();
 		view.update(this, slot);
 	}
 
@@ -176,6 +178,7 @@ public class ViewContext extends VirtualView {
 	 * @param slot the slot to be cleared.
 	 */
 	public void clear(int slot) {
+		inventoryModificationTriggered();
 		getItems()[slot] = null;
 	}
 
@@ -184,6 +187,7 @@ public class ViewContext extends VirtualView {
 	 * It is necessary to use `update` to apply the action.
 	 */
 	public void clear() {
+		inventoryModificationTriggered();
 		for (int i = 0; i < getItems().length; i++) {
 			clear(i);
 		}
@@ -306,6 +310,7 @@ public class ViewContext extends VirtualView {
 	 * @param title The new inventory title.
 	 */
 	public void updateTitle(@NotNull String title) {
+		inventoryModificationTriggered();
 		final Plugin plugin = getView().getFrame().getOwner();
 		Bukkit.getScheduler().runTaskLater(plugin,
 			() -> InventoryUpdate.updateInventory((JavaPlugin) plugin, getPlayer(), title), 2L);
@@ -316,6 +321,7 @@ public class ViewContext extends VirtualView {
 	 * Must be used after {@link #updateTitle(String)} to take effect.
 	 */
 	public void resetTitle() {
+		inventoryModificationTriggered();
 		updateTitle(player.getOpenInventory().getTitle());
 	}
 
@@ -363,6 +369,8 @@ public class ViewContext extends VirtualView {
 
 		return new SlotFindResult(idx, moveTo, stacked);
 	}
+
+	protected void inventoryModificationTriggered() {}
 
 	@Override
 	public String toString() {

@@ -174,6 +174,7 @@ public class VirtualView {
 	 * @param slot the item slot.
 	 */
 	public final ViewItem slot(int slot) {
+		inventoryModificationTriggered();
 		final int max = getLastSlot() + 1;
 		if (slot > max)
 			throw new IllegalArgumentException(
@@ -256,6 +257,7 @@ public class VirtualView {
 	 * Render all items in this view.
 	 */
 	public void render() {
+		inventoryModificationTriggered();
 	}
 
 	/**
@@ -265,6 +267,7 @@ public class VirtualView {
 	 */
 	public void render(ViewContext context) {
 		Preconditions.checkNotNull(context, "Context cannot be null.");
+		inventoryModificationTriggered();
 
 		for (int i = 0; i < items.length; i++) {
 			render(context, i);
@@ -312,6 +315,7 @@ public class VirtualView {
 	 * Updates this view for all viewers who's viewing it.
 	 */
 	public void update() {
+		inventoryModificationTriggered();
 	}
 
 	/**
@@ -320,6 +324,7 @@ public class VirtualView {
 	 * @param context the target context.
 	 */
 	public void update(ViewContext context) {
+		inventoryModificationTriggered();
 		Preconditions.checkNotNull(context, "Context cannot be null");
 		for (int i = 0; i < items.length; i++) {
 			update(context, i);
@@ -405,6 +410,7 @@ public class VirtualView {
 	 * @param interval The ticks to wait between runs.
 	 */
 	protected final void scheduleUpdate(long delay, long interval) {
+		inventoryModificationTriggered();
 		// initialize only when needed
 		if (updateJob == null) {
 			updateJob = new ViewUpdateJob(this, delay, interval);
@@ -429,6 +435,8 @@ public class VirtualView {
 	public final boolean isScheduledToUpdate() {
 		return updateJob != null;
 	}
+
+	protected void inventoryModificationTriggered() {}
 
 	@Override
 	public String toString() {
