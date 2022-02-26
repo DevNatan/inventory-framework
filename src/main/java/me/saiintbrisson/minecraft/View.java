@@ -88,6 +88,13 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 		return rows;
 	}
 
+	/**
+	 * The inventory title of this view.
+	 * <p>
+	 * Does not work with contexts that have had their title dynamically updated.
+	 *
+	 * @return the inventory title of this view.
+	 */
 	public final String getTitle() {
 		return title;
 	}
@@ -98,11 +105,25 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 			: new ViewContext(view, player, inventory);
 	}
 
-	public final void open(final Player player) {
+	/**
+	 * Opens this view to the given player.
+	 *
+	 * @param player The player this view will be shown to.
+	 */
+	public final void open(@NotNull Player player) {
 		open(player, null);
 	}
 
-	public final void open(final Player player, final Map<String, Object> data) {
+	/**
+	 * Opens this view to the given player with predefined data.
+	 *
+	 * @param player The player this view will be shown to.
+	 * @param data   The initial data of the player's context.
+	 */
+	public final void open(
+		@NotNull Player player,
+		Map<String, Object> data
+	) {
 		contexts.computeIfPresent(player.getName(), ($, context) -> {
 			context.invalidate();
 			return null;
@@ -125,12 +146,6 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 		int inventorySize = preOpenContext.getInventorySize();
 		if (inventorySize != items.length)
 			this.expandItemsArray(inventorySize);
-
-		// it is possible to set static items to the context through onOpen.
-		if (preOpenContext.getItems().length > 0) {
-			// TODO
-		}
-
 
 		final Inventory inventory = getInventory(preOpenContext.getInventoryTitle(), inventorySize);
 		final ViewContext context = createContext(this, player, inventory);
@@ -211,28 +226,58 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 		}
 	}
 
+	/**
+	 * Closes the inventory for all players who have this view open.
+	 */
 	public final void close() {
 		for (final Player player : Sets.newHashSet(getContexts().keySet())) {
 			player.closeInventory();
 		}
 	}
 
+	/**
+	 * Should cancel the item click while the view is open.
+	 *
+	 * @return If item click should be cancelled.
+	 */
 	public final boolean isCancelOnClick() {
 		return cancelOnClick;
 	}
 
+	/**
+	 * Defines whether or not to click on items in the inventory.
+	 *
+	 * @param cancelOnClick <code>true</code> if click should be cancelled or
+	 *                       <code>false</code> otherwise.
+	 */
 	public final void setCancelOnClick(final boolean cancelOnClick) {
 		this.cancelOnClick = cancelOnClick;
 	}
 
+	/**
+	 * Should cancel the item pickup while the view is open.
+	 *
+	 * @return If item pickup should be cancelled.
+	 */
 	public final boolean isCancelOnPickup() {
 		return cancelOnPickup;
 	}
 
+	/**
+	 * Defines whether the player is allowed to pick up items while the view is open.
+	 *
+	 * @param cancelOnPickup <code>true</code> to cancel item pickup while
+	 *                          view is open or <code>false</code> otherwise.
+	 */
 	public final void setCancelOnPickup(final boolean cancelOnPickup) {
 		this.cancelOnPickup = cancelOnPickup;
 	}
 
+	/**
+	 * Should cancel the item drop while the view is open.
+	 *
+	 * @return If item drop should be cancelled.
+	 */
 	public final boolean isCancelOnDrop() {
 		return cancelOnDrop;
 	}
@@ -249,6 +294,11 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 		this.cancelOnDrag = cancelOnDrag;
 	}
 
+	/**
+	 * Should cancel the item clone (with mouse wheel) while the view is open.
+	 *
+	 * @return If item clone should be cancelled.
+	 */
 	public final boolean isCancelOnClone() {
 		return cancelOnClone;
 	}
@@ -257,10 +307,21 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 		this.cancelOnClone = cancelOnClone;
 	}
 
+	/**
+	 * If moving items out of the view's inventory is allowed.
+	 *
+	 * @return If moving items out of the view's inventory is allowed.
+	 */
 	public final boolean isCancelOnMoveOut() {
 		return cancelOnMoveOut;
 	}
 
+	/**
+	 * Defines whether or not to move items out of the view's inventory.
+	 *
+	 * @param cancelOnMoveOut <code>true</code> to cancel the move out of the
+	 *                        view's inventory or <code>false</code> otherwise
+	 */
 	public final void setCancelOnMoveOut(boolean cancelOnMoveOut) {
 		this.cancelOnMoveOut = cancelOnMoveOut;
 	}
@@ -281,17 +342,32 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 		this.clearCursorOnClose = clearCursorOnClose;
 	}
 
+	/**
+	 * Whether to close the view's inventory if the player clicks
+	 * outside the inventory while it is open.
+	 *
+	 * @return If inventory should be closed when player clicks outside.
+	 */
 	public final boolean isCloseOnOutsideClick() {
 		return closeOnOutsideClick;
 	}
 
+	/**
+	 * Defines whether to close the view's inventory for the player when he
+	 * clicks outside the view's inventory while the view is open.
+	 *
+	 * @param closeOnOutsideClick If inventory should be closed
+	 *                            when player clicks outside.
+	 */
 	public final void setCloseOnOutsideClick(boolean closeOnOutsideClick) {
 		this.closeOnOutsideClick = closeOnOutsideClick;
 	}
 
 	@Override
 	public Inventory getInventory() {
-		throw new UnsupportedOperationException();
+		throw new UnsupportedOperationException(
+			"View inventory is not accessible"
+		);
 	}
 
 	private Inventory getInventory(final String title, final int size) {
@@ -329,14 +405,34 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 		return (T) data.get(player).get(key);
 	}
 
+	/**
+	 * Defines data for the player.
+	 *
+	 * @param player The player.
+	 * @param data   The data.
+	 */
 	public final void setData(@NotNull Player player, @NotNull Map<String, Object> data) {
 		this.data.put(player, data);
 	}
 
+	/**
+	 * Defines data for the player linked with a key with the given value.
+	 *
+	 * @param player The player.
+	 * @param key    The data key.
+	 * @param value  The data value.
+	 */
 	public final void setData(@NotNull Player player, @NotNull String key, @Nullable Object value) {
 		data.computeIfAbsent(player, $ -> new HashMap<>()).put(key, value);
 	}
 
+	/**
+	 * Check if there is data linked with the specific key for a player.
+	 *
+	 * @param player The player.
+	 * @param key    The data key.
+	 * @return If data is set or not.
+	 */
 	public final boolean hasData(@NotNull Player player, @NotNull String key) {
 		if (!data.containsKey(player))
 			return false;
