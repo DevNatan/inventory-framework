@@ -20,7 +20,7 @@ Before get started, make sure you have the [JitPack repository](https://jitpack.
 **Gradle (build.gradle)**
 ```groovy
 dependencies {
-    compileOnly 'com.github.DevNatan:inventory-framework:2.3.2'
+    compileOnly 'com.github.DevNatan:inventory-framework:2.4.0'
 }
 ```
 
@@ -29,7 +29,7 @@ dependencies {
 <dependency>
     <groupId>com.github.DevNatan</groupId>
     <artifactId>inventory-framework</artifactId>
-    <version>2.3.2</version>
+    <version>2.4.0</version>
     <scope>provided</scope>
 </dependency>
 ```
