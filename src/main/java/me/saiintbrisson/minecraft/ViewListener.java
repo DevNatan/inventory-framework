@@ -161,7 +161,7 @@ public class ViewListener implements Listener {
 
 				final ViewSlotMoveContext moveOutContext = new ViewSlotMoveContext(context, item.getSlot(), cursor,
 					e.getView().getBottomInventory(), swappedItem, slot, swappedItem != null, false);
-				moveOutContext.runCatching(moveOutContext, () ->
+				view.runCatching(moveOutContext, () ->
 					view.onMoveOut(moveOutContext));
 
 				for (final ViewItem holdingItem : view.getItems()) {
@@ -196,7 +196,7 @@ public class ViewListener implements Listener {
 
 			final ViewSlotMoveContext moveOutContext = new ViewSlotMoveContext(context, slot, stack, targetInventory,
 				targetItem, slot, false, false);
-			moveOutContext.runCatching(moveOutContext,
+			view.runCatching(moveOutContext,
 				() -> view.onMoveOut(moveOutContext));
 
 			if (view.isCancelOnMoveOut() || moveOutContext.isCancelled())
@@ -211,7 +211,7 @@ public class ViewListener implements Listener {
 
 		// global click handling
 		final ViewSlotContext globalClick = new DelegatedViewContext(context, slot, stack);
-		globalClick.runCatching(globalClick, () -> view.onClick(globalClick));
+		view.runCatching(globalClick, () -> view.onClick(globalClick));
 
 		e.setCancelled(e.isCancelled() || globalClick.isCancelled());
 		if (item == null) {
@@ -228,7 +228,7 @@ public class ViewListener implements Listener {
 		final ViewSlotContext slotContext = new DelegatedViewContext(context, slot, stack);
 
 		if (item.getClickHandler() != null) {
-			slotContext.runCatching(slotContext,
+			view.runCatching(slotContext,
 				() -> item.getClickHandler().handle(slotContext));
 			e.setCancelled(e.isCancelled() || slotContext.isCancelled());
 		}
@@ -242,7 +242,7 @@ public class ViewListener implements Listener {
 		if (!e.isCancelled()) {
 			if (action.name().startsWith("PICKUP") || action == InventoryAction.CLONE_STACK) {
 				item.setState(ViewItem.State.HOLDING);
-				slotContext.runCatching(slotContext, () ->
+				view.runCatching(slotContext, () ->
 					view.onItemHold(slotContext));
 			} else if (item.getState() == ViewItem.State.HOLDING) {
 				final ViewItem holdingItem = resolveReleasableItem(view, slotContext);
@@ -270,7 +270,7 @@ public class ViewListener implements Listener {
 			return;
 
 		final ViewContext close = new CloseViewContext(context);
-		context.runCatching(context, () -> view.onClose(close));
+		view.runCatching(context, () -> view.onClose(close));
 
 		if (close.isCancelled()) {
 			Bukkit.getScheduler().runTaskLater(
@@ -383,7 +383,7 @@ public class ViewListener implements Listener {
 
 			final ViewSlotMoveContext moveInContext = new ViewSlotMoveContext(context, event.getSlot(), item,
 				event.getView().getTopInventory(), null, availableSlot.getValue(), false, false);
-			moveInContext.runCatching(moveInContext, () ->
+			view.runCatching(moveInContext, () ->
 				view.onMoveIn(moveInContext));
 
 			if (moveInContext.isCancelled()) {

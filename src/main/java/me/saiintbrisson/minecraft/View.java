@@ -577,9 +577,6 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 		@NotNull ViewContext context,
 		@NotNull Exception exception
 	) {
-		setErrorHandler((ViewContext $, Exception error) -> {
-
-		});
 		super.throwViewException(context, exception);
 
 		// propagate error to the global error handler

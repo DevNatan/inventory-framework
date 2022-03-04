@@ -401,7 +401,7 @@ public class ViewContext extends VirtualView {
 		super.throwViewException(context, exception);
 
 		// propagate errors to the View then to the global view error handler
-		if (propagateErrors) {
+		if (context.isPropagateErrors()) {
 			getView().throwViewException(context, exception);
 			return;
 		}

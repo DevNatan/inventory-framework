@@ -12,6 +12,7 @@ Bukkit inventory framework used in some of my projects, feel free to use it. Lea
     * [Interaction handling](#interaction-handling)
     * [Managing data between contexts](#managing-data-between-contexts)
     * [Error Handling](#error-handling)
+    * Pagination
     * [Open and Close](#open-and-close)
     * [Registration](#registration)
     * [Feature Preview](#feature-preview)
