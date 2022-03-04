@@ -297,7 +297,8 @@ public class VirtualView {
 			final ViewSlotContext render = context instanceof ViewSlotContext ?
 				(ViewSlotContext) context :
 				new DelegatedViewContext(context, slot, fallback);
-			item.getRenderHandler().handle(render);
+
+			runCatching(context, () -> item.getRenderHandler().handle(render));
 			if (render.hasChanged()) {
 				render.getInventory().setItem(slot, render.getItem());
 				render.setChanged(false);
@@ -352,7 +353,7 @@ public class VirtualView {
 				(ViewSlotContext) context :
 				new DelegatedViewContext(context, slot, item.getItem());
 
-			item.getUpdateHandler().handle(update);
+			runCatching(context, () -> item.getUpdateHandler().handle(update));
 			if (update.hasChanged()) {
 				render(update, item, slot);
 				update.setChanged(false);
@@ -364,8 +365,9 @@ public class VirtualView {
 			final ViewSlotContext slotContext = (ViewSlotContext) context;
 
 			// when using #updateSlot() inside a onClick
-			if (item.getRenderHandler() != null)
-				item.getRenderHandler().handle(slotContext);
+			if (item.getRenderHandler() != null) {
+				runCatching(context, () -> item.getRenderHandler().handle(slotContext));
+			}
 
 			// can be global click/move (in/out) handler
 			if (slotContext.hasChanged()) {
@@ -469,10 +471,28 @@ public class VirtualView {
 		@NotNull ViewContext context,
 		@NotNull Exception exception
 	) {
+		// re-throw exception if error handler is not defined
 		if (getErrorHandler() == null)
 			return;
 
 		getErrorHandler().error(context, exception);
+	}
+
+	void runCatching(
+		@NotNull ViewContext context,
+		Runnable fn
+	) {
+		if (getErrorHandler() != null) {
+			try {
+				fn.run();
+			} catch (final Exception e) {
+				throwViewException(context, e);
+			}
+			return;
+		}
+
+		// unhandled exception
+		fn.run();
 	}
 
 	protected void inventoryModificationTriggered() {

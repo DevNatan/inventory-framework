@@ -12,7 +12,6 @@ import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Objects;
 
@@ -162,7 +161,8 @@ public class ViewListener implements Listener {
 
 				final ViewSlotMoveContext moveOutContext = new ViewSlotMoveContext(context, item.getSlot(), cursor,
 					e.getView().getBottomInventory(), swappedItem, slot, swappedItem != null, false);
-				view.onMoveOut(moveOutContext);
+				moveOutContext.runCatching(moveOutContext, () ->
+					view.onMoveOut(moveOutContext));
 
 				for (final ViewItem holdingItem : view.getItems()) {
 					if (holdingItem == null || holdingItem.getState() != ViewItem.State.HOLDING)
@@ -196,7 +196,8 @@ public class ViewListener implements Listener {
 
 			final ViewSlotMoveContext moveOutContext = new ViewSlotMoveContext(context, slot, stack, targetInventory,
 				targetItem, slot, false, false);
-			view.onMoveOut(moveOutContext);
+			moveOutContext.runCatching(moveOutContext,
+				() -> view.onMoveOut(moveOutContext));
 
 			if (view.isCancelOnMoveOut() || moveOutContext.isCancelled())
 				e.setCancelled(true);
@@ -210,7 +211,7 @@ public class ViewListener implements Listener {
 
 		// global click handling
 		final ViewSlotContext globalClick = new DelegatedViewContext(context, slot, stack);
-		view.onClick(globalClick);
+		globalClick.runCatching(globalClick, () -> view.onClick(globalClick));
 
 		e.setCancelled(e.isCancelled() || globalClick.isCancelled());
 		if (item == null) {
@@ -227,7 +228,8 @@ public class ViewListener implements Listener {
 		final ViewSlotContext slotContext = new DelegatedViewContext(context, slot, stack);
 
 		if (item.getClickHandler() != null) {
-			item.getClickHandler().handle(slotContext);
+			slotContext.runCatching(slotContext,
+				() -> item.getClickHandler().handle(slotContext));
 			e.setCancelled(e.isCancelled() || slotContext.isCancelled());
 		}
 
@@ -240,7 +242,8 @@ public class ViewListener implements Listener {
 		if (!e.isCancelled()) {
 			if (action.name().startsWith("PICKUP") || action == InventoryAction.CLONE_STACK) {
 				item.setState(ViewItem.State.HOLDING);
-				view.onItemHold(slotContext);
+				slotContext.runCatching(slotContext, () ->
+					view.onItemHold(slotContext));
 			} else if (item.getState() == ViewItem.State.HOLDING) {
 				final ViewItem holdingItem = resolveReleasableItem(view, slotContext);
 				if (holdingItem != null)
@@ -267,14 +270,14 @@ public class ViewListener implements Listener {
 			return;
 
 		final ViewContext close = new CloseViewContext(context);
-		view.onClose(close);
+		context.runCatching(context, () -> view.onClose(close));
 
 		if (close.isCancelled()) {
-			new BukkitRunnable() {
-				public void run() {
-					player.openInventory(close.getInventory());
-				}
-			}.runTaskLater(frame.getOwner(), 1L);
+			Bukkit.getScheduler().runTaskLater(
+				frame.getOwner(),
+				() -> player.openInventory(close.getInventory()),
+				1L
+			);
 
 			// set the old cursor item
 			final ItemStack cursor = player.getItemOnCursor();
@@ -380,7 +383,8 @@ public class ViewListener implements Listener {
 
 			final ViewSlotMoveContext moveInContext = new ViewSlotMoveContext(context, event.getSlot(), item,
 				event.getView().getTopInventory(), null, availableSlot.getValue(), false, false);
-			view.onMoveIn(moveInContext);
+			moveInContext.runCatching(moveInContext, () ->
+				view.onMoveIn(moveInContext));
 
 			if (moveInContext.isCancelled()) {
 				event.setCancelled(true);
