@@ -1,5 +1,10 @@
 # Changelog
 
+# 2.4.1 (unreleased)
+* Error Handling withing a View or ViewContext prototype.
+* `extends View` is now deprecated, the `setup()` method should be used instead.
+* Now `cancelOnShiftClick` respects if the click was already cancelled by `cancelOnClick`.
+
 # 2.4.0
 * ~~Detect the movement of an item from the player's inventory to their View using `onMoveIn` 
   feature preview.~~ (postponed to 2.5)
