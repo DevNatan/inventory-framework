@@ -462,13 +462,17 @@ public class VirtualView {
 	/**
 	 * Throws an exception to the error handler if one has been defined.
 	 *
-	 * @param exception The exception.
+	 * @param context   The current view context.
+	 * @param exception The caught exception.
 	 */
-	void throwViewException(@NotNull Exception exception) {
+	void throwViewException(
+		@NotNull ViewContext context,
+		@NotNull Exception exception
+	) {
 		if (getErrorHandler() == null)
 			return;
 
-		getErrorHandler().error(exception);
+		getErrorHandler().error(context, exception);
 	}
 
 	protected void inventoryModificationTriggered() {

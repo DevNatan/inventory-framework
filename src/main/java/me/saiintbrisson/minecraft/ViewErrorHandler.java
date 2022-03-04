@@ -13,8 +13,9 @@ public interface ViewErrorHandler {
 	/**
 	 * Called when an error occurs in some View handler.
 	 *
-	 * @param exception The error.
+	 * @param context The current view context.
+	 * @param exception The caught exception.
 	 */
-	void error(@NotNull Exception exception);
+	void error(@NotNull ViewContext context, @NotNull Exception exception);
 
 }

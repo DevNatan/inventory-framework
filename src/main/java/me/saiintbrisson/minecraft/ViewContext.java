@@ -27,6 +27,7 @@ public class ViewContext extends VirtualView {
 	boolean checkedLayerSignature;
 	Stack<Integer> itemsLayer, fillLayer;
 	private boolean invalidated;
+	private boolean propagateErrors;
 
 	public ViewContext(@NotNull View view, @NotNull Player player, @NotNull Inventory inventory) {
 		super(new ViewItem[INVENTORY_ROW_SIZE * (inventory.getSize() / INVENTORY_ROW_SIZE)]);
@@ -325,6 +326,25 @@ public class ViewContext extends VirtualView {
 		updateTitle(player.getOpenInventory().getTitle());
 	}
 
+	/**
+	 * If errors should be propagated to the View's error handler for
+	 * that context.
+	 *
+	 * @return If errors will be propagated to the View.
+	 */
+	public boolean isPropagateErrors() {
+		return propagateErrors;
+	}
+
+	/**
+	 * Defines whether errors should be propagated to the View's error handler.
+	 *
+	 * @param propagateErrors If errors should be propagated to the View.
+	 */
+	public void setPropagateErrors(boolean propagateErrors) {
+		this.propagateErrors = propagateErrors;
+	}
+
 	public boolean isValid() {
 		return !invalidated;
 	}
@@ -370,12 +390,27 @@ public class ViewContext extends VirtualView {
 		return new SlotFindResult(idx, moveTo, stacked);
 	}
 
-	protected void inventoryModificationTriggered() {}
+	protected void inventoryModificationTriggered() {
+	}
 
 	@Override
-	final void throwViewException(@NotNull Exception exception) {
-		super.throwViewException(exception);
-		getView().throwViewException(exception);
+	final void throwViewException(
+		@NotNull ViewContext context,
+		@NotNull Exception exception
+	) {
+		super.throwViewException(context, exception);
+
+		// propagate errors to the View then to the global view error handler
+		if (propagateErrors) {
+			getView().throwViewException(context, exception);
+			return;
+		}
+
+		final ViewErrorHandler globalErrorHandler =
+			getView().getFrame().getErrorHandler();
+
+		if (globalErrorHandler != null)
+			globalErrorHandler.error(context, exception);
 	}
 
 	@Override
@@ -386,6 +421,9 @@ public class ViewContext extends VirtualView {
 			", inventory=" + inventory +
 			", cancelled=" + cancelled +
 			", data=" + getData() +
+			", propagateErrors=" + propagateErrors +
+			", invalidated=" + invalidated +
+			", markedToClose=" + markedToClose +
 			"} " + super.toString();
 	}
 

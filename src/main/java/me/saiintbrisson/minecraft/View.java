@@ -573,12 +573,18 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 	}
 
 	@Override
-	final void throwViewException(@NotNull Exception exception) {
-		super.throwViewException(exception);
+	final void throwViewException(
+		@NotNull ViewContext context,
+		@NotNull Exception exception
+	) {
+		setErrorHandler((ViewContext $, Exception error) -> {
+
+		});
+		super.throwViewException(context, exception);
 
 		// propagate error to the global error handler
 		if (frame.getErrorHandler() != null)
-			frame.getErrorHandler().error(exception);
+			frame.getErrorHandler().error(context, exception);
 	}
 
 	@Override

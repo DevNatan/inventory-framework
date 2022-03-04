@@ -122,6 +122,16 @@ public class DelegatedViewContext extends ViewSlotContext {
 	}
 
 	@Override
+	public boolean isPropagateErrors() {
+		return delegate.isPropagateErrors();
+	}
+
+	@Override
+	public void setPropagateErrors(boolean propagateErrors) {
+		delegate.setPropagateErrors(propagateErrors);
+	}
+
+	@Override
 	public String toString() {
 		return "DelegatedViewContext{" +
 			"cancelled=" + cancelled +
