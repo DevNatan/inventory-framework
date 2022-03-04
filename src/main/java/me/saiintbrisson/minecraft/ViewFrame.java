@@ -9,6 +9,7 @@ import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.ServicesManager;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -18,11 +19,12 @@ import java.util.function.Function;
 public final class ViewFrame {
 
 	private final Plugin owner;
-	private Listener listener;
 	private final Map<Class<? extends View>, View> registeredViews;
+	private Listener listener;
 	private Function<PaginatedViewContext<?>, ViewItem> defaultPreviousPageItem;
 	private Function<PaginatedViewContext<?>, ViewItem> defaultNextPageItem;
 	private boolean debugEnabled;
+	private ViewErrorHandler globalErrorHandler;
 
 	public ViewFrame(@NotNull Plugin owner) {
 		this.owner = owner;
@@ -184,6 +186,25 @@ public final class ViewFrame {
 			return;
 
 		getOwner().getLogger().info("[IF DEBUG] " + message);
+	}
+
+	/**
+	 * Gets the global error handler for all views.
+	 *
+	 * @return The global error handler.
+	 */
+	public ViewErrorHandler getErrorHandler() {
+		return globalErrorHandler;
+	}
+
+	/**
+	 * Sets the global error handler for all views.
+	 *
+	 * @param errorHandler The global error handler. Use <code>null</code> to
+	 *                     remove if it's already defined.
+	 */
+	public void setErrorHandler(@Nullable ViewErrorHandler errorHandler) {
+		this.globalErrorHandler = errorHandler;
 	}
 
 	private boolean ensureProvider() {

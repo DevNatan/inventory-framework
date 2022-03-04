@@ -19,6 +19,7 @@ public class VirtualView {
 	protected String[] layout;
 
 	ViewUpdateJob updateJob;
+	ViewErrorHandler errorHandler;
 
 	public VirtualView(ViewItem[] items) {
 		this.items = items;
@@ -436,7 +437,42 @@ public class VirtualView {
 		return updateJob != null;
 	}
 
-	protected void inventoryModificationTriggered() {}
+	/**
+	 * Gets the error handler for this virtual view.
+	 *
+	 * @return The ViewErrorHandler for this view.
+	 */
+	public ViewErrorHandler getErrorHandler() {
+		return errorHandler;
+	}
+
+	/**
+	 * Defines the error handler for this virtual view.
+	 * <p>
+	 * Setting specific error handling for a {@link ViewContext} will cause the
+	 * error to be propagated to the {@link View} as well if it has been set.
+	 *
+	 * @param errorHandler The View Error Handler for this view.
+	 *                     Use <code>null</code> to remove it.
+	 */
+	public void setErrorHandler(@Nullable ViewErrorHandler errorHandler) {
+		this.errorHandler = errorHandler;
+	}
+
+	/**
+	 * Throws an exception to the error handler if one has been defined.
+	 *
+	 * @param exception The exception.
+	 */
+	void throwViewException(@NotNull Exception exception) {
+		if (getErrorHandler() == null)
+			return;
+
+		getErrorHandler().error(exception);
+	}
+
+	protected void inventoryModificationTriggered() {
+	}
 
 	@Override
 	public String toString() {

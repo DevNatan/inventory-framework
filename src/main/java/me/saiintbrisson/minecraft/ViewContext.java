@@ -373,6 +373,12 @@ public class ViewContext extends VirtualView {
 	protected void inventoryModificationTriggered() {}
 
 	@Override
+	final void throwViewException(@NotNull Exception exception) {
+		super.throwViewException(exception);
+		getView().throwViewException(exception);
+	}
+
+	@Override
 	public String toString() {
 		return "ViewContext{" +
 			"view=" + view +

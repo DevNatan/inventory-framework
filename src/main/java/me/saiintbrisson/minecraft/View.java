@@ -572,6 +572,25 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 	) {
 	}
 
+	@Override
+	final void throwViewException(@NotNull Exception exception) {
+		super.throwViewException(exception);
+
+		// propagate error to the global error handler
+		if (frame.getErrorHandler() != null)
+			frame.getErrorHandler().error(exception);
+	}
+
+	@Override
+	public final ViewErrorHandler getErrorHandler() {
+		return super.getErrorHandler();
+	}
+
+	@Override
+	public final void setErrorHandler(@Nullable ViewErrorHandler errorHandler) {
+		super.setErrorHandler(errorHandler);
+	}
+
 	private void expandItemsArray(int newLength) {
 		ViewItem[] newItems = new ViewItem[newLength];
 		System.arraycopy(items, 0, newItems, 0, items.length);

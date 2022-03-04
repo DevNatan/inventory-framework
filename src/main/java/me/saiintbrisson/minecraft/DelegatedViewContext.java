@@ -1,6 +1,7 @@
 package me.saiintbrisson.minecraft;
 
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 import java.util.Stack;
@@ -108,6 +109,16 @@ public class DelegatedViewContext extends ViewSlotContext {
 	@Override
 	public boolean isValid() {
 		return delegate.isValid();
+	}
+
+	@Override
+	public final ViewErrorHandler getErrorHandler() {
+		return delegate.getErrorHandler();
+	}
+
+	@Override
+	public final void setErrorHandler(@Nullable ViewErrorHandler errorHandler) {
+		delegate.setErrorHandler(errorHandler);
 	}
 
 	@Override
