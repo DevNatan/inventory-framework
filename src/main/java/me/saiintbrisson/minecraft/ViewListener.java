@@ -92,14 +92,13 @@ public class ViewListener implements Listener {
 		if (e.getSlotType() == InventoryType.SlotType.OUTSIDE) {
 			e.setCancelled(true);
 
-			if (view.isCloseOnOutsideClick())
-				view.close();
+			if (view.isCloseOnOutsideClick()) {
+				final ViewContext context = view.getContext(player);
+				if (context == null)
+					return;
 
-			final ViewContext context = view.getContext(player);
-			if (context == null)
-				return;
-
-			context.close();
+				context.closeNow();
+			}
 			return;
 		}
 
@@ -118,19 +117,15 @@ public class ViewListener implements Listener {
 
 		final ViewContext context = view.getContext(player);
 
-		// for some reason I haven't figured out which one yet, it's possible that the View's inventory is open and
-		// the context doesn't exist, so we check to see if it's null
+		// for some reason I haven't figured out which one yet, it's possible
+		// that the View's inventory is open and the context doesn't exist,
+		// so we check to see if it's null
 		if (context == null) {
 			return;
 		}
 
 		// move in and out handling
 		if (bottomInventoryClick) {
-			// context.getPlayer().sendMessage("Action: " + e.getAction());
-			// context.getPlayer().sendMessage("Current item: " + e
-			// .getCurrentItem());
-			// context.getPlayer().sendMessage("Cursor item:" + e.getCursor());
-
 			if (handleMoveIn(view, context, e))
 				return;
 
