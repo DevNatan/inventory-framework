@@ -10,9 +10,16 @@ Bukkit inventory framework used in some of my projects, feel free to use it. Lea
 * [Preventing Library Conflicts](#preventing-library-conflicts)
 * [Getting Started](#getting-started)
     * [Interaction handling](#interaction-handling)
-    * [Managing data between contexts](#managing-data-between-contexts)
+    * [Managing Data Between Contexts](#managing-data-between-contexts)
     * [Error Handling](#error-handling)
-    * Pagination
+    * [Pagination](#pagination)
+      * [Type Declaration](#type-declaration)
+      * [Item Rendering](#item-rendering)
+      * [Defining the Data Source](#defining-the-data-source)
+      * [Layout](#layout)
+      * [Previous and Next Page Items](#previous-and-next-page-items)
+      * [Title Update on Page Switch](#title-update-on-page-switch)
+      * [Final Considerations](#final-considerations)
     * [Open and Close](#open-and-close)
     * [Registration](#registration)
     * [Feature Preview](#feature-preview)
@@ -306,6 +313,408 @@ prevent this from happening by changing a property of the ViewContext.
 
 ```java
 viewContext.setPropagateErrors(false);
+```
+
+## Pagination
+There are times when we have a large database that needs to be displayed in the inventory,
+but Minecraft limits us to having a certain size for inventories that is not enough to 
+accommodate this data in the form of an item display.
+
+For that, we turn to Paging, paging allows us to sub-divide our data into multiple sectors (pages)
+so that they are displayed within the limit of our inventory. IF helps you to do this easily.
+
+### Type Declaration
+To do a paginated inventory you first need to declare the type of data you have.
+This type will be defined as a type parameter for the PaginatedView extension, come on.
+
+#### Extending PaginatedView
+First, instead of `extend View`, `extend PaginatedView`.
+```java
+public final class MyPaginatedView extends PaginatedView<T> {
+    
+}
+```
+
+The type parameter `<T>` will be the type of your data source, in these examples we will work with 
+integers,
+but you can use any type as long as there is a source for them.
+
+```java
+public final class MyPaginatedView extends PaginatedView<Integer> {
+    
+    public MyPaginatedView() {
+        super(3, "It's cool :)");
+    }
+    
+}
+```
+
+### Item Rendering
+The PaginatedView class, which you extended earlier, requires you to override the paginated item 
+rendering function, which means: this function will be responsible for determining how such data
+will be rendered in the inventory.
+
+**You don't have to worry about anything, just determine what you want to appear and IF will do 
+the rest.**
+
+```java
+public final class MyPaginatedView extends PaginatedView<Integer> {
+
+    public MyPaginatedView() {
+        super(3, "It's cool :)");
+    }
+    
+    @Override
+    protected void onItemRender(PaginatedViewSlotContext<Integer> render, ViewItem item, Integer value) {
+    }
+    
+}
+```
+
+**Notice that you have three parameters in the item rendering function:**
+* `context` It is a **variation of ViewContext** for paginated inventories, it contains current 
+  page information, page limit and other player context information;
+* `item` An empty **mutable item** entry, this will be the item that you will have to modify so 
+  that it fits according to what will be displayed on the page for the player.
+* `value` Current value being computed by the IF for the page the player is on.
+
+As I said earlier, you don't have to worry about where your data is, the IF will give you everything 
+in the item rendering function.
+
+#### Rendering our Data
+Now that I've explained a few things to you, let's render our item
+
+**We will make that when the player clicks, it sends a message in which value he is clicking.**
+```java
+@Override
+protected void onItemRender(
+        PaginatedViewSlotContext<Integer> render,
+        ViewItem item, 
+        Integer value
+) {
+    context.withItem(createItem(value))
+        .onClick(click -> click.sendMessage("Clicked on value " + value));
+}
+
+// organize your code into multiple functions to make it easier to understand!
+private ItemStack createItem(Integer value) {
+    final ItemStack stack = new ItemStack(Material.DIAMOND);
+    final ItemMeta meta = stack.getItemMeta();
+    meta.setDisplayItem("Value: " + value);
+    stack.setItemMeta(meta);
+    return item;
+}
+```
+
+### Defining the Data Source
+Well, if you tested your paginated inventory code, you probably saw that an error occurred,
+that's why we didn't define where the IF will get this data to be rendered from,
+you now have to specify your data source.
+
+To define paginated data you must be inside a `PaginatedView` and use the `PaginatedViewContext`'s 
+data source definition method.
+
+```java
+PaginatedContext#setSource(...)
+```
+
+Functions that pass IF context by default are not type safe because of backwards compatibility of the code,
+so we provide **an extension for you to turn a ViewContext into a PaginatedViewContext** and access 
+the data source definition method.
+
+```java
+ViewContext#paginated(); // now it's a PaginatedViewContext
+```
+
+#### Scopes
+The data source can be defined in three scopes:
+
+##### View (static)
+Static persistent data source for the entire View, ideal for **data that will not change at any 
+point in your code's lifecycle**, For example: immutable data coming from configuration. 
+Defined in View constructor
+```java
+public MyPaginatedView() {
+    super(...);
+    setSource(...);
+}
+```
+
+#### View (dynamic)
+Dynamic non-persistent data source for the entire View, ideal for **data that does not require a
+player to obtain but will change** at some point in its lifecycle. For example: a list of 
+server teleport locations. Defined in View `onRender`;
+```java
+@Override
+protected final void onRender(ViewContext render) {
+    setSource(...);
+}
+```
+
+#### Per Context
+Dynamic non-persistent data source that depend on a player to be defined. For example: list of 
+player houses. Defined in View `onRender`
+```java
+@Override
+protected final void onRender(ViewContext render) {
+    render.paginated().setSource(...);
+}
+```
+
+### Layout
+Of course you won't leave your items scattered on the menu in a disorderly way, we already expected that and for that we created the layout to make everything beautiful in its place.
+
+The Layout is a pattern of characters that you will use to determine where each item will go on your page.
+
+You can define layouts in two scopes:
+* **For the entire View**: the same layout will be used in that view forever.
+* **Just for a context**: Only a specific context will use a layout pattern which for some reason 
+  must be different from the layout defined in the View or other layouts.
+
+> If you define both layouts, for the View and for the context, the layout of the context will take precedence.
+
+#### Pattern
+First, as I said before, a layout is a pattern of characters that you will use to determine where items will go,
+these characters are:
+* `O` a slot that will have a paginated item in the inventory;
+* `X` an undefined slot in the inventory;
+* `<` a slot in which the item "back page" will be positioned (for paginated views);
+* `>` a slot in which the item "next page" will be positioned (for paginated views).
+
+**There are rules for creating a layout that you should pay attention to**
+* The width of the pattern must be the same number of columns as the inventory;
+* The height of the pattern must be the same number of rows as the inventory;
+* If you define an item in the layout and don't define it in the code an error will be thrown.
+
+Define a layout using `setLayout`.
+```java
+public final class MyPaginatedView extends PaginatedView<Integer> {
+
+    public MyPaginatedView() {
+        super(3, "It's cool :)");
+        setLayout(
+                "XXXXXXXXX",
+                "XOOOOOOOX",
+                "XXXXXXXXX"
+        );
+    }
+
+}
+```
+
+You can also set it in the View's `onRender` rendering function as I said earlier too.
+```java
+@Override
+protected final void onRender(ViewContext render) {
+    setLayout(
+        "XXXXXXXXX",
+        "XOOOOOOOX",
+        "XXXXXXXXX"
+    );
+}
+```
+
+Set the layout only for a specific context using `ViewContext#setLayout`.
+```java
+@Override
+protected final void onRender(ViewContext render) {
+    render.setLayout(
+        "XXXXXXXXX",
+        "XOOOOOOOX",
+        "XXXXXXXXX"
+    );
+}
+```
+
+In our inventory, items will be positioned in the center, with spaces on the side in the second row.
+
+Note that the number of rows in my layout is the same as the number of rows in my inventory, and the character span of the layout is the number of columns I have in my inventory, 9.
+
+#### Updating Context Layout while Inventory is open
+Yes, you can change the layout while the player's inventory is open, it only works for the current context. 
+This allows you to use multiple layouts and switch between them without having to close the player's inventory and open it again with the updated layout.
+
+To do this, use the View's update function.
+
+```java
+@Override
+protected final void onUpdate(ViewContext update) {
+    // will be updated to the player every time
+    update.setLayout(...);
+}
+```
+
+When the View or context update method is called, the layout will be updated.
+
+> Be careful, for changing the layout through the update function to work it is necessary that an 
+> initial layout is defined as described in the section on creating layout patterns,
+> otherwise the inventory will be without any defined layout.
+
+### Previous and Next Page Items
+To set the page change menu items, extend the PaginatedView's `getPreviousPageItem` and `getNextPageItem` methods.
+
+```java
+public final class MyPaginatedView extends PaginatedView<Integer> {
+
+    // ... constructor here ...
+
+    @Override
+    public ViewItem getPreviousPageItem(PaginatedViewContext<Integer> context) {
+        return item(new ItemStack(Material.ARROW));
+    }
+
+    @Override
+    public ViewItem getNextPageItem(PaginatedViewContext<Integer> context) {
+        return item(new ItemStack(Material.BLAZE_ROW));
+    }
+
+}
+```
+
+> The `item(...)` function comes from the VirtualView class which gives you an empty mutable
+> item so you can manipulate it however you want.
+
+There are cases where all paginated inventories have the same page toggle item pattern, 
+and so that you don't need to set such items in ALL paginated inventories,
+we have a function in the ViewFrame that you can use to set toggle items page for all views coming from that ViewFrame.
+
+```java
+viewFrame.setDefaultPreviousPageItem((context) -> {
+    return context.item(new ItemStack(Material.BLAZE_ROW));
+});
+
+viewFrame.setDefaultNextPageItem((context) -> {
+    return context.item(new ItemStack(Material.BLAZE_ROW));
+});
+```
+
+If you don't want to set page toggle items this way or want to change pages using another item,
+the PaginatedViewContext has functions that will help you with that.
+* `switchToPreviousPage()` return to previous page;
+* `switchToNextPage()` advances to the next page;
+* `switchToPage(page)` go to a specific page.
+
+### Title Update on Page Switch
+There are cases where we want to display the current page where the player is in the inventory title, 
+in some inventory frameworks the code closes the player's current inventory and opens a new one whose 
+title contains the page the player went to.
+
+But with the IF this wouldn't work because we don't want 
+the player's inventory to close, and more than that, we want their context to hold anyway.
+
+Let's go to the examples, **consider that the title of your inventory is:**
+```
+My Awesome Inventory
+```
+
+But that when the player switches pages **he becomes something similar to this**
+```
+My Awesome Inventory (4/12)
+```
+
+You can use three IF functionalities together to achieve this result, namely:
+* `onPageSwitch` is a PaginatedView function that is called when a player switches pages.
+* `updateTitle` is a ViewContext function used to change the title of the inventory.
+* `resetTitle` is a ViewContext function used to change the title of the inventory to its initial state (after `updateTitle` has been used).
+
+```java
+@Override
+protected void onPageSwitch(PaginatedViewContext<Integer> pageSwitch) {
+    // pages starts at 0
+    final int currentPage = pageSwitch.getPage();
+   
+    // if the player is on the homepage we don't want to display (1/12) 
+    // but actually the default title of the inventory so we reset it
+    if (currentPage == 0) {
+        pageSwitch.resetTitle();
+        return;
+    }
+
+    // takes the current title and adds the page value to it.
+    final int maxPages = pageSwitch.getPagesCount();
+    pageSwitch.updateTitle(String.format(
+        "%s (%d/%d)",
+        pageSwitch.getView().getTitle(), 
+        currentPage + 1,
+        maxPages
+    ));
+}
+```
+
+When the page is changed, the title will change.
+
+### Final Considerations
+Paginated views are a great way to define data in your inventory when you have a large amount of data.
+
+Once you set the item rendering function and data source, you can open the player's inventory and it will be working.
+
+##### Beware of item rendering function!!
+The paginated inventory item rendering function is called thousands of times according to your data,
+so it is not designed for you to do external computations. The correct thing is that you use 
+[Context Data](#managing-data-between-contexts) to determine what will be rendered and to get 
+data coming from other contexts.
+
+For example: suppose you have a user object that you need it in the item render function:
+
+**❌ WHAT IS NOT TO BE DONE**\
+Don't compute anything inside the item render function.
+```java
+@Override
+protected void onItemRender(
+    PaginatedViewSlotContext<Integer> render,
+    ViewItem item,
+    T value
+) {
+    User user = getUserFromDatabase()
+}
+```
+
+**✔️ WHAT IS IDEAL TO BE DONE**\
+Move the necessary computation to `onOpen`.
+```java
+private static final String USER_CONTEXT_KEY = "user";
+
+@Override
+protected void onOpen(OpenViewContext context) {
+    context.set(USER_CONTEXT_KEY, ...);
+}
+
+@Override
+protected void onItemRender(
+    PaginatedViewSlotContext<Integer> render,
+    ViewItem item,
+    T value
+) {
+    // now user is available because you defined it on `onOpen`
+    User user = render.get(USER_CONTEXT_KEY);
+}
+```
+
+Or even open the View with the player information.
+
+We do not recommend this method because it is ideal that the methods of the View are encapsulated in it,
+and the **context will be defined regardless of the data of who opened the view** (where `open` was 
+called), so if you have a view which can be opened in several places in the code, 
+for example: clicking on an item in the inventory or executing the command, both will work homogeneously.
+
+It can be used without any problems.
+```java
+static final String USER_CONTEXT_KEY = "user";
+
+// somewhere you will open the inventory
+viewFrame.open(player, ImmutableMap.of(
+        USER_CONTEXT_KEY, computedUser
+));
+
+@Override
+protected void onItemRender(
+    PaginatedViewSlotContext<Integer> render,
+    ViewItem item,
+    T value
+) {
+    // now user is available because you defined it before
+    User user = render.get(USER_CONTEXT_KEY);
+}
 ```
 
 ## Open and Close
