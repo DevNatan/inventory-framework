@@ -1,9 +1,14 @@
 # Changelog
 
 # 2.4.1 (unreleased)
-* Error Handling withing a View or ViewContext prototype.
-* `extends View` is now deprecated, the `setup()` method should be used instead.
-* Now `cancelOnShiftClick` respects if the click was already cancelled by `cancelOnClick`.
+* Error Handling prototype.
+* ~~`extends View` is now deprecated, the `setup()` method should be used instead.~~ (postponed 
+  to 2.5)
+* No longer possible to use shift-click to move items from the player's inventory to the view's
+  inventory that has `cancelOnClick` or `cancelOnShiftClick` enabled.
+* Fixed bug where `closeOnOutsideClick` closed the View for all its contexts not just for the player.
+* It's now possible to interact with items in the player's inventory while the View is open 
+  independently.
 
 # 2.4.0
 * ~~Detect the movement of an item from the player's inventory to their View using `onMoveIn` 
