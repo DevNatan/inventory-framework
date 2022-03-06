@@ -174,7 +174,7 @@ public final class MyView extends View {
     }
 
     @Override
-    public final void onRender(final ViewContext context) {
+    public void onRender(ViewContext context) {
         // ...
     }
 
@@ -195,7 +195,7 @@ public final class MyView extends View {
     }
 
     @Override
-    public final void onRender(final ViewContext context) {
+    public void onRender(ViewContext context) {
         final Player player = context.getPlayer();
         player.sendMessage("Hi, " + player.getName() + "!");
     }
@@ -392,15 +392,15 @@ protected void onItemRender(
         ViewItem item, 
         Integer value
 ) {
-    context.withItem(createItem(value))
-        .onClick(click -> click.sendMessage("Clicked on value " + value));
+    render.withItem(createItem(value))
+        .onClick(click -> click.getPlayer().sendMessage("Clicked on value " + value));
 }
 
 // organize your code into multiple functions to make it easier to understand!
 private ItemStack createItem(Integer value) {
     final ItemStack stack = new ItemStack(Material.DIAMOND);
     final ItemMeta meta = stack.getItemMeta();
-    meta.setDisplayItem("Value: " + value);
+    meta.setDisplayName("Value: " + value);
     stack.setItemMeta(meta);
     return item;
 }
@@ -446,7 +446,7 @@ player to obtain but will change** at some point in its lifecycle. For example: 
 server teleport locations. Defined in View `onRender`;
 ```java
 @Override
-protected final void onRender(ViewContext render) {
+protected void onRender(ViewContext render) {
     setSource(...);
 }
 ```
@@ -456,7 +456,7 @@ Dynamic non-persistent data source that depend on a player to be defined. For ex
 player houses. Defined in View `onRender`
 ```java
 @Override
-protected final void onRender(ViewContext render) {
+protected void onRender(ViewContext render) {
     render.paginated().setSource(...);
 }
 ```
@@ -505,7 +505,7 @@ public final class MyPaginatedView extends PaginatedView<Integer> {
 You can also set it in the View's `onRender` rendering function as I said earlier too.
 ```java
 @Override
-protected final void onRender(ViewContext render) {
+protected void onRender(ViewContext render) {
     setLayout(
         "XXXXXXXXX",
         "XOOOOOOOX",
@@ -517,7 +517,7 @@ protected final void onRender(ViewContext render) {
 Set the layout only for a specific context using `ViewContext#setLayout`.
 ```java
 @Override
-protected final void onRender(ViewContext render) {
+protected void onRender(ViewContext render) {
     render.setLayout(
         "XXXXXXXXX",
         "XOOOOOOOX",
@@ -538,7 +538,7 @@ To do this, use the View's update function.
 
 ```java
 @Override
-protected final void onUpdate(ViewContext update) {
+protected void onUpdate(ViewContext update) {
     // will be updated to the player every time
     update.setLayout(...);
 }
@@ -703,7 +703,7 @@ static final String USER_CONTEXT_KEY = "user";
 
 // somewhere you will open the inventory
 viewFrame.open(player, ImmutableMap.of(
-        USER_CONTEXT_KEY, computedUser
+   USER_CONTEXT_KEY, computedUser
 ));
 
 @Override
