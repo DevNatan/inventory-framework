@@ -13,6 +13,7 @@
 * Fixed clicks being cancelled in player inventory if view is marked to cancel on click even 
   player is not clicking in the view inventory.
 * Now `closeOnOutsideClick` View option are enabled by default.
+* Build project on JDK 8 (thanks to @luiz-otavio [#40][i40])
 
 # 2.4.0
 * ~~Detect the movement of an item from the player's inventory to their View using `onMoveIn` 
@@ -50,3 +51,4 @@
 [p27]: https://github.com/DevNatan/inventory-framework/pull/27
 [i31]: https://github.com/DevNatan/inventory-framework/issues/31
 [i32]: https://github.com/DevNatan/inventory-framework/issues/32
+[i40]: https://github.com/DevNatan/inventory-framework/issues/40
