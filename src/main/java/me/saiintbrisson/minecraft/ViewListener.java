@@ -157,7 +157,8 @@ public class ViewListener implements Listener {
 					continue;
 
 				final ViewSlotMoveContext moveOutContext = new ViewSlotMoveContext(context, item.getSlot(), cursor,
-					e.getView().getBottomInventory(), swappedItem, slot, swappedItem != null, false);
+					e.getView().getBottomInventory(), swappedItem, slot,
+					swappedItem != null, false, e);
 				view.runCatching(moveOutContext, () ->
 					view.onMoveOut(moveOutContext));
 
@@ -192,7 +193,7 @@ public class ViewListener implements Listener {
 				targetItem = targetInventory.getItem(e.getHotbarButton());
 
 			final ViewSlotMoveContext moveOutContext = new ViewSlotMoveContext(context, slot, stack, targetInventory,
-				targetItem, slot, false, false);
+				targetItem, slot, false, false, e);
 			view.runCatching(moveOutContext,
 				() -> view.onMoveOut(moveOutContext));
 
@@ -207,14 +208,16 @@ public class ViewListener implements Listener {
 		final ViewItem item = view.resolve(context, slot);
 
 		// global click handling
-		final ViewSlotContext globalClick = new DelegatedViewContext(context, slot, stack);
+		final ViewSlotContext globalClick = new DelegatedViewContext(context, slot, stack, e);
 		view.runCatching(globalClick, () -> view.onClick(globalClick));
 
 		e.setCancelled(e.isCancelled() || globalClick.isCancelled());
 		if (item == null) {
 			final ViewItem holdingItem = resolveReleasableItem(view, context);
 			if (holdingItem != null)
-				releaseAt(new DelegatedViewContext(context, holdingItem.getSlot(), stack), slot, cursor, e.getClickedInventory());
+				releaseAt(new DelegatedViewContext(context,
+					holdingItem.getSlot(), stack, e), slot, cursor,
+					e.getClickedInventory());
 
 			return;
 		}
@@ -222,7 +225,8 @@ public class ViewListener implements Listener {
 		if (globalClick.isCancelled())
 			return;
 
-		final ViewSlotContext slotContext = new DelegatedViewContext(context, slot, stack);
+		final ViewSlotContext slotContext = new DelegatedViewContext(context,
+			slot, stack, e);
 
 		if (item.getClickHandler() != null) {
 			view.runCatching(slotContext,
@@ -359,7 +363,7 @@ public class ViewListener implements Listener {
 
 		final InventoryAction action = event.getAction();
 
-		// no need to handle hotbar swap
+		// no need to handle hot bar swap
 		if (action == InventoryAction.HOTBAR_SWAP)
 			return false;
 
@@ -379,7 +383,8 @@ public class ViewListener implements Listener {
 			}
 
 			final ViewSlotMoveContext moveInContext = new ViewSlotMoveContext(context, event.getSlot(), item,
-				event.getView().getTopInventory(), null, availableSlot.getValue(), false, false);
+				event.getView().getTopInventory(), null,
+				availableSlot.getValue(), false, false, event);
 			view.runCatching(moveInContext, () ->
 				view.onMoveIn(moveInContext));
 

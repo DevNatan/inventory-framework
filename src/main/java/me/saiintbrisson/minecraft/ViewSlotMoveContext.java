@@ -1,5 +1,6 @@
 package me.saiintbrisson.minecraft;
 
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -13,8 +14,9 @@ public class ViewSlotMoveContext extends DelegatedViewContext {
 
     public ViewSlotMoveContext(final ViewContext delegate, final int slot, final ItemStack item,
 							   final Inventory targetInventory, final ItemStack targetItem, final int targetSlot,
-							   final boolean swap, final boolean stack) {
-        super(delegate, slot, item);
+							   final boolean swap, final boolean stack,
+							   InventoryClickEvent fallbackClickOrigin) {
+        super(delegate, slot, item, fallbackClickOrigin);
         this.targetInventory = targetInventory;
         this.targetItem = targetItem;
         this.targetSlot = targetSlot;

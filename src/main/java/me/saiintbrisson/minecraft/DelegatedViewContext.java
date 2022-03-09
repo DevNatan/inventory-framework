@@ -1,5 +1,6 @@
 package me.saiintbrisson.minecraft;
 
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,6 +20,17 @@ public class DelegatedViewContext extends ViewSlotContext {
 	public DelegatedViewContext(ViewContext delegate, int slot, ItemStack item) {
 		super(delegate.getView(), delegate.getPlayer(), delegate.getInventory(), slot, item,
 			delegate instanceof ViewSlotContext ? ((ViewSlotContext) delegate).getClickOrigin() : null);
+		this.delegate = delegate;
+	}
+
+	public DelegatedViewContext(
+		ViewContext delegate,
+		int slot,
+		ItemStack item,
+		InventoryClickEvent fallbackClickOrigin
+	) {
+		super(delegate.getView(), delegate.getPlayer(), delegate.getInventory(), slot, item,
+			delegate instanceof ViewSlotContext ? ((ViewSlotContext) delegate).getClickOrigin() : fallbackClickOrigin);
 		this.delegate = delegate;
 	}
 
