@@ -5,17 +5,11 @@
   buggy some times).
 * New `onHotbarInteract(...)` to handle hotbar button interacts.
 
-# 2.4.1 (unreleased)
+# 2.4.1
 * Error Handling prototype.
-* ~~`extends View` is now deprecated, the `setup()` method should be used instead.~~ (postponed 
-  to 2.6)
 * No longer possible to use shift-click to move items from the player's inventory to the view's
   inventory that has `cancelOnClick` or `cancelOnShiftClick` enabled.
 * Fixed bug where `closeOnOutsideClick` closed the View for all its contexts not just for the player.
-* It's now possible to interact with items in the player's inventory while the View is open 
-  independently.
-* Fixed bug that allows player move items to the View inventory even if View is configured to 
-  cancel clicks or cancel move in by shift clicking items on their inventory.
 * Fixed clicks being cancelled in player inventory if view is marked to cancel on click even 
   player is not clicking in the view inventory.
 * Now `closeOnOutsideClick` View option are enabled by default.
