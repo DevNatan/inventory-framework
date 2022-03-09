@@ -25,7 +25,8 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 	private final Map<Player, Map<String, Object>> data;
 	private ViewFrame frame;
 	private boolean cancelOnClick, cancelOnPickup, cancelOnDrop, cancelOnDrag, cancelOnClone;
-	private boolean cancelOnMoveOut, cancelOnShiftClick, clearCursorOnClose, closeOnOutsideClick;
+	private boolean cancelOnMoveIn, cancelOnMoveOut, cancelOnShiftClick,
+		clearCursorOnClose,	closeOnOutsideClick;
 
 	public View() {
 		this(0);
@@ -50,6 +51,7 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 		cancelOnDrop = true;
 		cancelOnDrag = true;
 		cancelOnClone = true;
+		cancelOnMoveIn = true;
 		cancelOnMoveOut = true;
 		cancelOnShiftClick = true;
 		closeOnOutsideClick = true;
@@ -306,6 +308,25 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 
 	public final void setCancelOnClone(final boolean cancelOnClone) {
 		this.cancelOnClone = cancelOnClone;
+	}
+
+	/**
+	 * If moving items to the view's inventory is allowed.
+	 *
+	 * @return If moving items to the view's inventory is allowed.
+	 */
+	public final boolean isCancelOnMoveIn() {
+		return cancelOnMoveIn;
+	}
+
+	/**
+	 * Defines whether or not to move items to the view's inventory.
+	 *
+	 * @param cancelOnMoveIn <code>true</code> to cancel the move into
+	 *                        view's inventory or <code>false</code> otherwise
+	 */
+	public final void setCancelOnMoveIn(boolean cancelOnMoveIn) {
+		this.cancelOnMoveIn = cancelOnMoveIn;
 	}
 
 	/**
