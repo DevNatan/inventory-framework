@@ -35,18 +35,17 @@ build configuration.
 
 ```groovy
 dependencies {
-    compileOnly 'com.github.DevNatan:inventory-framework:2.4.0'
+    compileOnly 'com.github.DevNatan:inventory-framework:2.4.1'
 }
 ```
 
 **Maven (pom.xml)**
 
 ```xml
-
 <dependency>
     <groupId>com.github.DevNatan</groupId>
     <artifactId>inventory-framework</artifactId>
-    <version>2.4.0</version>
+    <version>2.4.1</version>
     <scope>provided</scope>
 </dependency>
 ```
