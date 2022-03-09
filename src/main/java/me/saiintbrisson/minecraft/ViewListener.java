@@ -129,6 +129,14 @@ public class ViewListener implements Listener {
 			if (handleMoveIn(view, context, e))
 				return;
 
+			// cannot move items to the view inventory with shift click
+			if (action == InventoryAction.MOVE_TO_OTHER_INVENTORY
+				&& e.getClick().isShiftClick()
+			) {
+				e.setCancelled(true);
+				return;
+			}
+
 			if (action != InventoryAction.PLACE_ALL &&
 				action != InventoryAction.PLACE_ONE &&
 				action != InventoryAction.PLACE_SOME &&
