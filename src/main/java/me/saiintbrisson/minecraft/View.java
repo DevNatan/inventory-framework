@@ -26,7 +26,7 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 	private ViewFrame frame;
 	private boolean cancelOnClick, cancelOnPickup, cancelOnDrop, cancelOnDrag, cancelOnClone;
 	private boolean cancelOnMoveIn, cancelOnMoveOut, cancelOnShiftClick,
-		clearCursorOnClose,	closeOnOutsideClick;
+		clearCursorOnClose, closeOnOutsideClick;
 
 	public View() {
 		this(0);
@@ -251,7 +251,7 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 	 * Defines whether or not to click on items in the inventory.
 	 *
 	 * @param cancelOnClick <code>true</code> if click should be cancelled or
-	 *                       <code>false</code> otherwise.
+	 *                      <code>false</code> otherwise.
 	 */
 	public final void setCancelOnClick(final boolean cancelOnClick) {
 		this.cancelOnClick = cancelOnClick;
@@ -270,7 +270,7 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 	 * Defines whether the player is allowed to pick up items while the view is open.
 	 *
 	 * @param cancelOnPickup <code>true</code> to cancel item pickup while
-	 *                          view is open or <code>false</code> otherwise.
+	 *                       view is open or <code>false</code> otherwise.
 	 */
 	public final void setCancelOnPickup(final boolean cancelOnPickup) {
 		this.cancelOnPickup = cancelOnPickup;
@@ -323,7 +323,7 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 	 * Defines whether or not to move items to the view's inventory.
 	 *
 	 * @param cancelOnMoveIn <code>true</code> to cancel the move into
-	 *                        view's inventory or <code>false</code> otherwise
+	 *                       view's inventory or <code>false</code> otherwise
 	 */
 	public final void setCancelOnMoveIn(boolean cancelOnMoveIn) {
 		this.cancelOnMoveIn = cancelOnMoveIn;
@@ -592,6 +592,21 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 		@NotNull ViewSlotContext from,
 		@NotNull ViewSlotContext to
 	) {
+	}
+
+	/**
+	 * Called when a player uses the hot bar key button.
+	 * <p>
+	 * This context is non-cancelable.
+	 *
+	 * @param context      The current view context.
+	 * @param hotbarButton The interacted hot bar button.
+	 */
+	protected void onHotbarInteract(
+		@NotNull ViewContext context,
+		int hotbarButton
+	) {
+
 	}
 
 	@Override

@@ -12,6 +12,7 @@ import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
@@ -103,6 +104,15 @@ public class ViewListener implements Listener {
 		}
 
 		final InventoryAction action = e.getAction();
+		final int hotBarButton = e.getHotbarButton();
+		if (hotBarButton != -1) {
+			final ViewContext context = getContextOrNull(view, player);
+			if (context == null)
+				return;
+
+			view.onHotbarInteract(context, hotBarButton);
+		}
+
 		if (action == InventoryAction.NOTHING)
 			return;
 
@@ -115,14 +125,9 @@ public class ViewListener implements Listener {
 			return;
 		}
 
-		final ViewContext context = view.getContext(player);
-
-		// for some reason I haven't figured out which one yet, it's possible
-		// that the View's inventory is open and the context doesn't exist,
-		// so we check to see if it's null
-		if (context == null) {
+		final ViewContext context = getContextOrNull(view, player);
+		if (context == null)
 			return;
-		}
 
 		// move in and out handling
 		if (bottomInventoryClick) {
@@ -399,6 +404,22 @@ public class ViewListener implements Listener {
 		}
 
 		return false;
+	}
+
+	private ViewContext getContextOrNull(
+		@NotNull View view,
+		@NotNull Player player
+	) {
+		final ViewContext context = view.getContext(player);
+
+		// for some reason I haven't figured out which one yet, it's possible
+		// that the View's inventory is open and the context doesn't exist,
+		// so we check to see if it's null
+		if (context == null) {
+			return null;
+		}
+
+		return context;
 	}
 
 }
