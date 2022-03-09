@@ -135,12 +135,6 @@ public class ViewListener implements Listener {
 				action != InventoryAction.SWAP_WITH_CURSOR)
 				return;
 
-			// cannot to handle move in/out since item move not possible
-			if (view.isCancelOnClick()) {
-				e.setCancelled(true);
-				return;
-			}
-
 			ItemStack swappedItem = null;
 			if (action == InventoryAction.SWAP_WITH_CURSOR)
 				swappedItem = e.getCurrentItem();
