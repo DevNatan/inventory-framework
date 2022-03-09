@@ -52,6 +52,7 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 		cancelOnClone = true;
 		cancelOnMoveOut = true;
 		cancelOnShiftClick = true;
+		closeOnOutsideClick = true;
 	}
 
 	public static void enableFeaturePreview(@NotNull String feature) {
