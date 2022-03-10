@@ -249,7 +249,7 @@ public class ViewListener implements Listener {
 		if (item.isOverrideCancelOnClick())
 			e.setCancelled(item.isCancelOnClick());
 
-		if ((view.isCancelOnShiftClick() || item.isOverrideCancelOnShiftClick()) && click.isShiftClick())
+		if (!e.isCancelled() && (view.isCancelOnShiftClick() || item.isOverrideCancelOnShiftClick()) && click.isShiftClick())
 			e.setCancelled(view.isCancelOnShiftClick() || item.isCancelOnShiftClick());
 
 		if (!e.isCancelled()) {
