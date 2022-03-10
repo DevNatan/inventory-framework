@@ -84,7 +84,8 @@ public class ViewListener implements Listener {
 			return;
 
 		if (view.getFrame().isDebugEnabled()) {
-			player.sendMessage("[IF DEBUG] interacting with view");
+			player.sendMessage("[IF DEBUG] interacting with view (already " +
+				"cancelled = " + e.isCancelled() + ")");
 			player.sendMessage("[IF DEBUG] tracked slot: " + e.getSlotType());
 			player.sendMessage("[IF DEBUG] tracked click: " + e.getClick());
 		}
