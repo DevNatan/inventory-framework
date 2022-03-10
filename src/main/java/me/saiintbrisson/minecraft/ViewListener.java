@@ -58,15 +58,16 @@ public class ViewListener implements Listener {
 		if (view == null)
 			return;
 
+		if (!view.isCancelOnDrag())
+			return;
+
 		final int size = inventory.getSize();
 		for (int slot : e.getRawSlots()) {
 			if (!(slot < size))
 				continue;
 
-			if (view.isCancelOnDrag()) {
-				e.setCancelled(true);
-				break;
-			}
+			e.setCancelled(true);
+			break;
 		}
 	}
 
