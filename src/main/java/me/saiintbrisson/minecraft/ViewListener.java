@@ -83,6 +83,12 @@ public class ViewListener implements Listener {
 		if (view == null)
 			return;
 
+		if (view.getFrame().isDebugEnabled()) {
+			player.sendMessage("[IF DEBUG] interacting with view");
+			player.sendMessage("[IF DEBUG] tracked slot: " + e.getSlotType());
+			player.sendMessage("[IF DEBUG] tracked click: " + e.getClick());
+		}
+
 		if (e.getSlotType() == InventoryType.SlotType.OUTSIDE) {
 			e.setCancelled(true);
 
@@ -97,6 +103,9 @@ public class ViewListener implements Listener {
 		}
 
 		final InventoryAction action = e.getAction();
+		if (view.getFrame().isDebugEnabled())
+			player.sendMessage("[IF DEBUG] tracked action: " + action);
+
 		if (action == InventoryAction.UNKNOWN ||
 			action == InventoryAction.NOTHING) {
 			e.setCancelled(true);
@@ -214,6 +223,10 @@ public class ViewListener implements Listener {
 		view.runCatching(globalClick, () -> view.onClick(globalClick));
 
 		e.setCancelled(e.isCancelled() || globalClick.isCancelled());
+
+		if (globalClick.isCancelled())
+			return;
+
 		if (item == null) {
 			final ViewItem holdingItem = resolveReleasableItem(view, context);
 			if (holdingItem != null)
@@ -223,9 +236,6 @@ public class ViewListener implements Listener {
 
 			return;
 		}
-
-		if (globalClick.isCancelled())
-			return;
 
 		final ViewSlotContext slotContext = new DelegatedViewContext(context,
 			slot, stack, e);
