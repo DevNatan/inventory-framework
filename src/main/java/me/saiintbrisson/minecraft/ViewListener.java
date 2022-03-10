@@ -37,14 +37,6 @@ public class ViewListener implements Listener {
 		if (inventory.getType() != InventoryType.CHEST)
 			throw new UnsupportedOperationException("Views is only supported on chest-type inventory.");
 
-		final ViewContext context = view.getContext(player);
-
-		// for some reason I haven't figured out which one yet,
-		// it's possible that the View's inventory is open and the context doesn't exist,
-		// so we check to see if it's null
-		if (context == null)
-			return null;
-
 		return view;
 	}
 
