@@ -40,6 +40,7 @@ public class ViewListener implements Listener {
 		return view;
 	}
 
+	@SuppressWarnings("unused")
 	@EventHandler
 	public void onViewPluginDisable(final PluginDisableEvent e) {
 		if (!frame.getOwner().equals(e.getPlugin()))
@@ -48,6 +49,7 @@ public class ViewListener implements Listener {
 		frame.unregister();
 	}
 
+	@SuppressWarnings("unused")
 	@EventHandler
 	public void onViewItemDrag(final InventoryDragEvent e) {
 		if (!(e.getWhoClicked() instanceof Player))
@@ -71,6 +73,7 @@ public class ViewListener implements Listener {
 		}
 	}
 
+	@SuppressWarnings("unused")
 	@EventHandler
 	public void onViewClick(final InventoryClickEvent e) {
 		if (!(e.getWhoClicked() instanceof Player))
@@ -90,16 +93,12 @@ public class ViewListener implements Listener {
 			player.sendMessage("[IF DEBUG] tracked click: " + e.getClick());
 		}
 
+		final ViewContext context = getContextOrThrow(view, player);
 		if (e.getSlotType() == InventoryType.SlotType.OUTSIDE) {
 			e.setCancelled(true);
 
-			if (view.isCloseOnOutsideClick()) {
-				final ViewContext context = view.getContext(player);
-				if (context == null)
-					return;
-
+			if (view.isCloseOnOutsideClick())
 				context.closeNow();
-			}
 			return;
 		}
 
@@ -113,27 +112,20 @@ public class ViewListener implements Listener {
 			return;
 		}
 
-		final int hotBarButton = e.getHotbarButton();
-		if (hotBarButton != -1) {
-			final ViewContext context = getContextOrNull(view, player);
-			if (context == null)
-				return;
-
-			view.onHotbarInteract(context, hotBarButton);
-		}
+		if (e.getClick() == ClickType.NUMBER_KEY)
+			view.onHotbarInteract(context, e.getHotbarButton());
 
 		final ItemStack cursor = e.getCursor();
 		final int slot = e.getSlot();
 
 		final boolean bottomInventoryClick = !(e.getRawSlot() < inventory.getSize());
+		if (bottomInventoryClick && view.getFrame().isDebugEnabled())
+			player.sendMessage("[IF DEBUG] bottom inventory click");
+
 		if (!bottomInventoryClick && action == InventoryAction.CLONE_STACK && view.isCancelOnClone()) {
 			e.setCancelled(true);
 			return;
 		}
-
-		final ViewContext context = getContextOrNull(view, player);
-		if (context == null)
-			return;
 
 		// move in and out handling
 		if (bottomInventoryClick) {
@@ -232,7 +224,7 @@ public class ViewListener implements Listener {
 			final ViewItem holdingItem = resolveReleasableItem(view, context);
 			if (holdingItem != null)
 				releaseAt(new DelegatedViewContext(context,
-					holdingItem.getSlot(), stack, e), slot, cursor,
+						holdingItem.getSlot(), stack, e), slot, cursor,
 					e.getClickedInventory());
 
 			return;
@@ -269,6 +261,7 @@ public class ViewListener implements Listener {
 			Bukkit.getScheduler().runTask(frame.getOwner(), slotContext::closeNow);
 	}
 
+	@SuppressWarnings("unused")
 	@EventHandler
 	public void onViewClose(final InventoryCloseEvent e) {
 		if (!(e.getPlayer() instanceof Player))
@@ -309,6 +302,7 @@ public class ViewListener implements Listener {
 		view.remove(context);
 	}
 
+	@SuppressWarnings("unused")
 	@EventHandler
 	public void onDropItemOnView(final PlayerDropItemEvent e) {
 		final View view = getView(e.getPlayer().getOpenInventory().getTopInventory(), e.getPlayer());
@@ -318,6 +312,7 @@ public class ViewListener implements Listener {
 		e.setCancelled(view.isCancelOnDrop());
 	}
 
+	@SuppressWarnings("unused")
 	@EventHandler
 	public void onPickupItemOnView(final PlayerPickupItemEvent e) {
 		final View view = getView(e.getPlayer().getOpenInventory().getTopInventory(), e.getPlayer());
@@ -366,9 +361,9 @@ public class ViewListener implements Listener {
 	/**
 	 * Handles the action of moving an item from the player's inventory to the view's inventory.
 	 *
-	 * @param view The view itself.
+	 * @param view    The view itself.
 	 * @param context The current player context.
-	 * @param event The event related to the movement.
+	 * @param event   The event related to the movement.
 	 */
 	private boolean handleMoveIn(final View view, final ViewContext context, final InventoryClickEvent event) {
 		if (!View.isFeatureEnabled(ViewFeature.MOVE_IN))
@@ -418,7 +413,7 @@ public class ViewListener implements Listener {
 		return false;
 	}
 
-	private ViewContext getContextOrNull(
+	private @NotNull ViewContext getContextOrThrow(
 		@NotNull View view,
 		@NotNull Player player
 	) {
@@ -427,9 +422,8 @@ public class ViewListener implements Listener {
 		// for some reason I haven't figured out which one yet, it's possible
 		// that the View's inventory is open and the context doesn't exist,
 		// so we check to see if it's null
-		if (context == null) {
-			return null;
-		}
+		if (context == null)
+			throw new IllegalStateException("View context cannot be null to " + player.getName() + " in " + view.getClass().getName());
 
 		return context;
 	}
