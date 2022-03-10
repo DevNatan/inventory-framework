@@ -104,6 +104,12 @@ public class ViewListener implements Listener {
 		}
 
 		final InventoryAction action = e.getAction();
+		if (action == InventoryAction.UNKNOWN ||
+			action == InventoryAction.NOTHING) {
+			e.setCancelled(true);
+			return;
+		}
+
 		final int hotBarButton = e.getHotbarButton();
 		if (hotBarButton != -1) {
 			final ViewContext context = getContextOrNull(view, player);
@@ -112,9 +118,6 @@ public class ViewListener implements Listener {
 
 			view.onHotbarInteract(context, hotBarButton);
 		}
-
-		if (action == InventoryAction.NOTHING)
-			return;
 
 		final ItemStack cursor = e.getCursor();
 		final int slot = e.getSlot();
