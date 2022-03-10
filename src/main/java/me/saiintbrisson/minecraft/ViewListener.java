@@ -93,7 +93,20 @@ public class ViewListener implements Listener {
 			player.sendMessage("[IF DEBUG] tracked click: " + e.getClick());
 		}
 
-		final ViewContext context = getContextOrThrow(view, player);
+		final ViewContext context;
+		try {
+			context = getContextOrThrow(view, player);
+		} catch (final IllegalStateException ex) {
+			e.setCancelled(true);
+
+			if (view.getFrame().isDebugEnabled())
+				player.sendMessage("[IF DEBUG] null view context detected");
+
+			Bukkit.getScheduler().runTask(frame.getOwner(), player::closeInventory);
+			ex.printStackTrace();
+			return;
+		}
+
 		if (e.getSlotType() == InventoryType.SlotType.OUTSIDE) {
 			e.setCancelled(true);
 
@@ -106,14 +119,15 @@ public class ViewListener implements Listener {
 		if (view.getFrame().isDebugEnabled())
 			player.sendMessage("[IF DEBUG] tracked action: " + action);
 
-		if (action == InventoryAction.UNKNOWN ||
-			action == InventoryAction.NOTHING) {
+		if (e.getClick() == ClickType.NUMBER_KEY)
+			view.onHotbarInteract(context, e.getHotbarButton());
+
+		if (e.getClick() != ClickType.NUMBER_KEY && (
+			action == InventoryAction.UNKNOWN || action == InventoryAction.NOTHING
+		)) {
 			e.setCancelled(true);
 			return;
 		}
-
-		if (e.getClick() == ClickType.NUMBER_KEY)
-			view.onHotbarInteract(context, e.getHotbarButton());
 
 		final ItemStack cursor = e.getCursor();
 		final int slot = e.getSlot();
