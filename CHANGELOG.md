@@ -6,6 +6,7 @@
 * New `onHotbarInteract(...)` to handle hotbar button interacts.
 
 # 2.4.2
+* Previous and next page items aren't displayed if item slot is manually defined ([#44](i44))
 * Add Jetbrains annotations as transitive dependency ([#45](i45))
 
 # 2.4.1
@@ -55,4 +56,5 @@
 [i31]: https://github.com/DevNatan/inventory-framework/issues/31
 [i32]: https://github.com/DevNatan/inventory-framework/issues/32
 [i40]: https://github.com/DevNatan/inventory-framework/issues/40
+[i44]: https://github.com/DevNatan/inventory-framework/issues/44
 [i45]: https://github.com/DevNatan/inventory-framework/issues/45
