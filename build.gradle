@@ -1,7 +1,7 @@
 import org.apache.tools.ant.filters.ReplaceTokens
 
 plugins {
-    id 'java'
+    id 'java-library'
     id 'maven-publish'
 }
 
@@ -17,11 +17,11 @@ repositories {
 
 dependencies {
     compileOnly libs.spigot.api
-    compileOnly libs.jetbrains.annotations
+    compileOnlyApi libs.jetbrains.annotations
+    testCompileOnly libs.jetbrains.annotations
     testImplementation libs.junit.api
     testRuntimeOnly libs.junit.engine
     testImplementation libs.spigot.api
-    testCompileOnly libs.jetbrains.annotations
 }
 
 test {
