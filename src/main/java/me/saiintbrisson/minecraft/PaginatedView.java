@@ -3,6 +3,7 @@ package me.saiintbrisson.minecraft;
 import me.saiintbrisson.minecraft.utils.Paginator;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Stack;
@@ -17,6 +18,9 @@ public abstract class PaginatedView<T> extends View {
     private static final char NEXT_PAGE_CHAR = '>';
     private static final char EMPTY_SLOT_CHAR = 'X';
     private static final char ITEM_SLOT_CHAR = 'O';
+
+	private static final int NAVIGATE_LEFT = -1;
+	private static final int NAVIGATE_RIGHT = 1;
 
     private Paginator<T> paginator;
     private int offset, limit;
@@ -92,80 +96,84 @@ public abstract class PaginatedView<T> extends View {
         this.limit = limit;
     }
 
-    protected final ViewItem resolvePreviousPageItem(PaginatedViewContext<T> context) {
-        final ViewFrame frame = getFrame();
-        if (frame == null)
-            throw new IllegalArgumentException("View frame cannot be null");
+	private ViewItem resolveNavigationItem(
+		@NotNull PaginatedViewContext<T> context,
+		int direction
+	) {
+		final ViewFrame frame = getFrame();
+		if (frame == null)
+			throw new IllegalArgumentException("View frame cannot be null");
 
-        ViewItem item = getPreviousPageItem(context);
-        if (item == null) {
-            final Function<PaginatedViewContext<?>, ViewItem> fallback = getFrame().getDefaultPreviousPageItem();
-            if (fallback == null)
-                return null;
+		ViewItem item = direction == NAVIGATE_LEFT
+			? getPreviousPageItem(context)
+			: getNextPageItem(context);
+		if (item == null) {
+			final Function<PaginatedViewContext<?>, ViewItem> fallback =
+				direction == NAVIGATE_LEFT
+					? getFrame().getDefaultPreviousPageItem()
+					: getFrame().getDefaultNextPageItem();
+			if (fallback == null)
+				return null;
 
-            item = fallback.apply(context);
-        }
+			item = fallback.apply(context);
+		}
 
-        return item;
-    }
+		return item;
+	}
 
-    protected final ViewItem resolveNextPageItem(PaginatedViewContext<T> context) {
-        final ViewFrame frame = getFrame();
-        if (frame == null)
-            throw new IllegalArgumentException("View frame cannot be null");
+	private void updateNavigationItem(
+		@NotNull PaginatedViewContext<T> context,
+		int direction
+	) {
+		int expectedSlot = getExpectedNavigationItemSlot(context,
+			direction);
 
-        ViewItem item = getNextPageItem(context);
-        if (item == null) {
-            final Function<PaginatedViewContext<?>, ViewItem> fallback = getFrame().getDefaultNextPageItem();
-            if (fallback == null)
-                return null;
+		ViewItem item = null;
+		if (expectedSlot == UNSET_SLOT) {
+			// check if item was manually set
+			// https://github.com/DevNatan/inventory-framework/issues/43
+			item = resolveNavigationItem(context, direction);
 
-            item = fallback.apply(context);
-        }
+			if (item != null && item.getSlot() != UNSET_SLOT) {
+				if (direction == NAVIGATE_LEFT)
+					context.setPreviousPageItemSlot((expectedSlot = item.getSlot()));
+				else
+					context.setNextPageItemSlot((expectedSlot = item.getSlot()));
+			}
+			else return;
+		}
 
-        return item;
-    }
+		// try to resolve again if not resolved
+		if (item == null)
+			item = resolveNavigationItem(context, direction);
 
-    private void updateNavigationPreviousItem(PaginatedViewContext<T> context) {
-        if (context.getPreviousPageItemSlot() == UNSET_SLOT)
-            return;
-
-        final ViewItem item = resolvePreviousPageItem(context);
-        if (item == null) {
-            clearSlot(context, context.getPreviousPageItemSlot());
-            return;
-        }
-
-        // checking if the item already has a native click handler
-        // will make it possible to have custom handlers.
-        if (item.getClickHandler() == null)
-            item.onClick(ctx -> ctx.paginated().switchToPreviousPage());
-
-        render(context, item.withCancelOnClick(true), context.getPreviousPageItemSlot());
-    }
-
-    private void updateNavigationNextItem(PaginatedViewContext<T> context) {
-        if (context.getNextPageItemSlot() == UNSET_SLOT)
+		if (item == null) {
+			clearSlot(context, expectedSlot);
 			return;
+		}
 
-        final ViewItem item = resolveNextPageItem(context);
-        if (item == null) {
-            clearSlot(context, context.getNextPageItemSlot());
-            return;
-        }
+		// checking if the item already has a native click handler
+		// will make it possible to have custom handlers.
+		if (item.getClickHandler() == null)
+			item.onClick(ctx -> {
+				if (direction == NAVIGATE_LEFT) ctx.paginated().switchToPreviousPage();
+				else ctx.paginated().switchToNextPage();
+			});
 
-        // checking if the item already has a native click handler
-        // will make it possible to have custom handlers.
-        if (item.getClickHandler() == null)
-            item.onClick(ctx -> ctx.paginated().switchToNextPage());
+		render(context, item.withCancelOnClick(true), expectedSlot);
+	}
 
-        render(context, item.withCancelOnClick(true), context.getNextPageItemSlot());
-    }
+	private int getExpectedNavigationItemSlot(
+		@NotNull PaginatedViewContext<T> context,
+		int direction
+	) {
+		return direction == NAVIGATE_LEFT ?
+			context.getPreviousPageItemSlot() : context.getNextPageItemSlot();
+	}
 
     private void updateNavigation(PaginatedViewContext<T> context) {
-        updateNavigationPreviousItem(context);
-        updateNavigationNextItem(context);
-
+		updateNavigationItem(context, NAVIGATE_LEFT);
+		updateNavigationItem(context, NAVIGATE_RIGHT);
     }
 
 	public void render(ViewContext context, ViewItem item, int slot) {
@@ -312,14 +320,14 @@ public abstract class PaginatedView<T> extends View {
                     }
                     case PREVIOUS_PAGE_CHAR: {
                     	if (render) {
-							resolvePreviousPageItem(context);
+							resolveNavigationItem(context, NAVIGATE_LEFT);
 							context.setPreviousPageItemSlot(targetSlot);
 						}
                         break;
                     }
                     case NEXT_PAGE_CHAR: {
                         if (render) {
-							resolveNextPageItem(context);
+							resolveNavigationItem(context, NAVIGATE_RIGHT);
 							context.setNextPageItemSlot(targetSlot);
 						}
                         break;
