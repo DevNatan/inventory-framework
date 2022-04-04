@@ -235,8 +235,10 @@ public abstract class PaginatedView<T> extends View {
         if (override == null) {
             final PaginatedViewSlotContext<T> slotContext = new PaginatedViewSlotContext<>(context, index, slot);
             item.setPaginationItem(true);
-            onPaginationItemRender(slotContext, item, value);
-			onItemRender(slotContext, item, value);
+			runCatching(context, () -> {
+				onPaginationItemRender(slotContext, item, value);
+				onItemRender(slotContext, item, value);
+			});
             render(slotContext, item, slot);
         } else {
         	// we need to reset the initial rendering function of the overlaid item if not,
