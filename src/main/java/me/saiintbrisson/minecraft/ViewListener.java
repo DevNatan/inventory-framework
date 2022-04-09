@@ -112,6 +112,8 @@ public class ViewListener implements Listener {
 
 			if (view.isCloseOnOutsideClick())
 				context.closeNow();
+
+			view.onClickOutside(context);
 			return;
 		}
 

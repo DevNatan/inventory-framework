@@ -530,6 +530,9 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 	protected void onClick(@NotNull ViewSlotContext context) {
 	}
 
+	protected void onClickOutside(@NotNull ViewContext context) {
+	}
+
 	/**
 	 * Called when the view is updated for a player.
 	 * <p>
