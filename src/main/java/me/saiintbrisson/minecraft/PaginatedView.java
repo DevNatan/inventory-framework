@@ -26,8 +26,12 @@ public abstract class PaginatedView<T> extends View {
     private int offset, limit;
 
     public PaginatedView() {
-        this(null, 3, "");
+        this(null, 0, "");
     }
+
+	public PaginatedView(int rows) {
+		this(null, rows, "");
+	}
 
     public PaginatedView(int rows, String title) {
         this(null, rows, title);
