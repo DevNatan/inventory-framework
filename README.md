@@ -736,7 +736,24 @@ or until removed.
 ```java
 view.open(player,new HashMap<String,Object>(){{
         put("key","value");
-        }});
+}});
+```
+
+While in one context, there is a shortener method that takes the player itself as a parameter to the opening method, 
+so you don't need to pass anything other than the target view you want to open.
+```java
+viewContext.open(view);
+viewContext.open(view, data);
+```
+
+If you want to reuse the data from the current context in other views, for example: a user that was defined only once 
+to save resources, use the `transitiveData` parameter of the open function to transfer the data from your current context 
+to the next, which will open.
+```java
+viewContext.open(view, true);
+
+// You can still use custom data, which will be merged with the current data.
+viewContext.open(view, data, true);
 ```
 
 To close an inventory view you can use `View.close`, but pay close attention... This will close the
