@@ -9,6 +9,7 @@ Bukkit inventory framework used in some of my projects, feel free to use it. Lea
 * [Setup](#setup)
 * [Preventing Library Conflicts](#preventing-library-conflicts)
 * [Getting Started](#getting-started)
+    * [Options](#options)
     * [Interaction handling](#interaction-handling)
     * [Managing Data Between Contexts](#managing-data-between-contexts)
     * [Error Handling](#error-handling)
@@ -136,6 +137,25 @@ public final class MyView extends View {
 
 }
 ```
+
+### Options
+The Inventory Framework aims to make your life easier when discussing interactions handling,
+so there are a number of options you can enable or disable that target specific views.
+For example, you can cancel the click on the entire view just by changing the `cancelOnClick` option.
+
+| Property name              | Default Value | Description                                                                                                                                                                                                                           |
+|----------------------------|---------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| cancelOnClick              | `false`       | Enabling will cancel every click in the view by default. You can do individual treatments per slot using contexts (this will be explained later), by disabling this click so only clicks that are not in that slot will be cancelled. |
+| cancelOnShiftClick         | `true`        | Cancels when the player tries to shift-click items within the view's inventory.                                                                                                                                                       |                                                                                                                                                      |
+| cancelOnPickup             | `true`        | Cancels picking up items while the view's inventory is open.                                                                                                                                                                          |
+| cancelOnDrop               | `true`        | Cancels item drops while the view's inventory is open.                                                                                                                                                                                |
+| cancelOnClone              | `true`        | Cancels cloning of items using the middle mouse button.                                                                                                                                                                               |
+| cancelOnDrag               | `true`        | Cancels dragging items into the view's inventory.                                                                                                                                                                                     |
+| closeOnOutsideClick        | `true`        | Closes the view's inventory when the player clicks outside the inventory.                                                                                                                                                             |
+| cancelOnMoveOut            | `true`        | Cancels when a player tries to move items from the view's inventory to the player's inventory.                                                                                                                                        |
+| cancelOnMoveIn *(v2.4.0+)* | `true`        | Cancels when a player tries to move items from the player's inventory to the view's inventory.                                                                                                                                        |
+
+All these options can be handled by the developer himself through the View handlers.
 
 ### Interaction handling
 
