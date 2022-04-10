@@ -6,6 +6,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
 import java.util.List;
 
 import static me.saiintbrisson.minecraft.View.UNSET_SLOT;
@@ -179,7 +180,7 @@ public class PaginatedViewContext<T> extends ViewContext {
 	 * @return The paging source for all pages, the one defined earlier.
 	 */
 	public List<T> getSource() {
-		return getPaginator().getSource();
+		return Collections.unmodifiableList(getPaginator().getSource());
 	}
 
 	/**
@@ -189,7 +190,9 @@ public class PaginatedViewContext<T> extends ViewContext {
 	 * @return The paging source for a specific page.
 	 */
 	public List<T> getSource(int page) {
-		return getPaginator().getPage(Math.min(page, getPagesCount()));
+		return Collections.unmodifiableList(
+			getPaginator().getPage(Math.min(page, getPagesCount()))
+		);
 	}
 
 	@SuppressWarnings({"unchecked", "rawtypes"})
