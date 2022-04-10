@@ -153,7 +153,7 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 		final Inventory inventory = getInventory(preOpenContext.getInventoryTitle(), inventorySize);
 		final ViewContext context = createContext(this, player, inventory);
 		contexts.put(player.getName(), context);
-		onRender(context);
+		runCatching(context, () -> onRender(context));
 		render(context);
 		player.openInventory(inventory);
 	}
