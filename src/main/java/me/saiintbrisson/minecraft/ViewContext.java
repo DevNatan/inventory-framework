@@ -294,6 +294,15 @@ public class ViewContext extends VirtualView {
 	}
 
 	/**
+	 * The title of the player's currently open inventory.
+	 *
+	 * @return The title of the player's inventory.
+	 */
+	public @NotNull String getTitle() {
+		return player.getOpenInventory().getTitle();
+	}
+
+	/**
 	 * Updates the title of the inventory for the client of the player who owns this context.
 	 * <p>
 	 * Notes:
