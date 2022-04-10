@@ -140,7 +140,7 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 			clearData(player);
 		}
 
-		onOpen(preOpenContext);
+		runCatching(preOpenContext, () -> onOpen(preOpenContext));
 		if (preOpenContext.isCancelled()) {
 			clearData(player);
 			return;
