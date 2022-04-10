@@ -200,7 +200,18 @@ public class ViewContext extends VirtualView {
 	 * @param view The view to be opened.
 	 */
 	public void open(Class<? extends View> view) {
-		open(view, null);
+		open(view, null, false);
+	}
+
+	/**
+	 * Opens the specified view for users in that context.
+	 *
+	 * @param view The view to be opened.
+	 * @param transitiveData Whether data from this context should be passed to the next one,
+	 *                       to the view that will be opened.
+	 */
+	public void open(Class<? extends View> view, boolean transitiveData) {
+		open(view, null, transitiveData);
 	}
 
 	/**
