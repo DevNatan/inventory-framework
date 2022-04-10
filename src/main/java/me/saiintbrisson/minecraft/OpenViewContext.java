@@ -2,6 +2,7 @@ package me.saiintbrisson.minecraft;
 
 import com.google.common.base.Preconditions;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 
 import static me.saiintbrisson.minecraft.View.INVENTORY_ROW_SIZE;
@@ -18,6 +19,14 @@ public final class OpenViewContext extends ViewContext {
 	public OpenViewContext(@NotNull View view, @NotNull Player player) {
 		super(view, player, view.getLastSlot() + 1);
 		inventorySize = view.getItems().length;
+	}
+
+	@Override
+	public Inventory getInventory() {
+		throw new IllegalStateException(
+			"It is not allowed to manipulate or try to get the inventory instance in the initial open handler " +
+			"because the inventory has not yet been created. If you really need it, use `onRender` instead."
+		);
 	}
 
 	/**
