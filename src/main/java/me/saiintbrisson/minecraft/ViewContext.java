@@ -197,20 +197,38 @@ public class ViewContext extends VirtualView {
 	/**
 	 * Opens the specified view for users in that context.
 	 *
-	 * @param view the view to be open.
+	 * @param view The view to be opened.
 	 */
 	public void open(Class<? extends View> view) {
-		this.view.getFrame().open(view, player);
+		open(view, null);
 	}
 
 	/**
 	 * Opens the specified view for users in that context with the specified data.
 	 *
-	 * @param view the view to be open.
-	 * @param data custom data.
+	 * @param view The view to be opened.
+	 * @param data Custom context data.
 	 */
 	public void open(Class<? extends View> view, Map<String, Object> data) {
-		this.view.getFrame().open(view, player, data);
+		open(view, data, false);
+	}
+
+	/**
+	 * Opens the specified view for users in that context with the specified data and/or transitive data.
+	 *
+	 * @param view           The view to be opened.
+	 * @param data           Custom context data.
+	 * @param transitiveData Whether data from this context should be passed to the next one,
+	 *                       to the view that will be opened.
+	 */
+	public void open(Class<? extends View> view, Map<String, Object> data, boolean transitiveData) {
+		Map<String, Object> contextData = data;
+		if (transitiveData) {
+			contextData = new HashMap<>(getData());
+			contextData.putAll(data);
+		}
+
+		this.view.getFrame().open(view, player, contextData);
 	}
 
 	public <T> T get(String key) {
