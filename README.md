@@ -36,7 +36,7 @@ build configuration.
 
 ```groovy
 dependencies {
-    compileOnly 'com.github.DevNatan:inventory-framework:2.4.1'
+    compileOnly 'com.github.DevNatan:inventory-framework:2.4.3'
 }
 ```
 
@@ -46,7 +46,7 @@ dependencies {
 <dependency>
     <groupId>com.github.DevNatan</groupId>
     <artifactId>inventory-framework</artifactId>
-    <version>2.4.1</version>
+    <version>2.4.3</version>
     <scope>provided</scope>
 </dependency>
 ```

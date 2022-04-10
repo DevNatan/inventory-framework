@@ -1,9 +1,16 @@
 # Changelog
 
-# 2.5 (unreleased)
-* New `cancelOnMoveIn` option to cancel moving items to the inventory (yet under development can be
-  buggy some times).
-* New `onHotbarInteract(...)` to handle hotbar button interacts.
+# 2.4.3
+* New `onHotbarInteract(...)` to handle hotbar button interactions;
+* Documentation explaining how view options work ([#66][p66]);
+* Allow transitive data context while transitioning to another view ([#48][i48]);
+* Error handling now works on the initial `onRender` ([#51][i51]);
+* Error handling now works on `onOpen` ([#51][i51]);
+* It's now allowed to cancel the initial render handler context, causing the inventory to not be displayed to the player ([#60][p60]);
+* An exception is thrown when trying to manipulate inventory before opening it ([#63][p63]);
+* New PaginatedView(rows) constructor ([#49][i49]);
+* Possibility to get the pagination source from ViewContext ([#62][p62]);
+* Allow getting current title from context inventory ([#56][p56]);
 
 # 2.4.2
 * Previous and next page items aren't displayed if item slot is manually defined ([#44][i44])
@@ -54,9 +61,17 @@
 [p25]: https://github.com/DevNatan/inventory-framework/pull/25
 [p26]: https://github.com/DevNatan/inventory-framework/pull/26
 [p27]: https://github.com/DevNatan/inventory-framework/pull/27
+[p56]: https://github.com/DevNatan/inventory-framework/pull/56
+[p60]: https://github.com/DevNatan/inventory-framework/pull/60
+[p62]: https://github.com/DevNatan/inventory-framework/pull/62
+[p63]: https://github.com/DevNatan/inventory-framework/pull/63
+[p66]: https://github.com/DevNatan/inventory-framework/pull/66
 [i31]: https://github.com/DevNatan/inventory-framework/issues/31
 [i32]: https://github.com/DevNatan/inventory-framework/issues/32
 [i40]: https://github.com/DevNatan/inventory-framework/issues/40
 [i41]: https://github.com/DevNatan/inventory-framework/issues/41
 [i44]: https://github.com/DevNatan/inventory-framework/issues/44
 [i45]: https://github.com/DevNatan/inventory-framework/issues/45
+[i48]: https://github.com/DevNatan/inventory-framework/issues/48
+[i49]: https://github.com/DevNatan/inventory-framework/issues/49
+[i51]: https://github.com/DevNatan/inventory-framework/issues/51
