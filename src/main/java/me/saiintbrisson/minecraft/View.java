@@ -152,8 +152,20 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 
 		final Inventory inventory = getInventory(preOpenContext.getInventoryTitle(), inventorySize);
 		final ViewContext context = createContext(this, player, inventory);
-		contexts.put(player.getName(), context);
-		onRender(context);
+
+		synchronized (contexts) {
+			contexts.put(player.getName(), context);
+		}
+
+		runCatching(context, () -> onRender(context));
+		if (context.isCancelled()) {
+			clearData(player);
+			synchronized (contexts) {
+				contexts.remove(player.getName());
+			}
+			return;
+		}
+
 		render(context);
 		player.openInventory(inventory);
 	}
@@ -470,7 +482,7 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 	 * without even doing any handling related to the inventory.
 	 * <p>
 	 * It is not possible to manipulate the inventory in this handler, if it
-	 * happens a exception will be thrown.
+	 * happens an exception will be thrown.
 	 *
 	 * @param context The player view context.
 	 */
