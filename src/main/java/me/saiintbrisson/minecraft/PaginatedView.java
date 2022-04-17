@@ -6,6 +6,7 @@ import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Stack;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -291,20 +292,20 @@ public abstract class PaginatedView<T> extends View {
             }
         }
 
-//		for (final LayoutPattern pattern : getLayoutPatterns()) {
-//			for (final int slot : pattern.getSlots()) {
-//				final ViewItem item = pattern.getFactory().get();
-//				if (item.getSlot() != UNSET_SLOT)
-//					throw new IllegalStateException(
-//						"Items defined through the layout pattern's item factory cannot have a pre-defined slot." +
-//						"Use `item()` instead of `slot(x)`. " +
-//						"Expected: " + UNSET_SLOT + ", given: " + item.getSlot()
-//					);
-//
-//				item.setSlot(slot);
-//				render(context, item, slot);
-//			}
-//		}
+		for (final LayoutPattern pattern : getLayoutPatterns()) {
+			for (final int slot : pattern.getSlots()) {
+				final ViewItem item = pattern.getFactory().get();
+				if (item.getSlot() != UNSET_SLOT)
+					throw new IllegalStateException(
+						"Items defined through the layout pattern's item factory cannot have a pre-defined slot." +
+						"Use `item()` instead of `slot(x)`. " +
+						"Expected: " + UNSET_SLOT + ", given: " + item.getSlot()
+					);
+
+				item.setSlot(slot);
+				render(context, item, slot);
+			}
+		}
     }
 
 	private void resolveLayout(PaginatedViewContext<T> context, String[] layout) {
@@ -321,6 +322,7 @@ public abstract class PaginatedView<T> extends View {
         if (len != columnsLimit)
             throw new IllegalArgumentException("Layout columns must respect the size of the inventory (" + len + " != " + columnsLimit + ")");
 
+		context.itemsLayer = new Stack<>();
         for (int row = 0; row < len; row++) {
             final String layer = layout[row];
             if (layer.length() != INVENTORY_ROW_SIZE)
@@ -354,7 +356,6 @@ public abstract class PaginatedView<T> extends View {
 						final LayoutPattern pattern = getLayoutOrNull(character);
 						if (pattern != null) {
 							pattern.getSlots().push(targetSlot);
-							break;
 						}
 					}
                 }

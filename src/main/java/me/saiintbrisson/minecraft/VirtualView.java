@@ -1,6 +1,5 @@
 package me.saiintbrisson.minecraft;
 
-import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -111,12 +110,6 @@ public class VirtualView {
 //			));
 
 		layoutPatterns.add(new LayoutPattern(character, factory));
-	}
-
-	LayoutPattern getLayout(char character) {
-		return layoutPatterns.stream().filter(pattern -> pattern.getCharacter() == character)
-			.findFirst()
-			.orElseThrow(() -> new IllegalStateException("Layout pattern for \"" + character + "\" not found"));
 	}
 
 	LayoutPattern getLayoutOrNull(char character) {

@@ -26,7 +26,7 @@ public class ViewContext extends VirtualView {
 	protected boolean markedToClose;
 	boolean checkedLayerSignature;
 
-	final Stack<Integer> itemsLayer = new Stack<>();
+	Stack<Integer> itemsLayer;
 	private boolean invalidated;
 	private boolean propagateErrors;
 
