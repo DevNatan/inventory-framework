@@ -1,15 +1,20 @@
 package me.saiintbrisson.minecraft;
 
+import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import static me.saiintbrisson.minecraft.PaginatedView.*;
 import static me.saiintbrisson.minecraft.View.INVENTORY_ROW_SIZE;
 import static me.saiintbrisson.minecraft.View.UNSET_SLOT;
 
@@ -17,6 +22,7 @@ public class VirtualView {
 
 	protected ViewItem[] items;
 	protected String[] layout;
+	protected final List<LayoutPattern> layoutPatterns = new ArrayList<>();
 
 	ViewUpdateJob updateJob;
 	ViewErrorHandler errorHandler;
@@ -81,6 +87,43 @@ public class VirtualView {
 	 */
 	public void setLayout(@Nullable String... layout) {
 		this.layout = layout;
+	}
+
+	public void setLayout(char character, Supplier<ViewItem> factory) {
+		final String name = this instanceof ViewContext ? "context" : "view";
+		if (character == EMPTY_SLOT_CHAR
+			|| character == ITEM_SLOT_CHAR
+			|| character == NEXT_PAGE_CHAR
+			|| character == PREVIOUS_PAGE_CHAR
+		) throw new IllegalArgumentException(String.format(
+			"The \"%c\" character is reserved in the %s layout" +
+				" and cannot be used for backwards compatibility.",
+			character,
+			name
+		));
+
+//		if (layoutPatterns.stream().anyMatch(pattern -> pattern.getCharacter() == character))
+//			throw new IllegalArgumentException(String.format(
+//				"The \"%c\" has already been defined in the %s layout, " +
+//					"it is not allowed to define the same pattern more than once.",
+//				character,
+//				name
+//			));
+
+		layoutPatterns.add(new LayoutPattern(character, factory));
+	}
+
+	LayoutPattern getLayout(char character) {
+		return layoutPatterns.stream().filter(pattern -> pattern.getCharacter() == character)
+			.findFirst()
+			.orElseThrow(() -> new IllegalStateException("Layout pattern for \"" + character + "\" not found"));
+	}
+
+	LayoutPattern getLayoutOrNull(char character) {
+		return layoutPatterns.stream()
+			.filter(pattern -> pattern.getCharacter() == character)
+			.findFirst()
+			.orElse(null);
 	}
 
 	/**
@@ -496,6 +539,10 @@ public class VirtualView {
 	}
 
 	protected void inventoryModificationTriggered() {
+	}
+
+	final List<LayoutPattern> getLayoutPatterns() {
+		return layoutPatterns;
 	}
 
 	@Override

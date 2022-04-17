@@ -25,7 +25,7 @@ public class PaginatedViewContext<T> extends ViewContext {
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public void setLayout(String... layout) {
+	public final void setLayout(String... layout) {
 		// dynamic layout update
 		if (checkedLayerSignature) {
 			getView().getFrame().debug("[context] layout updated");

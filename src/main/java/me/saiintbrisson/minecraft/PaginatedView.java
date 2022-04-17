@@ -6,7 +6,6 @@ import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.Stack;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -14,10 +13,10 @@ import static me.saiintbrisson.minecraft.PaginatedViewContext.FIRST_PAGE;
 
 public abstract class PaginatedView<T> extends View {
 
-    private static final char PREVIOUS_PAGE_CHAR = '<';
-    private static final char NEXT_PAGE_CHAR = '>';
-    private static final char EMPTY_SLOT_CHAR = 'X';
-    private static final char ITEM_SLOT_CHAR = 'O';
+    static final char PREVIOUS_PAGE_CHAR = '<';
+    static final char NEXT_PAGE_CHAR = '>';
+    static final char EMPTY_SLOT_CHAR = 'X';
+    static final char ITEM_SLOT_CHAR = 'O';
 
 	private static final int NAVIGATE_LEFT = -1;
 	private static final int NAVIGATE_RIGHT = 1;
@@ -245,10 +244,9 @@ public abstract class PaginatedView<T> extends View {
 			});
             render(slotContext, item, slot);
         } else {
-        	// we need to reset the initial rendering function of the overlaid item if not,
-			// when we get to the rendering stage of the overlaid item,
-			// the overlaid item's rendering function will be called first
-			// and will render the wrong item.
+        	// we need to reset the initial rendering function of the overlaid item if not, when we get to the rendering
+			// stage of the overlaid item, he overlaid item's rendering function will be called first and will render
+			// the wrong item.
 			override.setUpdateHandler(null);
 
 			// only if there's a fallback item available, clearing it without checking will cause
@@ -292,6 +290,21 @@ public abstract class PaginatedView<T> extends View {
                 clearSlot(context, targetSlot);
             }
         }
+
+//		for (final LayoutPattern pattern : getLayoutPatterns()) {
+//			for (final int slot : pattern.getSlots()) {
+//				final ViewItem item = pattern.getFactory().get();
+//				if (item.getSlot() != UNSET_SLOT)
+//					throw new IllegalStateException(
+//						"Items defined through the layout pattern's item factory cannot have a pre-defined slot." +
+//						"Use `item()` instead of `slot(x)`. " +
+//						"Expected: " + UNSET_SLOT + ", given: " + item.getSlot()
+//					);
+//
+//				item.setSlot(slot);
+//				render(context, item, slot);
+//			}
+//		}
     }
 
 	private void resolveLayout(PaginatedViewContext<T> context, String[] layout) {
@@ -308,7 +321,6 @@ public abstract class PaginatedView<T> extends View {
         if (len != columnsLimit)
             throw new IllegalArgumentException("Layout columns must respect the size of the inventory (" + len + " != " + columnsLimit + ")");
 
-        context.itemsLayer = new Stack<>();
         for (int row = 0; row < len; row++) {
             final String layer = layout[row];
             if (layer.length() != INVENTORY_ROW_SIZE)
@@ -316,8 +328,8 @@ public abstract class PaginatedView<T> extends View {
 
             for (int col = 0; col < INVENTORY_ROW_SIZE; col++) {
                 final int targetSlot = col + (row * INVENTORY_ROW_SIZE);
-                final char c = layer.charAt(col);
-                switch (c) {
+                final char character = layer.charAt(col);
+                switch (character) {
                     case EMPTY_SLOT_CHAR:
                         break;
                     case ITEM_SLOT_CHAR: {
@@ -325,7 +337,7 @@ public abstract class PaginatedView<T> extends View {
                         break;
                     }
                     case PREVIOUS_PAGE_CHAR: {
-                    	if (render) {
+						if (render) {
 							resolveNavigationItem(context, NAVIGATE_LEFT);
 							context.setPreviousPageItemSlot(targetSlot);
 						}
@@ -338,13 +350,17 @@ public abstract class PaginatedView<T> extends View {
 						}
                         break;
                     }
-                    default:
-                        throw new IllegalArgumentException("Invalid layer character: " + c);
+                    default: {
+						final LayoutPattern pattern = getLayoutOrNull(character);
+						if (pattern != null) {
+							pattern.getSlots().push(targetSlot);
+							break;
+						}
+					}
                 }
             }
         }
 
-		getFrame().debug("[context] layout resolved with " + context.itemsLayer.size() + " items");
         if (!render)
         	return;
 
@@ -358,21 +374,19 @@ public abstract class PaginatedView<T> extends View {
         final int layerSize = layout == null ? 0 /* ignored */ : context.getItemsLayer().size();
         final ViewItem[] preservedItems = new ViewItem[layerSize + 1];
         for (int i = 0; i < (layout == null ? limit : context.getItemsLayer().peek()); i++) {
-            if (layout != null && i >= layerSize)
-                break;
+			if (layout != null && i >= layerSize)
+				break;
 
-            final int targetSlot = layout == null ? offset + i : context.getItemsLayer().elementAt(i);
-            final ViewItem item;
-            if (i < size)
-                preservedItems[i] = context.getItem(targetSlot);
-            else {
-                item = getItem(targetSlot);
-                if (item != null)
-                    continue;
-            }
+			final int targetSlot = layout == null ? offset + i : context.getItemsLayer().elementAt(i);
+			if (i < size)
+				preservedItems[i] = context.getItem(targetSlot);
+			else {
+				if (getItem(targetSlot) != null)
+					continue;
+			}
 
-            clearSlot(context, targetSlot);
-        }
+			clearSlot(context, targetSlot);
+		}
 
         return preservedItems;
     }
@@ -380,12 +394,8 @@ public abstract class PaginatedView<T> extends View {
     void updateLayout(PaginatedViewContext<T> context, String[] layout) {
 		getFrame().debug("[context] updating layout");
 
-        /*
-            what we will do: first, use the old defined
-            layout to preserve the actual item slot state and then
-            reorder this items with the new slots of the new layout
-            on different positions but with the same preserved state
-         */
+        // what we will do: first, use the old defined layout to preserve the actual item slot state and then reorder
+		// these items with the new slots of the new layout on different positions but with the same preserved state
         final ViewItem[] items = clearLayout(context, useLayout(context));
         resolveLayout(context, layout);
         renderLayout(context, layout, items);
@@ -402,7 +412,7 @@ public abstract class PaginatedView<T> extends View {
     @Override
     @SuppressWarnings("unchecked")
     public void update(ViewContext context) {
-        // call global onUpdate
+        // calls global onUpdate
         super.update(context);
 
         PaginatedViewContext<T> paginated = (PaginatedViewContext<T>) context;
