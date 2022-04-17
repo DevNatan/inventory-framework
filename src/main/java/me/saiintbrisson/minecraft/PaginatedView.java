@@ -268,7 +268,25 @@ public abstract class PaginatedView<T> extends View {
         return context;
     }
 
+	private void renderLayoutPattern(PaginatedViewContext<T> context) {
+		for (final LayoutPattern pattern : getLayoutPatterns()) {
+			for (final int slot : pattern.getSlots()) {
+				final ViewItem item = pattern.getFactory().get();
+				if (item.getSlot() != UNSET_SLOT)
+					throw new IllegalStateException(
+						"Items defined through the layout pattern's item factory cannot have a pre-defined slot." +
+							"Use `item()` instead of `slot(x)`. " +
+							"Expected: " + UNSET_SLOT + ", given: " + item.getSlot()
+					);
+
+				item.setSlot(slot);
+				render(context, item, slot);
+			}
+		}
+	}
+
     private void renderLayout(PaginatedViewContext<T> context, String[] layout, ViewItem[] preservedItems) {
+		renderLayoutPattern(context);
     	getFrame().debug("[context] rendering layout");
         final List<T> elements = context.getPaginator().getPage(context.getPage());
         final int size = elements.size();
@@ -291,21 +309,6 @@ public abstract class PaginatedView<T> extends View {
                 clearSlot(context, targetSlot);
             }
         }
-
-		for (final LayoutPattern pattern : getLayoutPatterns()) {
-			for (final int slot : pattern.getSlots()) {
-				final ViewItem item = pattern.getFactory().get();
-				if (item.getSlot() != UNSET_SLOT)
-					throw new IllegalStateException(
-						"Items defined through the layout pattern's item factory cannot have a pre-defined slot." +
-						"Use `item()` instead of `slot(x)`. " +
-						"Expected: " + UNSET_SLOT + ", given: " + item.getSlot()
-					);
-
-				item.setSlot(slot);
-				render(context, item, slot);
-			}
-		}
     }
 
 	private void resolveLayout(PaginatedViewContext<T> context, String[] layout) {
