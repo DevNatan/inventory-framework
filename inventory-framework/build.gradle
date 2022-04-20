@@ -1,0 +1,21 @@
+plugins {
+    id 'maven-publish'
+}
+
+javadoc {
+    exclude 'me/matsubara/**'
+    exclude 'me/saiintbrisson/minecraft/utils/**'
+}
+
+project.afterEvaluate {
+    publishing {
+        publications {
+            jitpack(MavenPublication) {
+                groupId = 'com.github.DevNatan'
+                artifactId = 'inventory-framework'
+
+                from components.java
+            }
+        }
+    }
+}
