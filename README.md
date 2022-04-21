@@ -584,7 +584,7 @@ public final class MyPaginatedView extends PaginatedView<Integer> {
 
     @Override
     public ViewItem getNextPageItem(PaginatedViewContext<Integer> context) {
-        return item(new ItemStack(Material.BLAZE_ROW));
+        return item(new ItemStack(Material.BLAZE_ROD));
     }
 
 }
@@ -599,11 +599,11 @@ we have a function in the ViewFrame that you can use to set toggle items page fo
 
 ```java
 viewFrame.setDefaultPreviousPageItem((context) -> {
-    return context.item(new ItemStack(Material.BLAZE_ROW));
+    return context.item(new ItemStack(Material.BLAZE_ROD));
 });
 
 viewFrame.setDefaultNextPageItem((context) -> {
-    return context.item(new ItemStack(Material.BLAZE_ROW));
+    return context.item(new ItemStack(Material.BLAZE_ROD));
 });
 ```
 
