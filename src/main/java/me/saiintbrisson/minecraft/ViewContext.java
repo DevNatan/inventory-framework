@@ -25,7 +25,8 @@ public class ViewContext extends VirtualView {
 	protected boolean cancelled;
 	protected boolean markedToClose;
 	boolean checkedLayerSignature;
-	Stack<Integer> itemsLayer, fillLayer;
+
+	Stack<Integer> itemsLayer;
 	private boolean invalidated;
 	private boolean propagateErrors;
 
@@ -44,12 +45,8 @@ public class ViewContext extends VirtualView {
 		this.inventory = null;
 	}
 
-	protected Stack<Integer> getItemsLayer() {
+	Stack<Integer> getItemsLayer() {
 		return itemsLayer;
-	}
-
-	protected Stack<Integer> getFillLayer() {
-		return fillLayer;
 	}
 
 	public boolean isMarkedToClose() {
@@ -300,8 +297,8 @@ public class ViewContext extends VirtualView {
 
 		view.clearData(player);
 		slotData.clear();
+		layoutPatterns.clear();
 		checkedLayerSignature = false;
-		itemsLayer = null;
 		invalidated = true;
 	}
 

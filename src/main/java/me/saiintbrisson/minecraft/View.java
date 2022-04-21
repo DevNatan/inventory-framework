@@ -643,6 +643,11 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 		super.setErrorHandler(errorHandler);
 	}
 
+	@Override
+	public final void setLayout(@Nullable String... layout) {
+		super.setLayout(layout);
+	}
+
 	private void expandItemsArray(int newLength) {
 		ViewItem[] newItems = new ViewItem[newLength];
 		System.arraycopy(items, 0, newItems, 0, items.length);
