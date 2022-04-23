@@ -5,16 +5,17 @@ import me.saiintbrisson.minecraft.ViewContext;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-public final class AmountSelectorView extends View {
+public final class AmountSelector extends View {
 
 	private static final String CURRENT_AMOUNT_KEY = "current-amount";
 
-	public AmountSelectorView() {
+	public AmountSelector() {
 		super(3, "Amount Selector");
+		setCancelOnClick(true);
 
 		// item with current value
 		slot(2, 5).onRender(render -> render.setItem(
-			new ItemStack(Material.PAPER, render.get(CURRENT_AMOUNT_KEY, () -> 1))
+			new ItemStack(Material.PAPER, Math.min(render.get(CURRENT_AMOUNT_KEY, () -> 1), Material.PAPER.getMaxStackSize()))
 		));
 
 		// increment
