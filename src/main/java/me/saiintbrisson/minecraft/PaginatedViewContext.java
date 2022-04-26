@@ -27,7 +27,7 @@ public class PaginatedViewContext<T> extends ViewContext {
 	@SuppressWarnings("unchecked")
 	public final void setLayout(String... layout) {
 		// dynamic layout update
-		if (checkedLayerSignature) {
+		if (isCheckedLayerSignature()) {
 			getView().getFrame().debug("[context] layout updated");
 			this.layout = layout;
 			((PaginatedView<T>) view).updateLayout(this, layout);
@@ -198,25 +198,17 @@ public class PaginatedViewContext<T> extends ViewContext {
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	public void setSource(List<?> source) {
 		final PaginatedView<T> view = (PaginatedView<T>) getView();
-		boolean checked = isCheckedLayerSignature();
+		final boolean checkedLayer = isCheckedLayerSignature();
 		final String[] layout = view.useLayout(this);
 
 		// force layout resolving but do not render
-		if (!checked && layout != null) {
+		if (!checkedLayer && layout != null)
 			view.resolveLayout(this, layout, false);
-			setCheckedLayerSignature(checked = true);
-		}
 
-		final Paginator<T> paginator = new Paginator(checked ?
-			getItemsLayer().size() :
-			view.getPageSize(), source
-		);
-
-		if (checked)
-			setCheckedLayerSignature(true);
-
-		view.setPaginator(paginator);
-		view.updateLayout(this, layout);
+		view.setPaginator(new Paginator(
+			checkedLayer ? getItemsLayer().size() : view.getPageSize(),
+			source
+		));
 	}
 
 	public int getPreviousPageItemSlot() {
