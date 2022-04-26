@@ -28,7 +28,7 @@ public class ViewContext extends VirtualView {
 
 	Stack<Integer> itemsLayer;
 	private boolean invalidated;
-	private boolean propagateErrors;
+	private boolean propagateErrors = true;
 
 	public ViewContext(@NotNull View view, @NotNull Player player, @NotNull Inventory inventory) {
 		super(new ViewItem[INVENTORY_ROW_SIZE * (inventory.getSize() / INVENTORY_ROW_SIZE)]);
