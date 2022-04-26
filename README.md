@@ -36,7 +36,7 @@ build configuration.
 
 ```groovy
 dependencies {
-    compileOnly 'com.github.DevNatan:inventory-framework:2.4.3'
+    compileOnly 'com.github.DevNatan:inventory-framework:2.5'
 }
 ```
 
@@ -46,7 +46,7 @@ dependencies {
 <dependency>
     <groupId>com.github.DevNatan</groupId>
     <artifactId>inventory-framework</artifactId>
-    <version>2.4.3</version>
+    <version>2.5</version>
     <scope>provided</scope>
 </dependency>
 ```
@@ -492,13 +492,15 @@ You can define layouts in two scopes:
 
 > If you define both layouts, for the View and for the context, the layout of the context will take precedence.
 
-#### Pattern
+#### Default Pattern
 First, as I said before, a layout is a pattern of characters that you will use to determine where items will go,
 these characters are:
 * `O` a slot that will have a paginated item in the inventory;
 * `X` an undefined slot in the inventory;
 * `<` a slot in which the item "back page" will be positioned (for paginated views);
 * `>` a slot in which the item "next page" will be positioned (for paginated views).
+
+> v2.5+ you can define the default layout definitions with your own character grid.
 
 **There are rules for creating a layout that you should pay attention to**
 * The width of the pattern must be the same number of columns as the inventory;
@@ -547,7 +549,46 @@ protected void onRender(ViewContext render) {
 
 In our inventory, items will be positioned in the center, with spaces on the side in the second row.
 
-Note that the number of rows in my layout is the same as the number of rows in my inventory, and the character span of the layout is the number of columns I have in my inventory, 9.
+> Note that the number of rows in my layout is the same as the number of rows in my inventory, and the character span of the layout is the number of columns I have in my inventory, 9.
+
+#### User-defined pattern
+###### v2.5+
+There are cases where we want to define custom items within our layout, but generally this requires a lot of calculations e.g. to define items at the ends of the inventory, below, above, and anywhere, starting from version 2.5, IF has made it easier for you. life allowing proper characters to be defined in the layout.
+
+So here we go, let's say you want to place panes of glass on the edges of your inventory, like you would have done before:
+* Would calculate inventory edges to get correct slot positions
+* And then, render in these slots, a pane of glass.
+
+You would probably spend a little time and even have a little headache for this, now you can do it with just one line.
+**Let's say `P` is a pane of glass.**
+```java
+public final class MyPaginatedView extends PaginatedView<Integer> {
+
+    public MyPaginatedView() {
+        super(3, "P44t33rns :)");
+        setLayout(
+                "PPPPPPPPP",
+                "POOOOOOOP",
+                "PPPPPPPPP"
+        );
+        setLayout('P', () -> item(new ItemStack(Material.STAINED_GLASS_PANE)));
+    }
+
+}
+```
+
+> Anything that is set to "P" in our layout will be rendered with the value of our factory set in `setLayout(character, factory)`.
+
+The item factory for the layout is of type `Supplier<ViewItem>`
+**`item` is a function provided by IF to create ViewItem.**
+```java
+setLayout('P', () -> item(...));
+```
+
+You can define besides the display item, functions for that item so for example: **you can make the inventory close when someone clicks on that glass pane**.
+```java
+setLayout('P', () -> item(new ItemStack(Material.STAINED_GLASS_PANE)).onClick(ViewContext::close));
+```
 
 #### Updating Context Layout while Inventory is open
 Yes, you can change the layout while the player's inventory is open, it only works for the current context. 
@@ -675,7 +716,7 @@ data coming from other contexts.
 
 For example: suppose you have a user object that you need it in the item render function:
 
-**❌ WHAT IS NOT TO BE DONE**\
+**❌ DON'T**\
 Don't compute anything inside the item render function.
 ```java
 @Override
@@ -688,7 +729,7 @@ protected void onItemRender(
 }
 ```
 
-**✔️ WHAT IS IDEAL TO BE DONE**\
+**✔️ DO**\
 Move the necessary computation to `onOpen`.
 ```java
 private static final String USER_CONTEXT_KEY = "user";
