@@ -8,12 +8,11 @@ import org.bukkit.inventory.InventoryHolder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.Closeable;
 import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-public class View extends VirtualView implements InventoryHolder, Closeable {
+public class View extends VirtualView implements InventoryHolder {
 
 	public static final int INVENTORY_ROW_SIZE = 9;
 	public static final int UNSET_SLOT = -1;
