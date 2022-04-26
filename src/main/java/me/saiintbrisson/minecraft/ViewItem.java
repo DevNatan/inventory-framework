@@ -28,6 +28,7 @@ public class ViewItem {
 	private Map<String, Object> data;
 	private State state = State.UNDEFINED;
 	private boolean isPaginationItem;
+	private ViewItem lastInternalState;
 
 	/**
 	 * @deprecated Use {@link ViewItem(int)} instead.
@@ -39,6 +40,14 @@ public class ViewItem {
 
 	public ViewItem(int slot) {
 		this.slot = slot;
+	}
+
+	ViewItem getLastInternalState() {
+		return lastInternalState;
+	}
+
+	void setLastInternalState(ViewItem lastInternalState) {
+		this.lastInternalState = lastInternalState;
 	}
 
 	State getState() {
@@ -203,7 +212,8 @@ public class ViewItem {
 			", staticData=" + data +
 			", isPaginationItem=" + isPaginationItem +
 			", cancelOnShiftClick=" + isCancelOnShiftClick +
-			", overrideCancelOnShiftClick= " + overrideCancelOnShiftClick +
+			", overrideCancelOnShiftClick=" + overrideCancelOnShiftClick +
+//			", lastInternalState=" + lastInternalState +
 			'}';
 	}
 

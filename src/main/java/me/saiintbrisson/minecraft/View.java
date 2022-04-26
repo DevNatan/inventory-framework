@@ -202,20 +202,27 @@ public class View extends VirtualView implements InventoryHolder, Closeable {
 
 	@Override
 	public void render(final ViewContext context, final ViewItem item, final int slot) {
-		frame.debug("[slot " + slot + "]: render with item");
+		frame.debug("[slot " + slot + "]: render with " + item);
 		super.render(context, item, slot);
 	}
 
 	final ViewItem resolve(ViewContext context, int slot) {
-		frame.debug("[slot " + slot + "]: resolve item");
-
 		// fast path -- ArrayIndexOutOfBoundsException
-		if (slot > items.length)
+		if (slot > items.length) {
+			frame.debug("[slot " + slot + "]: AIOOBE");
 			return null;
+		}
 
-		final ViewItem item = items[slot];
-		if (item == null)
-			return context.getItem(slot);
+		final ViewItem item;
+
+		// PaginatedView priories paginated item
+		if (this instanceof PaginatedView) {
+			item = context.getItem(slot);
+			if (item == null) return getItem(slot);
+		} else {
+			item = getItem(slot);
+			if (item == null) return context.getItem(slot);
+		}
 
 		return item;
 	}
