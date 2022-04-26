@@ -1,5 +1,14 @@
 # Changelog
 
+# 2.5
+* Inheritable context data (#65)
+* User-defined paginated view layout pattern (#70)
+* Custom "on click outside" inventory handler (#55)
+* Pagination item overrides already set item on re-render (#81)
+* Now errors are propagated by default if they occur inside a handler (#83)
+* View not longer implements `Closeable` (#82)
+* Replaced `BLAZE_ROW` to `BLAZE_ROD` in readme (thanks to @mattnicee7) (#75)
+
 # 2.4.3
 * New `onHotbarInteract(...)` to handle hotbar button interactions;
 * Documentation explaining how view options work ([#66][p66]);
