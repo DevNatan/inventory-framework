@@ -37,7 +37,7 @@ jobs:
       - name: Publish to GitHub Packages
         uses: gradle/gradle-build-action@0d13054264b0bb894ded474f08ebb30921341cee
         with:
-          arguments: publish
+          arguments: publishGprPublicationToMavenRepository
         env:
           USERNAME: ${{ github.actor }}
           TOKEN: ${{ secrets.GITHUB_TOKEN }}
