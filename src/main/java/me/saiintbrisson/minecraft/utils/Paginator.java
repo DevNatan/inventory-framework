@@ -1,20 +1,40 @@
 package me.saiintbrisson.minecraft.utils;
 
 import com.google.common.collect.Lists;
+import me.saiintbrisson.minecraft.ViewContext;
 
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Function;
 
 public class Paginator<T> {
 
     private int pageSize;
-    private final List<T> source;
+    private List<T> source;
+	private Function<ViewContext, List<T>> provider;
+	private List<T> currSource;
 
-    public Paginator(int pageSize, List<T> source) {
+	@SuppressWarnings("unchecked")
+    public Paginator(int pageSize, Object source) {
         this.pageSize = pageSize;
-        this.source = source;
+
+		if (source instanceof List) this.source = (List<T>) source;
+		else if (source instanceof Function) this.provider = (Function<ViewContext, List<T>>) source;
+		else throw new IllegalArgumentException("Unsupported pagination source type: " + source.getClass().getName());
     }
+
+	Function<ViewContext, List<T>> getProvider() {
+		return provider;
+	}
+
+	public List<T> getCurrentSource() {
+		return currSource;
+	}
+
+	public void setCurrentSource(List<T> currSource) {
+		this.currSource = currSource;
+	}
 
 	public List<T> getSource() {
 		return source;

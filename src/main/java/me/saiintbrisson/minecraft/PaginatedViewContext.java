@@ -6,8 +6,11 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
 
 import static me.saiintbrisson.minecraft.View.UNSET_SLOT;
 
@@ -164,17 +167,6 @@ public class PaginatedViewContext<T> extends ViewContext {
 	}
 
 	/**
-	 * Defines the source of the {@link Paginator} for this context.
-	 *
-	 * @param source the pagination source.
-	 * @deprecated Use {@link #setSource(List)} instead.
-	 */
-	@Deprecated
-	public void setPaginationSource(List<?> source) {
-		setSource(source);
-	}
-
-	/**
 	 * Inventory data pagination source.
 	 *
 	 * @return The paging source for all pages, the one defined earlier.
@@ -190,13 +182,25 @@ public class PaginatedViewContext<T> extends ViewContext {
 	 * @return The paging source for a specific page.
 	 */
 	public List<T> getSource(int page) {
+		if (page == getPage())
+			return getCurrentSource();
+
 		return Collections.unmodifiableList(
 			getPaginator().getPage(Math.min(page, getPagesCount()))
 		);
 	}
 
-	@SuppressWarnings({"unchecked", "rawtypes"})
-	public void setSource(List<?> source) {
+	/**
+	 * Inventory data pagination source of the current page.
+	 *
+	 * @return The paging source of the current page.
+	 */
+	public List<T> getCurrentSource() {
+		return Collections.unmodifiableList(getPaginator().getCurrentSource());
+	}
+
+	@SuppressWarnings("unchecked")
+	private boolean layoutCheck() {
 		final PaginatedView<T> view = (PaginatedView<T>) getView();
 		boolean checked = isCheckedLayerSignature();
 		final String[] layout = view.useLayout(this);
@@ -207,16 +211,31 @@ public class PaginatedViewContext<T> extends ViewContext {
 			setCheckedLayerSignature(checked = true);
 		}
 
-		final Paginator<T> paginator = new Paginator(checked ?
+		if (checked) setCheckedLayerSignature(true);
+		return checked;
+	}
+
+	public void setSource(List<T> source) {
+		setSource0(source);
+	}
+
+	public void setSource(Function<ViewContext, List<T>> source) {
+		setSource0(source);
+	}
+
+	@SuppressWarnings({"unchecked"})
+	private void setSource0(Object source) {
+		layoutCheck();
+		final PaginatedView<T> view = (PaginatedView<T>) getView();
+		final boolean checked = layoutCheck();
+
+		final Paginator<T> paginator = new Paginator<>(checked ?
 			getItemsLayer().size() :
 			view.getPageSize(), source
 		);
 
-		if (checked)
-			setCheckedLayerSignature(true);
-
 		view.setPaginator(paginator);
-		view.updateLayout(this, layout);
+		view.updateLayout(this, getLayout());
 	}
 
 	public int getPreviousPageItemSlot() {

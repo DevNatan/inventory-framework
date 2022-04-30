@@ -66,6 +66,10 @@ public abstract class PaginatedView<T> extends View {
         this.paginator = new Paginator<>(getPageSize(), source);
     }
 
+	public void setSource(Function<ViewContext, List<T>> sourceProvider) {
+		this.paginator = new Paginator<>(getPageSize(), sourceProvider);
+	}
+
     public int getPageSize() {
         return limit - offset;
     }
