@@ -1,6 +1,6 @@
 # inventory-framework
 
-[![Build](https://github.com/DevNatan/inventory-framework/actions/workflows/gradle.yml/badge.svg)](https://github.com/DevNatan/inventory-framework/actions/workflows/gradle.yml)
+[![Build](https://github.com/DevNatan/inventory-framework/actions/workflows/build.yml/badge.svg)](https://github.com/DevNatan/inventory-framework/actions/workflows/build.yml)
 [![CodeQL](https://github.com/DevNatan/inventory-framework/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/DevNatan/inventory-framework/actions/workflows/codeql-analysis.yml)
 [![Jitpack](https://jitpack.io/v/DevNatan/inventory-framework.svg)](https://jitpack.io/#DevNatan/inventory-framework)
 
