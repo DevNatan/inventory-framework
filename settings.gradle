@@ -1,3 +1,3 @@
 rootProject.name = 'inventory-framework'
-include 'inventory-framework', 'inventory-framework-api', 'inventory-framework-plugin'
+include 'framework', 'plugin'
 enableFeaturePreview('VERSION_CATALOGS')
