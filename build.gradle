@@ -20,6 +20,10 @@ subprojects {
         testImplementation libs.junit.api
         testRuntimeOnly libs.junit.engine
         testImplementation libs.spigot.api
+        compileOnly libs.lombok
+        annotationProcessor libs.lombok
+        testCompileOnly libs.lombok
+        testAnnotationProcessor libs.lombok
     }
 
     test {

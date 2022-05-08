@@ -2,6 +2,7 @@
 jetbrains-annotations = "22.0.0"
 spigot-api = "1.16.5-R0.1-SNAPSHOT"
 junit = "5.8.2"
+lombok = "1.18.24"
 
 [libraries.spigot-api]
 module = "org.spigotmc:spigot-api"
@@ -18,3 +19,7 @@ version.ref = "junit"
 [libraries.junit-engine]
 module = "org.junit.jupiter:junit-jupiter-engine"
 version.ref = "junit"
+
+[libraries.lombok]
+module = "org.projectlombok:lombok"
+version.ref = "lombok"
