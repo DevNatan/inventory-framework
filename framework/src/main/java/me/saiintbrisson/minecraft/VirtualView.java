@@ -335,6 +335,7 @@ public class VirtualView {
 				new DelegatedViewContext(context, slot, fallback);
 
 			runCatching(context, () -> item.getRenderHandler().handle(render));
+			item.setLinkedContext(render);
 			if (render.hasChanged()) {
 				render.getInventory().setItem(slot, render.getItem());
 				render.setChanged(false);
@@ -531,6 +532,26 @@ public class VirtualView {
 		fn.run();
 	}
 
+	/**
+	 * Returns an item whose reference key is the same as the specified key.
+	 *
+	 * @param referenceKey The item reference key.
+	 * @return The slot context linked to the referenced item, returning null if the item is not found.
+	 * @throws IllegalStateException If the item was not yet rendered.
+	 */
+	public @Nullable ViewSlotContext ref(@NotNull String referenceKey) {
+		final ViewItem ref = Arrays.stream(getItems())
+			.filter(item -> item.getReference().equals(referenceKey))
+			.findFirst()
+			.orElse(null);
+
+		if (ref == null) return null;
+		return ref.getLinkedContext();
+	}
+
+	/**
+	 * Called when a modification is triggered in this inventory view.
+	 */
 	protected void inventoryModificationTriggered() {
 	}
 
