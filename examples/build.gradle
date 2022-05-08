@@ -1,14 +1,3 @@
-plugins {
-    id 'java-library'
-}
-
-repositories {
-    mavenCentral()
-    maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
-    maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' }
-}
-
 dependencies {
-    compileOnly libs.spigot.api
-    implementation rootProject
+    implementation project(':framework')
 }
