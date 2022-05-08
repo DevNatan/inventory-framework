@@ -1,6 +1,8 @@
 package me.saiintbrisson.minecraft;
 
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,6 +31,8 @@ public class ViewItem {
 	private State state = State.UNDEFINED;
 	private boolean isPaginationItem;
 	private ViewItem lastInternalState;
+	private String reference;
+	private ViewSlotContext linkedContext;
 
 	/**
 	 * @deprecated Use {@link ViewItem(int)} instead.
@@ -198,6 +202,27 @@ public class ViewItem {
 		isPaginationItem = paginationItem;
 	}
 
+	@NotNull
+	ViewSlotContext getLinkedContext() {
+		if (linkedContext == null)
+			throw new IllegalStateException("Item was not yet rendered");
+
+		return linkedContext;
+	}
+
+	void setLinkedContext(ViewSlotContext linkedContext) {
+		this.linkedContext = linkedContext;
+	}
+
+	public String getReference() {
+		return reference;
+	}
+
+	public ViewItem referencedBy(@Nullable String referenceKey) {
+		this.reference = referenceKey;
+		return this;
+	}
+
 	@Override
 	public String toString() {
 		return "ViewItem{" +
@@ -214,6 +239,7 @@ public class ViewItem {
 			", cancelOnShiftClick=" + isCancelOnShiftClick +
 			", overrideCancelOnShiftClick=" + overrideCancelOnShiftClick +
 //			", lastInternalState=" + lastInternalState +
+			", reference=" + reference +
 			'}';
 	}
 
