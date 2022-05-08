@@ -1,5 +1,15 @@
 import org.apache.tools.ant.filters.ReplaceTokens
 
+dependencies {
+    runtimeOnly(project(':framework'))
+}
+
+jar {
+    from {
+        configurations.runtimeClasspath.filter { it.exists() }.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
 processResources {
     from(sourceSets.main.resources.srcDirs) {
         duplicatesStrategy DuplicatesStrategy.INCLUDE
