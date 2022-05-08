@@ -1,0 +1,39 @@
+apply plugin: 'maven-publish'
+
+project.afterEvaluate {
+    publishing {
+        repositories {
+            maven {
+                url = uri("https://maven.pkg.github.com/DevNatan/inventory-framework")
+                credentials {
+                    username = System.getenv("USERNAME")
+                    password = System.getenv("TOKEN")
+                }
+            }
+        }
+
+        publications {
+            jitpack(MavenPublication) {
+                groupId = 'com.github.DevNatan'
+                artifactId = 'inventory-framework'
+
+                from components.java
+
+                pom {
+                    url.set("https://gihub.com/DevNatan/inventory-framework.git")
+                }
+            }
+
+            register("gpr", MavenPublication) {
+                groupId = 'com.github.DevNatan'
+                artifactId = 'inventory-framework'
+
+                from components.java
+
+                pom {
+                    url.set("https://gihub.com/DevNatan/inventory-framework.git")
+                }
+            }
+        }
+    }
+}
