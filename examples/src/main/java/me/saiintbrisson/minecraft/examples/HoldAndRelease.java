@@ -1,9 +1,5 @@
 package me.saiintbrisson.minecraft.examples;
 
-import me.saiintbrisson.minecraft.View;
-import me.saiintbrisson.minecraft.ViewContext;
-import me.saiintbrisson.minecraft.ViewSlotContext;
-import me.saiintbrisson.minecraft.ViewSlotMoveContext;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;

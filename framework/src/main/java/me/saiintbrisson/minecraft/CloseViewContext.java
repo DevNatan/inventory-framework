@@ -1,11 +1,10 @@
 package me.saiintbrisson.minecraft;
 
-import org.jetbrains.annotations.NotNull;
-
-public final class CloseViewContext extends DelegatedViewContext {
-
-	public CloseViewContext(@NotNull ViewContext delegate) {
-		super(delegate);
-	}
-
+/**
+ * Backwards compatible close view context.
+ *
+ * Context created for when the inventory is closed, it is possible to cancel it so that the
+ * container is not closed.
+ */
+public final class CloseViewContext extends BaseViewContext {
 }
