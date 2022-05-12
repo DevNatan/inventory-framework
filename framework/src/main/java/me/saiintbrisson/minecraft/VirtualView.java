@@ -2,12 +2,7 @@ package me.saiintbrisson.minecraft;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-
 public interface VirtualView {
-
-	@NotNull
-	List<Viewer> getViewers();
 
 	/**
 	 * The current title of this view's container.
@@ -27,5 +22,7 @@ public interface VirtualView {
 	 * Closes this view.
 	 */
 	void close();
+
+	ViewErrorHandler getErrorHandler();
 
 }

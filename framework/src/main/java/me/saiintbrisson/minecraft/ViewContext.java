@@ -2,9 +2,22 @@ package me.saiintbrisson.minecraft;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Map;
+import java.util.List;
 
 public interface ViewContext extends VirtualView {
+
+	@NotNull
+	List<Viewer> getViewers();
+
+	void addViewer(@NotNull Viewer viewer);
+
+	void removeViewer(@NotNull Viewer viewer);
+
+	<T> T get(@NotNull String key);
+
+	void set(@NotNull String key, @NotNull Object value);
+
+	boolean has(@NotNull String key);
 
 	@NotNull
 	ViewContainer getContainer();

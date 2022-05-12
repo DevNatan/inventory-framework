@@ -1,15 +1,28 @@
 package me.saiintbrisson.minecraft;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.*;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
+import java.util.WeakHashMap;
+
 @Getter
-@AllArgsConstructor
-public class View extends AbstractVirtualView {
+@RequiredArgsConstructor
+public class View extends AbstractVirtualView implements InventoryHolder {
 
 	private final int rows;
 	private final String title;
+
+	private final Set<ViewContext> contexts = Collections.newSetFromMap(new WeakHashMap<>());
+
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.PACKAGE)
+	ViewFrame viewFrame;
 
 	public View() {
 		this(0);
@@ -142,9 +155,59 @@ public class View extends AbstractVirtualView {
 	) {
 	}
 
+	public final void open(
+		@NotNull Player player,
+		@NotNull Map<String, Object> data
+	) {
+		final Viewer viewer = new BukkitViewer(player);
+		final OpenViewContext openViewContext = open(viewer, data);
+		final ViewContainer container = viewFrame.getContainerFactory().create(
+			this,
+			openViewContext.getContainerSize(),
+			openViewContext.getContainerTitle()
+		);
+
+		final ViewContext context = create(viewer, container);
+		synchronized (contexts) {
+			contexts.add(context);
+		}
+
+		render(context);
+	}
+
+	private OpenViewContext open(@NotNull Viewer viewer, @NotNull Map<String, Object> data) {
+		final OpenViewContext context = new OpenViewContext(this);
+		context.addViewer(viewer);
+		data.forEach(context::set);
+
+		runCatching(context, () -> onOpen(context));
+		return context;
+	}
+
+	private void render(@NotNull ViewContext context) {
+		runCatching(context, () -> onRender(context));
+		context.getContainer().open(context.getViewers());
+	}
+
 	@Override
 	public final void close() {
-		getViewers().forEach(Viewer::close);
+		getContexts().forEach(ViewContext::close);
+	}
+
+	final ViewContext create(
+		@NotNull Viewer viewer,
+		@NotNull ViewContainer container
+	) {
+		final ViewContext context = new ViewContextImpl(this, container);
+		context.addViewer(viewer);
+		return context;
+	}
+
+	@SuppressWarnings("ConstantConditions")
+	@NotNull
+	@Override
+	public final Inventory getInventory() {
+		return null;
 	}
 
 }

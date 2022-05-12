@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
  * defined data, for any reason and can be used to change the title and size of the container before
  * the rendering intent.
  */
+@Getter
 @ToString(callSuper = true)
 public final class OpenViewContext extends BaseViewContext implements CancellableViewContext {
 
@@ -24,12 +25,11 @@ public final class OpenViewContext extends BaseViewContext implements Cancellabl
 	 */
 	private int containerSize;
 
-	@Getter
 	@Setter
 	private boolean cancelled;
 
-	OpenViewContext(@NotNull ViewContext context) {
-		super(context);
+	OpenViewContext(@NotNull View view) {
+		super(view, null);
 	}
 
 	/**
@@ -75,7 +75,7 @@ public final class OpenViewContext extends BaseViewContext implements Cancellabl
 	}
 
 	@Override
-	void inventoryAccessNeeded() {
+	void inventoryModificationTriggered() {
 		throw new IllegalStateException(
 			"It is not allowed to modify the inventory " +
 			"in the opening context as the inventory was not even created. " +

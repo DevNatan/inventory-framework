@@ -7,8 +7,6 @@ public interface ViewSlotContext extends ViewContext {
 	@Deprecated
 	InventoryClickEvent getClickOrigin();
 
-
-
 	boolean isCancelled();
 
 	void setCancelled(boolean cancelled);

@@ -12,6 +12,8 @@ import org.jetbrains.annotations.Nullable;
 @RequiredArgsConstructor
 final class BukkitChestViewContainer extends BukkitViewContainer {
 
+	private static final int EXPECTED_INVENTORY_SIZE = 9;
+
 	@NotNull
 	private final Inventory inventory;
 

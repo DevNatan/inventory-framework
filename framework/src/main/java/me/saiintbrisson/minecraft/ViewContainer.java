@@ -64,6 +64,8 @@ interface ViewContainer {
 		return size;
 	}
 
+	void open(@NotNull Iterable<Viewer> viewers);
+
 	void close();
 
 	void changeTitle(@Nullable String title);
