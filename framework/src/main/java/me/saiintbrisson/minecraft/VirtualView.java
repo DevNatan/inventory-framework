@@ -9,6 +9,10 @@ public interface VirtualView {
 	@NotNull
 	List<Viewer> getViewers();
 
+	/**
+	 * The current title of this view's container.
+	 * @return The title of container of this view.
+	 */
 	@NotNull
 	String getTitle();
 
@@ -20,15 +24,8 @@ public interface VirtualView {
 	int getRows();
 
 	/**
-	 * Close this view.
+	 * Closes this view.
 	 */
 	void close();
-
-//	/**
-//	 * Renders an item in this view.
-//	 *
-//	 * @param slot The slot that the item will be rendered.
-//	 */
-//	void render(@NotNull ViewItem item, int slot);
 
 }

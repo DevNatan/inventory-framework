@@ -4,11 +4,12 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
-public interface ViewContext extends VirtualView, CancellableViewContext {
+public interface ViewContext extends VirtualView {
+
+	@NotNull
+	ViewContainer getContainer();
 
 	View getView();
-
-	Map<String, Object> getSlotData();
 
 	<T> PaginatedViewContext<T> paginated();
 

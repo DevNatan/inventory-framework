@@ -1,21 +1,27 @@
 package me.saiintbrisson.minecraft;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import org.jetbrains.annotations.NotNull;
 
 @ToString
 @Getter
+@Setter
 @RequiredArgsConstructor
 class BaseViewContext extends AbstractVirtualView implements ViewContext {
 
+	@NotNull
 	private final View view;
-
 	@NotNull
 	private final ViewContainer container;
 
+	@Setter(AccessLevel.NONE)
 	private String updatedTitle;
+
+	private boolean propagateErrors;
+
+	public BaseViewContext(@NotNull ViewContext context) {
+		this(context.getView(), context.getContainer());
+	}
 
 	@Override
 	public @NotNull String getTitle() {
@@ -25,17 +31,19 @@ class BaseViewContext extends AbstractVirtualView implements ViewContext {
 
 	@Override
 	public int getRows() {
-		return 0;
+		return container.getRowSize();
 	}
 
 	@Override
 	public void updateTitle(@NotNull String title) {
 		updatedTitle = title;
+		container.changeTitle(title);
 	}
 
 	@Override
 	public void resetTitle() {
 		updatedTitle = null;
+		container.changeTitle(null);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -46,4 +54,10 @@ class BaseViewContext extends AbstractVirtualView implements ViewContext {
 
 		return (PaginatedViewContext<T>) this;
 	}
+
+	@Override
+	public void close() {
+		container.close();
+	}
+
 }

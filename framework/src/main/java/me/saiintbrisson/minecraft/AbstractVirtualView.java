@@ -3,14 +3,18 @@ package me.saiintbrisson.minecraft;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
-import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @ToString
 @Getter
 @RequiredArgsConstructor
 abstract class AbstractVirtualView implements VirtualView {
 
-	@NotNull
-	abstract ViewContainer getContainer();
+	private final List<Viewer> viewers = new ArrayList<>();
+
+	void inventoryAccessNeeded() {
+	}
 
 }

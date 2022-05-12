@@ -1,5 +1,8 @@
 package me.saiintbrisson.minecraft;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import static java.lang.String.format;
 
 interface ViewContainer {
@@ -62,5 +65,7 @@ interface ViewContainer {
 	}
 
 	void close();
+
+	void changeTitle(@Nullable String title);
 
 }

@@ -1,6 +1,6 @@
 package me.saiintbrisson.minecraft;
 
-interface CancellableViewContext {
+interface CancellableViewContext extends ViewContext {
 
 	boolean isCancelled();
 
