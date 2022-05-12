@@ -25,7 +25,7 @@ class ClickSlotContext extends BaseViewContext implements ViewSlotContext {
 	}
 
 	@Override
-	void inventoryAccessNeeded() {
+	void inventoryModificationTriggered() {
 		throw new IllegalStateException(
 			"You cannot modify the inventory in the click context. " +
 			"Use the onRender(...) rendering function for this."

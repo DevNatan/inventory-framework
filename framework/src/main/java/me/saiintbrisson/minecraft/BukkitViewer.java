@@ -13,6 +13,14 @@ class BukkitViewer implements Viewer {
 	private final Player player;
 
 	@Override
+	public void open(@NotNull ViewContainer container) {
+		if (!(container instanceof BukkitViewContainer))
+			throw new IllegalArgumentException("Only BukkitViewContainer is supported");
+
+		player.openInventory(((BukkitViewContainer) container).getInventory());
+	}
+
+	@Override
 	public void close() {
 		player.closeInventory();
 	}
