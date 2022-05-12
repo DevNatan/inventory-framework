@@ -61,4 +61,6 @@ interface ViewContainer {
 		return size;
 	}
 
+	void close();
+
 }
