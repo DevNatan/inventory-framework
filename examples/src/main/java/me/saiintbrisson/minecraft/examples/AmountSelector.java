@@ -1,5 +1,7 @@
 package me.saiintbrisson.minecraft.examples;
 
+import me.saiintbrisson.minecraft.View;
+import me.saiintbrisson.minecraft.ViewContext;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
