@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 @ToString
 @Getter
@@ -37,6 +38,11 @@ final class BukkitChestViewContainer extends BukkitViewContainer {
 	@Override
 	public int getRowSize() {
 		return getSlotsCount() / EXPECTED_INVENTORY_SIZE;
+	}
+
+	@Override
+	public void changeTitle(@Nullable String title) {
+		throw new UnsupportedOperationException();
 	}
 
 }
