@@ -1,4 +1,4 @@
-package me.saiintbrisson.minecraft.v3;
+package me.saiintbrisson.minecraft;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
