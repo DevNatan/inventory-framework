@@ -1,16 +1,20 @@
 package me.saiintbrisson.minecraft.v3;
 
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 @ToString
-@Getter
 @RequiredArgsConstructor
-abstract class AbstractVirtualView implements VirtualView {
+class BukkitViewer implements Viewer {
 
 	@NotNull
-	abstract ViewContainer getContainer();
+	private final Player player;
+
+	@Override
+	public void close() {
+		player.closeInventory();
+	}
 
 }

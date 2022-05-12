@@ -2,7 +2,27 @@ package me.saiintbrisson.minecraft.v3;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 public interface VirtualView {
+
+	@NotNull
+	List<Viewer> getViewers();
+
+	@NotNull
+	String getTitle();
+
+	/**
+	 * Returns the row count of this view.
+	 *
+	 * @return The row count of this view.
+	 */
+	int getRows();
+
+	/**
+	 * Close this view.
+	 */
+	void close();
 
 //	/**
 //	 * Renders an item in this view.
