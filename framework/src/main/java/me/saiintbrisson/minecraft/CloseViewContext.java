@@ -1,11 +1,23 @@
 package me.saiintbrisson.minecraft;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
 
-public final class CloseViewContext extends DelegatedViewContext {
+/**
+ * Context created for when the container is closed, it is possible to cancel it so that the
+ * container is not closed.
+ */
+@ToString(callSuper = true)
+public final class CloseViewContext extends BaseViewContext {
 
-	public CloseViewContext(@NotNull ViewContext delegate) {
-		super(delegate);
+	@Getter
+	@Setter
+	private boolean cancelled;
+
+	CloseViewContext(@NotNull final ViewContext context) {
+		super(context);
 	}
 
 }

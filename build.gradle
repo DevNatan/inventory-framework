@@ -1,25 +1,24 @@
-import org.apache.tools.ant.filters.ReplaceTokens
-
 subprojects {
     apply plugin: 'java-library'
 
     group 'me.saiintbrisson.minecraft'
-    version '2.5'
+    version '2.5.1-SNAPSHOT'
 
     repositories {
         mavenCentral()
         mavenLocal()
-        maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
-        maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' }
     }
 
     dependencies {
-        compileOnly libs.spigot.api
         compileOnlyApi libs.jetbrains.annotations
         testCompileOnly libs.jetbrains.annotations
         testImplementation libs.junit.api
         testRuntimeOnly libs.junit.engine
         testImplementation libs.spigot.api
+        compileOnly libs.lombok
+        annotationProcessor libs.lombok
+        testCompileOnly libs.lombok
+        testAnnotationProcessor libs.lombok
     }
 
     test {

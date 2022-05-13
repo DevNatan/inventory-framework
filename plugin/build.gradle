@@ -1,13 +1,16 @@
 import org.apache.tools.ant.filters.ReplaceTokens
 
-dependencies {
-    runtimeOnly(project(':framework'))
+plugins {
+    alias(libs.plugins.shadowjar)
 }
 
-jar {
-    from {
-        configurations.runtimeClasspath.filter { it.exists() }.collect { it.isDirectory() ? it : zipTree(it) }
-    }
+dependencies {
+    implementation(project(':framework:compat'))
+    implementation(project(':framework:bukkit'))
+}
+
+shadowJar {
+    archiveBaseName.set('inventory-framework')
 }
 
 processResources {

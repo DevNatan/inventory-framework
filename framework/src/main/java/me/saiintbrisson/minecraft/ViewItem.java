@@ -1,220 +1,87 @@
 package me.saiintbrisson.minecraft;
 
-import org.bukkit.inventory.ItemStack;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.Map;
+@ToString
+@Setter(AccessLevel.PACKAGE)
+@Getter(AccessLevel.PACKAGE)
+public final class ViewItem {
 
-import static me.saiintbrisson.minecraft.View.UNSET_SLOT;
-
-public class ViewItem {
-
-	public enum State {
-
-		UNDEFINED,
-
-		HOLDING,
-
-	}
+	enum State {UNDEFINED, HOLDING}
 
 	private int slot;
-	private ItemStack item;
 
-	// fast path handlers
-	private boolean closeOnClick, cancelOnClick, isCancelOnShiftClick, overrideCancelOnClick, overrideCancelOnShiftClick;
+	@Setter(AccessLevel.PUBLIC)
+	private Object item;
 
-	private ViewItemHandler clickHandler, renderHandler, updateHandler;
-
-	private Map<String, Object> data;
 	private State state = State.UNDEFINED;
-	private boolean isPaginationItem;
-	private ViewItem lastInternalState;
+
+	@Getter(AccessLevel.PUBLIC)
+	private boolean paginationItem;
+	@Getter(AccessLevel.PUBLIC)
+	private boolean closeOnClick,
+		cancelOnClick,
+		isCancelOnShiftClick,
+		overrideCancelOnClick,
+		overrideCancelOnShiftClick;
+
+	private ViewItemHandler renderHandler, updateHandler, clickHandler;
 
 	/**
-	 * @deprecated Use {@link ViewItem(int)} instead.
+	 * @deprecated Use {@link VirtualView#slot(int)} instead.
 	 */
 	@Deprecated
 	public ViewItem() {
-		this(UNSET_SLOT);
+		this(-1);
 	}
 
-	public ViewItem(int slot) {
+	/**
+	 * @deprecated Use {@link VirtualView#slot(int)} instead.
+	 */
+	@Deprecated
+	public ViewItem(final int slot) {
 		this.slot = slot;
 	}
 
-	ViewItem getLastInternalState() {
-		return lastInternalState;
-	}
-
-	void setLastInternalState(ViewItem lastInternalState) {
-		this.lastInternalState = lastInternalState;
-	}
-
-	State getState() {
-		return state;
-	}
-
-	void setState(State state) {
-		this.state = state;
-	}
-
-	public int getSlot() {
-		return slot;
-	}
-
-	void setSlot(int slot) {
-		this.slot = slot;
-	}
-
-	public ItemStack getItem() {
+	/**
+	 * The fallback item stack that will be rendered if a function that can render is not defined or if
+	 * a function that can render does not render an item.
+	 *
+	 * @return The fallback item stack.
+	 */
+	public Object getItem() {
 		return item;
 	}
 
-	public ViewItem withItem(ItemStack item) {
-		this.item = item;
-		return this;
-	}
-
-	public ViewItemHandler getClickHandler() {
-		return clickHandler;
-	}
-
-	public ViewItemHandler getRenderHandler() {
-		return renderHandler;
-	}
-
-	void setRenderHandler(ViewItemHandler renderHandler) {
+	/**
+	 * Sets the handler that'll be called when the item is rendered.
+	 *
+	 * @param renderHandler The render handler.
+	 */
+	public void onRender(@Nullable ViewItemHandler renderHandler) {
 		this.renderHandler = renderHandler;
 	}
 
-	public ViewItemHandler getUpdateHandler() {
-		return updateHandler;
-	}
-
-	void setUpdateHandler(ViewItemHandler updateHandler) {
+	/**
+	 * Sets the handler that'll be called when the item is updated.
+	 *
+	 * @param updateHandler The update handler.
+	 */
+	public void onUpdate(@Nullable ViewItemHandler updateHandler) {
 		this.updateHandler = updateHandler;
 	}
 
-	public ViewItem onClick(ViewItemHandler clickHandler) {
+	/**
+	 * Sets the handler that'll be called when the item is clicked by a player.
+	 *
+	 * @param clickHandler The click handler.
+	 */
+	public void onClick(@Nullable ViewItemHandler clickHandler) {
 		this.clickHandler = clickHandler;
-		return this;
-	}
-
-	public ViewItem onRender(ViewItemHandler renderHandler) {
-		this.renderHandler = renderHandler;
-		return this;
-	}
-
-	public ViewItem onUpdate(ViewItemHandler updateHandler) {
-		this.updateHandler = updateHandler;
-		return this;
-	}
-
-	public boolean isCloseOnClick() {
-		return closeOnClick;
-	}
-
-	public void setCloseOnClick(boolean closeOnClick) {
-		this.closeOnClick = closeOnClick;
-		if (this.closeOnClick)
-			setCancelOnClick(true);
-	}
-
-	public ViewItem closeOnClick() {
-		return withCloseOnClick(true);
-	}
-
-	public ViewItem withCloseOnClick(boolean closeOnClick) {
-		setCloseOnClick(closeOnClick);
-		return this;
-	}
-
-	public boolean isOverrideCancelOnClick() {
-		return overrideCancelOnClick;
-	}
-
-	public boolean isCancelOnClick() {
-		return cancelOnClick;
-	}
-
-	public void setCancelOnClick(boolean cancelOnClick) {
-		this.cancelOnClick = cancelOnClick;
-		overrideCancelOnClick = true;
-	}
-
-	public ViewItem withCancelOnClick(boolean cancelOnClick) {
-		setCancelOnClick(cancelOnClick);
-		return this;
-	}
-
-	public ViewItem cancelOnClick() {
-		return withCancelOnClick(true);
-	}
-
-	public boolean isCancelOnShiftClick() {
-		return isCancelOnShiftClick;
-	}
-
-	public boolean isOverrideCancelOnShiftClick() {
-		return overrideCancelOnShiftClick;
-	}
-
-	public void setCancelOnShiftClick(boolean cancelOnShiftClick) {
-		isCancelOnShiftClick = cancelOnShiftClick;
-		overrideCancelOnShiftClick = true;
-	}
-
-	public ViewItem withCancelOnShiftClick(boolean cancelOnShiftClick) {
-		setCancelOnShiftClick(cancelOnShiftClick);
-		return this;
-	}
-
-	public ViewItem cancelOnShiftClick() {
-		return withCancelOnShiftClick(true);
-	}
-
-	@SuppressWarnings("unchecked")
-	public <T> T getData(String key) {
-		return data == null ? null : (T) data.get(key);
-	}
-
-	public void setData(String key, Object value) {
-		withData(key, value);
-	}
-
-	public ViewItem withData(String key, Object value) {
-		if (data == null)
-			data = new HashMap<>();
-
-		data.put(key, value);
-		return this;
-	}
-
-	public boolean isPaginationItem() {
-		return isPaginationItem;
-	}
-
-	void setPaginationItem(boolean paginationItem) {
-		isPaginationItem = paginationItem;
-	}
-
-	@Override
-	public String toString() {
-		return "ViewItem{" +
-			"slot=" + slot +
-			", item=" + item +
-			", closeOnClick=" + closeOnClick +
-			", cancelOnClick=" + cancelOnClick +
-			", overrideCancelOnClick=" + overrideCancelOnClick +
-			", clickHandler=" + clickHandler +
-			", renderHandler=" + renderHandler +
-			", updateHandler=" + updateHandler +
-			", staticData=" + data +
-			", isPaginationItem=" + isPaginationItem +
-			", cancelOnShiftClick=" + isCancelOnShiftClick +
-			", overrideCancelOnShiftClick=" + overrideCancelOnShiftClick +
-//			", lastInternalState=" + lastInternalState +
-			'}';
 	}
 
 }

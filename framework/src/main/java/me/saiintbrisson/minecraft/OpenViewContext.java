@@ -1,84 +1,86 @@
 package me.saiintbrisson.minecraft;
 
-import com.google.common.base.Preconditions;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
-
-import static me.saiintbrisson.minecraft.View.INVENTORY_ROW_SIZE;
+import org.jetbrains.annotations.Nullable;
 
 /**
- * This context happens before the inventory is opened, it is used for cancellation by previously defined data,
- * for any reason and can be used to change the title and size of the inventory before the rendering intent.
+ * This context is created before the container is opened, it is used for cancellation by previously
+ * defined data, for any reason and can be used to change the title and size of the container before
+ * the rendering intent.
  */
-public final class OpenViewContext extends ViewContext {
+@Getter
+@ToString(callSuper = true)
+public final class OpenViewContext extends BaseViewContext implements CancellableViewContext {
 
-	private String inventoryTitle;
-	private int inventorySize;
+	/**
+	 * The title of the container that'll be created.
+	 */
+	private String containerTitle;
 
-	public OpenViewContext(@NotNull View view, @NotNull Player player) {
-		super(view, player, view.getLastSlot() + 1);
-		inventorySize = view.getItems().length;
+	/**
+	 * The size of the inventory that'll be created.
+	 */
+	private int containerSize;
+
+	@Setter
+	private boolean cancelled;
+
+	OpenViewContext(@NotNull final AbstractView view) {
+		super(view, null);
+	}
+
+	/**
+	 * Defines the title of the inventory for this context.
+	 *
+	 * @param inventoryTitle The new title of the inventory that'll be created.
+	 * @deprecated Use {@link #setContainerTitle(String)} instead.
+	 */
+	@Deprecated
+	public void setInventoryTitle(@Nullable final String inventoryTitle) {
+		this.containerTitle = inventoryTitle;
+	}
+
+	/**
+	 * Defines the size of the inventory for this context, can be the total number of slots or the
+	 * number of horizontal lines in the inventory.
+	 *
+	 * @param inventorySize The new inventory size.
+	 * @deprecated Use {@link #setContainerSize(int)} instead.
+	 */
+	@Deprecated
+	public void setInventorySize(final int inventorySize) {
+		setContainerSize(inventorySize);
+	}
+
+	/**
+	 * Defines the title of the container for this context.
+	 *
+	 * @param containerTitle The new title of the container that'll be created.
+	 */
+	public void setContainerTitle(@Nullable final String containerTitle) {
+		this.containerTitle = containerTitle;
+	}
+
+	/**
+	 * Defines the size of the container for this context, can be the total number of slots or the
+	 * number of horizontal lines in the container.
+	 *
+	 * @param containerSize The new container size.
+	 */
+	public void setContainerSize(final int containerSize) {
+		this.containerSize = getContainer().normalizeSize(containerSize);
 	}
 
 	@Override
-	public Inventory getInventory() {
-		throw new IllegalStateException(
-			"It is not allowed to manipulate or try to get the inventory instance in the initial open handler " +
-			"because the inventory has not yet been created. If you really need it, use `onRender` instead."
-		);
-	}
-
-	/**
-	 * Returns the custom inventory title if it has been defined.
-	 */
-	public String getInventoryTitle() {
-		return inventoryTitle;
-	}
-
-	/**
-	 * Defines the title of the inventory that will be created
-	 * for the new specified title according to the context.
-	 *
-	 * @param title the new inventory title.
-	 */
-	public void setInventoryTitle(String title) {
-		Preconditions.checkNotNull(title, "Inventory title cannot be null");
-		this.inventoryTitle = title;
-	}
-
-	/**
-	 * Returns the size of the inventory.
-	 */
-	public int getInventorySize() {
-		return inventorySize;
-	}
-
-	/**
-	 * Defines the new size for the inventory.
-	 *
-	 * @param inventorySize the new inventory size.
-	 */
-	public void setInventorySize(int inventorySize) {
-		// is less than nine, probably the person thought it was to put the row so we convert at once
-		this.inventorySize = inventorySize < INVENTORY_ROW_SIZE ? inventorySize * INVENTORY_ROW_SIZE : inventorySize;
-	}
-
-	@Override
-	protected void inventoryModificationTriggered() {
+	void inventoryModificationTriggered() {
 		throw new IllegalStateException(
 			"It is not allowed to modify the inventory " +
 			"in the opening context as the inventory was not even created. " +
 			"Use the onRender() rendering function for this."
 		);
-	}
-
-	@Override
-	public String toString() {
-		return "OpenViewContext{" +
-			"inventoryTitle='" + inventoryTitle + '\'' +
-			", inventorySize=" + inventorySize +
-			"} " + super.toString();
 	}
 
 }

@@ -1,4 +1,14 @@
-apply from: '../publish.gradle'
+repositories {
+    maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
+    maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' }
+}
+
+dependencies {
+    runtimeOnly(project(':framework:bukkit')) {
+        because('Backward compatibility')
+    }
+    compileOnlyApi libs.spigot.api
+}
 
 javadoc {
     exclude 'me/matsubara/**'

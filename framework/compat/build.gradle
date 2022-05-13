@@ -4,7 +4,6 @@ repositories {
 }
 
 dependencies {
-    compileOnly libs.spigot.api
-    implementation project(':framework')
-    implementation project(':framework:bukkit')
+    compileOnly project(':framework')
+    compileOnly project(':framework:bukkit')
 }

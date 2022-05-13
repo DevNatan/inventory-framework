@@ -1,8 +1,10 @@
 package me.saiintbrisson.minecraft;
 
+import org.jetbrains.annotations.NotNull;
+
 @FunctionalInterface
 public interface ViewItemHandler {
 
-    void handle(ViewSlotContext context);
+	void handle(@NotNull ViewSlotContext context);
 
 }
