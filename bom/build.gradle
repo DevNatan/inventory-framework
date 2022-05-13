@@ -46,6 +46,7 @@ tasks.withType(GenerateModuleMetadata).configureEach {
     enabled = false
 }
 
+@SuppressWarnings('unused')
 def configurePublication(Publication publication) {
     publication.groupId = 'com.github.DevNatan'
     publication.artifactId = 'inventory-framework'
@@ -53,6 +54,18 @@ def configurePublication(Publication publication) {
     publication.from components.java
 
     publication.pom {
-        url.set("https://gihub.com/DevNatan/inventory-framework.git")
+        url.set('https://gihub.com/DevNatan/inventory-framework.git')
+        licenses {
+            license {
+                name = 'MIT license'
+                url = 'https://github.com/DevNatan/inventory-framework/blob/main/LICENSE'
+            }
+        }
+
+        scm {
+            connection = 'scm:git:git://github.com/DevNatan/inventory-framework.git'
+            developerConnection = 'scm:git:ssh://github.com/DevNatan/inventory-framework.git'
+            url = 'https://github.com/DevNatan/inventory-framework'
+        }
     }
 }
