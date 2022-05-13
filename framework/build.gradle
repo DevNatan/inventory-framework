@@ -11,9 +11,7 @@ dependencies {
 }
 
 dependencies {
-    runtimeOnly(project(':framework:bukkit')) {
-        because('Backward compatibility')
-    }
+    runtimeOnly(project(':framework:bukkit')) { because('Backward compatibility') }
 }
 
 javadoc {
