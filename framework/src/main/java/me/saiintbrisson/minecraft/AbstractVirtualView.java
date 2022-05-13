@@ -51,6 +51,11 @@ abstract class AbstractVirtualView implements VirtualView {
 	}
 
 	@Override
+	public void with(@NotNull ViewItem item) {
+		throw new UnsupportedOperationException("not available");
+	}
+
+	@Override
 	public final void update() {
 		throw new UnsupportedOperationException("not available");
 	}
