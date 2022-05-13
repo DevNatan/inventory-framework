@@ -7,9 +7,14 @@ subprojects {
     repositories {
         mavenCentral()
         mavenLocal()
+        repositories {
+            maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
+            maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' }
+        }
     }
 
     dependencies {
+        compileOnly libs.spigot.api
         compileOnlyApi libs.jetbrains.annotations
         testCompileOnly libs.jetbrains.annotations
         testImplementation libs.junit.api

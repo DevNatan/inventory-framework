@@ -138,4 +138,9 @@ class BaseViewContext extends AbstractVirtualView implements ViewContext {
 		root.open(root.getViewFrame().getFactory().createViewer(viewer), data);
 	}
 
+	@Override
+	public Player getPlayer() {
+		throw new UnsupportedOperationException();
+	}
+
 }

@@ -1,7 +1,6 @@
 package me.saiintbrisson.minecraft;
 
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public interface ViewSlotContext extends ViewContext {
@@ -15,6 +14,6 @@ public interface ViewSlotContext extends ViewContext {
 
 	int getSlot();
 
-	void setItem(@Nullable Object item);
+	default void setItem(@Nullable Object item) {}
 
 }
