@@ -1,11 +1,19 @@
 package me.saiintbrisson.minecraft;
 
-import lombok.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Supplier;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.*;
 
 @ToString
 @Getter
@@ -32,19 +40,6 @@ class BaseViewContext extends AbstractVirtualView implements ViewContext {
 	}
 
 	@Override
-	public Player getPlayer() {
-		throw new UnsupportedOperationException("Player implementation is not supported in this context");
-	}
-
-	@Override
-	public final Viewer getViewer() {
-		if (viewers.isEmpty())
-			throw new IllegalStateException("context is not valid, there's no viewers available");
-
-		return viewers.get(0);
-	}
-
-	@Override
 	public final void addViewer(@NotNull final Viewer viewer) {
 		synchronized (viewers) {
 			viewers.add(viewer);
@@ -62,6 +57,19 @@ class BaseViewContext extends AbstractVirtualView implements ViewContext {
 	@SuppressWarnings("unchecked")
 	public final <T> T get(@NotNull final String key) {
 		return (T) data.get(key);
+	}
+
+	@Override
+	public <T> T get(@NotNull String key, @NotNull Supplier<T> defaultValue) {
+		synchronized (data) {
+			if (!data.containsKey(key)) {
+				final T value = defaultValue.get();
+				data.put(key, value);
+				return value;
+			}
+
+			return (T) data.get(key);
+		}
 	}
 
 	@Override
@@ -125,12 +133,7 @@ class BaseViewContext extends AbstractVirtualView implements ViewContext {
 	}
 
 	@Override
-	public final void open(@NotNull Viewer viewer, @NotNull Map<String, Object> data) {
-		root.open(viewer, data);
-	}
-
-	@Override
-	public final void open(@NotNull Player viewer, @NotNull Map<String, Object> data) {
+	public final void open(@NotNull Object viewer, @NotNull Map<String, Object> data) {
 		// workaround to keep backward compatibility
 		root.open(root.getViewFrame().getFactory().createViewer(viewer), data);
 	}

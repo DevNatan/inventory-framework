@@ -1,11 +1,11 @@
 package me.saiintbrisson.minecraft;
 
 import java.util.List;
-import java.util.Map;
+import java.util.function.Supplier;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public interface ViewContext extends VirtualView, ViewerHolder<Player> {
+public interface ViewContext extends VirtualView {
 
 	@NotNull
 	List<Viewer> getViewers();
@@ -15,6 +15,8 @@ public interface ViewContext extends VirtualView, ViewerHolder<Player> {
 	void removeViewer(@NotNull final Viewer viewer);
 
 	<T> T get(@NotNull final String key);
+
+	<T> T get(@NotNull final String key, @NotNull Supplier<T> defaultValue);
 
 	void set(@NotNull final String key, @NotNull final Object value);
 
@@ -72,20 +74,6 @@ public interface ViewContext extends VirtualView, ViewerHolder<Player> {
 	 */
 	void setPropagateErrors(final boolean propagateErrors);
 
-	/**
-	 * @deprecated Use {@link #getViewer()} instead.
-	 */
-	@Deprecated
 	Player getPlayer();
-
-	Viewer getViewer();
-
-	@Override
-	default void open(final @NotNull Player viewer, final @NotNull Map<String, Object> data) {
-		throw new UnsupportedOperationException(
-			"This function is only available on the Bukkit platform for reasons of backward " +
-				"compatibility, so it is not available on the current platform."
-		);
-	}
 
 }

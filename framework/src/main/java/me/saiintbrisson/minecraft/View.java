@@ -3,7 +3,6 @@ package me.saiintbrisson.minecraft;
 import java.util.Map;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.jetbrains.annotations.NotNull;
@@ -13,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
  */
 @Getter
 @RequiredArgsConstructor
-public class View extends AbstractView implements ViewerHolder<Player>, InventoryHolder {
+public class View extends AbstractView implements InventoryHolder {
 
 	private final int rows;
 	private final String title;
@@ -28,7 +27,7 @@ public class View extends AbstractView implements ViewerHolder<Player>, Inventor
 
 	@Override
 	public final void open(
-		@NotNull Player player,
+		@NotNull Object player,
 		@NotNull Map<String, Object> data
 	) {
 		open(getViewFrame().getFactory().createViewer(player), data);

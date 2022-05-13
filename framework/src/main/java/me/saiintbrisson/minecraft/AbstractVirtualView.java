@@ -15,7 +15,38 @@ abstract class AbstractVirtualView implements VirtualView {
 	private ViewErrorHandler errorHandler;
 
 	@Override
+	@NotNull
+	public final ViewItem item() {
+		throw new UnsupportedOperationException("not available");
+	}
+
+	@Override
+	@NotNull
+	public final ViewItem item(@NotNull Object item) {
+		throw new UnsupportedOperationException("not available");
+	}
+
+	@Override
+	@NotNull
 	public final ViewItem slot(int slot) {
+		throw new UnsupportedOperationException("not available");
+	}
+
+	@Override
+	@NotNull
+	public final ViewItem slot(int slot, Object item) {
+		throw new UnsupportedOperationException("not available");
+	}
+
+	@Override
+	@NotNull
+	public final ViewItem slot(int row, int column) {
+		throw new UnsupportedOperationException("not available");
+	}
+
+	@Override
+	@NotNull
+	public final ViewItem slot(int row, int column, Object item) {
 		throw new UnsupportedOperationException("not available");
 	}
 

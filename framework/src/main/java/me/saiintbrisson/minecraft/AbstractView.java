@@ -10,6 +10,7 @@ import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 
 @Getter
+@Setter
 abstract class AbstractView extends AbstractVirtualView {
 
 	@Getter(AccessLevel.PROTECTED)
@@ -17,6 +18,9 @@ abstract class AbstractView extends AbstractVirtualView {
 	PlatformViewFrame<?, ?, ?> viewFrame;
 
 	private final Set<ViewContext> contexts = Collections.newSetFromMap(new WeakHashMap<>());
+
+	private boolean cancelOnClick, cancelOnPickup, cancelOnDrop, cancelOnDrag, cancelOnClone,
+		cancelOnMoveIn, cancelOnMoveOut, cancelOnShiftClick, clearCursorOnClose, closeOnOutsideClick;
 
 	public final void open(@NotNull Viewer viewer, @NotNull Map<String, Object> data) {
 		final OpenViewContext openViewContext = open0(viewer, data);

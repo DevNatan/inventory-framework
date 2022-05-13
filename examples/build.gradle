@@ -1,3 +1,10 @@
+repositories {
+    maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
+    maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' }
+}
+
 dependencies {
+    compileOnly libs.spigot.api
     implementation project(':framework')
+    implementation project(':framework:bukkit')
 }

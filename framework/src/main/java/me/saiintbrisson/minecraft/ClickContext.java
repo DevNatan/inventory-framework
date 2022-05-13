@@ -11,14 +11,8 @@ import org.jetbrains.annotations.NotNull;
 @ToString(callSuper = true)
 class ClickContext extends BaseViewContext {
 
-	private final InventoryClickEvent clickOrigin;
-
-	ClickContext(
-		@NotNull final ViewContext context,
-		@NotNull final InventoryClickEvent clickOrigin
-	) {
+	ClickContext(@NotNull final ViewContext context, @NotNull InventoryClickEvent clickOrigin) {
 		super(context);
-		this.clickOrigin = clickOrigin;
 	}
 
 	@Override
