@@ -1,5 +1,11 @@
 apply from: '../publish.gradle'
 
+dependencies {
+    runtimeOnly(project(':framework:bukkit')) {
+        because('Backward compatibility')
+    }
+}
+
 javadoc {
     exclude 'me/matsubara/**'
     exclude 'me/saiintbrisson/minecraft/utils/**'
