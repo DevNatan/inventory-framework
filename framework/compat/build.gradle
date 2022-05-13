@@ -1,4 +1,4 @@
 dependencies {
     compileOnly project(':framework')
-    implementation(project(':framework:bukkit'))
+    compileOnly project(':framework:bukkit')
 }

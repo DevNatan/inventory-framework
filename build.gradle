@@ -2,7 +2,7 @@ subprojects {
     apply plugin: 'java-library'
 
     group 'me.saiintbrisson.minecraft'
-    version '2.5.1'
+    version '2.5.1-SNAPSHOT'
 
     repositories {
         mavenCentral()
