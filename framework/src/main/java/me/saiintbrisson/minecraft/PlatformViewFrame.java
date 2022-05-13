@@ -46,7 +46,7 @@ public interface PlatformViewFrame<V, P, F extends PlatformViewFrame<V, P, F>> {
 	P getOwner();
 
 	@NotNull
-	ViewContainerFactory getFactory();
+	ViewComponentFactory getFactory();
 
 	<R extends View> R open(
 		@NotNull final Class<R> viewClass,

@@ -124,4 +124,14 @@ class BaseViewContext extends AbstractVirtualView implements ViewContext {
 		getContainer().close();
 	}
 
+	@Override
+	public final void open(@NotNull Viewer viewer, @NotNull Map<String, Object> data) {
+		view.open(viewer, data);
+	}
+
+	@Override
+	public final void open(@NotNull Player viewer, @NotNull Map<String, Object> data) {
+		view.open(viewer, data);
+	}
+
 }

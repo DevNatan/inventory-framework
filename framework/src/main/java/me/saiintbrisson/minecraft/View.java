@@ -192,7 +192,7 @@ public class View extends AbstractVirtualView implements ViewerHolder<Player>, I
 		@NotNull Player player,
 		@NotNull Map<String, Object> data
 	) {
-		open(new BukkitViewer(player), data);
+		open(viewFrame.getFactory().createViewer(player), data);
 	}
 
 	private OpenViewContext open0(@NotNull Viewer viewer, @NotNull Map<String, Object> data) {
@@ -211,11 +211,7 @@ public class View extends AbstractVirtualView implements ViewerHolder<Player>, I
 		@NotNull Viewer viewer,
 		@NotNull ViewContainer container
 	) {
-		final ViewContext context = new BukkitViewContext(
-			this,
-			container,
-			((BukkitViewer) viewer).getPlayer()
-		);
+		final ViewContext context = viewFrame.getFactory().createContext(this, container);
 		context.addViewer(viewer);
 		return context;
 	}

@@ -28,7 +28,7 @@ public final class ViewFrame implements PlatformViewFrame<Player, Plugin, ViewFr
 
 	@ToString.Exclude
 	private final Map<Class<? extends View>, View> views = new HashMap<>();
-	private final ViewContainerFactory factory = new BukkitViewContainerFactory();
+	private ViewComponentFactory factory;
 
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
@@ -67,31 +67,32 @@ public final class ViewFrame implements PlatformViewFrame<Player, Plugin, ViewFr
 	@Override
 	public void register() {
 		if (isRegistered())
-			throw new IllegalStateException("Already registered");
+			throw new IllegalStateException("This ViewFrame is already registered.");
+
+		// check if there's another ViewFrame instance in the same server
+		final ServicesManager servicesManager = getOwner().getServer().getServicesManager();
+		if (servicesManager.isProvidedFor(ViewFrame.class))
+			return;
+
+		factory = PlatformUtils.getFactory();
 
 		synchronized (views) {
 			for (final View view : views.values()) {
 				if (views.containsKey(view.getClass()))
-					throw new IllegalArgumentException(
-						"View already registered, try to use #with before #register instead."
-					);
+					throw new IllegalArgumentException(String.format(
+						"View %s already registered, try to use #with before #register instead.",
+						view.getClass().getName()
+					));
 
 				views.put(view.getClass(), view);
 			}
-		}
-
-		// check if there's another ViewFrame instance in the same server
-		final ServicesManager servicesManager = getOwner().getServer().getServicesManager();
-
-		if (!servicesManager.isProvidedFor(ViewFrame.class)) {
-			servicesManager.register(ViewFrame.class, this, getOwner(), ServicePriority.Normal);
-			return;
 		}
 
 		getOwner().getServer().getPluginManager().registerEvents(
 			listener = new ViewListener(this),
 			getOwner()
 		);
+		servicesManager.register(ViewFrame.class, this, getOwner(), ServicePriority.Normal);
 	}
 
 	@Override
@@ -130,17 +131,17 @@ public final class ViewFrame implements PlatformViewFrame<Player, Plugin, ViewFr
 		@NotNull Map<String, Object> data
 	) {
 		if (!isRegistered())
-			throw new IllegalStateException("Attempted to open a view without having registered the view frame");
+			throw new IllegalStateException("Attempt to open a view without having registered the view frame.");
 
 		@SuppressWarnings("unchecked") final T view = (T) views.get(viewClass);
 
 		if (view == null)
 			throw new IllegalStateException(String.format(
-				"View %s is not registered",
+				"View %s is not registered.",
 				viewClass.getName()
 			));
 
-		view.open(new BukkitViewer(player), data);
+		view.open(factory.createViewer(player), data);
 		return view;
 	}
 

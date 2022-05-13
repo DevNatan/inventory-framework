@@ -4,8 +4,9 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Map;
 
-public interface ViewContext extends VirtualView {
+public interface ViewContext extends VirtualView, ViewerHolder<Player> {
 
 	@NotNull
 	List<Viewer> getViewers();
@@ -70,5 +71,13 @@ public interface ViewContext extends VirtualView {
 	Player getPlayer();
 
 	Viewer getViewer();
+
+	@Override
+	default void open(final @NotNull Player viewer, final @NotNull Map<String, Object> data) {
+		throw new UnsupportedOperationException(
+			"This function is only available on the Bukkit platform for reasons of backward " +
+			"compatibility, so it is not available on the current platform."
+		);
+	}
 
 }
