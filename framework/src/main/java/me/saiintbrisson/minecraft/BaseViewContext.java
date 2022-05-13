@@ -1,6 +1,7 @@
 package me.saiintbrisson.minecraft;
 
 import lombok.*;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,19 +27,32 @@ class BaseViewContext extends AbstractVirtualView implements ViewContext {
 	private boolean propagateErrors;
 	private final Map<String, Object> data = new HashMap<>();
 
-	public BaseViewContext(@NotNull ViewContext context) {
+	public BaseViewContext(@NotNull final ViewContext context) {
 		this(context.getView(), context.getContainer());
 	}
 
 	@Override
-	public void addViewer(@NotNull Viewer viewer) {
+	public Player getPlayer() {
+		throw new UnsupportedOperationException("Player implementation is not supported in this context");
+	}
+
+	@Override
+	public final Viewer getViewer() {
+		if (viewers.isEmpty())
+			throw new IllegalStateException("context is not valid, there's no viewers available");
+
+		return viewers.get(0);
+	}
+
+	@Override
+	public final void addViewer(@NotNull final Viewer viewer) {
 		synchronized (viewers) {
 			viewers.add(viewer);
 		}
 	}
 
 	@Override
-	public void removeViewer(@NotNull Viewer viewer) {
+	public final void removeViewer(@NotNull final Viewer viewer) {
 		synchronized (viewers) {
 			viewers.remove(viewer);
 		}
@@ -46,19 +60,19 @@ class BaseViewContext extends AbstractVirtualView implements ViewContext {
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public <T> T get(@NotNull String key) {
+	public final <T> T get(@NotNull final String key) {
 		return (T) data.get(key);
 	}
 
 	@Override
-	public void set(@NotNull String key, @NotNull Object value) {
+	public final void set(@NotNull final String key, @NotNull final Object value) {
 		synchronized (data) {
 			data.put(key, value);
 		}
 	}
 
 	@Override
-	public boolean has(@NotNull String key) {
+	public final boolean has(@NotNull final String key) {
 		synchronized (data) {
 			return data.containsKey(key);
 		}
@@ -66,7 +80,7 @@ class BaseViewContext extends AbstractVirtualView implements ViewContext {
 
 	@Override
 	@NotNull
-	public ViewContainer getContainer() {
+	public final ViewContainer getContainer() {
 		return Objects.requireNonNull(
 			container,
 			"View context container cannot be null"
@@ -74,31 +88,31 @@ class BaseViewContext extends AbstractVirtualView implements ViewContext {
 	}
 
 	@Override
-	public @NotNull String getTitle() {
+	public final @NotNull String getTitle() {
 		if (updatedTitle != null) return updatedTitle;
 		return view.getTitle();
 	}
 
 	@Override
-	public int getRows() {
+	public final int getRows() {
 		return getContainer().getRowSize();
 	}
 
 	@Override
-	public void updateTitle(@NotNull String title) {
+	public final void updateTitle(@NotNull final String title) {
 		updatedTitle = title;
 		getContainer().changeTitle(title);
 	}
 
 	@Override
-	public void resetTitle() {
+	public final void resetTitle() {
 		updatedTitle = null;
 		getContainer().changeTitle(null);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> PaginatedViewContext<T> paginated() {
+	public final <T> PaginatedViewContext<T> paginated() {
 		if (!(getView() instanceof PaginatedView))
 			throw new IllegalArgumentException("Only paginated views can enforce paginated view context");
 
@@ -106,7 +120,7 @@ class BaseViewContext extends AbstractVirtualView implements ViewContext {
 	}
 
 	@Override
-	public void close() {
+	public final void close() {
 		getContainer().close();
 	}
 

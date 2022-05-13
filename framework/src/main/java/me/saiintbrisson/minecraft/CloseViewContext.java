@@ -16,7 +16,7 @@ public final class CloseViewContext extends BaseViewContext {
 	@Setter
 	private boolean cancelled;
 
-	CloseViewContext(@NotNull ViewContext context) {
+	CloseViewContext(@NotNull final ViewContext context) {
 		super(context);
 	}
 

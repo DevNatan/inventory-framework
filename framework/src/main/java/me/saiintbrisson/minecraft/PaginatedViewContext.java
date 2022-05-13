@@ -72,7 +72,7 @@ public interface PaginatedViewContext<T> extends ViewContext, Paginated<T> {
 	 *
 	 * @param page the new page.
 	 */
-	void switchTo(int page);
+	void switchTo(final int page);
 
 	/**
 	 * Updates the current context by switching to the previous page if available.

@@ -9,6 +9,8 @@ public interface ViewSlotContext extends ViewContext {
 
 	boolean isCancelled();
 
-	void setCancelled(boolean cancelled);
+	void setCancelled(final boolean cancelled);
+
+	int getSlot();
 
 }

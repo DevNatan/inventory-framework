@@ -4,6 +4,6 @@ interface CancellableViewContext extends ViewContext {
 
 	boolean isCancelled();
 
-	void setCancelled(boolean cancelled);
+	void setCancelled(final boolean cancelled);
 
 }

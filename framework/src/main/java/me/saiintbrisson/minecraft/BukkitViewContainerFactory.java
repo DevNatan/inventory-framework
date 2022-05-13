@@ -5,14 +5,14 @@ import org.jetbrains.annotations.NotNull;
 
 final class BukkitViewContainerFactory implements ViewContainerFactory {
 
-	@NotNull
 	@Override
-	public ViewContainer create(
-		@NotNull View view,
-		int size,
-		String title
-	) {
+	public @NotNull ViewContainer createContainer(@NotNull final View view, final int size, final String title) {
 		return new BukkitChestViewContainer(Bukkit.createInventory(view, size, title));
+	}
+
+	@Override
+	public @NotNull Viewer createViewer() {
+		throw new UnsupportedOperationException();
 	}
 
 }

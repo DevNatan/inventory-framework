@@ -1,5 +1,6 @@
 package me.saiintbrisson.minecraft;
 
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -9,15 +10,15 @@ public interface ViewContext extends VirtualView {
 	@NotNull
 	List<Viewer> getViewers();
 
-	void addViewer(@NotNull Viewer viewer);
+	void addViewer(@NotNull final Viewer viewer);
 
-	void removeViewer(@NotNull Viewer viewer);
+	void removeViewer(@NotNull final Viewer viewer);
 
-	<T> T get(@NotNull String key);
+	<T> T get(@NotNull final String key);
 
-	void set(@NotNull String key, @NotNull Object value);
+	void set(@NotNull final String key, @NotNull final Object value);
 
-	boolean has(@NotNull String key);
+	boolean has(@NotNull final String key);
 
 	@NotNull
 	ViewContainer getContainer();
@@ -40,7 +41,7 @@ public interface ViewContext extends VirtualView {
 	 * if you try to use this function and fail (will possibly fail silently), report it to the
 	 * inventory-framework developers to add support to your version.
 	 */
-	void updateTitle(@NotNull String title);
+	void updateTitle(@NotNull final String title);
 
 	/**
 	 * Updates the inventory title of the customer that owns this context to the initially defined title.
@@ -60,6 +61,14 @@ public interface ViewContext extends VirtualView {
 	 *
 	 * @param propagateErrors If errors should be propagated to the root view.
 	 */
-	void setPropagateErrors(boolean propagateErrors);
+	void setPropagateErrors(final boolean propagateErrors);
+
+	/**
+	 * @deprecated Use {@link #getViewer()} instead.
+	 */
+	@Deprecated
+	Player getPlayer();
+
+	Viewer getViewer();
 
 }

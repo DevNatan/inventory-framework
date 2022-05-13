@@ -27,7 +27,7 @@ interface ViewContainer {
 	 * @param slot The item slot.
 	 * @return Whether there is an item in the specified slot.
 	 */
-	boolean hasItem(int slot);
+	boolean hasItem(final int slot);
 
 	/**
 	 * The number of slots in this inventory (available or not).
@@ -50,7 +50,7 @@ interface ViewContainer {
 	 * @param size The expected size of the container.
 	 * @return The size of the container according to the specified parameter.
 	 */
-	default int normalizeSize(int size) {
+	default int normalizeSize(final int size) {
 		// is less than the row size, probably the user thought it was to put the row size
 		if (size < getRowSize()) return size * getRowSize();
 
@@ -64,10 +64,10 @@ interface ViewContainer {
 		return size;
 	}
 
-	void open(@NotNull Iterable<Viewer> viewers);
+	void open(@NotNull final Iterable<Viewer> viewers);
 
 	void close();
 
-	void changeTitle(@Nullable String title);
+	void changeTitle(@Nullable final String title);
 
 }

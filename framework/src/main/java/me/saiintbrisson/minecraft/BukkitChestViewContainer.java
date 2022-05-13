@@ -43,7 +43,7 @@ final class BukkitChestViewContainer extends BukkitViewContainer {
 	}
 
 	@Override
-	public void changeTitle(@Nullable String title) {
+	public void changeTitle(@Nullable final String title) {
 		throw new UnsupportedOperationException();
 	}
 

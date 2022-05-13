@@ -28,7 +28,7 @@ public final class OpenViewContext extends BaseViewContext implements Cancellabl
 	@Setter
 	private boolean cancelled;
 
-	OpenViewContext(@NotNull View view) {
+	OpenViewContext(@NotNull final View view) {
 		super(view, null);
 	}
 
@@ -39,7 +39,7 @@ public final class OpenViewContext extends BaseViewContext implements Cancellabl
 	 * @deprecated Use {@link #setContainerTitle(String)} instead.
 	 */
 	@Deprecated
-	public void setInventoryTitle(@Nullable String inventoryTitle) {
+	public void setInventoryTitle(@Nullable final String inventoryTitle) {
 		this.containerTitle = inventoryTitle;
 	}
 
@@ -51,7 +51,7 @@ public final class OpenViewContext extends BaseViewContext implements Cancellabl
 	 * @deprecated Use {@link #setContainerSize(int)} instead.
 	 */
 	@Deprecated
-	public void setInventorySize(int inventorySize) {
+	public void setInventorySize(final int inventorySize) {
 		setContainerSize(inventorySize);
 	}
 
@@ -60,7 +60,7 @@ public final class OpenViewContext extends BaseViewContext implements Cancellabl
 	 *
 	 * @param containerTitle The new title of the container that'll be created.
 	 */
-	public void setContainerTitle(@Nullable String containerTitle) {
+	public void setContainerTitle(@Nullable final String containerTitle) {
 		this.containerTitle = containerTitle;
 	}
 
@@ -70,7 +70,7 @@ public final class OpenViewContext extends BaseViewContext implements Cancellabl
 	 *
 	 * @param containerSize The new container size.
 	 */
-	public void setContainerSize(int containerSize) {
+	public void setContainerSize(final int containerSize) {
 		this.containerSize = getContainer().normalizeSize(containerSize);
 	}
 

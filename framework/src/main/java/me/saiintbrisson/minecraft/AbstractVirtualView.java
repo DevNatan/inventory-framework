@@ -17,14 +17,14 @@ abstract class AbstractVirtualView implements VirtualView {
 	void inventoryModificationTriggered() {
 	}
 
-	final void throwException(@NotNull ViewContext context, @NotNull Exception exception) {
+	final void throwException(@NotNull final ViewContext context, @NotNull final Exception exception) {
 		if (getErrorHandler() == null)
 			return;
 
 		getErrorHandler().error(context, exception);
 	}
 
-	void runCatching(@NotNull ViewContext context, @NotNull Runnable runnable) {
+	void runCatching(@NotNull final ViewContext context, @NotNull final Runnable runnable) {
 		// unhandled exception
 		if (getErrorHandler() == null) {
 			runnable.run();

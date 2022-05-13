@@ -13,7 +13,7 @@ import java.util.WeakHashMap;
 
 @Getter
 @RequiredArgsConstructor
-public class View extends AbstractVirtualView implements InventoryHolder {
+public class View extends AbstractVirtualView implements ViewerHolder<Player>, InventoryHolder {
 
 	private final int rows;
 	private final String title;
@@ -155,13 +155,24 @@ public class View extends AbstractVirtualView implements InventoryHolder {
 	) {
 	}
 
-	public final void open(
-		@NotNull Player player,
-		@NotNull Map<String, Object> data
-	) {
-		final Viewer viewer = new BukkitViewer(player);
-		final OpenViewContext openViewContext = open(viewer, data);
-		final ViewContainer container = viewFrame.getContainerFactory().create(
+	/**
+	 * Called when a player moves a view item out of the view's inventory.
+	 * <p>
+	 * Canceling the context will cancel the move.
+	 * Don't confuse moving with dropping.
+	 *
+	 * @param context The player view context.
+	 */
+	protected void onMoveOut(@NotNull ViewSlotMoveContext context) {
+	}
+
+	protected void onMoveIn(@NotNull ViewSlotMoveContext context) {
+	}
+
+	@Override
+	public final void open(@NotNull Viewer viewer, @NotNull Map<String, Object> data) {
+		final OpenViewContext openViewContext = open0(viewer, data);
+		final ViewContainer container = viewFrame.getFactory().createContainer(
 			this,
 			openViewContext.getContainerSize(),
 			openViewContext.getContainerTitle()
@@ -173,34 +184,45 @@ public class View extends AbstractVirtualView implements InventoryHolder {
 		}
 
 		render(context);
+		context.getContainer().open(context.getViewers());
 	}
 
-	private OpenViewContext open(@NotNull Viewer viewer, @NotNull Map<String, Object> data) {
+	@Override
+	public final void open(
+		@NotNull Player player,
+		@NotNull Map<String, Object> data
+	) {
+		open(new BukkitViewer(player), data);
+	}
+
+	private OpenViewContext open0(@NotNull Viewer viewer, @NotNull Map<String, Object> data) {
 		final OpenViewContext context = new OpenViewContext(this);
 		context.addViewer(viewer);
 		data.forEach(context::set);
-
 		runCatching(context, () -> onOpen(context));
 		return context;
 	}
 
 	private void render(@NotNull ViewContext context) {
 		runCatching(context, () -> onRender(context));
-		context.getContainer().open(context.getViewers());
-	}
-
-	@Override
-	public final void close() {
-		getContexts().forEach(ViewContext::close);
 	}
 
 	final ViewContext create(
 		@NotNull Viewer viewer,
 		@NotNull ViewContainer container
 	) {
-		final ViewContext context = new ViewContextImpl(this, container);
+		final ViewContext context = new BukkitViewContext(
+			this,
+			container,
+			((BukkitViewer) viewer).getPlayer()
+		);
 		context.addViewer(viewer);
 		return context;
+	}
+
+	@Override
+	public final void close() {
+		getContexts().forEach(ViewContext::close);
 	}
 
 	@SuppressWarnings("ConstantConditions")
