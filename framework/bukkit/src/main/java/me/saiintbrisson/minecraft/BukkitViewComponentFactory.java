@@ -13,11 +13,11 @@ final class BukkitViewComponentFactory implements ViewComponentFactory {
 
 	@Override
 	public @NotNull ViewContainer createContainer(
-		@NotNull final View view,
+		@NotNull final VirtualView view,
 		final int size,
 		final String title
 	) {
-		return new BukkitChestViewContainer(Bukkit.createInventory(view, size, title));
+		return new BukkitChestViewContainer(Bukkit.createInventory((View) view, size, title));
 	}
 
 	@Override
@@ -31,7 +31,7 @@ final class BukkitViewComponentFactory implements ViewComponentFactory {
 
 	@Override
 	public @NotNull ViewContext createContext(
-		@NotNull final View view,
+		@NotNull final AbstractView view,
 		@NotNull final ViewContainer container
 	) {
 		return new BukkitViewContext(

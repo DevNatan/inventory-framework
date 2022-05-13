@@ -25,4 +25,8 @@ public interface VirtualView {
 
 	ViewErrorHandler getErrorHandler();
 
+	ViewItem slot(int slot);
+
+	void update();
+
 }

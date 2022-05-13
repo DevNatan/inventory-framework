@@ -16,7 +16,7 @@ class BaseViewContext extends AbstractVirtualView implements ViewContext {
 	private final List<Viewer> viewers = new ArrayList<>();
 
 	@NotNull
-	private final View view;
+	private final AbstractView root;
 
 	@Nullable
 	private final ViewContainer container;
@@ -28,7 +28,7 @@ class BaseViewContext extends AbstractVirtualView implements ViewContext {
 	private final Map<String, Object> data = new HashMap<>();
 
 	public BaseViewContext(@NotNull final ViewContext context) {
-		this(context.getView(), context.getContainer());
+		this((AbstractView) context.getRoot(), context.getContainer());
 	}
 
 	@Override
@@ -90,7 +90,7 @@ class BaseViewContext extends AbstractVirtualView implements ViewContext {
 	@Override
 	public final @NotNull String getTitle() {
 		if (updatedTitle != null) return updatedTitle;
-		return view.getTitle();
+		return root.getTitle();
 	}
 
 	@Override
@@ -113,7 +113,7 @@ class BaseViewContext extends AbstractVirtualView implements ViewContext {
 	@SuppressWarnings("unchecked")
 	@Override
 	public final <T> PaginatedViewContext<T> paginated() {
-		if (!(getView() instanceof PaginatedView))
+		if (!(this.getRoot() instanceof PaginatedView))
 			throw new IllegalArgumentException("Only paginated views can enforce paginated view context");
 
 		return (PaginatedViewContext<T>) this;
@@ -126,12 +126,13 @@ class BaseViewContext extends AbstractVirtualView implements ViewContext {
 
 	@Override
 	public final void open(@NotNull Viewer viewer, @NotNull Map<String, Object> data) {
-		view.open(viewer, data);
+		root.open(viewer, data);
 	}
 
 	@Override
 	public final void open(@NotNull Player viewer, @NotNull Map<String, Object> data) {
-		view.open(viewer, data);
+		// workaround to keep backward compatibility
+		root.open(root.getViewFrame().getFactory().createViewer(viewer), data);
 	}
 
 }

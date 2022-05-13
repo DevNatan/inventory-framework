@@ -6,10 +6,10 @@ import org.jetbrains.annotations.Nullable;
 final class BukkitViewContext extends BaseViewContext {
 
 	public BukkitViewContext(
-		@NotNull final View view,
+		@NotNull final AbstractView root,
 		@Nullable final ViewContainer container
 	) {
-		super(view, container);
+		super(root, container);
 	}
 
 }

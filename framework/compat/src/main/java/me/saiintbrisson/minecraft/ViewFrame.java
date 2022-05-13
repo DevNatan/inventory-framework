@@ -19,7 +19,7 @@ import java.util.function.Function;
 @Setter
 @ToString
 @RequiredArgsConstructor
-public final class ViewFrame implements PlatformViewFrame<Player, Plugin, ViewFrame> {
+public final class ViewFrame implements CompatViewFrame<ViewFrame> {
 
 	@NotNull
 	private final Plugin owner;

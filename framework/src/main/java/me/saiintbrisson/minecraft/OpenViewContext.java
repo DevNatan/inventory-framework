@@ -28,7 +28,7 @@ public final class OpenViewContext extends BaseViewContext implements Cancellabl
 	@Setter
 	private boolean cancelled;
 
-	OpenViewContext(@NotNull final View view) {
+	OpenViewContext(@NotNull final AbstractView view) {
 		super(view, null);
 	}
 

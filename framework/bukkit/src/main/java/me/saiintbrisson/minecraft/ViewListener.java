@@ -6,6 +6,6 @@ import org.bukkit.event.Listener;
 @RequiredArgsConstructor
 class ViewListener implements Listener {
 
-	private final ViewFrame viewFrame;
+	private final CompatViewFrame viewFrame;
 
 }

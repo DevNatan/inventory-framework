@@ -9,24 +9,24 @@ import org.jetbrains.annotations.NotNull;
 @Getter
 @Setter
 @ToString(callSuper = true)
-class BukkitClickSlotContext extends ClickContext implements ViewSlotContext {
+class ClickContext extends BaseViewContext {
 
 	private final InventoryClickEvent clickOrigin;
 
-	@Setter
-	private boolean cancelled;
-
-	BukkitClickSlotContext(
+	ClickContext(
 		@NotNull final ViewContext context,
 		@NotNull final InventoryClickEvent clickOrigin
 	) {
-		super(context, clickOrigin);
+		super(context);
 		this.clickOrigin = clickOrigin;
 	}
 
 	@Override
-	public int getSlot() {
-		return clickOrigin.getSlot();
+	final void inventoryModificationTriggered() {
+		throw new IllegalStateException(
+			"You cannot modify the inventory in the click handler context. " +
+				"Use the onRender(...) rendering function for this."
+		);
 	}
 
 }

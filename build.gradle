@@ -1,10 +1,8 @@
-import org.apache.tools.ant.filters.ReplaceTokens
-
 subprojects {
     apply plugin: 'java-library'
 
     group 'me.saiintbrisson.minecraft'
-    version '2.5'
+    version '2.5.1'
 
     repositories {
         mavenCentral()

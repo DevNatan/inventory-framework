@@ -1,10 +1,9 @@
 package me.saiintbrisson.minecraft;
 
-import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
 import java.util.Map;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 public interface ViewContext extends VirtualView, ViewerHolder<Player> {
 
@@ -24,7 +23,15 @@ public interface ViewContext extends VirtualView, ViewerHolder<Player> {
 	@NotNull
 	ViewContainer getContainer();
 
-	View getView();
+	/**
+	 * @deprecated Use {@link #getRoot()} instead.
+	 */
+	@Deprecated
+	default View getView() {
+		return (View) getRoot();
+	}
+
+	VirtualView getRoot();
 
 	<T> PaginatedViewContext<T> paginated();
 
@@ -32,15 +39,16 @@ public interface ViewContext extends VirtualView, ViewerHolder<Player> {
 
 	/**
 	 * Updates the title of the container for the client of the player who owns this context.
-	 *
-	 * @param title The new container title.
-	 * @apiNote This should not be used before the container is opened, if you need to set the
+	 * <p>
+	 * This should not be used before the container is opened, if you need to set the
 	 * __initial title__ use {@link OpenViewContext#setInventoryTitle(String)} on
 	 * {@link View#onOpen(OpenViewContext)} instead.
 	 * <p>
 	 * This function is not agnostic, so it may be that your server version is not yet supported,
 	 * if you try to use this function and fail (will possibly fail silently), report it to the
 	 * inventory-framework developers to add support to your version.
+	 *
+	 * @param title The new container title.
 	 */
 	void updateTitle(@NotNull final String title);
 
@@ -76,7 +84,7 @@ public interface ViewContext extends VirtualView, ViewerHolder<Player> {
 	default void open(final @NotNull Player viewer, final @NotNull Map<String, Object> data) {
 		throw new UnsupportedOperationException(
 			"This function is only available on the Bukkit platform for reasons of backward " +
-			"compatibility, so it is not available on the current platform."
+				"compatibility, so it is not available on the current platform."
 		);
 	}
 

@@ -14,6 +14,16 @@ abstract class AbstractVirtualView implements VirtualView {
 
 	private ViewErrorHandler errorHandler;
 
+	@Override
+	public final ViewItem slot(int slot) {
+		throw new UnsupportedOperationException("not available");
+	}
+
+	@Override
+	public final void update() {
+		throw new UnsupportedOperationException("not available");
+	}
+
 	void inventoryModificationTriggered() {
 	}
 
