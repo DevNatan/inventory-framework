@@ -13,7 +13,7 @@ public abstract class BukkitViewContainer implements ViewContainer {
 	abstract Inventory getInventory();
 
 	@Override
-	public void open(@NotNull Iterable<Viewer> viewers) {
+	public void open(@NotNull final Iterable<Viewer> viewers) {
 		viewers.forEach(viewer -> viewer.open(this));
 	}
 

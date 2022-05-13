@@ -1,9 +1,6 @@
 package me.saiintbrisson.minecraft;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
@@ -12,6 +9,7 @@ import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.ServicesManager;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -20,34 +18,24 @@ import java.util.function.Function;
 @Getter
 @Setter
 @ToString
-public final class ViewFrame {
+@RequiredArgsConstructor
+public final class ViewFrame implements PlatformViewFrame<Player, Plugin, ViewFrame> {
 
-	private final Plugin plugin;
+	@NotNull
+	private final Plugin owner;
+
 	private ViewErrorHandler errorHandler;
 
 	@ToString.Exclude
 	private final Map<Class<? extends View>, View> views = new HashMap<>();
-	private final ViewContainerFactory containerFactory = new BukkitViewContainerFactory();
+	private final ViewContainerFactory factory = new BukkitViewContainerFactory();
 
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
 	private Listener listener;
 	private Function<PaginatedViewContext<?>, ViewItem> defaultPreviousPageItem, defaultNextPageItem;
 
-	/**
-	 * @deprecated Use {@link ViewFrame#of(Plugin, View...)} instead.
-	 */
-	@Deprecated
-	public ViewFrame(@NotNull Plugin plugin) {
-		this.plugin = plugin;
-	}
-
-	/**
-	 * Registers a new view to this view frame.
-	 *
-	 * @param views The views that'll be registered.
-	 * @return This view frame instance.
-	 */
+	@Override
 	public ViewFrame with(@NotNull View... views) {
 		synchronized (getViews()) {
 			for (final View view : views) {
@@ -57,11 +45,7 @@ public final class ViewFrame {
 		return this;
 	}
 
-	/**
-	 * Removes a view from this view frame.
-	 *
-	 * @param views The views that'll be removed.
-	 */
+	@Override
 	public void remove(@NotNull View... views) {
 		synchronized (getViews()) {
 			for (final View view : views) {
@@ -80,11 +64,7 @@ public final class ViewFrame {
 		register();
 	}
 
-	/**
-	 * Registers this view frame.
-	 *
-	 * @throws IllegalStateException If this view frame is already registered.
-	 */
+	@Override
 	public void register() {
 		if (isRegistered())
 			throw new IllegalStateException("Already registered");
@@ -101,24 +81,20 @@ public final class ViewFrame {
 		}
 
 		// check if there's another ViewFrame instance in the same server
-		final ServicesManager servicesManager = plugin.getServer().getServicesManager();
+		final ServicesManager servicesManager = getOwner().getServer().getServicesManager();
 
 		if (!servicesManager.isProvidedFor(ViewFrame.class)) {
-			servicesManager.register(ViewFrame.class, this, plugin, ServicePriority.Normal);
+			servicesManager.register(ViewFrame.class, this, getOwner(), ServicePriority.Normal);
 			return;
 		}
 
-		plugin.getServer().getPluginManager().registerEvents(
+		getOwner().getServer().getPluginManager().registerEvents(
 			listener = new ViewListener(this),
-			plugin
+			getOwner()
 		);
 	}
 
-	/**
-	 * Unregisters this view frame and closes all registered views.
-	 *
-	 * @throws IllegalStateException If this view frame is not registered.
-	 */
+	@Override
 	public void unregister() {
 		if (!isRegistered())
 			throw new IllegalStateException("Not registered");
@@ -134,22 +110,20 @@ public final class ViewFrame {
 		listener = null;
 	}
 
-	/**
-	 * Returns `true` if this view frame is registered or `false` otherwise.
-	 *
-	 * @return If this view frame is registered.
-	 */
+	@Override
 	public boolean isRegistered() {
 		return listener != null;
 	}
 
+	@Override
 	public <T extends View> T open(
 		@NotNull Class<T> viewClass,
 		@NotNull Player player
 	) {
-		return open(viewClass, player, new HashMap<>());
+		return open(viewClass, player, Collections.emptyMap());
 	}
 
+	@Override
 	public <T extends View> T open(
 		@NotNull Class<T> viewClass,
 		@NotNull Player player,
@@ -166,7 +140,7 @@ public final class ViewFrame {
 				viewClass.getName()
 			));
 
-		view.open(player, data);
+		view.open(new BukkitViewer(player), data);
 		return view;
 	}
 
@@ -184,14 +158,6 @@ public final class ViewFrame {
 	@Deprecated
 	public void addView(final View... views) {
 		with(views);
-	}
-
-	/**
-	 * @deprecated Use {@link #getPlugin()} instead.
-	 */
-	@Deprecated
-	public Plugin getOwner() {
-		return getPlugin();
 	}
 
 	public static ViewFrame of(

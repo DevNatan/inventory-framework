@@ -9,19 +9,24 @@ import org.jetbrains.annotations.NotNull;
 @Getter
 @Setter
 @ToString(callSuper = true)
-class ClickSlotContext extends BaseViewContext implements ViewSlotContext {
+class BukkitClickSlotContext extends BaseViewContext implements ViewSlotContext {
 
 	private final InventoryClickEvent clickOrigin;
 
 	@Setter
 	private boolean cancelled;
 
-	public ClickSlotContext(
-		@NotNull ViewContext context,
-		@NotNull InventoryClickEvent clickOrigin
+	public BukkitClickSlotContext(
+		@NotNull final ViewContext context,
+		@NotNull final InventoryClickEvent clickOrigin
 	) {
 		super(context);
 		this.clickOrigin = clickOrigin;
+	}
+
+	@Override
+	public int getSlot() {
+		return clickOrigin.getSlot();
 	}
 
 	@Override

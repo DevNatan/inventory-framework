@@ -5,10 +5,6 @@ import org.jetbrains.annotations.NotNull;
 public interface ViewContainerFactory {
 
 	@NotNull
-	ViewContainer create(
-		@NotNull View view,
-		int size,
-		String title
-	);
+	ViewContainer createContainer(@NotNull final View view, final int size, final String title);
 
 }
