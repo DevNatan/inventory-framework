@@ -10,9 +10,4 @@ final class BukkitViewContainerFactory implements ViewContainerFactory {
 		return new BukkitChestViewContainer(Bukkit.createInventory(view, size, title));
 	}
 
-	@Override
-	public @NotNull Viewer createViewer() {
-		throw new UnsupportedOperationException();
-	}
-
 }

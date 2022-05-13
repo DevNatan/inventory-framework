@@ -10,6 +10,12 @@ dependencies {
     compileOnlyApi libs.spigot.api
 }
 
+dependencies {
+    runtimeOnly(project(':framework:bukkit')) {
+        because('Backward compatibility')
+    }
+}
+
 javadoc {
     exclude 'me/matsubara/**'
     exclude 'me/saiintbrisson/minecraft/utils/**'
