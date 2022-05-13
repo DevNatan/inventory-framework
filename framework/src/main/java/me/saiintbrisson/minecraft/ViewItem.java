@@ -39,11 +39,7 @@ public final class ViewItem {
 		this(-1);
 	}
 
-	/**
-	 * @deprecated Use {@link VirtualView#slot(int)} instead.
-	 */
-	@Deprecated
-	public ViewItem(final int slot) {
+	ViewItem(final int slot) {
 		this.slot = slot;
 	}
 

@@ -78,6 +78,8 @@ public interface VirtualView {
 	@NotNull
 	ViewItem slot(int row, int column, Object item);
 
+	void with(@NotNull ViewItem item);
+
 	void update();
 
 	void open(@NotNull final Object viewer, @NotNull final Map<String, Object> data);
