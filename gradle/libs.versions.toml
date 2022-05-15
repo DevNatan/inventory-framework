@@ -4,6 +4,7 @@ spigot-api = "1.16.5-R0.1-SNAPSHOT"
 junit = "5.8.2"
 lombok = "1.18.24"
 plugin-shadowjar = "7.1.2"
+kotlin = "1.6.21"
 
 [libraries.spigot-api]
 module = "org.spigotmc:spigot-api"
@@ -25,5 +26,10 @@ version.ref = "junit"
 module = "org.projectlombok:lombok"
 version.ref = "lombok"
 
+[libraries.kotlin]
+module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+version.ref = "kotlin"
+
 [plugins]
 shadowjar = { id = "com.github.johnrengelman.shadow", version.ref = "plugin-shadowjar" }
+kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }

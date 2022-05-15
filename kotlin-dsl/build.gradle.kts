@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm") version "1.6.21"
+    alias(libs.plugins.kotlin)
 }
 
 repositories {
@@ -8,6 +8,7 @@ repositories {
 
 dependencies {
     implementation(project(":framework"))
+    compileOnly(libs.kotlin)
 }
 
 kotlin {
