@@ -1,6 +1,11 @@
+@file:JvmName("ViewDslExtensions")
 @file:Suppress("FunctionName")
 
 package me.saiintbrisson.minecraft
+
+@DslMarker
+@Target(AnnotationTarget.CLASS, AnnotationTarget.TYPE, AnnotationTarget.FUNCTION)
+internal annotation class ViewDsl
 
 internal typealias ContextBlock = @ViewDsl ViewContext.() -> Unit
 internal typealias SlotContextBlock = @ViewDsl ViewSlotContext.() -> Unit
