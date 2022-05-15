@@ -12,16 +12,23 @@ final class BukkitViewComponentFactory implements ViewComponentFactory {
 	private Boolean worksInCurrentPlatform = null;
 
 	@Override
-	public @NotNull AbstractView createView(int rows, String title, @NotNull ViewType type) {
-		return new View(rows, title);
+	public @NotNull AbstractView createView(
+		final int rows,
+		final String title,
+		final @NotNull ViewType type
+	) {
+		checkTypeSupport(type);
+		return new View(rows, title, type);
 	}
 
 	@Override
 	public @NotNull ViewContainer createContainer(
-		@NotNull final VirtualView view,
+		final @NotNull VirtualView view,
 		final int size,
-		final String title
+		final String title,
+		final @NotNull ViewType type
 	) {
+		checkTypeSupport(type);
 		return new BukkitChestViewContainer(Bukkit.createInventory((View) view, size, title));
 	}
 
@@ -36,8 +43,8 @@ final class BukkitViewComponentFactory implements ViewComponentFactory {
 
 	@Override
 	public @NotNull BaseViewContext createContext(
-		@NotNull final AbstractView view,
-		@NotNull final ViewContainer container
+		final @NotNull AbstractView view,
+		final @NotNull ViewContainer container
 	) {
 		return new BukkitViewContext(
 			view,
@@ -61,6 +68,16 @@ final class BukkitViewComponentFactory implements ViewComponentFactory {
 
 			return worksInCurrentPlatform;
 		}
+	}
+
+	private void checkTypeSupport(@NotNull ViewType type) {
+		if (type == ViewType.CHEST)
+			return;
+
+		throw new IllegalArgumentException(String.format(
+			"%s ViewType is not supported in Bukkit platform.",
+			type.getIdentifier()
+		));
 	}
 
 }
