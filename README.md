@@ -23,6 +23,7 @@ Bukkit inventory framework used in some of my projects, feel free to use it. Lea
       * [Final Considerations](#final-considerations)
     * [Open and Close](#open-and-close)
     * [Registration](#registration)
+    * [Kotlin DSL](#kotlin-dsl)
     * [Feature Preview](#feature-preview)
 * [Version Compatibility](#version-compatibility)
 * [Examples](#examples)
@@ -862,6 +863,13 @@ To open our view, we need to call the facade method.
 // opens "MyView" to the player.
 viewFrame.open(MyView.class,player);
 ```
+
+## Kotlin DSL
+###### v2.5.1+
+There is a module called [`kotlin-dsl`](https://github.com/DevNatan/inventory-framework/tree/main/kotlin-dsl) that provides extensions that make it easy to create views in Kotlin code. 
+You can import it into your project if you are using Kotlin in your project.
+
+Note that IF doesn't include Kotlin's stdlib for you, at runtime you need to have the Kotlin library available in your classpath.
 
 ## Feature Preview
 
