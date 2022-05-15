@@ -14,7 +14,7 @@ public class PlatformUtilsTest {
 
 	@Test
 	void shouldThrowExceptionWhenFactoryWontWorkInTheCurrentPlatform() {
-		PlatformUtils.setFactory(new FakeViewComponentFactory(false));
+		PlatformUtils.setFactory(new PlatformTestViewComponentFactory(false));
 		Assertions.assertThrows(IllegalStateException.class, PlatformUtils::getFactory);
 	}
 
@@ -24,7 +24,7 @@ public class PlatformUtilsTest {
 	}
 
 	@AllArgsConstructor
-	private static class FakeViewComponentFactory extends NoopViewComponentFactory {
+	private static class PlatformTestViewComponentFactory extends NoopViewComponentFactory {
 
 		private final boolean worksInCurrentPlatform;
 

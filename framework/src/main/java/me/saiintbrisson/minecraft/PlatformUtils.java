@@ -54,7 +54,7 @@ public class PlatformUtils {
 	}
 
 	private static ViewComponentFactory fallbackFactory() throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-		final Class<?> clazz = Class.forName("me.saiintbrisson.BukkitViewComponentFactory");
+		final Class<?> clazz = Class.forName("me.saiintbrisson.minecraft.BukkitViewComponentFactory");
 		return (ViewComponentFactory) clazz.newInstance();
 	}
 
