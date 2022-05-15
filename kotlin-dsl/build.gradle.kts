@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 plugins {
     alias(libs.plugins.kotlin)
 }
@@ -7,7 +9,8 @@ repositories {
 }
 
 dependencies {
-    implementation(project(":framework"))
+    compileOnly(project(":framework"))
+    runtimeOnly(project(":framework"))
     compileOnly(libs.kotlin)
 }
 
