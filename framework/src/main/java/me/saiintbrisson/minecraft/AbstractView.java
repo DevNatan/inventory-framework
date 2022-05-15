@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -204,6 +205,7 @@ public abstract class AbstractView extends AbstractVirtualView {
 	protected void onMoveOut(@NotNull ViewSlotMoveContext context) {
 	}
 
+	@ApiStatus.Experimental
 	protected void onMoveIn(@NotNull ViewSlotMoveContext context) {
 	}
 

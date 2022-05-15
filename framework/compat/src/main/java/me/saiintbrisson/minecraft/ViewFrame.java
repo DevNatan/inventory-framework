@@ -11,6 +11,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.ServicesManager;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -66,6 +67,7 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
 	 * @deprecated Use {@link #register()} and {@link #with(View...)} instead.
 	 */
 	@Deprecated
+	@ApiStatus.ScheduledForRemoval(inVersion = "2.5.2")
 	public void register(@NotNull View... views) {
 		with(views);
 		register();
@@ -159,6 +161,7 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
 	 * @deprecated Use {@link #with(View...)} instead.
 	 */
 	@Deprecated
+	@ApiStatus.ScheduledForRemoval(inVersion = "2.5.2")
 	public void addView(final View view) {
 		with(view);
 	}
@@ -167,6 +170,7 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
 	 * @deprecated Use {@link #with(View...)} instead.
 	 */
 	@Deprecated
+	@ApiStatus.ScheduledForRemoval(inVersion = "2.5.2")
 	public void addView(final View... views) {
 		with(views);
 	}

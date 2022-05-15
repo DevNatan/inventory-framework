@@ -18,6 +18,7 @@ final class BukkitViewComponentFactory implements ViewComponentFactory {
 		final @NotNull ViewType type
 	) {
 		checkTypeSupport(type);
+		PlatformUtils.removeFactory();
 		return new View(rows, title, type);
 	}
 
@@ -53,21 +54,19 @@ final class BukkitViewComponentFactory implements ViewComponentFactory {
 	}
 
 	@Override
-	public boolean worksInCurrentPlatform() {
-		synchronized (this) {
-			if (worksInCurrentPlatform != null)
-				return worksInCurrentPlatform;
-
-			try {
-				Class.forName("org.bukkit.Bukkit");
-				worksInCurrentPlatform = true;
-			} catch (ClassNotFoundException ignored) {
-				// suppress RuntimeException because it will be thrown in PlatformUtils
-				worksInCurrentPlatform = false;
-			}
-
+	public synchronized boolean worksInCurrentPlatform() {
+		if (worksInCurrentPlatform != null)
 			return worksInCurrentPlatform;
+
+		try {
+			Class.forName("org.bukkit.Bukkit");
+			worksInCurrentPlatform = true;
+		} catch (ClassNotFoundException ignored) {
+			// suppress RuntimeException because it will be thrown in PlatformUtils
+			worksInCurrentPlatform = false;
 		}
+
+		return worksInCurrentPlatform;
 	}
 
 	private void checkTypeSupport(@NotNull ViewType type) {

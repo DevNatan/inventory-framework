@@ -9,10 +9,7 @@ public class PlatformUtilsTest {
 
 	@Test
 	void shouldThrowExceptionWhenNoFactoryIsAvailable() {
-		Assertions.assertThrows(IllegalStateException.class, () -> {
-			ViewComponentFactory factory = PlatformUtils.getFactory();
-			System.out.println("factory: " + factory);
-		});
+		Assertions.assertThrows(IllegalStateException.class, PlatformUtils::getFactory);
 	}
 
 	@Test
