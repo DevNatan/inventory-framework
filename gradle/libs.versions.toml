@@ -3,8 +3,9 @@ jetbrains-annotations = "22.0.0"
 spigot-api = "1.16.5-R0.1-SNAPSHOT"
 junit = "5.8.2"
 lombok = "1.18.24"
-plugin-shadowjar = "7.1.2"
 kotlin = "1.6.21"
+plugin-shadowjar = "7.1.2"
+plugin-ktlint = "3.10.0"
 
 [libraries.spigot-api]
 module = "org.spigotmc:spigot-api"
@@ -33,3 +34,4 @@ version.ref = "kotlin"
 [plugins]
 shadowjar = { id = "com.github.johnrengelman.shadow", version.ref = "plugin-shadowjar" }
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+ktlint = { id = "org.jmailen.kotlinter", version.ref = "plugin-ktlint" }

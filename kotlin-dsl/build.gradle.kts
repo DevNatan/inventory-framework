@@ -1,8 +1,9 @@
 @file:Suppress("UnstableApiUsage")
 
+@Suppress("DSL_SCOPE_VIOLATION")
 plugins {
-    @Suppress("DSL_SCOPE_VIOLATION")
     alias(libs.plugins.kotlin)
+    alias(libs.plugins.ktlint)
 }
 
 repositories {
