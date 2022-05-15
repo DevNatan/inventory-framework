@@ -2,6 +2,7 @@
 
 package me.saiintbrisson.minecraft
 
+@ViewDsl
 public class ViewBuilder {
 
     public var cancelOnClick: Boolean = false
@@ -31,6 +32,7 @@ public class ViewBuilder {
 
 }
 
+@ViewDsl
 public class ViewSlotBuilder(@PublishedApi internal val slot: Int) {
 
     internal var render: SlotContextBlock? = null
