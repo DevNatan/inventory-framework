@@ -7,6 +7,7 @@ plugins {
 dependencies {
     implementation(project(':framework:compat'))
     implementation(project(':framework:bukkit'))
+    implementation(project(':kotlin-dsl'))
 }
 
 shadowJar {
