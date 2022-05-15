@@ -32,12 +32,15 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
 
 	@ToString.Exclude
 	private final Map<Class<? extends View>, View> views = new HashMap<>();
-	private ViewComponentFactory factory;
 
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
 	private Listener listener;
 	private Function<PaginatedViewContext<?>, ViewItem> defaultPreviousPageItem, defaultNextPageItem;
+
+	static {
+		PlatformUtils.setFactory(new BukkitViewComponentFactory());
+	}
 
 	@Override
 	public ViewFrame with(@NotNull View... views) {
@@ -77,8 +80,6 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
 		final ServicesManager servicesManager = getOwner().getServer().getServicesManager();
 		if (servicesManager.isProvidedFor(ViewFrame.class))
 			return;
-
-		factory = PlatformUtils.getFactory();
 
 		synchronized (views) {
 			for (final View view : views.values()) {
@@ -121,6 +122,11 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
 	}
 
 	@Override
+	public @NotNull ViewComponentFactory getFactory() {
+		return PlatformUtils.getFactory();
+	}
+
+	@Override
 	public <T extends View> T open(
 		@NotNull Class<T> viewClass,
 		@NotNull Player player
@@ -145,7 +151,7 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
 				viewClass.getName()
 			));
 
-		view.open(factory.createViewer(player), data);
+		view.open(PlatformUtils.getFactory().createViewer(player), data);
 		return view;
 	}
 
