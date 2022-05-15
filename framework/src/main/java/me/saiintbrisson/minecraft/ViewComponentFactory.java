@@ -15,14 +15,15 @@ public interface ViewComponentFactory {
 	ViewContainer createContainer(
 		@NotNull final VirtualView view,
 		final int size,
-		final String title
+		final String title,
+		final ViewType type
 	);
 
 	@NotNull
 	Viewer createViewer(Object... parameters);
 
 	@NotNull
-	ViewContext createContext(
+	BaseViewContext createContext(
 		@NotNull final AbstractView root,
 		@NotNull final ViewContainer container
 	);

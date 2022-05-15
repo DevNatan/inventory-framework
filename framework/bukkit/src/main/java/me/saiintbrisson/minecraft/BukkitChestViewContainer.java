@@ -18,6 +18,11 @@ final class BukkitChestViewContainer extends BukkitViewContainer {
 	private final Inventory inventory;
 
 	@Override
+	public @NotNull ViewType getType() {
+		return ViewType.CHEST;
+	}
+
+	@Override
 	public int getFirstSlot() {
 		return 0;
 	}

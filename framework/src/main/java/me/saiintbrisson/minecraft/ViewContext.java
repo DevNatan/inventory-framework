@@ -1,18 +1,16 @@
 package me.saiintbrisson.minecraft;
 
 import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public interface ViewContext extends VirtualView {
 
 	@NotNull
 	List<Viewer> getViewers();
-
-	void addViewer(@NotNull final Viewer viewer);
-
-	void removeViewer(@NotNull final Viewer viewer);
 
 	<T> T get(@NotNull final String key);
 
@@ -33,7 +31,7 @@ public interface ViewContext extends VirtualView {
 		return (View) getRoot();
 	}
 
-	VirtualView getRoot();
+	AbstractView getRoot();
 
 	<T> PaginatedViewContext<T> paginated();
 
@@ -74,6 +72,14 @@ public interface ViewContext extends VirtualView {
 	 */
 	void setPropagateErrors(final boolean propagateErrors);
 
+	// backward compatibility
 	Player getPlayer();
+
+	void open(@NotNull Class<? extends AbstractView> viewClass);
+
+	void open(
+		@NotNull Class<? extends AbstractView> viewClass,
+		@NotNull Map<String, @Nullable Object> data
+	);
 
 }

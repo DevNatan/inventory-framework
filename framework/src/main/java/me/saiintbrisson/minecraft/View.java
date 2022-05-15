@@ -1,8 +1,6 @@
 package me.saiintbrisson.minecraft;
 
-import java.util.Map;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.jetbrains.annotations.NotNull;
@@ -25,16 +23,8 @@ public class View extends AbstractView implements InventoryHolder {
 		this(rows, title, ViewType.CHEST);
 	}
 
-	public View(int rows, String title, @NotNull  ViewType type) {
+	public View(int rows, String title, @NotNull ViewType type) {
 		super(rows, title, type);
-	}
-
-	@Override
-	public final void open(
-		@NotNull Object player,
-		@NotNull Map<String, Object> data
-	) {
-		open(getViewFrame().getFactory().createViewer(player), data);
 	}
 
 	@SuppressWarnings("ConstantConditions")

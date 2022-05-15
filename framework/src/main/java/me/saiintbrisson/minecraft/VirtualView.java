@@ -82,6 +82,4 @@ public interface VirtualView {
 
 	void update();
 
-	void open(@NotNull final Object viewer, @NotNull final Map<String, Object> data);
-
 }

@@ -1,11 +1,5 @@
 package me.saiintbrisson.minecraft;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.function.Supplier;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +8,13 @@ import lombok.ToString;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Supplier;
 
 @ToString
 @Getter
@@ -39,15 +40,13 @@ class BaseViewContext extends AbstractVirtualView implements ViewContext {
 		this((AbstractView) context.getRoot(), context.getContainer());
 	}
 
-	@Override
-	public final void addViewer(@NotNull final Viewer viewer) {
+	final void addViewer(@NotNull final Viewer viewer) {
 		synchronized (viewers) {
 			viewers.add(viewer);
 		}
 	}
 
-	@Override
-	public final void removeViewer(@NotNull final Viewer viewer) {
+	final void removeViewer(@NotNull final Viewer viewer) {
 		synchronized (viewers) {
 			viewers.remove(viewer);
 		}
@@ -133,14 +132,27 @@ class BaseViewContext extends AbstractVirtualView implements ViewContext {
 	}
 
 	@Override
-	public final void open(@NotNull Object viewer, @NotNull Map<String, Object> data) {
-		// workaround to keep backward compatibility
-		root.open(root.getViewFrame().getFactory().createViewer(viewer), data);
+	@SuppressWarnings({"rawtypes", "unchecked"})
+	public final void open(@NotNull Class<? extends AbstractView> viewClass) {
+		final PlatformViewFrame platformViewFrame = root.getViewFrame();
+		for (final Viewer viewer : getViewers())
+			platformViewFrame.open(viewClass, viewer);
+	}
+
+	@Override
+	@SuppressWarnings({"rawtypes", "unchecked"})
+	public final void open(@NotNull Class<? extends AbstractView> viewClass, @NotNull Map<String, @Nullable Object> data) {
+		final PlatformViewFrame platformViewFrame = root.getViewFrame();
+		for (final Viewer viewer : getViewers())
+			platformViewFrame.open(viewClass, viewer, data);
 	}
 
 	@Override
 	public Player getPlayer() {
-		throw new UnsupportedOperationException();
+		throw new UnsupportedOperationException(
+			"This function should not be used on your platform, it is only available for reasons" +
+				" of reserve compatibility with the Bukkit platform."
+		);
 	}
 
 }

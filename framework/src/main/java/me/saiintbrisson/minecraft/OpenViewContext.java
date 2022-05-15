@@ -16,14 +16,20 @@ import org.jetbrains.annotations.Nullable;
 public final class OpenViewContext extends BaseViewContext implements CancellableViewContext {
 
 	/**
-	 * The title of the container that'll be created.
+	 * The title of the container that player will see.
 	 */
 	private String containerTitle;
 
 	/**
-	 * The size of the inventory that'll be created.
+	 * The size of the container that player will see.
 	 */
 	private int containerSize;
+
+	/**
+	 * The type of the inventory that player will see.
+	 */
+	@Setter
+	private ViewType viewType;
 
 	@Setter
 	private boolean cancelled;

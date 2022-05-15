@@ -1,15 +1,15 @@
 package me.saiintbrisson.minecraft;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import org.jetbrains.annotations.NotNull;
 
 @Getter
 @Setter
@@ -30,21 +30,39 @@ public abstract class AbstractView extends AbstractVirtualView {
 	private boolean cancelOnClick, cancelOnPickup, cancelOnDrop, cancelOnDrag, cancelOnClone,
 		cancelOnMoveIn, cancelOnMoveOut, cancelOnShiftClick, clearCursorOnClose, closeOnOutsideClick;
 
-	public final void open(@NotNull Viewer viewer, @NotNull Map<String, Object> data) {
+	final void open(@NotNull Viewer viewer, @NotNull Map<String, Object> data) {
 		final OpenViewContext openViewContext = open0(viewer, data);
 		final ViewContainer container = viewFrame.getFactory().createContainer(
 			this,
 			openViewContext.getContainerSize(),
-			openViewContext.getContainerTitle()
+			openViewContext.getContainerTitle(),
+			openViewContext.getViewType()
 		);
 
-		final ViewContext context = create(viewer, container);
+		if (openViewContext.isCancelled())
+			return;
+
+		final BaseViewContext context = viewFrame.getFactory().createContext(this, container);
+		context.addViewer(viewer);
+
 		synchronized (contexts) {
 			contexts.add(context);
 		}
 
 		render(context);
 		context.getContainer().open(context.getViewers());
+	}
+
+	private OpenViewContext open0(@NotNull Viewer viewer, @NotNull Map<String, Object> data) {
+		final OpenViewContext context = new OpenViewContext(this);
+		context.addViewer(viewer);
+		data.forEach(context::set);
+		runCatching(context, () -> onOpen(context));
+		return context;
+	}
+
+	private void render(@NotNull ViewContext context) {
+		runCatching(context, () -> onRender(context));
 	}
 
 	@Override
@@ -187,27 +205,6 @@ public abstract class AbstractView extends AbstractVirtualView {
 	}
 
 	protected void onMoveIn(@NotNull ViewSlotMoveContext context) {
-	}
-
-	private OpenViewContext open0(@NotNull Viewer viewer, @NotNull Map<String, Object> data) {
-		final OpenViewContext context = new OpenViewContext(this);
-		context.addViewer(viewer);
-		data.forEach(context::set);
-		runCatching(context, () -> onOpen(context));
-		return context;
-	}
-
-	private void render(@NotNull ViewContext context) {
-		runCatching(context, () -> onRender(context));
-	}
-
-	final ViewContext create(
-		@NotNull Viewer viewer,
-		@NotNull ViewContainer container
-	) {
-		final ViewContext context = viewFrame.getFactory().createContext(this, container);
-		context.addViewer(viewer);
-		return context;
 	}
 
 }

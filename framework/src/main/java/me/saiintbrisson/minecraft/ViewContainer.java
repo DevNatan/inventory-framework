@@ -7,6 +7,9 @@ import static java.lang.String.format;
 
 interface ViewContainer {
 
+	@NotNull
+	ViewType getType();
+
 	/**
 	 * Returns the position of the first slot of this container.
 	 *

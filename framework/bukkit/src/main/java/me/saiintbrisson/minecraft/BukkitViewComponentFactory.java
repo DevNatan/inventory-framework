@@ -35,7 +35,7 @@ final class BukkitViewComponentFactory implements ViewComponentFactory {
 	}
 
 	@Override
-	public @NotNull ViewContext createContext(
+	public @NotNull BaseViewContext createContext(
 		@NotNull final AbstractView view,
 		@NotNull final ViewContainer container
 	) {
