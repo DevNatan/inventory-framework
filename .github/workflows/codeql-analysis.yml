@@ -64,6 +64,8 @@ jobs:
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v2
+      with:
+        category: codeql_java
     - name: Upload SARIF file
       uses: github/codeql-action/upload-sarif@v2
       with:
@@ -71,4 +73,4 @@ jobs:
         sarif_file: results.sarif
         # Optional category for the results
         # Used to differentiate multiple results for one commit
-        category: codeql
+        category: codeql_java
