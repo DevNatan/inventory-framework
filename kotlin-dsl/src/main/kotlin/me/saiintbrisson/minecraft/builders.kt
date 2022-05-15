@@ -29,7 +29,6 @@ public class ViewBuilder {
 
     @PublishedApi
     internal var slots: MutableList<ViewSlotBuilder> = mutableListOf()
-
 }
 
 @ViewDsl
@@ -51,5 +50,4 @@ public class ViewSlotBuilder(@PublishedApi internal val slot: Int) {
         currentHandler: SlotContextBlock?,
         assign: ViewItem.(ViewItemHandler) -> Unit
     ) = currentHandler?.let { it -> assign(it) }
-
 }
