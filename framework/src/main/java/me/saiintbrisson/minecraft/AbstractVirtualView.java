@@ -1,5 +1,6 @@
 package me.saiintbrisson.minecraft;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -9,8 +10,8 @@ import org.jetbrains.annotations.NotNull;
 @Getter
 @Setter
 @ToString
-@RequiredArgsConstructor
-abstract class AbstractVirtualView implements VirtualView {
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
+public abstract class AbstractVirtualView implements VirtualView {
 
 	private ViewErrorHandler errorHandler;
 

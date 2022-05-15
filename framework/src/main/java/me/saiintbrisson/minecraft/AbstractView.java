@@ -6,16 +6,24 @@ import java.util.Set;
 import java.util.WeakHashMap;
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 
 @Getter
 @Setter
-abstract class AbstractView extends AbstractVirtualView {
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
+public abstract class AbstractView extends AbstractVirtualView {
+
+	private final int rows;
+	private final String title;
 
 	@Getter(AccessLevel.PROTECTED)
 	@Setter(AccessLevel.PACKAGE)
 	PlatformViewFrame<?, ?, ?> viewFrame;
+
+	private final ViewType type;
 
 	private final Set<ViewContext> contexts = Collections.newSetFromMap(new WeakHashMap<>());
 

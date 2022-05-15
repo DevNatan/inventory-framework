@@ -5,6 +5,13 @@ import org.jetbrains.annotations.NotNull;
 public interface ViewComponentFactory {
 
 	@NotNull
+	AbstractView createView(
+		int rows,
+		String title,
+		@NotNull ViewType type
+	);
+
+	@NotNull
 	ViewContainer createContainer(
 		@NotNull final VirtualView view,
 		final int size,

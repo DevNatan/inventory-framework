@@ -12,6 +12,11 @@ final class BukkitViewComponentFactory implements ViewComponentFactory {
 	private Boolean worksInCurrentPlatform = null;
 
 	@Override
+	public @NotNull AbstractView createView(int rows, String title, @NotNull ViewType type) {
+		return new View(rows, title);
+	}
+
+	@Override
 	public @NotNull ViewContainer createContainer(
 		@NotNull final VirtualView view,
 		final int size,

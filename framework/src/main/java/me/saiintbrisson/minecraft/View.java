@@ -11,11 +11,7 @@ import org.jetbrains.annotations.NotNull;
  * Bukkit platform View backward compatible implementation.
  */
 @Getter
-@RequiredArgsConstructor
 public class View extends AbstractView implements InventoryHolder {
-
-	private final int rows;
-	private final String title;
 
 	public View() {
 		this(0);
@@ -23,6 +19,14 @@ public class View extends AbstractView implements InventoryHolder {
 
 	public View(int rows) {
 		this(rows, null);
+	}
+
+	public View(int rows, String title) {
+		this(rows, title, ViewType.CHEST);
+	}
+
+	public View(int rows, String title, @NotNull  ViewType type) {
+		super(rows, title, type);
 	}
 
 	@Override

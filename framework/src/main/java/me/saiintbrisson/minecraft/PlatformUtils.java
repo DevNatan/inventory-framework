@@ -5,12 +5,12 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Utility class to define which ViewComponentFactory will be used for the current platform.
  */
-class PlatformUtils {
+public class PlatformUtils {
 
 	private static ViewComponentFactory factory;
 
 	@NotNull
-	static ViewComponentFactory getFactory() {
+	public static ViewComponentFactory getFactory() {
 		if (factory != null)
 			return factory;
 
