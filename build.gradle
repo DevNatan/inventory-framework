@@ -14,15 +14,14 @@ subprojects {
     }
 
     dependencies {
+        annotationProcessor libs.lombok
         compileOnly libs.spigot.api
         compileOnlyApi libs.jetbrains.annotations
-        testCompileOnly libs.jetbrains.annotations
-        testImplementation libs.junit.api
-        testRuntimeOnly libs.junit.engine
-        testImplementation libs.spigot.api
         compileOnly libs.lombok
-        annotationProcessor libs.lombok
+        testCompileOnly libs.jetbrains.annotations
         testCompileOnly libs.lombok
+        testRuntimeOnly libs.junit.engine
+        testImplementation libs.junit.api
         testAnnotationProcessor libs.lombok
     }
 
