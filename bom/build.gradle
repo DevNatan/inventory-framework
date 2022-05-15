@@ -5,7 +5,9 @@ plugins {
 dependencies {
     compileOnlyApi project(':framework')
     compileOnlyApi project(':framework:compat')
-    runtimeOnly project(':framework:bukkit')
+    runtimeOnly(project(':framework:bukkit')) {
+        because('Backward compatibility')
+    }
 }
 
 jar {
