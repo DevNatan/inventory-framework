@@ -1,6 +1,7 @@
 package me.saiintbrisson.minecraft;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.TestOnly;
 
 /**
  * Utility class to define which ViewComponentFactory will be used for the current platform.
@@ -11,8 +12,10 @@ public class PlatformUtils {
 
 	@NotNull
 	public static ViewComponentFactory getFactory() {
-		if (factory != null)
+		if (factory != null) {
+			checkIfPlatformWorksInCurrentPlatform();
 			return factory;
+		}
 
 		try {
 			factory = fallbackFactory();
@@ -20,14 +23,19 @@ public class PlatformUtils {
 			throw new IllegalStateException("Failed to use fallback ViewComponentFactory on classpath.", e);
 		}
 
-		if (!factory.worksInCurrentPlatform())
-			throw new IllegalStateException(
-				"We found a ViewComponentFactory on the classpath but it is not usable on this " +
-					"platform, make sure you have in your classpath an implementation of this class " +
-					"that is functional on the current platform."
-			);
-
+		checkIfPlatformWorksInCurrentPlatform();
 		return factory;
+	}
+
+	private static void checkIfPlatformWorksInCurrentPlatform() {
+		if (factory.worksInCurrentPlatform())
+			return;
+
+		throw new IllegalStateException(
+			"We found a ViewComponentFactory on the classpath but it is not usable on this " +
+				"platform, make sure you have in your classpath an implementation of this class " +
+				"that is functional on the current platform."
+		);
 	}
 
 	static void setFactory(@NotNull ViewComponentFactory factory) {
@@ -38,6 +46,11 @@ public class PlatformUtils {
 			);
 
 		PlatformUtils.factory = factory;
+	}
+
+	@TestOnly
+	static void removeFactory() {
+		PlatformUtils.factory = null;
 	}
 
 	private static ViewComponentFactory fallbackFactory() throws ClassNotFoundException, InstantiationException, IllegalAccessException {
