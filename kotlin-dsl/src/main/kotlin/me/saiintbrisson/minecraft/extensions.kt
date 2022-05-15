@@ -8,12 +8,17 @@ internal typealias SlotMoveContextBlock = @ViewDsl ViewSlotMoveContext.() -> Uni
 internal typealias ItemReleaseBlock = @ViewDsl ViewSlotContext.(to: ViewSlotContext) -> Unit
 internal typealias HotbarInteractBlock = @ViewDsl ViewSlotContext.(hotbarButton: Int) -> Unit
 
-public inline fun View(
+@PublishedApi
+internal val factory: ViewComponentFactory
+    inline get() = PlatformUtils.getFactory()
+
+public inline fun createView(
     rows: Int = 0,
     title: String? = null,
+    type: ViewType = ViewType.CHEST,
     content: ViewBuilder.() -> Unit
-): VirtualView {
-    val view = View(rows, title)
+): AbstractView {
+    val view = factory.createView(rows, title, type)
     val builder = ViewBuilder().apply(content)
     builder.slots.forEach { view.with(it.toItem()) }
     return view
