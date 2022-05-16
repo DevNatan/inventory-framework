@@ -943,6 +943,14 @@ public class MyView extends View {
 There's a lot of things you can do with inventory-framework, but for now, we'll just use the simple
 one. You can make paginated pages, refreshing items and schedule tasks inside each view.
 
+## Contributors
+
+<a href="https://github.com/DevNatan/inventory-framework/graphs/contributors">
+  <img alt="Contributors" src="https://contrib.rocks/image?repo=DevNatan/inventory-framework"/>
+</a>
+
+Made with [contributors-img](https://contrib.rocks).
+
 ## License
 
 inventory-framework is distributed under
