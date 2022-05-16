@@ -16,10 +16,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Supplier;
 
-@ToString
 @Getter
 @Setter
 @RequiredArgsConstructor
+@ToString(callSuper = true)
 class BaseViewContext extends AbstractVirtualView implements ViewContext {
 
 	private final List<Viewer> viewers = new ArrayList<>();

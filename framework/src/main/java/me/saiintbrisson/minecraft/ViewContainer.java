@@ -46,27 +46,6 @@ interface ViewContainer {
 	 */
 	int getRowSize();
 
-	/**
-	 * Normalizes the specified parameter to conform to container constraints and does not exceed
-	 * or fail in an attempt to set the container size.
-	 *
-	 * @param size The expected size of the container.
-	 * @return The size of the container according to the specified parameter.
-	 */
-	default int normalizeSize(final int size) {
-		// is less than the row size, probably the user thought it was to put the row size
-		if (size < getRowSize()) return size * getRowSize();
-
-		if (size % getRowSize() != 0)
-			throw new IllegalArgumentException(format(
-				"Container size must be a multiple of %d (given: %d)",
-				getRowSize(),
-				size
-			));
-
-		return size;
-	}
-
 	void open(@NotNull final Iterable<Viewer> viewers);
 
 	void close();

@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,9 +16,10 @@ import java.util.WeakHashMap;
 @Getter
 @Setter
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
+@ToString(callSuper = true)
 public abstract class AbstractView extends AbstractVirtualView {
 
-	private static final ViewType DEFAULT_TYPE = ViewType.CHEST;
+	static final ViewType DEFAULT_TYPE = ViewType.CHEST;
 
 	private final int rows;
 	private final String title;
@@ -29,29 +31,32 @@ public abstract class AbstractView extends AbstractVirtualView {
 	@NotNull
 	private final ViewType type;
 
-	private final Set<ViewContext> contexts = Collections.newSetFromMap(new WeakHashMap<>());
+	private final Set<ViewContext> contexts = Collections.newSetFromMap(Collections.synchronizedMap(new WeakHashMap<>()));
 
 	private boolean cancelOnClick, cancelOnPickup, cancelOnDrop, cancelOnDrag, cancelOnClone,
 		cancelOnMoveIn, cancelOnMoveOut, cancelOnShiftClick, clearCursorOnClose, closeOnOutsideClick;
 
 	final void open(@NotNull Viewer viewer, @NotNull Map<String, Object> data) {
-		final OpenViewContext openViewContext = open0(viewer, data);
+		final OpenViewContext open = open0(viewer, data);
+
+		final int containerSize = open.getContainerSize() == 0 ? rows : open.getContainerSize();
+		final String containerTitle = open.getContainerTitle() == null ? title : open.getContainerTitle();
+		final ViewType containerType = open.getContainerType() == null ? type : open.getContainerType();
+
 		final ViewContainer container = viewFrame.getFactory().createContainer(
 			this,
-			openViewContext.getContainerSize(),
-			openViewContext.getContainerTitle(),
-			openViewContext.getViewType()
+			containerSize,
+			containerTitle,
+			containerType
 		);
 
-		if (openViewContext.isCancelled())
+		if (open.isCancelled())
 			return;
 
 		final BaseViewContext context = viewFrame.getFactory().createContext(this, container, null);
 		context.addViewer(viewer);
 
-		synchronized (contexts) {
-			contexts.add(context);
-		}
+		contexts.add(context);
 
 		render(context);
 		context.getContainer().open(context.getViewers());
@@ -77,6 +82,10 @@ public abstract class AbstractView extends AbstractVirtualView {
 	@Override
 	public final void close() {
 		getContexts().forEach(ViewContext::close);
+	}
+
+	public final Set<ViewContext> getContexts() {
+		return Collections.unmodifiableSet(contexts);
 	}
 
 	/**

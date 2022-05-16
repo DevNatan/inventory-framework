@@ -48,12 +48,12 @@ public interface PlatformViewFrame<V, P, F extends PlatformViewFrame<V, P, F>> {
 	@NotNull
 	ViewComponentFactory getFactory();
 
-	<R extends View> R open(
+	<R extends AbstractView> R open(
 		@NotNull final Class<R> viewClass,
 		@NotNull final V viewer
 	);
 
-	<R extends View> R open(
+	<R extends AbstractView> R open(
 		@NotNull final Class<R> viewClass,
 		@NotNull final V viewer,
 		@NotNull final Map<String, Object> data

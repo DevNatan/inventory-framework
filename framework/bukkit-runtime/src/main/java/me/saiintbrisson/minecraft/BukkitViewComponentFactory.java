@@ -34,8 +34,13 @@ final class BukkitViewComponentFactory implements ViewComponentFactory {
 	) {
 		final ViewType finalType;
 		if (type == null)
-			finalType = ViewType.CHEST;
+			finalType = AbstractView.DEFAULT_TYPE;
 		else checkTypeSupport((finalType = type));
+
+		System.out.println(view);
+		System.out.println(size);
+		System.out.println(title);
+		System.out.println(type);
 
 		final Inventory inventory;
 		if (title == null) {
@@ -90,11 +95,14 @@ final class BukkitViewComponentFactory implements ViewComponentFactory {
 	}
 
 	private InventoryType toInventoryType(@NotNull ViewType type) {
-		return InventoryType.CHEST;
+		if (type == ViewType.HOPPER) return InventoryType.HOPPER;
+		if (type == ViewType.FURNACE) return InventoryType.FURNACE;
+		if (type == ViewType.CHEST) return InventoryType.CHEST;
+		return null;
 	}
 
 	private void checkTypeSupport(@NotNull ViewType type) {
-		if (type == ViewType.CHEST)
+		if (toInventoryType(type) != null)
 			return;
 
 		throw new IllegalArgumentException(String.format(

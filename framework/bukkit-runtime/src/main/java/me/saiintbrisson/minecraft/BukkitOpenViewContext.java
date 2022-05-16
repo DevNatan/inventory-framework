@@ -2,7 +2,6 @@ package me.saiintbrisson.minecraft;
 
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 final class BukkitOpenViewContext extends OpenViewContext {
 
@@ -17,6 +16,11 @@ final class BukkitOpenViewContext extends OpenViewContext {
 			throw new IllegalStateException("Tried to retrieve context player while it's not valid anymore.");
 
 		return ((BukkitViewer) viewer).getPlayer();
+	}
+
+	@Override
+	public void setContainerSize(int containerSize) {
+		super.setContainerSize((getContainerType() == null ? AbstractView.DEFAULT_TYPE : getContainerType()).normalize(containerSize));
 	}
 
 }

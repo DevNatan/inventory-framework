@@ -2,7 +2,8 @@ package me.saiintbrisson.minecraft;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
-import org.jetbrains.annotations.VisibleForTesting;
+
+import static java.lang.String.format;
 
 /**
  * Utility class to define which ViewComponentFactory will be used for the current platform.

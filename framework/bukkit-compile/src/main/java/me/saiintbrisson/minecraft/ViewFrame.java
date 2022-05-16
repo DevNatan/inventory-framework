@@ -32,7 +32,11 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
 	private ViewErrorHandler errorHandler;
 
 	@ToString.Exclude
-	private final Map<Class<? extends View>, View> views = new HashMap<>();
+	private final Map<Class<? extends AbstractView>, View> views = new HashMap<>();
+
+	@Getter(AccessLevel.NONE)
+	@ToString.Exclude
+	private final Map<Class<? extends View>, View> legacyViews = new HashMap<>();
 
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
@@ -41,6 +45,15 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
 
 	static {
 		PlatformUtils.setFactory(new BukkitViewComponentFactory());
+	}
+
+	/**
+	 * @deprecated Use {@link #getViews()} instead.
+	 */
+	@SuppressWarnings("unchecked")
+	@Deprecated
+	public Map<Class<? extends View>, View> getRegisteredViews() {
+		return Collections.unmodifiableMap(legacyViews);
 	}
 
 	@Override
@@ -54,6 +67,7 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
 					));
 
 				getViews().put(view.getClass(), view);
+				legacyViews.put(view.getClass(), view);
 			}
 		}
 		return this;
@@ -126,7 +140,7 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
 	}
 
 	@Override
-	public <T extends View> T open(
+	public <T extends AbstractView> T open(
 		@NotNull Class<T> viewClass,
 		@NotNull Player player
 	) {
@@ -134,7 +148,7 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
 	}
 
 	@Override
-	public <T extends View> T open(
+	public <T extends AbstractView> T open(
 		@NotNull Class<T> viewClass,
 		@NotNull Player player,
 		@NotNull Map<String, Object> data

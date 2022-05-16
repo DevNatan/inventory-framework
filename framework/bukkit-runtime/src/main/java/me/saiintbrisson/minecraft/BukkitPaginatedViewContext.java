@@ -1,9 +1,11 @@
 package me.saiintbrisson.minecraft;
 
+import lombok.ToString;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+@ToString(callSuper = true)
 final class BukkitPaginatedViewContext<T> extends BasePaginatedViewContext<T> {
 
 	BukkitPaginatedViewContext(@NotNull AbstractView root, @Nullable ViewContainer container) {

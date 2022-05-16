@@ -9,7 +9,6 @@ import org.jetbrains.annotations.NotNull;
 
 @Getter
 @Setter
-@ToString
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public abstract class AbstractVirtualView implements VirtualView {
 

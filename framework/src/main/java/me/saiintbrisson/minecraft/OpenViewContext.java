@@ -3,7 +3,6 @@ package me.saiintbrisson.minecraft;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,13 +23,13 @@ public class OpenViewContext extends BaseViewContext implements CancellableViewC
 	/**
 	 * The size of the container that player will see.
 	 */
-	private int containerSize;
+	private int containerSize = 0;
 
 	/**
-	 * The type of the inventory that player will see.
+	 * The type of the container that player will see.
 	 */
 	@Setter
-	private ViewType viewType;
+	private ViewType containerType;
 
 	@Setter
 	private boolean cancelled;
@@ -46,8 +45,8 @@ public class OpenViewContext extends BaseViewContext implements CancellableViewC
 	 * @deprecated Use {@link #setContainerTitle(String)} instead.
 	 */
 	@Deprecated
-	public void setInventoryTitle(@Nullable final String inventoryTitle) {
-		this.containerTitle = inventoryTitle;
+	public final void setInventoryTitle(@Nullable final String inventoryTitle) {
+		setContainerTitle(inventoryTitle);
 	}
 
 	/**
@@ -58,7 +57,7 @@ public class OpenViewContext extends BaseViewContext implements CancellableViewC
 	 * @deprecated Use {@link #setContainerSize(int)} instead.
 	 */
 	@Deprecated
-	public void setInventorySize(final int inventorySize) {
+	public final void setInventorySize(final int inventorySize) {
 		setContainerSize(inventorySize);
 	}
 
@@ -78,7 +77,7 @@ public class OpenViewContext extends BaseViewContext implements CancellableViewC
 	 * @param containerSize The new container size.
 	 */
 	public void setContainerSize(final int containerSize) {
-		this.containerSize = getContainer().normalizeSize(containerSize);
+		this.containerSize = containerSize;
 	}
 
 	@Override
