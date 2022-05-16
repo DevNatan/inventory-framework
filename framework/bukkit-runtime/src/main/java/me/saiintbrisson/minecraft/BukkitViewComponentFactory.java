@@ -4,6 +4,9 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.jetbrains.annotations.NotNull;
 
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
@@ -27,10 +30,24 @@ final class BukkitViewComponentFactory implements ViewComponentFactory {
 		final @NotNull VirtualView view,
 		final int size,
 		final String title,
-		final @NotNull ViewType type
+		final ViewType type
 	) {
-		checkTypeSupport(type);
-		return new BukkitChestViewContainer(Bukkit.createInventory((View) view, size, title));
+		final ViewType finalType;
+		if (type == null)
+			finalType = ViewType.CHEST;
+		else checkTypeSupport((finalType = type));
+
+		final Inventory inventory;
+		if (title == null) {
+			inventory = size == 0
+				? Bukkit.createInventory((InventoryHolder) view, toInventoryType(finalType))
+				: Bukkit.createInventory((InventoryHolder) view, size);
+		} else if (size == 0)
+			inventory = Bukkit.createInventory((InventoryHolder) view, toInventoryType(finalType), title);
+		else
+			inventory = Bukkit.createInventory((InventoryHolder) view, size, title);
+
+		return new BukkitChestViewContainer(inventory);
 	}
 
 	@Override
@@ -67,6 +84,10 @@ final class BukkitViewComponentFactory implements ViewComponentFactory {
 		}
 
 		return worksInCurrentPlatform;
+	}
+
+	private InventoryType toInventoryType(@NotNull ViewType type) {
+		return InventoryType.CHEST;
 	}
 
 	private void checkTypeSupport(@NotNull ViewType type) {
