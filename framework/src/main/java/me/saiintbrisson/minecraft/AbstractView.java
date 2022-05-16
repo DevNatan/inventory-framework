@@ -17,6 +17,8 @@ import java.util.WeakHashMap;
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public abstract class AbstractView extends AbstractVirtualView {
 
+	private static final ViewType DEFAULT_TYPE = ViewType.CHEST;
+
 	private final int rows;
 	private final String title;
 
@@ -24,6 +26,7 @@ public abstract class AbstractView extends AbstractVirtualView {
 	@Setter(AccessLevel.PACKAGE)
 	PlatformViewFrame<?, ?, ?> viewFrame;
 
+	@NotNull
 	private final ViewType type;
 
 	private final Set<ViewContext> contexts = Collections.newSetFromMap(new WeakHashMap<>());
@@ -43,7 +46,7 @@ public abstract class AbstractView extends AbstractVirtualView {
 		if (openViewContext.isCancelled())
 			return;
 
-		final BaseViewContext context = viewFrame.getFactory().createContext(this, container);
+		final BaseViewContext context = viewFrame.getFactory().createContext(this, container, null);
 		context.addViewer(viewer);
 
 		synchronized (contexts) {
@@ -55,7 +58,12 @@ public abstract class AbstractView extends AbstractVirtualView {
 	}
 
 	private OpenViewContext open0(@NotNull Viewer viewer, @NotNull Map<String, Object> data) {
-		final OpenViewContext context = new OpenViewContext(this);
+		final OpenViewContext context = (OpenViewContext) getViewFrame().getFactory().createContext(
+			this,
+			null,
+			OpenViewContext.class
+		);
+
 		context.addViewer(viewer);
 		data.forEach(context::set);
 		runCatching(context, () -> onOpen(context));

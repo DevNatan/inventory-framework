@@ -4,8 +4,8 @@ plugins {
 
 dependencies {
     compileOnlyApi project(':framework')
-    compileOnlyApi project(':framework:compat')
-    runtimeOnly(project(':framework:bukkit')) {
+    compileOnlyApi project(':framework:bukkit-compile')
+    runtimeOnly(project(':framework:bukkit-runtime')) {
         because('Backward compatibility')
     }
 }

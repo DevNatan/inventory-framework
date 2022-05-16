@@ -47,6 +47,12 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
 	public ViewFrame with(@NotNull View... views) {
 		synchronized (getViews()) {
 			for (final View view : views) {
+				if (getViews().containsKey(view.getClass()))
+					throw new IllegalArgumentException(String.format(
+						"View %s already registered, try to use #with before #register instead.",
+						view.getClass().getName()
+					));
+
 				getViews().put(view.getClass(), view);
 			}
 		}
@@ -83,17 +89,8 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
 		if (servicesManager.isProvidedFor(ViewFrame.class))
 			return;
 
-		synchronized (views) {
-			for (final View view : views.values()) {
-				if (views.containsKey(view.getClass()))
-					throw new IllegalArgumentException(String.format(
-						"View %s already registered, try to use #with before #register instead.",
-						view.getClass().getName()
-					));
-
-				views.put(view.getClass(), view);
-			}
-		}
+		for (final View view : views.values())
+			view.setViewFrame(this);
 
 		getOwner().getServer().getPluginManager().registerEvents(
 			listener = new ViewListener(this),

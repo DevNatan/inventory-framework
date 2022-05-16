@@ -20,7 +20,7 @@ public abstract class NoopViewComponentFactory implements ViewComponentFactory {
 	}
 
 	@Override
-	public @NotNull BaseViewContext createContext(@NotNull AbstractView root, @NotNull ViewContainer container) {
+	public @NotNull BaseViewContext createContext(@NotNull AbstractView root, ViewContainer container, Class<? extends ViewContext> backingContext) {
 		throw new UnsupportedOperationException();
 	}
 

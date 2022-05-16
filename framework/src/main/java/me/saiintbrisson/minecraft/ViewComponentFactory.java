@@ -25,7 +25,8 @@ public interface ViewComponentFactory {
 	@NotNull
 	BaseViewContext createContext(
 		@NotNull final AbstractView root,
-		@NotNull final ViewContainer container
+		final ViewContainer container,
+		final Class<? extends ViewContext> backingContext
 	);
 
 	boolean worksInCurrentPlatform();

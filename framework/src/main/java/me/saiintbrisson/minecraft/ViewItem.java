@@ -22,6 +22,7 @@ public final class ViewItem {
 
 	@Getter(AccessLevel.PUBLIC)
 	private boolean paginationItem;
+
 	@Getter(AccessLevel.PUBLIC)
 	private boolean closeOnClick,
 		cancelOnClick,

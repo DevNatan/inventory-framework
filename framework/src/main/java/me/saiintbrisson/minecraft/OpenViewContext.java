@@ -3,6 +3,7 @@ package me.saiintbrisson.minecraft;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
  */
 @Getter
 @ToString(callSuper = true)
-public final class OpenViewContext extends BaseViewContext implements CancellableViewContext {
+public class OpenViewContext extends BaseViewContext implements CancellableViewContext {
 
 	/**
 	 * The title of the container that player will see.

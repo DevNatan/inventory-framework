@@ -62,12 +62,15 @@ final class BukkitViewComponentFactory implements ViewComponentFactory {
 	@Override
 	public @NotNull BaseViewContext createContext(
 		final @NotNull AbstractView view,
-		final @NotNull ViewContainer container
+		final ViewContainer container,
+		final Class<? extends ViewContext> backingContext
 	) {
-		return new BukkitViewContext(
-			view,
-			container
-		);
+		if (backingContext != null && OpenViewContext.class.isAssignableFrom(backingContext))
+			return new BukkitOpenViewContext(view);
+
+		return view instanceof PaginatedView
+			? new BukkitPaginatedViewContext<>(view, container)
+			: new BukkitViewContext(view, container);
 	}
 
 	@Override

@@ -28,21 +28,6 @@ public interface VirtualView {
 	ViewErrorHandler getErrorHandler();
 
 	/**
-	 * Returns a new {@link ViewItem}.
-	 */
-	@NotNull
-	ViewItem item();
-
-	/**
-	 * Returns a new {@link ViewItem} with an item stack.
-	 *
-	 * @param item The item.
-	 * @deprecated
-	 */
-	@NotNull
-	ViewItem item(@NotNull Object item);
-
-	/**
 	 * Registers a {@link ViewItem} in the specified slot.
 	 *
 	 * @param slot The item slot.

@@ -5,8 +5,9 @@ plugins {
 }
 
 dependencies {
-    implementation(project(':framework:compat'))
-    implementation(project(':framework:bukkit'))
+    implementation(project(':framework'))
+    implementation(project(':framework:bukkit-compile'))
+    implementation(project(':framework:bukkit-runtime'))
     implementation(project(':kotlin-dsl'))
 }
 

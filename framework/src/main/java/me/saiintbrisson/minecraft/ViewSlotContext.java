@@ -16,4 +16,6 @@ public interface ViewSlotContext extends ViewContext {
 
 	default void setItem(@Nullable Object item) {}
 
+	ViewItem withItem(@Nullable Object fallbackItem);
+
 }

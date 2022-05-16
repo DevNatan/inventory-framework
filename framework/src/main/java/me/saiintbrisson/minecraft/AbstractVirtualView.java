@@ -17,18 +17,6 @@ public abstract class AbstractVirtualView implements VirtualView {
 
 	@Override
 	@NotNull
-	public final ViewItem item() {
-		throw new UnsupportedOperationException("not available");
-	}
-
-	@Override
-	@NotNull
-	public final ViewItem item(@NotNull Object item) {
-		throw new UnsupportedOperationException("not available");
-	}
-
-	@Override
-	@NotNull
 	public final ViewItem slot(int slot) {
 		throw new UnsupportedOperationException("not available");
 	}

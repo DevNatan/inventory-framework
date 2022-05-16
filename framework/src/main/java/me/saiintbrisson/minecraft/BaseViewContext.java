@@ -37,7 +37,7 @@ class BaseViewContext extends AbstractVirtualView implements ViewContext {
 	private final Map<String, Object> data = new HashMap<>();
 
 	public BaseViewContext(@NotNull final ViewContext context) {
-		this((AbstractView) context.getRoot(), context.getContainer());
+		this(context.getRoot(), context.getContainer());
 	}
 
 	final void addViewer(@NotNull final Viewer viewer) {
@@ -151,7 +151,7 @@ class BaseViewContext extends AbstractVirtualView implements ViewContext {
 	public Player getPlayer() {
 		throw new UnsupportedOperationException(
 			"This function should not be used on your platform, it is only available for reasons" +
-				" of reserve compatibility with the Bukkit platform."
+				" of backward compatibility with the Bukkit platform."
 		);
 	}
 

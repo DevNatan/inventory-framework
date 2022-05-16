@@ -1,4 +1,4 @@
 dependencies {
     implementation project(':framework')
-    implementation project(':framework:bukkit')
+    implementation project(':framework:bukkit-compile')
 }

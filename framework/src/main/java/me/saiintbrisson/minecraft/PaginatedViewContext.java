@@ -1,6 +1,6 @@
 package me.saiintbrisson.minecraft;
 
-public interface PaginatedViewContext<T> extends ViewContext, Paginated<T> {
+public interface PaginatedViewContext<T> extends ViewContext, PaginatedVirtualView<T> {
 
 	/**
 	 * Returns the current page.
@@ -15,23 +15,6 @@ public interface PaginatedViewContext<T> extends ViewContext, Paginated<T> {
 	 * @return The total page count.
 	 */
 	int getPagesCount();
-
-	/**
-	 * Returns the total maximum number of fixed elements that a page can contain.
-	 *
-	 * @return the items count.
-	 */
-	@Deprecated
-	default int getPageSize() {
-		return getPageItemsCount();
-	}
-
-	/**
-	 * Returns the total maximum number of fixed elements that a page can contain.
-	 *
-	 * @return the items count.
-	 */
-	int getPageItemsCount();
 
 	/**
 	 * Returns the index of the previous page.
