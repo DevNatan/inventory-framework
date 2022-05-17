@@ -1,5 +1,7 @@
 dependencies {
     compileOnly libs.spigot.api
     compileOnly project(':framework')
+    testCompileOnly libs.spigot.api
+    testRuntimeOnly libs.spigot.api
     testImplementation project(':framework')
 }

@@ -3,7 +3,7 @@ package me.saiintbrisson.minecraft;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class ViewChestTypeSizeTest {
+public class ViewTypeSlotNormalizationTest {
 
 	@Test
 	void returnRowsWhenSizeIsGreaterThanContainerRowsCount() {

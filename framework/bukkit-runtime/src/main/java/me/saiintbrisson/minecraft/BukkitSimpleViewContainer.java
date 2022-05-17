@@ -9,26 +9,25 @@ import org.jetbrains.annotations.NotNull;
 @ToString
 @Getter
 @RequiredArgsConstructor
-final class BukkitChestViewContainer extends BukkitViewContainer {
-
-	private static final int COLUMNS = 9;
+final class BukkitSimpleViewContainer extends BukkitViewContainer {
 
 	@NotNull
 	private final Inventory inventory;
+	private final ViewType type;
 
 	@Override
 	public @NotNull ViewType getType() {
-		return ViewType.CHEST;
+		return type;
 	}
 
 	@Override
 	public int getRowsCount() {
-		return getSize() / COLUMNS;
+		return type.getRows();
 	}
 
 	@Override
 	public int getColumnsCount() {
-		return COLUMNS;
+		return type.getColumns();
 	}
 
 }

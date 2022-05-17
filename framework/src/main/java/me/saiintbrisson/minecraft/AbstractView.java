@@ -59,7 +59,7 @@ public abstract class AbstractView extends AbstractVirtualView {
 		contexts.add(context);
 
 		render(context);
-		context.getContainer().open(context.getViewers());
+		context.getViewers().forEach(context.getContainer()::open);
 	}
 
 	private OpenViewContext open0(@NotNull Viewer viewer, @NotNull Map<String, Object> data) {

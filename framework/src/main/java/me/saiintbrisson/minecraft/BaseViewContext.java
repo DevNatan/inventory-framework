@@ -102,7 +102,7 @@ class BaseViewContext extends AbstractVirtualView implements ViewContext {
 
 	@Override
 	public final int getRows() {
-		return getContainer().getRowSize();
+		return getContainer().getColumnsCount();
 	}
 
 	@Override

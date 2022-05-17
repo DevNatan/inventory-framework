@@ -1,67 +1,102 @@
 package me.saiintbrisson.minecraft;
 
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
-import org.jetbrains.annotations.Range;
 
 import static java.lang.String.format;
 
 @Getter
 @ToString
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class ViewType {
 
-	private final String identifier;
-	private final int maxSize;
+	public static final ViewType HOPPER = new ViewType("hopper", 5, 1, 5);
+	public static final ViewType CHEST = new ViewType("chest", 54, 6, 9);
 
-	int normalize(int size) {
-		return size;
-	}
+	public static final ViewType FURNACE = new ViewType("furnace", 2, 1, 1) {
+		private static final int RESULT_SLOT = 2;
 
-	public static final ViewType FURNACE = new ViewType("minecraft:furnace", 3);
-	public static final ViewType CRAFTING_TABLE = new ViewType("minecraft:crafting_table", 9);
-	public static final ViewType HOPPER = new ViewType("minecraft:hopper", 5);
-
-	public static final ViewType CHEST = new ViewType("minecraft:chest", 54) {
-
-		private static final int MAX_ROWS = 6;
-		private static final int COLUMNS = 9;
-
-		/**
-		 * Normalizes the specified parameter to conform to container constraints and does not exceed
-		 * or fail in an attempt to set the container size.
-		 *
-		 * @param size The expected size of the container.
-		 * @return The size of the container according to the specified parameter.
-		 */
 		@Override
-		public int normalize(@Range(from = 0, to = MAX_ROWS * COLUMNS) final int size) {
-			if (size == 0) return size;
+		public int[] getResultSlots() {
+			return new int[] { RESULT_SLOT };
+		}
 
-			if (size > MAX_ROWS) {
-				if (size % COLUMNS != 0)
-					throw new IllegalArgumentException(format(
-						"Container size must be a multiple of %d (given: %d)",
-						COLUMNS,
-						size
-					));
-
-				final int fullSize = size * COLUMNS;
-				if (fullSize > getMaxSize())
-					throw new IllegalArgumentException(format(
-						"Size cannot exceed container max size of %d (given: %d (%s rows))",
-						getMaxSize(),
-						fullSize,
-						size
-					));
-
-				return fullSize;
-			}
-
-			return size * COLUMNS;
+		@Override
+		public boolean hasResultSlot() {
+			return true;
 		}
 	};
+
+	public static final ViewType CRAFTING_TABLE = new ViewType("crafting-table", 9, 3, 3) {
+		private static final int RESULT_SLOT = 3;
+
+		@Override
+		public int[] getResultSlots() {
+			return new int[] { RESULT_SLOT };
+		}
+
+		@Override
+		public boolean hasResultSlot() {
+			return true;
+		}
+
+		@Override
+		public boolean canPlayerInteractOn(int slot) {
+			return slot != RESULT_SLOT;
+		}
+	};
+
+	private final String identifier;
+	private final int maxSize, rows, columns;
+
+	/**
+	 * Normalizes the specified parameter to conform to container constraints and does not exceed
+	 * or fail in an attempt to set the container size, e.g.: if player provides inventory rows count
+	 * instead of the full inventory size, it will return the inventory size.
+	 *
+	 * @param size The expected size of the container.
+	 * @return The size of the container according to the specified parameter.
+	 */
+	public final int normalize(final int size) {
+		if (size == 0) return size;
+
+		if (size > rows) {
+			if (size % columns != 0)
+				throw new IllegalArgumentException(format(
+					"Container size must be a multiple of %d (given: %d)",
+					columns,
+					size
+				));
+
+			final int fullSize = size * columns;
+			if (fullSize > getMaxSize())
+				throw new IllegalArgumentException(format(
+					"Size cannot exceed container max size of %d (given: %d (%s rows))",
+					getMaxSize(),
+					fullSize,
+					size
+				));
+
+			return fullSize;
+		}
+
+		return size * columns;
+	}
+
+	public int[] getResultSlots() {
+		return null;
+	}
+
+	public boolean hasResultSlot() {
+		return getResultSlots() != null;
+	}
+
+	public boolean canPlayerInteractOn(int slot) {
+		return true;
+	}
 
 }

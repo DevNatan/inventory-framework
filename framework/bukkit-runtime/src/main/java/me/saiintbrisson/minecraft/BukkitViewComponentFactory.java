@@ -9,6 +9,8 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.jetbrains.annotations.NotNull;
 
+import static java.util.Objects.requireNonNull;
+
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
 final class BukkitViewComponentFactory implements ViewComponentFactory {
 
@@ -32,25 +34,20 @@ final class BukkitViewComponentFactory implements ViewComponentFactory {
 		final String title,
 		final ViewType type
 	) {
-		final ViewType finalType;
-		if (type == null)
-			finalType = AbstractView.DEFAULT_TYPE;
-		else checkTypeSupport((finalType = type));
+		final ViewType finalType = type == null ? AbstractView.DEFAULT_TYPE : type;
+		checkTypeSupport(finalType);
 
-		System.out.println(view);
-		System.out.println(size);
-		System.out.println(title);
-		System.out.println(type);
+		final int finalSize = size == 0 ? 0 : finalType.normalize(size);
 
 		final Inventory inventory;
 		if (title == null) {
-			inventory = size == 0
-				? Bukkit.createInventory((InventoryHolder) view, toInventoryType(finalType))
-				: Bukkit.createInventory((InventoryHolder) view, size);
-		} else if (size == 0)
-			inventory = Bukkit.createInventory((InventoryHolder) view, toInventoryType(finalType), title);
+			inventory = finalSize == 0
+				? Bukkit.createInventory((InventoryHolder) view, requireNonNull(toInventoryType(finalType)))
+				: Bukkit.createInventory((InventoryHolder) view, finalSize);
+		} else if (finalSize == 0)
+			inventory = Bukkit.createInventory((InventoryHolder) view, requireNonNull(toInventoryType(finalType)), title);
 		else
-			inventory = Bukkit.createInventory((InventoryHolder) view, size, title);
+			inventory = Bukkit.createInventory((InventoryHolder) view, finalSize, title);
 
 		return new BukkitChestViewContainer(inventory);
 	}
@@ -98,6 +95,7 @@ final class BukkitViewComponentFactory implements ViewComponentFactory {
 		if (type == ViewType.HOPPER) return InventoryType.HOPPER;
 		if (type == ViewType.FURNACE) return InventoryType.FURNACE;
 		if (type == ViewType.CHEST) return InventoryType.CHEST;
+
 		return null;
 	}
 
@@ -106,7 +104,7 @@ final class BukkitViewComponentFactory implements ViewComponentFactory {
 			return;
 
 		throw new IllegalArgumentException(String.format(
-			"%s ViewType is not supported in Bukkit platform.",
+			"%s view type is not supported on Bukkit platform.",
 			type.getIdentifier()
 		));
 	}

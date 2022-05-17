@@ -30,26 +30,48 @@ interface ViewContainer {
 	 * @param slot The item slot.
 	 * @return Whether there is an item in the specified slot.
 	 */
-	boolean hasItem(final int slot);
+	boolean hasItem(int slot);
+
+	void renderItem(int slot, Object item);
+
+	boolean matchesItem(int slot, Object item, boolean exactly);
+
+	Object convertItem(Object source);
+
+	boolean isSupportedItem(Object item);
 
 	/**
-	 * The number of slots in this inventory (available or not).
+	 * The number of slots in this container.
 	 *
 	 * @return The number of slots in this container.
 	 */
+	int getSize();
+
+	/**
+	 * The number of slot indexes in this container (available or not).
+	 *
+	 * @return All slot indexes in this container.
+	 */
 	int getSlotsCount();
+
+	/**
+	 * The amount of horizontal lines present in the container.
+	 *
+	 * @return The amount of horizontal lines present in the container.
+	 */
+	int getRowsCount();
 
 	/**
 	 * The amount of vertical lines present in the container.
 	 *
 	 * @return The amount of vertical lines present in the container.
 	 */
-	int getRowSize();
+	int getColumnsCount();
 
-	void open(@NotNull final Iterable<Viewer> viewers);
+	void open(@NotNull Viewer viewer);
 
 	void close();
 
-	void changeTitle(@Nullable final String title);
+	void changeTitle(@Nullable String title);
 
 }
