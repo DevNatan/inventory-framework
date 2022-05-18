@@ -14,6 +14,6 @@ jobs:
         java-version: '8'
         distribution: 'temurin'
     - name: Build with Gradle
-      uses: gradle/gradle-build-action@937999e9cc2425eddc7fd62d1053baf041147db7
+      uses: gradle/gradle-build-action@c0b2cb764a2f9be712639456bac9d13fb6445aa1
       with:
         arguments: build -x kotlin-dsl:lintKotlin
