@@ -11,7 +11,6 @@ import static java.lang.String.format;
 @Getter
 @ToString
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class ViewType {
 
 	public static final ViewType HOPPER = new ViewType("hopper", 5, 1, 5);

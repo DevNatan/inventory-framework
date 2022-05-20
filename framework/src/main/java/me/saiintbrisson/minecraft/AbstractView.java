@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
+import java.util.function.Predicate;
 
 @Getter
 @Setter
@@ -23,18 +24,24 @@ public abstract class AbstractView extends AbstractVirtualView {
 
 	private final int rows;
 	private final String title;
+	@NotNull
+	private final ViewType type;
+	@NotNull
+	private final ViewPipeline pipeline = new ViewPipeline();
 
 	@Getter(AccessLevel.PROTECTED)
 	@Setter(AccessLevel.PACKAGE)
 	PlatformViewFrame<?, ?, ?> viewFrame;
 
-	@NotNull
-	private final ViewType type;
-
 	private final Set<ViewContext> contexts = Collections.newSetFromMap(Collections.synchronizedMap(new WeakHashMap<>()));
 
 	private boolean cancelOnClick, cancelOnPickup, cancelOnDrop, cancelOnDrag, cancelOnClone,
 		cancelOnMoveIn, cancelOnMoveOut, cancelOnShiftClick, clearCursorOnClose, closeOnOutsideClick;
+
+	@NotNull
+	final ViewPipeline getPipeline() {
+		return pipeline;
+	}
 
 	final void open(@NotNull Viewer viewer, @NotNull Map<String, Object> data) {
 		final OpenViewContext open = open0(viewer, data);
@@ -86,6 +93,10 @@ public abstract class AbstractView extends AbstractVirtualView {
 
 	public final Set<ViewContext> getContexts() {
 		return Collections.unmodifiableSet(contexts);
+	}
+
+	public final ViewContext getContext(@NotNull Predicate<ViewContext> predicate) {
+		return getContexts().stream().filter(predicate).findFirst().orElse(null);
 	}
 
 	/**
