@@ -8,6 +8,9 @@ import lombok.ToString;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.ServicesManager;
@@ -47,10 +50,30 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
 		PlatformUtils.setFactory(new BukkitViewComponentFactory());
 	}
 
+	@Override
+	public AbstractView get(@NotNull Player player) {
+		final Inventory inventory = player.getOpenInventory().getTopInventory();
+
+		// fast path -- check for inventory type first
+		if (inventory.getType() == InventoryType.PLAYER)
+			return null;
+
+		// TODO: search for alternative ways to retrieve current view
+		// TODO: InventoryHolder is deprecated in newer versions of Bukkit API
+		final InventoryHolder holder = inventory.getHolder();
+		if (!(holder instanceof View))
+			return null;
+
+		final View view = (View) holder;
+		if (inventory.getType() != InventoryType.CHEST)
+			throw new UnsupportedOperationException("Views is only supported on chest-type inventory.");
+
+		return view;
+	}
+
 	/**
 	 * @deprecated Use {@link #getViews()} instead.
 	 */
-	@SuppressWarnings("unchecked")
 	@Deprecated
 	public Map<Class<? extends View>, View> getRegisteredViews() {
 		return Collections.unmodifiableMap(legacyViews);
