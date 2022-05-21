@@ -1,13 +1,14 @@
 package me.saiintbrisson.minecraft;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.sun.istack.internal.NotNull;
+import com.sun.istack.internal.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * The pipeline is a structure containing a sequence of functions (blocks/lambdas) that are called
@@ -23,36 +24,21 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 class Pipeline<S, C> {
 
-	private final List<Object> _phases;
+	private final List<PipelinePhase> _phases;
 
-	private final AtomicReference<List<PipelineInterceptor<S, C>>> _interceptors
-		= new AtomicReference<>(null);
+	private final Map<PipelinePhase, List<PipelineInterceptor<S, C>>> interceptors = new HashMap<>();
 
 	public Pipeline(PipelinePhase... phases) {
 		_phases = new ArrayList<>(Arrays.asList(phases));
 	}
 
-	public List<PipelineInterceptor<S, C>> getInterceptors() {
-		return _interceptors.get();
-	}
-
-	public List<PipelineInterceptor<S, C>> getSafeInterceptors() {
-		List<PipelineInterceptor<S, C>> interceptors = getInterceptors();
-		return interceptors == null ? Collections.emptyList() : interceptors;
-	}
-
-	void setInterceptors(List<PipelineInterceptor<S, C>> interceptors) {
-		_interceptors.set(interceptors);
-	}
-
-	private PipelinePhaseContent<S, C> findPhase(final @NotNull PipelinePhase phase) {
+	private PipelinePhase findPhase(final @NotNull PipelinePhase phase) {
 		final List<PipelinePhase> phasesList = _phases;
 
 		for (int i = 0; i < phasesList.size(); i++) {
-			final PipelinePhaseContent<S, C>
+			final PipelinePhase curr = phasesList.get(i);
 			if (curr.equals(phase)) {
-				final PipelinePhaseContent<S, C> content = new PipelinePhaseContent<>(phase);
-				phasesList.set( content);
+				phasesList.set(i, phase);
 				return curr;
 			}
 		}
@@ -117,26 +103,14 @@ class Pipeline<S, C> {
 				reference
 			));
 
-		_phases.add(refIdx + 1, new PipelinePhaseContent<>(phase, PipelineRelation.After, Collections.emptyList()));
-	}
-
-	private boolean addToPhaseFP(
-		final @NotNull PipelinePhase phase,
-		final @NotNull PipelineInterceptor<S, C> interceptor
-	) {
-		final List<PipelineInterceptor<S, C>> currInterceptors = getInterceptors();
-		if (_phases.isEmpty() || currInterceptors == null)
-			return false;
-
-
-		return true;
+		_phases.add(refIdx + 1, phase);
 	}
 
 	public void intercept(
 		final @NotNull PipelinePhase phase,
 		final @NotNull PipelineInterceptor<S, C> interceptor
 	) {
-		final PipelinePhaseContent<S, C> pipelinePhase = findPhase(phase);
+		final PipelinePhase pipelinePhase = findPhase(phase);
 		if (pipelinePhase == null)
 			throw new IllegalArgumentException(String.format(
 				"Phase %s was not registered for this pipeline",
@@ -145,7 +119,7 @@ class Pipeline<S, C> {
 
 		final int lastIndex = _phases.size() - 1;
 		if (phase.equals(_phases.get(lastIndex)) || findIndex(phase) == lastIndex) {
-			final PipelinePhaseContent<S, C> target = findPhase(phase);
+			final PipelinePhase target = findPhase(phase);
 			if (target != null)
 				target.add
 			return true;
@@ -161,7 +135,7 @@ class Pipeline<S, C> {
 		final @Nullable C context,
 		final @NotNull S subject
 	) {
-		return new PipelineContext<S, C>(context, subject, getSafeInterceptors(), 0).execute(subject);
+		return new PipelineContext<>(context, subject, new ArrayList<>(interceptors.values().stream().flatMap(List::addAll).collect(Collectors.toList())), 0).execute(subject);
 	}
 
 }

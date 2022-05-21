@@ -2,7 +2,6 @@ package me.saiintbrisson.minecraft;
 
 import lombok.AllArgsConstructor;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
@@ -19,15 +18,6 @@ public final class PipelineContext<S, C> {
 	 */
 	public void finish() {
 		index = -1;
-	}
-
-	public S proceed() {
-		if (index >= interceptors.size()) {
-			finish();
-			return subject;
-		}
-
-		return loop();
 	}
 
 	private S loop() {
@@ -49,6 +39,15 @@ public final class PipelineContext<S, C> {
 		} while (true);
 
 		return subject;
+	}
+
+	public S proceed() {
+		if (index >= interceptors.size()) {
+			finish();
+			return subject;
+		}
+
+		return loop();
 	}
 
 	public S execute(S initial) {

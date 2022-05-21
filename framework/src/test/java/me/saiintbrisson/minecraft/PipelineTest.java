@@ -1,11 +1,12 @@
 package me.saiintbrisson.minecraft;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PipelineTest {
 
@@ -17,7 +18,7 @@ public class PipelineTest {
 		Pipeline<String, Void> pipeline = new Pipeline<>();
 		pipeline.execute(null, "abc");
 		pipeline.intercept(pipelinePhase, ($, subject) -> events.add("intercepted " + subject));
-		Assertions.assertEquals(Collections.singletonList("intercepted abc"), events);
+		assertEquals(Collections.singletonList("intercepted abc"), events);
 	}
 
 }
