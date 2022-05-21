@@ -236,7 +236,13 @@ public class ViewContext extends VirtualView {
 			contextData.putAll(data);
 		}
 
-		this.view.getFrame().open(view, player, contextData);
+		final Map<String, Object> finalData = contextData;
+		final Plugin plugin = getView().getFrame().getOwner();
+		plugin.getServer().getScheduler().runTaskLater(
+			plugin,
+			() -> this.view.getFrame().open(view, player, finalData),
+			1L
+		);
 	}
 
 	public <T> T get(String key) {
