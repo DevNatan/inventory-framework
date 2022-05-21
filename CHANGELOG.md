@@ -1,5 +1,8 @@
 # Changelog
 
+# 2.5-CC
+* Fixed StackOverflowError if context is invalidated while context inventory's is being opened to the player (thanks to @devwckd);
+
 # 2.5
 * Inheritable context data (#65)
 * User-defined paginated view layout pattern (#70)
