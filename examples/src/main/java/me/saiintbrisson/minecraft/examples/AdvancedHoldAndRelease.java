@@ -12,11 +12,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public final class HoldAndRelease extends View {
+public final class AdvancedHoldAndRelease extends View {
 
 	private final Map<UUID, Integer> position = new HashMap<>();
 
-	public HoldAndRelease() {
+	public AdvancedHoldAndRelease() {
 		super(3, "Take an item");
 	}
 

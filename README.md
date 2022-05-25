@@ -900,40 +900,10 @@ Here is the compatibility table, see if your version is compatible before trying
 | 1.18              | v2.3.2          | ✅ Supported   |       |
 
 ## Examples
-
-#### View using rendering function and click handler
-
-```java
-public class MyView extends View {
-
-    public MyView() {
-        super(3, "My view"); // 3 views per page with title "My view"
-    }
-
-    @Override
-    public final void onRender(final ViewContext context) {
-        // We can get the player from inventory
-        Player player = context.getPlayer();
-
-        // We put the Stone in slot 14
-        context.slot(14, new ItemStack(Material.STONE));
-
-        // Also, we can put the Stone in row 1, column 5
-        context.slot(1, 5, new ItemStack(Material.STONE));
-
-        // We can also put the Stone in row 3, column 5
-        ViewItem myItem = context.slot(3, 5, new ItemStack(Material.STONE));
-
-        // We can add a click event
-        myItem.onClick(() -> {
-            player.sendMessage("You clicked on the stone!");
-        });
-    }
-}
-```
-
 There's a lot of things you can do with inventory-framework, but for now, we'll just use the simple
 one. You can make paginated pages, refreshing items and schedule tasks inside each view.
+
+See more examples in the [examples directory](https://github.com/DevNatan/inventory-framework/tree/main/examples).
 
 ## License
 
