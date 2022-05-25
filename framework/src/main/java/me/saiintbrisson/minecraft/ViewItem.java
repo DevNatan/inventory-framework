@@ -105,6 +105,13 @@ public class ViewItem {
 	}
 
 	public ViewItem onRender(ViewItemHandler renderHandler) {
+		if (isPaginationItem())
+			throw new IllegalStateException(
+				"As of version 2.5.1 it is forbidden to use the item rendering function as paginated items are already " +
+					"encapsulated in rendering functions. Using a render function on an item already wrapped in one would" +
+					" cause a rendering duplicate."
+			);
+
 		this.renderHandler = renderHandler;
 		return this;
 	}
