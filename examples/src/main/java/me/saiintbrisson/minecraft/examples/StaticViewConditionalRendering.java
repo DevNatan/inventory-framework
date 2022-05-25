@@ -6,7 +6,6 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 /**
- * Renders a paper if the name of the player viewing the View is "JohnDoe".
  * When the player clicks on the paper the item is hidden or displayed.
  */
 public final class StaticViewConditionalRendering extends View {

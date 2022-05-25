@@ -16,9 +16,9 @@ import java.util.stream.Collectors;
 /**
  * Creates a paginated view based on items in the player inventory.
  */
-public final class LayeredPaginatedViewBasedOnPlayerInventory extends PaginatedView<ItemStack> {
+public final class LayeredNavigablePaginatedViewBasedOnPlayerInventory extends PaginatedView<ItemStack> {
 
-	public LayeredPaginatedViewBasedOnPlayerInventory() {
+	public LayeredNavigablePaginatedViewBasedOnPlayerInventory() {
 		super(3, "Your inventory");
 		setCancelOnClick(true);
 
