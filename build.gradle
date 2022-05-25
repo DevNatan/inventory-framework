@@ -1,7 +1,12 @@
 import org.apache.tools.ant.filters.ReplaceTokens
 
+plugins {
+    id "com.diffplug.spotless" version "6.6.1" apply false
+}
+
 subprojects {
     apply plugin: 'java-library'
+    apply plugin: "com.diffplug.spotless"
 
     group 'me.saiintbrisson.minecraft'
     version '2.5'
@@ -36,5 +41,11 @@ subprojects {
 
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
+    }
+
+    spotless {
+        java {
+            googleJavaFormat()
+        }
     }
 }
