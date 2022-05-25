@@ -1,103 +1,119 @@
 package me.saiintbrisson.minecraft.utils;
 
-import com.google.common.collect.Lists;
-import me.saiintbrisson.minecraft.ViewContext;
+import me.saiintbrisson.minecraft.PaginatedViewContext;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 public class Paginator<T> {
 
-    private int pageSize;
-    private List<T> source;
-	private Function<ViewContext, List<T>> provider;
-	private List<T> currSource;
+	private int pageSize;
+	private List<T> provider;
+	private Function<PaginatedViewContext<T>, Object> lazyProvider;
 
 	@SuppressWarnings("unchecked")
-    public Paginator(int pageSize, Object source) {
-        this.pageSize = pageSize;
+	public Paginator(int pageSize, Object provider) {
+		this.pageSize = pageSize;
+		if (provider instanceof List) this.provider = (List<T>) provider;
+		else if (provider instanceof Function) this.lazyProvider = ( Function<PaginatedViewContext<T>, Object>) provider;
+		else throw new IllegalArgumentException("Unsupported pagination source type: " + provider.getClass().getName());
+	}
 
-		if (source instanceof List) this.source = (List<T>) source;
-		else if (source instanceof Function) this.provider = (Function<ViewContext, List<T>>) source;
-		else throw new IllegalArgumentException("Unsupported pagination source type: " + source.getClass().getName());
-    }
-
-	Function<ViewContext, List<T>> getProvider() {
+	public List<T> getProvider() {
 		return provider;
 	}
 
-	public List<T> getCurrentSource() {
-		return currSource;
-	}
-
-	public void setCurrentSource(List<T> currSource) {
-		this.currSource = currSource;
-	}
-
-	public List<T> getSource() {
-		return source;
-	}
-
 	public int getPageSize() {
-        return pageSize;
-    }
+		return pageSize;
+	}
 
-    public void setPageSize(int pageSize) {
-        this.pageSize = pageSize;
-    }
+	public void setPageSize(int pageSize) {
+		this.pageSize = pageSize;
+	}
 
-    public int size() {
-        return source.size();
-    }
+	public int size() {
+		return provider.size();
+	}
 
-    public T get(int index) {
-        return source.get(index);
-    }
+	public T get(int index) {
+		return provider.get(index);
+	}
 
-    public int count() {
-        return (int) Math.ceil((double) size() / pageSize);
-    }
+	public int count() {
+		return (int) Math.ceil((double) size() / pageSize);
+	}
 
-    public List<T> getPage(int index) {
-        if (source.isEmpty())
-            return Collections.emptyList();
+	public CompletableFuture<List<T>> getPage(int index, PaginatedViewContext<T> context) {
+		if (provider != null) return CompletableFuture.completedFuture(getPageBlocking(index));
+		if (lazyProvider != null) return getPageLazy(context);
 
-        int size = size();
+		throw new IllegalStateException(String.format(
+			"No source or provider available to fetch page data on index %d.",
+			index
+		));
+	}
 
-        // fast path
-        if (size < pageSize)
-            return Lists.newArrayList(source);
+	@SuppressWarnings("unchecked")
+	private CompletableFuture<List<T>> getPageLazy(PaginatedViewContext<T> context) {
+		final Object data = lazyProvider.apply(context);
+		if (data instanceof List) {
+			final List<T> contents = (List<T>) data;
+			return CompletableFuture.completedFuture(contents.isEmpty() ? Collections.emptyList() : new ArrayList<>(contents));
+		}
 
-        if (index < 0 || index >= count())
-            throw new ArrayIndexOutOfBoundsException("Index must be between the range of 0 and " + (count() - 1) + ", given: " + index);
+		if (data instanceof CompletableFuture) {
+			return ((CompletableFuture<List<T>>) lazyProvider.apply(context));
+		}
 
-        List<T> page = new LinkedList<>();
+		throw new IllegalArgumentException(String.format(
+			"Pagination provider return value must be a List or CompletableFuture (given %s).",
+			data.getClass().getName()
+		));
+	}
 
-        int base = index * pageSize;
-        int until = base + pageSize;
+	private List<T> getPageBlocking(int index) {
+		if (provider.isEmpty())
+			return Collections.emptyList();
 
-        if (until > size()) until = size;
+		int size = size();
 
-        for (int i = base; i < until; i++) {
-            page.add(get(i));
-        }
+		// fast path
+		if (size < pageSize)
+			return new ArrayList<>(provider);
 
-        return page;
-    }
+		if (index < 0 || index >= count())
+			throw new ArrayIndexOutOfBoundsException("Index must be between the range of 0 and " + (count() - 1) + ", given: " + index);
 
-    public boolean hasPage(int currentIndex) {
-        return currentIndex >= 0 && currentIndex < count();
-    }
+		List<T> page = new LinkedList<>();
 
-    @Override
-    public String toString() {
-        return "Paginator{" +
-                "pageSize=" + pageSize +
-                ", src=" + source +
-                ", elements=" + source.size() +
-                ", count=" + count() +
-                '}';
-    }
+		int base = index * pageSize;
+		int until = base + pageSize;
+
+		if (until > size()) until = size;
+
+		for (int i = base; i < until; i++) {
+			page.add(get(i));
+		}
+
+		return page;
+	}
+
+	public boolean hasPage(int currentIndex) {
+		return currentIndex >= 0 && currentIndex < count();
+	}
+
+	@Override
+	public String toString() {
+		return "Paginator{" +
+			"pageSize=" + pageSize +
+			", src=" + provider +
+			", elements=" + provider.size() +
+			", count=" + count() +
+			'}';
+	}
 }

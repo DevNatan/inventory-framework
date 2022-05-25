@@ -1,5 +1,8 @@
 package me.saiintbrisson.minecraft;
 
+import me.saiintbrisson.minecraft.utils.Paginator;
+
+import java.util.List;
 import java.util.Stack;
 
 public class PaginatedViewSlotContext<T> extends PaginatedViewContext<T> {
@@ -28,6 +31,21 @@ public class PaginatedViewSlotContext<T> extends PaginatedViewContext<T> {
 	@Override
 	void setCheckedLayerSignature(boolean checkedLayerSignature) {
 		delegate.setCheckedLayerSignature(checkedLayerSignature);
+	}
+
+	@Override
+	public List<T> getCurrentSource() {
+		return delegate.getCurrentSource();
+	}
+
+	@Override
+	Paginator<T> getPaginator() {
+		return delegate.getPaginator();
+	}
+
+	@Override
+	protected void setSource0(Object source) {
+		throw new IllegalStateException("");
 	}
 
 	/**

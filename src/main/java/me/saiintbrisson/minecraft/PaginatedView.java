@@ -7,8 +7,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Stack;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static me.saiintbrisson.minecraft.PaginatedViewContext.FIRST_PAGE;
 
@@ -58,23 +60,27 @@ public abstract class PaginatedView<T> extends View {
      * @deprecated Use {@link #setSource(List)} instead.
      */
     @Deprecated
-    public void setPaginationSource(List<T> source) {
+    public final void setPaginationSource(List<T> source) {
         setSource(source);
     }
 
-    public void setSource(List<T> source) {
+    public final void setSource(List<T> source) {
         this.paginator = new Paginator<>(getPageSize(), source);
     }
 
-	public void setSource(Function<ViewContext, List<T>> sourceProvider) {
-		this.paginator = new Paginator<>(getPageSize(), sourceProvider);
+	public final void setLazySource(Function<PaginatedViewContext<T>, List<T>> source) {
+		this.paginator = new Paginator<>(getPageSize(), source);
 	}
 
-    public int getPageSize() {
+	public final void setAsyncSource(Function<PaginatedViewContext<T>, CompletableFuture<List<T>>> source) {
+		this.paginator = new Paginator<>(getPageSize(), source);
+	}
+
+    public final int getPageSize() {
         return limit - offset;
     }
 
-    public Paginator<?> getPaginator() {
+    Paginator<?> getPaginator() {
         return paginator;
     }
 
@@ -82,22 +88,22 @@ public abstract class PaginatedView<T> extends View {
         this.paginator = paginator;
     }
 
-    public int getOffset() {
+    public final int getOffset() {
         return offset;
     }
 
-    public void setOffset(int offset) {
+    public final void setOffset(int offset) {
         if (layout != null)
             throw new IllegalArgumentException("Layered views cannot set the offset slot.");
 
         this.offset = offset;
     }
 
-    public int getLimit() {
+    public final int getLimit() {
         return limit;
     }
 
-    public void setLimit(int limit) {
+    public final void setLimit(int limit) {
         if (layout != null)
             throw new IllegalArgumentException("Layered views cannot set the limit slot.");
 
@@ -208,7 +214,7 @@ public abstract class PaginatedView<T> extends View {
 			// index check
 			if (render && !context.getPaginator().hasPage(page)) {
 				getFrame().debug("[context] paginated update - no page " + page + " available");
-				getFrame().debug("[context] paginated update - items: " + context.getPaginator().getSource().stream().map(Object::toString).collect(Collectors.joining(", ")));
+				getFrame().debug("[context] paginated update - items: " + context.getPaginator().getProvider().stream().map(Object::toString).collect(Collectors.joining(", ")));
 				getFrame().debug("[context] paginated update - count: " + context.getPaginator().count());
 				getFrame().debug("[context] paginated update - page size: " + context.getPaginator().getPageSize());
 				return;
@@ -292,27 +298,39 @@ public abstract class PaginatedView<T> extends View {
     private void renderLayout(PaginatedViewContext<T> context, String[] layout, ViewItem[] preservedItems) {
 		renderLayoutPattern(context);
     	getFrame().debug("[context] rendering layout");
-        final List<T> elements = context.getPaginator().getPage(context.getPage());
-        final int size = elements.size();
-        final int lastSlot = layout == null ? limit : context.getItemsLayer().peek();
-        final int layerSize = layout == null ? 0 /* ignored */ : context.getItemsLayer().size();
-        for (int i = 0; i < lastSlot; i++) {
-            if (layout != null && i >= layerSize)
-                break;
 
-            final int targetSlot = layout == null ? offset + i : context.getItemsLayer().elementAt(i);
-            if (i < size) {
-                final ViewItem preserved = preservedItems == null || preservedItems.length <= i ? null : preservedItems[i];
-                renderPaginatedItemAt(context, i, targetSlot, elements.get(i), preserved);
-            } else {
-                final ViewItem item = getItem(targetSlot);
-                // check if a non-virtual item has been defined in that slot
-                if (item != null)
-                    continue;
+		final CompletableFuture<List<T>> job = context.getPaginator().getPage(context.getPage(), context);
+		final int lastSlot = layout == null ? limit : context.getItemsLayer().peek();
+		final int layerSize = layout == null ? 0 /* ignored */ : context.getItemsLayer().size();
 
-                clearSlot(context, targetSlot);
-            }
-        }
+		job.whenComplete((elements, $) -> {
+			final int size = elements.size();
+			for (int i = 0; i < lastSlot; i++) {
+				if (layout != null && i >= layerSize)
+					break;
+
+				final int targetSlot = layout == null ? offset + i : context.getItemsLayer().elementAt(i);
+				if (i < size) {
+					final ViewItem preserved = preservedItems == null || preservedItems.length <= i ? null : preservedItems[i];
+					renderPaginatedItemAt(context, i, targetSlot, elements.get(i), preserved);
+				} else {
+					final ViewItem item = getItem(targetSlot);
+					// check if a non-virtual item has been defined in that slot
+					if (item != null)
+						continue;
+
+					clearSlot(context, targetSlot);
+				}
+			}
+
+			context.setLastIndex(lastSlot * (context.getPage() + 1));
+		}).exceptionally(error -> {
+			throwViewException(context, new IllegalStateException(
+				"Failed to render layout, asynchronous data retrieval job completed exceptionally",
+				error
+			));
+			return null;
+		});
     }
 
 	private void resolveLayout(PaginatedViewContext<T> context, String[] layout) {
@@ -378,23 +396,33 @@ public abstract class PaginatedView<T> extends View {
 
     final ViewItem[] clearLayout(PaginatedViewContext<T> context, String[] layout) {
 		getFrame().debug("[context] clearing layout");
-        final int size = context.getPaginator().getPage(context.getPage()).size();
-        final int layerSize = layout == null ? 0 /* ignored */ : context.getItemsLayer().size();
-        final ViewItem[] preservedItems = new ViewItem[layerSize + 1];
-        for (int i = 0; i < (layout == null ? limit : context.getItemsLayer().peek()); i++) {
-			if (layout != null && i >= layerSize)
-				break;
+		final CompletableFuture<List<T>> job = context.getPaginator().getPage(context.getPage(), context);
+		final int layerSize = layout == null ? 0 /* ignored */ : context.getItemsLayer().size() + 1;
+		final ViewItem[] preservedItems = new ViewItem[layerSize];
 
-			final int targetSlot = layout == null ? offset + i : context.getItemsLayer().elementAt(i);
-			if (i < size)
-				preservedItems[i] = context.getItem(targetSlot);
-			else {
-				if (getItem(targetSlot) != null)
-					continue;
+		job.whenComplete((data, $) -> {
+			final int size = data.size();
+			for (int i = 0; i < (layout == null ? limit : context.getItemsLayer().peek()); i++) {
+				if (layout != null && i >= layerSize)
+					break;
+
+				final int targetSlot = layout == null ? offset + i : context.getItemsLayer().elementAt(i);
+				if (i < size)
+					preservedItems[i] = context.getItem(targetSlot);
+				else {
+					if (getItem(targetSlot) != null)
+						continue;
+				}
+
+				clearSlot(context, targetSlot);
 			}
-
-			clearSlot(context, targetSlot);
-		}
+		}).exceptionally(error -> {
+			throwViewException(context, new IllegalStateException(
+				"Failed to clear layout, asynchronous data retrieval job completed exceptionally",
+				error
+			));
+			return null;
+		});
 
         return preservedItems;
     }

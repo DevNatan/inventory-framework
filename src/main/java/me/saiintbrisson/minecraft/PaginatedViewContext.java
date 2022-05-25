@@ -6,10 +6,9 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
 import static me.saiintbrisson.minecraft.View.UNSET_SLOT;
@@ -20,6 +19,8 @@ public class PaginatedViewContext<T> extends ViewContext {
 	private int page;
 	private int previousPageItemSlot = UNSET_SLOT;
 	private int nextPageItemSlot = UNSET_SLOT;
+	private List<T> currentSource;
+	private int lastIndex;
 
 	public PaginatedViewContext(View view, Player player, Inventory inventory, int page) {
 		super(view, player, inventory);
@@ -128,6 +129,14 @@ public class PaginatedViewContext<T> extends ViewContext {
 		return !hasNextPage();
 	}
 
+	public int getLastIndex() {
+		return lastIndex;
+	}
+
+	void setLastIndex(int lastIndex) {
+		this.lastIndex = lastIndex;
+	}
+
 	/**
 	 * Updates the current context by jumping to the specified page.
 	 *
@@ -172,7 +181,7 @@ public class PaginatedViewContext<T> extends ViewContext {
 	 * @return The paging source for all pages, the one defined earlier.
 	 */
 	public List<T> getSource() {
-		return Collections.unmodifiableList(getPaginator().getSource());
+		return Collections.unmodifiableList(getPaginator().getProvider());
 	}
 
 	/**
@@ -180,13 +189,15 @@ public class PaginatedViewContext<T> extends ViewContext {
 	 *
 	 * @param page The page you want to get the source from.
 	 * @return The paging source for a specific page.
+	 * @deprecated Will be removed in v2.5.2.
 	 */
+	@Deprecated
 	public List<T> getSource(int page) {
 		if (page == getPage())
 			return getCurrentSource();
 
 		return Collections.unmodifiableList(
-			getPaginator().getPage(Math.min(page, getPagesCount()))
+			getPaginator().getPage(Math.min(page, getPagesCount()), this).join()
 		);
 	}
 
@@ -196,7 +207,7 @@ public class PaginatedViewContext<T> extends ViewContext {
 	 * @return The paging source of the current page.
 	 */
 	public List<T> getCurrentSource() {
-		return Collections.unmodifiableList(getPaginator().getCurrentSource());
+		return Collections.unmodifiableList(currentSource);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -219,12 +230,16 @@ public class PaginatedViewContext<T> extends ViewContext {
 		setSource0(source);
 	}
 
-	public void setSource(Function<ViewContext, List<T>> source) {
+	public void setLazySource(Function<PaginatedViewContext<T>, List<T>> source) {
+		setSource0(source);
+	}
+
+	public void setAsyncSource(Function<PaginatedViewContext<T>, CompletableFuture<T>> source) {
 		setSource0(source);
 	}
 
 	@SuppressWarnings({"unchecked"})
-	private void setSource0(Object source) {
+	protected void setSource0(Object source) {
 		layoutCheck();
 		final PaginatedView<T> view = (PaginatedView<T>) getView();
 		final boolean checked = layoutCheck();
@@ -262,6 +277,10 @@ public class PaginatedViewContext<T> extends ViewContext {
 		}
 
 		return super.findNextAvailableSlot(currentItem);
+	}
+
+	void setCurrentSource(List<T> currentSource) {
+		this.currentSource = currentSource;
 	}
 
 	@Override
