@@ -47,7 +47,7 @@ class Pipeline<S> {
 		return null;
 	}
 
-	private int findIndex(final @NotNull PipelinePhase phase) {
+	private int findIndexOrThrow(final @NotNull PipelinePhase phase) {
 		final List<PipelinePhase> phasesList = new ArrayList<>(_phases);
 		for (int i = 0; i < phasesList.size(); i++) {
 			final PipelinePhase curr = phasesList.get(i);
@@ -55,7 +55,10 @@ class Pipeline<S> {
 				return i;
 		}
 
-		return -1;
+		throw new IllegalArgumentException(String.format(
+			"Phase %s was not registered for this pipeline",
+			phase
+		));
 	}
 
 	public boolean hasPhase(final @NotNull PipelinePhase phase) {
@@ -81,13 +84,7 @@ class Pipeline<S> {
 	) {
 		if (hasPhase(phase)) return;
 
-		final int refIdx = findIndex(reference);
-		if (refIdx == -1)
-			throw new IllegalArgumentException(String.format(
-				"Phase %s was not registered for this pipeline",
-				reference
-			));
-
+		final int refIdx = findIndexOrThrow(reference);
 		_phases.add(refIdx, phase);
 	}
 
@@ -97,13 +94,7 @@ class Pipeline<S> {
 	) {
 		if (hasPhase(phase)) return;
 
-		final int refIdx = findIndex(reference);
-		if (refIdx == -1)
-			throw new IllegalArgumentException(String.format(
-				"Phase %s was not registered for this pipeline",
-				reference
-			));
-
+		final int refIdx = findIndexOrThrow(reference);
 		_phases.add(refIdx + 1, phase);
 	}
 
