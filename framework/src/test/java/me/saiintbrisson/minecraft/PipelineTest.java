@@ -6,8 +6,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PipelineTest {
 
@@ -164,6 +168,65 @@ public class PipelineTest {
 			"intercept-p1-2 p1",
 			"success-p1-1 p1"
 		), events);
+	}
+
+	@Test
+	public void phased() {
+		PipelinePhase before = new PipelinePhase("before");
+		PipelinePhase after = new PipelinePhase("after");
+		Pipeline<String> pipeline = new Pipeline<>(before, after);
+
+		checkPipelineOrder(after, before, pipeline);
+	}
+
+	@Test
+	public void phasedNotRegistered() {
+		PipelinePhase before = new PipelinePhase("before");
+		PipelinePhase after = new PipelinePhase("after");
+		Pipeline<String> pipeline = new Pipeline<>(before);
+
+		assertThrows(IllegalArgumentException.class, () -> pipeline.intercept(after, ($, $$) -> {}));
+	}
+
+	@Test
+	public void phasedBefore() {
+		Pipeline<String> pipeline = new Pipeline<>();
+		PipelinePhase before = new PipelinePhase("before");
+		PipelinePhase after = new PipelinePhase("after");
+		pipeline.addPhase(after);
+		pipeline.insertPhaseBefore(after, before);
+		checkPipelineOrder(after, before, pipeline);
+	}
+
+	@Test
+	public void phasedAfter() {
+		Pipeline<String> pipeline = new Pipeline<>();
+		PipelinePhase before = new PipelinePhase("before");
+		PipelinePhase after = new PipelinePhase("after");
+		pipeline.addPhase(before);
+		pipeline.insertPhaseAfter(before, after);
+		checkPipelineOrder(after, before, pipeline);
+	}
+
+	private void checkPipelineOrder(
+		PipelinePhase after,
+		PipelinePhase before,
+		Pipeline<String> pipeline
+	) {
+		ThreadLocal<Boolean> value = ThreadLocal.withInitial(() -> false);
+
+		pipeline.intercept(after, (context, $) -> {
+			value.set(true);
+			context.proceed();
+		});
+
+		pipeline.intercept(before, (context, $) -> {
+			assertFalse(value.get());
+			context.proceed();
+		});
+
+		pipeline.execute("some");
+		assertTrue(value.get());
 	}
 
 }
