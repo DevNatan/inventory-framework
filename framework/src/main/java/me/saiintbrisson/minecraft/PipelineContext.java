@@ -5,11 +5,10 @@ import lombok.AllArgsConstructor;
 import java.util.List;
 
 @AllArgsConstructor
-public final class PipelineContext<S, C> {
+public final class PipelineContext<S> {
 
-	private final C context;
 	private S subject;
-	private final List<PipelineInterceptor<S, C>> interceptors;
+	private final List<PipelineInterceptor<S>> interceptors;
 
 	private int index;
 
@@ -20,40 +19,38 @@ public final class PipelineContext<S, C> {
 		index = -1;
 	}
 
-	private S loop() {
+	private void loop() {
 		do {
 			final int pointer = index;
 			if (pointer == -1)
 				break;
 
-			final List<PipelineInterceptor<S, C>> safeInterceptors = interceptors;
+			final List<PipelineInterceptor<S>> safeInterceptors = interceptors;
 			if (pointer >= safeInterceptors.size()) {
 				finish();
 				break;
 			}
 
-			final PipelineInterceptor<S, C> nextInterceptor = safeInterceptors.get(pointer);
+			final PipelineInterceptor<S> nextInterceptor = safeInterceptors.get(pointer);
 			index = pointer + 1;
 
 			nextInterceptor.intercept(this, subject);
 		} while (true);
-
-		return subject;
 	}
 
-	public S proceed() {
+	public void proceed() {
 		if (index >= interceptors.size()) {
 			finish();
-			return subject;
+			return;
 		}
 
-		return loop();
+		loop();
 	}
 
-	public S execute(S initial) {
+	public void execute(S initial) {
 		index = 0;
 		subject = initial;
-		return proceed();
+		proceed();
 	}
 
 }

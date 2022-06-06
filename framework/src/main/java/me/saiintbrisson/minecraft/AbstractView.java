@@ -26,8 +26,6 @@ public abstract class AbstractView extends AbstractVirtualView {
 	private final String title;
 	@NotNull
 	private final ViewType type;
-	@NotNull
-	private final ViewPipeline pipeline = new ViewPipeline();
 
 	@Getter(AccessLevel.PROTECTED)
 	@Setter(AccessLevel.PACKAGE)
@@ -37,11 +35,6 @@ public abstract class AbstractView extends AbstractVirtualView {
 
 	private boolean cancelOnClick, cancelOnPickup, cancelOnDrop, cancelOnDrag, cancelOnClone,
 		cancelOnMoveIn, cancelOnMoveOut, cancelOnShiftClick, clearCursorOnClose, closeOnOutsideClick;
-
-	@NotNull
-	final ViewPipeline getPipeline() {
-		return pipeline;
-	}
 
 	final void open(@NotNull Viewer viewer, @NotNull Map<String, Object> data) {
 		final OpenViewContext open = open0(viewer, data);

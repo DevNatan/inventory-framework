@@ -1,8 +1,8 @@
 package me.saiintbrisson.minecraft;
 
 @FunctionalInterface
-public interface PipelineInterceptor<S, C> {
+public interface PipelineInterceptor<S> {
 
-	void intercept(PipelineContext<S, C> context, S subject);
+	void intercept(PipelineContext<S> context, S subject);
 
 }

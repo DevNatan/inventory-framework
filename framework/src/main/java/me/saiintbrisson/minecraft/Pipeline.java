@@ -1,10 +1,11 @@
 package me.saiintbrisson.minecraft;
 
-import com.sun.istack.internal.NotNull;
-import com.sun.istack.internal.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,11 +23,11 @@ import java.util.stream.Collectors;
  *
  * @see PipelinePhase
  */
-class Pipeline<S, C> {
+class Pipeline<S> {
 
 	private final List<PipelinePhase> _phases;
 
-	private final Map<PipelinePhase, List<PipelineInterceptor<S, C>>> interceptors = new HashMap<>();
+	private final Map<PipelinePhase, List<PipelineInterceptor<S>>> interceptors = new HashMap<>();
 
 	public Pipeline(PipelinePhase... phases) {
 		_phases = new ArrayList<>(Arrays.asList(phases));
@@ -108,7 +109,7 @@ class Pipeline<S, C> {
 
 	public void intercept(
 		final @NotNull PipelinePhase phase,
-		final @NotNull PipelineInterceptor<S, C> interceptor
+		final @NotNull PipelineInterceptor<S> interceptor
 	) {
 		final PipelinePhase pipelinePhase = findPhase(phase);
 		if (pipelinePhase == null)
@@ -117,25 +118,25 @@ class Pipeline<S, C> {
 				phase
 			));
 
-		final int lastIndex = _phases.size() - 1;
-		if (phase.equals(_phases.get(lastIndex)) || findIndex(phase) == lastIndex) {
-			final PipelinePhase target = findPhase(phase);
-			if (target != null)
-				target.add
-			return true;
-		}
-
+		interceptors.computeIfAbsent(phase, $ -> new ArrayList<>()).add(interceptor);
 		afterIntercept();
 	}
 
 	public void afterIntercept() {
 	}
 
-	public S execute(
-		final @Nullable C context,
-		final @NotNull S subject
+	public PipelineContext<S> execute(
+		@Nullable final S subject
 	) {
-		return new PipelineContext<>(context, subject, new ArrayList<>(interceptors.values().stream().flatMap(List::addAll).collect(Collectors.toList())), 0).execute(subject);
+		final PipelineContext<S> context = new PipelineContext<>(
+			subject,
+			interceptors.values().stream()
+				.flatMap(Collection::stream)
+				.collect(Collectors.toList()),
+			0
+		);
+		context.execute(subject);
+		return context;
 	}
 
 }
