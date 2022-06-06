@@ -6,7 +6,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -213,7 +218,7 @@ public class PipelineTest {
 		PipelinePhase before,
 		Pipeline<String> pipeline
 	) {
-		ThreadLocal<Boolean> value = ThreadLocal.withInitial(() -> false);
+		AtomicBoolean value = new AtomicBoolean();
 
 		pipeline.intercept(after, (context, $) -> {
 			value.set(true);

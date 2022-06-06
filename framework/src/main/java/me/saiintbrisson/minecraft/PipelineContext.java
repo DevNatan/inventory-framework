@@ -1,11 +1,11 @@
 package me.saiintbrisson.minecraft;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
-@AllArgsConstructor
-public final class PipelineContext<S> {
+@RequiredArgsConstructor
+final class PipelineContext<S> {
 
 	private S subject;
 	private final List<PipelineInterceptor<S>> interceptors;

@@ -5,11 +5,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * The pipeline is a structure containing a sequence of functions (blocks/lambdas) that are called
@@ -26,11 +25,10 @@ import java.util.stream.Collectors;
 class Pipeline<S> {
 
 	private final List<PipelinePhase> _phases;
-
 	private final Map<PipelinePhase, List<PipelineInterceptor<S>>> interceptors = new HashMap<>();
 
 	public Pipeline(PipelinePhase... phases) {
-		_phases = new ArrayList<>(Arrays.asList(phases));
+		_phases = new LinkedList<>(Arrays.asList(phases));
 	}
 
 	private PipelinePhase findPhase(final @NotNull PipelinePhase phase) {
@@ -110,24 +108,33 @@ class Pipeline<S> {
 			));
 
 		interceptors.computeIfAbsent(phase, $ -> new ArrayList<>()).add(interceptor);
-		afterIntercept();
 	}
 
-	public void afterIntercept() {
-	}
+	public void execute(@Nullable final S subject) {
+		final List<PipelineInterceptor<S>> pipelineInterceptors = new LinkedList<>();
+		for (final PipelinePhase phase : _phases) {
+			final List<PipelineInterceptor<S>> interceptors = this.interceptors.get(phase);
+			if (interceptors == null)
+				continue;
 
-	public PipelineContext<S> execute(
-		@Nullable final S subject
-	) {
+			pipelineInterceptors.addAll(interceptors);
+		}
+
 		final PipelineContext<S> context = new PipelineContext<>(
-			subject,
-			interceptors.values().stream()
-				.flatMap(Collection::stream)
-				.collect(Collectors.toList()),
-			0
+			pipelineInterceptors
 		);
 		context.execute(subject);
-		return context;
+	}
+
+	public void execute(@NotNull final PipelinePhase phase, @Nullable final S subject) {
+		final List<PipelineInterceptor<S>> pipelineInterceptors = interceptors.get(phase);
+		if (pipelineInterceptors == null)
+			return;
+
+		final PipelineContext<S> context = new PipelineContext<>(
+			pipelineInterceptors
+		);
+		context.execute(subject);
 	}
 
 }

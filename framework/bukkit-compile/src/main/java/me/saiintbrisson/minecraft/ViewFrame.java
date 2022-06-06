@@ -129,11 +129,12 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
 		for (final View view : views.values())
 			view.setViewFrame(this);
 
-		getOwner().getServer().getPluginManager().registerEvents(
-			listener = new ViewListener(this),
-			getOwner()
+		final Plugin plugin = getOwner();
+		plugin.getServer().getPluginManager().registerEvents(
+			listener = new ViewListener(plugin, this),
+			plugin
 		);
-		servicesManager.register(ViewFrame.class, this, getOwner(), ServicePriority.Normal);
+		servicesManager.register(ViewFrame.class, this, plugin, ServicePriority.Normal);
 	}
 
 	@Override

@@ -9,6 +9,6 @@ public interface ItemFactory<T> {
 		return item(null);
 	}
 
-	ViewItem item(@NotNull T stack);
+	ViewItem item(@SuppressWarnings("NullableProblems") @NotNull T stack);
 
 }

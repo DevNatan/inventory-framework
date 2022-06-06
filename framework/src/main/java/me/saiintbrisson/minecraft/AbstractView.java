@@ -20,6 +20,12 @@ import java.util.function.Predicate;
 @ToString(callSuper = true)
 public abstract class AbstractView extends AbstractVirtualView {
 
+	static final PipelinePhase OPEN = new PipelinePhase("open");
+	static final PipelinePhase RENDER = new PipelinePhase("render");
+	static final PipelinePhase UPDATE = new PipelinePhase("update");
+	static final PipelinePhase CLICK = new PipelinePhase("click");
+	static final PipelinePhase CLOSE = new PipelinePhase("close");
+
 	static final ViewType DEFAULT_TYPE = ViewType.CHEST;
 
 	private final int rows;
@@ -31,7 +37,11 @@ public abstract class AbstractView extends AbstractVirtualView {
 	@Setter(AccessLevel.PACKAGE)
 	PlatformViewFrame<?, ?, ?> viewFrame;
 
-	private final Set<ViewContext> contexts = Collections.newSetFromMap(Collections.synchronizedMap(new WeakHashMap<>()));
+	private final Set<ViewContext> contexts = Collections.newSetFromMap(
+		Collections.synchronizedMap(new WeakHashMap<>())
+	);
+
+	private final Pipeline<ViewContext> pipeline = new Pipeline<>(OPEN, RENDER, UPDATE, CLICK, CLOSE);
 
 	private boolean cancelOnClick, cancelOnPickup, cancelOnDrop, cancelOnDrag, cancelOnClone,
 		cancelOnMoveIn, cancelOnMoveOut, cancelOnShiftClick, clearCursorOnClose, closeOnOutsideClick;

@@ -55,19 +55,11 @@ class ViewListener implements Listener {
 		try {
 			context = getContextOrThrow(view, player);
 		} catch (final IllegalStateException e) {
-			e.setStackTrace(e.getStackTrace());
-
 			plugin.getServer().getScheduler().runTask(plugin, player::closeInventory);
 			throw e;
 		}
 
-		if (event.getSlotType() == InventoryType.SlotType.OUTSIDE) {
-			event.setCancelled(true);
-
-			// TODO handle outside click
-		}
-
-		view.getPipeline().exex
+		view.getPipeline().execute(AbstractView.CLICK, context);
 	}
 
 }
