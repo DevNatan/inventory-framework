@@ -12,13 +12,13 @@ public interface ViewContext extends VirtualView {
 	@NotNull
 	List<Viewer> getViewers();
 
-	<T> T get(@NotNull final String key);
+	<T> T get(@NotNull String key);
 
-	<T> T get(@NotNull final String key, @NotNull Supplier<T> defaultValue);
+	<T> T get(@NotNull String key, @NotNull Supplier<T> defaultValue);
 
-	void set(@NotNull final String key, @NotNull final Object value);
+	void set(@NotNull String key, @NotNull Object value);
 
-	boolean has(@NotNull final String key);
+	boolean has(@NotNull String key);
 
 	@NotNull
 	ViewContainer getContainer();
@@ -50,7 +50,7 @@ public interface ViewContext extends VirtualView {
 	 *
 	 * @param title The new container title.
 	 */
-	void updateTitle(@NotNull final String title);
+	void updateTitle(@NotNull String title);
 
 	/**
 	 * Updates the inventory title of the customer that owns this context to the initially defined title.
@@ -70,7 +70,11 @@ public interface ViewContext extends VirtualView {
 	 *
 	 * @param propagateErrors If errors should be propagated to the root view.
 	 */
-	void setPropagateErrors(final boolean propagateErrors);
+	void setPropagateErrors(boolean propagateErrors);
+
+	boolean isCancelled();
+
+	void setCancelled(boolean cancelled);
 
 	// backward compatibility
 	Player getPlayer();

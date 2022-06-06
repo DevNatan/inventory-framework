@@ -58,6 +58,7 @@ class BaseViewContext extends AbstractVirtualView implements ViewContext {
 		return (T) data.get(key);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T get(@NotNull String key, @NotNull Supplier<T> defaultValue) {
 		synchronized (data) {
@@ -153,6 +154,16 @@ class BaseViewContext extends AbstractVirtualView implements ViewContext {
 			"This function should not be used on your platform, it is only available for reasons" +
 				" of backward compatibility with the Bukkit platform."
 		);
+	}
+
+	@Override
+	public boolean isCancelled() {
+		throw new UnsupportedOperationException("This context is not cancellable");
+	}
+
+	@Override
+	public void setCancelled(boolean cancelled) {
+		throw new UnsupportedOperationException("This context is not cancellable");
 	}
 
 }

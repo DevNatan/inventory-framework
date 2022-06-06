@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
  */
 @Getter
 @ToString(callSuper = true)
-public class OpenViewContext extends BaseViewContext implements CancellableViewContext {
+public class OpenViewContext extends BaseViewContext {
 
 	/**
 	 * The title of the container that player will see.
