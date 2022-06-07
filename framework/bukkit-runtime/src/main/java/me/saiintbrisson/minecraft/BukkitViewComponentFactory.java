@@ -23,8 +23,12 @@ final class BukkitViewComponentFactory implements ViewComponentFactory {
 		final @NotNull ViewType type
 	) {
 		checkTypeSupport(type);
-		PlatformUtils.removeFactory();
 		return new View(rows, title, type);
+	}
+
+	@Override
+	public void setupView(@NotNull AbstractView view) {
+		registerInterceptors((View) view);
 	}
 
 	@Override
@@ -71,8 +75,8 @@ final class BukkitViewComponentFactory implements ViewComponentFactory {
 			return new BukkitOpenViewContext(view);
 
 		return view instanceof PaginatedView
-			? new BukkitPaginatedViewContext<>(view, container)
-			: new BukkitViewContext(view, container);
+			? new PaginatedViewContextImpl<>(view, container)
+			: new ViewContextImpl(view, container);
 	}
 
 	@Override
@@ -107,6 +111,10 @@ final class BukkitViewComponentFactory implements ViewComponentFactory {
 			"%s view type is not supported on Bukkit platform.",
 			type.getIdentifier()
 		));
+	}
+
+	private void registerInterceptors(View view) {
+		view.getPipeline().intercept(AbstractView.CLICK, new HotbarClickInterceptor());
 	}
 
 }

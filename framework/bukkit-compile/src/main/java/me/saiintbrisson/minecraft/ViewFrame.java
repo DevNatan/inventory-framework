@@ -126,8 +126,10 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
 		if (servicesManager.isProvidedFor(ViewFrame.class))
 			return;
 
-		for (final View view : views.values())
+		for (final View view : views.values()) {
 			view.setViewFrame(this);
+			PlatformUtils.getFactory().setupView(view);
+		}
 
 		final Plugin plugin = getOwner();
 		plugin.getServer().getPluginManager().registerEvents(

@@ -10,6 +10,11 @@ public abstract class NoopViewComponentFactory implements ViewComponentFactory {
 	}
 
 	@Override
+	public void setupView(@NotNull AbstractView view) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
 	public @NotNull ViewContainer createContainer(@NotNull VirtualView view, int size, String title, ViewType type) {
 		throw new UnsupportedOperationException();
 	}

@@ -15,10 +15,6 @@ class BasePaginatedViewContext<T> extends BaseViewContext implements PaginatedVi
 		super(root, container);
 	}
 
-	BasePaginatedViewContext(@NotNull ViewContext context) {
-		super(context);
-	}
-
 	@Override
 	public int getPage() {
 		return page;

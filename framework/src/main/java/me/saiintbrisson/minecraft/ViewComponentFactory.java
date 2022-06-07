@@ -11,6 +11,8 @@ public interface ViewComponentFactory {
 		@NotNull ViewType type
 	);
 
+	void setupView(@NotNull AbstractView view);
+
 	@NotNull
 	ViewContainer createContainer(
 		@NotNull final VirtualView view,

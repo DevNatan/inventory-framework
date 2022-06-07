@@ -96,9 +96,10 @@ class Pipeline<S> {
 		_phases.add(refIdx + 1, phase);
 	}
 
+	@SuppressWarnings("unchecked")
 	public void intercept(
 		final @NotNull PipelinePhase phase,
-		final @NotNull PipelineInterceptor<S> interceptor
+		final @NotNull PipelineInterceptor<? extends S> interceptor
 	) {
 		final PipelinePhase pipelinePhase = findPhase(phase);
 		if (pipelinePhase == null)
@@ -107,7 +108,7 @@ class Pipeline<S> {
 				phase
 			));
 
-		interceptors.computeIfAbsent(phase, $ -> new ArrayList<>()).add(interceptor);
+		interceptors.computeIfAbsent(phase, $ -> new ArrayList<>()).add((PipelineInterceptor<S>) interceptor);
 	}
 
 	public void execute(@Nullable final S subject) {
@@ -128,8 +129,10 @@ class Pipeline<S> {
 
 	public void execute(@NotNull final PipelinePhase phase, @Nullable final S subject) {
 		final List<PipelineInterceptor<S>> pipelineInterceptors = interceptors.get(phase);
-		if (pipelineInterceptors == null)
+		if (pipelineInterceptors == null) {
+			System.out.println("no interceptors found to " + phase);
 			return;
+		}
 
 		final PipelineContext<S> context = new PipelineContext<>(
 			pipelineInterceptors

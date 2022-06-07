@@ -28,4 +28,12 @@ class BukkitViewer implements Viewer {
 		player.closeInventory();
 	}
 
+	public static Player toPlayerOfContext(ViewContext context) {
+		final Viewer viewer = context.getViewers().get(0);
+		if (viewer == null)
+			throw new IllegalStateException("Tried to retrieve context player while it's not valid anymore.");
+
+		return ((BukkitViewer) viewer).getPlayer();
+	}
+
 }

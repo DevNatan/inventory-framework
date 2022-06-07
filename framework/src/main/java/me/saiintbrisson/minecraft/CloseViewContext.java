@@ -12,12 +12,20 @@ import org.jetbrains.annotations.NotNull;
 @ToString(callSuper = true)
 public final class CloseViewContext extends BaseViewContext {
 
+	private final ViewContext parent;
+
 	@Getter
 	@Setter
 	private boolean cancelled;
 
-	CloseViewContext(@NotNull final ViewContext context) {
-		super(context);
+	CloseViewContext(@NotNull final ViewContext parent) {
+		super(parent.getRoot(), parent.getContainer());
+		this.parent = parent;
+	}
+
+	@Override
+	public @NotNull ViewContextAttributes getAttributes() {
+		return parent.getAttributes();
 	}
 
 }

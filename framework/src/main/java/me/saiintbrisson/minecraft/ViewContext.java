@@ -10,6 +10,9 @@ import org.jetbrains.annotations.Nullable;
 public interface ViewContext extends VirtualView {
 
 	@NotNull
+	ViewContextAttributes getAttributes();
+
+	@NotNull
 	List<Viewer> getViewers();
 
 	<T> T get(@NotNull String key);

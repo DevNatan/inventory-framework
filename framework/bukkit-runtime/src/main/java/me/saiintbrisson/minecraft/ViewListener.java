@@ -5,7 +5,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -57,12 +56,16 @@ class ViewListener implements Listener {
 		final ViewContext context;
 		try {
 			context = getContextOrThrow(view, player);
+			System.out.println("context");
 		} catch (final IllegalStateException e) {
 			plugin.getServer().getScheduler().runTask(plugin, player::closeInventory);
 			throw e;
 		}
 
-		view.getPipeline().execute(AbstractView.CLICK, context);
+		System.out.println("on click");
+
+		view.getPipeline().execute(AbstractView.CLICK, new BukkitClickViewSlotContext(context, event));
+		System.out.println("pipeline executed");
 	}
 
 }

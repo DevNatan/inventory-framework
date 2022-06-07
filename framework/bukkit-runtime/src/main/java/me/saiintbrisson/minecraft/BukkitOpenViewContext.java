@@ -10,17 +10,13 @@ final class BukkitOpenViewContext extends OpenViewContext {
 	}
 
 	@Override
-	public Player getPlayer() {
-		final Viewer viewer = getViewers().get(0);
-		if (viewer == null)
-			throw new IllegalStateException("Tried to retrieve context player while it's not valid anymore.");
-
-		return ((BukkitViewer) viewer).getPlayer();
+	public void setContainerSize(int containerSize) {
+		super.setContainerSize((getContainerType() == null ? AbstractView.DEFAULT_TYPE : getContainerType()).normalize(containerSize));
 	}
 
 	@Override
-	public void setContainerSize(int containerSize) {
-		super.setContainerSize((getContainerType() == null ? AbstractView.DEFAULT_TYPE : getContainerType()).normalize(containerSize));
+	public Player getPlayer() {
+		return BukkitViewer.toPlayerOfContext(this);
 	}
 
 }
