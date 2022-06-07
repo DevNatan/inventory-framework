@@ -50,7 +50,7 @@ public class View extends AbstractView implements ItemFactory<ItemStack>, Invent
 	}
 
 	@Override
-	public ViewItem item(@NotNull ItemStack stack) {
+	public final ViewItem item(@NotNull ItemStack stack) {
 		// TODO remove it. XD :)
 		final ViewItem item = new ViewItem();
 		item.setItem(stack);

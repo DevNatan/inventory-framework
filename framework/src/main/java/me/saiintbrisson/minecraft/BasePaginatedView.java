@@ -24,11 +24,11 @@ class BasePaginatedView<T> extends AbstractView implements PaginatedVirtualView<
 		throw new UnsupportedOperationException();
 	}
 
-	public final void setPreviousPageItem(@NotNull Function<PaginatedViewContext<T>, ViewItem> previousPageItemFactory) {
+	final void setPreviousPageItem(@NotNull Function<PaginatedViewContext<T>, ViewItem> previousPageItemFactory) {
 		this.previousPageItemFactory = previousPageItemFactory;
 	}
 
-	public final void setNextPageItem(@NotNull Function<PaginatedViewContext<T>, ViewItem> nextPageItemFactory) {
+	final void setNextPageItem(@NotNull Function<PaginatedViewContext<T>, ViewItem> nextPageItemFactory) {
 		this.nextPageItemFactory = nextPageItemFactory;
 	}
 

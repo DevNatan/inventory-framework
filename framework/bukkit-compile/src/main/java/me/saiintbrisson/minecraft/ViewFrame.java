@@ -58,8 +58,8 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
 		if (inventory.getType() == InventoryType.PLAYER)
 			return null;
 
-		// TODO: search for alternative ways to retrieve current view
-		// TODO: InventoryHolder is deprecated in newer versions of Bukkit API
+		// TODO: search for alternative ways to retrieve current view because
+		//       InventoryHolder is deprecated in newer versions of Bukkit API
 		final InventoryHolder holder = inventory.getHolder();
 		if (!(holder instanceof View))
 			return null;
