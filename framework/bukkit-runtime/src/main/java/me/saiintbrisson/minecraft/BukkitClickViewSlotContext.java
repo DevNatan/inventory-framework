@@ -13,7 +13,10 @@ import org.jetbrains.annotations.Nullable;
 @ToString(callSuper = true)
 public final class BukkitClickViewSlotContext extends BaseViewContext implements ViewSlotContext {
 
+	@ToString.Exclude
 	private final ViewContext parent;
+
+	@ToString.Exclude
 	private final InventoryClickEvent clickOrigin;
 
 	@Setter

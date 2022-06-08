@@ -1,5 +1,6 @@
 package me.saiintbrisson.minecraft;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -8,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -175,6 +177,14 @@ class BaseViewContext extends AbstractVirtualView implements ViewContext {
 	@Override
 	public void setCancelled(boolean cancelled) {
 		throw new UnsupportedOperationException("This context is not cancellable");
+	}
+
+	final ViewItem resolve(int index) {
+		ViewItem item = getRoot().resolve(index);
+		if (item == null)
+			return getRoot().resolve(index);
+
+		return item;
 	}
 
 }

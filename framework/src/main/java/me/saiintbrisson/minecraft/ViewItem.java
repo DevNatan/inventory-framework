@@ -81,4 +81,9 @@ public final class ViewItem {
 		this.clickHandler = clickHandler;
 	}
 
+	public ViewItem cancelOnClick() {
+		cancelOnClick = !cancelOnClick;
+		return this;
+	}
+
 }

@@ -7,23 +7,41 @@ import lombok.Setter;
 import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Stack;
+
 @Getter
 @Setter
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public abstract class AbstractVirtualView implements VirtualView {
+
+	@ToString.Exclude
+	@Getter(AccessLevel.PROTECTED)
+	private ViewItem[] items;
 
 	private ViewErrorHandler errorHandler;
 
 	@Override
 	@NotNull
 	public final ViewItem slot(int slot) {
-		throw new UnsupportedOperationException("not available");
+		return Objects.requireNonNull(
+			slot(slot, null),
+			"ViewItem cannot be null"
+		);
 	}
 
 	@Override
 	@NotNull
 	public final ViewItem slot(int slot, Object item) {
-		throw new UnsupportedOperationException("not available");
+		if (getItems() == null)
+			throw new IllegalStateException("VirtualView was not initialized yet");
+
+		final ViewItem viewItem = new ViewItem(slot);
+		viewItem.setItem(item);
+		getItems()[slot] = viewItem;
+		return viewItem;
 	}
 
 	@Override
@@ -40,7 +58,7 @@ public abstract class AbstractVirtualView implements VirtualView {
 
 	@Override
 	public void with(@NotNull ViewItem item) {
-		throw new UnsupportedOperationException("not available");
+		throw new UnsupportedOperationException("Items without a defined slot aren't supported yet");
 	}
 
 	@Override

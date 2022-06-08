@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 @ToString(callSuper = true)
 public final class CloseViewContext extends BaseViewContext {
 
+	@ToString.Exclude
 	private final ViewContext parent;
 
 	@Getter

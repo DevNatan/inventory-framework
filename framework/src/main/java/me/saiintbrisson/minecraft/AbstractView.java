@@ -8,7 +8,9 @@ import lombok.ToString;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
@@ -16,8 +18,7 @@ import java.util.function.Predicate;
 
 @Getter
 @Setter
-@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
-@ToString(callSuper = true)
+@ToString(callSuper = true, onlyExplicitlyIncluded = true)
 public abstract class AbstractView extends AbstractVirtualView {
 
 	static final PipelinePhase OPEN = new PipelinePhase("open");
@@ -28,10 +29,9 @@ public abstract class AbstractView extends AbstractVirtualView {
 
 	static final ViewType DEFAULT_TYPE = ViewType.CHEST;
 
-	private final int rows;
-	private final String title;
-	@NotNull
-	private final ViewType type;
+	@ToString.Include private final int rows;
+	@ToString.Include private final String title;
+	@ToString.Include private final @NotNull ViewType type;
 
 	@Getter(AccessLevel.PROTECTED)
 	@Setter(AccessLevel.PACKAGE)
@@ -43,13 +43,23 @@ public abstract class AbstractView extends AbstractVirtualView {
 
 	private final Pipeline<ViewContext> pipeline = new Pipeline<>(OPEN, RENDER, UPDATE, CLICK, CLOSE);
 
+	@ToString.Include
 	private boolean cancelOnClick, cancelOnPickup, cancelOnDrop, cancelOnDrag, cancelOnClone,
 		cancelOnMoveIn, cancelOnMoveOut, cancelOnShiftClick, clearCursorOnClose, closeOnOutsideClick;
+
+	AbstractView(int rows, String title, @NotNull ViewType type) {
+		this.rows = rows;
+		this.title = title;
+		this.type = type;
+		setItems(new ViewItem[type.normalize(rows)]);
+	}
 
 	final void open(@NotNull Viewer viewer, @NotNull Map<String, Object> data) {
 		final OpenViewContext open = open0(viewer, data);
 
+		// rows will be normalized to fixed container size on `createContainer`
 		final int containerSize = open.getContainerSize() == 0 ? rows : open.getContainerSize();
+
 		final String containerTitle = open.getContainerTitle() == null ? title : open.getContainerTitle();
 		final ViewType containerType = open.getContainerType() == null ? type : open.getContainerType();
 
@@ -64,6 +74,7 @@ public abstract class AbstractView extends AbstractVirtualView {
 			return;
 
 		final BaseViewContext context = viewFrame.getFactory().createContext(this, container, null);
+		context.setItems(new ViewItem[containerSize]);
 		context.addViewer(viewer);
 		contexts.add(context);
 		render(context);
@@ -85,6 +96,17 @@ public abstract class AbstractView extends AbstractVirtualView {
 
 	private void render(@NotNull ViewContext context) {
 		runCatching(context, () -> onRender(context));
+		for (int i = 0; i < getItems().length; i++) {
+			final ViewItem item = getItems()[i];
+			if (item == null) continue;
+			if (item.getItem() == null) continue;
+
+			context.getContainer().renderItem(item.getSlot(), item.getItem());
+		}
+	}
+
+	protected void render(ViewContext context, int slot) {
+
 	}
 
 	@Override
@@ -239,6 +261,10 @@ public abstract class AbstractView extends AbstractVirtualView {
 
 	@ApiStatus.Experimental
 	protected void onMoveIn(@NotNull ViewSlotMoveContext context) {
+	}
+
+	final ViewItem resolve(int index) {
+		return getItems()[index];
 	}
 
 }

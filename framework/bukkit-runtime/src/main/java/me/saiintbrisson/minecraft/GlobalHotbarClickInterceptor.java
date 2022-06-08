@@ -2,6 +2,7 @@ package me.saiintbrisson.minecraft;
 
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Intercepts the player's hotbar click by launching
@@ -9,11 +10,11 @@ import org.bukkit.event.inventory.InventoryClickEvent;
  *
  * @see PipelineInterceptor
  */
-public final class HotbarClickInterceptor implements PipelineInterceptor<BukkitClickViewSlotContext> {
+final class GlobalHotbarClickInterceptor implements PipelineInterceptor<BukkitClickViewSlotContext> {
 
 	@Override
 	public void intercept(
-		PipelineContext<BukkitClickViewSlotContext> pipeline,
+		@NotNull PipelineContext<BukkitClickViewSlotContext> pipeline,
 		BukkitClickViewSlotContext subject
 	) {
 		final InventoryClickEvent clickEvent = subject.getClickOrigin();
@@ -22,6 +23,11 @@ public final class HotbarClickInterceptor implements PipelineInterceptor<BukkitC
 			return;
 
 		subject.getRoot().onHotbarInteract(subject, clickEvent.getHotbarButton());
+		if (!subject.isCancelled())
+			return;
+
+		clickEvent.setCancelled(true);
+		pipeline.finish();
 	}
 
 }

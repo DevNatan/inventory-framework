@@ -38,7 +38,7 @@ public interface VirtualView {
 	/**
 	 * Registers a {@link ViewItem} with an item stack in the specified slot.
 	 *
-	 * @param slot Tthe item slot.
+	 * @param slot The item slot.
 	 * @param item The item to be set.
 	 */
 	@NotNull

@@ -10,6 +10,7 @@ import org.bukkit.inventory.InventoryHolder;
 import org.jetbrains.annotations.NotNull;
 
 import static java.util.Objects.requireNonNull;
+import static me.saiintbrisson.minecraft.AbstractView.CLICK;
 
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
 final class BukkitViewComponentFactory implements ViewComponentFactory {
@@ -113,9 +114,12 @@ final class BukkitViewComponentFactory implements ViewComponentFactory {
 		));
 	}
 
-	private void registerInterceptors(View view) {
-		view.getPipeline().intercept(AbstractView.CLICK, new ClickOutsideInterceptor());
-		view.getPipeline().intercept(AbstractView.CLICK, new HotbarClickInterceptor());
+	private void registerInterceptors(AbstractView view) {
+		final Pipeline<? super ViewContext> pipeline = view.getPipeline();
+		pipeline.intercept(CLICK, new ItemClickInterceptor());
+		pipeline.intercept(CLICK, new GlobalClickInterceptor());
+		pipeline.intercept(CLICK, new GlobalClickOutsideInterceptor());
+		pipeline.intercept(CLICK, new GlobalHotbarClickInterceptor());
 	}
 
 }
