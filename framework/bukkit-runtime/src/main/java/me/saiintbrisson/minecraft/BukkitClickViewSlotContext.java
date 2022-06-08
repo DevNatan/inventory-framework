@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 @Getter
 @Setter
 @ToString(callSuper = true)
-class BukkitClickViewSlotContext extends BaseViewContext implements ViewSlotContext {
+public final class BukkitClickViewSlotContext extends BaseViewContext implements ViewSlotContext {
 
 	private final ViewContext parent;
 	private final InventoryClickEvent clickOrigin;
@@ -49,7 +49,7 @@ class BukkitClickViewSlotContext extends BaseViewContext implements ViewSlotCont
 	}
 
 	@Override
-	final void inventoryModificationTriggered() {
+	void inventoryModificationTriggered() {
 		throw new IllegalStateException(
 			"You cannot modify the inventory directly in the click handler context. " +
 				"Use the onRender(...) and then context.setItem(...) instead."
