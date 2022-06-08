@@ -13,8 +13,7 @@ repositories {
 dependencies {
     compileOnly(project(":framework"))
     runtimeOnly(project(":framework"))
-    implementation(libs.kotlin)
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.2")
+    compileOnly(libs.kotlin)
 }
 
 kotlin {
