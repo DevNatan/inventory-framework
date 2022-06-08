@@ -129,10 +129,8 @@ class Pipeline<S> {
 
 	public void execute(@NotNull final PipelinePhase phase, @Nullable final S subject) {
 		final List<PipelineInterceptor<S>> pipelineInterceptors = interceptors.get(phase);
-		if (pipelineInterceptors == null) {
-			System.out.println("no interceptors found to " + phase);
+		if (pipelineInterceptors == null)
 			return;
-		}
 
 		final PipelineContext<S> context = new PipelineContext<>(
 			pipelineInterceptors
