@@ -56,16 +56,12 @@ class ViewListener implements Listener {
 		final ViewContext context;
 		try {
 			context = getContextOrThrow(view, player);
-			System.out.println("context");
 		} catch (final IllegalStateException e) {
 			plugin.getServer().getScheduler().runTask(plugin, player::closeInventory);
 			throw e;
 		}
 
-		System.out.println("on click");
-
 		view.getPipeline().execute(AbstractView.CLICK, new BukkitClickViewSlotContext(context, event));
-		System.out.println("pipeline executed");
 	}
 
 }
