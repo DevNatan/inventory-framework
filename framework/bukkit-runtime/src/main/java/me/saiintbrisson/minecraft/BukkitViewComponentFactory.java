@@ -114,6 +114,7 @@ final class BukkitViewComponentFactory implements ViewComponentFactory {
 	}
 
 	private void registerInterceptors(View view) {
+		view.getPipeline().intercept(AbstractView.CLICK, new ClickOutsideInterceptor());
 		view.getPipeline().intercept(AbstractView.CLICK, new HotbarClickInterceptor());
 	}
 

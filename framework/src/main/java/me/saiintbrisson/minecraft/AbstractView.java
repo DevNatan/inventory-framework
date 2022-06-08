@@ -177,6 +177,9 @@ public abstract class AbstractView extends AbstractVirtualView {
 	protected void onClick(@NotNull ViewSlotContext context) {
 	}
 
+	protected void onClickOutside(@NotNull ViewContext context) {
+	}
+
 	/**
 	 * Called when a player uses the hot bar key button.
 	 * <p>
