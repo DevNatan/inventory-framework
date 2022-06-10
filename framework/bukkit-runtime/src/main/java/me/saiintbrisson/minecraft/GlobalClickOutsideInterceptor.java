@@ -23,9 +23,6 @@ final class GlobalClickOutsideInterceptor implements PipelineInterceptor<BukkitC
 			return;
 
 		final AbstractView root = subject.getRoot();
-
-		// inherit cancellation so we can un-cancel it
-		subject.setCancelled(root.isCancelOnClick());
 		root.onClickOutside(subject);
 		clickEvent.setCancelled(subject.isCancelled());
 
