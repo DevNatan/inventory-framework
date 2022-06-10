@@ -4,7 +4,11 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @ToString
 @Setter(AccessLevel.PACKAGE)
@@ -20,17 +24,13 @@ public final class ViewItem {
 
 	private State state = State.UNDEFINED;
 
-	@Getter(AccessLevel.PUBLIC)
 	private boolean paginationItem;
 
 	@Getter(AccessLevel.PUBLIC)
-	private boolean closeOnClick,
-		cancelOnClick,
-		isCancelOnShiftClick,
-		overrideCancelOnClick,
-		overrideCancelOnShiftClick;
+	private boolean closeOnClick, cancelOnClick, cancelOnShiftClick;
 
 	private ViewItemHandler renderHandler, updateHandler, clickHandler;
+	private Map<String, Object> data;
 
 	/**
 	 * @deprecated Use {@link VirtualView#slot(int)} instead.
@@ -50,7 +50,7 @@ public final class ViewItem {
 	 *
 	 * @return The fallback item stack.
 	 */
-	public Object getItem() {
+	Object getItem() {
 		return item;
 	}
 
@@ -81,8 +81,43 @@ public final class ViewItem {
 		this.clickHandler = clickHandler;
 	}
 
+	@NotNull
 	public ViewItem cancelOnClick() {
-		cancelOnClick = !cancelOnClick;
+		return withCancelOnClick(!cancelOnClick);
+	}
+
+	@NotNull
+	public ViewItem withCancelOnClick(boolean cancelOnClick) {
+		this.cancelOnClick = cancelOnClick;
+		return this;
+	}
+
+	@NotNull
+	public ViewItem closeOnClick() {
+		return withCloseOnClick(!closeOnClick);
+	}
+
+	@NotNull
+	public ViewItem withCloseOnClick(boolean closeOnClick) {
+		this.closeOnClick = !closeOnClick;
+		return this;
+	}
+
+	@SuppressWarnings("unchecked")
+	<T> T getData(@NotNull String key) {
+		return data == null ? null : (T) data.get(key);
+	}
+
+	void setData(@NotNull String key, @NotNull Object value) {
+		withData(key, value);
+	}
+
+	@NotNull
+	public ViewItem withData(@NotNull String key, @NotNull Object value) {
+		if (data == null)
+			data = new HashMap<>();
+
+		data.put(key, value);
 		return this;
 	}
 
