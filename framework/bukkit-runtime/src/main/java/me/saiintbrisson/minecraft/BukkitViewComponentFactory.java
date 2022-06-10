@@ -14,7 +14,7 @@ import static me.saiintbrisson.minecraft.AbstractView.CLICK;
 import static org.bukkit.Bukkit.createInventory;
 
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
-final class BukkitViewComponentFactory implements ViewComponentFactory {
+final class BukkitViewComponentFactory extends ViewComponentFactory {
 
 	private Boolean worksInCurrentPlatform = null;
 

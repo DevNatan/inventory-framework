@@ -2,7 +2,7 @@ package me.saiintbrisson.minecraft;
 
 import org.jetbrains.annotations.NotNull;
 
-public abstract class NoopViewComponentFactory implements ViewComponentFactory {
+public abstract class NoopViewComponentFactory extends ViewComponentFactory {
 
 	@Override
 	public @NotNull AbstractView createView(int rows, String title, @NotNull ViewType type) {
