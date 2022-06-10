@@ -16,17 +16,14 @@ final class GlobalClickInterceptor implements PipelineInterceptor<BukkitClickVie
 		BukkitClickViewSlotContext subject
 	) {
 		final InventoryClickEvent event = subject.getClickOrigin();
-		event.setCancelled(subject.getRoot().isCancelOnClick());
-
-		final ViewSlotContext globalClick = new BukkitClickViewSlotContext(subject, event);
 
 		// inherit cancellation so we can un-cancel it
-		globalClick.setCancelled(subject.isCancelled());
+		subject.setCancelled(subject.getRoot().isCancelOnClick());
 
-		subject.getRoot().onClick(globalClick);
-		event.setCancelled(globalClick.isCancelled());
+		subject.getRoot().onClick(subject);
+		event.setCancelled(subject.isCancelled());
 
-		if (!globalClick.isCancelled())
+		if (!subject.isCancelled())
 			return;
 
 		pipeline.finish();

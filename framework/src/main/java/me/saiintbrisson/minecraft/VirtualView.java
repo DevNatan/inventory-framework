@@ -21,9 +21,14 @@ public interface VirtualView {
 	int getRows();
 
 	/**
-	 * Closes this view.
+	 * Mark this view to be closed when needed.
 	 */
 	void close();
+
+	/**
+	 * Closes this view immediately.
+	 */
+	void closeUninterruptedly();
 
 	ViewErrorHandler getErrorHandler();
 

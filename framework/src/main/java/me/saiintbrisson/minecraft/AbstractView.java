@@ -111,6 +111,12 @@ public abstract class AbstractView extends AbstractVirtualView {
 
 	@Override
 	public final void close() {
+		// global closings must be always immediate
+		closeUninterruptedly();
+	}
+
+	@Override
+	public final void closeUninterruptedly() {
 		getContexts().forEach(ViewContext::close);
 	}
 

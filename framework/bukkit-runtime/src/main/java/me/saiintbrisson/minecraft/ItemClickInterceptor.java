@@ -20,15 +20,13 @@ final class ItemClickInterceptor implements PipelineInterceptor<BukkitClickViewS
 		if (item == null || item.getClickHandler() == null)
 			return;
 
-		final ViewSlotContext slotClick = new BukkitClickViewSlotContext(subject, event);
-
 		// inherit cancellation so we can un-cancel it
-		slotClick.setCancelled(subject.isCancelled() || item.isCancelOnClick());
+		subject.setCancelled(subject.isCancelled() || item.isCancelOnClick());
 
-		item.getClickHandler().handle(slotClick);
-		event.setCancelled(slotClick.isCancelled());
+		item.getClickHandler().handle(subject);
+		event.setCancelled(subject.isCancelled());
 
-		if (!slotClick.isCancelled())
+		if (!subject.isCancelled())
 			return;
 
 		pipeline.finish();

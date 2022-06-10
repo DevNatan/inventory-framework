@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static java.util.Objects.requireNonNull;
 import static me.saiintbrisson.minecraft.AbstractView.CLICK;
+import static org.bukkit.Bukkit.createInventory;
 
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
 final class BukkitViewComponentFactory implements ViewComponentFactory {
@@ -47,12 +48,12 @@ final class BukkitViewComponentFactory implements ViewComponentFactory {
 		final Inventory inventory;
 		if (title == null) {
 			inventory = finalSize == 0
-				? Bukkit.createInventory((InventoryHolder) view, requireNonNull(toInventoryType(finalType)))
-				: Bukkit.createInventory((InventoryHolder) view, finalSize);
+				? createInventory((InventoryHolder) view, requireNonNull(toInventoryType(finalType)))
+				: createInventory((InventoryHolder) view, finalSize);
 		} else if (finalSize == 0)
-			inventory = Bukkit.createInventory((InventoryHolder) view, requireNonNull(toInventoryType(finalType)), title);
+			inventory = createInventory((InventoryHolder) view, requireNonNull(toInventoryType(finalType)), title);
 		else
-			inventory = Bukkit.createInventory((InventoryHolder) view, finalSize, title);
+			inventory = createInventory((InventoryHolder) view, finalSize, title);
 
 		return new BukkitChestViewContainer(inventory);
 	}

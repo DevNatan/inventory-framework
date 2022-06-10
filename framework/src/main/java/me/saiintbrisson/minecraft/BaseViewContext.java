@@ -142,6 +142,11 @@ class BaseViewContext extends AbstractVirtualView implements ViewContext {
 
 	@Override
 	public final void close() {
+		getAttributes().setMarkedToClose(true);
+	}
+
+	@Override
+	public void closeUninterruptedly() {
 		getContainer().close();
 	}
 

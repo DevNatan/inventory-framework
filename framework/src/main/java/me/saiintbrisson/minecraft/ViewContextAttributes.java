@@ -22,8 +22,8 @@ class ViewContextAttributes {
 	@Setter(AccessLevel.NONE)
 	private String updatedTitle;
 
-	@Setter
-	private boolean propagateErrors;
+	@Setter private boolean propagateErrors;
+	@Setter private boolean markedToClose;
 
 	private final Map<String, Object> data = new HashMap<>();
 
