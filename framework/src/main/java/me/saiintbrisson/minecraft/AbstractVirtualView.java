@@ -66,6 +66,10 @@ public abstract class AbstractVirtualView implements VirtualView {
 		throw new UnsupportedOperationException("not available");
 	}
 
+	ViewItem resolve(int index) {
+		return getItems()[index];
+	}
+
 	void inventoryModificationTriggered() {
 	}
 

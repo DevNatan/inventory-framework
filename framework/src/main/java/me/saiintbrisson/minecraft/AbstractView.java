@@ -269,8 +269,4 @@ public abstract class AbstractView extends AbstractVirtualView {
 	protected void onMoveIn(@NotNull ViewSlotMoveContext context) {
 	}
 
-	final ViewItem resolve(int index) {
-		return getItems()[index];
-	}
-
 }

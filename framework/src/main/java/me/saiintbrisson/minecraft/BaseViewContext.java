@@ -184,9 +184,9 @@ class BaseViewContext extends AbstractVirtualView implements ViewContext {
 		throw new UnsupportedOperationException("This context is not cancellable");
 	}
 
-	final ViewItem resolve(int index) {
-		ViewItem item = getRoot().resolve(index);
-		if (item == null)
+	final ViewItem resolve(int index, boolean resolveOnRoot) {
+		ViewItem item = super.resolve(index);
+		if (item == null && resolveOnRoot)
 			return getRoot().resolve(index);
 
 		return item;
