@@ -1,6 +1,7 @@
 package me.saiintbrisson.minecraft;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -46,6 +47,10 @@ public abstract class ViewComponentFactory {
 		@NotNull final AbstractView root,
 		final ViewContainer container,
 		final Class<? extends ViewContext> backingContext
+	);
+
+	public abstract Object createItem(
+		@Nullable Object stack
 	);
 
 	public abstract boolean worksInCurrentPlatform();

@@ -3,11 +3,14 @@ package me.saiintbrisson.minecraft;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import static java.util.Objects.requireNonNull;
 import static me.saiintbrisson.minecraft.AbstractView.CLICK;
@@ -95,6 +98,19 @@ final class BukkitViewComponentFactory extends ViewComponentFactory {
 		}
 
 		return worksInCurrentPlatform;
+	}
+
+	@Override
+	public Object createItem(@Nullable Object stack) {
+		if (stack instanceof ItemStack) return ((ItemStack) stack).clone();
+		if (stack instanceof Material) return new ItemStack((Material) stack);
+		if (stack == null) return null;
+
+		throw new IllegalArgumentException(String.format(
+			"Unsupported item type \"%s\": %s",
+			stack.getClass().getName(),
+			stack
+		));
 	}
 
 	private InventoryType toInventoryType(@NotNull ViewType type) {
