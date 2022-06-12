@@ -18,4 +18,16 @@ public interface ViewSlotContext extends ViewContext {
 
 	ViewItem withItem(@Nullable Object fallbackItem);
 
+	boolean isLeftClick();
+
+	boolean isRightClick();
+
+	boolean isMiddleClick();
+
+	boolean isShiftClick();
+
+	boolean isKeyboardClick();
+
+	boolean isOnEntityContainer();
+
 }
