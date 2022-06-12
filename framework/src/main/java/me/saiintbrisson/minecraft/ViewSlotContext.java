@@ -5,16 +5,19 @@ import org.jetbrains.annotations.Nullable;
 
 public interface ViewSlotContext extends ViewContext {
 
+	/**
+	 * @deprecated Will be removed soon.
+	 */
 	@Deprecated
 	InventoryClickEvent getClickOrigin();
 
 	boolean isCancelled();
 
-	void setCancelled(final boolean cancelled);
+	void setCancelled(boolean cancelled);
 
 	int getSlot();
 
-	default void setItem(@Nullable Object item) {}
+	void setItem(@Nullable Object item);
 
 	ViewItem withItem(@Nullable Object fallbackItem);
 
