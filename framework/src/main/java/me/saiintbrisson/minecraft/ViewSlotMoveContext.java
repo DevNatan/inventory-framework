@@ -1,23 +1,14 @@
 package me.saiintbrisson.minecraft;
 
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-
 public interface ViewSlotMoveContext extends ViewSlotContext {
 
-	@Deprecated
-	Inventory getTargetInventory();
+	ViewContainer getTargetContainer();
 
-	@Deprecated
-	ItemStack getTargetItem();
-
-	@Deprecated
-	default ItemStack getSwappedItem() {
-		if (!isSwap()) throw new IllegalStateException("not swap");
-		return getTargetItem();
-	}
+	<T> T getTargetItem();
 
 	int getTargetSlot();
+
+	<T> T getSwappedItem();
 
 	boolean isSwap();
 

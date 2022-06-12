@@ -4,23 +4,25 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @Getter
 @Setter
-@ToString(callSuper = true)
-public final class BukkitClickViewSlotContext extends BaseViewContext implements ViewSlotContext {
+@ToString(callSuper = true, onlyExplicitlyIncluded = true)
+public class BukkitClickViewSlotContext extends BaseViewContext implements ViewSlotContext {
 
-	@ToString.Exclude
 	private final ViewContext parent;
-
-	@ToString.Exclude
 	private final InventoryClickEvent clickOrigin;
 
 	@Setter
+	@ToString.Include
 	private boolean cancelled;
+
+	private Object item;
 
 	BukkitClickViewSlotContext(
 		@NotNull final ViewContext parent,
@@ -32,22 +34,36 @@ public final class BukkitClickViewSlotContext extends BaseViewContext implements
 	}
 
 	@Override
-	public @NotNull ViewContextAttributes getAttributes() {
+	public final @NotNull ViewContextAttributes getAttributes() {
 		return parent.getAttributes();
 	}
 
 	@Override
-	public int getSlot() {
-		return clickOrigin.getSlot();
+	public final int getSlot() {
+		return getClickOrigin().getSlot();
+	}
+
+	public final Object getItem() {
+		return item;
+	}
+
+	@SuppressWarnings({"unchecked", "rawtypes"})
+	@Override
+	public final ViewItem withItem(@Nullable final Object fallbackItem) {
+		if (!(getRoot() instanceof ItemFactory))
+			throw new IllegalStateException("Context root must be a item factory");
+
+		setItem(fallbackItem);
+		return ((ItemFactory) getRoot()).item(getItem());
 	}
 
 	@Override
-	public ViewItem withItem(@Nullable Object fallbackItem) {
-		return null;
+	public void setItem(@Nullable final Object item) {
+		this.item = PlatformUtils.getFactory().createItem(item);
 	}
 
 	@Override
-	public Player getPlayer() {
+	public final Player getPlayer() {
 		return BukkitViewer.toPlayerOfContext(this);
 	}
 
@@ -58,5 +74,37 @@ public final class BukkitClickViewSlotContext extends BaseViewContext implements
 				"Use the onRender(...) and then context.setItem(...) instead."
 		);
 	}
+
+	@Override
+	public final boolean isLeftClick() {
+		return getClickOrigin().isLeftClick();
+	}
+
+	@Override
+	public final boolean isRightClick() {
+		return getClickOrigin().isRightClick();
+	}
+
+	@Override
+	public final boolean isMiddleClick() {
+		return getClickOrigin().getClick() == ClickType.MIDDLE;
+	}
+
+	@Override
+	public final boolean isShiftClick() {
+		return getClickOrigin().isShiftClick();
+	}
+
+	@Override
+	public final boolean isKeyboardClick() {
+		return getClickOrigin().getClick().isKeyboardClick();
+	}
+
+	@Override
+	public final boolean isOnEntityContainer() {
+		return getClickOrigin().getClickedInventory() instanceof PlayerInventory;
+	}
+
+
 
 }
