@@ -72,7 +72,7 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
 	}
 
 	/**
-	 * @deprecated Use {@link #getViews()} instead.
+	 * @deprecated Will be removed soon.
 	 */
 	@Deprecated
 	public Map<Class<? extends View>, View> getRegisteredViews() {
