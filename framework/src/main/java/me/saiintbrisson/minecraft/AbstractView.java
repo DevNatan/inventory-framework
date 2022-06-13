@@ -125,7 +125,7 @@ public abstract class AbstractView extends AbstractVirtualView {
 	}
 
 	public final ViewContext getContext(@NotNull Predicate<ViewContext> predicate) {
-		return getContexts().stream().filter(predicate).findFirst().orElse(null);
+		return contexts.stream().filter(predicate).findFirst().orElse(null);
 	}
 
 	@SuppressWarnings("ConstantConditions")
