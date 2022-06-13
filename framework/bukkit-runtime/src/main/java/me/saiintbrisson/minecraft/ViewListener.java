@@ -66,11 +66,13 @@ class ViewListener implements Listener {
 			return;
 		}
 
-		view.getPipeline().execute(AbstractView.CLICK, new BukkitClickViewSlotContext(
-			context.resolve(event.getRawSlot(), true, event.getClickedInventory() instanceof PlayerInventory),
-			context,
-			event
-		));
+		view.runCatching(context, () -> {
+			view.getPipeline().execute(AbstractView.CLICK, new BukkitClickViewSlotContext(
+				context.resolve(event.getRawSlot(), true, event.getClickedInventory() instanceof PlayerInventory),
+				context,
+				event
+			));
+		});
 	}
 
 }
