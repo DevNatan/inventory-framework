@@ -1,11 +1,13 @@
 package me.saiintbrisson.minecraft;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -22,7 +24,8 @@ public class BukkitClickViewSlotContext extends BaseViewContext implements ViewS
 	@ToString.Include
 	private boolean cancelled;
 
-	private Object item;
+	@Setter(AccessLevel.NONE)
+	private ItemStack item;
 
 	BukkitClickViewSlotContext(
 		@NotNull final ViewContext parent,
@@ -43,23 +46,9 @@ public class BukkitClickViewSlotContext extends BaseViewContext implements ViewS
 		return getClickOrigin().getSlot();
 	}
 
-	public final Object getItem() {
-		return item;
-	}
-
-	@SuppressWarnings({"unchecked", "rawtypes"})
 	@Override
-	public final ViewItem withItem(@Nullable final Object fallbackItem) {
-		if (!(getRoot() instanceof ItemFactory))
-			throw new IllegalStateException("Context root must be a item factory");
-
-		setItem(fallbackItem);
-		return ((ItemFactory) getRoot()).item(getItem());
-	}
-
-	@Override
-	public void setItem(@Nullable final Object item) {
-		this.item = PlatformUtils.getFactory().createItem(item);
+	public final void setItem(@Nullable Object item) {
+		this.item = (ItemStack) PlatformUtils.getFactory().createItem(item);
 	}
 
 	@Override
@@ -104,7 +93,5 @@ public class BukkitClickViewSlotContext extends BaseViewContext implements ViewS
 	public final boolean isOnEntityContainer() {
 		return getClickOrigin().getClickedInventory() instanceof PlayerInventory;
 	}
-
-
 
 }

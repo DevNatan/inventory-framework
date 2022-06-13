@@ -1,6 +1,5 @@
 package me.saiintbrisson.minecraft;
 
-import java.util.Map;
 import org.jetbrains.annotations.NotNull;
 
 public interface VirtualView {

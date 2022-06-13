@@ -1,6 +1,7 @@
 package me.saiintbrisson.minecraft;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class NoopViewComponentFactory extends ViewComponentFactory {
 
@@ -26,6 +27,11 @@ public abstract class NoopViewComponentFactory extends ViewComponentFactory {
 
 	@Override
 	public @NotNull BaseViewContext createContext(@NotNull AbstractView root, ViewContainer container, Class<? extends ViewContext> backingContext) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Object createItem(@Nullable Object stack) {
 		throw new UnsupportedOperationException();
 	}
 

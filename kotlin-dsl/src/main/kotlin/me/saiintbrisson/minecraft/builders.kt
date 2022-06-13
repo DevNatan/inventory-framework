@@ -19,13 +19,13 @@ public class ViewBuilder {
     internal var open: (OpenViewContext.() -> Unit)? = null
     internal var render: ContextBlock? = null
     internal var update: ContextBlock? = null
-    internal var click: SlotContextBlock? = null
+    internal var click: SlotContextBlock<*>? = null
     internal var close: (CloseViewContext.() -> Unit)? = null
-    internal var hotbarInteract: HotbarInteractBlock? = null
-    internal var itemHold: SlotContextBlock? = null
-    internal var itemRelease: ItemReleaseBlock? = null
-    internal var moveOut: SlotMoveContextBlock? = null
-    internal var moveIn: SlotMoveContextBlock? = null
+    internal var hotbarInteract: HotbarInteractBlock<*>? = null
+    internal var itemHold: SlotContextBlock<*>? = null
+    internal var itemRelease: ItemReleaseBlock<*>? = null
+    internal var moveOut: SlotMoveContextBlock<*>? = null
+    internal var moveIn: SlotMoveContextBlock<*>? = null
 
     @PublishedApi
     internal var slots: MutableList<ViewSlotBuilder> = mutableListOf()
@@ -34,9 +34,9 @@ public class ViewBuilder {
 @ViewDsl
 public class ViewSlotBuilder(@PublishedApi internal val slot: Int) {
 
-    internal var render: SlotContextBlock? = null
-    internal var update: SlotContextBlock? = null
-    internal var click: SlotContextBlock? = null
+    internal var render: SlotContextBlock<*>? = null
+    internal var update: SlotContextBlock<*>? = null
+    internal var click: SlotContextBlock<*>? = null
 
     public fun toItem(): ViewItem {
         return ViewItem(slot).apply {
@@ -47,7 +47,7 @@ public class ViewSlotBuilder(@PublishedApi internal val slot: Int) {
     }
 
     private fun ViewItem.setHandler(
-        currentHandler: SlotContextBlock?,
+        currentHandler: SlotContextBlock<*>?,
         assign: ViewItem.(ViewItemHandler) -> Unit
     ) = currentHandler?.let { it -> assign(it) }
 }

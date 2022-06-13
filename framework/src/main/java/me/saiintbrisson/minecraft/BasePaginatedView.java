@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.function.Function;
 
 @ToString(callSuper = true)
-class BasePaginatedView<T> extends AbstractView implements PaginatedVirtualView<T> {
+abstract class BasePaginatedView<T> extends AbstractView implements PaginatedVirtualView<T> {
 
 	@Setter
 	private List<T> source;
@@ -47,5 +47,11 @@ class BasePaginatedView<T> extends AbstractView implements PaginatedVirtualView<
 	protected ViewItem getNextPageItem(@NotNull PaginatedViewContext<T> context) {
 		return null;
 	}
+
+	protected abstract void onItemRender(
+		@NotNull PaginatedViewSlotContext<T> render,
+		@NotNull ViewItem item,
+		@NotNull T value
+	);
 
 }

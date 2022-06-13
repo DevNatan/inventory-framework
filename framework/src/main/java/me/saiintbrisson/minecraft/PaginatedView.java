@@ -23,12 +23,6 @@ public abstract class PaginatedView<T> extends BasePaginatedView<T> {
 		super(rows, title, type);
 	}
 
-	protected abstract void onItemRender(
-		@NotNull PaginatedViewSlotContext<T> render,
-		@NotNull ViewItem item,
-		@NotNull T value
-	);
-
 	@Override
 	public final int getPageSize() {
 		return super.getPageSize();

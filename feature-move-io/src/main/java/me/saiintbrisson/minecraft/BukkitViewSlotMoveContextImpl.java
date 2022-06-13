@@ -3,6 +3,7 @@ package me.saiintbrisson.minecraft;
 import lombok.Getter;
 import lombok.ToString;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 @Getter
@@ -12,15 +13,15 @@ final class BukkitViewSlotMoveContextImpl extends BukkitClickViewSlotContext imp
 	@ToString.Exclude
 	private final ViewContainer targetContainer;
 
-	private final Object targetItem, swappedItem;
+	private final ItemStack targetItem, swappedItem;
 	private final int targetSlot;
 	private final boolean swap, stack;
 
 	BukkitViewSlotMoveContextImpl(@NotNull ViewContext parent,
 								  @NotNull InventoryClickEvent clickOrigin,
 								  ViewContainer targetContainer,
-								  Object targetItem,
-								  Object swappedItem,
+								  ItemStack targetItem,
+								  ItemStack swappedItem,
 								  int targetSlot,
 								  boolean swap,
 								  boolean stack) {

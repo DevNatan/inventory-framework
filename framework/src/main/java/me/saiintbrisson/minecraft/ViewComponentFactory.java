@@ -3,23 +3,16 @@ package me.saiintbrisson.minecraft;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
 
 public abstract class ViewComponentFactory {
 
-	private final Set<String> enabledFeatures = new HashSet<>();
+	private final List<Consumer<AbstractView>> modifiers = new ArrayList<>();
 
-	final void addFeature(@NotNull String feature) {
-		enabledFeatures.add(feature);
-	}
-
-	final void removeFeature(@NotNull String feature) {
-		enabledFeatures.remove(feature);
-	}
-
-	final boolean isFeatureEnabled(@NotNull String feature) {
-		return enabledFeatures.contains(feature);
+	void registerModifier(@NotNull Consumer<AbstractView> modifier) {
+		modifiers.add(modifier);
 	}
 
 	@NotNull

@@ -1,10 +1,6 @@
 package me.saiintbrisson.minecraft;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
@@ -17,11 +13,9 @@ import org.bukkit.plugin.ServicesManager;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 @Getter
 @Setter
@@ -45,6 +39,10 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
 	@Setter(AccessLevel.NONE)
 	private Listener listener;
 	private Function<PaginatedViewContext<?>, ViewItem> defaultPreviousPageItem, defaultNextPageItem;
+
+	@Getter(AccessLevel.NONE)
+	private final FeatureInstaller<ViewFrame> featureInstaller
+		= new DefaultFeatureInstaller<>(this);
 
 	static {
 		PlatformUtils.setFactory(new BukkitViewComponentFactory());
@@ -210,6 +208,22 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
 	@ApiStatus.ScheduledForRemoval(inVersion = "2.5.2")
 	public void addView(final View... views) {
 		with(views);
+	}
+
+	@Override
+	public @NotNull Plugin getPlatform() {
+		return getOwner();
+	}
+
+	@Override
+	public Collection<Feature<?, ?>> getInstalledFeatures() {
+		return featureInstaller.getInstalledFeatures();
+	}
+
+	@NotNull
+	@Override
+	public <C, R> R install(@NotNull Feature<C, R> feature, @NotNull UnaryOperator<C> configure) {
+		return featureInstaller.install(feature, configure);
 	}
 
 	public static ViewFrame of(

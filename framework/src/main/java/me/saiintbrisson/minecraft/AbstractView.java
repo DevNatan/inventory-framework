@@ -105,7 +105,7 @@ public abstract class AbstractView extends AbstractVirtualView {
 		}
 	}
 
-	protected void render(ViewContext context, int slot) {
+	protected final void render(ViewContext context, int slot) {
 
 	}
 
@@ -126,6 +126,18 @@ public abstract class AbstractView extends AbstractVirtualView {
 
 	public final ViewContext getContext(@NotNull Predicate<ViewContext> predicate) {
 		return getContexts().stream().filter(predicate).findFirst().orElse(null);
+	}
+
+	@SuppressWarnings("ConstantConditions")
+	final ViewItem item() {
+		return item(null);
+	}
+
+	final ViewItem item(@SuppressWarnings("NullableProblems") @NotNull Object stack) {
+		final Object transformedItem = PlatformUtils.getFactory().createItem(stack);
+		ViewItem item = new ViewItem();
+		item.setItem(transformedItem);
+		return item;
 	}
 
 	/**

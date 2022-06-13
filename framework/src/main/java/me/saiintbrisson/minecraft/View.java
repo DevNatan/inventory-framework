@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.ToString;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -12,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
  */
 @Getter
 @ToString(callSuper = true)
-public class View extends AbstractView implements ItemFactory<ItemStack>, InventoryHolder {
+public class View extends AbstractView implements InventoryHolder {
 
 	public View() {
 		this(0);
@@ -47,14 +46,6 @@ public class View extends AbstractView implements ItemFactory<ItemStack>, Invent
 	@Override
 	public final Inventory getInventory() {
 		return null;
-	}
-
-	@Override
-	public final ViewItem item(@NotNull ItemStack stack) {
-		// TODO remove it. XD :)
-		final ViewItem item = new ViewItem();
-		item.setItem(stack);
-		return item;
 	}
 
 }

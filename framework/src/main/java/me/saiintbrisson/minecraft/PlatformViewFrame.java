@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
-public interface PlatformViewFrame<V, P, F extends PlatformViewFrame<V, P, F>> {
+public interface PlatformViewFrame<V, P, F extends PlatformViewFrame<V, P, F>> extends FeatureInstaller<P> {
 
 	/**
 	 * Registers a new view to this view frame.

@@ -8,7 +8,7 @@ dependencies {
     implementation(project(':framework'))
     implementation(project(':framework:bukkit-compile'))
     implementation(project(':framework:bukkit-runtime'))
-    implementation(project(':kotlin-dsl'))
+//    implementation(project(':kotlin-dsl'))
 }
 
 shadowJar {

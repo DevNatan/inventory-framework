@@ -8,10 +8,10 @@ package me.saiintbrisson.minecraft
 internal annotation class ViewDsl
 
 internal typealias ContextBlock = @ViewDsl ViewContext.() -> Unit
-internal typealias SlotContextBlock = @ViewDsl ViewSlotContext.() -> Unit
-internal typealias SlotMoveContextBlock = @ViewDsl ViewSlotMoveContext.() -> Unit
-internal typealias ItemReleaseBlock = @ViewDsl ViewSlotContext.(to: ViewSlotContext) -> Unit
-internal typealias HotbarInteractBlock = @ViewDsl ViewSlotContext.(hotbarButton: Int) -> Unit
+internal typealias SlotContextBlock<T> = @ViewDsl ViewSlotContext<T>.() -> Unit
+internal typealias SlotMoveContextBlock<T> = @ViewDsl ViewSlotMoveContext<T>.() -> Unit
+internal typealias ItemReleaseBlock<T> = @ViewDsl ViewSlotContext<T>.(to: ViewSlotContext<T>) -> Unit
+internal typealias HotbarInteractBlock<T> = @ViewDsl ViewSlotContext<T>.(hotbarButton: Int) -> Unit
 
 @PublishedApi
 internal val factory: ViewComponentFactory
@@ -36,54 +36,54 @@ public inline fun ViewBuilder.slot(
     slots.add(ViewSlotBuilder(slot).apply(block))
 }
 
-public fun ViewBuilder.onOpen(block: OpenViewContext.() -> Unit) {
+public fun <T> ViewBuilder.onOpen(block: OpenViewContext.() -> Unit) {
     open = block
 }
 
-public fun ViewBuilder.onClose(block: CloseViewContext.() -> Unit) {
+public fun <T> ViewBuilder.onClose(block: CloseViewContext.() -> Unit) {
     close = block
 }
 
-public fun ViewBuilder.onRender(block: ContextBlock) {
+public fun <T> ViewBuilder.onRender(block: ContextBlock) {
     render = block
 }
 
-public fun ViewBuilder.onUpdate(block: ContextBlock) {
+public fun <T> ViewBuilder.onUpdate(block: ContextBlock) {
     update = block
 }
 
-public fun ViewBuilder.onClick(block: SlotContextBlock) {
+public fun <T> ViewBuilder.onClick(block: SlotContextBlock<T>) {
     click = block
 }
 
-public fun ViewBuilder.onHotbarInteract(block: HotbarInteractBlock) {
+public fun <T> ViewBuilder.onHotbarInteract(block: HotbarInteractBlock<T>) {
     hotbarInteract = block
 }
 
-public fun ViewBuilder.onItemHold(block: SlotContextBlock) {
+public fun <T : Any> ViewBuilder.onItemHold(block: SlotContextBlock<@UnsafeVariance T>) {
     itemHold = block
 }
 
-public fun ViewBuilder.onItemRelease(block: ItemReleaseBlock) {
+public fun <T> ViewBuilder.onItemRelease(block: ItemReleaseBlock<T>) {
     itemRelease = block
 }
 
-public fun ViewBuilder.onMoveIn(block: SlotMoveContextBlock) {
+public fun <T> ViewBuilder.onMoveIn(block: SlotMoveContextBlock<T>) {
     moveIn = block
 }
 
-public fun ViewBuilder.onMoveOut(block: SlotMoveContextBlock) {
+public fun <T> ViewBuilder.onMoveOut(block: SlotMoveContextBlock<T>) {
     moveOut = block
 }
 
-public fun ViewSlotBuilder.onRender(block: SlotContextBlock) {
+public fun <T> ViewSlotBuilder.onRender(block: SlotContextBlock<T>) {
     render = block
 }
 
-public fun ViewSlotBuilder.onUpdate(block: SlotContextBlock) {
+public fun <T> ViewSlotBuilder.onUpdate(block: SlotContextBlock<T>) {
     update = block
 }
 
-public fun ViewSlotBuilder.onClick(block: SlotContextBlock) {
+public fun <T> ViewSlotBuilder.onClick(block: SlotContextBlock<T>) {
     click = block
 }

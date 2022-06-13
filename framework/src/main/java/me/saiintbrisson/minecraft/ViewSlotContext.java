@@ -19,8 +19,6 @@ public interface ViewSlotContext extends ViewContext {
 
 	void setItem(@Nullable Object item);
 
-	ViewItem withItem(@Nullable Object fallbackItem);
-
 	boolean isLeftClick();
 
 	boolean isRightClick();
