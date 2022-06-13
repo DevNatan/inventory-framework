@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,17 +28,20 @@ class ViewListener implements Listener {
 		final ViewContext context = view.getContext(target ->
 			target.getViewers().stream()
 				.map(viewer -> (BukkitViewer) viewer)
-				.anyMatch(viewer -> viewer.getPlayer().equals(player))
+				.anyMatch(viewer -> viewer.getPlayer().getName().equals(player.getName()))
 		);
 
 		// for some reason I haven't figured out which one yet, it's possible
 		// that the View's inventory is open and the context doesn't exist,
 		// so we check to see if it's null
-		if (context == null)
+		if (context == null) {
+			System.out.println("contexts: " + view.getContexts());
+
 			throw new IllegalStateException(String.format(
 				"View context cannot be null in %s",
 				view.getClass().getName()
 			));
+		}
 
 		return context;
 	}
@@ -53,16 +57,20 @@ class ViewListener implements Listener {
 		if (view == null)
 			return;
 
-		final ViewContext context;
+		final BaseViewContext context;
 		try {
-			context = getContextOrThrow(view, player);
+			context = (BaseViewContext) getContextOrThrow(view, player);
 		} catch (final IllegalStateException e) {
 			event.setCancelled(true);
 			e.printStackTrace();
 			return;
 		}
 
-		view.getPipeline().execute(AbstractView.CLICK, new BukkitClickViewSlotContext(context, event));
+		view.getPipeline().execute(AbstractView.CLICK, new BukkitClickViewSlotContext(
+			context.resolve(event.getRawSlot(), true, event.getClickedInventory() instanceof PlayerInventory),
+			context,
+			event
+		));
 	}
 
 }

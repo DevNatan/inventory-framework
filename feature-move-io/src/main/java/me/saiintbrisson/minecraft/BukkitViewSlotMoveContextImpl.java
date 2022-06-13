@@ -17,15 +17,18 @@ final class BukkitViewSlotMoveContextImpl extends BukkitClickViewSlotContext imp
 	private final int targetSlot;
 	private final boolean swap, stack;
 
-	BukkitViewSlotMoveContextImpl(@NotNull ViewContext parent,
-								  @NotNull InventoryClickEvent clickOrigin,
-								  ViewContainer targetContainer,
-								  ItemStack targetItem,
-								  ItemStack swappedItem,
-								  int targetSlot,
-								  boolean swap,
-								  boolean stack) {
-		super(parent, clickOrigin);
+	BukkitViewSlotMoveContextImpl(
+		ViewItem backingItem,
+		@NotNull BaseViewContext parent,
+		@NotNull InventoryClickEvent clickOrigin,
+		ViewContainer targetContainer,
+		ItemStack targetItem,
+		ItemStack swappedItem,
+		int targetSlot,
+		boolean swap,
+		boolean stack
+	) {
+		super(backingItem, parent, clickOrigin);
 		this.targetContainer = targetContainer;
 		this.targetItem = targetItem;
 		this.swappedItem = swappedItem;

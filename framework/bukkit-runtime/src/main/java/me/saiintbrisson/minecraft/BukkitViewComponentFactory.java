@@ -86,6 +86,21 @@ final class BukkitViewComponentFactory extends ViewComponentFactory {
 	}
 
 	@Override
+	public @NotNull AbstractViewSlotContext createSlotContext(
+		final ViewItem item,
+		@NotNull final AbstractView root,
+		final ViewContainer container
+	) {
+		final BaseViewContext parent = root.getViewFrame().getFactory().createContext(
+			root,
+			container,
+			null
+		);
+
+		return new BukkitViewSlotContext(item, parent);
+	}
+
+	@Override
 	public synchronized boolean worksInCurrentPlatform() {
 		if (worksInCurrentPlatform != null)
 			return worksInCurrentPlatform;

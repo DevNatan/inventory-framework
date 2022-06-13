@@ -1,6 +1,7 @@
 package me.saiintbrisson.minecraft;
 
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -16,12 +17,17 @@ final class ItemClickInterceptor implements PipelineInterceptor<BukkitClickViewS
 		BukkitClickViewSlotContext subject
 	) {
 		final InventoryClickEvent event = subject.getClickOrigin();
-		final ViewItem item = subject.resolve(event.getSlot());
+		if (event.getSlotType() == InventoryType.SlotType.OUTSIDE)
+			return;
+
+		final ViewItem item = subject.getBackingItem();
+
+		System.out.println("Backing item: " + item);
 		if (item == null || item.getClickHandler() == null)
 			return;
 
 		// inherit cancellation so we can un-cancel it
-		subject.setCancelled(subject.isCancelled() || item.isCancelOnClick());
+		subject.setCancelled(item.isCancelOnClick());
 
 		item.getClickHandler().handle(subject);
 		event.setCancelled(subject.isCancelled());

@@ -21,6 +21,8 @@ public final class ViewItem {
 	private State state = State.UNDEFINED;
 	private boolean paginationItem;
 	private String referenceKey;
+
+	// TODO add move in, move out, item hold and item release handlers
 	private ViewItemHandler renderHandler, updateHandler, clickHandler;
 
 	@Setter(AccessLevel.PUBLIC)

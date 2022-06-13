@@ -8,6 +8,7 @@ dependencies {
     implementation(project(':framework'))
     implementation(project(':framework:bukkit-compile'))
     implementation(project(':framework:bukkit-runtime'))
+    implementation(project(':feature-move-io'))
 //    implementation(project(':kotlin-dsl'))
 }
 

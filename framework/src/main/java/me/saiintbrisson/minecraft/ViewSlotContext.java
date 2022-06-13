@@ -31,4 +31,6 @@ public interface ViewSlotContext extends ViewContext {
 
 	boolean isOnEntityContainer();
 
+	ViewSlotContext ref(String key);
+
 }

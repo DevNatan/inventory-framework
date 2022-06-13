@@ -1,44 +1,28 @@
 package me.saiintbrisson.minecraft;
 
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 @Getter
 @Setter
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
-public class BukkitClickViewSlotContext extends BaseViewContext implements ViewSlotContext {
+public class BukkitClickViewSlotContext extends AbstractViewSlotContext {
 
-	private final ViewContext parent;
 	private final InventoryClickEvent clickOrigin;
 
-	@Setter
-	@ToString.Include
-	private boolean cancelled;
-
-	@Setter(AccessLevel.NONE)
-	private ItemStack item;
-
 	BukkitClickViewSlotContext(
-		@NotNull final ViewContext parent,
+		final ViewItem backingItem,
+		@NotNull final BaseViewContext parent,
 		@NotNull final InventoryClickEvent clickOrigin
 	) {
-		super(parent.getRoot(), parent.getContainer());
-		this.parent = parent;
+		super(backingItem, parent);
 		this.clickOrigin = clickOrigin;
-	}
-
-	@Override
-	public final @NotNull ViewContextAttributes getAttributes() {
-		return parent.getAttributes();
 	}
 
 	@Override
@@ -47,21 +31,8 @@ public class BukkitClickViewSlotContext extends BaseViewContext implements ViewS
 	}
 
 	@Override
-	public final void setItem(@Nullable Object item) {
-		this.item = (ItemStack) PlatformUtils.getFactory().createItem(item);
-	}
-
-	@Override
 	public final Player getPlayer() {
-		return BukkitViewer.toPlayerOfContext(this);
-	}
-
-	@Override
-	void inventoryModificationTriggered() {
-		throw new IllegalStateException(
-			"You cannot modify the inventory directly in the click handler context. " +
-				"Use the onRender(...) and then context.setItem(...) instead."
-		);
+		return (Player) clickOrigin.getWhoClicked();
 	}
 
 	@Override

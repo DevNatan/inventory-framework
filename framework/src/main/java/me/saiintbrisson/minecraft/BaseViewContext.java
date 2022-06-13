@@ -176,17 +176,23 @@ class BaseViewContext extends AbstractVirtualView implements ViewContext {
 
 	@Override
 	public boolean isCancelled() {
-		throw new UnsupportedOperationException("This context is not cancellable");
+		throw new UnsupportedOperationException(String.format(
+			"This context %s is not cancellable",
+			getClass().getName()
+		));
 	}
 
 	@Override
 	public void setCancelled(boolean cancelled) {
-		throw new UnsupportedOperationException("This context is not cancellable");
+		throw new UnsupportedOperationException(String.format(
+			"This context %s is not cancellable",
+			getClass().getName()
+		));
 	}
 
-	final ViewItem resolve(int index, boolean resolveOnRoot) {
-		// fast path -- skip -999 index on some platforms
-		if (index < 0) return null;
+	final ViewItem resolve(int index, boolean resolveOnRoot, boolean entityContainer) {
+		// fast path -- user is unable to set items on entity container
+		if (entityContainer) return null;
 
 		ViewItem item = super.resolve(index);
 		if (item == null && resolveOnRoot)

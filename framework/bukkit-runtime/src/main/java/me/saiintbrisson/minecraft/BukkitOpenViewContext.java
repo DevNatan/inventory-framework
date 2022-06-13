@@ -10,11 +10,6 @@ final class BukkitOpenViewContext extends OpenViewContext {
 	}
 
 	@Override
-	public void setContainerSize(int containerSize) {
-		super.setContainerSize((getContainerType() == null ? AbstractView.DEFAULT_TYPE : getContainerType()).normalize(containerSize));
-	}
-
-	@Override
 	public Player getPlayer() {
 		return BukkitViewer.toPlayerOfContext(this);
 	}
