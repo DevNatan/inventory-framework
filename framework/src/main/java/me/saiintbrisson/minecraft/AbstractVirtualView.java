@@ -57,7 +57,7 @@ public abstract class AbstractVirtualView implements VirtualView {
 	}
 
 	@Override
-	public void with(@NotNull ViewItem item) {
+	public final void with(@NotNull ViewItem item) {
 		throw new UnsupportedOperationException("Items without a defined slot aren't supported yet");
 	}
 
