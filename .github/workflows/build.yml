@@ -16,4 +16,4 @@ jobs:
     - name: Build with Gradle
       uses: gradle/gradle-build-action@c0b2cb764a2f9be712639456bac9d13fb6445aa1
       with:
-        arguments: build -x kotlin-dsl:lintKotlin
+        arguments: build
