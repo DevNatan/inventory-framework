@@ -36,12 +36,8 @@ public final class BukkitMoveOutInterceptor implements PipelineInterceptor<Bukki
 
 		final ViewContainer container = subject.getContainer();
 
-		// fast path -- items defined on root are all static so we skip them
-		final boolean resolveOnRoot = false;
-		final boolean entityContainer = subject.isOnEntityContainer();
-
 		for (int i = container.getFirstSlot(); i <= container.getLastSlot(); i++) {
-			final ViewItem item = subject.resolve(i, resolveOnRoot, entityContainer);
+			final ViewItem item = subject.resolve(i, true);
 			if (item == null) continue;
 
 			// fast path -- skip not yet hold items
