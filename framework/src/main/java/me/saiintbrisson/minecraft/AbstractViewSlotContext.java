@@ -7,22 +7,24 @@ import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+@Getter
+@Setter
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
 public abstract class AbstractViewSlotContext extends BaseViewContext implements ViewSlotContext {
 
+	@Getter(AccessLevel.NONE)
 	private final BaseViewContext parent;
 
 	@Getter(AccessLevel.PACKAGE)
 	private final ViewItem backingItem;
 
-	@Getter
-	@Setter
 	@ToString.Include
 	private boolean cancelled;
 
-	@Getter(AccessLevel.PACKAGE)
 	@Setter(AccessLevel.NONE)
 	private Object item;
+
+	private boolean changed;
 
 	AbstractViewSlotContext(ViewItem backingItem, @NotNull final BaseViewContext parent) {
 		super(parent.getRoot(), parent.getContainer());
@@ -36,17 +38,33 @@ public abstract class AbstractViewSlotContext extends BaseViewContext implements
 	}
 
 	@Override
-	protected ViewItem[] getItems() {
+	protected final ViewItem[] getItems() {
 		return parent.getItems();
 	}
 
 	@Override
-	public final void setItem(@Nullable Object item) {
-		this.item = PlatformUtils.getFactory().createItem(item);
+	public final Object getItem() {
+		return item;
 	}
 
 	@Override
-	public ViewSlotContext ref(String key) {
+	public final void setItem(@Nullable final Object item) {
+		inventoryModificationTriggered();
+		this.item = PlatformUtils.getFactory().createItem(item);
+		setChanged(true);
+	}
+
+	@Override
+	public final boolean hasChanged() {
+		return changed;
+	}
+
+	public final void setChanged(final boolean changed) {
+		this.changed = changed;
+	}
+
+	@Override
+	public ViewSlotContext ref(final String key) {
 		ViewItem item = tryResolveRef(this, key);
 		if (item == null) item = tryResolveRef(getRoot(), key);
 		if (item == null) return null;
@@ -58,7 +76,7 @@ public abstract class AbstractViewSlotContext extends BaseViewContext implements
 		);
 	}
 
-	private ViewItem tryResolveRef(AbstractVirtualView view, String key) {
+	private ViewItem tryResolveRef(final AbstractVirtualView view, final String key) {
 		for (final ViewItem item : view.getItems()) {
 			if (item == null) continue;
 			if (item.getReferenceKey() == null) continue;
@@ -69,11 +87,8 @@ public abstract class AbstractViewSlotContext extends BaseViewContext implements
 	}
 
 	@Override
-	final void inventoryModificationTriggered() {
-		throw new IllegalStateException(
-			"You cannot modify the inventory directly in the click handler context. " +
-				"Use the onRender(...) and then context.setItem(...) instead."
-		);
+	public void updateSlot() {
+		getRoot().update(this, getSlot());
 	}
 
 }

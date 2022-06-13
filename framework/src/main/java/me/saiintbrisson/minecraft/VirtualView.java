@@ -9,7 +9,6 @@ public interface VirtualView {
 	 *
 	 * @return The title of container of this view.
 	 */
-	@NotNull
 	String getTitle();
 
 	/**

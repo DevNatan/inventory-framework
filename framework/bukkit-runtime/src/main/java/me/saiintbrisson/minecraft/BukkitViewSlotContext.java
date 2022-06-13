@@ -26,21 +26,12 @@ public class BukkitViewSlotContext extends AbstractViewSlotContext {
 	}
 
 	@Override
-	public final ItemStack getItem() {
-		return (ItemStack) super.getItem();
-	}
-
-	public final void setItem(@Nullable ItemStack item) {
-		super.setItem(item);
-	}
-
-	@Override
 	public Player getPlayer() {
 		return BukkitViewer.toPlayerOfContext(this);
 	}
 
 	@Override
-	public InventoryClickEvent getClickOrigin() {
+	public @NotNull InventoryClickEvent getClickOrigin() {
 		throwNotClickContext();
 		return null;
 	}

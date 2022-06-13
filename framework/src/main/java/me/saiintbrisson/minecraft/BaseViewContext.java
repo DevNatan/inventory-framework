@@ -190,15 +190,19 @@ class BaseViewContext extends AbstractVirtualView implements ViewContext {
 		));
 	}
 
-	final ViewItem resolve(int index, boolean resolveOnRoot, boolean entityContainer) {
-		// fast path -- user is unable to set items on entity container
-		if (entityContainer) return null;
-
+	@Override
+	public ViewItem resolve(int index, boolean resolveOnRoot) {
 		ViewItem item = super.resolve(index);
 		if (item == null && resolveOnRoot)
 			return getRoot().resolve(index);
 
 		return item;
+	}
+
+	final ViewItem resolve(int index, boolean resolveOnRoot, boolean entityContainer) {
+		// fast path -- user is unable to set items on entity container
+		if (entityContainer) return null;
+		return resolve(index, resolveOnRoot);
 	}
 
 }

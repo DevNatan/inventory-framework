@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -88,5 +89,8 @@ public interface ViewContext extends VirtualView {
 		@NotNull Class<? extends AbstractView> viewClass,
 		@NotNull Map<String, @Nullable Object> data
 	);
+
+	@ApiStatus.Internal
+	ViewItem resolve(int index, boolean resolveOnRoot);
 
 }

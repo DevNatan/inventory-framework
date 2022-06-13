@@ -34,6 +34,8 @@ interface ViewContainer {
 
 	void renderItem(int slot, Object item);
 
+	void removeItem(int slot);
+
 	boolean matchesItem(int slot, Object item, boolean exactly);
 
 	Object convertItem(Object source);

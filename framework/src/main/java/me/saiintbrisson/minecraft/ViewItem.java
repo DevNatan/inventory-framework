@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -12,7 +13,7 @@ import java.util.Map;
 
 @ToString
 @Setter(AccessLevel.PACKAGE)
-@Getter(AccessLevel.PACKAGE)
+@Getter
 public final class ViewItem {
 
 	enum State {UNDEFINED, HOLDING}
@@ -21,15 +22,12 @@ public final class ViewItem {
 	private State state = State.UNDEFINED;
 	private boolean paginationItem;
 	private String referenceKey;
+	private Object item;
+	private boolean closeOnClick, cancelOnClick, cancelOnShiftClick;
 
 	// TODO add move in, move out, item hold and item release handlers
+	@Getter(AccessLevel.PACKAGE)
 	private ViewItemHandler renderHandler, updateHandler, clickHandler;
-
-	@Setter(AccessLevel.PUBLIC)
-	private Object item;
-
-	@Getter(AccessLevel.PUBLIC)
-	private boolean closeOnClick, cancelOnClick, cancelOnShiftClick;
 
 	@Getter(AccessLevel.NONE)
 	private Map<String, Object> data;
@@ -37,6 +35,7 @@ public final class ViewItem {
 	/**
 	 * @deprecated Use {@link VirtualView#slot(int)} instead.
 	 */
+	@SuppressWarnings("DeprecatedIsStillUsed")
 	@Deprecated
 	public ViewItem() {
 		this(-1);
@@ -61,6 +60,7 @@ public final class ViewItem {
 	 *
 	 * @param renderHandler The render handler.
 	 */
+	@Contract(value = "_ -> this", mutates = "this")
 	public ViewItem onRender(@Nullable ViewItemHandler renderHandler) {
 		this.renderHandler = renderHandler;
 		return this;
@@ -71,6 +71,7 @@ public final class ViewItem {
 	 *
 	 * @param updateHandler The update handler.
 	 */
+	@Contract(value = "_ -> this", mutates = "this")
 	public ViewItem onUpdate(@Nullable ViewItemHandler updateHandler) {
 		this.updateHandler = updateHandler;
 		return this;
@@ -81,28 +82,29 @@ public final class ViewItem {
 	 *
 	 * @param clickHandler The click handler.
 	 */
+	@Contract(value = "_ -> this", mutates = "this")
 	public ViewItem onClick(@Nullable ViewItemHandler clickHandler) {
 		this.clickHandler = clickHandler;
 		return this;
 	}
 
-	@NotNull
+	@Contract(mutates = "this")
 	public ViewItem cancelOnClick() {
 		return withCancelOnClick(!cancelOnClick);
 	}
 
-	@NotNull
+	@Contract(value = "_ -> this", mutates = "this")
 	public ViewItem withCancelOnClick(boolean cancelOnClick) {
 		this.cancelOnClick = cancelOnClick;
 		return this;
 	}
 
-	@NotNull
+	@Contract(mutates = "this")
 	public ViewItem closeOnClick() {
 		return withCloseOnClick(!closeOnClick);
 	}
 
-	@NotNull
+	@Contract(value = "_ -> this", mutates = "this")
 	public ViewItem withCloseOnClick(boolean closeOnClick) {
 		this.closeOnClick = !closeOnClick;
 		return this;
@@ -126,8 +128,10 @@ public final class ViewItem {
 		return this;
 	}
 
-	public void referencedBy(String key) {
+	@Contract(value = "_ -> this", mutates = "this")
+	public ViewItem referencedBy(@NotNull String key) {
 		this.referenceKey = key;
+		return this;
 	}
 
 }

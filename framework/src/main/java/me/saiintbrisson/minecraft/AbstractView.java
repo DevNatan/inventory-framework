@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.Accessors;
+import lombok.experimental.FieldDefaults;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,7 +31,6 @@ public abstract class AbstractView extends AbstractVirtualView {
 	@ToString.Include private final @NotNull ViewType type;
 
 	@Getter(AccessLevel.PROTECTED)
-	@Setter(AccessLevel.PACKAGE)
 	PlatformViewFrame<?, ?, ?> viewFrame;
 
 	private final Set<ViewContext> contexts = Collections.newSetFromMap(
@@ -39,8 +40,7 @@ public abstract class AbstractView extends AbstractVirtualView {
 	private final Pipeline<ViewContext> pipeline = new Pipeline<>(OPEN, RENDER, UPDATE, CLICK, CLOSE);
 
 	@ToString.Include
-	private boolean cancelOnClick, cancelOnPickup, cancelOnDrop, cancelOnDrag, cancelOnClone,
-		cancelOnMoveIn, cancelOnMoveOut, cancelOnShiftClick, clearCursorOnClose, closeOnOutsideClick;
+	private boolean cancelOnClick, cancelOnPickup, cancelOnDrop, cancelOnDrag, cancelOnClone, cancelOnMoveIn, cancelOnMoveOut, cancelOnShiftClick, clearCursorOnClose, closeOnOutsideClick;
 
 	AbstractView(int rows, String title, @NotNull ViewType type) {
 		this.rows = rows;
@@ -89,19 +89,16 @@ public abstract class AbstractView extends AbstractVirtualView {
 		return context;
 	}
 
-	private void render(@NotNull ViewContext context) {
-		runCatching(context, () -> onRender(context));
-		for (int i = 0; i < getItems().length; i++) {
-			final ViewItem item = getItems()[i];
-			if (item == null) continue;
-			if (item.getItem() == null) continue;
-
-			context.getContainer().renderItem(item.getSlot(), item.getItem());
-		}
+	@Override
+	protected final void render(@NotNull ViewContext context) {
+		getPipeline().execute(RENDER, context);
+		super.render(context);
 	}
 
-	protected final void render(ViewContext context, int slot) {
-
+	@Override
+	final void update(@NotNull ViewContext context) {
+		getPipeline().execute(UPDATE, context);
+		super.update(context);
 	}
 
 	@Override
@@ -133,6 +130,125 @@ public abstract class AbstractView extends AbstractVirtualView {
 		ViewItem item = new ViewItem();
 		item.setItem(transformedItem);
 		return item;
+	}
+
+	public final boolean isCancelOnClick() {
+		return cancelOnClick;
+	}
+
+	public final boolean isCancelOnClone() {
+		return cancelOnClone;
+	}
+
+	public final boolean isCancelOnPickup() {
+		return cancelOnPickup;
+	}
+
+	public final boolean isCancelOnDrop() {
+		return cancelOnDrop;
+	}
+
+	public final boolean isCancelOnDrag() {
+		return cancelOnDrag;
+	}
+
+	public final boolean isCancelOnMoveIn() {
+		return cancelOnMoveIn;
+	}
+
+	public final boolean isCancelOnMoveOut() {
+		return cancelOnMoveOut;
+	}
+
+	public final boolean isCancelOnShiftClick() {
+		return cancelOnShiftClick;
+	}
+
+	public final boolean isClearCursorOnClose() {
+		return clearCursorOnClose;
+	}
+
+	public final boolean isCloseOnOutsideClick() {
+		return closeOnOutsideClick;
+	}
+
+	final void setViewFrame(@NotNull PlatformViewFrame<?, ?, ?> viewFrame) {
+		this.viewFrame = viewFrame;
+	}
+
+	public final void setCancelOnClick(final boolean cancelOnClick) {
+		this.cancelOnClick = cancelOnClick;
+	}
+
+	public final void setCancelOnPickup(final boolean cancelOnPickup) {
+		this.cancelOnPickup = cancelOnPickup;
+	}
+
+	public final void setCancelOnDrop(final boolean cancelOnDrop) {
+		this.cancelOnDrop = cancelOnDrop;
+	}
+
+	public final void setCancelOnDrag(final boolean cancelOnDrag) {
+		this.cancelOnDrag = cancelOnDrag;
+	}
+
+	public final void setCancelOnClone(final boolean cancelOnClone) {
+		this.cancelOnClone = cancelOnClone;
+	}
+
+	public final void setCancelOnMoveIn(final boolean cancelOnMoveIn) {
+		this.cancelOnMoveIn = cancelOnMoveIn;
+	}
+
+	public final void setCancelOnMoveOut(final boolean cancelOnMoveOut) {
+		this.cancelOnMoveOut = cancelOnMoveOut;
+	}
+
+	public final void setCancelOnShiftClick(final boolean cancelOnShiftClick) {
+		this.cancelOnShiftClick = cancelOnShiftClick;
+	}
+
+	public final void setClearCursorOnClose(final boolean clearCursorOnClose) {
+		this.clearCursorOnClose = clearCursorOnClose;
+	}
+
+	public final void setCloseOnOutsideClick(final boolean closeOnOutsideClick) {
+		this.closeOnOutsideClick = closeOnOutsideClick;
+	}
+
+	@Override
+	protected final ViewItem[] getItems() {
+		return super.getItems();
+	}
+
+	public final Pipeline<ViewContext> getPipeline() {
+		return pipeline;
+	}
+
+	public final PlatformViewFrame<?, ?, ?> getViewFrame() {
+		return viewFrame;
+	}
+
+	public final ViewType getType() {
+		return type;
+	}
+
+	public final int getRows() {
+		return rows;
+	}
+
+	public final String getTitle() {
+		return title;
+	}
+
+	@Override
+	final void inventoryModificationTriggered() {
+		super.inventoryModificationTriggered();
+	}
+
+	@Override
+	final ViewItem resolve(int index) {
+		return super.resolve(index);
 	}
 
 	/**

@@ -1,6 +1,8 @@
 package me.saiintbrisson.minecraft;
 
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public interface ViewSlotContext extends ViewContext {
@@ -8,6 +10,7 @@ public interface ViewSlotContext extends ViewContext {
 	/**
 	 * @deprecated Will be removed soon.
 	 */
+	@NotNull
 	@Deprecated
 	InventoryClickEvent getClickOrigin();
 
@@ -16,6 +19,9 @@ public interface ViewSlotContext extends ViewContext {
 	void setCancelled(boolean cancelled);
 
 	int getSlot();
+
+	@ApiStatus.Internal
+	Object getItem();
 
 	void setItem(@Nullable Object item);
 
@@ -32,5 +38,13 @@ public interface ViewSlotContext extends ViewContext {
 	boolean isOnEntityContainer();
 
 	ViewSlotContext ref(String key);
+
+	@ApiStatus.Internal
+	boolean hasChanged();
+
+	@ApiStatus.Internal
+	void setChanged(boolean changed);
+
+	void updateSlot();
 
 }

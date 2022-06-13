@@ -22,6 +22,11 @@ public abstract class BukkitViewContainer implements ViewContainer {
 	}
 
 	@Override
+	public void removeItem(int slot) {
+		getInventory().setItem(slot, null);
+	}
+
+	@Override
 	public boolean matchesItem(int slot, Object item, boolean exactly) {
 		requireSupportedItem(item);
 		final ItemStack target = getInventory().getItem(slot);

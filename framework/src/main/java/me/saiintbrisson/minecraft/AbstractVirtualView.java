@@ -7,21 +7,27 @@ import lombok.Setter;
 import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
-import java.util.Stack;
 
-@Getter
-@Setter
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public abstract class AbstractVirtualView implements VirtualView {
 
 	@ToString.Exclude
-	@Getter(AccessLevel.PROTECTED)
 	private ViewItem[] items;
 
 	private ViewErrorHandler errorHandler;
+
+	protected ViewItem[] getItems() {
+		return items;
+	}
+
+	final void setItems(ViewItem[] items) {
+		this.items = items;
+	}
+
+	public final ViewErrorHandler getErrorHandler() {
+		return errorHandler;
+	}
 
 	@Override
 	@NotNull
@@ -61,9 +67,85 @@ public abstract class AbstractVirtualView implements VirtualView {
 		throw new UnsupportedOperationException("Items without a defined slot aren't supported yet");
 	}
 
+	protected void render(@NotNull ViewContext context) {
+		inventoryModificationTriggered();
+
+		for (int i = 0; i < getItems().length; i++) {
+			render(context, i);
+		}
+	}
+
+	protected final void render(@NotNull ViewContext context, int slot) {
+		final ViewItem item = context.resolve(slot, true);
+		if (item == null)
+			return;
+
+		render(context, item, slot);
+	}
+
+	private void render(
+		@NotNull ViewContext context,
+		@NotNull ViewItem item,
+		int slot
+	) {
+		final Object fallbackItem = item.getItem();
+
+		if (item.getRenderHandler() != null) {
+			final ViewSlotContext renderContext = PlatformUtils.getFactory()
+				.createSlotContext(item, context.getRoot(), context.getContainer());
+
+			runCatching(context, () -> item.getRenderHandler().handle(renderContext));
+			if (renderContext.hasChanged()) {
+				context.getContainer().renderItem(slot, renderContext.getItem());
+				renderContext.setChanged(false);
+				return;
+			}
+		}
+
+		if (fallbackItem == null)
+			throw new IllegalArgumentException(String.format(
+				"No item were provided and the rendering function was not defined at slot %d." +
+					"You must use a rendering function slot(...).onRender(...)" +
+					" or a fallback item slot(fallbackItem)",
+				slot
+			));
+
+		context.getContainer().renderItem(slot, fallbackItem);
+	}
+
 	@Override
 	public final void update() {
-		throw new UnsupportedOperationException("not available");
+		inventoryModificationTriggered();
+		throw new UnsupportedOperationException("Update aren't supported in this view");
+	}
+
+	void update(@NotNull ViewContext context) {
+		for (int i = 0; i < getItems().length; i++)
+			update(context, i);
+	}
+
+	final void update(@NotNull ViewContext context, int slot) {
+		final ViewItem item = context.resolve(slot, true);
+		if (item == null) {
+			context.getContainer().removeItem(slot);
+			return;
+		}
+
+		if (item.getUpdateHandler() != null) {
+			final ViewSlotContext updateContext = PlatformUtils.getFactory()
+				.createSlotContext(item, context.getRoot(), context.getContainer());
+
+			runCatching(context, () -> item.getUpdateHandler().handle(updateContext));
+			if (updateContext.hasChanged()) {
+				context.getContainer().renderItem(slot, updateContext.getItem());
+				updateContext.setChanged(false);
+				return;
+			}
+		}
+
+		// update handler can be used as a empty function, so we fall back to the render handler to
+		// update the fallback item properly
+		render(context, item, slot);
 	}
 
 	ViewItem resolve(int index) {
@@ -81,15 +163,16 @@ public abstract class AbstractVirtualView implements VirtualView {
 	}
 
 	final void throwException(@NotNull final ViewContext context, @NotNull final Exception exception) {
-		if (getErrorHandler() == null)
-			return;
+		ViewErrorHandler errorHandler = getErrorHandler();
+		if (errorHandler == null) errorHandler = context.getErrorHandler();
+		if (errorHandler == null) return;
 
-		getErrorHandler().error(context, exception);
+		errorHandler.error(context, exception);
 	}
 
-	void runCatching(@NotNull final ViewContext context, @NotNull final Runnable runnable) {
+	final void runCatching(@NotNull final ViewContext context, @NotNull final Runnable runnable) {
 		// unhandled exception
-		if (getErrorHandler() == null) {
+		if (getErrorHandler() == null && context.getErrorHandler() == null) {
 			runnable.run();
 			return;
 		}
