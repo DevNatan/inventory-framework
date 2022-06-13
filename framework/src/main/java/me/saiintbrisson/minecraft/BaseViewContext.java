@@ -185,6 +185,9 @@ class BaseViewContext extends AbstractVirtualView implements ViewContext {
 	}
 
 	final ViewItem resolve(int index, boolean resolveOnRoot) {
+		// fast path -- skip -999 index on some platforms
+		if (index < 0) return null;
+
 		ViewItem item = super.resolve(index);
 		if (item == null && resolveOnRoot)
 			return getRoot().resolve(index);
