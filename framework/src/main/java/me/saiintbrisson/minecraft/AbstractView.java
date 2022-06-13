@@ -16,11 +16,11 @@ import java.util.function.Predicate;
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
 public abstract class AbstractView extends AbstractVirtualView {
 
-	static final PipelinePhase OPEN = new PipelinePhase("open");
-	static final PipelinePhase RENDER = new PipelinePhase("render");
-	static final PipelinePhase UPDATE = new PipelinePhase("update");
-	static final PipelinePhase CLICK = new PipelinePhase("click");
-	static final PipelinePhase CLOSE = new PipelinePhase("close");
+	@Getter(AccessLevel.NONE) static final PipelinePhase OPEN = new PipelinePhase("open");
+	@Getter(AccessLevel.NONE) static final PipelinePhase RENDER = new PipelinePhase("render");
+	@Getter(AccessLevel.NONE) static final PipelinePhase UPDATE = new PipelinePhase("update");
+	@Getter(AccessLevel.NONE) static final PipelinePhase CLICK = new PipelinePhase("click");
+	@Getter(AccessLevel.NONE) static final PipelinePhase CLOSE = new PipelinePhase("close");
 
 	static final ViewType DEFAULT_TYPE = ViewType.CHEST;
 
