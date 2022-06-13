@@ -33,7 +33,8 @@ final class BukkitViewComponentFactory extends ViewComponentFactory {
 
 	@Override
 	public void setupView(@NotNull AbstractView view) {
-		registerInterceptors((View) view);
+		getModifiers().forEach(modifier -> modifier.accept(view));
+		registerInterceptors(view);
 	}
 
 	@Override

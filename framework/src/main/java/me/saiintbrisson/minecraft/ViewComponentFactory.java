@@ -1,5 +1,7 @@
 package me.saiintbrisson.minecraft;
 
+import lombok.AccessLevel;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -9,6 +11,7 @@ import java.util.function.Consumer;
 
 public abstract class ViewComponentFactory {
 
+	@Getter(AccessLevel.PROTECTED)
 	private final List<Consumer<AbstractView>> modifiers = new ArrayList<>();
 
 	void registerModifier(@NotNull Consumer<AbstractView> modifier) {
@@ -40,6 +43,13 @@ public abstract class ViewComponentFactory {
 		@NotNull final AbstractView root,
 		final ViewContainer container,
 		final Class<? extends ViewContext> backingContext
+	);
+
+	@NotNull
+	public abstract AbstractViewSlotContext createSlotContext(
+		ViewItem item,
+		@NotNull final AbstractView root,
+		final ViewContainer container
 	);
 
 	public abstract Object createItem(
