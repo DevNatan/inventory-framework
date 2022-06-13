@@ -36,6 +36,7 @@ public class OpenViewContext extends BaseViewContext {
 
 	OpenViewContext(@NotNull final AbstractView view) {
 		super(view, null);
+		containerType = view.getType();
 	}
 
 	/**
@@ -66,7 +67,7 @@ public class OpenViewContext extends BaseViewContext {
 	 *
 	 * @param containerTitle The new title of the container that'll be created.
 	 */
-	public void setContainerTitle(@Nullable final String containerTitle) {
+	public final void setContainerTitle(@Nullable final String containerTitle) {
 		this.containerTitle = containerTitle;
 	}
 
@@ -76,7 +77,13 @@ public class OpenViewContext extends BaseViewContext {
 	 *
 	 * @param containerSize The new container size.
 	 */
-	public void setContainerSize(final int containerSize) {
+	public final void setContainerSize(final int containerSize) {
+		if (getContainerType() == null)
+			throw new IllegalStateException(
+				"Cannot find a defined or fallback view type to determine the container size. " +
+					"Set it via #setContainerType or on root view constructor"
+			);
+
 		this.containerSize = containerSize;
 	}
 
