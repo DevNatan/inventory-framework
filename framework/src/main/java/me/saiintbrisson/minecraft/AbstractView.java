@@ -74,7 +74,7 @@ public abstract class AbstractView extends AbstractVirtualView {
 			return;
 
 		final BaseViewContext context = viewFrame.getFactory().createContext(this, container, null);
-		context.setItems(new ViewItem[containerSize]);
+		context.setItems(new ViewItem[containerType.normalize(containerSize)]);
 		context.addViewer(viewer);
 		contexts.add(context);
 		render(context);
