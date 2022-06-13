@@ -18,20 +18,9 @@ public final class BukkitMoveOutInterceptor implements PipelineInterceptor<Bukki
 		final InventoryClickEvent event = subject.getClickOrigin();
 		final InventoryAction action = event.getAction();
 
-		// fast path -- from entity container to view container is detected on move in interceptor
+		// fast path -- move out detects items being moved to entity container
 		if (!subject.isOnEntityContainer())
 			return;
-
-		// cannot move items to the view container with shift click
-		if (action == InventoryAction.MOVE_TO_OTHER_INVENTORY
-			&& subject.getRoot().isCancelOnMoveIn()
-			&& event.getClick().isShiftClick()
-		) {
-			subject.setCancelled(true);
-			event.setCancelled(true);
-			pipeline.finish();
-			return;
-		}
 
 		if (action != InventoryAction.PLACE_ALL &&
 			action != InventoryAction.PLACE_ONE &&
