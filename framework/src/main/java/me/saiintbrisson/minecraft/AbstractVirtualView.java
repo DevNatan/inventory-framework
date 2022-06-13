@@ -67,6 +67,13 @@ public abstract class AbstractVirtualView implements VirtualView {
 	}
 
 	ViewItem resolve(int index) {
+		// fast path -- skip -999 index on some platforms
+		if (index < 0) return null;
+
+		final int len = getItems().length;
+		if (index >= len)
+			return null;
+
 		return getItems()[index];
 	}
 
