@@ -68,7 +68,7 @@ public class BukkitClickViewSlotContext extends AbstractViewSlotContext {
 	@Override
 	final void inventoryModificationTriggered() {
 		throw new IllegalStateException(
-			"You cannot modify the inventory directly in the click handler context. " +
+			"You cannot update the item in the click handler context. " +
 				"Use the slot.onRender(...) or slot.onUpdate(...) and then context.setItem(...) instead."
 		);
 	}
