@@ -1,6 +1,7 @@
 package me.saiintbrisson.minecraft;
 
 import lombok.*;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
@@ -188,7 +189,8 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
 				viewClass.getName()
 			));
 
-		view.open(PlatformUtils.getFactory().createViewer(player), data);
+		getOwner().getServer().getScheduler().runTaskLater(getOwner(),
+			() -> view.open(PlatformUtils.getFactory().createViewer(player), data), 1L);
 		return view;
 	}
 
@@ -223,7 +225,15 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
 	@NotNull
 	@Override
 	public <C, R> R install(@NotNull Feature<C, R> feature, @NotNull UnaryOperator<C> configure) {
-		return featureInstaller.install(feature, configure);
+		if (isRegistered())
+			throw new IllegalStateException("Cannot register a feature after framework registration");
+
+		final R value = featureInstaller.install(feature, configure);
+		getOwner().getLogger().info(String.format(
+			"Feature %s installed",
+			StringUtils.substringBeforeLast(feature.getClass().getSimpleName(), "Feature")
+		));
+		return value;
 	}
 
 	public static ViewFrame of(
