@@ -153,6 +153,7 @@ final class BukkitViewComponentFactory extends ViewComponentFactory {
 		pipeline.intercept(CLICK, new GlobalClickInterceptor());
 		pipeline.intercept(CLICK, new GlobalClickOutsideInterceptor());
 		pipeline.intercept(CLICK, new GlobalHotbarClickInterceptor());
+		pipeline.intercept(CLICK, new GlobalItemHoldInterceptor());
 	}
 
 }
