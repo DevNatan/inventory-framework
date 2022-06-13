@@ -38,7 +38,7 @@ public abstract class AbstractView extends AbstractVirtualView {
 	PlatformViewFrame<?, ?, ?> viewFrame;
 
 	private final Set<ViewContext> contexts = Collections.newSetFromMap(
-		Collections.synchronizedMap(new WeakHashMap<>())
+		Collections.synchronizedMap(new HashMap<>())
 	);
 
 	private final Pipeline<ViewContext> pipeline = new Pipeline<>(OPEN, RENDER, UPDATE, CLICK, CLOSE);
