@@ -1,7 +1,6 @@
 package me.saiintbrisson.minecraft;
 
 import lombok.RequiredArgsConstructor;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -10,6 +9,8 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.logging.Level;
 
 @RequiredArgsConstructor
 class ViewListener implements Listener {
@@ -68,13 +69,20 @@ class ViewListener implements Listener {
 		}
 
 		final ViewSlotContext slotContext = new BukkitClickViewSlotContext(
-			context.resolve(event.getRawSlot(), true, event.getClickedInventory() instanceof PlayerInventory),
+			context.resolve(event.getRawSlot(), true,
+				event.getClickedInventory() instanceof PlayerInventory
+			),
 			context,
 			event
 		);
-		view.runCatching(context, () -> {
-			view.getPipeline().execute(AbstractView.CLICK, slotContext);
-		});
+
+		try {
+			view.runCatching(context,
+				() -> view.getPipeline().execute(AbstractView.CLICK, slotContext));
+		} catch (final Throwable e) {
+			plugin.getLogger().log(Level.SEVERE, "Failed to execute click pipeline", e);
+			return;
+		}
 
 		if (slotContext.getAttributes().isMarkedToClose())
 			plugin.getServer().getScheduler().runTask(plugin, slotContext::closeUninterruptedly);
