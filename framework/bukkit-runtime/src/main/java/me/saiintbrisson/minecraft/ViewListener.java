@@ -1,6 +1,7 @@
 package me.saiintbrisson.minecraft;
 
 import lombok.RequiredArgsConstructor;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -66,13 +67,17 @@ class ViewListener implements Listener {
 			return;
 		}
 
+		final ViewSlotContext slotContext = new BukkitClickViewSlotContext(
+			context.resolve(event.getRawSlot(), true, event.getClickedInventory() instanceof PlayerInventory),
+			context,
+			event
+		);
 		view.runCatching(context, () -> {
-			view.getPipeline().execute(AbstractView.CLICK, new BukkitClickViewSlotContext(
-				context.resolve(event.getRawSlot(), true, event.getClickedInventory() instanceof PlayerInventory),
-				context,
-				event
-			));
+			view.getPipeline().execute(AbstractView.CLICK, slotContext);
 		});
+
+		if (slotContext.getAttributes().isMarkedToClose())
+			plugin.getServer().getScheduler().runTask(plugin, slotContext::closeUninterruptedly);
 	}
 
 }
