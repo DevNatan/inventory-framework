@@ -18,18 +18,18 @@ public final class ViewItem {
 	enum State {UNDEFINED, HOLDING}
 
 	private int slot;
+	private State state = State.UNDEFINED;
+	private boolean paginationItem;
+	private String referenceKey;
+	private ViewItemHandler renderHandler, updateHandler, clickHandler;
 
 	@Setter(AccessLevel.PUBLIC)
 	private Object item;
 
-	private State state = State.UNDEFINED;
-
-	private boolean paginationItem;
-
 	@Getter(AccessLevel.PUBLIC)
 	private boolean closeOnClick, cancelOnClick, cancelOnShiftClick;
 
-	private ViewItemHandler renderHandler, updateHandler, clickHandler;
+	@Getter(AccessLevel.NONE)
 	private Map<String, Object> data;
 
 	/**
@@ -59,8 +59,9 @@ public final class ViewItem {
 	 *
 	 * @param renderHandler The render handler.
 	 */
-	public void onRender(@Nullable ViewItemHandler renderHandler) {
+	public ViewItem onRender(@Nullable ViewItemHandler renderHandler) {
 		this.renderHandler = renderHandler;
+		return this;
 	}
 
 	/**
@@ -68,8 +69,9 @@ public final class ViewItem {
 	 *
 	 * @param updateHandler The update handler.
 	 */
-	public void onUpdate(@Nullable ViewItemHandler updateHandler) {
+	public ViewItem onUpdate(@Nullable ViewItemHandler updateHandler) {
 		this.updateHandler = updateHandler;
+		return this;
 	}
 
 	/**
@@ -77,8 +79,9 @@ public final class ViewItem {
 	 *
 	 * @param clickHandler The click handler.
 	 */
-	public void onClick(@Nullable ViewItemHandler clickHandler) {
+	public ViewItem onClick(@Nullable ViewItemHandler clickHandler) {
 		this.clickHandler = clickHandler;
+		return this;
 	}
 
 	@NotNull
@@ -119,6 +122,10 @@ public final class ViewItem {
 
 		data.put(key, value);
 		return this;
+	}
+
+	public void referencedBy(String key) {
+		this.referenceKey = key;
 	}
 
 }
