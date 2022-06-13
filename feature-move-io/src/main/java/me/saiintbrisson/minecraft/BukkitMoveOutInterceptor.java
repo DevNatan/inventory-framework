@@ -12,6 +12,9 @@ public final class BukkitMoveOutInterceptor implements PipelineInterceptor<Bukki
 		@NotNull final PipelineContext<BukkitClickViewSlotContext> pipeline,
 		final BukkitClickViewSlotContext subject
 	) {
+		if (subject.isCancelled())
+			return;
+
 		final InventoryClickEvent event = subject.getClickOrigin();
 		final InventoryAction action = event.getAction();
 
@@ -46,9 +49,10 @@ public final class BukkitMoveOutInterceptor implements PipelineInterceptor<Bukki
 
 		// fast path -- items defined on root are all static so we skip them
 		final boolean resolveOnRoot = false;
+		final boolean entityContainer = subject.isOnEntityContainer();
 
 		for (int i = container.getFirstSlot(); i <= container.getLastSlot(); i++) {
-			final ViewItem item = subject.resolve(i, resolveOnRoot);
+			final ViewItem item = subject.resolve(i, resolveOnRoot, entityContainer);
 			if (item == null) continue;
 
 			// fast path -- skip not yet hold items
@@ -62,6 +66,7 @@ public final class BukkitMoveOutInterceptor implements PipelineInterceptor<Bukki
 			return;
 
 		final ViewSlotMoveContext moveContext = new BukkitViewSlotMoveContextImpl(
+			hold,
 			subject,
 			event,
 			container,
@@ -72,7 +77,14 @@ public final class BukkitMoveOutInterceptor implements PipelineInterceptor<Bukki
 			false
 		);
 
-		// TODO complete it
+		moveContext.setCancelled(subject.isCancelled());
+		subject.getRoot().onMoveOut(moveContext);
+		event.setCancelled(moveContext.isCancelled());
+
+		if (!moveContext.isCancelled())
+			return;
+
+		pipeline.finish();
 	}
 
 }
