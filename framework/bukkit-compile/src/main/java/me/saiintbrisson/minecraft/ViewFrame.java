@@ -96,13 +96,14 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
 	}
 
 	@Override
-	public void remove(@NotNull View... views) {
+	public ViewFrame remove(@NotNull View... views) {
 		synchronized (getViews()) {
 			for (final View view : views) {
 				view.close();
 				getViews().remove(view.getClass());
 			}
 		}
+		return this;
 	}
 
 	/**
@@ -116,14 +117,14 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
 	}
 
 	@Override
-	public void register() {
+	public ViewFrame register() {
 		if (isRegistered())
 			throw new IllegalStateException("This ViewFrame is already registered.");
 
 		// check if there's another ViewFrame instance in the same server
 		final ServicesManager servicesManager = getOwner().getServer().getServicesManager();
 		if (servicesManager.isProvidedFor(ViewFrame.class))
-			return;
+			return this;
 
 		for (final View view : views.values()) {
 			view.setViewFrame(this);
@@ -136,6 +137,7 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
 			plugin
 		);
 		servicesManager.register(ViewFrame.class, this, plugin, ServicePriority.Normal);
+		return this;
 	}
 
 	@Override
