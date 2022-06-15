@@ -328,6 +328,16 @@ public abstract class AbstractView extends AbstractVirtualView {
 	protected void onClick(@NotNull ViewSlotContext context) {
 	}
 
+	/**
+	 *Called when the player who clicks outside the view of containers, neither the view's container
+	 * nor the player's own container.
+	 *
+	 * @param context The click context.
+	 * @deprecated Use {@link #onClick(ViewSlotContext)}
+	 *             with {@link ViewSlotContext#isOutsideClick()} instead.
+	 */
+	@SuppressWarnings("DeprecatedIsStillUsed")
+	@Deprecated
 	protected void onClickOutside(@NotNull ViewContext context) {
 	}
 
