@@ -1,8 +1,14 @@
 # Changelog
 
 # 2.5.1 (unreleased)
+* Lazy pagination source ([#72](https://github.com/DevNatan/inventory-framework/issues/72))
+* Item References ([#80](https://github.com/DevNatan/inventory-framework/issues/80))
+* Internal codebase rewrite ([#89](https://github.com/DevNatan/inventory-framework/pull/89))
 * Kotlin DSL ([#90](https://github.com/DevNatan/inventory-framework/pull/90))
-* Internal codebase rewrite ([#89](https://github.com/DevNatan/inventory-framework/pull/80))
+* Fixed cancellation overrides
+* Prohibit pagination item rendering function use ([#104](https://github.com/DevNatan/inventory-framework/pull/104))
+* Fixed a bug where when the paginated view was updated with empty source the items from the previous pagination were not cleared
+* Slot context item patch ([#112](https://github.com/DevNatan/inventory-framework/issues/112))
 
 # 2.5
 * Inheritable context data (#65)
