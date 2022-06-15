@@ -255,6 +255,19 @@ public abstract class AbstractView extends AbstractVirtualView {
 	}
 
 	@Override
+	final boolean throwException(ViewContext context, @NotNull Exception exception) {
+		if (!super.throwException(context, exception))
+			return false;
+
+		final PlatformViewFrame<?, ?, ?> vf = getViewFrame();
+		if (vf == null)
+			return true;
+
+		launchError(vf.getErrorHandler(), context, exception);
+		return true;
+	}
+
+	@Override
 	final ViewItem resolve(int index) {
 		return super.resolve(index);
 	}

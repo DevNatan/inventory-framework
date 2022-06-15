@@ -15,7 +15,6 @@ public abstract class AbstractVirtualView implements VirtualView {
 	@ToString.Exclude
 	private ViewItem[] items;
 
-	@Setter(AccessLevel.PACKAGE)
 	private ViewErrorHandler errorHandler;
 
 	protected ViewItem[] getItems() {
@@ -125,6 +124,10 @@ public abstract class AbstractVirtualView implements VirtualView {
 			update(context, i);
 	}
 
+	public final void setErrorHandler(ViewErrorHandler errorHandler) {
+		this.errorHandler = errorHandler;
+	}
+
 	final void update(@NotNull ViewContext context, int slot) {
 		final ViewItem item = context.resolve(slot, true);
 		if (item == null) {
@@ -163,21 +166,43 @@ public abstract class AbstractVirtualView implements VirtualView {
 	void inventoryModificationTriggered() {
 	}
 
-	final void throwException(final ViewContext context, @NotNull final Exception exception) {
-		ViewErrorHandler errorHandler = getErrorHandler();
-		if (errorHandler == null && context != null) errorHandler = context.getErrorHandler();
-		if (errorHandler == null) return;
-
-		errorHandler.error(context, exception);
-	}
-
 	final void runCatching(final ViewContext context, @NotNull final Runnable runnable) {
-		// unhandled exception
-		if (getErrorHandler() == null && (context != null && context.getErrorHandler() == null)) {
+		if (context != null && context.getErrorHandler() != null) {
+			tryRunOrFail(context, runnable);
+			return;
+		}
+
+		if (getErrorHandler() == null) {
 			runnable.run();
 			return;
 		}
 
+		tryRunOrFail(context, runnable);
+	}
+
+	boolean throwException(final ViewContext context, @NotNull final Exception exception) {
+		if (context != null && context.getErrorHandler() != null) {
+			context.getErrorHandler().error(context, exception);
+			if (!context.isPropagateErrors())
+				return false;
+		}
+
+		launchError(getErrorHandler(), context, exception);
+		return true;
+	}
+
+	protected final void launchError(
+		final ViewErrorHandler errorHandler,
+		final ViewContext context,
+		@NotNull final Exception exception
+	) {
+		if (errorHandler == null)
+			return;
+
+		errorHandler.error(context, exception);
+	}
+
+	private void tryRunOrFail(final ViewContext context, @NotNull final Runnable runnable) {
 		try {
 			runnable.run();
 		} catch (final Exception e) {

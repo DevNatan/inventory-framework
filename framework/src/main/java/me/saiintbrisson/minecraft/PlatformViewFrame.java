@@ -62,4 +62,6 @@ public interface PlatformViewFrame<V, P, F extends PlatformViewFrame<V, P, F>> e
 
 	ViewErrorHandler getErrorHandler();
 
+	void setErrorHandler(ViewErrorHandler errorHandler);
+
 }
