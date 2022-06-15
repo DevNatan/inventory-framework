@@ -15,6 +15,7 @@ public abstract class AbstractVirtualView implements VirtualView {
 	@ToString.Exclude
 	private ViewItem[] items;
 
+	@Setter(AccessLevel.PACKAGE)
 	private ViewErrorHandler errorHandler;
 
 	protected ViewItem[] getItems() {
