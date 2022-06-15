@@ -2,15 +2,15 @@ package me.saiintbrisson.minecraft;
 
 import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.experimental.Accessors;
-import lombok.experimental.FieldDefaults;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Predicate;
 
 @Getter
@@ -18,17 +18,25 @@ import java.util.function.Predicate;
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
 public abstract class AbstractView extends AbstractVirtualView {
 
-	@Getter(AccessLevel.NONE) static final PipelinePhase OPEN = new PipelinePhase("open");
-	@Getter(AccessLevel.NONE) static final PipelinePhase RENDER = new PipelinePhase("render");
-	@Getter(AccessLevel.NONE) static final PipelinePhase UPDATE = new PipelinePhase("update");
-	@Getter(AccessLevel.NONE) static final PipelinePhase CLICK = new PipelinePhase("click");
-	@Getter(AccessLevel.NONE) static final PipelinePhase CLOSE = new PipelinePhase("close");
+	@Getter(AccessLevel.NONE)
+	static final PipelinePhase OPEN = new PipelinePhase("open");
+	@Getter(AccessLevel.NONE)
+	static final PipelinePhase RENDER = new PipelinePhase("render");
+	@Getter(AccessLevel.NONE)
+	static final PipelinePhase UPDATE = new PipelinePhase("update");
+	@Getter(AccessLevel.NONE)
+	static final PipelinePhase CLICK = new PipelinePhase("click");
+	@Getter(AccessLevel.NONE)
+	static final PipelinePhase CLOSE = new PipelinePhase("close");
 
 	static final ViewType DEFAULT_TYPE = ViewType.CHEST;
 
-	@ToString.Include private final int rows;
-	@ToString.Include private final String title;
-	@ToString.Include private final @NotNull ViewType type;
+	@ToString.Include
+	private final int rows;
+	@ToString.Include
+	private final String title;
+	@ToString.Include
+	private final @NotNull ViewType type;
 
 	@Getter(AccessLevel.PROTECTED)
 	PlatformViewFrame<?, ?, ?> viewFrame;
@@ -229,7 +237,7 @@ public abstract class AbstractView extends AbstractVirtualView {
 		return viewFrame;
 	}
 
-	public final ViewType getType() {
+	public final @NotNull ViewType getType() {
 		return type;
 	}
 
@@ -267,11 +275,11 @@ public abstract class AbstractView extends AbstractVirtualView {
 	}
 
 	/**
-	 * Called when this view is rendered to the player.
+	 * Called when this view is rendered to the player for the first time.
 	 * <p>
 	 * This is where you will define items that will be contained non-persistently in the context.
 	 * <p>
-	 * Using {@link View#slot(int)} here will cause a leak of items in memory or that  the item that
+	 * Using {@link View#slot(int)} here will cause a leak of items in memory or that the item that
 	 * was previously defined will be overwritten as the slot item definition method is for use in
 	 * the constructor only once. Instead, you should use the context item definition function
 	 * {@link ViewContext#slot(int)}.
@@ -284,7 +292,7 @@ public abstract class AbstractView extends AbstractVirtualView {
 	 *     <li>{@link #onClose(ViewContext)}</li>
 	 * </ul>
 	 * <p>
-	 * This is a rendering function and can modify the view's inventory.
+	 * This is a rendering function and can modify the view's container, it's called once.
 	 *
 	 * @param context The player view context.
 	 */
@@ -329,12 +337,12 @@ public abstract class AbstractView extends AbstractVirtualView {
 	}
 
 	/**
-	 *Called when the player who clicks outside the view of containers, neither the view's container
+	 * Called when the player who clicks outside the view of containers, neither the view's container
 	 * nor the player's own container.
 	 *
 	 * @param context The click context.
 	 * @deprecated Use {@link #onClick(ViewSlotContext)}
-	 *             with {@link ViewSlotContext#isOutsideClick()} instead.
+	 * with {@link ViewSlotContext#isOutsideClick()} instead.
 	 */
 	@SuppressWarnings("DeprecatedIsStillUsed")
 	@Deprecated
