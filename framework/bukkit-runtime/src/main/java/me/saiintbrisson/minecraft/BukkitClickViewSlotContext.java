@@ -6,6 +6,7 @@ import lombok.ToString;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.NotNull;
 
@@ -63,6 +64,11 @@ public class BukkitClickViewSlotContext extends AbstractViewSlotContext {
 	@Override
 	public final boolean isOnEntityContainer() {
 		return getClickOrigin().getClickedInventory() instanceof PlayerInventory;
+	}
+
+	@Override
+	public final boolean isOutsideClick() {
+		return getClickOrigin().getSlotType() == InventoryType.SlotType.OUTSIDE;
 	}
 
 	@Override

@@ -37,6 +37,8 @@ public interface ViewSlotContext extends ViewContext {
 
 	boolean isOnEntityContainer();
 
+	boolean isOutsideClick();
+
 	ViewSlotContext ref(String key);
 
 	@ApiStatus.Internal

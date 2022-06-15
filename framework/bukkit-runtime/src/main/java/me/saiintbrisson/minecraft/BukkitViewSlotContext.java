@@ -8,6 +8,7 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -68,11 +69,17 @@ public class BukkitViewSlotContext extends AbstractViewSlotContext {
 
 	@Override
 	public boolean isOnEntityContainer() {
-		throw new IllegalStateException(
-			"Cannot retrieve click information from a non-click context"
-		);
+		throwNotClickContext();
+		return false;
 	}
 
+	@Override
+	public boolean isOutsideClick() {
+		throwNotClickContext();
+		return false;
+	}
+
+	@Contract(value = " -> fail", pure = true)
 	private void throwNotClickContext() {
 		throw new IllegalStateException(
 			"Cannot retrieve click information from a non-click context"
