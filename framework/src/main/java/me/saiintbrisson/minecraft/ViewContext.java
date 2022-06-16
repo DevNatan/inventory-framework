@@ -1,12 +1,13 @@
 package me.saiintbrisson.minecraft;
 
-import java.util.List;
-import java.util.Map;
-import java.util.function.Supplier;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
 
 public interface ViewContext extends VirtualView {
 
@@ -36,8 +37,6 @@ public interface ViewContext extends VirtualView {
 	}
 
 	AbstractView getRoot();
-
-	<T> PaginatedViewContext<T> paginated();
 
 	String getUpdatedTitle();
 
@@ -94,5 +93,17 @@ public interface ViewContext extends VirtualView {
 	ViewItem resolve(int index, boolean resolveOnRoot);
 
 	ViewSlotContext ref(String key);
+
+	/**
+	 * Converts this context to a pagination context.
+	 * <p>
+	 * It only works if the view that originated this context is a paginated view,
+	 * throwing an IllegalStateException if the root of this context is not paginated.
+	 *
+	 * @param <T> The pagination item type.
+	 * @return This context as a PaginatedViewContext.
+	 * @throws IllegalStateException If the root of this context is not paginated.
+	 */
+	<T> PaginatedViewContext<T> paginated();
 
 }

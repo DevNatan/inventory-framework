@@ -249,6 +249,13 @@ public abstract class AbstractView extends AbstractVirtualView {
 		return title;
 	}
 
+	/**
+	 * Thrown when a method explicitly needs to specify that it will directly modify
+	 * the view's container when executed, that method is overridden by implementations whose
+	 * direct modification of the container is not allowed, throwing an IllegalStateException.
+	 *
+	 * @throws IllegalStateException Whether a direct modification of the inventory is not allowed.
+	 */
 	@Override
 	final void inventoryModificationTriggered() {
 		super.inventoryModificationTriggered();
@@ -345,8 +352,27 @@ public abstract class AbstractView extends AbstractVirtualView {
 	 * Handling the inventory in the click handler is not allowed.
 	 *
 	 * @param context The player view context.
+	 * @deprecated Use {@link #onClick(ViewSlotClickContext)} instead.
 	 */
+	@Deprecated
 	protected void onClick(@NotNull ViewSlotContext context) {
+	}
+
+	/**
+	 * Called when an actor clicks on a container while it has a view open.
+	 * <p>
+	 * You can know if the click was on entity inventory or view inventory by
+	 * {@link ViewSlotContext#isOnEntityContainer()}
+	 * <p>
+	 * Any function that triggers an {@link #inventoryModificationTriggered() inventory modification}
+	 * is prohibited from being used in this handler.
+	 * <p>
+	 * This context is cancelable and canceling this context will cancel the click, thus canceling
+	 * all subsequent interceptors causing the pipeline to terminate immediately.
+	 *
+	 * @param context The click context.
+	 */
+	protected void onClick(@NotNull ViewSlotClickContext context) {
 	}
 
 	/**
@@ -355,7 +381,7 @@ public abstract class AbstractView extends AbstractVirtualView {
 	 *
 	 * @param context The click context.
 	 * @deprecated Use {@link #onClick(ViewSlotContext)}
-	 * with {@link ViewSlotContext#isOutsideClick()} instead.
+	 * with {@link ViewSlotClickContext#isOutsideClick()} instead.
 	 */
 	@SuppressWarnings("DeprecatedIsStillUsed")
 	@Deprecated
@@ -370,7 +396,7 @@ public abstract class AbstractView extends AbstractVirtualView {
 	 * @param context      The current view context.
 	 * @param hotbarButton The interacted hot bar button.
 	 * @deprecated Use {@link #onClick(ViewSlotContext)}
-	 * with {@link ViewSlotContext#isKeyboardClick()} instead.
+	 * with {@link ViewSlotClickContext#isKeyboardClick()} instead.
 	 */
 	@SuppressWarnings("DeprecatedIsStillUsed")
 	@Deprecated

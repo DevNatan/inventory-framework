@@ -90,6 +90,11 @@ public abstract class BukkitViewContainer implements ViewContainer {
 	}
 
 	@Override
+	public boolean isEntityContainer() {
+		return false;
+	}
+
+	@Override
 	public final void open(@NotNull final Viewer viewer) {
 		((BukkitViewer) viewer).getPlayer().openInventory(getInventory());
 	}

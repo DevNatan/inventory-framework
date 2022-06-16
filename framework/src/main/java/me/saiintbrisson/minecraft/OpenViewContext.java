@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * This context is created before the container is opened, it is used for cancellation by previously
- * defined data, for any reason and can be used to change the title and size of the container before
+ * defined data, for any reason, and can be used to change the title and size of the container before
  * the rendering intent.
  */
 @Getter

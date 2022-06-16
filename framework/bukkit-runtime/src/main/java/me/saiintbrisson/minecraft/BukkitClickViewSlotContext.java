@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 @Getter
 @Setter
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
-public class BukkitClickViewSlotContext extends AbstractViewSlotContext {
+public class BukkitClickViewSlotContext extends AbstractViewSlotContext implements ViewSlotClickContext {
 
 	private final InventoryClickEvent clickOrigin;
 
@@ -69,6 +69,11 @@ public class BukkitClickViewSlotContext extends AbstractViewSlotContext {
 	@Override
 	public final boolean isOutsideClick() {
 		return getClickOrigin().getSlotType() == InventoryType.SlotType.OUTSIDE;
+	}
+
+	@Override
+	public @NotNull String getClickIdentifier() {
+		return getClickOrigin().getClick().name();
 	}
 
 	@Override

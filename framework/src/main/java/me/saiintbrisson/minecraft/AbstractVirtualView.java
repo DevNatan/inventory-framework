@@ -163,6 +163,13 @@ public abstract class AbstractVirtualView implements VirtualView {
 		return getItems()[index];
 	}
 
+	/**
+	 * Thrown when a method explicitly needs to specify that it will directly modify
+	 * the view's container when executed, that method is overridden by implementations whose
+	 * direct modification of the container is not allowed, throwing an IllegalStateException.
+	 *
+	 * @throws IllegalStateException Whether a direct modification of the inventory is not allowed.
+	 */
 	void inventoryModificationTriggered() {
 	}
 

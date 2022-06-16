@@ -77,12 +77,12 @@ public abstract class AbstractViewSlotContext extends BaseViewContext implements
 	}
 
 	@Override
-	public void updateSlot() {
+	public final void updateSlot() {
 		getRoot().update(this, getSlot());
 	}
 
 	@Override
-	public final  <T> T data(@NotNull String key) {
+	public final <T> T data(@NotNull String key) {
 		final Map<String, Object> data = backingItem.getData();
 		if (data != null && data.containsKey(key))
 			//noinspection unchecked
@@ -93,4 +93,10 @@ public abstract class AbstractViewSlotContext extends BaseViewContext implements
 			key
 		));
 	}
+
+	@Override
+	public final <T> PaginatedViewSlotContext<T> paginated() {
+		return (PaginatedViewSlotContext<T>) super.paginated();
+	}
+
 }

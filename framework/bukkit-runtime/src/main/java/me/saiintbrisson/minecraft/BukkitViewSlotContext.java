@@ -32,58 +32,8 @@ public class BukkitViewSlotContext extends AbstractViewSlotContext {
 	}
 
 	@Override
-	public @NotNull InventoryClickEvent getClickOrigin() {
-		throwNotClickContext();
-		return null;
-	}
-
-	@Override
-	public boolean isLeftClick() {
-		throwNotClickContext();
-		return false;
-	}
-
-	@Override
-	public boolean isRightClick() {
-		throwNotClickContext();
-		return false;
-	}
-
-	@Override
-	public boolean isMiddleClick() {
-		throwNotClickContext();
-		return false;
-	}
-
-	@Override
-	public boolean isShiftClick() {
-		throwNotClickContext();
-		return false;
-	}
-
-	@Override
-	public boolean isKeyboardClick() {
-		throwNotClickContext();
-		return false;
-	}
-
-	@Override
 	public boolean isOnEntityContainer() {
-		throwNotClickContext();
-		return false;
-	}
-
-	@Override
-	public boolean isOutsideClick() {
-		throwNotClickContext();
-		return false;
-	}
-
-	@Contract(value = " -> fail", pure = true)
-	private void throwNotClickContext() {
-		throw new IllegalStateException(
-			"Cannot retrieve click information from a non-click context"
-		);
+		return getContainer().isEntityContainer();
 	}
 
 }

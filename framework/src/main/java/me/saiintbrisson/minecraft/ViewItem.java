@@ -206,16 +206,14 @@ public final class ViewItem {
 	 * inside the container, you can define a data in this item and as soon as the actor moves it
 	 * the data will remain there, and you can use it any way you want.
 	 * <pre>
-	 * {@code
-	 * slot(...).withCancelOnClick(false).withData("name", "Anna")
-	 * slot(...).withCncelOnClick(false).withData("name", "James");
+	 *  slot(...).withCancelOnClick(false).withData("name", "Anna");
+	 *  slot(...).withCncelOnClick(false).withData("name", "James");
 	 *
-	 * @Override
-	 * protected void onItemHold(ViewSlotContext context) {
-	 *     String name = context.data("name");
-	 *     ...
-	 * }
-	 * }
+	 *  &#64;Override
+	 *  protected void onItemHold(ViewSlotContext context) {
+	 *      String name = context.data("name");
+	 *      ...
+	 *  }
 	 * </pre>
 	 *
 	 * @param key   The property key.
@@ -237,16 +235,14 @@ public final class ViewItem {
 	 * inside the container, you can define a data in this item and as soon as the actor moves it
 	 * the data will remain there, and you can use it any way you want.
 	 * <pre>
-	 * {@code
-	 * slot(...).withCancelOnClick(false).withData("name", "Anna")
-	 * slot(...).withCncelOnClick(false).withData("name", "James");
+	 *  slot(...).withCancelOnClick(false).withData("name", "Anna")
+	 *  slot(...).withCancelOnClick(false).withData("name", "James");
 	 *
-	 * @Override
-	 * protected void onItemHold(ViewSlotContext context) {
-	 *     String name = context.getItemData("name");
-	 *     ...
-	 * }
-	 * }
+	 *  &#64;Override
+	 *  protected void onItemHold(ViewSlotContext context) {
+	 *      String name = context.getItemData("name");
+	 *      ...
+	 *  }
 	 * </pre>
 	 *
 	 * @param key   The property key.
@@ -269,15 +265,13 @@ public final class ViewItem {
 	 * will be this item, that is, you can later reference this item in an unknown handler
 	 * in your code and update this item manually, for example, if necessary.
 	 * <pre>
-	 * {@code
-	 * slot(...).referencedBy("my-item");
+	 *  slot(...).referencedBy("my-item");
 	 *
-	 * // Now you can update your item somewhere
-	 * slot(...).onClick(click -> {
-	 *     ViewSlotContext myItemContext = click.ref("my-item");
-	 *     myItemContext.updateSlot();
-	 * });
-	 * }
+	 *  // Now you can update your item somewhere
+	 *  slot(...).onClick(click -&#62; {
+	 *      ViewSlotContext myItemContext = click.ref("my-item");
+	 *      myItemContext.updateSlot();
+	 *  });
 	 * </pre>
 	 * To get the instance a slot through a reference key, you will need a context.
 	 *

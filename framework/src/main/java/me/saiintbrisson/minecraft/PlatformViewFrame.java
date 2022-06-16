@@ -10,7 +10,7 @@ public interface PlatformViewFrame<V, P, F extends PlatformViewFrame<V, P, F>> e
 	 * Registers a new view to this view frame.
 	 *
 	 * @param views The views that'll be registered.
-	 * @return This view frame instance.
+	 * @return This platform view frame.
 	 */
 	F with(@NotNull final AbstractView... views);
 
@@ -18,6 +18,7 @@ public interface PlatformViewFrame<V, P, F extends PlatformViewFrame<V, P, F>> e
 	 * Removes a view from this view frame.
 	 *
 	 * @param views The views that'll be removed.
+	 * @return This platform view frame.
 	 */
 	F remove(@NotNull final AbstractView... views);
 
@@ -25,6 +26,7 @@ public interface PlatformViewFrame<V, P, F extends PlatformViewFrame<V, P, F>> e
 	 * Registers this view frame.
 	 *
 	 * @throws IllegalStateException If this view frame is already registered.
+	 * @return This platform view frame.
 	 */
 	F register();
 

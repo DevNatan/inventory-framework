@@ -13,7 +13,7 @@ final class BukkitViewSlotMoveContextImpl extends BukkitClickViewSlotContext imp
 	@ToString.Exclude
 	private final ViewContainer targetContainer;
 
-	private final ItemStack targetItem, swappedItem;
+	private final ItemWrapper targetItem, swappedItem;
 	private final int targetSlot;
 	private final boolean swap, stack;
 
@@ -30,8 +30,8 @@ final class BukkitViewSlotMoveContextImpl extends BukkitClickViewSlotContext imp
 	) {
 		super(backingItem, parent, clickOrigin);
 		this.targetContainer = targetContainer;
-		this.targetItem = targetItem;
-		this.swappedItem = swappedItem;
+		this.targetItem = new ItemWrapper(targetItem);
+		this.swappedItem = new ItemWrapper(swappedItem);
 		this.targetSlot = targetSlot;
 		this.swap = swap;
 		this.stack = stack;

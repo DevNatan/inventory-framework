@@ -76,4 +76,6 @@ interface ViewContainer {
 
 	void changeTitle(@Nullable String title);
 
+	boolean isEntityContainer();
+
 }
