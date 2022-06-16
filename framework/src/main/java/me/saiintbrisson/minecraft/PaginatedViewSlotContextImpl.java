@@ -47,6 +47,12 @@ final class PaginatedViewSlotContextImpl<T> extends AbstractViewSlotContext
 	}
 
 	@Override
+	public boolean hasSource() {
+		// it's a context of a rendered pagination item
+		return true;
+	}
+
+	@Override
 	public void setSource(@NotNull List<T> source) {
 		throw new IllegalStateException(
 			"It is not possible to change pagination data in a paginated item rendering context."
