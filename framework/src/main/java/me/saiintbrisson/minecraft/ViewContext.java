@@ -93,4 +93,6 @@ public interface ViewContext extends VirtualView {
 	@ApiStatus.Internal
 	ViewItem resolve(int index, boolean resolveOnRoot);
 
+	ViewSlotContext ref(String key);
+
 }

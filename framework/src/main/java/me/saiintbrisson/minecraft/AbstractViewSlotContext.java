@@ -64,29 +64,6 @@ public abstract class AbstractViewSlotContext extends BaseViewContext implements
 	}
 
 	@Override
-	public ViewSlotContext ref(final String key) {
-		ViewItem item = tryResolveRef(this, key);
-		if (item == null) item = tryResolveRef(getRoot(), key);
-		if (item == null) return null;
-
-		return getRoot().getViewFrame().getFactory().createSlotContext(
-			item,
-			getRoot(),
-			getContainer()
-		);
-	}
-
-	private ViewItem tryResolveRef(final AbstractVirtualView view, final String key) {
-		for (final ViewItem item : view.getItems()) {
-			if (item == null) continue;
-			if (item.getReferenceKey() == null) continue;
-			if (item.getReferenceKey().equals(key))
-				return item;
-		}
-		return null;
-	}
-
-	@Override
 	public void updateSlot() {
 		getRoot().update(this, getSlot());
 	}
