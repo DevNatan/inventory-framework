@@ -122,7 +122,7 @@ class BaseViewContext extends AbstractVirtualView implements ViewContext {
 	}
 
 	@Override
-	public final void setPropagateErrors(boolean propagateErrors) {
+	public void setPropagateErrors(boolean propagateErrors) {
 		getAttributes().setPropagateErrors(propagateErrors);
 	}
 
@@ -177,7 +177,7 @@ class BaseViewContext extends AbstractVirtualView implements ViewContext {
 	@Override
 	public boolean isCancelled() {
 		throw new UnsupportedOperationException(String.format(
-			"This context %s is not cancellable",
+			"This context is not cancellable: %s",
 			getClass().getName()
 		));
 	}
@@ -185,7 +185,7 @@ class BaseViewContext extends AbstractVirtualView implements ViewContext {
 	@Override
 	public void setCancelled(boolean cancelled) {
 		throw new UnsupportedOperationException(String.format(
-			"This context %s is not cancellable",
+			"This context is not cancellable: %s",
 			getClass().getName()
 		));
 	}

@@ -77,6 +77,14 @@ public abstract class AbstractViewSlotContext extends BaseViewContext implements
 	}
 
 	@Override
+	public final void setPropagateErrors(boolean propagateErrors) {
+		throw new IllegalStateException(
+			"Error propagation attribute cannot be modified from a ViewSlotContext." +
+			"You must set this in view's #onRender(...) or globally on constructor instead."
+		);
+	}
+
+	@Override
 	public final void updateSlot() {
 		getRoot().update(this, getSlot());
 	}
