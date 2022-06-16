@@ -3,6 +3,7 @@ package me.saiintbrisson.minecraft;
 import lombok.Setter;
 import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.List;
 import java.util.function.Function;
@@ -48,6 +49,15 @@ abstract class BasePaginatedView<T> extends AbstractView implements PaginatedVir
 		return null;
 	}
 
+	/**
+	 * TODO document it properly
+	 *
+	 * You can use: item.withItem(...);
+	 *
+	 * @param render The pagination item rendering context.
+	 * @param item The item that'll be displayed.
+	 * @param value The paginated value.
+	 */
 	protected abstract void onItemRender(
 		@NotNull PaginatedViewSlotContext<T> render,
 		@NotNull ViewItem item,
