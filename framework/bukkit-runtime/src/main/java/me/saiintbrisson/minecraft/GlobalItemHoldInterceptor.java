@@ -28,7 +28,11 @@ final class GlobalItemHoldInterceptor implements PipelineInterceptor<BukkitClick
 		if (!(action.name().startsWith("PICKUP") || action == InventoryAction.CLONE_STACK))
 			return;
 
-		subject.getBackingItem().setState(ViewItem.State.HOLDING);
+		final ViewItem item = subject.getBackingItem();
+		item.setState(ViewItem.State.HOLDING);
+
+		if (item.getItemHoldHandler() != null)
+			item.getItemHoldHandler().accept(subject);
 
 		final AbstractView root = subject.getRoot();
 		root.onItemHold(subject);
