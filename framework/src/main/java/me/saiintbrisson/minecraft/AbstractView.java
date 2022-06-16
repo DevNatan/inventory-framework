@@ -38,7 +38,6 @@ public abstract class AbstractView extends AbstractVirtualView {
 	@ToString.Include
 	private final @NotNull ViewType type;
 
-	@Getter(AccessLevel.PROTECTED)
 	PlatformViewFrame<?, ?, ?> viewFrame;
 
 	private final Set<ViewContext> contexts = Collections.newSetFromMap(
@@ -124,7 +123,7 @@ public abstract class AbstractView extends AbstractVirtualView {
 		return Collections.unmodifiableSet(contexts);
 	}
 
-	public final ViewContext getContext(@NotNull Predicate<ViewContext> predicate) {
+	final ViewContext getContext(@NotNull Predicate<ViewContext> predicate) {
 		return contexts.stream().filter(predicate).findFirst().orElse(null);
 	}
 
