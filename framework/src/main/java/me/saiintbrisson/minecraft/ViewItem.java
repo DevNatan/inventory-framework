@@ -4,10 +4,13 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Range;
 
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
@@ -20,6 +23,8 @@ import java.util.function.Consumer;
 @Setter(AccessLevel.PACKAGE)
 @Getter(AccessLevel.PACKAGE)
 public final class ViewItem {
+
+	private static final long NO_INTERVAL = -1;
 
 	enum State {UNDEFINED, HOLDING}
 
@@ -40,6 +45,7 @@ public final class ViewItem {
 	private Consumer<ViewSlotContext> itemHoldHandler;
 	private BiConsumer<ViewSlotContext, ViewSlotContext> itemReleaseHandler;
 	private Map<String, Object> data;
+	private long updateIntervalInTicks = NO_INTERVAL;
 
 	/**
 	 * Creates a new ViewItem instance.
@@ -59,6 +65,35 @@ public final class ViewItem {
 	 */
 	ViewItem(int slot) {
 		this.slot = slot;
+	}
+
+	/**
+	 * Schedules this item to be updated every a defined interval.
+	 *
+	 * @param intervalInTicks The item update interval in ticks.
+	 * @return This item.
+	 */
+	@ApiStatus.Experimental
+	@Contract(value = "_ -> this", mutates = "this")
+	public ViewItem scheduleUpdate(@Range(from = NO_INTERVAL, to = Long.MAX_VALUE) long intervalInTicks) {
+		this.updateIntervalInTicks = Math.max(NO_INTERVAL, intervalInTicks);
+		return this;
+	}
+
+	/**
+	 * Schedules this item to be updated every a defined interval.
+	 *
+	 * @param duration The item update interval.
+	 * @return This item.
+	 */
+	@ApiStatus.Experimental
+	@Contract(value = "_ -> this", mutates = "this")
+	public ViewItem scheduleUpdate(@Nullable Duration duration) {
+		if (duration == null)
+			this.updateIntervalInTicks = NO_INTERVAL;
+		else
+			this.updateIntervalInTicks = duration.getSeconds() * 20L;
+		return this;
 	}
 
 	/**
