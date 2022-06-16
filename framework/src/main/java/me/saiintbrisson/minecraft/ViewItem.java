@@ -295,7 +295,7 @@ public final class ViewItem {
 	 * <p>
 	 * An item can be re-rendered individually using {@link ViewSlotContext#updateSlot()}.
 	 *
-	 * @param handler The move in handler.
+	 * @param handler The render handler.
 	 * @return This item.
 	 */
 	@Contract(value = "_ -> this", mutates = "this")
@@ -312,7 +312,7 @@ public final class ViewItem {
 	 * <p>
 	 * An item can be updated individually using {@link ViewSlotContext#updateSlot()}.
 	 *
-	 * @param handler The move in handler.
+	 * @param handler The update handler.
 	 * @return This item.
 	 */
 	@Contract(value = "_ -> this", mutates = "this")
@@ -329,7 +329,7 @@ public final class ViewItem {
 	 * <p>
 	 * **Using item mutation functions in this handler is not allowed.**
 	 *
-	 * @param handler The move in handler.
+	 * @param handler The click handler.
 	 * @return This item.
 	 */
 	@Contract(value = "_ -> this", mutates = "this")
