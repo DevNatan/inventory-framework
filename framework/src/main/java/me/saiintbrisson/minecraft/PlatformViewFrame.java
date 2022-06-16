@@ -12,7 +12,7 @@ public interface PlatformViewFrame<V, P, F extends PlatformViewFrame<V, P, F>> e
 	 * @param views The views that'll be registered.
 	 * @return This platform view frame.
 	 */
-	F with(@NotNull final AbstractView... views);
+	F with(@NotNull AbstractView... views);
 
 	/**
 	 * Removes a view from this view frame.
@@ -20,7 +20,7 @@ public interface PlatformViewFrame<V, P, F extends PlatformViewFrame<V, P, F>> e
 	 * @param views The views that'll be removed.
 	 * @return This platform view frame.
 	 */
-	F remove(@NotNull final AbstractView... views);
+	F remove(@NotNull AbstractView... views);
 
 	/**
 	 * Registers this view frame.
@@ -51,14 +51,14 @@ public interface PlatformViewFrame<V, P, F extends PlatformViewFrame<V, P, F>> e
 	ViewComponentFactory getFactory();
 
 	<R extends AbstractView> R open(
-		@NotNull final Class<R> viewClass,
-		@NotNull final V viewer
+		@NotNull Class<R> viewClass,
+		@NotNull V viewer
 	);
 
 	<R extends AbstractView> R open(
-		@NotNull final Class<R> viewClass,
-		@NotNull final V viewer,
-		@NotNull final Map<String, Object> data
+		@NotNull Class<R> viewClass,
+		@NotNull V viewer,
+		Map<String, Object> data
 	);
 
 	ViewErrorHandler getErrorHandler();
