@@ -25,6 +25,14 @@ public interface VirtualView {
 
 	/**
 	 * Closes this view immediately.
+	 *
+	 * @deprecated Use {@link #closeUninterruptedly()} instead.
+	 */
+	@Deprecated
+	void closeNow();
+
+	/**
+	 * Closes this view immediately.
 	 */
 	void closeUninterruptedly();
 

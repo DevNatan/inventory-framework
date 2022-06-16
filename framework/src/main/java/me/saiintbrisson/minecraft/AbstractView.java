@@ -116,6 +116,12 @@ public abstract class AbstractView extends AbstractVirtualView {
 	}
 
 	@Override
+	@Deprecated
+	public final void closeNow() {
+		closeUninterruptedly();
+	}
+
+	@Override
 	public final void closeUninterruptedly() {
 		getContexts().forEach(ViewContext::close);
 	}
