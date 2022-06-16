@@ -30,13 +30,13 @@ public class TestViewFrame implements PlatformViewFrame<Void, Void, TestViewFram
 	}
 
 	@Override
-	public TestViewFrame with(@NotNull View... views) {
+	public TestViewFrame with(@NotNull AbstractView... views) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public TestViewFrame remove(@NotNull View... views) {
-		throw new UnsupportedOperationException();
+	public TestViewFrame remove(@NotNull AbstractView... views) {
+		return null;
 	}
 
 	@Override
