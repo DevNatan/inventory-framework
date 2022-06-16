@@ -220,6 +220,37 @@ public final class ViewItem {
 	 *
 	 * @param key   The property key.
 	 * @param value The property value.
+	 * @deprecated Use {@link #withData(String, Object)} instead.
+	 */
+	@Deprecated
+	public void setData(@NotNull String key, @NotNull Object value) {
+		withData(key, value);
+	}
+
+	/**
+	 * Adds a new user-defined property to this item.
+	 * <p>
+	 * User-defined properties can be used to persist data that can be retrieved later even after
+	 * several actions applied to that item.
+	 * <p>
+	 * An example of user-defined data persistence is for post-moving identification of an item
+	 * inside the container, you can define a data in this item and as soon as the actor moves it
+	 * the data will remain there, and you can use it any way you want.
+	 * <pre>
+	 * {@code
+	 * slot(...).withCancelOnClick(false).withData("name", "Anna")
+	 * slot(...).withCncelOnClick(false).withData("name", "James");
+	 *
+	 * @Override
+	 * protected void onItemHold(ViewSlotContext context) {
+	 *     String name = context.getItemData("name");
+	 *     ...
+	 * }
+	 * }
+	 * </pre>
+	 *
+	 * @param key   The property key.
+	 * @param value The property value.
 	 * @return This item.
 	 */
 	@Contract("_, _ -> this")
