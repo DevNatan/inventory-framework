@@ -2,6 +2,7 @@ package me.saiintbrisson.minecraft;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
@@ -11,12 +12,13 @@ import static java.lang.String.format;
 @Getter
 @ToString
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class ViewType {
 
-	public static final ViewType HOPPER = new ViewType("hopper", 5, 1, 5);
-	public static final ViewType CHEST = new ViewType("chest", 54, 6, 9);
+	public static final ViewType HOPPER = new ViewType("hopper", 5, 1, 5, false);
+	public static final ViewType CHEST = new ViewType("chest", 54, 6, 9, true);
 
-	public static final ViewType FURNACE = new ViewType("furnace", 2, 1, 1) {
+	public static final ViewType FURNACE = new ViewType("furnace", 2, 1, 1, false) {
 		private static final int RESULT_SLOT = 2;
 
 		@Override
@@ -30,7 +32,7 @@ public class ViewType {
 		}
 	};
 
-	public static final ViewType CRAFTING_TABLE = new ViewType("crafting-table", 9, 3, 3) {
+	public static final ViewType CRAFTING_TABLE = new ViewType("crafting-table", 9, 3, 3, false) {
 		private static final int RESULT_SLOT = 3;
 
 		@Override
@@ -49,8 +51,11 @@ public class ViewType {
 		}
 	};
 
+	@EqualsAndHashCode.Include
 	private final String identifier;
+
 	private final int maxSize, rows, columns;
+	private final boolean extendable;
 
 	/**
 	 * Normalizes the specified parameter to conform to container constraints and does not exceed
@@ -63,7 +68,7 @@ public class ViewType {
 	public final int normalize(final int size) {
 		if (size == 0) return size;
 
-		if (size > rows) {
+		if (size <= rows) {
 			if (size % columns != 0)
 				throw new IllegalArgumentException(format(
 					"Container size must be a multiple of %d (given: %d)",

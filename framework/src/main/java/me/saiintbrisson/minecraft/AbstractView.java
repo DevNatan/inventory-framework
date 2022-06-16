@@ -33,7 +33,7 @@ public abstract class AbstractView extends AbstractVirtualView {
 	static final ViewType DEFAULT_TYPE = ViewType.CHEST;
 
 	@ToString.Include
-	private final int rows;
+	private final int size;
 	@ToString.Include
 	private final String title;
 	@ToString.Include
@@ -57,18 +57,20 @@ public abstract class AbstractView extends AbstractVirtualView {
 	 */
 	private boolean initialized;
 
-	AbstractView(int rows, String title, @NotNull ViewType type) {
-		this.rows = rows;
+	AbstractView(int size, String title, @NotNull ViewType type) {
+		final int fixedSize = size == 0 ? type.getMaxSize() : type.normalize(size);
+		this.size = fixedSize;
 		this.title = title;
 		this.type = type;
-		setItems(new ViewItem[type.normalize(rows)]);
+
+		setItems(new ViewItem[fixedSize]);
 	}
 
 	final void open(@NotNull Viewer viewer, @NotNull Map<String, Object> data) {
 		final OpenViewContext open = open0(viewer, data);
 
 		// rows will be normalized to fixed container size on `createContainer`
-		final int containerSize = open.getContainerSize() == 0 ? rows : open.getContainerSize();
+		final int containerSize = open.getContainerSize() == 0 ? size : open.getContainerSize();
 
 		final String containerTitle = open.getContainerTitle() == null ? title : open.getContainerTitle();
 		final ViewType containerType = open.getContainerType() == null ? type : open.getContainerType();
@@ -270,14 +272,18 @@ public abstract class AbstractView extends AbstractVirtualView {
 		return type;
 	}
 
+	public final int getSize() {
+		return size;
+	}
+
+	@Override
 	public final int getRows() {
-		return rows;
+		return getSize();
 	}
 
 	public final String getTitle() {
 		return title;
 	}
-
 
 
 	/**

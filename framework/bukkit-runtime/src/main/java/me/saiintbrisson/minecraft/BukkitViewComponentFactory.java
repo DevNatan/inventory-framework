@@ -45,10 +45,9 @@ final class BukkitViewComponentFactory extends ViewComponentFactory {
 	) {
 		final ViewType finalType = type == null ? AbstractView.DEFAULT_TYPE : type;
 		checkTypeSupport(finalType);
-		final int finalSize = size == 0 ? 0 : finalType.normalize(size);
 
 		// only chests can have a custom size
-		if (finalSize != 0 && finalType != ViewType.CHEST)
+		if (size != 0 && !finalType.isExtendable())
 			throw new IllegalArgumentException(String.format(
 				"Only \"%s\" type can have a custom size," +
 					" \"%s\" always have a size of %d. Remove the parameter that specifies the size" +
@@ -61,13 +60,13 @@ final class BukkitViewComponentFactory extends ViewComponentFactory {
 
 		final Inventory inventory;
 		if (title == null) {
-			inventory = finalSize == 0
+			inventory = !finalType.isExtendable()
 				? createInventory((InventoryHolder) view, requireNonNull(toInventoryType(finalType)))
-				: createInventory((InventoryHolder) view, finalSize);
-		} else if (finalSize == 0)
+				: createInventory((InventoryHolder) view, size);
+		} else if (!finalType.isExtendable())
 			inventory = createInventory((InventoryHolder) view, requireNonNull(toInventoryType(finalType)), title);
 		else
-			inventory = createInventory((InventoryHolder) view, finalSize, title);
+			inventory = createInventory((InventoryHolder) view, size, title);
 
 		return new BukkitChestViewContainer(inventory);
 	}
@@ -98,15 +97,8 @@ final class BukkitViewComponentFactory extends ViewComponentFactory {
 	@Override
 	public @NotNull AbstractViewSlotContext createSlotContext(
 		final ViewItem item,
-		@NotNull final AbstractView root,
-		final ViewContainer container
+		final BaseViewContext parent
 	) {
-		final BaseViewContext parent = root.getViewFrame().getFactory().createContext(
-			root,
-			container,
-			null
-		);
-
 		return new BukkitViewSlotContext(item, parent);
 	}
 

@@ -65,6 +65,11 @@ public class TestViewFrame implements PlatformViewFrame<Void, Void, TestViewFram
 	}
 
 	@Override
+	public void nextTick(Runnable runnable) {
+		runnable.run();
+	}
+
+	@Override
 	public <R extends AbstractView> R open(@NotNull Class<R> viewClass, @NotNull Void viewer) {
 		throw new UnsupportedOperationException();
 	}

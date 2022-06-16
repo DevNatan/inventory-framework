@@ -225,8 +225,7 @@ class BaseViewContext extends AbstractVirtualView implements ViewContext {
 
 		return vf.getFactory().createSlotContext(
 			item,
-			getRoot(),
-			getContainer()
+			this
 		);
 	}
 

@@ -47,9 +47,8 @@ public abstract class ViewComponentFactory {
 
 	@NotNull
 	public abstract AbstractViewSlotContext createSlotContext(
-		ViewItem item,
-		@NotNull final AbstractView root,
-		final ViewContainer container
+		final ViewItem item,
+		final BaseViewContext parent
 	);
 
 	public abstract Object createItem(

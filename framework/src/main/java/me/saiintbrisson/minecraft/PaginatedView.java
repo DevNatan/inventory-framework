@@ -2,6 +2,7 @@ package me.saiintbrisson.minecraft;
 
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -35,6 +36,9 @@ public abstract class PaginatedView<T> extends BasePaginatedView<T> implements I
 
 	public PaginatedView(int size, String title, @NotNull ViewType type) {
 		super(size, title, type);
+	}
+
+	protected void onRender(@NotNull PaginatedViewContext<T> context) {
 	}
 
 	@Override

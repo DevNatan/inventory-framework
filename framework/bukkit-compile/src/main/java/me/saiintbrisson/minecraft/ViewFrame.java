@@ -60,14 +60,10 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
 		// TODO: search for alternative ways to retrieve current view because
 		//       InventoryHolder is deprecated in newer versions of Bukkit API
 		final InventoryHolder holder = inventory.getHolder();
-		if (!(holder instanceof View))
+		if (!(holder instanceof AbstractView))
 			return null;
 
-		final View view = (View) holder;
-		if (inventory.getType() != InventoryType.CHEST)
-			throw new UnsupportedOperationException("Views is only supported on chest-type inventory.");
-
-		return view;
+		return (AbstractView) holder;
 	}
 
 	/**
@@ -240,6 +236,11 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
 			StringUtils.substringBeforeLast(feature.getClass().getSimpleName(), "Feature")
 		));
 		return value;
+	}
+
+	@Override
+	public void nextTick(Runnable runnable) {
+		getOwner().getServer().getScheduler().runTask(getOwner(), runnable);
 	}
 
 	public static ViewFrame of(

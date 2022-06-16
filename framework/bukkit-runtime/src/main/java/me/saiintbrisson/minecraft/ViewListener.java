@@ -37,8 +37,6 @@ class ViewListener implements Listener {
 		// that the View's inventory is open and the context doesn't exist,
 		// so we check to see if it's null
 		if (context == null) {
-			System.out.println("contexts: " + view.getContexts());
-
 			throw new IllegalStateException(String.format(
 				"View context cannot be null in %s",
 				view.getClass().getName()

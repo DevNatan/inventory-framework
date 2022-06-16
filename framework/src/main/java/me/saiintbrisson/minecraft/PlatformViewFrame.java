@@ -65,4 +65,6 @@ public interface PlatformViewFrame<V, P, F extends PlatformViewFrame<V, P, F>> e
 
 	void setErrorHandler(ViewErrorHandler errorHandler);
 
+	void nextTick(Runnable runnable);
+
 }

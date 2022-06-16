@@ -92,11 +92,11 @@ public abstract class AbstractVirtualView implements VirtualView {
 
 		if (item.getRenderHandler() != null) {
 			final ViewSlotContext renderContext = PlatformUtils.getFactory()
-				.createSlotContext(item, context.getRoot(), context.getContainer());
+				.createSlotContext(item, (BaseViewContext) context);
 
 			runCatching(context, () -> item.getRenderHandler().accept(renderContext));
 			if (renderContext.hasChanged()) {
-				context.getContainer().renderItem(slot, renderContext.getItem());
+				context.getContainer().renderItem(slot, unwrap(renderContext.getItem()));
 				renderContext.setChanged(false);
 				return;
 			}
@@ -105,12 +105,19 @@ public abstract class AbstractVirtualView implements VirtualView {
 		if (fallbackItem == null)
 			throw new IllegalArgumentException(String.format(
 				"No item were provided and the rendering function was not defined at slot %d." +
-					"You must use a rendering function slot(...).onRender(...)" +
-					" or a fallback item slot(fallbackItem)",
+					"You must use a rendering function #slot(...).onRender(...)" +
+					" or a fallback item #slot(fallbackItem)",
 				slot
 			));
 
-		context.getContainer().renderItem(slot, fallbackItem);
+		context.getContainer().renderItem(slot, unwrap(fallbackItem));
+	}
+
+	private Object unwrap(Object item) {
+		if (item instanceof ItemWrapper)
+			return unwrap(((ItemWrapper) item).getValue());
+
+		return item;
 	}
 
 	@Override
@@ -136,13 +143,19 @@ public abstract class AbstractVirtualView implements VirtualView {
 			return;
 		}
 
+		update(context, item, slot);
+	}
+
+	final void update(@NotNull ViewContext context, ViewItem item, int slot) {
+		inventoryModificationTriggered();
+
 		if (item.getUpdateHandler() != null) {
 			final ViewSlotContext updateContext = PlatformUtils.getFactory()
-				.createSlotContext(item, context.getRoot(), context.getContainer());
+				.createSlotContext(item, (BaseViewContext) context);
 
 			runCatching(context, () -> item.getUpdateHandler().accept(updateContext));
 			if (updateContext.hasChanged()) {
-				context.getContainer().renderItem(slot, updateContext.getItem());
+				context.getContainer().renderItem(slot, unwrap(updateContext.getItem()));
 				updateContext.setChanged(false);
 				return;
 			}
