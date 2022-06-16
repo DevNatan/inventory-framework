@@ -5,6 +5,8 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Intercepted when a player clicks on the view container.
+ * <p>
+ * If the click is canceled, this interceptor ends the pipeline immediately.
  *
  * @see PipelineInterceptor
  */
