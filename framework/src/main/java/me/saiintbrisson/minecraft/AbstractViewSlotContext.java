@@ -12,6 +12,7 @@ import java.util.NoSuchElementException;
 import java.util.function.Consumer;
 
 import static java.lang.String.format;
+import static java.lang.String.valueOf;
 
 @Getter
 @Setter
@@ -68,6 +69,12 @@ public abstract class AbstractViewSlotContext extends BaseViewContext implements
 	}
 
 	@Override
+	public ViewSlotContext withItem(@Nullable Object item) {
+		setItem(item);
+		return this;
+	}
+
+	@Override
 	public final boolean hasChanged() {
 		return changed;
 	}
@@ -100,6 +107,16 @@ public abstract class AbstractViewSlotContext extends BaseViewContext implements
 			"Property \"%s\" has not been set for this item. Use #withData(key, value) to set it",
 			key
 		));
+	}
+
+	@Override
+	public final int getSlot() {
+		return getBackingItem().getSlot();
+	}
+
+	@Override
+	public boolean isOnEntityContainer() {
+		return getContainer().isEntityContainer();
 	}
 
 	@Override

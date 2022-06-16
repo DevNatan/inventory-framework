@@ -22,18 +22,8 @@ public class BukkitViewSlotContext extends AbstractViewSlotContext {
 	}
 
 	@Override
-	public final int getSlot() {
-		return getBackingItem().getSlot();
-	}
-
-	@Override
 	public Player getPlayer() {
 		return BukkitViewer.toPlayerOfContext(this);
-	}
-
-	@Override
-	public boolean isOnEntityContainer() {
-		return getContainer().isEntityContainer();
 	}
 
 }

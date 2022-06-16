@@ -57,6 +57,16 @@ public interface ViewSlotContext extends ViewContext {
 	void setItem(@Nullable Object item);
 
 	/**
+	 * Defines a new item for this context, triggering an
+	 * {@link AbstractVirtualView#inventoryModificationTriggered() inventory modification}.
+	 * <p>
+	 * If you need to change the item partially use {@link #updateItem(Consumer)}.
+	 *
+	 * @param item The new item that'll be set.
+	 */
+	ViewSlotContext withItem(@Nullable Object item);
+
+	/**
 	 * Applies a patch to the current item.
 	 * <p>
 	 * This method should be used when only a partial modification is required to be applied
