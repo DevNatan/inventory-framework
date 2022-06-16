@@ -12,7 +12,7 @@ import java.util.Random;
 
 import static me.saiintbrisson.minecraft.MoveInOutFeature.MoveInOut;
 
-class TestView extends View {
+class TestView extends PaginatedView<String> {
 
 	public TestView() {
 		super(3, "Test");
@@ -43,7 +43,9 @@ class TestView extends View {
 
 		slot(8).cancelOnClick()
 			.onRender(render -> render.setItem(new ItemStack(Material.values()[new Random().nextInt(Material.values().length)])))
-			.onClick(click -> click.setItem(new ItemStack(Material.GOLDEN_APPLE)));
+			.onClick(click -> {
+				click.setCancelled(true);
+			});
 	}
 
 	@Override
@@ -61,6 +63,10 @@ class TestView extends View {
 	@Override
 	protected void onMoveOut(@NotNull ViewSlotMoveContext context) {
 		context.getPlayer().sendMessage("moved out");
+	}
+
+	@Override
+	protected void onItemRender(@NotNull PaginatedViewSlotContext<String> render, @NotNull ViewItem item, @NotNull String value) {
 	}
 
 }

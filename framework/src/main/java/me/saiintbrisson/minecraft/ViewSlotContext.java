@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.NoSuchElementException;
+import java.util.function.Consumer;
 
 public interface ViewSlotContext extends ViewContext {
 
@@ -23,9 +24,11 @@ public interface ViewSlotContext extends ViewContext {
 	int getSlot();
 
 	@ApiStatus.Internal
-	Object getItem();
+	ItemWrapper getItem();
 
 	void setItem(@Nullable Object item);
+
+	void updateItem(Consumer<ItemWrapper> updater);
 
 	boolean isLeftClick();
 

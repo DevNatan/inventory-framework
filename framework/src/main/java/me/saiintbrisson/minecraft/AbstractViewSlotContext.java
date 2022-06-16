@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.function.Consumer;
 
 import static java.lang.String.format;
 
@@ -27,7 +28,7 @@ public abstract class AbstractViewSlotContext extends BaseViewContext implements
 	private boolean cancelled;
 
 	@Setter(AccessLevel.NONE)
-	private Object item;
+	private ItemWrapper item;
 
 	private boolean changed;
 
@@ -48,14 +49,21 @@ public abstract class AbstractViewSlotContext extends BaseViewContext implements
 	}
 
 	@Override
-	public final Object getItem() {
+	public final ItemWrapper getItem() {
 		return item;
+	}
+
+	@Override
+	public final void updateItem(Consumer<ItemWrapper> updater) {
+		inventoryModificationTriggered();
+		updater.accept(this.item);
+		setChanged(true);
 	}
 
 	@Override
 	public final void setItem(@Nullable final Object item) {
 		inventoryModificationTriggered();
-		this.item = PlatformUtils.getFactory().createItem(item);
+		this.item = new ItemWrapper(PlatformUtils.getFactory().createItem(item));
 		setChanged(true);
 	}
 
