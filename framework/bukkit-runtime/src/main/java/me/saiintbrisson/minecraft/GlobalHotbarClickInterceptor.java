@@ -17,17 +17,15 @@ final class GlobalHotbarClickInterceptor implements PipelineInterceptor<BukkitCl
 		@NotNull PipelineContext<BukkitClickViewSlotContext> pipeline,
 		BukkitClickViewSlotContext subject
 	) {
+		if (subject.isCancelled()) return;
+
 		final InventoryClickEvent clickEvent = subject.getClickOrigin();
 
 		if (clickEvent.getClick() != ClickType.NUMBER_KEY)
 			return;
 
 		subject.getRoot().onHotbarInteract(subject, clickEvent.getHotbarButton());
-		if (!subject.isCancelled())
-			return;
-
-		clickEvent.setCancelled(true);
-		pipeline.finish();
+		clickEvent.setCancelled(subject.isCancelled());
 	}
 
 }

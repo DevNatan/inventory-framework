@@ -22,7 +22,6 @@ final class ItemClickInterceptor implements PipelineInterceptor<BukkitClickViewS
 
 		final ViewItem item = subject.getBackingItem();
 
-		System.out.println("Backing item: " + item);
 		if (item == null)
 			return;
 
@@ -33,11 +32,6 @@ final class ItemClickInterceptor implements PipelineInterceptor<BukkitClickViewS
 			subject.getRoot().runCatching(subject, () -> item.getClickHandler().accept(subject));
 
 		event.setCancelled(subject.isCancelled());
-
-		if (!subject.isCancelled())
-			return;
-
-		pipeline.finish();
 	}
 
 }
