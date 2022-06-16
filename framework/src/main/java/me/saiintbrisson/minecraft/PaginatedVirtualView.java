@@ -23,6 +23,8 @@ public interface PaginatedVirtualView<T> extends VirtualView {
 	 */
 	int getPageItemsCount();
 
+	boolean hasSource();
+
 	void setSource(@NotNull List<T> source);
 
 }

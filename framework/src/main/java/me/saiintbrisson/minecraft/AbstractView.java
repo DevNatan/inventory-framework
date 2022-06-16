@@ -98,7 +98,7 @@ public abstract class AbstractView extends AbstractVirtualView {
 	}
 
 	@Override
-	final void render(@NotNull ViewContext context) {
+	void render(@NotNull ViewContext context) {
 		getPipeline().execute(RENDER, context);
 		super.render(context);
 	}

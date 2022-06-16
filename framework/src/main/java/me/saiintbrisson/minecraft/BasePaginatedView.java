@@ -10,13 +10,28 @@ import java.util.function.Function;
 @ToString(callSuper = true)
 abstract class BasePaginatedView<T> extends AbstractView implements PaginatedVirtualView<T> {
 
-	@Setter
 	private List<T> source;
 
 	private Function<PaginatedViewContext<T>, ViewItem> previousPageItemFactory, nextPageItemFactory;
 
 	BasePaginatedView(int rows, String title, @NotNull ViewType type) {
 		super(rows, title, type);
+	}
+
+	@Override
+	final void render(@NotNull ViewContext context) {
+		super.render(context);
+
+		if (!hasSource() && !context.paginated().hasSource())
+			throw new IllegalStateException(
+				"At least one pagination source must be set, " +
+				"use #setSource in the PaginatedView constructor or set just to a context" +
+				" in the #onRender(...) function with \"render.paginated().setSource(...)\"."
+			);
+	}
+
+	public final void setSource(@NotNull List<T> source) {
+		this.source = source;
 	}
 
 	@Override

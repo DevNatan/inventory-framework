@@ -41,7 +41,11 @@ public class View extends AbstractView implements InventoryHolder {
 		super(size, title, type);
 	}
 
-	@SuppressWarnings("ConstantConditions")
+	@Override
+	final void render(@NotNull ViewContext context) {
+		super.render(context);
+	}
+
 	@NotNull
 	@Override
 	public final Inventory getInventory() {
