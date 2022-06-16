@@ -3,7 +3,6 @@ package me.saiintbrisson.minecraft;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
-import java.util.function.UnaryOperator;
 
 public interface PlatformViewFrame<V, P, F extends PlatformViewFrame<V, P, F>> extends FeatureInstaller<P> {
 
@@ -13,14 +12,14 @@ public interface PlatformViewFrame<V, P, F extends PlatformViewFrame<V, P, F>> e
 	 * @param views The views that'll be registered.
 	 * @return This view frame instance.
 	 */
-	F with(@NotNull final View... views);
+	F with(@NotNull final AbstractView... views);
 
 	/**
 	 * Removes a view from this view frame.
 	 *
 	 * @param views The views that'll be removed.
 	 */
-	F remove(@NotNull final View... views);
+	F remove(@NotNull final AbstractView... views);
 
 	/**
 	 * Registers this view frame.

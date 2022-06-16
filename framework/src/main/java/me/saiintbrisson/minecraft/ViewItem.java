@@ -55,6 +55,12 @@ public final class ViewItem {
 		return item;
 	}
 
+	@Contract(value = "_ -> this", mutates = "this")
+	ViewItem withItem(Object item) {
+		setItem(item);
+		return this;
+	}
+
 	/**
 	 * Sets the handler that'll be called when the item is rendered.
 	 *

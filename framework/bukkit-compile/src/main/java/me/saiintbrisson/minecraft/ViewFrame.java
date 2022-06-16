@@ -30,7 +30,7 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
 	private ViewErrorHandler errorHandler;
 
 	@ToString.Exclude
-	private final Map<Class<? extends AbstractView>, View> views = new HashMap<>();
+	private final Map<Class<? extends AbstractView>, AbstractView> views = new HashMap<>();
 
 	@Getter(AccessLevel.NONE)
 	@ToString.Exclude
@@ -79,9 +79,9 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
 	}
 
 	@Override
-	public ViewFrame with(@NotNull View... views) {
+	public ViewFrame with(@NotNull AbstractView... views) {
 		synchronized (getViews()) {
-			for (final View view : views) {
+			for (final AbstractView view : views) {
 				if (getViews().containsKey(view.getClass()))
 					throw new IllegalArgumentException(String.format(
 						"View %s already registered, try to use #with before #register instead.",
@@ -89,16 +89,18 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
 					));
 
 				getViews().put(view.getClass(), view);
-				legacyViews.put(view.getClass(), view);
+
+				if (view instanceof View)
+					legacyViews.put(((View) view).getClass(), (View) view);
 			}
 		}
 		return this;
 	}
 
 	@Override
-	public ViewFrame remove(@NotNull View... views) {
+	public ViewFrame remove(@NotNull AbstractView... views) {
 		synchronized (getViews()) {
-			for (final View view : views) {
+			for (final AbstractView view : views) {
 				view.close();
 				getViews().remove(view.getClass());
 			}
@@ -107,7 +109,7 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
 	}
 
 	/**
-	 * @deprecated Use {@link #register()} and {@link #with(View...)} instead.
+	 * @deprecated Use {@link #register()} and {@link #with(AbstractView...)} instead.
 	 */
 	@Deprecated
 	@ApiStatus.ScheduledForRemoval(inVersion = "2.5.2")
@@ -126,7 +128,7 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
 		if (servicesManager.isProvidedFor(ViewFrame.class))
 			return this;
 
-		for (final View view : views.values()) {
+		for (final AbstractView view : views.values()) {
 			view.setViewFrame(this);
 			PlatformUtils.getFactory().setupView(view);
 		}
@@ -145,9 +147,9 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
 		if (!isRegistered())
 			throw new IllegalStateException("Not registered");
 
-		final Iterator<View> viewIterator = views.values().iterator();
+		final Iterator<AbstractView> viewIterator = views.values().iterator();
 		while (viewIterator.hasNext()) {
-			final View view = viewIterator.next();
+			final AbstractView view = viewIterator.next();
 			view.close();
 			viewIterator.remove();
 		}
@@ -197,7 +199,7 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
 	}
 
 	/**
-	 * @deprecated Use {@link #with(View...)} instead.
+	 * @deprecated Use {@link #with(AbstractView...)} instead.
 	 */
 	@Deprecated
 	@ApiStatus.ScheduledForRemoval(inVersion = "2.5.2")
@@ -206,7 +208,7 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
 	}
 
 	/**
-	 * @deprecated Use {@link #with(View...)} instead.
+	 * @deprecated Use {@link #with(AbstractView...)} instead.
 	 */
 	@Deprecated
 	@ApiStatus.ScheduledForRemoval(inVersion = "2.5.2")
