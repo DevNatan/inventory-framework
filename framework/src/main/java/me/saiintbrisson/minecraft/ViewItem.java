@@ -57,7 +57,7 @@ public final class ViewItem {
 	 *
 	 * @param slot The slot that this item will be placed initially.
 	 */
-	ViewItem(final int slot) {
+	ViewItem(int slot) {
 		this.slot = slot;
 	}
 
