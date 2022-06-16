@@ -68,8 +68,6 @@ public abstract class AbstractVirtualView implements VirtualView {
 	}
 
 	void render(@NotNull ViewContext context) {
-		inventoryModificationTriggered();
-
 		for (int i = 0; i < getItems().length; i++) {
 			render(context, i);
 		}
@@ -88,6 +86,8 @@ public abstract class AbstractVirtualView implements VirtualView {
 		@NotNull ViewItem item,
 		int slot
 	) {
+		inventoryModificationTriggered();
+
 		final Object fallbackItem = item.getItem();
 
 		if (item.getRenderHandler() != null) {
@@ -115,7 +115,6 @@ public abstract class AbstractVirtualView implements VirtualView {
 
 	@Override
 	public final void update() {
-		inventoryModificationTriggered();
 		throw new UnsupportedOperationException("Update aren't supported in this view");
 	}
 
@@ -129,6 +128,8 @@ public abstract class AbstractVirtualView implements VirtualView {
 	}
 
 	final void update(@NotNull ViewContext context, int slot) {
+		inventoryModificationTriggered();
+
 		final ViewItem item = context.resolve(slot, true);
 		if (item == null) {
 			context.getContainer().removeItem(slot);
