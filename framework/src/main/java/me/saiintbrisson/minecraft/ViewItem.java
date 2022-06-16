@@ -21,7 +21,9 @@ public final class ViewItem {
 	private int slot;
 	private State state = State.UNDEFINED;
 	private boolean paginationItem;
-	private String referenceKey;
+
+	@Nullable private String referenceKey;
+
 	private Object item;
 	private boolean closeOnClick, cancelOnClick, cancelOnShiftClick;
 
@@ -33,7 +35,7 @@ public final class ViewItem {
 	private Map<String, Object> data;
 
 	/**
-	 * @deprecated Use {@link VirtualView#slot(int)} instead.
+	 * @deprecated You cannot instantiate a ViewItem, use {@link AbstractView#item()} instead.
 	 */
 	@SuppressWarnings("DeprecatedIsStillUsed")
 	@Deprecated
