@@ -44,9 +44,23 @@ public interface ViewSlotContext extends ViewContext {
 
 	boolean isOutsideClick();
 
+	/**
+	 * Checks if the item in this context has been changed.
+	 * <p>
+	 * __This API is internal and should not be used.__
+	 */
 	@ApiStatus.Internal
 	boolean hasChanged();
 
+	/**
+	 * Marks this context as changed.
+	 * <p>
+	 * Improperly changing this property can cause unexpected side effects.
+	 * <p>
+	 * __This API is internal and should not be used.__
+	 *
+	 * @param changed If the context item was changed.
+	 */
 	@ApiStatus.Internal
 	void setChanged(boolean changed);
 
