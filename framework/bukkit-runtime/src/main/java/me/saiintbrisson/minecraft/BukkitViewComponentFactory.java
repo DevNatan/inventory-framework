@@ -2,7 +2,6 @@ package me.saiintbrisson.minecraft;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
@@ -46,8 +45,19 @@ final class BukkitViewComponentFactory extends ViewComponentFactory {
 	) {
 		final ViewType finalType = type == null ? AbstractView.DEFAULT_TYPE : type;
 		checkTypeSupport(finalType);
-
 		final int finalSize = size == 0 ? 0 : finalType.normalize(size);
+
+		// only chests can have a custom size
+		if (finalSize != 0 && finalType != ViewType.CHEST)
+			throw new IllegalArgumentException(String.format(
+				"Only \"%s\" type can have a custom size," +
+					" \"%s\" always have a size of %d. Remove the parameter that specifies the size" +
+					" of the container on %s or just set the type explicitly.",
+				ViewType.CHEST.getIdentifier(),
+				finalType.getIdentifier(),
+				finalType.getMaxSize(),
+				view.getClass().getName()
+			));
 
 		final Inventory inventory;
 		if (title == null) {
