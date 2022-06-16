@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -97,7 +98,7 @@ public abstract class AbstractView extends AbstractVirtualView {
 	}
 
 	@Override
-	protected final void render(@NotNull ViewContext context) {
+	final void render(@NotNull ViewContext context) {
 		getPipeline().execute(RENDER, context);
 		super.render(context);
 	}
@@ -128,11 +129,11 @@ public abstract class AbstractView extends AbstractVirtualView {
 	}
 
 	@SuppressWarnings("ConstantConditions")
-	final ViewItem item() {
+	public final ViewItem item() {
 		return item(null);
 	}
 
-	final ViewItem item(@SuppressWarnings("NullableProblems") @NotNull Object stack) {
+	public final ViewItem item(@SuppressWarnings("NullableProblems") @NotNull Object stack) {
 		final Object transformedItem = PlatformUtils.getFactory().createItem(stack);
 		ViewItem item = new ViewItem();
 		item.setItem(transformedItem);
@@ -228,11 +229,11 @@ public abstract class AbstractView extends AbstractVirtualView {
 		return super.getItems();
 	}
 
-	public final Pipeline<ViewContext> getPipeline() {
+	final Pipeline<ViewContext> getPipeline() {
 		return pipeline;
 	}
 
-	public final PlatformViewFrame<?, ?, ?> getViewFrame() {
+	public final @Nullable PlatformViewFrame<?, ?, ?> getViewFrame() {
 		return viewFrame;
 	}
 
@@ -368,7 +369,11 @@ public abstract class AbstractView extends AbstractVirtualView {
 	 *
 	 * @param context      The current view context.
 	 * @param hotbarButton The interacted hot bar button.
+	 * @deprecated Use {@link #onClick(ViewSlotContext)}
+	 * with {@link ViewSlotContext#isKeyboardClick()} instead.
 	 */
+	@SuppressWarnings("DeprecatedIsStillUsed")
+	@Deprecated
 	protected void onHotbarInteract(@NotNull ViewContext context, int hotbarButton) {
 	}
 
@@ -398,12 +403,12 @@ public abstract class AbstractView extends AbstractVirtualView {
 	 * <p>
 	 * This handler is the counterpart of {@link #onItemHold(ViewSlotContext)}.
 	 *
-	 * @param from The input context of the move.
-	 * @param to   The output context of the move.
+	 * @param fromContext The input context of the move.
+	 * @param toContext   The output context of the move.
 	 */
 	protected void onItemRelease(
-		@NotNull ViewSlotContext from,
-		@NotNull ViewSlotContext to
+		@NotNull ViewSlotContext fromContext,
+		@NotNull ViewSlotContext toContext
 	) {
 	}
 

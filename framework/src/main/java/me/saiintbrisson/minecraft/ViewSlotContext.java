@@ -5,6 +5,8 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.NoSuchElementException;
+
 public interface ViewSlotContext extends ViewContext {
 
 	/**
@@ -39,8 +41,6 @@ public interface ViewSlotContext extends ViewContext {
 
 	boolean isOutsideClick();
 
-	ViewSlotContext ref(String key);
-
 	@ApiStatus.Internal
 	boolean hasChanged();
 
@@ -48,5 +48,16 @@ public interface ViewSlotContext extends ViewContext {
 	void setChanged(boolean changed);
 
 	void updateSlot();
+
+	/**
+	 * Returns the value of a user-defined property for the item of this slot context
+	 * or throws an exception if the property has not been set.
+	 *
+	 * @param key The property key.
+	 * @param <T> The property value type.
+	 * @return This item.
+	 * @throws NoSuchElementException If the property has not been set.
+	 */
+	<T> T getItemData(@NotNull String key);
 
 }

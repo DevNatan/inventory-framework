@@ -7,6 +7,11 @@ import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Map;
+import java.util.NoSuchElementException;
+
+import static java.lang.String.format;
+
 @Getter
 @Setter
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
@@ -68,4 +73,16 @@ public abstract class AbstractViewSlotContext extends BaseViewContext implements
 		getRoot().update(this, getSlot());
 	}
 
+	@Override
+	public final  <T> T getItemData(@NotNull String key) {
+		final Map<String, Object> data = backingItem.getData();
+		if (data != null && data.containsKey(key))
+			//noinspection unchecked
+			return (T) data.get(key);
+
+		throw new NoSuchElementException(format(
+			"Property \"%s\" has not been set for this item. Use #withData(key, value) to set it",
+			key
+		));
+	}
 }

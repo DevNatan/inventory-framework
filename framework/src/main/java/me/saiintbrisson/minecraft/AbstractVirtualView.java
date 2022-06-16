@@ -67,7 +67,7 @@ public abstract class AbstractVirtualView implements VirtualView {
 		throw new UnsupportedOperationException("Items without a defined slot aren't supported yet");
 	}
 
-	protected void render(@NotNull ViewContext context) {
+	void render(@NotNull ViewContext context) {
 		inventoryModificationTriggered();
 
 		for (int i = 0; i < getItems().length; i++) {
@@ -94,7 +94,7 @@ public abstract class AbstractVirtualView implements VirtualView {
 			final ViewSlotContext renderContext = PlatformUtils.getFactory()
 				.createSlotContext(item, context.getRoot(), context.getContainer());
 
-			runCatching(context, () -> item.getRenderHandler().handle(renderContext));
+			runCatching(context, () -> item.getRenderHandler().accept(renderContext));
 			if (renderContext.hasChanged()) {
 				context.getContainer().renderItem(slot, renderContext.getItem());
 				renderContext.setChanged(false);
@@ -139,7 +139,7 @@ public abstract class AbstractVirtualView implements VirtualView {
 			final ViewSlotContext updateContext = PlatformUtils.getFactory()
 				.createSlotContext(item, context.getRoot(), context.getContainer());
 
-			runCatching(context, () -> item.getUpdateHandler().handle(updateContext));
+			runCatching(context, () -> item.getUpdateHandler().accept(updateContext));
 			if (updateContext.hasChanged()) {
 				context.getContainer().renderItem(slot, updateContext.getItem());
 				updateContext.setChanged(false);
