@@ -3,7 +3,6 @@ package me.saiintbrisson.minecraft;
 import lombok.Setter;
 import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.List;
 import java.util.function.Function;
@@ -25,11 +24,11 @@ abstract class BasePaginatedView<T> extends AbstractView implements PaginatedVir
 		throw new UnsupportedOperationException();
 	}
 
-	final void setPreviousPageItem(@NotNull Function<PaginatedViewContext<T>, ViewItem> previousPageItemFactory) {
+	public final void setPreviousPageItem(@NotNull Function<PaginatedViewContext<T>, ViewItem> previousPageItemFactory) {
 		this.previousPageItemFactory = previousPageItemFactory;
 	}
 
-	final void setNextPageItem(@NotNull Function<PaginatedViewContext<T>, ViewItem> nextPageItemFactory) {
+	public final void setNextPageItem(@NotNull Function<PaginatedViewContext<T>, ViewItem> nextPageItemFactory) {
 		this.nextPageItemFactory = nextPageItemFactory;
 	}
 
