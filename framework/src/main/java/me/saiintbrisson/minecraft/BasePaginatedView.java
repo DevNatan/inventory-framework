@@ -22,11 +22,19 @@ abstract class BasePaginatedView<T> extends AbstractView implements PaginatedVir
 	final void render(@NotNull ViewContext context) {
 		super.render(context);
 
+		if (getType() != ViewType.CHEST)
+			throw new IllegalStateException(String.format(
+				"Pagination is not supported in \"%s\" view type: %s." +
+				" Use chest type instead.",
+				getType().getIdentifier(),
+				getClass().getName()
+			));
+
 		if (!hasSource() && !context.paginated().hasSource())
 			throw new IllegalStateException(
-				"At least one pagination source must be set, " +
-				"use #setSource in the PaginatedView constructor or set just to a context" +
-				" in the #onRender(...) function with \"render.paginated().setSource(...)\"."
+				"At least one pagination source must be set. " +
+					"Use #setSource in the PaginatedView constructor or set just to a context" +
+					" in the #onRender(...) function with \"render.paginated().setSource(...)\"."
 			);
 	}
 
