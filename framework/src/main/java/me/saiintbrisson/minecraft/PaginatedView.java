@@ -11,16 +11,16 @@ public abstract class PaginatedView<T> extends BasePaginatedView<T> {
 		this(0);
 	}
 
-	public PaginatedView(int rows) {
-		this(rows, null);
+	public PaginatedView(int size) {
+		this(size, null);
 	}
 
-	public PaginatedView(int rows, String title) {
-		this(rows, title, ViewType.CHEST);
+	public PaginatedView(int size, String title) {
+		this(size, title, ViewType.CHEST);
 	}
 
-	public PaginatedView(int rows, String title, @NotNull ViewType type) {
-		super(rows, title, type);
+	public PaginatedView(int size, String title, @NotNull ViewType type) {
+		super(size, title, type);
 	}
 
 	@Override

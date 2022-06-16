@@ -17,8 +17,8 @@ public class View extends AbstractView implements InventoryHolder {
 		this(0);
 	}
 
-	public View(int rows) {
-		this(rows, null);
+	public View(int size) {
+		this(size, null);
 	}
 
 	public View(String title) {
@@ -33,12 +33,12 @@ public class View extends AbstractView implements InventoryHolder {
 		this(0, null, type);
 	}
 
-	public View(int rows, String title) {
-		this(rows, title, ViewType.CHEST);
+	public View(int size, String title) {
+		this(size, title, ViewType.CHEST);
 	}
 
-	public View(int rows, String title, @NotNull ViewType type) {
-		super(rows, title, type);
+	public View(int size, String title, @NotNull ViewType type) {
+		super(size, title, type);
 	}
 
 	@SuppressWarnings("ConstantConditions")
