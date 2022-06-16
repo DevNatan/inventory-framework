@@ -212,7 +212,7 @@ public final class ViewItem {
 	 *
 	 * @Override
 	 * protected void onItemHold(ViewSlotContext context) {
-	 *     String name = context.getItemData("name");
+	 *     String name = context.data("name");
 	 *     ...
 	 * }
 	 * }

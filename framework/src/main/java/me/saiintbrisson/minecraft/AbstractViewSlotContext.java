@@ -49,7 +49,7 @@ public abstract class AbstractViewSlotContext extends BaseViewContext implements
 	}
 
 	@Override
-	public final ItemWrapper getItem() {
+	public final @NotNull ItemWrapper getItem() {
 		return item;
 	}
 
@@ -82,7 +82,7 @@ public abstract class AbstractViewSlotContext extends BaseViewContext implements
 	}
 
 	@Override
-	public final  <T> T getItemData(@NotNull String key) {
+	public final  <T> T data(@NotNull String key) {
 		final Map<String, Object> data = backingItem.getData();
 		if (data != null && data.containsKey(key))
 			//noinspection unchecked
