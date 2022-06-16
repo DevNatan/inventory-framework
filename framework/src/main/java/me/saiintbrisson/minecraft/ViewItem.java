@@ -137,7 +137,7 @@ public final class ViewItem {
 	}
 
 	@Contract(value = "_ -> this", mutates = "this")
-	public ViewItem referencedBy(@NotNull String key) {
+	public ViewItem referencedBy(@Nullable String key) {
 		this.referenceKey = key;
 		return this;
 	}
