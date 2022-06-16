@@ -2,9 +2,11 @@ package me.saiintbrisson.minecraft;
 
 import lombok.Getter;
 import lombok.ToString;
-import lombok.experimental.Delegate;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Range;
+
+import java.util.List;
 
 /**
  * PaginatedViewSlotContext implementation that inherits a ViewSlotContext.
@@ -15,22 +17,21 @@ import org.jetbrains.annotations.Nullable;
  */
 @Getter
 @ToString
-class PaginatedViewSlotContextImpl<T> extends AbstractViewSlotContext
+final class PaginatedViewSlotContextImpl<T> extends AbstractViewSlotContext
 	implements PaginatedViewSlotContext<T> {
 
 	private final int index;
 	private final T value;
 
-	@Delegate
-	private final BasePaginatedViewContext<T> parent;
+	private final PaginatedViewContext<T> parent;
 
 	PaginatedViewSlotContextImpl(
 		int index,
 		@NotNull T value,
 		ViewItem backingItem,
-		BasePaginatedViewContext<T> parent
+		PaginatedViewContext<T> parent
 	) {
-		super(backingItem, parent);
+		super(backingItem, (BaseViewContext) parent);
 		this.index = index;
 		this.value = value;
 		this.parent = parent;
@@ -46,9 +47,60 @@ class PaginatedViewSlotContextImpl<T> extends AbstractViewSlotContext
 	}
 
 	@Override
-	public final PaginatedViewSlotContext<T> withItem(@Nullable Object item) {
+	public void setSource(@NotNull List<T> source) {
+		throw new IllegalStateException(
+			"It is not possible to change pagination data in a paginated item rendering context."
+		);
+	}
+
+	@Override
+	public PaginatedViewSlotContext<T> withItem(@Nullable Object item) {
 		super.withItem(item);
 		return this;
 	}
 
+	@Override
+	public PaginatedViewSlotContext<T> ref(String key) {
+		return super.ref(key).paginated();
+	}
+
+	@Override
+	public int getPageItemsCount() {
+		return parent.getPageItemsCount();
+	}
+
+	@Override
+	public int getPage() {
+		return parent.getPage();
+	}
+
+	@Override
+	public int getPagesCount() {
+		return parent.getPagesCount();
+	}
+
+	@Override
+	public @Range(from = 0, to = Integer.MAX_VALUE) int getPreviousPage() {
+		return parent.getPreviousPage();
+	}
+
+	@Override
+	public @Range(from = 1, to = Integer.MAX_VALUE) int getNextPage() {
+		return parent.getNextPage();
+	}
+
+	@Override
+	public boolean hasPreviousPage() {
+		return parent.hasPreviousPage();
+	}
+
+	@Override
+	public boolean hasNextPage() {
+		return parent.hasNextPage();
+	}
+
+	@Override
+	public void switchTo(int page) {
+		parent.switchTo(page);
+	}
 }

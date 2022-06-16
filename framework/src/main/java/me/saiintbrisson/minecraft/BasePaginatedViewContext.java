@@ -79,7 +79,7 @@ class BasePaginatedViewContext<T> extends BaseViewContext implements PaginatedVi
 	}
 
 	@Override
-	public final void setSource(@NotNull List<T> source) {
+	public void setSource(@NotNull List<T> source) {
 		throw new UnsupportedOperationException("Not implemented yet");
 	}
 

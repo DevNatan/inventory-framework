@@ -110,7 +110,7 @@ public abstract class AbstractViewSlotContext extends BaseViewContext implements
 	}
 
 	@Override
-	public final int getSlot() {
+	public int getSlot() {
 		return getBackingItem().getSlot();
 	}
 
