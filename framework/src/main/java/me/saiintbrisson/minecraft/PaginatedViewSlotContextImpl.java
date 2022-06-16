@@ -37,11 +37,11 @@ class PaginatedViewSlotContextImpl<T> extends AbstractViewSlotContext
 	}
 
 	@Override
-	final void update(@NotNull ViewContext context) {
-		throw new UnsupportedOperationException(
-			"The update method cannot be called directly from the paging context because " +
+	void inventoryModificationTriggered() {
+		throw new IllegalStateException(
+			"Direct container modifications are not allowed from a paginated context because " +
 				"rendering a paginated item is an extensive method and can cause cyclic" +
-				" rendering on refresh when rendering a paginated view."
+				" rendering on update, when rendering a paginated view."
 		);
 	}
 
