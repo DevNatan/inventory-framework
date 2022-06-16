@@ -150,6 +150,30 @@ public final class ViewItem {
 	}
 
 	/**
+	 * Determines whether the interaction should be canceled based on the current value of the
+	 * {@link #cancelOnShiftClick} property, as an actor shift clicks on this item.
+	 *
+	 * @return This item.
+	 */
+	@Contract(mutates = "this")
+	public ViewItem cancelOnShiftClick() {
+		return withCancelOnShiftClick(!isCancelOnShiftClick());
+	}
+
+	/**
+	 * Determines whether the interaction should be canceled as an actor shift clicks on this item.
+	 *
+	 * @param cancelOnShiftClick whether the interaction should be canceled as an actor shift clicks
+	 *                           on this item.
+	 * @return This item.
+	 */
+	@Contract(value = "_ -> this", mutates = "this")
+	public ViewItem withCancelOnShiftClick(boolean cancelOnShiftClick) {
+		setCancelOnShiftClick(cancelOnShiftClick);
+		return this;
+	}
+
+	/**
 	 * Determines whether the container should be closed based on the current value of the {@link #closeOnClick}
 	 * property, __AFTER__ this item is clicked.
 	 *
