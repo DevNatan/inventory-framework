@@ -15,9 +15,11 @@
 * Now the item from a slot context can be accessed
 * More fluent ViewFrame API with chain accessors
 * Removed pollution of overridable methods in View that shouldn't be overridden
-* `onClickOutside` and `onHotbarInteract` handlers now deprecated.
-* Now `onItemHold`, `onItemRelease`, `onMoveIn` and `onMoveOut` can be applied per-item.
-* Experimental per item update schedule, View's `scheduleUpdate` like can be now used per-item.
+* `onClickOutside` and `onHotbarInteract` handlers now deprecated
+* Now `onItemHold`, `onItemRelease`, `onMoveIn` and `onMoveOut` can be applied per-item
+* Experimental per item update schedule, View's `scheduleUpdate` like can be now used per-item
+* Now an exception will be thrown if the user does not define any paging data
+* Now an exception is thrown when the user changes the state of the view after it has been rendered
 
 # 2.5
 * Inheritable context data (#65)
