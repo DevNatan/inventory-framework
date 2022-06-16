@@ -1,6 +1,5 @@
 package me.saiintbrisson.minecraft;
 
-import lombok.Setter;
 import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
 
@@ -38,7 +37,13 @@ abstract class BasePaginatedView<T> extends AbstractView implements PaginatedVir
 			);
 	}
 
+	@Override
+	public boolean hasSource() {
+		return source != null;
+	}
+
 	public final void setSource(@NotNull List<T> source) {
+		ensureNotInitialized();
 		this.source = source;
 	}
 
@@ -48,10 +53,12 @@ abstract class BasePaginatedView<T> extends AbstractView implements PaginatedVir
 	}
 
 	public final void setPreviousPageItem(@NotNull Function<PaginatedViewContext<T>, ViewItem> previousPageItemFactory) {
+		ensureNotInitialized();
 		this.previousPageItemFactory = previousPageItemFactory;
 	}
 
 	public final void setNextPageItem(@NotNull Function<PaginatedViewContext<T>, ViewItem> nextPageItemFactory) {
+		ensureNotInitialized();
 		this.nextPageItemFactory = nextPageItemFactory;
 	}
 
@@ -73,12 +80,12 @@ abstract class BasePaginatedView<T> extends AbstractView implements PaginatedVir
 
 	/**
 	 * TODO document it properly
-	 *
+	 * <p>
 	 * You can use: item.withItem(...);
 	 *
 	 * @param render The pagination item rendering context.
-	 * @param item The item that'll be displayed.
-	 * @param value The paginated value.
+	 * @param item   The item that'll be displayed.
+	 * @param value  The paginated value.
 	 */
 	protected abstract void onItemRender(
 		@NotNull PaginatedViewSlotContext<T> render,

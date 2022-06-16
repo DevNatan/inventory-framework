@@ -130,7 +130,9 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
 
 		for (final AbstractView view : views.values()) {
 			view.setViewFrame(this);
+			view.setInitialized(true);
 			PlatformUtils.getFactory().setupView(view);
+			owner.getLogger().info("\"" + view.getClass().getSimpleName() + "\" registered");
 		}
 
 		final Plugin plugin = getOwner();

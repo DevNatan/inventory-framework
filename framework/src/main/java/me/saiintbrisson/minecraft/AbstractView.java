@@ -14,8 +14,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 
-@Getter
-@Setter
+@Getter(AccessLevel.PACKAGE)
+@Setter(AccessLevel.PACKAGE)
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
 public abstract class AbstractView extends AbstractVirtualView {
 
@@ -49,6 +49,13 @@ public abstract class AbstractView extends AbstractVirtualView {
 
 	@ToString.Include
 	private boolean cancelOnClick, cancelOnPickup, cancelOnDrop, cancelOnDrag, cancelOnClone, cancelOnMoveIn, cancelOnMoveOut, cancelOnShiftClick, clearCursorOnClose, closeOnOutsideClick;
+
+	/**
+	 * An initialized view is one that has already been registered if there is a ViewFrame
+	 * or has been initialized manually. It is not possible to perform certain operations if the
+	 * view has already been initialized.
+	 */
+	private boolean initialized;
 
 	AbstractView(int rows, String title, @NotNull ViewType type) {
 		this.rows = rows;
@@ -99,6 +106,9 @@ public abstract class AbstractView extends AbstractVirtualView {
 
 	@Override
 	void render(@NotNull ViewContext context) {
+		if (!initialized)
+			throw new IllegalStateException("Cannot render a unitialized view.");
+
 		getPipeline().execute(RENDER, context);
 		onRender(context);
 		super.render(context);
@@ -189,46 +199,57 @@ public abstract class AbstractView extends AbstractVirtualView {
 	}
 
 	final void setViewFrame(@NotNull PlatformViewFrame<?, ?, ?> viewFrame) {
+		ensureNotInitialized();
 		this.viewFrame = viewFrame;
 	}
 
 	public final void setCancelOnClick(final boolean cancelOnClick) {
+		ensureNotInitialized();
 		this.cancelOnClick = cancelOnClick;
 	}
 
 	public final void setCancelOnPickup(final boolean cancelOnPickup) {
+		ensureNotInitialized();
 		this.cancelOnPickup = cancelOnPickup;
 	}
 
 	public final void setCancelOnDrop(final boolean cancelOnDrop) {
+		ensureNotInitialized();
 		this.cancelOnDrop = cancelOnDrop;
 	}
 
 	public final void setCancelOnDrag(final boolean cancelOnDrag) {
+		ensureNotInitialized();
 		this.cancelOnDrag = cancelOnDrag;
 	}
 
 	public final void setCancelOnClone(final boolean cancelOnClone) {
+		ensureNotInitialized();
 		this.cancelOnClone = cancelOnClone;
 	}
 
 	public final void setCancelOnMoveIn(final boolean cancelOnMoveIn) {
+		ensureNotInitialized();
 		this.cancelOnMoveIn = cancelOnMoveIn;
 	}
 
 	public final void setCancelOnMoveOut(final boolean cancelOnMoveOut) {
+		ensureNotInitialized();
 		this.cancelOnMoveOut = cancelOnMoveOut;
 	}
 
 	public final void setCancelOnShiftClick(final boolean cancelOnShiftClick) {
+		ensureNotInitialized();
 		this.cancelOnShiftClick = cancelOnShiftClick;
 	}
 
 	public final void setClearCursorOnClose(final boolean clearCursorOnClose) {
+		ensureNotInitialized();
 		this.clearCursorOnClose = clearCursorOnClose;
 	}
 
 	public final void setCloseOnOutsideClick(final boolean closeOnOutsideClick) {
+		ensureNotInitialized();
 		this.closeOnOutsideClick = closeOnOutsideClick;
 	}
 
@@ -256,6 +277,8 @@ public abstract class AbstractView extends AbstractVirtualView {
 	public final String getTitle() {
 		return title;
 	}
+
+
 
 	/**
 	 * Thrown when a method explicitly needs to specify that it will directly modify
@@ -285,6 +308,29 @@ public abstract class AbstractView extends AbstractVirtualView {
 	@Override
 	final ViewItem resolve(int index) {
 		return super.resolve(index);
+	}
+
+	/**
+	 * Throws an exception if the view has already been initialized.
+	 * <p>
+	 * This method is to be used in cases where the user may mistakenly use functions that must be
+	 * used in the view constructor, in the handlers, such as: defining the data of a paginated view
+	 * in the rendering function without using a context.
+	 *
+	 * @throws IllegalStateException If this view is initialized.
+	 */
+	protected final void ensureNotInitialized() {
+		if (!isInitialized()) return;
+
+		throw new IllegalStateException(
+			"Not allowed to change the nature of the view after it has been initialized," +
+				" it is incorrect to use global functions of the view in render or" +
+				" update functions, whatever method you are trying to call you" +
+				" probably want to call the same function using the context that" +
+				" was provided for you. For example: it is not allowed to use" +
+				" \"setSource(...)\" in the rendering function, you must use " +
+				"\"context.paginated().setSource()\" instead.`"
+		);
 	}
 
 	/**

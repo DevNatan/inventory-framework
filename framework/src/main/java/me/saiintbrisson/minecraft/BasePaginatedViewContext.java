@@ -75,7 +75,12 @@ class BasePaginatedViewContext<T> extends BaseViewContext implements PaginatedVi
 
 	@Override
 	public final int getPageItemsCount() {
-		throw new UnsupportedOperationException();
+		throw new UnsupportedOperationException("Not implemented yet");
+	}
+
+	@Override
+	public boolean hasSource() {
+		return false;
 	}
 
 	@Override
