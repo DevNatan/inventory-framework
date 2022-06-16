@@ -45,7 +45,7 @@ public class View extends AbstractView implements InventoryHolder {
 	@NotNull
 	@Override
 	public final Inventory getInventory() {
-		return null;
+		throw new IllegalStateException("View inventory cannot be accessed");
 	}
 
 }
