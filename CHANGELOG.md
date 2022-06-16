@@ -13,6 +13,7 @@
 * More fluent ViewFrame API with chain accessors
 * Removed pollution of overridable methods in View that shouldn't be overridden
 * `onClickOutside` and `onHotbarInteract` handlers now deprecated.
+* Now `onItemHold`, `onItemRelease`, `onMoveIn` and `onMoveOut` can be applied per-item.
 
 # 2.5
 * Inheritable context data (#65)
