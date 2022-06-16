@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 @Getter
 @ToString(callSuper = true)
-final class BukkitViewSlotMoveContextImpl extends BukkitClickViewSlotContext implements ViewSlotMoveContext {
+final class ViewSlotMoveContextImpl extends BukkitClickViewSlotContext implements ViewSlotMoveContext {
 
 	@ToString.Exclude
 	private final ViewContainer targetContainer;
@@ -17,13 +17,13 @@ final class BukkitViewSlotMoveContextImpl extends BukkitClickViewSlotContext imp
 	private final int targetSlot;
 	private final boolean swap, stack;
 
-	BukkitViewSlotMoveContextImpl(
+	ViewSlotMoveContextImpl(
 		ViewItem backingItem,
 		@NotNull BaseViewContext parent,
 		@NotNull InventoryClickEvent clickOrigin,
 		ViewContainer targetContainer,
-		ItemStack targetItem,
-		ItemStack swappedItem,
+		Object targetItem,
+		Object swappedItem,
 		int targetSlot,
 		boolean swap,
 		boolean stack

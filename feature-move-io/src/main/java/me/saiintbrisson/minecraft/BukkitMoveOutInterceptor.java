@@ -50,7 +50,7 @@ public final class BukkitMoveOutInterceptor implements PipelineInterceptor<Bukki
 		if (hold == null)
 			return;
 
-		final ViewSlotMoveContext moveContext = new BukkitViewSlotMoveContextImpl(
+		final ViewSlotMoveContext moveContext = new ViewSlotMoveContextImpl(
 			hold,
 			subject,
 			event,
@@ -63,13 +63,11 @@ public final class BukkitMoveOutInterceptor implements PipelineInterceptor<Bukki
 		);
 
 		moveContext.setCancelled(subject.isCancelled());
+		if (hold.getMoveOutHandler() != null)
+			hold.getMoveInHandler().accept(moveContext);
+
 		subject.getRoot().onMoveOut(moveContext);
 		event.setCancelled(moveContext.isCancelled());
-
-		if (!moveContext.isCancelled())
-			return;
-
-		pipeline.finish();
 	}
 
 }
