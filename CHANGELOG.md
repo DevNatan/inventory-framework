@@ -20,6 +20,7 @@
 * Experimental per item update schedule, View's `scheduleUpdate` like can be now used per-item
 * Now an exception will be thrown if the user does not define any paging data
 * Now an exception is thrown when the user changes the state of the view after it has been rendered
+* Bukkit platform implementation now have bStats.
 
 # 2.5
 * Inheritable context data (#65)
