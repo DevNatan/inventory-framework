@@ -3,6 +3,8 @@ package me.saiintbrisson.minecraft;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 
 public interface PlatformViewFrame<V, P, F extends PlatformViewFrame<V, P, F>> extends FeatureInstaller<P> {
 
@@ -66,5 +68,25 @@ public interface PlatformViewFrame<V, P, F extends PlatformViewFrame<V, P, F>> e
 	void setErrorHandler(ViewErrorHandler errorHandler);
 
 	void nextTick(Runnable runnable);
+
+	Function<PaginatedViewContext<?>, ViewItem> getDefaultPreviousPageItem();
+
+	/**
+	 * @deprecated Use {@link #setNavigateBackItemFactory(BiConsumer)} instead.
+	 */
+	@Deprecated
+	void setDefaultPreviousPageItem(Function<PaginatedViewContext<?>, ViewItem> defaultPreviousPageItemFactory);
+
+	F setNavigateBackItemFactory(BiConsumer<PaginatedViewContext<?>, ViewItem> navigateBackItemFactory);
+
+	Function<PaginatedViewContext<?>, ViewItem> getDefaultNextPageItem();
+
+	/**
+	 * @deprecated Use {@link #setNavigateNextItemFactory(BiConsumer)} instead.
+	 */
+	@Deprecated
+	void setDefaultNextPageItem(Function<PaginatedViewContext<?>, ViewItem> defaultNextPageItemFactory);
+
+	F setNavigateNextItemFactory(BiConsumer<PaginatedViewContext<?>, ViewItem> navigateNextItemFactory);
 
 }

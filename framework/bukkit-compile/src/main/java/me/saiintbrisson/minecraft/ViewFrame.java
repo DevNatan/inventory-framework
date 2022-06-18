@@ -15,13 +15,13 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
 @Getter
 @Setter
 @ToString
-@RequiredArgsConstructor
 public final class ViewFrame implements CompatViewFrame<ViewFrame> {
 
 	@NotNull
@@ -47,6 +47,17 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
 
 	static {
 		PlatformUtils.setFactory(new BukkitViewComponentFactory());
+	}
+
+	/**
+	 * Creates a new ViewFrame instance.
+	 *
+	 * @param owner The Bukkit plugin holder of this view framework.
+	 * @deprecated Use {@link #of(Plugin, View...)} instead.
+	 */
+	@Deprecated
+	public ViewFrame(@NotNull Plugin owner) {
+		this.owner = owner;
 	}
 
 	@Override
@@ -241,6 +252,26 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
 	@Override
 	public void nextTick(Runnable runnable) {
 		getOwner().getServer().getScheduler().runTask(getOwner(), runnable);
+	}
+
+	@Override
+	public ViewFrame setNavigateBackItemFactory(BiConsumer<PaginatedViewContext<?>, ViewItem> navigateBackItemFactory) {
+		defaultPreviousPageItem = (context) -> {
+			final ViewItem item = new ViewItem();
+			navigateBackItemFactory.accept(context, item);
+			return item;
+		};
+		return this;
+	}
+
+	@Override
+	public ViewFrame setNavigateNextItemFactory(BiConsumer<PaginatedViewContext<?>, ViewItem> navigateNextItemFactory) {
+		defaultNextPageItem = (context) -> {
+			final ViewItem item = new ViewItem();
+			navigateNextItemFactory.accept(context, item);
+			return item;
+		};
+		return this;
 	}
 
 	public static ViewFrame of(
