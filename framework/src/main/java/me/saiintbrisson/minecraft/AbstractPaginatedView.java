@@ -17,6 +17,37 @@ abstract class AbstractPaginatedView<T> extends AbstractView implements Paginate
 		super(rows, title, type);
 	}
 
+	/**
+	 * @deprecated Offset and limit will be replaced by layout.
+	 * Use {@link #setLayout(String...)} instead.
+	 */
+	@Deprecated
+	public final void setOffset(int offset) {
+		ensureNotInitialized();
+		if (getLayout() != null)
+			throw new IllegalArgumentException(
+				"Paginated view with layout cannot use offset and limit slot."
+			);
+
+
+		this.offset = offset;
+	}
+
+	/**
+	 * @deprecated Offset and limit will be replaced by layout.
+	 * Use {@link #setLayout(String...)} instead.
+	 */
+	@Deprecated
+	public final void setLimit(int limit) {
+		ensureNotInitialized();
+		if (getLayout() != null)
+			throw new IllegalArgumentException(
+				"Paginated view with layout cannot use offset and limit slot."
+			);
+
+		this.limit = limit;
+	}
+
 	@Override
 	final void render(@NotNull ViewContext context) {
 		super.render(context);

@@ -25,6 +25,7 @@
 * Pagination navigation item methods override now deprecated
 * Page switch methods returns a boolean to know if page switch was successful
 * Exception handler now catches page switch errors
+* Pagination `offset` and `limit` now deprecated
 
 # 2.5
 * Inheritable context data (#65)
