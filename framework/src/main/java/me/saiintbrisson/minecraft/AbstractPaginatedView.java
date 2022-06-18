@@ -7,13 +7,13 @@ import java.util.List;
 import java.util.function.Function;
 
 @ToString(callSuper = true)
-abstract class BasePaginatedView<T> extends AbstractView implements PaginatedVirtualView<T> {
+abstract class AbstractPaginatedView<T> extends AbstractView implements PaginatedVirtualView<T> {
 
 	private List<T> source;
 
 	private Function<PaginatedViewContext<T>, ViewItem> previousPageItemFactory, nextPageItemFactory;
 
-	BasePaginatedView(int rows, String title, @NotNull ViewType type) {
+	AbstractPaginatedView(int rows, String title, @NotNull ViewType type) {
 		super(rows, title, type);
 	}
 
