@@ -46,14 +46,12 @@ public final class ViewItem {
 	private BiConsumer<ViewSlotContext, ViewSlotContext> itemReleaseHandler;
 	private Map<String, Object> data;
 	private long updateIntervalInTicks = NO_INTERVAL;
+	private ViewItem overlay;
 
 	/**
 	 * Creates a new ViewItem instance.
-	 *
-	 * @deprecated You cannot instantiate a ViewItem, use {@link AbstractView#item()} instead.
 	 */
-	@SuppressWarnings("DeprecatedIsStillUsed")
-	@Deprecated
+	@ApiStatus.Internal
 	public ViewItem() {
 		this(-1);
 	}
