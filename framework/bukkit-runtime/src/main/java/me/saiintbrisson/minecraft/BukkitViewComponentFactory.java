@@ -94,12 +94,18 @@ final class BukkitViewComponentFactory extends ViewComponentFactory {
 			: new ViewContextImpl(view, container);
 	}
 
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	@Override
-	public @NotNull AbstractViewSlotContext createSlotContext(
-		final ViewItem item,
-		final BaseViewContext parent
+	@NotNull
+	public AbstractViewSlotContext createSlotContext(
+		ViewItem item,
+		BaseViewContext parent,
+		int paginatedItemIndex,
+		Object paginatedItemValue
 	) {
-		return new BukkitViewSlotContext(item, parent);
+		return paginatedItemValue == null
+			? new BukkitViewSlotContext(item, parent)
+			: new PaginatedViewSlotContextImpl(paginatedItemIndex, paginatedItemValue, item, (PaginatedViewContext) parent);
 	}
 
 	@Override

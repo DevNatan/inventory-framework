@@ -29,10 +29,10 @@ public abstract class ViewComponentFactory {
 
 	@NotNull
 	public abstract ViewContainer createContainer(
-		@NotNull final VirtualView view,
-		final int size,
-		final String title,
-		final ViewType type
+		@NotNull VirtualView view,
+		int size,
+		String title,
+		ViewType type
 	);
 
 	@NotNull
@@ -40,15 +40,17 @@ public abstract class ViewComponentFactory {
 
 	@NotNull
 	public abstract BaseViewContext createContext(
-		@NotNull final AbstractView root,
-		final ViewContainer container,
-		final Class<? extends ViewContext> backingContext
+		@NotNull AbstractView root,
+		ViewContainer container,
+		Class<? extends ViewContext> backingContext
 	);
 
 	@NotNull
 	public abstract AbstractViewSlotContext createSlotContext(
-		final ViewItem item,
-		final BaseViewContext parent
+		ViewItem item,
+		BaseViewContext parent,
+		int paginatedItemIndex,
+		Object paginatedItemValue
 	);
 
 	public abstract Object createItem(
