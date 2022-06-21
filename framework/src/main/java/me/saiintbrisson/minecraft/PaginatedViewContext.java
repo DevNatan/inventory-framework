@@ -1,6 +1,9 @@
 package me.saiintbrisson.minecraft;
 
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Range;
+
+import java.util.List;
 
 /**
  * A paging context can originate from a view that supports paging.
@@ -14,9 +17,11 @@ import org.jetbrains.annotations.Range;
  *
  * @param <T> The paginated item type.
  * @see ViewContext
- * @see BasePaginatedView
+ * @see AbstractPaginatedView
  */
 public interface PaginatedViewContext<T> extends ViewContext, PaginatedVirtualView<T> {
+
+	List<T> getSource();
 
 	/**
 	 * Returns the current page.
@@ -61,35 +66,47 @@ public interface PaginatedViewContext<T> extends ViewContext, PaginatedVirtualVi
 	/**
 	 * Returns `true` if the current page is the first page of the available pages or `false` otherwise.
 	 */
-	default boolean isFirstPage() {
-		return !hasPreviousPage();
-	}
+	boolean isFirstPage();
 
 	/**
 	 * Returns `true` if the current page is the last page of the available pages or `false` otherwise.
 	 */
-	default boolean isLastPage() {
-		return !hasNextPage();
-	}
+	boolean isLastPage();
 
 	/**
 	 * Updates the current context by jumping to the specified page.
 	 *
 	 * @param page the new page.
 	 */
-	void switchTo(final int page);
+	void switchTo(@Range(from = 0, to = Integer.MAX_VALUE) int page);
 
 	/**
 	 * Updates the current context by switching to the previous page if available.
 	 */
-	default void switchToPreviousPage() {
-		switchTo(getPage() - 1);
-	}
+	boolean switchToPreviousPage();
 
 	/**
 	 * Updates the current context by switching to the next page if available.
 	 */
 	boolean switchToNextPage();
+
+	@ApiStatus.Internal
+	int getPreviousPageItemSlot();
+
+	@ApiStatus.Internal
+	void setPreviousPageItemSlot(int previousPageItemSlot);
+
+	@ApiStatus.Internal
+	int getNextPageItemSlot();
+
+	@ApiStatus.Internal
+	void setNextPageItemSlot(int nextPageItemSlot);
+
+	@ApiStatus.Internal
+	boolean isLayoutSignatureChecked();
+
+	@ApiStatus.Internal
+	void setLayoutSignatureChecked(boolean layoutSignatureChecked);
 
 	@Override
 	AbstractPaginatedView<T> getRoot();

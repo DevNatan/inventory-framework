@@ -1,8 +1,12 @@
 package me.saiintbrisson.minecraft;
 
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 public interface VirtualView {
+
+	@ApiStatus.Internal
+	ViewItem getItem(int index);
 
 	/**
 	 * The current title of this view's container.
@@ -77,5 +81,8 @@ public interface VirtualView {
 	void with(@NotNull ViewItem item);
 
 	void update();
+
+	@ApiStatus.Internal
+	void clear(int slot);
 
 }

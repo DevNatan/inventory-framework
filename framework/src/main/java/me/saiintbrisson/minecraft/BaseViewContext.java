@@ -1,6 +1,5 @@
 package me.saiintbrisson.minecraft;
 
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -9,7 +8,6 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -225,7 +223,9 @@ class BaseViewContext extends AbstractVirtualView implements ViewContext {
 
 		return vf.getFactory().createSlotContext(
 			item,
-			this
+			this,
+			0,
+			null
 		);
 	}
 

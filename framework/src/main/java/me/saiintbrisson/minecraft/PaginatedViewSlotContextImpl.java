@@ -7,6 +7,9 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
 
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * PaginatedViewSlotContext implementation that inherits a ViewSlotContext.
@@ -47,16 +50,8 @@ final class PaginatedViewSlotContextImpl<T> extends AbstractViewSlotContext
 	}
 
 	@Override
-	public boolean hasSource() {
-		// it's a context of a rendered pagination item
-		return true;
-	}
-
-	@Override
-	public void setSource(@NotNull List<T> source) {
-		throw new IllegalStateException(
-			"It is not possible to change pagination data in a paginated item rendering context."
-		);
+	public SharedPaginationProperties<T> getProperties() {
+		return parent.getProperties();
 	}
 
 	@Override
@@ -66,13 +61,67 @@ final class PaginatedViewSlotContextImpl<T> extends AbstractViewSlotContext
 	}
 
 	@Override
-	public PaginatedViewSlotContext<T> ref(String key) {
-		return super.ref(key).paginated();
+	public void setSource(@NotNull List<T> source) {
+		throwPaginationDataChangedError();
+	}
+
+	@Override
+	public void setSource(@NotNull Function<PaginatedViewContext<T>, List<T>> sourceProvider) {
+		throwPaginationDataChangedError();
+	}
+
+	@Override
+	public void setLayout(String... layout) {
+		throwPaginationDataChangedError();
+	}
+
+	@Override
+	public void setLayout(char identifier, @NotNull Supplier<ViewItem> layout) {
+		throwPaginationDataChangedError();
+	}
+
+	@Override
+	public void setLayout(char identifier, @NotNull Consumer<ViewItem> layout) {
+		throwPaginationDataChangedError();
+	}
+
+	@Override
+	@Deprecated
+	public int getOffset() {
+		return parent.getOffset();
+	}
+
+	@Override
+	@Deprecated
+	public void setOffset(int offset) {
+		throwPaginationDataChangedError();
+	}
+
+	@Override
+	public int getLimit() {
+		return parent.getLimit();
+	}
+
+	@Override
+	@Deprecated
+	public void setLimit(int limit) {
+		throwPaginationDataChangedError();
+	}
+
+	@Override
+	@Deprecated
+	public int getPageSize() {
+		return parent.getPageSize();
 	}
 
 	@Override
 	public int getPageItemsCount() {
 		return parent.getPageItemsCount();
+	}
+
+	@Override
+	public List<T> getSource() {
+		return parent.getSource();
 	}
 
 	@Override
@@ -106,7 +155,74 @@ final class PaginatedViewSlotContextImpl<T> extends AbstractViewSlotContext
 	}
 
 	@Override
+	public boolean isFirstPage() {
+		return parent.isFirstPage();
+	}
+
+	@Override
+	public boolean isLastPage() {
+		return parent.isLastPage();
+	}
+
+	@Override
 	public void switchTo(int page) {
 		parent.switchTo(page);
 	}
+
+	@Override
+	public boolean switchToPreviousPage() {
+		return parent.switchToPreviousPage();
+	}
+
+	@Override
+	public boolean switchToNextPage() {
+		return parent.switchToNextPage();
+	}
+
+	@Override
+	public int getPreviousPageItemSlot() {
+		return parent.getPreviousPageItemSlot();
+	}
+
+	@Override
+	public void setPreviousPageItemSlot(int previousPageItemSlot) {
+		throwPaginationDataChangedError();
+	}
+
+	@Override
+	public int getNextPageItemSlot() {
+		return parent.getNextPageItemSlot();
+	}
+
+	@Override
+	public void setNextPageItemSlot(int nextPageItemSlot) {
+		throwPaginationDataChangedError();
+	}
+
+	@Override
+	public boolean isLayoutSignatureChecked() {
+		return parent.isLayoutSignatureChecked();
+	}
+
+	@Override
+	public void setLayoutSignatureChecked(boolean layoutSignatureChecked) {
+		parent.setLayoutSignatureChecked(layoutSignatureChecked);
+	}
+
+	@Override
+	public PaginatedViewSlotContext<T> ref(String key) {
+		return parent.ref(key);
+	}
+
+	@Override
+	public AbstractPaginatedView<T> getRoot() {
+		return parent.getRoot();
+	}
+
+	private void throwPaginationDataChangedError() {
+		throw new IllegalStateException(
+			"It is not possible to change pagination data in a paginated item rendering context."
+		);
+	}
+
 }

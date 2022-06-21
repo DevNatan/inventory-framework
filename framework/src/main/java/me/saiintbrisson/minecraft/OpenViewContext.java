@@ -23,7 +23,7 @@ public class OpenViewContext extends BaseViewContext {
 	/**
 	 * The size of the container that player will see.
 	 */
-	private int containerSize = 0;
+	private int containerSize;
 
 	/**
 	 * The type of the container that player will see.

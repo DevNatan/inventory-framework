@@ -2,13 +2,12 @@ package me.saiintbrisson.minecraft;
 
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Bukkit platform PaginatedView backward compatible implementation.
  */
-public abstract class PaginatedView<T> extends BasePaginatedView<T> implements InventoryHolder {
+public abstract class PaginatedView<T> extends AbstractPaginatedView<T> implements InventoryHolder {
 
 	public PaginatedView() {
 		this(0);
@@ -36,14 +35,6 @@ public abstract class PaginatedView<T> extends BasePaginatedView<T> implements I
 
 	public PaginatedView(int size, String title, @NotNull ViewType type) {
 		super(size, title, type);
-	}
-
-	protected void onRender(@NotNull PaginatedViewContext<T> context) {
-	}
-
-	@Override
-	public final int getPageSize() {
-		return super.getPageSize();
 	}
 
 	@NotNull

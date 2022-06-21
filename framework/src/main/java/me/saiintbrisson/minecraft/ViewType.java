@@ -1,7 +1,6 @@
 package me.saiintbrisson.minecraft;
 
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -68,7 +67,7 @@ public class ViewType {
 	public final int normalize(final int size) {
 		if (size == 0) return size;
 
-		if (size <= rows) {
+		if (size >= rows) {
 			if (size % columns != 0)
 				throw new IllegalArgumentException(format(
 					"Container size must be a multiple of %d (given: %d)",

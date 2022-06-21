@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -67,13 +68,15 @@ public abstract class AbstractView extends AbstractVirtualView {
 	}
 
 	final void open(@NotNull Viewer viewer, @NotNull Map<String, Object> data) {
-		final OpenViewContext open = open0(viewer, data);
-
-		// rows will be normalized to fixed container size on `createContainer`
-		final int containerSize = open.getContainerSize() == 0 ? size : open.getContainerSize();
+		final OpenViewContext open = internalOpen(viewer, data);
 
 		final String containerTitle = open.getContainerTitle() == null ? title : open.getContainerTitle();
 		final ViewType containerType = open.getContainerType() == null ? type : open.getContainerType();
+
+		// rows will be normalized to fixed container size on `createContainer`
+		final int containerSize = open.getContainerSize() == 0
+			? size
+			: containerType.normalize(open.getContainerSize());
 
 		final ViewContainer container = viewFrame.getFactory().createContainer(
 			this,
@@ -86,14 +89,14 @@ public abstract class AbstractView extends AbstractVirtualView {
 			return;
 
 		final BaseViewContext context = viewFrame.getFactory().createContext(this, container, null);
-		context.setItems(new ViewItem[containerType.normalize(containerSize)]);
+		context.setItems(new ViewItem[containerSize]);
 		context.addViewer(viewer);
 		contexts.add(context);
 		render(context);
 		context.getViewers().forEach(context.getContainer()::open);
 	}
 
-	private OpenViewContext open0(@NotNull Viewer viewer, @NotNull Map<String, Object> data) {
+	private OpenViewContext internalOpen(@NotNull Viewer viewer, @NotNull Map<String, Object> data) {
 		final OpenViewContext context = (OpenViewContext) getViewFrame().getFactory().createContext(
 			this,
 			null,
@@ -117,7 +120,7 @@ public abstract class AbstractView extends AbstractVirtualView {
 	}
 
 	@Override
-	final void update(@NotNull ViewContext context) {
+	void update(@NotNull ViewContext context) {
 		getPipeline().execute(UPDATE, context);
 		onUpdate(context);
 		super.update(context);
@@ -511,6 +514,12 @@ public abstract class AbstractView extends AbstractVirtualView {
 
 	@ApiStatus.Experimental
 	protected void onMoveIn(@NotNull ViewSlotMoveContext context) {
+	}
+
+	@SuppressWarnings("unchecked")
+	@Contract(value = " -> this", pure = true)
+	public final <T> AbstractPaginatedView<T> paginated() {
+		return (AbstractPaginatedView<T>) this;
 	}
 
 }

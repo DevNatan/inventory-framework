@@ -1,9 +1,7 @@
 package me.saiintbrisson.minecraft;
 
 import lombok.AccessLevel;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,12 +19,21 @@ public abstract class AbstractVirtualView implements VirtualView {
 		return items;
 	}
 
+	@Override
+	public final ViewItem getItem(int index) {
+		return items[index];
+	}
+
 	final void setItems(ViewItem[] items) {
 		this.items = items;
 	}
 
 	public final ViewErrorHandler getErrorHandler() {
 		return errorHandler;
+	}
+
+	public final void setErrorHandler(ViewErrorHandler errorHandler) {
+		this.errorHandler = errorHandler;
 	}
 
 	@Override
@@ -81,7 +88,7 @@ public abstract class AbstractVirtualView implements VirtualView {
 		render(context, item, slot);
 	}
 
-	private void render(
+	protected final void render(
 		@NotNull ViewContext context,
 		@NotNull ViewItem item,
 		int slot
@@ -92,7 +99,7 @@ public abstract class AbstractVirtualView implements VirtualView {
 
 		if (item.getRenderHandler() != null) {
 			final ViewSlotContext renderContext = PlatformUtils.getFactory()
-				.createSlotContext(item, (BaseViewContext) context);
+				.createSlotContext(item, (BaseViewContext) context, 0, null);
 
 			runCatching(context, () -> item.getRenderHandler().accept(renderContext));
 			if (renderContext.hasChanged()) {
@@ -130,10 +137,6 @@ public abstract class AbstractVirtualView implements VirtualView {
 			update(context, i);
 	}
 
-	public final void setErrorHandler(ViewErrorHandler errorHandler) {
-		this.errorHandler = errorHandler;
-	}
-
 	final void update(@NotNull ViewContext context, int slot) {
 		inventoryModificationTriggered();
 
@@ -151,7 +154,7 @@ public abstract class AbstractVirtualView implements VirtualView {
 
 		if (item.getUpdateHandler() != null) {
 			final ViewSlotContext updateContext = PlatformUtils.getFactory()
-				.createSlotContext(item, (BaseViewContext) context);
+				.createSlotContext(item, (BaseViewContext) context, 0, null);
 
 			runCatching(context, () -> item.getUpdateHandler().accept(updateContext));
 			if (updateContext.hasChanged()) {
@@ -175,6 +178,11 @@ public abstract class AbstractVirtualView implements VirtualView {
 			return null;
 
 		return getItems()[index];
+	}
+
+	@Override
+	public final void clear(int slot) {
+		getItems()[slot] = null;
 	}
 
 	/**
