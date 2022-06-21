@@ -89,9 +89,10 @@ public interface PaginatedViewContext<T> extends ViewContext, PaginatedVirtualVi
 	/**
 	 * Updates the current context by switching to the next page if available.
 	 */
-	default void switchToNextPage() {
-		switchTo(getPage() + 1);
-	}
+	boolean switchToNextPage();
+
+	@Override
+	AbstractPaginatedView<T> getRoot();
 
 	@Override
 	PaginatedViewSlotContext<T> ref(String key);
