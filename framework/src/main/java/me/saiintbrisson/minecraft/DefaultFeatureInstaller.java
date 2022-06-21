@@ -47,4 +47,18 @@ public class DefaultFeatureInstaller<P extends PlatformViewFrame<?, ?, ?>> imple
 		return (R) value;
 	}
 
+	@Override
+	public void uninstall(@NotNull Feature<?, ?> feature) {
+		final Class<?> type = feature.getClass();
+		if (!featureList.containsKey(type))
+			throw new IllegalStateException(String.format(
+				"Feature %s not installed",
+				type.getSimpleName()
+			));
+
+		synchronized (featureList) {
+			featureList.remove(type).uninstall(platform);
+		}
+	}
+
 }

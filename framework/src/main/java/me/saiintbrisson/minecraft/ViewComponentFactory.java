@@ -5,17 +5,32 @@ import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Consumer;
 
 public abstract class ViewComponentFactory {
 
 	@Getter(AccessLevel.PROTECTED)
-	private final List<Consumer<AbstractView>> modifiers = new ArrayList<>();
+	private final Map<String, Consumer<AbstractView>> modifiers = new HashMap<>();
 
-	void registerModifier(@NotNull Consumer<AbstractView> modifier) {
-		modifiers.add(modifier);
+	/**
+	 * Registers a new view setup modifier.
+	 *
+	 * @param id       The modifier identifier.
+	 * @param modifier The modifier consumer instance.
+	 */
+	void registerModifier(@NotNull String id, @NotNull Consumer<AbstractView> modifier) {
+		modifiers.put(id, modifier);
+	}
+
+	/**
+	 * Unregisters a view setup modifier.
+	 *
+	 * @param id The modifier identifier.
+	 */
+	void unregisterModifier(@NotNull String id) {
+		modifiers.remove(id);
 	}
 
 	@NotNull

@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.UnaryOperator;
 
 /**
- * A feature is a module that is installed in the runtime and acts independently from the rest of the platform.
+ * A feature is a module that is installed in the runtime and acts independently of the rest of the platform.
  * <p>
  * Features are unknown internally and can only be accessed from themselves or from a reference
  * created by them, as a recommendation, a feature must be immutable and preferably inaccessible
@@ -49,5 +49,13 @@ public interface Feature<C, R> {
 	 */
 	@NotNull
 	R install(@NotNull PlatformViewFrame<?, ?, ?> platform, @NotNull UnaryOperator<C> configure);
+
+	/**
+	 * Uninstalls this feature, used to invalidate resources applied on installation.
+	 *
+	 * @param platform The feature uninstaller platform.
+	 * @see #install(PlatformViewFrame, UnaryOperator)
+	 */
+	void uninstall(@NotNull PlatformViewFrame<?, ?, ?> platform);
 
 }

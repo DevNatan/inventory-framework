@@ -34,7 +34,7 @@ public interface FeatureInstaller<P> {
 	 * @param feature The feature to be installed.
 	 * @param <C>     The feature configuration type.
 	 * @param <R>     The feature value instance type.
-	 * @return A initialized feature.
+	 * @return An initialized feature.
 	 */
 	@NotNull
 	default <C, R> R install(@NotNull Feature<C, R> feature) {
@@ -48,8 +48,15 @@ public interface FeatureInstaller<P> {
 	 * @param configure The feature configuration.
 	 * @param <C>       The feature configuration type.
 	 * @param <R>       The feature value instance type.
-	 * @return A initialized feature.
+	 * @return An initialized feature.
 	 */
 	@NotNull <C, R> R install(@NotNull Feature<C, R> feature, @NotNull UnaryOperator<C> configure);
+
+	/**
+	 * Uninstalls a feature.
+	 *
+	 * @param feature The feature to be uninstalled.
+	 */
+	void uninstall(@NotNull Feature<?, ?> feature);
 
 }

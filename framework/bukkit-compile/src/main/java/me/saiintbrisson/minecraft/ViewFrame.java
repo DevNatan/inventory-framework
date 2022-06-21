@@ -1,6 +1,9 @@
 package me.saiintbrisson.minecraft;
 
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
@@ -14,7 +17,11 @@ import org.bukkit.plugin.ServicesManager;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
@@ -250,6 +257,18 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
 	}
 
 	@Override
+	public void uninstall(@NotNull Feature<?, ?> feature) {
+		if (isRegistered())
+			throw new IllegalStateException("Cannot unregister a feature after framework registration");
+
+		featureInstaller.uninstall(feature);
+		getOwner().getLogger().info(String.format(
+			"Feature %s uninstalled",
+			StringUtils.substringBeforeLast(feature.getClass().getSimpleName(), "Feature")
+		));
+	}
+
+	@Override
 	public void nextTick(Runnable runnable) {
 		getOwner().getServer().getScheduler().runTask(getOwner(), runnable);
 	}
@@ -276,7 +295,7 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
 
 	public static ViewFrame of(
 		@NotNull Plugin plugin,
-		@NotNull View... views
+		@NotNull AbstractView... views
 	) {
 		return new ViewFrame(plugin).with(views);
 	}
