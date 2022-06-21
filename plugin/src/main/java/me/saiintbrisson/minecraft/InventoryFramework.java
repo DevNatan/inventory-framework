@@ -6,7 +6,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 @SuppressWarnings("unused")
 public final class InventoryFramework extends JavaPlugin {
 
-	private static final String BSTATS_SYSTEM_PROPERTY = "if.enable-bstats";
+	private static final String BSTATS_SYSTEM_PROPERTY = "inventory-framework.enable-bstats";
 
 	@Override
 	public void onEnable() {
