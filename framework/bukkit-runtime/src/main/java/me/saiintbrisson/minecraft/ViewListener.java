@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
@@ -44,6 +45,15 @@ class ViewListener implements Listener {
 		}
 
 		return context;
+	}
+
+	@SuppressWarnings("unused")
+	@EventHandler
+	public void onHolderDisable(final PluginDisableEvent e) {
+		if (!viewFrame.getOwner().equals(e.getPlugin()))
+			return;
+
+		viewFrame.unregister();
 	}
 
 
