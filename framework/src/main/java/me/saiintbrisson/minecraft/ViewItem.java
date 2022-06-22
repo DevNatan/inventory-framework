@@ -40,7 +40,7 @@ public final class ViewItem {
 	private boolean paginationItem;
 	private String referenceKey;
 	private boolean closeOnClick, cancelOnClick, cancelOnShiftClick;
-	private Consumer<ViewSlotContext> renderHandler, updateHandler, clickHandler;
+	private ViewItemHandler renderHandler, updateHandler, clickHandler;
 	private Consumer<ViewSlotMoveContext> moveInHandler, moveOutHandler;
 	private Consumer<ViewSlotContext> itemHoldHandler;
 	private BiConsumer<ViewSlotContext, ViewSlotContext> itemReleaseHandler;
@@ -297,7 +297,7 @@ public final class ViewItem {
 	 * @return This item.
 	 */
 	@Contract(value = "_ -> this", mutates = "this")
-	public ViewItem onRender(@Nullable Consumer<ViewSlotContext> handler) {
+	public ViewItem onRender(@Nullable ViewItemHandler handler) {
 		setRenderHandler(handler);
 		return this;
 	}
@@ -314,7 +314,7 @@ public final class ViewItem {
 	 * @return This item.
 	 */
 	@Contract(value = "_ -> this", mutates = "this")
-	public ViewItem onUpdate(@Nullable Consumer<ViewSlotContext> handler) {
+	public ViewItem onUpdate(@Nullable ViewItemHandler handler) {
 		setUpdateHandler(handler);
 		return this;
 	}
@@ -331,7 +331,7 @@ public final class ViewItem {
 	 * @return This item.
 	 */
 	@Contract(value = "_ -> this", mutates = "this")
-	public ViewItem onClick(@Nullable Consumer<ViewSlotContext> handler) {
+	public ViewItem onClick(@Nullable ViewItemHandler handler) {
 		setClickHandler(handler);
 		return this;
 	}

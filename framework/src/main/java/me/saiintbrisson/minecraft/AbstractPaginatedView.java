@@ -54,7 +54,7 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
 	 * <p>
 	 * It is not allowed to call methods that {@link #inventoryModificationTriggered() trigger modifications in the container}
 	 * of the context or in the view within this rendering function, and it is also not possible to
-	 * use the item {@link ViewItem#onRender(Consumer) rendering} and {@link ViewItem#onUpdate(Consumer) update}
+	 * use the item {@link ViewItem#onRender(ViewItemHandler) render} and {@link ViewItem#onUpdate(ViewItemHandler) update}
 	 * functions within this function since it is already a rendering function of item itself.
 	 *
 	 * @param context  The pagination item rendering context.

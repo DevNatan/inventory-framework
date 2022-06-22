@@ -2,8 +2,6 @@
 
 package me.saiintbrisson.minecraft
 
-import java.util.function.Consumer
-
 @ViewDsl
 public class ViewBuilder {
 
@@ -54,6 +52,6 @@ public class ViewSlotBuilder(@PublishedApi internal val slot: Int) {
 
     private fun ViewItem.setHandler(
         currentHandler: SlotContextBlock?,
-        assign: ViewItem.(Consumer<ViewSlotContext>) -> Unit
+        assign: ViewItem.(ViewItemHandler) -> Unit
     ) = currentHandler?.let { it -> assign(it) }
 }

@@ -28,7 +28,7 @@ final class ItemClickInterceptor implements PipelineInterceptor<BukkitClickViewS
 		subject.setCancelled(item.isCancelOnClick());
 
 		if (item.getClickHandler() != null)
-			subject.getRoot().runCatching(subject, () -> item.getClickHandler().accept(subject));
+			subject.getRoot().runCatching(subject, () -> item.getClickHandler().handle(subject));
 
 		event.setCancelled(subject.isCancelled());
 	}
