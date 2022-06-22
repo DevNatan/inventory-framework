@@ -1,4 +1,7 @@
 @file:Suppress("UnstableApiUsage")
+apply {
+    from("../publish.gradle")
+}
 
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {

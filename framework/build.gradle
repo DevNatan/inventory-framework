@@ -4,3 +4,7 @@ javadoc {
     exclude 'me/matsubara/**'
     exclude 'me/saiintbrisson/minecraft/utils/**'
 }
+
+subprojects {
+    apply from: '../../publish.gradle'
+}

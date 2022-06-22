@@ -1,6 +1,8 @@
 plugins {
-    id 'maven-publish'
+    alias(libs.plugins.shadowjar)
 }
+
+apply from: '../publish.gradle'
 
 dependencies {
     compileOnlyApi project(':framework')
@@ -8,15 +10,20 @@ dependencies {
     runtimeOnly(project(':framework:bukkit-runtime')) {
         because('Backward compatibility')
     }
-    compileOnlyApi project(':feature-move-io')
+    runtimeOnly project(':feature-move-io')
+    compileOnlyApi project(':kotlin-dsl')
 }
 
 jar {
     manifest {
-        attributes('Implementation-Title': 'inventory-framework-' + project.name, 'Implementation-Version': project.version)
+        attributes(
+                'Implementation-Title': 'inventory-framework',
+                'Implementation-Version': project.version
+        )
     }
 
     from {
-        configurations.runtimeClasspath.filter { it.exists() }.collect { it.isDirectory() ? it : zipTree(it) }
+        configurations.runtimeClasspath.filter { it.exists() }
+                .collect { it.isDirectory() ? it : zipTree(it) }
     }
 }

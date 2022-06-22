@@ -1,10 +1,11 @@
 apply plugin: 'maven-publish'
 
 project.afterEvaluate {
+    final def project = it
     publishing {
         publications {
             jitpack(MavenPublication) {
-                configurePublication(it)
+                configurePublication(project, it)
             }
         }
     }
@@ -15,9 +16,15 @@ tasks.withType(GenerateModuleMetadata).configureEach {
 }
 
 @SuppressWarnings('unused')
-def configurePublication(Publication publication) {
+def configurePublication(Project project, Publication publication) {
     publication.groupId = 'com.github.DevNatan'
-    publication.artifactId = 'inventory-framework'
+
+    final def base = 'inventory-framework'
+    def fixedName = base + '-' + project.name
+    if (project.name == 'bom') fixedName = base
+    if (project.name == 'framework') fixedName = base + '-shared'
+
+    publication.artifactId = fixedName
 
     publication.from components.java
 
