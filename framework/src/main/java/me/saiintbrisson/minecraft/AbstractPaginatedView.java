@@ -38,20 +38,18 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
 	 * <p>
 	 * The {@link ViewItem item parameter} is mutable and must be used to determine what will be
 	 * rendered in that context for that specific item.
-	 * <pre>
-	 * {@code
-	 * @Override
+	 * <pre><code>
+	 * &#64;Override
 	 * protected void onItemRender(
-	 *     PaginatedViewSlotContext<T> renderContext,
+	 *     PaginatedViewSlotContext&#60;T&#62; context,
 	 *     ViewItem viewItem,
 	 *     T value
 	 * ) {
-	 *     viewItem.withItem(platformStack).onClick(click -> {
+	 *     viewItem.withItem(platformStack).onClick(click -&#62; {
 	 *         // clicked on value
 	 *     });
 	 * }
-	 * }
-	 * </pre>
+	 * </code></pre>
 	 * This function is called extensively, every time a paginated item is rendered or updated.
 	 * <p>
 	 * It is not allowed to call methods that {@link #inventoryModificationTriggered() trigger modifications in the container}

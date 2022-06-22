@@ -6,6 +6,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
 public class TestViewFrame implements PlatformViewFrame<Void, Void, TestViewFrame> {
@@ -70,12 +72,52 @@ public class TestViewFrame implements PlatformViewFrame<Void, Void, TestViewFram
 	}
 
 	@Override
+	public Function<PaginatedViewContext<?>, ViewItem> getDefaultPreviousPageItem() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void setDefaultPreviousPageItem(Function<PaginatedViewContext<?>, ViewItem> defaultPreviousPageItemFactory) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public TestViewFrame setNavigateBackItemFactory(BiConsumer<PaginatedViewContext<?>, ViewItem> navigateBackItemFactory) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Function<PaginatedViewContext<?>, ViewItem> getDefaultNextPageItem() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void setDefaultNextPageItem(Function<PaginatedViewContext<?>, ViewItem> defaultNextPageItemFactory) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public TestViewFrame setNavigateNextItemFactory(BiConsumer<PaginatedViewContext<?>, ViewItem> navigateNextItemFactory) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
 	public <R extends AbstractView> R open(@NotNull Class<R> viewClass, @NotNull Void viewer) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public <R extends AbstractView> R open(@NotNull Class<R> viewClass, @NotNull Void viewer, @NotNull Map<String, Object> data) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public <C, R> @NotNull R install(@NotNull Feature<C, R> feature) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void uninstall(@NotNull Feature<?, ?> feature) {
 		throw new UnsupportedOperationException();
 	}
 

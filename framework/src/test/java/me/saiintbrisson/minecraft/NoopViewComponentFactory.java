@@ -31,7 +31,7 @@ public abstract class NoopViewComponentFactory extends ViewComponentFactory {
 	}
 
 	@Override
-	public @NotNull AbstractViewSlotContext createSlotContext(ViewItem item, BaseViewContext parent) {
+	public @NotNull AbstractViewSlotContext createSlotContext(ViewItem item, BaseViewContext parent, int paginatedItemIndex, Object paginatedItemValue) {
 		throw new UnsupportedOperationException();
 	}
 
