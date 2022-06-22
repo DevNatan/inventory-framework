@@ -1,10 +1,13 @@
 package me.saiintbrisson.minecraft;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.concurrent.CompletableFuture;
 
 /**
  * This context is created before the container is opened, it is used for cancellation by previously
@@ -30,6 +33,9 @@ public class OpenViewContext extends BaseViewContext {
 	 */
 	@Setter
 	private ViewType containerType;
+
+	@Getter(AccessLevel.PACKAGE)
+	private CompletableFuture<?> job;
 
 	@Setter
 	private boolean cancelled;
@@ -85,6 +91,15 @@ public class OpenViewContext extends BaseViewContext {
 			);
 
 		this.containerSize = containerSize;
+	}
+
+	/**
+	 * Waits until the specified job is complete to open the view.
+	 *
+	 * @param job The job that'll be waited for.
+	 */
+	public final void waitUntil(@NotNull CompletableFuture<?> job) {
+		this.job = job;
 	}
 
 	@Override
