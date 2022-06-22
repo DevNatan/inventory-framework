@@ -1,12 +1,7 @@
 package me.saiintbrisson.minecraft;
 
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.util.Collection;
-import java.util.Map;
-import java.util.function.UnaryOperator;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertTrue;

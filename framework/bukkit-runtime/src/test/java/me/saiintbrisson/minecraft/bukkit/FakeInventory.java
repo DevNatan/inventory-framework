@@ -1,7 +1,6 @@
 package me.saiintbrisson.minecraft.bukkit;
 
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;

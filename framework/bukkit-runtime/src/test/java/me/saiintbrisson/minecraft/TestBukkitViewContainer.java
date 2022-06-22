@@ -2,7 +2,6 @@ package me.saiintbrisson.minecraft;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import me.saiintbrisson.minecraft.bukkit.FakeInventory;
 import me.saiintbrisson.minecraft.bukkit.FakeItemStack;

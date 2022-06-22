@@ -3,7 +3,6 @@ package me.saiintbrisson.minecraft;
 import lombok.Getter;
 import lombok.ToString;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 @Getter

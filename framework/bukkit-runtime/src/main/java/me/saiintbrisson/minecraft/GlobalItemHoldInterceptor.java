@@ -2,8 +2,6 @@ package me.saiintbrisson.minecraft;
 
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
 /**

@@ -1,7 +1,6 @@
 package me.saiintbrisson.minecraft;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 
 /**
