@@ -70,13 +70,33 @@ public abstract class AbstractView extends AbstractVirtualView {
 	final void open(@NotNull Viewer viewer, @NotNull Map<String, Object> data) {
 		final OpenViewContext open = internalOpen(viewer, data);
 
-		final String containerTitle = open.getContainerTitle() == null ? title : open.getContainerTitle();
-		final ViewType containerType = open.getContainerType() == null ? type : open.getContainerType();
+		// wait for asynchronous open
+		if (open.getJob() != null) {
+			open.getJob().whenComplete(($, error) -> {
+				postOpen(viewer, open);
+			}).exceptionally(error -> {
+				throwException(open, new RuntimeException(error));
+				return null;
+			});
+			return;
+		}
+
+		postOpen(viewer, open);
+	}
+
+	private void postOpen(
+		@NotNull Viewer viewer,
+		@NotNull OpenViewContext openContext
+	) {
+		if (openContext.isCancelled()) return;
+
+		final String containerTitle = openContext.getContainerTitle() == null ? title : openContext.getContainerTitle();
+		final ViewType containerType = openContext.getContainerType() == null ? type : openContext.getContainerType();
 
 		// rows will be normalized to fixed container size on `createContainer`
-		final int containerSize = open.getContainerSize() == 0
+		final int containerSize = openContext.getContainerSize() == 0
 			? size
-			: containerType.normalize(open.getContainerSize());
+			: containerType.normalize(openContext.getContainerSize());
 
 		final ViewContainer container = viewFrame.getFactory().createContainer(
 			this,
@@ -84,9 +104,6 @@ public abstract class AbstractView extends AbstractVirtualView {
 			containerTitle,
 			containerType
 		);
-
-		if (open.isCancelled())
-			return;
 
 		final BaseViewContext context = viewFrame.getFactory().createContext(this, container, null);
 		context.setItems(new ViewItem[containerSize]);
