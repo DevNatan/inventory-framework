@@ -336,6 +336,12 @@ public abstract class AbstractView extends AbstractVirtualView {
 		return super.resolve(index);
 	}
 
+	void remove(@NotNull ViewContext context) {
+		synchronized (contexts) {
+			contexts.remove(context);
+		}
+	}
+
 	/**
 	 * Throws an exception if the view has already been initialized.
 	 * <p>

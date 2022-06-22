@@ -1,13 +1,19 @@
 package me.saiintbrisson.minecraft;
 
 import lombok.RequiredArgsConstructor;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
@@ -83,7 +89,6 @@ class ViewListener implements Listener {
 		}
 	}
 
-
 	@EventHandler
 	public void onClick(final InventoryClickEvent event) {
 		if (!(event.getWhoClicked() instanceof Player))
@@ -122,6 +127,68 @@ class ViewListener implements Listener {
 
 		if (slotContext.getAttributes().isMarkedToClose())
 			plugin.getServer().getScheduler().runTask(plugin, slotContext::closeUninterruptedly);
+	}
+
+	@SuppressWarnings("unused")
+	@EventHandler
+	public void onViewClose(final InventoryCloseEvent e) {
+		if (!(e.getPlayer() instanceof Player))
+			return;
+
+		final AbstractView view = getView((Player) e.getPlayer());
+		if (view == null)
+			return;
+
+		final Player player = (Player) e.getPlayer();
+		final ViewContext context = getContextOrThrow(view, player);
+		final ViewContext close = new CloseViewContext(context);
+		view.runCatching(context, () -> view.onClose(close));
+
+		if (close.isCancelled()) {
+			Bukkit.getScheduler().runTaskLater(
+				viewFrame.getOwner(),
+				() -> context.getViewers().stream()
+					.filter(other -> other instanceof BukkitViewer &&
+						((BukkitViewer) other).getPlayer().equals(player))
+					.findFirst()
+					.ifPresent(viewer -> close.getContainer().open(viewer)),
+				1L
+			);
+
+			// set the old cursor item
+			final ItemStack cursor = player.getItemOnCursor();
+
+			// cursor can be null in legacy versions
+			//noinspection ConstantConditions
+			if ((cursor != null) && cursor.getType() != Material.AIR)
+				player.setItemOnCursor(cursor);
+			return;
+		}
+
+		if (view.isClearCursorOnClose())
+			player.setItemOnCursor(null);
+
+		view.remove(context);
+	}
+
+	@SuppressWarnings("unused")
+	@EventHandler
+	public void onDropItemOnView(final PlayerDropItemEvent e) {
+		final AbstractView view = getView(e.getPlayer());
+		if (view == null)
+			return;
+
+		e.setCancelled(view.isCancelOnDrop());
+	}
+
+	@SuppressWarnings("unused")
+	@EventHandler
+	public void onPickupItemOnView(final PlayerPickupItemEvent e) {
+		final AbstractView view = getView(e.getPlayer());
+		if (view == null)
+			return;
+
+		e.setCancelled(view.isCancelOnPickup());
 	}
 
 }
