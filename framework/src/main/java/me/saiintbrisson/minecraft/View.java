@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.ToString;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -25,10 +26,12 @@ public class View extends AbstractView implements InventoryHolder {
 		this(0, title);
 	}
 
+	@ApiStatus.Experimental
 	public View(String title, @NotNull ViewType type) {
 		this(0, title, type);
 	}
 
+	@ApiStatus.Experimental
 	public View(@NotNull ViewType type) {
 		this(0, null, type);
 	}
@@ -37,6 +40,7 @@ public class View extends AbstractView implements InventoryHolder {
 		this(size, title, ViewType.CHEST);
 	}
 
+	@ApiStatus.Experimental
 	public View(int size, String title, @NotNull ViewType type) {
 		super(size, title, type);
 	}

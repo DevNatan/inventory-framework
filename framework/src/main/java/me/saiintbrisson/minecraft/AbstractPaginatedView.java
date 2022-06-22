@@ -2,6 +2,7 @@ package me.saiintbrisson.minecraft;
 
 import lombok.Getter;
 import lombok.ToString;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
@@ -78,6 +79,19 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
 	protected void onPageSwitch(@NotNull PaginatedViewContext<T> context) {
 	}
 
+	@ApiStatus.Internal
+	public final Paginator<T> getPaginator() {
+		return paginator;
+	}
+
+	public BiConsumer<PaginatedViewContext<T>, ViewItem> getPreviousPageItemFactory() {
+		return previousPageItemFactory;
+	}
+
+	public BiConsumer<PaginatedViewContext<T>, ViewItem> getNextPageItemFactory() {
+		return nextPageItemFactory;
+	}
+
 	/**
 	 * @deprecated Offset and limit will be replaced by layout.
 	 */
@@ -116,6 +130,11 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
 	public final void setLimit(int limit) {
 		ensureNotInitialized();
 		this.limit = limit;
+	}
+
+	@ApiStatus.Internal
+	public final String[] getLayout() {
+		return layout;
 	}
 
 	@Override
@@ -179,19 +198,24 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
 	}
 
 	@Override
+	@ApiStatus.Experimental
 	public final void setSource(@NotNull Function<PaginatedViewContext<T>, List<T>> sourceProvider) {
 		ensureNotInitialized();
 		this.paginator = new Paginator<>(getPageSize(), sourceProvider);
 	}
 
 	@Override
-	public int getPageMaxItemsCount() {
+	public final int getPageMaxItemsCount() {
 		throw new IllegalStateException("Cannot retrieve page max items count without a container");
 	}
 
 	@Override
 	public final int getPageSize() {
 		return limit - offset;
+	}
+
+	private List<LayoutPattern> getLayoutPatterns() {
+		return layoutPatterns;
 	}
 
 	@Override
@@ -330,7 +354,7 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
 	private void renderPatterns(
 		@NotNull PaginatedViewContext<T> context
 	) {
-		for (final LayoutPattern pattern : layoutPatterns) {
+		for (final LayoutPattern pattern : getLayoutPatterns()) {
 			for (final int slot : pattern.getSlots()) {
 				final ViewItem item = pattern.getFactory().get();
 

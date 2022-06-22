@@ -21,6 +21,7 @@ import java.util.function.Consumer;
  */
 public interface ViewSlotContext extends ViewContext {
 
+	@ApiStatus.Internal
 	ViewContext getParent();
 
 	/**

@@ -3,7 +3,7 @@ package me.saiintbrisson.minecraft;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Handler to catch {@link VirtualView} errors.
+ * Handler to catch view errors.
  */
 @FunctionalInterface
 public interface ViewErrorHandler {

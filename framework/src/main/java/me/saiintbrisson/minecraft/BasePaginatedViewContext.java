@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,6 +31,11 @@ class BasePaginatedViewContext<T> extends BaseViewContext implements PaginatedVi
 
 	BasePaginatedViewContext(@NotNull AbstractView root, @Nullable ViewContainer container) {
 		super(root, container);
+	}
+
+	@ApiStatus.Internal
+	public final String[] getLayout() {
+		return layout;
 	}
 
 	@Override
@@ -111,6 +117,7 @@ class BasePaginatedViewContext<T> extends BaseViewContext implements PaginatedVi
 		return true;
 	}
 
+	@ApiStatus.Internal
 	public final Paginator<T> getPaginator() {
 		if (paginator != null)
 			return paginator;
@@ -144,6 +151,7 @@ class BasePaginatedViewContext<T> extends BaseViewContext implements PaginatedVi
 	}
 
 	@Override
+	@ApiStatus.Experimental
 	public final void setSource(@NotNull Function<PaginatedViewContext<T>, List<T>> sourceProvider) {
 		final Paginator<T> paginator = getPaginator();
 		if (paginator != null && paginator.isProvided())

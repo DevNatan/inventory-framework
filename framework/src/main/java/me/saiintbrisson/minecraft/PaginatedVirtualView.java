@@ -57,7 +57,7 @@ public interface PaginatedVirtualView<T> extends VirtualView {
 	 * You can only use this method once during the view's lifecycle as it is a provider,
 	 * and the pagination resets with each update accordingly.
 	 * <p>
-	 * <i>This is an experimental api which is subject to change.</i>
+	 * <i>This is an experimental API which is subject to change.</i>
 	 *
 	 * @param sourceProvider The pagination data source provider.
 	 */

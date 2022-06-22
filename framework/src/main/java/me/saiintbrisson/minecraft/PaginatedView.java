@@ -2,6 +2,7 @@ package me.saiintbrisson.minecraft;
 
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -21,10 +22,12 @@ public abstract class PaginatedView<T> extends AbstractPaginatedView<T> implemen
 		this(0, title);
 	}
 
+	@ApiStatus.Experimental
 	public PaginatedView(String title, @NotNull ViewType type) {
 		this(0, title, type);
 	}
 
+	@ApiStatus.Experimental
 	public PaginatedView(@NotNull ViewType type) {
 		this(0, null, type);
 	}
@@ -33,6 +36,7 @@ public abstract class PaginatedView<T> extends AbstractPaginatedView<T> implemen
 		this(size, title, ViewType.CHEST);
 	}
 
+	@ApiStatus.Experimental
 	public PaginatedView(int size, String title, @NotNull ViewType type) {
 		super(size, title, type);
 	}

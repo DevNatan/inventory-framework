@@ -1,5 +1,6 @@
 package me.saiintbrisson.minecraft;
 
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -11,6 +12,8 @@ import java.util.function.UnaryOperator;
  *
  * @param <P> The platform view framework.
  */
+@ApiStatus.NonExtendable
+@ApiStatus.Experimental
 public interface FeatureInstaller<P> {
 
 	/**

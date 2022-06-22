@@ -7,10 +7,10 @@ apply from: '../publish.gradle'
 dependencies {
     compileOnlyApi project(':framework')
     compileOnlyApi project(':framework:bukkit-compile')
-    runtimeOnly(project(':framework:bukkit-runtime')) {
+    compileOnlyApi(project(':framework:bukkit-runtime')) {
         because('Backward compatibility')
     }
-    runtimeOnly project(':feature-move-io')
+    compileOnlyApi project(':feature-move-io')
     compileOnlyApi project(':kotlin-dsl')
 }
 

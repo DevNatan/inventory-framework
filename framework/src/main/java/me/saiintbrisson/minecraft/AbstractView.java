@@ -151,6 +151,7 @@ public abstract class AbstractView extends AbstractVirtualView {
 
 	@Override
 	@Deprecated
+	@ApiStatus.ScheduledForRemoval(inVersion = "2.5.2")
 	public final void closeNow() {
 		closeUninterruptedly();
 	}

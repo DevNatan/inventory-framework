@@ -33,6 +33,7 @@ public interface VirtualView {
 	 * @deprecated Use {@link #closeUninterruptedly()} instead.
 	 */
 	@Deprecated
+	@ApiStatus.ScheduledForRemoval(inVersion = "2.5.2")
 	void closeNow();
 
 	/**
