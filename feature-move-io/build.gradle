@@ -1,3 +1,5 @@
+apply from: '../publish.gradle'
+
 dependencies {
     compileOnly project(':framework')
     compileOnly project(':framework:bukkit-runtime')

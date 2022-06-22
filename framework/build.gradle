@@ -1,3 +1,5 @@
+apply from: '../publish.gradle'
+
 javadoc {
     exclude 'me/matsubara/**'
     exclude 'me/saiintbrisson/minecraft/utils/**'

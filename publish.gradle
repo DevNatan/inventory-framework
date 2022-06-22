@@ -1,25 +1,9 @@
-plugins {
-    id 'maven-publish'
-}
+apply plugin: 'maven-publish'
 
 project.afterEvaluate {
     publishing {
-        repositories {
-            maven {
-                url = uri("https://maven.pkg.github.com/DevNatan/inventory-framework")
-                credentials {
-                    username = System.getenv("USERNAME")
-                    password = System.getenv("TOKEN")
-                }
-            }
-        }
-
         publications {
             jitpack(MavenPublication) {
-                configurePublication(it)
-            }
-
-            register("gpr", MavenPublication) {
                 configurePublication(it)
             }
         }
