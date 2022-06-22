@@ -49,7 +49,6 @@ class ViewListener implements Listener {
 
 	@EventHandler
 	public void onClick(final InventoryClickEvent event) {
-		System.out.println("on click");
 		if (!(event.getWhoClicked() instanceof Player))
 			return;
 

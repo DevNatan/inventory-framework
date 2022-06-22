@@ -213,7 +213,6 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
 
 		super.render(context);
 
-		System.out.println("Rendering context...");
 		updateContext(context.paginated(), 0, true, true);
 	}
 
@@ -241,7 +240,6 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
 		@NotNull T value,
 		@Nullable ViewItem override
 	) {
-		System.out.println("Rendering paginated item @ " + slot);
 		// TODO replace this with a more sophisticated overlay detection
 		ViewItem overlay = context.resolve(slot, true);
 		if (overlay != null && overlay.isPaginationItem())
@@ -293,17 +291,10 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
 
 		final List<T> elements = context.getPaginator().getPageBlocking(context.getPage());
 		final int elementsCount = elements.size();
-		System.out.println("rendering layout (" + elementsCount + " items)");
 
 		final Stack<Integer> itemsLayer = ((BasePaginatedViewContext<T>) context).getItemsLayer();
 		final int lastSlot = layout == null ? limit : itemsLayer.peek();
 		final int layerSize = getLayerSize(context, layout);
-
-		System.out.println("rendering layout");
-		System.out.println("elements count: " + elementsCount);
-		System.out.println("offset = " + offset + ", limit = " + getLimit());
-		System.out.println("layer size = " + layerSize);
-		System.out.println("last slot = " + lastSlot);
 
 		for (int i = 0; i <= lastSlot; i++) {
 			if (layout != null && i >= layerSize)
@@ -461,8 +452,6 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
 		boolean pageChecking,
 		boolean setupForRender
 	) {
-		System.out.println("Updating context");
-
 		if (context instanceof ViewSlotContext)
 			throw new IllegalStateException("Cannot update context using a slot context");
 
@@ -536,7 +525,6 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
 			});
 		}
 
-		System.out.println("setup for " + direction);
 		render(context, item.withCancelOnClick(true), expectedSlot);
 		((BasePaginatedViewContext<T>) context).getItems()[expectedSlot] = item;
 	}
@@ -549,10 +537,7 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
 		// since the layout is only defined once, we cache it
 		// to avoid unnecessary processing every time we update the context.
 		final int len = layout.length;
-		System.out.println("Layout length: " + len);
-
 		final int containerRowsCount = context.getContainer().getRowsCount();
-		System.out.println("Container rows count " + containerRowsCount);
 
 		if (len != containerRowsCount)
 			throw new IllegalArgumentException(String.format(
@@ -563,7 +548,6 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
 			));
 
 		final int containerColumnsCount = context.getContainer().getColumnsCount();
-		System.out.println("Container columns count: " + containerColumnsCount);
 
 		final Stack<Integer> itemsLayer = new Stack<>();
 		((BasePaginatedViewContext<T>) context).setItemsLayer(itemsLayer);
@@ -617,7 +601,6 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
 		if (!setupForRender)
 			return;
 
-		System.out.println("Items layer size set to " + itemsLayer.size());
 		context.getPaginator().setPageSize(itemsLayer.size());
 		context.setLayoutSignatureChecked(true);
 	}
