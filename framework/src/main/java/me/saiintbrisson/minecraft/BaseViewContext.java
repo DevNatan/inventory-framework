@@ -19,224 +19,207 @@ import java.util.function.Supplier;
 @ToString(callSuper = true)
 class BaseViewContext extends AbstractVirtualView implements ViewContext {
 
-	private final AbstractView root;
-	private final ViewContainer container;
-	private final ViewContextAttributes attributes;
+    private final AbstractView root;
+    private final ViewContainer container;
+    private final ViewContextAttributes attributes;
 
-	protected BaseViewContext(
-		final @NotNull AbstractView root,
-		final @Nullable ViewContainer container
-	) {
-		this.root = root;
-		this.container = container;
-		this.attributes = new ViewContextAttributes(container);
-	}
+    protected BaseViewContext(
+            final @NotNull AbstractView root, final @Nullable ViewContainer container) {
+        this.root = root;
+        this.container = container;
+        this.attributes = new ViewContextAttributes(container);
+    }
 
-	@Override
-	public final @NotNull List<Viewer> getViewers() {
-		return getAttributes().getViewers();
-	}
+    @Override
+    public final @NotNull List<Viewer> getViewers() {
+        return getAttributes().getViewers();
+    }
 
-	final void addViewer(@NotNull final Viewer viewer) {
-		synchronized (getAttributes().getViewers()) {
-			getAttributes().getViewers().add(viewer);
-		}
-	}
+    final void addViewer(@NotNull final Viewer viewer) {
+        synchronized (getAttributes().getViewers()) {
+            getAttributes().getViewers().add(viewer);
+        }
+    }
 
-	final void removeViewer(@NotNull final Viewer viewer) {
-		synchronized (getAttributes().getViewers()) {
-			getAttributes().getViewers().remove(viewer);
-		}
-	}
+    final void removeViewer(@NotNull final Viewer viewer) {
+        synchronized (getAttributes().getViewers()) {
+            getAttributes().getViewers().remove(viewer);
+        }
+    }
 
-	@Override
-	@SuppressWarnings("unchecked")
-	public final <T> T get(@NotNull final String key) {
-		return (T) getAttributes().getData().get(key);
-	}
+    @Override
+    @SuppressWarnings("unchecked")
+    public final <T> T get(@NotNull final String key) {
+        return (T) getAttributes().getData().get(key);
+    }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public <T> T get(@NotNull String key, @NotNull Supplier<T> defaultValue) {
-		synchronized (getAttributes().getData()) {
-			if (!getAttributes().getData().containsKey(key)) {
-				final T value = defaultValue.get();
-				getAttributes().getData().put(key, value);
-				return value;
-			}
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> T get(@NotNull String key, @NotNull Supplier<T> defaultValue) {
+        synchronized (getAttributes().getData()) {
+            if (!getAttributes().getData().containsKey(key)) {
+                final T value = defaultValue.get();
+                getAttributes().getData().put(key, value);
+                return value;
+            }
 
-			return (T) getAttributes().getData().get(key);
-		}
-	}
+            return (T) getAttributes().getData().get(key);
+        }
+    }
 
-	@Override
-	public final void set(@NotNull final String key, @NotNull final Object value) {
-		synchronized (getAttributes().getData()) {
-			getAttributes().getData().put(key, value);
-		}
-	}
+    @Override
+    public final void set(@NotNull final String key, @NotNull final Object value) {
+        synchronized (getAttributes().getData()) {
+            getAttributes().getData().put(key, value);
+        }
+    }
 
-	@Override
-	public final boolean has(@NotNull final String key) {
-		synchronized (getAttributes().getData()) {
-			return getAttributes().getData().containsKey(key);
-		}
-	}
+    @Override
+    public final boolean has(@NotNull final String key) {
+        synchronized (getAttributes().getData()) {
+            return getAttributes().getData().containsKey(key);
+        }
+    }
 
-	@Override
-	@NotNull
-	public final ViewContainer getContainer() {
-		return Objects.requireNonNull(
-			getAttributes().getContainer(),
-			"View context container cannot be null"
-		);
-	}
+    @Override
+    @NotNull
+    public final ViewContainer getContainer() {
+        return Objects.requireNonNull(
+                getAttributes().getContainer(), "View context container cannot be null");
+    }
 
-	@Override
-	public final @NotNull String getTitle() {
-		return getAttributes().getUpdatedTitle() != null
-			? getAttributes().getUpdatedTitle()
-			: getRoot().getTitle();
-	}
+    @Override
+    public final @NotNull String getTitle() {
+        return getAttributes().getUpdatedTitle() != null
+                ? getAttributes().getUpdatedTitle()
+                : getRoot().getTitle();
+    }
 
-	@Override
-	public final int getRows() {
-		return getContainer().getColumnsCount();
-	}
+    @Override
+    public final int getRows() {
+        return getContainer().getColumnsCount();
+    }
 
-	@Override
-	public final void updateTitle(@NotNull final String title) {
-		getAttributes().setTitle(title);
-	}
+    @Override
+    public final void updateTitle(@NotNull final String title) {
+        getAttributes().setTitle(title);
+    }
 
-	@Override
-	public final void resetTitle() {
-		getAttributes().setTitle(null);
-	}
+    @Override
+    public final void resetTitle() {
+        getAttributes().setTitle(null);
+    }
 
-	@Override
-	public final boolean isPropagateErrors() {
-		return getAttributes().isPropagateErrors();
-	}
+    @Override
+    public final boolean isPropagateErrors() {
+        return getAttributes().isPropagateErrors();
+    }
 
-	@Override
-	public void setPropagateErrors(boolean propagateErrors) {
-		getAttributes().setPropagateErrors(propagateErrors);
-	}
+    @Override
+    public void setPropagateErrors(boolean propagateErrors) {
+        getAttributes().setPropagateErrors(propagateErrors);
+    }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public <T> PaginatedViewContext<T> paginated() {
-		if (!(this.getRoot() instanceof PaginatedView))
-			throw new IllegalStateException("Only paginated views can enforce paginated view context");
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> PaginatedViewContext<T> paginated() {
+        if (!(this.getRoot() instanceof PaginatedView))
+            throw new IllegalStateException(
+                    "Only paginated views can enforce paginated view context");
 
-		return (PaginatedViewContext<T>) this;
-	}
+        return (PaginatedViewContext<T>) this;
+    }
 
-	@Override
-	public final String getUpdatedTitle() {
-		return getAttributes().getUpdatedTitle();
-	}
+    @Override
+    public final String getUpdatedTitle() {
+        return getAttributes().getUpdatedTitle();
+    }
 
-	@Override
-	public final void close() {
-		getAttributes().setMarkedToClose(true);
-	}
+    @Override
+    public final void close() {
+        getAttributes().setMarkedToClose(true);
+    }
 
-	@Override
-	@Deprecated
-	public void closeNow() {
-		closeUninterruptedly();
-	}
+    @Override
+    @Deprecated
+    public void closeNow() {
+        closeUninterruptedly();
+    }
 
-	@Override
-	public void closeUninterruptedly() {
-		getContainer().close();
-	}
+    @Override
+    public void closeUninterruptedly() {
+        getContainer().close();
+    }
 
-	@Override
-	@SuppressWarnings({"rawtypes", "unchecked"})
-	public final void open(@NotNull Class<? extends AbstractView> viewClass) {
-		final PlatformViewFrame platformViewFrame = getRoot().getViewFrame();
-		for (final Viewer viewer : getViewers())
-			platformViewFrame.open(viewClass, viewer);
-	}
+    @Override
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    public final void open(@NotNull Class<? extends AbstractView> viewClass) {
+        final PlatformViewFrame platformViewFrame = getRoot().getViewFrame();
+        for (final Viewer viewer : getViewers()) platformViewFrame.open(viewClass, viewer);
+    }
 
-	@Override
-	@SuppressWarnings({"rawtypes", "unchecked"})
-	public final void open(@NotNull Class<? extends AbstractView> viewClass, @NotNull Map<String, @Nullable Object> data) {
-		final PlatformViewFrame platformViewFrame = getRoot().getViewFrame();
-		for (final Viewer viewer : getViewers())
-			platformViewFrame.open(viewClass, viewer, data);
-	}
+    @Override
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    public final void open(
+            @NotNull Class<? extends AbstractView> viewClass,
+            @NotNull Map<String, @Nullable Object> data) {
+        final PlatformViewFrame platformViewFrame = getRoot().getViewFrame();
+        for (final Viewer viewer : getViewers()) platformViewFrame.open(viewClass, viewer, data);
+    }
 
-	@Override
-	public Player getPlayer() {
-		throw new UnsupportedOperationException(
-			"This function should not be used on your platform, it is only available for reasons" +
-				" of backward compatibility with the Bukkit platform."
-		);
-	}
+    @Override
+    public Player getPlayer() {
+        throw new UnsupportedOperationException(
+                "This function should not be used on your platform, it is only available for reasons"
+                        + " of backward compatibility with the Bukkit platform.");
+    }
 
-	@Override
-	public boolean isCancelled() {
-		throw new UnsupportedOperationException(String.format(
-			"This context is not cancellable: %s",
-			getClass().getName()
-		));
-	}
+    @Override
+    public boolean isCancelled() {
+        throw new UnsupportedOperationException(
+                String.format("This context is not cancellable: %s", getClass().getName()));
+    }
 
-	@Override
-	public void setCancelled(boolean cancelled) {
-		throw new UnsupportedOperationException(String.format(
-			"This context is not cancellable: %s",
-			getClass().getName()
-		));
-	}
+    @Override
+    public void setCancelled(boolean cancelled) {
+        throw new UnsupportedOperationException(
+                String.format("This context is not cancellable: %s", getClass().getName()));
+    }
 
-	@Override
-	public ViewItem resolve(int index, boolean resolveOnRoot) {
-		ViewItem item = super.resolve(index);
-		if (item == null && resolveOnRoot)
-			return getRoot().resolve(index);
+    @Override
+    public ViewItem resolve(int index, boolean resolveOnRoot) {
+        ViewItem item = super.resolve(index);
+        if (item == null && resolveOnRoot) return getRoot().resolve(index);
 
-		return item;
-	}
+        return item;
+    }
 
-	final ViewItem resolve(int index, boolean resolveOnRoot, boolean entityContainer) {
-		// fast path -- user is unable to set items on entity container
-		if (entityContainer) return null;
-		return resolve(index, resolveOnRoot);
-	}
+    final ViewItem resolve(int index, boolean resolveOnRoot, boolean entityContainer) {
+        // fast path -- user is unable to set items on entity container
+        if (entityContainer) return null;
+        return resolve(index, resolveOnRoot);
+    }
 
-	@Override
-	public ViewSlotContext ref(final String key) {
-		ViewItem item = tryResolveRef(this, key);
-		if (item == null) item = tryResolveRef(getRoot(), key);
-		if (item == null) return null;
+    @Override
+    public ViewSlotContext ref(final String key) {
+        ViewItem item = tryResolveRef(this, key);
+        if (item == null) item = tryResolveRef(getRoot(), key);
+        if (item == null) return null;
 
-		final PlatformViewFrame<?, ?, ?> vf = getRoot().getViewFrame();
-		if (vf == null)
-			throw new IllegalStateException(
-				"Tried to get a slot reference while context framework was not registered yet"
-			);
+        final PlatformViewFrame<?, ?, ?> vf = getRoot().getViewFrame();
+        if (vf == null)
+            throw new IllegalStateException(
+                    "Tried to get a slot reference while context framework was not registered yet");
 
-		return vf.getFactory().createSlotContext(
-			item,
-			this,
-			0,
-			null
-		);
-	}
+        return vf.getFactory().createSlotContext(item, this, 0, null);
+    }
 
-	private ViewItem tryResolveRef(final AbstractVirtualView view, final String key) {
-		for (final ViewItem item : view.getItems()) {
-			if (item == null) continue;
-			if (item.getReferenceKey() == null) continue;
-			if (item.getReferenceKey().equals(key))
-				return item;
-		}
-		return null;
-	}
-
+    private ViewItem tryResolveRef(final AbstractVirtualView view, final String key) {
+        for (final ViewItem item : view.getItems()) {
+            if (item == null) continue;
+            if (item.getReferenceKey() == null) continue;
+            if (item.getReferenceKey().equals(key)) return item;
+        }
+        return null;
+    }
 }

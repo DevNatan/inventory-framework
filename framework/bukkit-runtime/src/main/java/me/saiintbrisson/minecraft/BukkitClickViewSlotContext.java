@@ -13,75 +13,73 @@ import org.jetbrains.annotations.NotNull;
 @Getter
 @Setter
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
-public class BukkitClickViewSlotContext extends AbstractViewSlotContext implements ViewSlotClickContext {
+public class BukkitClickViewSlotContext extends AbstractViewSlotContext
+        implements ViewSlotClickContext {
 
-	private final InventoryClickEvent clickOrigin;
+    private final InventoryClickEvent clickOrigin;
 
-	BukkitClickViewSlotContext(
-		final ViewItem backingItem,
-		@NotNull final BaseViewContext parent,
-		@NotNull final InventoryClickEvent clickOrigin
-	) {
-		super(backingItem, parent);
-		this.clickOrigin = clickOrigin;
-	}
+    BukkitClickViewSlotContext(
+            final ViewItem backingItem,
+            @NotNull final BaseViewContext parent,
+            @NotNull final InventoryClickEvent clickOrigin) {
+        super(backingItem, parent);
+        this.clickOrigin = clickOrigin;
+    }
 
-	@Override
-	public final int getSlot() {
-		return getClickOrigin().getSlot();
-	}
+    @Override
+    public final int getSlot() {
+        return getClickOrigin().getSlot();
+    }
 
-	@Override
-	public final Player getPlayer() {
-		return (Player) clickOrigin.getWhoClicked();
-	}
+    @Override
+    public final Player getPlayer() {
+        return (Player) clickOrigin.getWhoClicked();
+    }
 
-	@Override
-	public final boolean isLeftClick() {
-		return getClickOrigin().isLeftClick();
-	}
+    @Override
+    public final boolean isLeftClick() {
+        return getClickOrigin().isLeftClick();
+    }
 
-	@Override
-	public final boolean isRightClick() {
-		return getClickOrigin().isRightClick();
-	}
+    @Override
+    public final boolean isRightClick() {
+        return getClickOrigin().isRightClick();
+    }
 
-	@Override
-	public final boolean isMiddleClick() {
-		return getClickOrigin().getClick() == ClickType.MIDDLE;
-	}
+    @Override
+    public final boolean isMiddleClick() {
+        return getClickOrigin().getClick() == ClickType.MIDDLE;
+    }
 
-	@Override
-	public final boolean isShiftClick() {
-		return getClickOrigin().isShiftClick();
-	}
+    @Override
+    public final boolean isShiftClick() {
+        return getClickOrigin().isShiftClick();
+    }
 
-	@Override
-	public final boolean isKeyboardClick() {
-		return getClickOrigin().getClick().isKeyboardClick();
-	}
+    @Override
+    public final boolean isKeyboardClick() {
+        return getClickOrigin().getClick().isKeyboardClick();
+    }
 
-	@Override
-	public final boolean isOnEntityContainer() {
-		return getClickOrigin().getClickedInventory() instanceof PlayerInventory;
-	}
+    @Override
+    public final boolean isOnEntityContainer() {
+        return getClickOrigin().getClickedInventory() instanceof PlayerInventory;
+    }
 
-	@Override
-	public final boolean isOutsideClick() {
-		return getClickOrigin().getSlotType() == InventoryType.SlotType.OUTSIDE;
-	}
+    @Override
+    public final boolean isOutsideClick() {
+        return getClickOrigin().getSlotType() == InventoryType.SlotType.OUTSIDE;
+    }
 
-	@Override
-	public @NotNull String getClickIdentifier() {
-		return getClickOrigin().getClick().name();
-	}
+    @Override
+    public @NotNull String getClickIdentifier() {
+        return getClickOrigin().getClick().name();
+    }
 
-	@Override
-	final void inventoryModificationTriggered() {
-		throw new IllegalStateException(
-			"You cannot update the item in the click handler context. " +
-				"Use the slot.onRender(...) or slot.onUpdate(...) and then context.setItem(...) instead."
-		);
-	}
-
+    @Override
+    final void inventoryModificationTriggered() {
+        throw new IllegalStateException(
+                "You cannot update the item in the click handler context. "
+                        + "Use the slot.onRender(...) or slot.onUpdate(...) and then context.setItem(...) instead.");
+    }
 }

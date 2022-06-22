@@ -14,30 +14,32 @@ import static java.util.Objects.requireNonNull;
 
 public final class PersistentNavigablePaginatedView extends PaginatedView<Integer> {
 
-	public PersistentNavigablePaginatedView() {
-		super(6, "Paginated view");
+    public PersistentNavigablePaginatedView() {
+        super(6, "Paginated view");
 
-		// pagination source
-		setSource(IntStream.rangeClosed(0, 100).boxed().collect(Collectors.toList()));
-		setOffset(10 /* slot where paging will start */);
-		setLimit(27 /* slot where paging will end */);
+        // pagination source
+        setSource(IntStream.rangeClosed(0, 100).boxed().collect(Collectors.toList()));
+        setOffset(10 /* slot where paging will start */);
+        setLimit(27 /* slot where paging will end */);
 
-		// navigation arrows
-		firstSlot(new ItemStack(Material.ARROW)).onClick(click -> click.paginated().switchToPreviousPage());
-		lastSlot(new ItemStack(Material.ARROW)).onClick(click -> click.paginated().switchToNextPage());
-	}
+        // navigation arrows
+        firstSlot(new ItemStack(Material.ARROW))
+                .onClick(click -> click.paginated().switchToPreviousPage());
+        lastSlot(new ItemStack(Material.ARROW))
+                .onClick(click -> click.paginated().switchToNextPage());
+    }
 
-	@Override
-	protected void onItemRender(PaginatedViewSlotContext<Integer> render, ViewItem item, Integer value) {
-		item.withItem(createPaginationItemStack(value));
-	}
+    @Override
+    protected void onItemRender(
+            PaginatedViewSlotContext<Integer> render, ViewItem item, Integer value) {
+        item.withItem(createPaginationItemStack(value));
+    }
 
-	private ItemStack createPaginationItemStack(int value) {
-		ItemStack stack = new ItemStack(Material.PAPER);
-		ItemMeta meta = requireNonNull(stack.getItemMeta());
-		meta.setDisplayName("Item " + value);
-		stack.setItemMeta(meta);
-		return stack;
-	}
-
+    private ItemStack createPaginationItemStack(int value) {
+        ItemStack stack = new ItemStack(Material.PAPER);
+        ItemMeta meta = requireNonNull(stack.getItemMeta());
+        meta.setDisplayName("Item " + value);
+        stack.setItemMeta(meta);
+        return stack;
+    }
 }

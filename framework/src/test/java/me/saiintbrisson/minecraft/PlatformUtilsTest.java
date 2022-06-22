@@ -7,32 +7,30 @@ import org.junit.jupiter.api.Test;
 
 public class PlatformUtilsTest {
 
-	@Test
-	void shouldThrowExceptionWhenNoFactoryIsAvailable() {
-		Assertions.assertThrows(IllegalStateException.class, PlatformUtils::getFactory);
-	}
+    @Test
+    void shouldThrowExceptionWhenNoFactoryIsAvailable() {
+        Assertions.assertThrows(IllegalStateException.class, PlatformUtils::getFactory);
+    }
 
-	@Test
-	void shouldThrowExceptionWhenFactoryWontWorkInTheCurrentPlatform() {
-		PlatformUtils.setFactory(new PlatformTestViewComponentFactory(false));
-		Assertions.assertThrows(IllegalStateException.class, PlatformUtils::getFactory);
-	}
+    @Test
+    void shouldThrowExceptionWhenFactoryWontWorkInTheCurrentPlatform() {
+        PlatformUtils.setFactory(new PlatformTestViewComponentFactory(false));
+        Assertions.assertThrows(IllegalStateException.class, PlatformUtils::getFactory);
+    }
 
-	@AfterEach
-	void cleanupFactory() {
-		PlatformUtils.removeFactory();
-	}
+    @AfterEach
+    void cleanupFactory() {
+        PlatformUtils.removeFactory();
+    }
 
-	@AllArgsConstructor
-	private static class PlatformTestViewComponentFactory extends NoopViewComponentFactory {
+    @AllArgsConstructor
+    private static class PlatformTestViewComponentFactory extends NoopViewComponentFactory {
 
-		private final boolean worksInCurrentPlatform;
+        private final boolean worksInCurrentPlatform;
 
-		@Override
-		public boolean worksInCurrentPlatform() {
-			return worksInCurrentPlatform;
-		}
-
-	}
-
+        @Override
+        public boolean worksInCurrentPlatform() {
+            return worksInCurrentPlatform;
+        }
+    }
 }

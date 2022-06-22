@@ -11,30 +11,25 @@ import org.jetbrains.annotations.NotNull;
  */
 final class GlobalItemHoldInterceptor implements PipelineInterceptor<BukkitClickViewSlotContext> {
 
-	@Override
-	public void intercept(
-		@NotNull PipelineContext<BukkitClickViewSlotContext> pipeline,
-		BukkitClickViewSlotContext subject
-	) {
-		if (subject.isCancelled() || subject.getBackingItem() == null)
-			return;
+    @Override
+    public void intercept(
+            @NotNull PipelineContext<BukkitClickViewSlotContext> pipeline,
+            BukkitClickViewSlotContext subject) {
+        if (subject.isCancelled() || subject.getBackingItem() == null) return;
 
-		final InventoryClickEvent clickEvent = subject.getClickOrigin();
-		final InventoryAction action = clickEvent.getAction();
+        final InventoryClickEvent clickEvent = subject.getClickOrigin();
+        final InventoryAction action = clickEvent.getAction();
 
-		// check for hold only on pickup or clone stack
-		if (!(action.name().startsWith("PICKUP") || action == InventoryAction.CLONE_STACK))
-			return;
+        // check for hold only on pickup or clone stack
+        if (!(action.name().startsWith("PICKUP") || action == InventoryAction.CLONE_STACK)) return;
 
-		final ViewItem item = subject.getBackingItem();
-		item.setState(ViewItem.State.HOLDING);
+        final ViewItem item = subject.getBackingItem();
+        item.setState(ViewItem.State.HOLDING);
 
-		if (item.getItemHoldHandler() != null)
-			item.getItemHoldHandler().accept(subject);
+        if (item.getItemHoldHandler() != null) item.getItemHoldHandler().accept(subject);
 
-		final AbstractView root = subject.getRoot();
-		root.onItemHold(subject);
-		clickEvent.setCancelled(subject.isCancelled());
-	}
-
+        final AbstractView root = subject.getRoot();
+        root.onItemHold(subject);
+        clickEvent.setCancelled(subject.isCancelled());
+    }
 }

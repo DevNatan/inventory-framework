@@ -17,48 +17,46 @@ import java.util.function.UnaryOperator;
  * @see DefaultFeatureInstaller
  */
 @RequiredArgsConstructor
-public class DefaultFeatureInstaller<P extends PlatformViewFrame<?, ?, ?>> implements FeatureInstaller<P> {
+public class DefaultFeatureInstaller<P extends PlatformViewFrame<?, ?, ?>>
+        implements FeatureInstaller<P> {
 
-	// don't change this to Maps.newHashMap, we don't want Guava here
-	private final Map<Class<?>, Feature<?, ?>> featureList = new HashMap<>();
+    // don't change this to Maps.newHashMap, we don't want Guava here
+    private final Map<Class<?>, Feature<?, ?>> featureList = new HashMap<>();
 
-	@Getter
-	private final @NotNull P platform;
+    @Getter private final @NotNull P platform;
 
-	@Override
-	public Collection<Feature<?, ?>> getInstalledFeatures() {
-		return Collections.unmodifiableCollection(featureList.values());
-	}
+    @Override
+    public Collection<Feature<?, ?>> getInstalledFeatures() {
+        return Collections.unmodifiableCollection(featureList.values());
+    }
 
-	@SuppressWarnings("unchecked")
-	@NotNull
-	@Override
-	public <C, R> R install(@NotNull Feature<C, R> feature, @NotNull UnaryOperator<C> configure) {
-		final Class<?> type = feature.getClass();
-		if (featureList.containsKey(type))
-			throw new IllegalStateException("Feature already installed, cannot install feature multiple times");
+    @SuppressWarnings("unchecked")
+    @NotNull
+    @Override
+    public <C, R> R install(@NotNull Feature<C, R> feature, @NotNull UnaryOperator<C> configure) {
+        final Class<?> type = feature.getClass();
+        if (featureList.containsKey(type))
+            throw new IllegalStateException(
+                    "Feature already installed, cannot install feature multiple times");
 
-		// TODO handle installation error
-		final Feature<C, R> value = (Feature<C, R>) feature.install(platform, configure);
-		synchronized (featureList) {
-			featureList.put(type, value);
-		}
+        // TODO handle installation error
+        final Feature<C, R> value = (Feature<C, R>) feature.install(platform, configure);
+        synchronized (featureList) {
+            featureList.put(type, value);
+        }
 
-		return (R) value;
-	}
+        return (R) value;
+    }
 
-	@Override
-	public void uninstall(@NotNull Feature<?, ?> feature) {
-		final Class<?> type = feature.getClass();
-		if (!featureList.containsKey(type))
-			throw new IllegalStateException(String.format(
-				"Feature %s not installed",
-				type.getSimpleName()
-			));
+    @Override
+    public void uninstall(@NotNull Feature<?, ?> feature) {
+        final Class<?> type = feature.getClass();
+        if (!featureList.containsKey(type))
+            throw new IllegalStateException(
+                    String.format("Feature %s not installed", type.getSimpleName()));
 
-		synchronized (featureList) {
-			featureList.remove(type).uninstall(platform);
-		}
-	}
-
+        synchronized (featureList) {
+            featureList.remove(type).uninstall(platform);
+        }
+    }
 }

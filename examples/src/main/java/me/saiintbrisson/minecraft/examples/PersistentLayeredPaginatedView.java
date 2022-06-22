@@ -14,34 +14,27 @@ import static java.util.Objects.requireNonNull;
 
 public final class PersistentLayeredPaginatedView extends PaginatedView<Integer> {
 
-	public PersistentLayeredPaginatedView() {
-		super(6, "Paginated view");
+    public PersistentLayeredPaginatedView() {
+        super(6, "Paginated view");
 
-		// pagination source
-		setSource(IntStream.rangeClosed(0, 100).boxed().collect(Collectors.toList()));
+        // pagination source
+        setSource(IntStream.rangeClosed(0, 100).boxed().collect(Collectors.toList()));
 
-		// "O"'s are items and "X"'s are empty slots
-		setLayout(
-			"XXXXXXXXX",
-			"XOOOOOOOX",
-			"XOOOOOOOX",
-			"XOOOOOOOX",
-			"XOOOOOOOX",
-			"XXXXXXXXX"
-		);
-	}
+        // "O"'s are items and "X"'s are empty slots
+        setLayout("XXXXXXXXX", "XOOOOOOOX", "XOOOOOOOX", "XOOOOOOOX", "XOOOOOOOX", "XXXXXXXXX");
+    }
 
-	@Override
-	protected void onItemRender(PaginatedViewSlotContext<Integer> render, ViewItem item, Integer value) {
-		item.withItem(createPaginationItemStack(value));
-	}
+    @Override
+    protected void onItemRender(
+            PaginatedViewSlotContext<Integer> render, ViewItem item, Integer value) {
+        item.withItem(createPaginationItemStack(value));
+    }
 
-	private ItemStack createPaginationItemStack(int value) {
-		ItemStack stack = new ItemStack(Material.PAPER);
-		ItemMeta meta = requireNonNull(stack.getItemMeta());
-		meta.setDisplayName("Item " + value);
-		stack.setItemMeta(meta);
-		return stack;
-	}
-
+    private ItemStack createPaginationItemStack(int value) {
+        ItemStack stack = new ItemStack(Material.PAPER);
+        ItemMeta meta = requireNonNull(stack.getItemMeta());
+        meta.setDisplayName("Item " + value);
+        stack.setItemMeta(meta);
+        return stack;
+    }
 }

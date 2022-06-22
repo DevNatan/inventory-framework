@@ -5,17 +5,15 @@ import me.saiintbrisson.minecraft.ViewContext;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-/**
- * Updates the current container title or resets it to default title.
- */
+/** Updates the current container title or resets it to default title. */
 public final class RealtimeTitleUpdate extends View {
 
-	public RealtimeTitleUpdate() {
-		super(3, "Initial title");
-		setCancelOnClick(true);
+    public RealtimeTitleUpdate() {
+        super(3, "Initial title");
+        setCancelOnClick(true);
 
-		slot(1, new ItemStack(Material.SUGAR_CANE)).onClick(click -> click.updateTitle("Hi " + click.getPlayer().getName() + "!"));
-		slot(2, new ItemStack(Material.REDSTONE)).onClick(ViewContext::resetTitle);
-	}
-
+        slot(1, new ItemStack(Material.SUGAR_CANE))
+                .onClick(click -> click.updateTitle("Hi " + click.getPlayer().getName() + "!"));
+        slot(2, new ItemStack(Material.REDSTONE)).onClick(ViewContext::resetTitle);
+    }
 }

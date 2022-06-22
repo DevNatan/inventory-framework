@@ -12,8 +12,7 @@ import java.util.function.Supplier;
 @RequiredArgsConstructor
 class LayoutPattern {
 
-	private final char character;
-	private final Supplier<ViewItem> factory;
-	private final Stack<Integer> slots = new Stack<>();
-
+    private final char character;
+    private final Supplier<ViewItem> factory;
+    private final Stack<Integer> slots = new Stack<>();
 }

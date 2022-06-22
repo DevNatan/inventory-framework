@@ -11,29 +11,28 @@ import org.jetbrains.annotations.NotNull;
 @RequiredArgsConstructor
 class BukkitViewer implements Viewer {
 
-	@NotNull
-	private final Player player;
+    @NotNull private final Player player;
 
-	@Override
-	public void open(@NotNull final ViewContainer container) {
-		if (!(container instanceof BukkitViewContainer))
-			throw new IllegalArgumentException("Only BukkitViewContainer is supported");
+    @Override
+    public void open(@NotNull final ViewContainer container) {
+        if (!(container instanceof BukkitViewContainer))
+            throw new IllegalArgumentException("Only BukkitViewContainer is supported");
 
-		container.open(this);
-		player.openInventory(((BukkitViewContainer) container).getInventory());
-	}
+        container.open(this);
+        player.openInventory(((BukkitViewContainer) container).getInventory());
+    }
 
-	@Override
-	public void close() {
-		player.closeInventory();
-	}
+    @Override
+    public void close() {
+        player.closeInventory();
+    }
 
-	public static Player toPlayerOfContext(ViewContext context) {
-		final Viewer viewer = context.getViewers().get(0);
-		if (viewer == null)
-			throw new IllegalStateException("Tried to retrieve context player while it's not valid anymore.");
+    public static Player toPlayerOfContext(ViewContext context) {
+        final Viewer viewer = context.getViewers().get(0);
+        if (viewer == null)
+            throw new IllegalStateException(
+                    "Tried to retrieve context player while it's not valid anymore.");
 
-		return ((BukkitViewer) viewer).getPlayer();
-	}
-
+        return ((BukkitViewer) viewer).getPlayer();
+    }
 }

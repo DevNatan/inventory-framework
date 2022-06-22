@@ -31,273 +31,269 @@ import java.util.function.UnaryOperator;
 @ToString
 public final class ViewFrame implements CompatViewFrame<ViewFrame> {
 
-	@NotNull
-	private final Plugin owner;
+    @NotNull private final Plugin owner;
 
-	private ViewErrorHandler errorHandler;
+    private ViewErrorHandler errorHandler;
 
-	@ToString.Exclude
-	private final Map<Class<? extends AbstractView>, AbstractView> views = new HashMap<>();
+    @ToString.Exclude
+    private final Map<Class<? extends AbstractView>, AbstractView> views = new HashMap<>();
 
-	@Getter(AccessLevel.NONE)
-	@ToString.Exclude
-	private final Map<Class<? extends View>, View> legacyViews = new HashMap<>();
+    @Getter(AccessLevel.NONE)
+    @ToString.Exclude
+    private final Map<Class<? extends View>, View> legacyViews = new HashMap<>();
 
-	@Getter(AccessLevel.NONE)
-	@Setter(AccessLevel.NONE)
-	private Listener listener;
-	private Function<PaginatedViewContext<?>, ViewItem> defaultPreviousPageItem, defaultNextPageItem;
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
+    private Listener listener;
 
-	@Getter(AccessLevel.NONE)
-	private final FeatureInstaller<ViewFrame> featureInstaller
-		= new DefaultFeatureInstaller<>(this);
+    private Function<PaginatedViewContext<?>, ViewItem> defaultPreviousPageItem,
+            defaultNextPageItem;
 
-	static {
-		PlatformUtils.setFactory(new BukkitViewComponentFactory());
-	}
+    @Getter(AccessLevel.NONE)
+    private final FeatureInstaller<ViewFrame> featureInstaller =
+            new DefaultFeatureInstaller<>(this);
 
-	/**
-	 * Creates a new ViewFrame instance.
-	 *
-	 * @param owner The Bukkit plugin holder of this view framework.
-	 * @deprecated Use {@link #of(Plugin, AbstractView...)} instead.
-	 */
-	@Deprecated
-	public ViewFrame(@NotNull Plugin owner) {
-		this.owner = owner;
-	}
+    static {
+        PlatformUtils.setFactory(new BukkitViewComponentFactory());
+    }
 
-	@Override
-	public AbstractView get(@NotNull Player player) {
-		final Inventory inventory = player.getOpenInventory().getTopInventory();
+    /**
+     * Creates a new ViewFrame instance.
+     *
+     * @param owner The Bukkit plugin holder of this view framework.
+     * @deprecated Use {@link #of(Plugin, AbstractView...)} instead.
+     */
+    @Deprecated
+    public ViewFrame(@NotNull Plugin owner) {
+        this.owner = owner;
+    }
 
-		// fast path -- check for inventory type first
-		if (inventory.getType() == InventoryType.PLAYER)
-			return null;
+    @Override
+    public AbstractView get(@NotNull Player player) {
+        final Inventory inventory = player.getOpenInventory().getTopInventory();
 
-		// TODO: search for alternative ways to retrieve current view because
-		//       InventoryHolder is deprecated in newer versions of Bukkit API
-		final InventoryHolder holder = inventory.getHolder();
-		if (!(holder instanceof AbstractView))
-			return null;
+        // fast path -- check for inventory type first
+        if (inventory.getType() == InventoryType.PLAYER) return null;
 
-		return (AbstractView) holder;
-	}
+        // TODO: search for alternative ways to retrieve current view because
+        //       InventoryHolder is deprecated in newer versions of Bukkit API
+        final InventoryHolder holder = inventory.getHolder();
+        if (!(holder instanceof AbstractView)) return null;
 
-	/**
-	 * @deprecated Will be removed soon.
-	 */
-	@Deprecated
-	public Map<Class<? extends View>, View> getRegisteredViews() {
-		return Collections.unmodifiableMap(legacyViews);
-	}
+        return (AbstractView) holder;
+    }
 
-	@Override
-	public ViewFrame with(@NotNull AbstractView... views) {
-		synchronized (getViews()) {
-			for (final AbstractView view : views) {
-				if (getViews().containsKey(view.getClass()))
-					throw new IllegalArgumentException(String.format(
-						"View %s already registered, try to use #with before #register instead.",
-						view.getClass().getName()
-					));
+    /** @deprecated Will be removed soon. */
+    @Deprecated
+    public Map<Class<? extends View>, View> getRegisteredViews() {
+        return Collections.unmodifiableMap(legacyViews);
+    }
 
-				getViews().put(view.getClass(), view);
+    @Override
+    public ViewFrame with(@NotNull AbstractView... views) {
+        synchronized (getViews()) {
+            for (final AbstractView view : views) {
+                if (getViews().containsKey(view.getClass()))
+                    throw new IllegalArgumentException(
+                            String.format(
+                                    "View %s already registered, try to use #with before #register instead.",
+                                    view.getClass().getName()));
 
-				if (view instanceof View)
-					legacyViews.put(((View) view).getClass(), (View) view);
-			}
-		}
-		return this;
-	}
+                getViews().put(view.getClass(), view);
 
-	@Override
-	public ViewFrame remove(@NotNull AbstractView... views) {
-		synchronized (getViews()) {
-			for (final AbstractView view : views) {
-				view.close();
-				getViews().remove(view.getClass());
-			}
-		}
-		return this;
-	}
+                if (view instanceof View) legacyViews.put(((View) view).getClass(), (View) view);
+            }
+        }
+        return this;
+    }
 
-	/**
-	 * @deprecated Use {@link #register()} and {@link #with(AbstractView...)} instead.
-	 */
-	@Deprecated
-	@ApiStatus.ScheduledForRemoval(inVersion = "2.5.2")
-	public void register(@NotNull AbstractView... views) {
-		with(views);
-		register();
-	}
+    @Override
+    public ViewFrame remove(@NotNull AbstractView... views) {
+        synchronized (getViews()) {
+            for (final AbstractView view : views) {
+                view.close();
+                getViews().remove(view.getClass());
+            }
+        }
+        return this;
+    }
 
-	@Override
-	public ViewFrame register() {
-		if (isRegistered())
-			throw new IllegalStateException("This ViewFrame is already registered.");
+    /** @deprecated Use {@link #register()} and {@link #with(AbstractView...)} instead. */
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.2")
+    public void register(@NotNull AbstractView... views) {
+        with(views);
+        register();
+    }
 
-		// check if there's another ViewFrame instance in the same server
-		final ServicesManager servicesManager = getOwner().getServer().getServicesManager();
-		if (servicesManager.isProvidedFor(ViewFrame.class))
-			return this;
+    @Override
+    public ViewFrame register() {
+        if (isRegistered())
+            throw new IllegalStateException("This ViewFrame is already registered.");
 
-		for (final AbstractView view : views.values()) {
-			view.setViewFrame(this);
-			view.setInitialized(true);
-			PlatformUtils.getFactory().setupView(view);
-			owner.getLogger().info("\"" + view.getClass().getSimpleName() + "\" registered");
-		}
+        // check if there's another ViewFrame instance in the same server
+        final ServicesManager servicesManager = getOwner().getServer().getServicesManager();
+        if (servicesManager.isProvidedFor(ViewFrame.class)) return this;
 
-		final Plugin plugin = getOwner();
-		plugin.getServer().getPluginManager().registerEvents(
-			listener = new ViewListener(plugin, this),
-			plugin
-		);
-		servicesManager.register(ViewFrame.class, this, plugin, ServicePriority.Normal);
-		return this;
-	}
+        for (final AbstractView view : views.values()) {
+            view.setViewFrame(this);
+            view.setInitialized(true);
+            PlatformUtils.getFactory().setupView(view);
+            owner.getLogger().info("\"" + view.getClass().getSimpleName() + "\" registered");
+        }
 
-	@Override
-	public void unregister() {
-		if (!isRegistered())
-			throw new IllegalStateException("Not registered");
+        final Plugin plugin = getOwner();
+        plugin.getServer()
+                .getPluginManager()
+                .registerEvents(listener = new ViewListener(plugin, this), plugin);
+        servicesManager.register(ViewFrame.class, this, plugin, ServicePriority.Normal);
+        return this;
+    }
 
-		final Iterator<AbstractView> viewIterator = views.values().iterator();
-		while (viewIterator.hasNext()) {
-			final AbstractView view = viewIterator.next();
-			view.close();
-			viewIterator.remove();
-		}
+    @Override
+    public void unregister() {
+        if (!isRegistered()) throw new IllegalStateException("Not registered");
 
-		HandlerList.unregisterAll(listener);
-		listener = null;
-	}
+        final Iterator<AbstractView> viewIterator = views.values().iterator();
+        while (viewIterator.hasNext()) {
+            final AbstractView view = viewIterator.next();
+            view.close();
+            viewIterator.remove();
+        }
 
-	@Override
-	public boolean isRegistered() {
-		return listener != null;
-	}
+        HandlerList.unregisterAll(listener);
+        listener = null;
+    }
 
-	@Override
-	public @NotNull ViewComponentFactory getFactory() {
-		return PlatformUtils.getFactory();
-	}
+    @Override
+    public boolean isRegistered() {
+        return listener != null;
+    }
 
-	@Override
-	public <T extends AbstractView> T open(
-		@NotNull Class<T> viewClass,
-		@NotNull Player player
-	) {
-		return open(viewClass, player, Collections.emptyMap());
-	}
+    @Override
+    public @NotNull ViewComponentFactory getFactory() {
+        return PlatformUtils.getFactory();
+    }
 
-	@Override
-	public <T extends AbstractView> T open(
-		@NotNull Class<T> viewClass,
-		@NotNull Player player,
-		@NotNull Map<String, Object> data
-	) {
-		if (!isRegistered())
-			throw new IllegalStateException("Attempt to open a view without having registered the view frame.");
+    @Override
+    public <T extends AbstractView> T open(@NotNull Class<T> viewClass, @NotNull Player player) {
+        return open(viewClass, player, Collections.emptyMap());
+    }
 
-		@SuppressWarnings("unchecked") final T view = (T) views.get(viewClass);
+    @Override
+    public <T extends AbstractView> T open(
+            @NotNull Class<T> viewClass,
+            @NotNull Player player,
+            @NotNull Map<String, Object> data) {
+        if (!isRegistered())
+            throw new IllegalStateException(
+                    "Attempt to open a view without having registered the view frame.");
 
-		if (view == null)
-			throw new IllegalStateException(String.format(
-				"View %s is not registered.",
-				viewClass.getName()
-			));
+        @SuppressWarnings("unchecked")
+        final T view = (T) views.get(viewClass);
 
-		getOwner().getServer().getScheduler().runTaskLater(getOwner(),
-			() -> view.open(PlatformUtils.getFactory().createViewer(player), data), 1L);
-		return view;
-	}
+        if (view == null)
+            throw new IllegalStateException(
+                    String.format("View %s is not registered.", viewClass.getName()));
 
-	/**
-	 * @deprecated Use {@link #with(AbstractView...)} instead.
-	 */
-	@Deprecated
-	@ApiStatus.ScheduledForRemoval(inVersion = "2.5.2")
-	public void addView(final AbstractView view) {
-		with(view);
-	}
+        getOwner()
+                .getServer()
+                .getScheduler()
+                .runTaskLater(
+                        getOwner(),
+                        () -> view.open(PlatformUtils.getFactory().createViewer(player), data),
+                        1L);
+        return view;
+    }
 
-	/**
-	 * @deprecated Use {@link #with(AbstractView...)} instead.
-	 */
-	@Deprecated
-	@ApiStatus.ScheduledForRemoval(inVersion = "2.5.2")
-	public void addView(final AbstractView... views) {
-		with(views);
-	}
+    /** @deprecated Use {@link #with(AbstractView...)} instead. */
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.2")
+    public void addView(final AbstractView view) {
+        with(view);
+    }
 
-	@Override
-	public @NotNull Plugin getPlatform() {
-		return getOwner();
-	}
+    /** @deprecated Use {@link #with(AbstractView...)} instead. */
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.2")
+    public void addView(final AbstractView... views) {
+        with(views);
+    }
 
-	@Override
-	public Collection<Feature<?, ?>> getInstalledFeatures() {
-		return featureInstaller.getInstalledFeatures();
-	}
+    @Override
+    public @NotNull Plugin getPlatform() {
+        return getOwner();
+    }
 
-	@NotNull
-	@Override
-	public <C, R> R install(@NotNull Feature<C, R> feature, @NotNull UnaryOperator<C> configure) {
-		if (isRegistered())
-			throw new IllegalStateException("Cannot register a feature after framework registration");
+    @Override
+    public Collection<Feature<?, ?>> getInstalledFeatures() {
+        return featureInstaller.getInstalledFeatures();
+    }
 
-		final R value = featureInstaller.install(feature, configure);
-		getOwner().getLogger().info(String.format(
-			"Feature %s installed",
-			StringUtils.substringBeforeLast(feature.getClass().getSimpleName(), "Feature")
-		));
-		return value;
-	}
+    @NotNull
+    @Override
+    public <C, R> R install(@NotNull Feature<C, R> feature, @NotNull UnaryOperator<C> configure) {
+        if (isRegistered())
+            throw new IllegalStateException(
+                    "Cannot register a feature after framework registration");
 
-	@Override
-	public void uninstall(@NotNull Feature<?, ?> feature) {
-		if (isRegistered())
-			throw new IllegalStateException("Cannot unregister a feature after framework registration");
+        final R value = featureInstaller.install(feature, configure);
+        getOwner()
+                .getLogger()
+                .info(
+                        String.format(
+                                "Feature %s installed",
+                                StringUtils.substringBeforeLast(
+                                        feature.getClass().getSimpleName(), "Feature")));
+        return value;
+    }
 
-		featureInstaller.uninstall(feature);
-		getOwner().getLogger().info(String.format(
-			"Feature %s uninstalled",
-			StringUtils.substringBeforeLast(feature.getClass().getSimpleName(), "Feature")
-		));
-	}
+    @Override
+    public void uninstall(@NotNull Feature<?, ?> feature) {
+        if (isRegistered())
+            throw new IllegalStateException(
+                    "Cannot unregister a feature after framework registration");
 
-	@Override
-	public void nextTick(Runnable runnable) {
-		getOwner().getServer().getScheduler().runTask(getOwner(), runnable);
-	}
+        featureInstaller.uninstall(feature);
+        getOwner()
+                .getLogger()
+                .info(
+                        String.format(
+                                "Feature %s uninstalled",
+                                StringUtils.substringBeforeLast(
+                                        feature.getClass().getSimpleName(), "Feature")));
+    }
 
-	@Override
-	public ViewFrame setNavigateBackItemFactory(BiConsumer<PaginatedViewContext<?>, ViewItem> navigateBackItemFactory) {
-		defaultPreviousPageItem = (context) -> {
-			final ViewItem item = new ViewItem();
-			navigateBackItemFactory.accept(context, item);
-			return item;
-		};
-		return this;
-	}
+    @Override
+    public void nextTick(Runnable runnable) {
+        getOwner().getServer().getScheduler().runTask(getOwner(), runnable);
+    }
 
-	@Override
-	public ViewFrame setNavigateNextItemFactory(BiConsumer<PaginatedViewContext<?>, ViewItem> navigateNextItemFactory) {
-		defaultNextPageItem = (context) -> {
-			final ViewItem item = new ViewItem();
-			navigateNextItemFactory.accept(context, item);
-			return item;
-		};
-		return this;
-	}
+    @Override
+    public ViewFrame setNavigateBackItemFactory(
+            BiConsumer<PaginatedViewContext<?>, ViewItem> navigateBackItemFactory) {
+        defaultPreviousPageItem =
+                (context) -> {
+                    final ViewItem item = new ViewItem();
+                    navigateBackItemFactory.accept(context, item);
+                    return item;
+                };
+        return this;
+    }
 
-	public static ViewFrame of(
-		@NotNull Plugin plugin,
-		@NotNull AbstractView... views
-	) {
-		return new ViewFrame(plugin).with(views);
-	}
+    @Override
+    public ViewFrame setNavigateNextItemFactory(
+            BiConsumer<PaginatedViewContext<?>, ViewItem> navigateNextItemFactory) {
+        defaultNextPageItem =
+                (context) -> {
+                    final ViewItem item = new ViewItem();
+                    navigateNextItemFactory.accept(context, item);
+                    return item;
+                };
+        return this;
+    }
 
+    public static ViewFrame of(@NotNull Plugin plugin, @NotNull AbstractView... views) {
+        return new ViewFrame(plugin).with(views);
+    }
 }

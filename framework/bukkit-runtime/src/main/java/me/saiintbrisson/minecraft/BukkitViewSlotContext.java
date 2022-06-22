@@ -11,13 +11,12 @@ import org.jetbrains.annotations.NotNull;
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
 public class BukkitViewSlotContext extends AbstractViewSlotContext {
 
-	BukkitViewSlotContext(ViewItem backingItem, @NotNull BaseViewContext parent) {
-		super(backingItem, parent);
-	}
+    BukkitViewSlotContext(ViewItem backingItem, @NotNull BaseViewContext parent) {
+        super(backingItem, parent);
+    }
 
-	@Override
-	public Player getPlayer() {
-		return BukkitViewer.toPlayerOfContext(this);
-	}
-
+    @Override
+    public Player getPlayer() {
+        return BukkitViewer.toPlayerOfContext(this);
+    }
 }

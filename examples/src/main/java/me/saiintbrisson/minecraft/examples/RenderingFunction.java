@@ -7,13 +7,13 @@ import org.jetbrains.annotations.NotNull;
 
 public final class RenderingFunction extends View {
 
-	public RenderingFunction() {
-		super(3, "Scooter Turtle");
-	}
+    public RenderingFunction() {
+        super(3, "Scooter Turtle");
+    }
 
-	@Override
-	protected void onRender(@NotNull ViewContext context) {
-		final Player player = context.getPlayer();
-		player.sendMessage("Hi, " + player.getName() + "!");
-	}
+    @Override
+    protected void onRender(@NotNull ViewContext context) {
+        final Player player = context.getPlayer();
+        player.sendMessage("Hi, " + player.getName() + "!");
+    }
 }

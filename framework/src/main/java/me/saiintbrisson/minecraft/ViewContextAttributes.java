@@ -17,20 +17,19 @@ import java.util.Map;
 @RequiredArgsConstructor
 class ViewContextAttributes {
 
-	@ToString.Exclude private final ViewContainer container;
-	@ToString.Exclude private final List<Viewer> viewers = new ArrayList<>();
+    @ToString.Exclude private final ViewContainer container;
+    @ToString.Exclude private final List<Viewer> viewers = new ArrayList<>();
 
-	@Setter(AccessLevel.NONE)
-	private String updatedTitle;
+    @Setter(AccessLevel.NONE)
+    private String updatedTitle;
 
-	@Setter private boolean propagateErrors = true;
-	@Setter private boolean markedToClose;
+    @Setter private boolean propagateErrors = true;
+    @Setter private boolean markedToClose;
 
-	private final Map<String, Object> data = new HashMap<>();
+    private final Map<String, Object> data = new HashMap<>();
 
-	public final void setTitle(@Nullable final String title) {
-		updatedTitle = title;
-		container.changeTitle(title);
-	}
-
+    public final void setTitle(@Nullable final String title) {
+        updatedTitle = title;
+        container.changeTitle(title);
+    }
 }

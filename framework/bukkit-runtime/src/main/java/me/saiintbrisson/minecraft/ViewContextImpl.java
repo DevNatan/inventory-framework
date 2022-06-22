@@ -11,19 +11,14 @@ import org.jetbrains.annotations.NotNull;
 @ToString(callSuper = true)
 class ViewContextImpl extends BaseViewContext {
 
-	@Setter
-	private boolean cancelled;
+    @Setter private boolean cancelled;
 
-	ViewContextImpl(
-		@NotNull final AbstractView root,
-		@NotNull final ViewContainer container
-	) {
-		super(root, container);
-	}
+    ViewContextImpl(@NotNull final AbstractView root, @NotNull final ViewContainer container) {
+        super(root, container);
+    }
 
-	@Override
-	public Player getPlayer() {
-		return BukkitViewer.toPlayerOfContext(this);
-	}
-
+    @Override
+    public Player getPlayer() {
+        return BukkitViewer.toPlayerOfContext(this);
+    }
 }

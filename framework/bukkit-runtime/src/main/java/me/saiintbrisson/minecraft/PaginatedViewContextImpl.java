@@ -8,13 +8,12 @@ import org.jetbrains.annotations.Nullable;
 @ToString(callSuper = true)
 final class PaginatedViewContextImpl<T> extends BasePaginatedViewContext<T> {
 
-	PaginatedViewContextImpl(@NotNull AbstractView root, @Nullable ViewContainer container) {
-		super(root, container);
-	}
+    PaginatedViewContextImpl(@NotNull AbstractView root, @Nullable ViewContainer container) {
+        super(root, container);
+    }
 
-	@Override
-	public Player getPlayer() {
-		return BukkitViewer.toPlayerOfContext(this);
-	}
-
+    @Override
+    public Player getPlayer() {
+        return BukkitViewer.toPlayerOfContext(this);
+    }
 }

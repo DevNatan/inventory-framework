@@ -11,26 +11,22 @@ import org.jetbrains.annotations.NotNull;
  */
 final class ItemClickInterceptor implements PipelineInterceptor<BukkitClickViewSlotContext> {
 
-	@Override
-	public void intercept(
-		@NotNull PipelineContext<BukkitClickViewSlotContext> pipeline,
-		BukkitClickViewSlotContext subject
-	) {
-		final InventoryClickEvent event = subject.getClickOrigin();
-		if (event.getSlotType() == InventoryType.SlotType.OUTSIDE)
-			return;
+    @Override
+    public void intercept(
+            @NotNull PipelineContext<BukkitClickViewSlotContext> pipeline,
+            BukkitClickViewSlotContext subject) {
+        final InventoryClickEvent event = subject.getClickOrigin();
+        if (event.getSlotType() == InventoryType.SlotType.OUTSIDE) return;
 
-		final ViewItem item = subject.getBackingItem();
-		if (item == null)
-			return;
+        final ViewItem item = subject.getBackingItem();
+        if (item == null) return;
 
-		// inherit cancellation so we can un-cancel it
-		subject.setCancelled(item.isCancelOnClick());
+        // inherit cancellation so we can un-cancel it
+        subject.setCancelled(item.isCancelOnClick());
 
-		if (item.getClickHandler() != null)
-			subject.getRoot().runCatching(subject, () -> item.getClickHandler().handle(subject));
+        if (item.getClickHandler() != null)
+            subject.getRoot().runCatching(subject, () -> item.getClickHandler().handle(subject));
 
-		event.setCancelled(subject.isCancelled());
-	}
-
+        event.setCancelled(subject.isCancelled());
+    }
 }

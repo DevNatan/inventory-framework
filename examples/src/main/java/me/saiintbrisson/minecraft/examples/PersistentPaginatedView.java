@@ -14,24 +14,24 @@ import static java.util.Objects.requireNonNull;
 
 public final class PersistentPaginatedView extends PaginatedView<Integer> {
 
-	public PersistentPaginatedView() {
-		super(6, "Paginated view");
+    public PersistentPaginatedView() {
+        super(6, "Paginated view");
 
-		// pagination source
-		setSource(IntStream.rangeClosed(0, 53).boxed().collect(Collectors.toList()));
-	}
+        // pagination source
+        setSource(IntStream.rangeClosed(0, 53).boxed().collect(Collectors.toList()));
+    }
 
-	@Override
-	protected void onItemRender(PaginatedViewSlotContext<Integer> render, ViewItem item, Integer value) {
-		item.withItem(createPaginationItemStack(value));
-	}
+    @Override
+    protected void onItemRender(
+            PaginatedViewSlotContext<Integer> render, ViewItem item, Integer value) {
+        item.withItem(createPaginationItemStack(value));
+    }
 
-	private ItemStack createPaginationItemStack(int value) {
-		ItemStack stack = new ItemStack(Material.PAPER);
-		ItemMeta meta = requireNonNull(stack.getItemMeta());
-		meta.setDisplayName("Item " + value);
-		stack.setItemMeta(meta);
-		return stack;
-	}
-
+    private ItemStack createPaginationItemStack(int value) {
+        ItemStack stack = new ItemStack(Material.PAPER);
+        ItemMeta meta = requireNonNull(stack.getItemMeta());
+        meta.setDisplayName("Item " + value);
+        stack.setItemMeta(meta);
+        return stack;
+    }
 }

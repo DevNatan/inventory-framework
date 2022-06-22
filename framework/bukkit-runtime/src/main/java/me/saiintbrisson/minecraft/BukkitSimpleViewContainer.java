@@ -11,23 +11,21 @@ import org.jetbrains.annotations.NotNull;
 @RequiredArgsConstructor
 final class BukkitSimpleViewContainer extends BukkitViewContainer {
 
-	@NotNull
-	private final Inventory inventory;
-	private final ViewType type;
+    @NotNull private final Inventory inventory;
+    private final ViewType type;
 
-	@Override
-	public @NotNull ViewType getType() {
-		return type;
-	}
+    @Override
+    public @NotNull ViewType getType() {
+        return type;
+    }
 
-	@Override
-	public int getRowsCount() {
-		return type.getRows();
-	}
+    @Override
+    public int getRowsCount() {
+        return type.getRows();
+    }
 
-	@Override
-	public int getColumnsCount() {
-		return type.getColumns();
-	}
-
+    @Override
+    public int getColumnsCount() {
+        return type.getColumns();
+    }
 }

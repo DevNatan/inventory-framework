@@ -12,96 +12,95 @@ import org.jetbrains.annotations.Nullable;
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
 public abstract class BukkitViewContainer implements ViewContainer {
 
-	@NotNull
-	abstract Inventory getInventory();
+    @NotNull
+    abstract Inventory getInventory();
 
-	@Override
-	public void renderItem(int slot, Object item) {
-		requireSupportedItem(item);
-		getInventory().setItem(slot, convertItem(item));
-	}
+    @Override
+    public void renderItem(int slot, Object item) {
+        requireSupportedItem(item);
+        getInventory().setItem(slot, convertItem(item));
+    }
 
-	@Override
-	public void removeItem(int slot) {
-		getInventory().setItem(slot, null);
-	}
+    @Override
+    public void removeItem(int slot) {
+        getInventory().setItem(slot, null);
+    }
 
-	@Override
-	public boolean matchesItem(int slot, Object item, boolean exactly) {
-		requireSupportedItem(item);
-		final ItemStack target = getInventory().getItem(slot);
-		if (target == null) return item == null;
-		if (item instanceof ItemStack) return exactly ? target.equals(item) : target.isSimilar((ItemStack) item);
-		if (item instanceof Material) return target.getType() == item;
+    @Override
+    public boolean matchesItem(int slot, Object item, boolean exactly) {
+        requireSupportedItem(item);
+        final ItemStack target = getInventory().getItem(slot);
+        if (target == null) return item == null;
+        if (item instanceof ItemStack)
+            return exactly ? target.equals(item) : target.isSimilar((ItemStack) item);
+        if (item instanceof Material) return target.getType() == item;
 
-		return false;
-	}
+        return false;
+    }
 
-	@Override
-	public ItemStack convertItem(Object source) {
-		requireSupportedItem(source);
+    @Override
+    public ItemStack convertItem(Object source) {
+        requireSupportedItem(source);
 
-		if (source instanceof ItemStack) return ((ItemStack) source).clone();
-		if (source instanceof Material) return new ItemStack((Material) source);
+        if (source instanceof ItemStack) return ((ItemStack) source).clone();
+        if (source instanceof Material) return new ItemStack((Material) source);
 
-		return null;
-	}
+        return null;
+    }
 
-	@Override
-	public boolean isSupportedItem(Object item) {
-		return item instanceof ItemStack || item instanceof Material;
-	}
+    @Override
+    public boolean isSupportedItem(Object item) {
+        return item instanceof ItemStack || item instanceof Material;
+    }
 
-	protected final void requireSupportedItem(Object item) {
-		if (isSupportedItem(item))
-			return;
+    protected final void requireSupportedItem(Object item) {
+        if (isSupportedItem(item)) return;
 
-		throw new IllegalStateException("Unsupported item type: " + item.getClass().getName());
-	}
+        throw new IllegalStateException("Unsupported item type: " + item.getClass().getName());
+    }
 
-	@Override
-	public boolean hasItem(int slot) {
-		return getInventory().getItem(slot) != null;
-	}
+    @Override
+    public boolean hasItem(int slot) {
+        return getInventory().getItem(slot) != null;
+    }
 
-	@Override
-	public int getSize() {
-		return getInventory().getSize();
-	}
+    @Override
+    public int getSize() {
+        return getInventory().getSize();
+    }
 
-	@Override
-	public int getSlotsCount() {
-		return getInventory().getSize() - 1;
-	}
+    @Override
+    public int getSlotsCount() {
+        return getInventory().getSize() - 1;
+    }
 
-	@Override
-	public int getFirstSlot() {
-		return 0;
-	}
+    @Override
+    public int getFirstSlot() {
+        return 0;
+    }
 
-	@Override
-	public int getLastSlot() {
-		return getSlotsCount();
-	}
+    @Override
+    public int getLastSlot() {
+        return getSlotsCount();
+    }
 
-	@Override
-	public void changeTitle(@Nullable final String title) {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public void changeTitle(@Nullable final String title) {
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public boolean isEntityContainer() {
-		return false;
-	}
+    @Override
+    public boolean isEntityContainer() {
+        return false;
+    }
 
-	@Override
-	public final void open(@NotNull final Viewer viewer) {
-		((BukkitViewer) viewer).getPlayer().openInventory(getInventory());
-	}
+    @Override
+    public final void open(@NotNull final Viewer viewer) {
+        ((BukkitViewer) viewer).getPlayer().openInventory(getInventory());
+    }
 
-	@Override
-	public final void close() {
-		getInventory().getViewers().forEach(HumanEntity::closeInventory);
-	}
-
+    @Override
+    public final void close() {
+        getInventory().getViewers().forEach(HumanEntity::closeInventory);
+    }
 }
