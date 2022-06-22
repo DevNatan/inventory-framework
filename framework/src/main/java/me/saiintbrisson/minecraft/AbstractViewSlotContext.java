@@ -12,7 +12,6 @@ import java.util.NoSuchElementException;
 import java.util.function.Consumer;
 
 import static java.lang.String.format;
-import static java.lang.String.valueOf;
 
 @Getter
 @Setter
@@ -127,8 +126,13 @@ public abstract class AbstractViewSlotContext extends BaseViewContext implements
 	}
 
 	@Override
-	public final <T> PaginatedViewSlotContext<T> paginated() {
-		return (PaginatedViewSlotContext<T>) super.paginated();
+	public final BaseViewContext getParent() {
+		return parent;
+	}
+
+	@Override
+	public <T> PaginatedViewContext<T> paginated() {
+		return parent.paginated();
 	}
 
 }

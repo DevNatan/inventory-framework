@@ -111,7 +111,4 @@ public interface PaginatedViewContext<T> extends ViewContext, PaginatedVirtualVi
 	@Override
 	AbstractPaginatedView<T> getRoot();
 
-	@Override
-	PaginatedViewSlotContext<T> ref(String key);
-
 }

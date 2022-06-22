@@ -60,7 +60,7 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
 	 * Creates a new ViewFrame instance.
 	 *
 	 * @param owner The Bukkit plugin holder of this view framework.
-	 * @deprecated Use {@link #of(Plugin, View...)} instead.
+	 * @deprecated Use {@link #of(Plugin, AbstractView...)} instead.
 	 */
 	@Deprecated
 	public ViewFrame(@NotNull Plugin owner) {
@@ -127,7 +127,7 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
 	 */
 	@Deprecated
 	@ApiStatus.ScheduledForRemoval(inVersion = "2.5.2")
-	public void register(@NotNull View... views) {
+	public void register(@NotNull AbstractView... views) {
 		with(views);
 		register();
 	}
@@ -219,7 +219,7 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
 	 */
 	@Deprecated
 	@ApiStatus.ScheduledForRemoval(inVersion = "2.5.2")
-	public void addView(final View view) {
+	public void addView(final AbstractView view) {
 		with(view);
 	}
 
@@ -228,7 +228,7 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
 	 */
 	@Deprecated
 	@ApiStatus.ScheduledForRemoval(inVersion = "2.5.2")
-	public void addView(final View... views) {
+	public void addView(final AbstractView... views) {
 		with(views);
 	}
 

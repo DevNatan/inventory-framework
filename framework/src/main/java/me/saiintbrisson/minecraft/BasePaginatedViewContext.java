@@ -9,48 +9,27 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Consumer;
+import java.util.Stack;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 @Getter
 @Setter
 @ToString(callSuper = true)
 class BasePaginatedViewContext<T> extends BaseViewContext implements PaginatedViewContext<T> {
 
-	private final SharedPaginationProperties<T> properties = new SharedPaginationProperties<>(this);
-
 	@Setter(AccessLevel.PACKAGE)
 	private int page;
 
 	private int previousPageItemSlot = -1;
 	private int nextPageItemSlot = -1;
+
 	private boolean layoutSignatureChecked;
+	private String[] layout;
+	private Paginator<T> paginator;
+	private Stack<Integer> itemsLayer;
 
 	BasePaginatedViewContext(@NotNull AbstractView root, @Nullable ViewContainer container) {
 		super(root, container);
-	}
-
-	@Override
-	public final int getOffset() {
-		return getProperties().getOffset();
-	}
-
-	@Override
-	@Deprecated
-	public final void setOffset(int offset) {
-		getProperties().setOffset(offset);
-	}
-
-	@Override
-	public final int getLimit() {
-		return getProperties().getLimit();
-	}
-
-	@Override
-	@Deprecated
-	public final void setLimit(int limit) {
-		getProperties().setLimit(limit);
 	}
 
 	@Override
@@ -60,13 +39,21 @@ class BasePaginatedViewContext<T> extends BaseViewContext implements PaginatedVi
 
 	@Override
 	public final int getPagesCount() {
-		return getProperties().getPaginator().count();
+		return getPaginator().count();
 	}
 
 	@Override
 	@Deprecated
 	public final int getPageSize() {
-		return getProperties().getPaginator().getPageSize();
+		return getPaginator().getPageSize();
+	}
+
+	@Override
+	public final int getPageMaxItemsCount() {
+		if (getItemsLayer() == null)
+			throw new IllegalStateException("Layout not resolved");
+
+		return getItemsLayer().size();
 	}
 
 	@Override
@@ -102,7 +89,7 @@ class BasePaginatedViewContext<T> extends BaseViewContext implements PaginatedVi
 	@Override
 	public final void switchTo(final int page) {
 		final AbstractPaginatedView<T> root = getRoot().paginated();
-		root.runCatching(this, () -> root.updatePage(this, page));
+		root.runCatching(this, () -> root.updateContext(this, page, true, true));
 		root.onPageSwitch(this);
 	}
 
@@ -124,53 +111,54 @@ class BasePaginatedViewContext<T> extends BaseViewContext implements PaginatedVi
 		return true;
 	}
 
-	@Override
-	public final int getPageItemsCount() {
-		throw new UnsupportedOperationException("Not implemented yet");
+	public final Paginator<T> getPaginator() {
+		if (paginator != null)
+			return paginator;
+
+		return getRoot().getPaginator();
 	}
 
 	@Override
 	public final List<T> getSource() {
-		return Collections.unmodifiableList(getProperties().getPaginator().getSource());
+		return Collections.unmodifiableList(getPaginator().getSource());
+	}
+
+	private void updateSource(Object source) {
+		final AbstractPaginatedView<T> root = getRoot();
+		final boolean isLayoutChecked = isLayoutSignatureChecked();
+		final String[] layout = root.useLayout(this);
+
+		// force layout resolving but do not render
+		if (!isLayoutChecked && layout != null)
+			root.resolveLayout(this, layout, false);
+
+		setPaginator(new Paginator<>(
+			isLayoutChecked ? getItemsLayer().size() : root.getPageSize(),
+			source
+		));
 	}
 
 	@Override
 	public final void setSource(@NotNull List<T> source) {
-		getProperties().getPaginator().setSource(source);
+		updateSource(source);
 	}
 
 	@Override
 	public final void setSource(@NotNull Function<PaginatedViewContext<T>, List<T>> sourceProvider) {
-		if (getProperties().hasSource() && getProperties().getPaginator().isProvided())
+		final Paginator<T> paginator = getPaginator();
+		if (paginator != null && paginator.isProvided())
 			throw new IllegalStateException("Pagination source cannot be provided more than once");
+
+		updateSource(sourceProvider);
 	}
 
 	@Override
 	public final void setLayout(String... layout) {
-		getProperties().setLayout(layout);
+		this.layout = layout;
 
-		// check if layout was already resolved, if it was, update it without waiting for a update
+		// allow dynamic layout update
 		if (isLayoutSignatureChecked())
-			getRoot().<T>paginated().updateLayout(this, layout);
-	}
-
-	@Override
-	public final void setLayout(char identifier, @NotNull Consumer<ViewItem> layout) {
-		setLayout(identifier, () -> {
-			final ViewItem item = new ViewItem();
-			layout.accept(item);
-			return item;
-		});
-	}
-
-	@Override
-	public final void setLayout(char identifier, @NotNull Supplier<ViewItem> layout) {
-		getProperties().setLayout(identifier, layout);
-	}
-
-	@Override
-	public final PaginatedViewSlotContext<T> ref(String key) {
-		return super.ref(key).paginated();
+			getRoot().updateLayout(this, layout);
 	}
 
 	@Override

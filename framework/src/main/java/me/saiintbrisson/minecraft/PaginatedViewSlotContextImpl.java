@@ -1,5 +1,6 @@
 package me.saiintbrisson.minecraft;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
@@ -7,9 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
 
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 /**
  * PaginatedViewSlotContext implementation that inherits a ViewSlotContext.
@@ -26,6 +25,7 @@ final class PaginatedViewSlotContextImpl<T> extends AbstractViewSlotContext
 	private final int index;
 	private final T value;
 
+	@Getter(AccessLevel.NONE)
 	private final PaginatedViewContext<T> parent;
 
 	PaginatedViewSlotContextImpl(
@@ -50,11 +50,6 @@ final class PaginatedViewSlotContextImpl<T> extends AbstractViewSlotContext
 	}
 
 	@Override
-	public SharedPaginationProperties<T> getProperties() {
-		return parent.getProperties();
-	}
-
-	@Override
 	public PaginatedViewSlotContext<T> withItem(@Nullable Object item) {
 		super.withItem(item);
 		return this;
@@ -71,41 +66,18 @@ final class PaginatedViewSlotContextImpl<T> extends AbstractViewSlotContext
 	}
 
 	@Override
+	public @Nullable String[] getLayout() {
+		return parent.getLayout();
+	}
+
+	@Override
 	public void setLayout(String... layout) {
 		throwPaginationDataChangedError();
 	}
 
 	@Override
-	public void setLayout(char identifier, @NotNull Supplier<ViewItem> layout) {
-		throwPaginationDataChangedError();
-	}
-
-	@Override
-	public void setLayout(char identifier, @NotNull Consumer<ViewItem> layout) {
-		throwPaginationDataChangedError();
-	}
-
-	@Override
-	@Deprecated
-	public int getOffset() {
-		return parent.getOffset();
-	}
-
-	@Override
-	@Deprecated
-	public void setOffset(int offset) {
-		throwPaginationDataChangedError();
-	}
-
-	@Override
-	public int getLimit() {
-		return parent.getLimit();
-	}
-
-	@Override
-	@Deprecated
-	public void setLimit(int limit) {
-		throwPaginationDataChangedError();
+	public Paginator<T> getPaginator() {
+		return parent.getPaginator();
 	}
 
 	@Override
@@ -115,8 +87,8 @@ final class PaginatedViewSlotContextImpl<T> extends AbstractViewSlotContext
 	}
 
 	@Override
-	public int getPageItemsCount() {
-		return parent.getPageItemsCount();
+	public int getPageMaxItemsCount() {
+		return parent.getPageMaxItemsCount();
 	}
 
 	@Override
@@ -206,17 +178,18 @@ final class PaginatedViewSlotContextImpl<T> extends AbstractViewSlotContext
 
 	@Override
 	public void setLayoutSignatureChecked(boolean layoutSignatureChecked) {
-		parent.setLayoutSignatureChecked(layoutSignatureChecked);
-	}
-
-	@Override
-	public PaginatedViewSlotContext<T> ref(String key) {
-		return parent.ref(key);
+		throwPaginationDataChangedError();
 	}
 
 	@Override
 	public AbstractPaginatedView<T> getRoot() {
 		return parent.getRoot();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public PaginatedViewSlotContext<T> paginated() {
+		return this;
 	}
 
 	private void throwPaginationDataChangedError() {

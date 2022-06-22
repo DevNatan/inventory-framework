@@ -49,6 +49,7 @@ class ViewListener implements Listener {
 
 	@EventHandler
 	public void onClick(final InventoryClickEvent event) {
+		System.out.println("on click");
 		if (!(event.getWhoClicked() instanceof Player))
 			return;
 
@@ -67,7 +68,7 @@ class ViewListener implements Listener {
 		}
 
 		final ViewSlotContext slotContext = new BukkitClickViewSlotContext(
-			context.resolve(event.getRawSlot(), true,
+			context.resolve(event.getSlot(), true,
 				event.getClickedInventory() instanceof PlayerInventory
 			),
 			context,
@@ -77,6 +78,7 @@ class ViewListener implements Listener {
 		try {
 			view.runCatching(context,
 				() -> view.getPipeline().execute(AbstractView.CLICK, slotContext));
+			plugin.getLogger().info("Pipeline launcher");
 		} catch (final Throwable e) {
 			plugin.getLogger().log(Level.SEVERE, "Failed to execute click pipeline", e);
 			return;

@@ -16,17 +16,19 @@ final class ItemClickInterceptor implements PipelineInterceptor<BukkitClickViewS
 		@NotNull PipelineContext<BukkitClickViewSlotContext> pipeline,
 		BukkitClickViewSlotContext subject
 	) {
+		System.out.println("Item click interceptor");
 		final InventoryClickEvent event = subject.getClickOrigin();
 		if (event.getSlotType() == InventoryType.SlotType.OUTSIDE)
 			return;
 
 		final ViewItem item = subject.getBackingItem();
-
 		if (item == null)
 			return;
 
 		// inherit cancellation so we can un-cancel it
 		subject.setCancelled(item.isCancelOnClick());
+		System.out.println("Cancel on click backing item is not null ;')");
+		System.out.println(item);
 
 		if (item.getClickHandler() != null)
 			subject.getRoot().runCatching(subject, () -> item.getClickHandler().accept(subject));

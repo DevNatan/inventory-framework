@@ -124,6 +124,7 @@ final class Paginator<T> {
 
 		// fast path
 		if (size < pageSize) return new ArrayList<>(source);
+
 		if (index < 0 || index >= count())
 			throw new ArrayIndexOutOfBoundsException("Index must be between the range of 0 and " + (count() - 1) + ", given: " + index);
 

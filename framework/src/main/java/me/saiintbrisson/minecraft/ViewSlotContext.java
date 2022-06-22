@@ -21,6 +21,8 @@ import java.util.function.Consumer;
  */
 public interface ViewSlotContext extends ViewContext {
 
+	ViewContext getParent();
+
 	/**
 	 * Returns the slot position of this context in the current container.
 	 *
@@ -128,6 +130,6 @@ public interface ViewSlotContext extends ViewContext {
 	 * @throws IllegalStateException If the root of this context is not paginated.
 	 */
 	@Override
-	<T> PaginatedViewSlotContext<T> paginated();
+	<T> PaginatedViewContext<T> paginated();
 
 }

@@ -2,49 +2,31 @@ package me.saiintbrisson.minecraft;
 
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 public interface PaginatedVirtualView<T> extends VirtualView {
 
-	int getOffset();
-
-	/**
-	 * @deprecated Offset and limit will be replaced by layout.
-	 * Use {@link #setLayout(String...)} instead.
-	 */
-	@Deprecated
-	void setOffset(int offset);
-
-	int getLimit();
-
-	/**
-	 * Defines the last slot that paging data can reach in the container.
-	 *
-	 * @deprecated Offset and limit will be replaced by layout.
-	 * Use {@link #setLayout(String...)} instead.
-	 */
-	@Deprecated
-	void setLimit(int limit);
+	char PREVIOUS_PAGE_CHAR = '<';
+	char NEXT_PAGE_CHAR = '>';
+	char EMPTY_SLOT_CHAR = 'X';
+	char ITEM_SLOT_CHAR = 'O';
 
 	/**
 	 * Returns the total maximum number of fixed elements that a page can contain.
 	 *
 	 * @return The items count that a single page can contain.
-	 * @deprecated Use {@link #getPageItemsCount()} instead.
 	 */
-	@Deprecated
 	int getPageSize();
 
 	/**
-	 * Returns the total maximum number of fixed elements that a page can contain.
+	 * Returns the total maximum number of items that a page in a layered context can contain.
 	 *
-	 * @return The items count that a single page can contain.
+	 * @return The max items count that a single page can have.
 	 */
-	int getPageItemsCount();
+	int getPageMaxItemsCount();
 
 	/**
 	 * Defines the data that will be used to populate this paginated view.
@@ -69,8 +51,8 @@ public interface PaginatedVirtualView<T> extends VirtualView {
 	 * your request data and return the correct data for each page.
 	 * <p>
 	 * Optimize your requests by specifying a limit of data to be returned, this limit being the
-	 * {@link PaginatedView#getPageItemsCount() maximum amount of items that the container can support},
-	 * taking into account paging nuances, such as {@link SharedPaginationProperties#getLayout() pagination layout}.
+	 * {@link PaginatedView#getPageMaxItemsCount() maximum amount of items that the container can support},
+	 * taking into account paging nuances, such as {@link PaginatedVirtualView#getLayout() pagination layout}.
 	 * <p>
 	 * You can only use this method once during the view's lifecycle as it is a provider,
 	 * and the pagination resets with each update accordingly.
@@ -82,25 +64,13 @@ public interface PaginatedVirtualView<T> extends VirtualView {
 	@ApiStatus.Experimental
 	void setSource(@NotNull Function<PaginatedViewContext<T>, List<T>> sourceProvider);
 
-	void setLayout(String... layout);
-
-	/**
-	 * @deprecated Use {@link #setLayout(char, Consumer)} instead.
-	 */
-	@Deprecated
-	void setLayout(char identifier, @NotNull Supplier<ViewItem> layout);
-
-	@ApiStatus.Experimental
-	void setLayout(char identifier, @NotNull Consumer<ViewItem> layout);
-
-	/**
-	 * Pagination data used for this view.
-	 * <p>
-	 * <i>This is an internal API, please don't rely on it.</i>
-	 *
-	 * @return Pagination properties for this view.
-	 */
 	@ApiStatus.Internal
-	SharedPaginationProperties<T> getProperties();
+	@Nullable
+	String[] getLayout();
+
+	void setLayout(@Nullable String... layout);
+
+	@ApiStatus.Internal
+	Paginator<T> getPaginator();
 
 }
