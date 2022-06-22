@@ -52,13 +52,13 @@ public interface PaginatedViewContext<T> extends ViewContext, PaginatedVirtualVi
 	int getNextPage();
 
 	/**
-	 * Returns <tt>false</tt> if the current page is the first page of the available pages or <tt>false</tt> otherwise.
+	 * Returns <code>false</code> if the current page is the first page of the available pages or <code>false</code> otherwise.
 	 * @return If the current page is the first page of the available pages.
 	 */
 	boolean hasPreviousPage();
 
 	/**
-	 * Returns <tt>false</tt> if there are more pages than the current one available or <tt>false</tt> otherwise.
+	 * Returns <code>false</code> if there are more pages than the current one available or <code>false</code> otherwise.
 	 * @return If there are more pages than the current one available.
 	 */
 	boolean hasNextPage();
