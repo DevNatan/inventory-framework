@@ -5,7 +5,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.server.PluginDisableEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
@@ -54,6 +56,31 @@ class ViewListener implements Listener {
 			return;
 
 		viewFrame.unregister();
+	}
+
+	@SuppressWarnings("unused")
+	@EventHandler
+	public void onDrag(final InventoryDragEvent e) {
+		if (!(e.getWhoClicked() instanceof Player))
+			return;
+
+		final Inventory inventory = e.getInventory();
+		final AbstractView view = getView((Player) e.getWhoClicked());
+		if (view == null)
+			return;
+
+		// TODO implement pipeline for drag
+		if (!view.isCancelOnDrag())
+			return;
+
+		final int size = inventory.getSize();
+		for (int slot : e.getRawSlots()) {
+			if (!(slot < size))
+				continue;
+
+			e.setCancelled(true);
+			break;
+		}
 	}
 
 
