@@ -1,5 +1,10 @@
+plugins {
+    id "com.diffplug.spotless" version "6.7.2" apply false
+}
+
 subprojects {
     apply plugin: 'java-library'
+    apply plugin: "com.diffplug.spotless"
 
     group 'me.saiintbrisson.minecraft'
     version '2.5.1'
@@ -25,19 +30,25 @@ subprojects {
         testAnnotationProcessor libs.lombok
     }
 
-    test {
-        useJUnitPlatform()
-    }
-
-    tasks.withType(JavaCompile) {
-        options.encoding = 'UTF-8'
-    }
-
     java {
         withSourcesJar()
         withJavadocJar()
 
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
+    }
+
+    test {
+        useJUnitPlatform()
+    }
+
+    spotless {
+        java {
+            googleJavaFormat()
+        }
+    }
+
+    tasks.withType(JavaCompile) {
+        options.encoding = 'UTF-8'
     }
 }
