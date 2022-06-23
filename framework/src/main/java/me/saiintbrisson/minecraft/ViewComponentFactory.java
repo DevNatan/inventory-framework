@@ -60,4 +60,15 @@ public abstract class ViewComponentFactory {
     public abstract Object createItem(@Nullable Object stack);
 
     public abstract boolean worksInCurrentPlatform();
+
+	@NotNull
+	public ViewUpdateJob scheduleUpdate(
+		@NotNull VirtualView view,
+		long delayInTicks,
+		long intervalInTicks
+	) {
+		throw new UnsupportedOperationException(
+			"Automatic view update is not supported in this platform"
+		);
+	}
 }

@@ -1,6 +1,7 @@
 package me.saiintbrisson.minecraft;
 
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import org.bukkit.Material;
@@ -8,12 +9,16 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.Duration;
+
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public abstract class AbstractVirtualView implements VirtualView {
 
     @ToString.Exclude private ViewItem[] items;
 
     private ViewErrorHandler errorHandler;
+
+	private ViewUpdateJob updateJob;
 
     protected ViewItem[] getItems() {
         return items;
@@ -248,7 +253,33 @@ public abstract class AbstractVirtualView implements VirtualView {
         getItems()[slot] = null;
     }
 
-    /**
+	@Override
+	public final ViewUpdateJob getUpdateJob() {
+		return updateJob;
+	}
+
+	@Override
+	public final void setUpdateJob(ViewUpdateJob updateJob) {
+		this.updateJob = updateJob;
+	}
+
+	@Override
+	public final void scheduleUpdate(long intervalInTicks) {
+		scheduleUpdate(-1, intervalInTicks);
+	}
+
+	@Override
+	public final void scheduleUpdate(long delayInTicks, long intervalInTicks) {
+		inventoryModificationTriggered();
+		PlatformUtils.getFactory().scheduleUpdate(this, delayInTicks, intervalInTicks);
+	}
+
+	@Override
+	public final void scheduleUpdate(@NotNull Duration duration) {
+		scheduleUpdate(-1, Math.floorDiv(duration.getSeconds(), 20));
+	}
+
+	/**
      * Thrown when a method explicitly needs to specify that it will directly modify the view's
      * container when executed, that method is overridden by implementations whose direct
      * modification of the container is not allowed, throwing an IllegalStateException.
