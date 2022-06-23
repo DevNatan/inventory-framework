@@ -85,11 +85,11 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
         return paginator;
     }
 
-    public BiConsumer<PaginatedViewContext<T>, ViewItem> getPreviousPageItemFactory() {
+    public final BiConsumer<PaginatedViewContext<T>, ViewItem> getPreviousPageItemFactory() {
         return previousPageItemFactory;
     }
 
-    public BiConsumer<PaginatedViewContext<T>, ViewItem> getNextPageItemFactory() {
+    public final BiConsumer<PaginatedViewContext<T>, ViewItem> getNextPageItemFactory() {
         return nextPageItemFactory;
     }
 
@@ -237,7 +237,7 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
     }
 
     @Override
-    void update(@NotNull ViewContext context) {
+    final void update(@NotNull ViewContext context) {
         super.update(context);
 
         final PaginatedViewContext<T> paginated = context.paginated();
@@ -362,7 +362,7 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
         }
     }
 
-    void updateLayout(@NotNull PaginatedViewContext<T> context, String[] layout) {
+    final void updateLayout(@NotNull PaginatedViewContext<T> context, String[] layout) {
         // what we will do: first, use the old defined layout to preserve the actual item slot state
         // and
         // then reorder
@@ -395,7 +395,7 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
         return preservedItems;
     }
 
-    void removeAt(@NotNull ViewContext context, int slot) {
+    final void removeAt(@NotNull ViewContext context, int slot) {
         context.clear(slot);
         context.getContainer().removeItem(slot);
     }

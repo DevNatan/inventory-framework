@@ -1,15 +1,13 @@
 package me.saiintbrisson.minecraft;
 
+import java.time.Duration;
 import lombok.AccessLevel;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
-
-import java.time.Duration;
 
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public abstract class AbstractVirtualView implements VirtualView {
@@ -18,7 +16,7 @@ public abstract class AbstractVirtualView implements VirtualView {
 
     private ViewErrorHandler errorHandler;
 
-	private ViewUpdateJob updateJob;
+    private ViewUpdateJob updateJob;
 
     protected ViewItem[] getItems() {
         return items;
@@ -54,42 +52,42 @@ public abstract class AbstractVirtualView implements VirtualView {
     @Override
     @Deprecated
     @ApiStatus.ScheduledForRemoval(inVersion = "2.5.3")
-    public ViewItem item() {
+    public final ViewItem item() {
         return new ViewItem();
     }
 
     @Override
     @Deprecated
     @ApiStatus.ScheduledForRemoval(inVersion = "2.5.3")
-    public ViewItem item(@NotNull ItemStack item) {
+    public final ViewItem item(@NotNull ItemStack item) {
         return new ViewItem().withItem(item);
     }
 
     @Override
     @Deprecated
     @ApiStatus.ScheduledForRemoval(inVersion = "2.5.3")
-    public ViewItem item(@NotNull Material material) {
+    public final ViewItem item(@NotNull Material material) {
         return new ViewItem().withItem(new ItemStack(material));
     }
 
     @Override
     @Deprecated
     @ApiStatus.ScheduledForRemoval(inVersion = "2.5.3")
-    public ViewItem item(@NotNull Material material, int amount) {
+    public final ViewItem item(@NotNull Material material, int amount) {
         return new ViewItem().withItem(new ItemStack(material, amount));
     }
 
     @Override
     @Deprecated
     @ApiStatus.ScheduledForRemoval(inVersion = "2.5.3")
-    public ViewItem item(@NotNull Material material, short durability) {
+    public final ViewItem item(@NotNull Material material, short durability) {
         return new ViewItem().withItem(new ItemStack(material, 1, durability));
     }
 
     @Override
     @Deprecated
     @ApiStatus.ScheduledForRemoval(inVersion = "2.5.3")
-    public ViewItem item(@NotNull Material material, int amount, short durability) {
+    public final ViewItem item(@NotNull Material material, int amount, short durability) {
         return new ViewItem().withItem(new ItemStack(material, amount, durability));
     }
 
@@ -129,22 +127,22 @@ public abstract class AbstractVirtualView implements VirtualView {
     }
 
     @Override
-    public @NotNull ViewItem firstSlot() {
+    public final @NotNull ViewItem firstSlot() {
         return slot(getFirstSlot());
     }
 
     @Override
-    public @NotNull ViewItem firstSlot(Object item) {
+    public final @NotNull ViewItem firstSlot(Object item) {
         return slot(getFirstSlot(), item);
     }
 
     @Override
-    public @NotNull ViewItem lastSlot() {
+    public final @NotNull ViewItem lastSlot() {
         return slot(getLastSlot());
     }
 
     @Override
-    public @NotNull ViewItem lastSlot(Object item) {
+    public final @NotNull ViewItem lastSlot(Object item) {
         return slot(getLastSlot(), item);
     }
 
@@ -253,33 +251,38 @@ public abstract class AbstractVirtualView implements VirtualView {
         getItems()[slot] = null;
     }
 
-	@Override
-	public final ViewUpdateJob getUpdateJob() {
-		return updateJob;
-	}
+    @Override
+    public final ViewUpdateJob getUpdateJob() {
+        return updateJob;
+    }
 
-	@Override
-	public final void setUpdateJob(ViewUpdateJob updateJob) {
-		this.updateJob = updateJob;
-	}
+    @Override
+    public final void setUpdateJob(ViewUpdateJob updateJob) {
+        this.updateJob = updateJob;
+    }
 
-	@Override
-	public final void scheduleUpdate(long intervalInTicks) {
-		scheduleUpdate(-1, intervalInTicks);
-	}
+    @Override
+    public final void scheduleUpdate(long intervalInTicks) {
+        scheduleUpdate(-1, intervalInTicks);
+    }
 
-	@Override
-	public final void scheduleUpdate(long delayInTicks, long intervalInTicks) {
-		inventoryModificationTriggered();
-		PlatformUtils.getFactory().scheduleUpdate(this, delayInTicks, intervalInTicks);
-	}
+    @Override
+    public final void scheduleUpdate(long delayInTicks, long intervalInTicks) {
+        inventoryModificationTriggered();
+        PlatformUtils.getFactory().scheduleUpdate(this, delayInTicks, intervalInTicks);
+    }
 
-	@Override
-	public final void scheduleUpdate(@NotNull Duration duration) {
-		scheduleUpdate(-1, Math.floorDiv(duration.getSeconds(), 20));
-	}
+    @Override
+    public final void scheduleUpdate(@NotNull Duration duration) {
+        scheduleUpdate(-1, Math.floorDiv(duration.getSeconds(), 20));
+    }
 
-	/**
+    @Override
+    public final boolean isScheduledToUpdate() {
+        return updateJob != null;
+    }
+
+    /**
      * Thrown when a method explicitly needs to specify that it will directly modify the view's
      * container when executed, that method is overridden by implementations whose direct
      * modification of the container is not allowed, throwing an IllegalStateException.

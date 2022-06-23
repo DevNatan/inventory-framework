@@ -55,7 +55,8 @@ final class PaginatedViewSlotContextImpl<T> extends AbstractViewSlotContext
     }
 
     @Override
-    public void setSource(@NotNull Function<PaginatedViewContext<T>, List<? extends T>> sourceProvider) {
+    public void setSource(
+            @NotNull Function<PaginatedViewContext<T>, List<? extends T>> sourceProvider) {
         throwPaginationDataChangedError();
     }
 

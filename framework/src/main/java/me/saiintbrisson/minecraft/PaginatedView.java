@@ -44,4 +44,9 @@ public abstract class PaginatedView<T> extends AbstractPaginatedView<T> implemen
     public final Inventory getInventory() {
         throw new IllegalStateException("View inventory cannot be accessed");
     }
+
+    @Override
+    public final String toString() {
+        return super.toString();
+    }
 }

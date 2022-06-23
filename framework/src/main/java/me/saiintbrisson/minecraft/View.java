@@ -1,15 +1,11 @@
 package me.saiintbrisson.minecraft;
 
-import lombok.Getter;
-import lombok.ToString;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 /** Bukkit platform View backward compatible implementation. */
-@Getter
-@ToString(callSuper = true)
 public class View extends AbstractView implements InventoryHolder {
 
     public View() {
@@ -48,9 +44,19 @@ public class View extends AbstractView implements InventoryHolder {
         super.render(context);
     }
 
+    @Override
+    final void update(@NotNull ViewContext context) {
+        super.update(context);
+    }
+
     @NotNull
     @Override
     public final Inventory getInventory() {
         throw new IllegalStateException("View inventory cannot be accessed");
+    }
+
+    @Override
+    public final String toString() {
+        return super.toString();
     }
 }

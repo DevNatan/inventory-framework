@@ -302,7 +302,7 @@ public abstract class AbstractView extends AbstractVirtualView {
         context.addViewer(viewer);
         data.forEach(context::set);
 
-		getPipeline().execute(OPEN, context);
+        getPipeline().execute(OPEN, context);
         runCatching(context, () -> onOpen(context));
         return context;
     }
@@ -502,10 +502,18 @@ public abstract class AbstractView extends AbstractVirtualView {
         return super.resolve(index);
     }
 
-    void remove(@NotNull ViewContext context) {
+    final void remove(@NotNull ViewContext context) {
         synchronized (contexts) {
             contexts.remove(context);
         }
+    }
+
+    final boolean isInitialized() {
+        return initialized;
+    }
+
+    final void setInitialized(boolean initialized) {
+        this.initialized = initialized;
     }
 
     /**

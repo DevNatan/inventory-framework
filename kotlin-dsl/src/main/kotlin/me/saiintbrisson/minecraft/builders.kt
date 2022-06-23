@@ -52,6 +52,6 @@ public class ViewSlotBuilder(@PublishedApi internal val slot: Int) {
 
     private fun ViewItem.setHandler(
         currentHandler: SlotContextBlock?,
-        assign: ViewItem.(ViewItemHandler) -> Unit
+        @Suppress("DEPRECATION") assign: ViewItem.(ViewItemHandler) -> Unit
     ) = currentHandler?.let { it -> assign(it) }
 }
