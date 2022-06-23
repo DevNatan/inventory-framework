@@ -1,14 +1,13 @@
 package me.saiintbrisson.minecraft;
 
+import java.util.List;
+import java.util.function.Function;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
-
-import java.util.List;
-import java.util.function.Function;
 
 /**
  * PaginatedViewSlotContext implementation that inherits a ViewSlotContext.
@@ -51,12 +50,12 @@ final class PaginatedViewSlotContextImpl<T> extends AbstractViewSlotContext
     }
 
     @Override
-    public void setSource(@NotNull List<T> source) {
+    public void setSource(@NotNull List<? extends T> source) {
         throwPaginationDataChangedError();
     }
 
     @Override
-    public void setSource(@NotNull Function<PaginatedViewContext<T>, List<T>> sourceProvider) {
+    public void setSource(@NotNull Function<PaginatedViewContext<T>, List<? extends T>> sourceProvider) {
         throwPaginationDataChangedError();
     }
 

@@ -1,12 +1,11 @@
 package me.saiintbrisson.minecraft;
 
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 /**
  * Asynchronous paging state machine data class.

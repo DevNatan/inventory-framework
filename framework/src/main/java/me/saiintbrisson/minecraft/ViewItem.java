@@ -1,5 +1,10 @@
 package me.saiintbrisson.minecraft;
 
+import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,12 +14,6 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
-
-import java.time.Duration;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 /** Mutable class that represents an item in a slot of a container. */
 @ToString

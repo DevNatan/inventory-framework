@@ -1,9 +1,8 @@
 package me.saiintbrisson.minecraft;
 
+import java.util.List;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Range;
-
-import java.util.List;
 
 /**
  * A paging context can originate from a view that supports paging.

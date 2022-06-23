@@ -1,12 +1,12 @@
 package me.saiintbrisson.minecraft;
 
+import static java.lang.String.format;
+
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
-
-import static java.lang.String.format;
 
 @Getter
 @ToString

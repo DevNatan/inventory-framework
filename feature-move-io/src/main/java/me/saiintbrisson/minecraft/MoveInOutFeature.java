@@ -1,10 +1,9 @@
 package me.saiintbrisson.minecraft;
 
+import java.util.function.UnaryOperator;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.function.UnaryOperator;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class MoveInOutFeature implements Feature<Void, Void> {

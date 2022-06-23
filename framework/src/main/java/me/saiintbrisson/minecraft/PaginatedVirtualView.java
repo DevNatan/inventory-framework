@@ -1,11 +1,10 @@
 package me.saiintbrisson.minecraft;
 
+import java.util.List;
+import java.util.function.Function;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
-import java.util.function.Function;
 
 public interface PaginatedVirtualView<T> extends VirtualView {
 

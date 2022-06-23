@@ -1,5 +1,10 @@
 package me.saiintbrisson.minecraft;
 
+import static java.lang.String.format;
+
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.function.Consumer;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -7,12 +12,6 @@ import lombok.ToString;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.function.Consumer;
-
-import static java.lang.String.format;
 
 @Getter
 @Setter

@@ -1,12 +1,5 @@
 package me.saiintbrisson.minecraft;
 
-import lombok.Getter;
-import lombok.ToString;
-import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.Range;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
@@ -14,6 +7,12 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import lombok.Getter;
+import lombok.ToString;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Range;
 
 @Getter
 @ToString(callSuper = true)

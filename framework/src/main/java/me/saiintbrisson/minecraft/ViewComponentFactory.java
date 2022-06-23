@@ -1,13 +1,12 @@
 package me.saiintbrisson.minecraft;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Consumer;
 import lombok.AccessLevel;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Consumer;
 
 public abstract class ViewComponentFactory {
 

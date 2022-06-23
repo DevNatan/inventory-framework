@@ -1,5 +1,9 @@
 package me.saiintbrisson.minecraft;
 
+import static java.util.Objects.requireNonNull;
+import static me.saiintbrisson.minecraft.AbstractView.CLICK;
+import static org.bukkit.Bukkit.createInventory;
+
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.bukkit.Material;
@@ -10,10 +14,6 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import static java.util.Objects.requireNonNull;
-import static me.saiintbrisson.minecraft.AbstractView.CLICK;
-import static org.bukkit.Bukkit.createInventory;
 
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
 final class BukkitViewComponentFactory extends ViewComponentFactory {

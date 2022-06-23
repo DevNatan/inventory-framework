@@ -1,11 +1,10 @@
 package me.saiintbrisson.minecraft;
 
+import java.util.Stack;
+import java.util.function.Supplier;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
-
-import java.util.Stack;
-import java.util.function.Supplier;
 
 @Getter
 @ToString

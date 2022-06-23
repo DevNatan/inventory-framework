@@ -1,5 +1,6 @@
 package me.saiintbrisson.minecraft.examples;
 
+import java.util.Arrays;
 import me.saiintbrisson.minecraft.PaginatedView;
 import me.saiintbrisson.minecraft.PaginatedViewSlotContext;
 import me.saiintbrisson.minecraft.ViewContext;
@@ -7,8 +8,6 @@ import me.saiintbrisson.minecraft.ViewItem;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Arrays;
 
 /** Creates a paginated view based on items in the player inventory. */
 public final class PaginatedViewBasedOnPlayerInventory extends PaginatedView<ItemStack> {

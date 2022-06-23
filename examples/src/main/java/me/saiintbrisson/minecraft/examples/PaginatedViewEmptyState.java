@@ -1,5 +1,9 @@
 package me.saiintbrisson.minecraft.examples;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import me.saiintbrisson.minecraft.PaginatedView;
 import me.saiintbrisson.minecraft.PaginatedViewSlotContext;
 import me.saiintbrisson.minecraft.ViewContext;
@@ -7,11 +11,6 @@ import me.saiintbrisson.minecraft.ViewItem;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * Adds an item to signal that there are no items available in pagination. Open the View with items

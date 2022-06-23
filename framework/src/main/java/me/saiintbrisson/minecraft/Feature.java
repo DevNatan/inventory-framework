@@ -1,8 +1,7 @@
 package me.saiintbrisson.minecraft;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.function.UnaryOperator;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A feature is a module that is installed in the runtime and acts independently of the rest of the

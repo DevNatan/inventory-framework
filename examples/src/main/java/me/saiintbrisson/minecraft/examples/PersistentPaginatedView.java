@@ -1,16 +1,15 @@
 package me.saiintbrisson.minecraft.examples;
 
+import static java.util.Objects.requireNonNull;
+
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import me.saiintbrisson.minecraft.PaginatedView;
 import me.saiintbrisson.minecraft.PaginatedViewSlotContext;
 import me.saiintbrisson.minecraft.ViewItem;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
-import static java.util.Objects.requireNonNull;
 
 public final class PersistentPaginatedView extends PaginatedView<Integer> {
 

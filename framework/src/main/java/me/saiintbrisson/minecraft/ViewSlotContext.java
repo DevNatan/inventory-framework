@@ -1,12 +1,11 @@
 package me.saiintbrisson.minecraft;
 
+import java.util.NoSuchElementException;
+import java.util.function.Consumer;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.NoSuchElementException;
-import java.util.function.Consumer;
 
 /**
  * Represents a context in which there is a specific slot related to it, the main context

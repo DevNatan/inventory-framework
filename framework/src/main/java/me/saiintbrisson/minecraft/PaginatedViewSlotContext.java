@@ -1,8 +1,7 @@
 package me.saiintbrisson.minecraft;
 
-import org.jetbrains.annotations.Nullable;
-
 import java.util.function.Consumer;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Represents a slot context that has a paged item attached to it, containing information for that

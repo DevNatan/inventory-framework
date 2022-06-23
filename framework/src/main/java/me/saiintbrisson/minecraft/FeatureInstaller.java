@@ -1,10 +1,9 @@
 package me.saiintbrisson.minecraft;
 
-import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Collection;
 import java.util.function.UnaryOperator;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A feature installer stores information about installed features, installs features and ensures

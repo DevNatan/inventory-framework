@@ -1,5 +1,9 @@
 package me.saiintbrisson.minecraft;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Stack;
+import java.util.function.Function;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -7,11 +11,6 @@ import lombok.ToString;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Stack;
-import java.util.function.Function;
 
 @Getter
 @Setter

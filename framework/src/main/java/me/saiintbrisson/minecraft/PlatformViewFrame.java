@@ -1,11 +1,10 @@
 package me.saiintbrisson.minecraft;
 
-import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 
 @ApiStatus.NonExtendable
 public interface PlatformViewFrame<V, P, F extends PlatformViewFrame<V, P, F>>

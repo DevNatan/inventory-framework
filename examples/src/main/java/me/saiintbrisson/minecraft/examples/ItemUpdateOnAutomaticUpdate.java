@@ -1,12 +1,11 @@
 package me.saiintbrisson.minecraft.examples;
 
+import java.util.Random;
 import me.saiintbrisson.minecraft.View;
 import me.saiintbrisson.minecraft.ViewContext;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Random;
 
 /**
  * Updates current view every 5 ticks. On each update, the type of the item in the View is changed.

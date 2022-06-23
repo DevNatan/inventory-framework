@@ -1,13 +1,12 @@
 package me.saiintbrisson.minecraft;
 
+import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
-import java.util.Map;
-import java.util.function.Supplier;
 
 public interface ViewContext extends VirtualView {
 

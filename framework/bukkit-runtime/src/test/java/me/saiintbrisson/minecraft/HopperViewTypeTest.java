@@ -1,14 +1,14 @@
 package me.saiintbrisson.minecraft;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import me.saiintbrisson.minecraft.bukkit.FakeInventory;
 import me.saiintbrisson.minecraft.bukkit.FakeItemStack;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class HopperViewTypeTest {
 

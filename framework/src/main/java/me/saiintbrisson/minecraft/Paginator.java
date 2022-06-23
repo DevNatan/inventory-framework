@@ -1,9 +1,5 @@
 package me.saiintbrisson.minecraft;
 
-import lombok.Getter;
-import lombok.Setter;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -11,6 +7,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
+import lombok.Getter;
+import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Utility class to handle paging related data.

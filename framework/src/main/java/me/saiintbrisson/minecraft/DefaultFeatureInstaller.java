@@ -1,14 +1,13 @@
 package me.saiintbrisson.minecraft;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.UnaryOperator;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Simple HashMap-backed feature installer implementation.

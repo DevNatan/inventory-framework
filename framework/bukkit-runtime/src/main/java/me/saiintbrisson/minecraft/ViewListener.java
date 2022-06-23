@@ -1,5 +1,6 @@
 package me.saiintbrisson.minecraft;
 
+import java.util.logging.Level;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -18,8 +19,6 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.logging.Level;
 
 @RequiredArgsConstructor
 class ViewListener implements Listener {

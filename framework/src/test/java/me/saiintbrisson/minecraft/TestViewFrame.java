@@ -1,14 +1,13 @@
 package me.saiintbrisson.minecraft;
 
-import lombok.Getter;
-import lombok.Setter;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Collection;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
+import lombok.Getter;
+import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
 
 public class TestViewFrame implements PlatformViewFrame<Void, Void, TestViewFrame> {
 
