@@ -301,6 +301,8 @@ public abstract class AbstractView extends AbstractVirtualView {
 
         context.addViewer(viewer);
         data.forEach(context::set);
+
+		getPipeline().execute(OPEN, context);
         runCatching(context, () -> onOpen(context));
         return context;
     }
