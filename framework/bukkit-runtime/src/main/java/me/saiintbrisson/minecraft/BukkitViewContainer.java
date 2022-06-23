@@ -96,7 +96,7 @@ public abstract class BukkitViewContainer implements ViewContainer {
 
     @Override
     public final void open(@NotNull final Viewer viewer) {
-		viewer.open(this);
+        viewer.open(this);
     }
 
     @Override

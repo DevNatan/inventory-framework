@@ -25,5 +25,4 @@ public final class CloseViewContext extends BaseViewContext {
     public @NotNull ViewContextAttributes getAttributes() {
         return parent.getAttributes();
     }
-
 }

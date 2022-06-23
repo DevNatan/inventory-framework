@@ -193,12 +193,12 @@ final class BukkitViewComponentFactory extends ViewComponentFactory {
 
     private void registerInterceptors(AbstractView view) {
         final Pipeline<? super ViewContext> pipeline = view.getPipeline();
-		pipeline.intercept(OPEN, new AutomaticUpdateInitiationInterceptor.Open());
+        pipeline.intercept(OPEN, new AutomaticUpdateInitiationInterceptor.Open());
         pipeline.intercept(CLICK, new ItemClickInterceptor());
         pipeline.intercept(CLICK, new GlobalClickInterceptor());
         pipeline.intercept(CLICK, new GlobalClickOutsideInterceptor());
         pipeline.intercept(CLICK, new GlobalHotbarClickInterceptor());
         pipeline.intercept(CLICK, new GlobalItemHoldInterceptor());
-		pipeline.intercept(CLOSE, new AutomaticUpdateInitiationInterceptor.Close());
+        pipeline.intercept(CLOSE, new AutomaticUpdateInitiationInterceptor.Close());
     }
 }

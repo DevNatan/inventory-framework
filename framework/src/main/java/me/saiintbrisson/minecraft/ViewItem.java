@@ -38,6 +38,8 @@ public final class ViewItem {
     private State state = State.UNDEFINED;
     private boolean paginationItem;
     private String referenceKey;
+
+    @Setter(AccessLevel.PUBLIC)
     private boolean closeOnClick, cancelOnClick, cancelOnShiftClick;
     private ViewItemHandler renderHandler, updateHandler, clickHandler;
     private Consumer<ViewSlotMoveContext> moveInHandler, moveOutHandler;
