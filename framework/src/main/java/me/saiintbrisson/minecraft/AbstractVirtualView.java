@@ -35,7 +35,17 @@ public abstract class AbstractVirtualView implements VirtualView {
         this.errorHandler = errorHandler;
     }
 
-    @Override
+	@Override
+	public final int getFirstSlot() {
+		return 0;
+	}
+
+	@Override
+	public final int getLastSlot() {
+		return items.length - 1;
+	}
+
+	@Override
     @NotNull
     public final ViewItem slot(int slot) {
         return Objects.requireNonNull(slot(slot, null), "ViewItem cannot be null");
@@ -71,7 +81,27 @@ public abstract class AbstractVirtualView implements VirtualView {
                 "Items without a defined slot aren't supported yet");
     }
 
-    void render(@NotNull ViewContext context) {
+	@Override
+	public @NotNull ViewItem firstSlot() {
+		return slot(getFirstSlot());
+	}
+
+	@Override
+	public @NotNull ViewItem firstSlot(Object item) {
+		return slot(getFirstSlot(), item);
+	}
+
+	@Override
+	public @NotNull ViewItem lastSlot() {
+		return slot(getLastSlot());
+	}
+
+	@Override
+	public @NotNull ViewItem lastSlot(Object item) {
+		return slot(getLastSlot(), item);
+	}
+
+	void render(@NotNull ViewContext context) {
         for (int i = 0; i < getItems().length; i++) {
             render(context, i);
         }

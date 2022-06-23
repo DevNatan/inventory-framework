@@ -39,6 +39,10 @@ public interface VirtualView {
 
     ViewErrorHandler getErrorHandler();
 
+	int getFirstSlot();
+
+	int getLastSlot();
+
     /**
      * Registers a {@link ViewItem} in the specified slot.
      *
@@ -75,6 +79,17 @@ public interface VirtualView {
     @NotNull
     ViewItem slot(int row, int column, Object item);
 
+	@NotNull
+	ViewItem firstSlot();
+
+	@NotNull
+	ViewItem firstSlot(Object item);
+
+	@NotNull
+	ViewItem lastSlot();
+
+	@NotNull
+	ViewItem lastSlot(Object item);
 
     @ApiStatus.Experimental
 	void with(@NotNull ViewItem item);
