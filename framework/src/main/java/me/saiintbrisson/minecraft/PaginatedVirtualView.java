@@ -41,7 +41,7 @@ public interface PaginatedVirtualView<T> extends VirtualView {
      *
      * @param source The pagination data source.
      */
-    void setSource(@NotNull List<T> source);
+    void setSource(@NotNull List<? extends T> source);
 
     /**
      * Defines the data provider that will be used to populate this paginated view.
@@ -63,7 +63,7 @@ public interface PaginatedVirtualView<T> extends VirtualView {
      * @param sourceProvider The pagination data source provider.
      */
     @ApiStatus.Experimental
-    void setSource(@NotNull Function<PaginatedViewContext<T>, List<T>> sourceProvider);
+    void setSource(@NotNull Function<PaginatedViewContext<T>, List<? extends T>> sourceProvider);
 
     @ApiStatus.Internal
     @Nullable

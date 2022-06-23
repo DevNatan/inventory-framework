@@ -190,7 +190,7 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
         this.nextPageItemFactory = nextPageItemFactory;
     }
 
-    public final void setSource(@NotNull List<T> source) {
+    public final void setSource(@NotNull List<? extends T> source) {
         ensureNotInitialized();
         this.paginator = new Paginator<>(getPageSize(), source);
     }
@@ -198,7 +198,7 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
     @Override
     @ApiStatus.Experimental
     public final void setSource(
-            @NotNull Function<PaginatedViewContext<T>, List<T>> sourceProvider) {
+            @NotNull Function<PaginatedViewContext<T>, List<? extends T>> sourceProvider) {
         ensureNotInitialized();
         this.paginator = new Paginator<>(getPageSize(), sourceProvider);
     }
