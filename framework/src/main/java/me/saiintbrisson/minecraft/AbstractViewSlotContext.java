@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -47,8 +48,14 @@ public abstract class AbstractViewSlotContext extends BaseViewContext implements
         return parent.getItems();
     }
 
-    @Override
-    public final @NotNull ItemWrapper getItem() {
+	@Override
+	@Deprecated
+	public final ItemStack getItem() {
+		return (ItemStack) getItemWrapper().getValue();
+	}
+
+	@Override
+    public final @NotNull ItemWrapper getItemWrapper() {
         return item;
     }
 

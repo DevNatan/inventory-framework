@@ -171,7 +171,7 @@ public abstract class AbstractVirtualView implements VirtualView {
 
 			runCatching(context, () -> item.getRenderHandler().handle(renderContext));
 			if (renderContext.hasChanged()) {
-				context.getContainer().renderItem(slot, unwrap(renderContext.getItem()));
+				context.getContainer().renderItem(slot, unwrap(renderContext.getItemWrapper()));
 				renderContext.setChanged(false);
 				return;
 			}
@@ -225,7 +225,7 @@ public abstract class AbstractVirtualView implements VirtualView {
 
 			runCatching(context, () -> item.getUpdateHandler().handle(updateContext));
 			if (updateContext.hasChanged()) {
-				context.getContainer().renderItem(slot, unwrap(updateContext.getItem()));
+				context.getContainer().renderItem(slot, unwrap(updateContext.getItemWrapper()));
 				updateContext.setChanged(false);
 				return;
 			}
