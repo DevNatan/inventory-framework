@@ -247,8 +247,8 @@ public abstract class AbstractView extends AbstractVirtualView {
         final OpenViewContext open = internalOpen(viewer, data);
 
         // wait for asynchronous open
-        if (open.getUpdateJob() != null) {
-            open.getUpdateJob()
+        if (open.getJob() != null) {
+            open.getJob()
                     .whenComplete(
                             ($, error) -> {
                                 postOpen(viewer, open);
