@@ -1,5 +1,7 @@
 package me.saiintbrisson.minecraft;
 
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -90,6 +92,30 @@ public interface VirtualView {
 
 	@NotNull
 	ViewItem lastSlot(Object item);
+
+	@Deprecated
+	@ApiStatus.ScheduledForRemoval(inVersion = "2.5.3")
+	ViewItem item();
+
+	@Deprecated
+	@ApiStatus.ScheduledForRemoval(inVersion = "2.5.3")
+	ViewItem item(@NotNull ItemStack item);
+
+	@Deprecated
+	@ApiStatus.ScheduledForRemoval(inVersion = "2.5.3")
+	ViewItem item(@NotNull Material material);
+
+	@Deprecated
+	@ApiStatus.ScheduledForRemoval(inVersion = "2.5.3")
+	ViewItem item(@NotNull Material material, short durability);
+
+	@Deprecated
+	@ApiStatus.ScheduledForRemoval(inVersion = "2.5.3")
+	ViewItem item(@NotNull Material material, int amount);
+
+	@Deprecated
+	@ApiStatus.ScheduledForRemoval(inVersion = "2.5.3")
+	ViewItem item(@NotNull Material material, int amount, short durability);
 
     @ApiStatus.Experimental
 	void with(@NotNull ViewItem item);
