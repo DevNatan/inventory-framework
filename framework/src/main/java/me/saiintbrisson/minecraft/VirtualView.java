@@ -75,10 +75,11 @@ public interface VirtualView {
     @NotNull
     ViewItem slot(int row, int column, Object item);
 
-    void with(@NotNull ViewItem item);
+
+    @ApiStatus.Experimental
+	void with(@NotNull ViewItem item);
 
     void update();
 
-    @ApiStatus.Internal
     void clear(int slot);
 }
