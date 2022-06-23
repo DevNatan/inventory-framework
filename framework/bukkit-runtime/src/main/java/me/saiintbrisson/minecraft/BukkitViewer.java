@@ -18,7 +18,6 @@ class BukkitViewer implements Viewer {
         if (!(container instanceof BukkitViewContainer))
             throw new IllegalArgumentException("Only BukkitViewContainer is supported");
 
-        container.open(this);
         player.openInventory(((BukkitViewContainer) container).getInventory());
     }
 

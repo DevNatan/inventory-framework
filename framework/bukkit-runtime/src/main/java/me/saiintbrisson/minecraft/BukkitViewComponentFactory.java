@@ -2,6 +2,8 @@ package me.saiintbrisson.minecraft;
 
 import static java.util.Objects.requireNonNull;
 import static me.saiintbrisson.minecraft.AbstractView.CLICK;
+import static me.saiintbrisson.minecraft.AbstractView.CLOSE;
+import static me.saiintbrisson.minecraft.AbstractView.OPEN;
 import static org.bukkit.Bukkit.createInventory;
 
 import lombok.AccessLevel;
@@ -191,10 +193,12 @@ final class BukkitViewComponentFactory extends ViewComponentFactory {
 
     private void registerInterceptors(AbstractView view) {
         final Pipeline<? super ViewContext> pipeline = view.getPipeline();
+		pipeline.intercept(OPEN, new AutomaticUpdateInitiationInterceptor.Open());
         pipeline.intercept(CLICK, new ItemClickInterceptor());
         pipeline.intercept(CLICK, new GlobalClickInterceptor());
         pipeline.intercept(CLICK, new GlobalClickOutsideInterceptor());
         pipeline.intercept(CLICK, new GlobalHotbarClickInterceptor());
         pipeline.intercept(CLICK, new GlobalItemHoldInterceptor());
+		pipeline.intercept(CLOSE, new AutomaticUpdateInitiationInterceptor.Close());
     }
 }

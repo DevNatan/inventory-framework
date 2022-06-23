@@ -502,6 +502,15 @@ public abstract class AbstractView extends AbstractVirtualView {
         return super.resolve(index);
     }
 
+	final void prepareClose(@NotNull CloseViewContext context) {
+		getPipeline().execute(CLOSE, context);
+	}
+
+	final void remove(@NotNull CloseViewContext context, Viewer viewer) {
+		context.getViewers().remove(viewer);
+		remove(context);
+	}
+
     final void remove(@NotNull ViewContext context) {
         synchronized (contexts) {
             contexts.remove(context);
@@ -512,7 +521,7 @@ public abstract class AbstractView extends AbstractVirtualView {
         return initialized;
     }
 
-    final void setInitialized(boolean initialized) {
+    final void setInitialized(@SuppressWarnings("SameParameterValue") boolean initialized) {
         this.initialized = initialized;
     }
 

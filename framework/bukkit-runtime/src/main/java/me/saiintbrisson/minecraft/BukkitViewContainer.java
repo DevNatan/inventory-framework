@@ -96,7 +96,7 @@ public abstract class BukkitViewContainer implements ViewContainer {
 
     @Override
     public final void open(@NotNull final Viewer viewer) {
-        ((BukkitViewer) viewer).getPlayer().openInventory(getInventory());
+		viewer.open(this);
     }
 
     @Override
