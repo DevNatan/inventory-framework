@@ -140,14 +140,14 @@ class BasePaginatedViewContext<T> extends BaseViewContext implements PaginatedVi
     }
 
     @Override
-    public final void setSource(@NotNull List<T> source) {
+    public final void setSource(@NotNull List<? extends T> source) {
         updateSource(source);
     }
 
     @Override
     @ApiStatus.Experimental
     public final void setSource(
-            @NotNull Function<PaginatedViewContext<T>, List<T>> sourceProvider) {
+            @NotNull Function<PaginatedViewContext<T>, List<? extends T>> sourceProvider) {
         final Paginator<T> paginator = getPaginator();
         if (paginator != null && paginator.isProvided())
             throw new IllegalStateException("Pagination source cannot be provided more than once");
@@ -168,9 +168,12 @@ class BasePaginatedViewContext<T> extends BaseViewContext implements PaginatedVi
         return super.getRoot().paginated();
     }
 
-	@Override
-	final int convertSlot(int row, int column) {
-		return convertSlot(row, column, getContainer().getType().getRows(), getContainer().getType().getColumns());
-	}
-
+    @Override
+    final int convertSlot(int row, int column) {
+        return convertSlot(
+                row,
+                column,
+                getContainer().getType().getRows(),
+                getContainer().getType().getColumns());
+    }
 }

@@ -41,9 +41,9 @@ public interface VirtualView {
 
     ViewErrorHandler getErrorHandler();
 
-	int getFirstSlot();
+    int getFirstSlot();
 
-	int getLastSlot();
+    int getLastSlot();
 
     /**
      * Registers a {@link ViewItem} in the specified slot.
@@ -81,44 +81,44 @@ public interface VirtualView {
     @NotNull
     ViewItem slot(int row, int column, Object item);
 
-	@NotNull
-	ViewItem firstSlot();
+    @NotNull
+    ViewItem firstSlot();
 
-	@NotNull
-	ViewItem firstSlot(Object item);
+    @NotNull
+    ViewItem firstSlot(Object item);
 
-	@NotNull
-	ViewItem lastSlot();
+    @NotNull
+    ViewItem lastSlot();
 
-	@NotNull
-	ViewItem lastSlot(Object item);
+    @NotNull
+    ViewItem lastSlot(Object item);
 
-	@Deprecated
-	@ApiStatus.ScheduledForRemoval(inVersion = "2.5.3")
-	ViewItem item();
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.3")
+    ViewItem item();
 
-	@Deprecated
-	@ApiStatus.ScheduledForRemoval(inVersion = "2.5.3")
-	ViewItem item(@NotNull ItemStack item);
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.3")
+    ViewItem item(@NotNull ItemStack item);
 
-	@Deprecated
-	@ApiStatus.ScheduledForRemoval(inVersion = "2.5.3")
-	ViewItem item(@NotNull Material material);
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.3")
+    ViewItem item(@NotNull Material material);
 
-	@Deprecated
-	@ApiStatus.ScheduledForRemoval(inVersion = "2.5.3")
-	ViewItem item(@NotNull Material material, short durability);
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.3")
+    ViewItem item(@NotNull Material material, short durability);
 
-	@Deprecated
-	@ApiStatus.ScheduledForRemoval(inVersion = "2.5.3")
-	ViewItem item(@NotNull Material material, int amount);
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.3")
+    ViewItem item(@NotNull Material material, int amount);
 
-	@Deprecated
-	@ApiStatus.ScheduledForRemoval(inVersion = "2.5.3")
-	ViewItem item(@NotNull Material material, int amount, short durability);
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.3")
+    ViewItem item(@NotNull Material material, int amount, short durability);
 
     @ApiStatus.Experimental
-	void with(@NotNull ViewItem item);
+    void with(@NotNull ViewItem item);
 
     void update();
 

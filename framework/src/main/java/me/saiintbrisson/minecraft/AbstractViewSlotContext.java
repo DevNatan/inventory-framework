@@ -48,13 +48,13 @@ public abstract class AbstractViewSlotContext extends BaseViewContext implements
         return parent.getItems();
     }
 
-	@Override
-	@Deprecated
-	public final ItemStack getItem() {
-		return (ItemStack) getItemWrapper().getValue();
-	}
+    @Override
+    @Deprecated
+    public final ItemStack getItem() {
+        return (ItemStack) getItemWrapper().getValue();
+    }
 
-	@Override
+    @Override
     public final @NotNull ItemWrapper getItemWrapper() {
         return item;
     }
