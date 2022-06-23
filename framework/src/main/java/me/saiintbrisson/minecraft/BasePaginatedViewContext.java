@@ -167,4 +167,10 @@ class BasePaginatedViewContext<T> extends BaseViewContext implements PaginatedVi
     public final AbstractPaginatedView<T> getRoot() {
         return super.getRoot().paginated();
     }
+
+	@Override
+	final int convertSlot(int row, int column) {
+		return convertSlot(row, column, getContainer().getType().getRows(), getContainer().getType().getColumns());
+	}
+
 }

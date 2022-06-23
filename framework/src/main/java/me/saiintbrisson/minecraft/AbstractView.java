@@ -529,7 +529,12 @@ public abstract class AbstractView extends AbstractVirtualView {
                         + "\"context.paginated().setSource()\" instead.`");
     }
 
-    @SuppressWarnings("unchecked")
+	@Override
+	final int convertSlot(int row, int column) {
+		return convertSlot(row, column, getType().getRows(), getType().getColumns());
+	}
+
+	@SuppressWarnings("unchecked")
     @Contract(value = " -> this", pure = true)
     public final <T> AbstractPaginatedView<T> paginated() {
         return (AbstractPaginatedView<T>) this;
