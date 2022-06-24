@@ -14,8 +14,8 @@ repositories {
 }
 
 dependencies {
-    compileOnly(project(":framework"))
-    runtimeOnly(project(":framework"))
+    compileOnly(project(":shared"))
+    runtimeOnly(project(":shared"))
     compileOnly(libs.kotlin)
 }
 

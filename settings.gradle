@@ -1,4 +1,9 @@
 rootProject.name = 'inventory-framework'
 enableFeaturePreview('VERSION_CATALOGS')
-include 'framework', 'framework:bukkit-runtime', 'framework:bukkit-compile', 'plugin', 'examples', 'bom',
-        'feature-move-io', 'kotlin-dsl'
+include 'bom',
+        'bukkit-api',
+        'bukkit-plugin',
+        'examples',
+        'feature-move-io',
+        'kotlin-dsl',
+        'shared'

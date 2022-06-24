@@ -1,6 +1,6 @@
 apply from: '../publish.gradle'
 
 dependencies {
-    compileOnly project(':framework')
-    compileOnly project(':framework:bukkit-runtime')
+    compileOnly project(':shared')
+    compileOnly project(':bukkit-api')
 }

@@ -5,11 +5,9 @@ plugins {
 apply from: '../publish.gradle'
 
 dependencies {
-    compileOnlyApi project(':framework')
-    compileOnlyApi project(':framework:bukkit-compile')
-    compileOnlyApi(project(':framework:bukkit-runtime')) {
-        because('Backward compatibility')
-    }
+    compileOnlyApi project(':shared')
+    compileOnlyApi project(':bukkit-api')
+    compileOnlyApi(project(':bukkit-plugin'))
     compileOnlyApi project(':feature-move-io')
     compileOnlyApi project(':kotlin-dsl')
 }
