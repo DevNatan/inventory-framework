@@ -22,6 +22,7 @@ public abstract class AbstractVirtualView implements VirtualView {
         return items;
     }
 
+    /** {@inheritDoc} */
     @Override
     public final ViewItem getItem(int index) {
         return items[index];
@@ -31,24 +32,29 @@ public abstract class AbstractVirtualView implements VirtualView {
         this.items = items;
     }
 
+    /** {@inheritDoc} */
     public final ViewErrorHandler getErrorHandler() {
         return errorHandler;
     }
 
+    /** {@inheritDoc} */
     public final void setErrorHandler(ViewErrorHandler errorHandler) {
         this.errorHandler = errorHandler;
     }
 
+    /** {@inheritDoc} */
     @Override
     public final int getFirstSlot() {
         return 0;
     }
 
+    /** {@inheritDoc} */
     @Override
     public final int getLastSlot() {
         return items.length - 1;
     }
 
+    /** {@inheritDoc} */
     @Override
     @Deprecated
     @ApiStatus.ScheduledForRemoval(inVersion = "2.5.3")
@@ -56,6 +62,7 @@ public abstract class AbstractVirtualView implements VirtualView {
         return new ViewItem();
     }
 
+    /** {@inheritDoc} */
     @Override
     @Deprecated
     @ApiStatus.ScheduledForRemoval(inVersion = "2.5.3")
@@ -63,6 +70,7 @@ public abstract class AbstractVirtualView implements VirtualView {
         return new ViewItem().withItem(item);
     }
 
+    /** {@inheritDoc} */
     @Override
     @Deprecated
     @ApiStatus.ScheduledForRemoval(inVersion = "2.5.3")
@@ -70,6 +78,7 @@ public abstract class AbstractVirtualView implements VirtualView {
         return new ViewItem().withItem(new ItemStack(material));
     }
 
+    /** {@inheritDoc} */
     @Override
     @Deprecated
     @ApiStatus.ScheduledForRemoval(inVersion = "2.5.3")
@@ -77,6 +86,7 @@ public abstract class AbstractVirtualView implements VirtualView {
         return new ViewItem().withItem(new ItemStack(material, amount));
     }
 
+    /** {@inheritDoc} */
     @Override
     @Deprecated
     @ApiStatus.ScheduledForRemoval(inVersion = "2.5.3")
@@ -84,6 +94,7 @@ public abstract class AbstractVirtualView implements VirtualView {
         return new ViewItem().withItem(new ItemStack(material, 1, durability));
     }
 
+    /** {@inheritDoc} */
     @Override
     @Deprecated
     @ApiStatus.ScheduledForRemoval(inVersion = "2.5.3")
@@ -91,6 +102,7 @@ public abstract class AbstractVirtualView implements VirtualView {
         return new ViewItem().withItem(new ItemStack(material, amount, durability));
     }
 
+    /** {@inheritDoc} */
     @Override
     @NotNull
     public final ViewItem slot(int slot) {
@@ -103,44 +115,46 @@ public abstract class AbstractVirtualView implements VirtualView {
         return item;
     }
 
+    /** {@inheritDoc} */
     @Override
     @NotNull
     public final ViewItem slot(int slot, Object item) {
         return slot(slot).withItem(item);
     }
 
+    /** {@inheritDoc} */
     @Override
     @NotNull
     public final ViewItem slot(int row, int column) {
         return slot(convertSlot(row, column), null);
     }
 
+    /** {@inheritDoc} */
     @Override
     @NotNull
     public final ViewItem slot(int row, int column, Object item) {
         return slot(convertSlot(row, column), item);
     }
 
-    @Override
-    public final void with(@NotNull ViewItem item) {
-        throw new UnsupportedOperationException("Automatic item addition is not supported yet");
-    }
-
+    /** {@inheritDoc} */
     @Override
     public final @NotNull ViewItem firstSlot() {
         return slot(getFirstSlot());
     }
 
+    /** {@inheritDoc} */
     @Override
     public final @NotNull ViewItem firstSlot(Object item) {
         return slot(getFirstSlot(), item);
     }
 
+    /** {@inheritDoc} */
     @Override
     public final @NotNull ViewItem lastSlot() {
         return slot(getLastSlot());
     }
 
+    /** {@inheritDoc} */
     @Override
     public final @NotNull ViewItem lastSlot(Object item) {
         return slot(getLastSlot(), item);
@@ -194,6 +208,7 @@ public abstract class AbstractVirtualView implements VirtualView {
         return item;
     }
 
+    /** {@inheritDoc} */
     @Override
     public final void update() {
         throw new UnsupportedOperationException("Update aren't supported in this view");
@@ -236,6 +251,8 @@ public abstract class AbstractVirtualView implements VirtualView {
         render(context, item, slot);
     }
 
+    /** {@inheritDoc} */
+    @ApiStatus.Internal
     ViewItem resolve(int index) {
         // fast path -- skip -999 index on some platforms
         if (index < 0) return null;
@@ -246,50 +263,53 @@ public abstract class AbstractVirtualView implements VirtualView {
         return getItems()[index];
     }
 
+    /** {@inheritDoc} */
     @Override
     public final void clear(int slot) {
         getItems()[slot] = null;
     }
 
+    /** {@inheritDoc} */
     @Override
     public final ViewUpdateJob getUpdateJob() {
         return updateJob;
     }
 
+    /** {@inheritDoc} */
     @Override
     public final void setUpdateJob(ViewUpdateJob updateJob) {
         this.updateJob = updateJob;
     }
 
+    /** {@inheritDoc} */
     @Override
     public final void scheduleUpdate(long intervalInTicks) {
         scheduleUpdate(-1, intervalInTicks);
     }
 
+    /** {@inheritDoc} */
     @Override
-    public final void scheduleUpdate(long delayInTicks, long intervalInTicks) {
+    public void scheduleUpdate(long delayInTicks, long intervalInTicks) {
         inventoryModificationTriggered();
         PlatformUtils.getFactory().scheduleUpdate(this, delayInTicks, intervalInTicks);
     }
 
+    /** {@inheritDoc} */
     @Override
     public final void scheduleUpdate(@NotNull Duration duration) {
         scheduleUpdate(-1, Math.floorDiv(duration.getSeconds(), 20));
     }
 
+    /** {@inheritDoc} */
     @Override
     public final boolean isScheduledToUpdate() {
         return updateJob != null;
     }
 
-    /**
-     * Thrown when a method explicitly needs to specify that it will directly modify the view's
-     * container when executed, that method is overridden by implementations whose direct
-     * modification of the container is not allowed, throwing an IllegalStateException.
-     *
-     * @throws IllegalStateException Whether a direct modification of the inventory is not allowed.
-     */
-    void inventoryModificationTriggered() {}
+    /** {@inheritDoc} */
+    @ApiStatus.Internal
+    @Override
+    public void inventoryModificationTriggered() {}
 
     final void runCatching(final ViewContext context, @NotNull final Runnable runnable) {
         if (context != null && context.getErrorHandler() != null) {

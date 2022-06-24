@@ -18,7 +18,7 @@ class ViewContextImpl extends BaseViewContext {
     }
 
     @Override
-    public Player getPlayer() {
+    public @NotNull Player getPlayer() {
         return BukkitViewer.toPlayerOfContext(this);
     }
 }

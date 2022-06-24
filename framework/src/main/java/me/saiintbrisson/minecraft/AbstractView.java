@@ -323,12 +323,14 @@ public abstract class AbstractView extends AbstractVirtualView {
         super.update(context);
     }
 
+    /** {@inheritDoc} */
     @Override
     public final void close() {
         // global closings must be always immediate
         closeUninterruptedly();
     }
 
+    /** {@inheritDoc} */
     @Override
     @Deprecated
     @ApiStatus.ScheduledForRemoval(inVersion = "2.5.2")
@@ -336,6 +338,7 @@ public abstract class AbstractView extends AbstractVirtualView {
         closeUninterruptedly();
     }
 
+    /** {@inheritDoc} */
     @Override
     public final void closeUninterruptedly() {
         getContexts().forEach(ViewContext::close);
@@ -444,6 +447,7 @@ public abstract class AbstractView extends AbstractVirtualView {
         this.closeOnOutsideClick = closeOnOutsideClick;
     }
 
+    /** {@inheritDoc} */
     @Override
     protected final ViewItem[] getItems() {
         return super.getItems();
@@ -461,28 +465,32 @@ public abstract class AbstractView extends AbstractVirtualView {
         return type;
     }
 
+    /** {@inheritDoc} */
     public final int getSize() {
         return size;
     }
 
+    /** {@inheritDoc} */
     @Override
     public final int getRows() {
         return getSize();
     }
 
+    /** {@inheritDoc} */
     public final String getTitle() {
         return title;
     }
 
-    /**
-     * Thrown when a method explicitly needs to specify that it will directly modify the view's
-     * container when executed, that method is overridden by implementations whose direct
-     * modification of the container is not allowed, throwing an IllegalStateException.
-     *
-     * @throws IllegalStateException Whether a direct modification of the inventory is not allowed.
-     */
+    /** {@inheritDoc} */
     @Override
-    final void inventoryModificationTriggered() {
+    public final void scheduleUpdate(long delayInTicks, long intervalInTicks) {
+        ensureNotInitialized();
+        super.scheduleUpdate(delayInTicks, intervalInTicks);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final void inventoryModificationTriggered() {
         super.inventoryModificationTriggered();
     }
 
@@ -497,6 +505,8 @@ public abstract class AbstractView extends AbstractVirtualView {
         return true;
     }
 
+    /** {@inheritDoc} */
+    @ApiStatus.Internal
     @Override
     final ViewItem resolve(int index) {
         return super.resolve(index);
@@ -552,6 +562,7 @@ public abstract class AbstractView extends AbstractVirtualView {
         return convertSlot(row, column, getType().getRows(), getType().getColumns());
     }
 
+    /** {@inheritDoc} */
     @SuppressWarnings("unchecked")
     @Contract(value = " -> this", pure = true)
     public final <T> AbstractPaginatedView<T> paginated() {

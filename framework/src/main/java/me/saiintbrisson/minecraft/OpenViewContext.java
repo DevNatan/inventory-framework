@@ -93,7 +93,7 @@ public class OpenViewContext extends BaseViewContext {
     }
 
     @Override
-    void inventoryModificationTriggered() {
+    public void inventoryModificationTriggered() {
         throw new IllegalStateException(
                 "It is not allowed to modify the inventory "
                         + "in the opening context as the inventory was not even created. "

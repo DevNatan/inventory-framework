@@ -53,7 +53,7 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
      * }
      * </code></pre>
      *
-     * This function is called extensively, every time a paginated item is rendered or updated.
+     * <p>This function is called extensively, every time a paginated item is rendered or updated.
      *
      * <p>It is not allowed to call methods that {@link #inventoryModificationTriggered() trigger
      * modifications in the container} of the context or in the view within this rendering function,
@@ -93,7 +93,12 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
         return nextPageItemFactory;
     }
 
-    /** @deprecated Offset and limit will be replaced by layout. */
+    /**
+     * Where pagination will start.
+     *
+     * @return The first slot that pagination can reach in the container.
+     * @deprecated Offset and limit will be replaced by layout.
+     */
     @Deprecated
     public final int getOffset() {
         return offset;
@@ -102,8 +107,8 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
     /**
      * Defines the slot that pagination will start in the container.
      *
-     * @deprecated Offset and limit will be replaced by layout. Use {@link #setLayout(String...)}
-     *     instead.
+     * @param offset Where pagination will start.
+     * @deprecated Offset and limit will be replaced by layout.
      */
     @Deprecated
     public final void setOffset(int offset) {
@@ -111,7 +116,12 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
         this.offset = offset;
     }
 
-    /** @deprecated Offset and limit will be replaced by layout. */
+    /**
+     * Where pagination will end.
+     *
+     * @return The last slot that pagination can reach in the container.
+     * @deprecated Offset and limit will be replaced by layout.
+     */
     @Deprecated
     public final int getLimit() {
         return limit;
@@ -120,8 +130,8 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
     /**
      * Defines the last slot that pagination can reach in the container.
      *
-     * @deprecated Offset and limit will be replaced by layout. Use {@link #setLayout(String...)}
-     *     instead.
+     * @param limit Where pagination will end.
+     * @deprecated Offset and limit will be replaced by layout.
      */
     @Deprecated
     public final void setLimit(int limit) {
@@ -165,7 +175,22 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
                 });
     }
 
-    /** @deprecated Use {@link #setPreviousPageItem(BiConsumer)} on constructor instead. */
+    /**
+     * The item that will be used to represent the backward navigation item.
+     *
+     * <p>Sample code:
+     *
+     * <pre><code>
+     * &#64;Override
+     * protected ViewItem getPreviousPageItem(PaginatedViewContext&#60;T&#62; context) {
+     *     return item(fallbackItem);
+     * }
+     * </code></pre>
+     *
+     * @param context The pagination context.
+     * @return The backward navigation item.
+     * @deprecated Use {@link #setPreviousPageItem(BiConsumer)} on constructor instead.
+     */
     @Deprecated
     protected ViewItem getPreviousPageItem(@NotNull PaginatedViewContext<T> context) {
         return null;
@@ -177,7 +202,22 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
         this.previousPageItemFactory = previousPageItemFactory;
     }
 
-    /** @deprecated Use {@link #setNextPageItem(BiConsumer)} on constructor instead. */
+    /**
+     * The item that will be used to represent the forward navigation item.
+     *
+     * <p>Sample code:
+     *
+     * <pre><code>
+     * &#64;Override
+     * protected ViewItem getNextPageItem(PaginatedViewContext&#60;T&#62; context) {
+     *     return item(fallbackItem);
+     * }
+     * </code></pre>
+     *
+     * @param context The pagination context.
+     * @return The forward navigation item.
+     * @deprecated Use {@link #setNextPageItem(BiConsumer)} on constructor instead.
+     */
     @Deprecated
     protected ViewItem getNextPageItem(@NotNull PaginatedViewContext<T> context) {
         return null;
@@ -191,7 +231,7 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
 
     public final void setSource(@NotNull List<? extends T> source) {
         ensureNotInitialized();
-        this.paginator = new Paginator<>(getPageSize(), source);
+        this.paginator = new Paginator<>(getExpectedPageSize(), source);
     }
 
     @Override
@@ -199,16 +239,10 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
     public final void setSource(
             @NotNull Function<PaginatedViewContext<T>, List<? extends T>> sourceProvider) {
         ensureNotInitialized();
-        this.paginator = new Paginator<>(getPageSize(), sourceProvider);
+        this.paginator = new Paginator<>(getExpectedPageSize(), sourceProvider);
     }
 
-    @Override
-    public final int getPageMaxItemsCount() {
-        throw new IllegalStateException("Cannot retrieve page max items count without a container");
-    }
-
-    @Override
-    public final int getPageSize() {
+    private int getExpectedPageSize() {
         return limit - offset;
     }
 

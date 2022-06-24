@@ -121,7 +121,7 @@ class BasePaginatedViewContext<T> extends BaseViewContext implements PaginatedVi
     }
 
     @Override
-    public final List<T> getSource() {
+    public final @NotNull List<T> getSource() {
         return Collections.unmodifiableList(getPaginator().getSource());
     }
 
@@ -134,8 +134,7 @@ class BasePaginatedViewContext<T> extends BaseViewContext implements PaginatedVi
         if (!isLayoutChecked && layout != null) root.resolveLayout(this, layout, false);
 
         setPaginator(
-                new Paginator<>(
-                        isLayoutChecked ? getItemsLayer().size() : root.getPageSize(), source));
+                new Paginator<>(isLayoutChecked ? getItemsLayer().size() : getPageSize(), source));
     }
 
     @Override
@@ -163,7 +162,7 @@ class BasePaginatedViewContext<T> extends BaseViewContext implements PaginatedVi
     }
 
     @Override
-    public final AbstractPaginatedView<T> getRoot() {
+    public final @NotNull AbstractPaginatedView<T> getRoot() {
         return super.getRoot().paginated();
     }
 

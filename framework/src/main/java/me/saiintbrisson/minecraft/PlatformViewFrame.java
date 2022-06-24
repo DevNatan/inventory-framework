@@ -29,8 +29,8 @@ public interface PlatformViewFrame<V, P, F extends PlatformViewFrame<V, P, F>>
     /**
      * Registers this view frame.
      *
-     * @throws IllegalStateException If this view frame is already registered.
      * @return This platform view frame.
+     * @throws IllegalStateException If this view frame is already registered.
      */
     F register();
 
@@ -67,7 +67,10 @@ public interface PlatformViewFrame<V, P, F extends PlatformViewFrame<V, P, F>>
 
     Function<PaginatedViewContext<?>, ViewItem> getDefaultPreviousPageItem();
 
-    /** @deprecated Use {@link #setNavigateBackItemFactory(BiConsumer)} instead. */
+    /**
+     * @param defaultPreviousPageItemFactory The navigation's previous page item factory.
+     * @deprecated Use {@link #setNavigateBackItemFactory(BiConsumer)} instead.
+     */
     @Deprecated
     void setDefaultPreviousPageItem(
             Function<PaginatedViewContext<?>, ViewItem> defaultPreviousPageItemFactory);
@@ -77,7 +80,10 @@ public interface PlatformViewFrame<V, P, F extends PlatformViewFrame<V, P, F>>
 
     Function<PaginatedViewContext<?>, ViewItem> getDefaultNextPageItem();
 
-    /** @deprecated Use {@link #setNavigateNextItemFactory(BiConsumer)} instead. */
+    /**
+     * @param defaultNextPageItemFactory The navigation's next page item factory.
+     * @deprecated Use {@link #setNavigateNextItemFactory(BiConsumer)} instead.
+     */
     @Deprecated
     void setDefaultNextPageItem(
             Function<PaginatedViewContext<?>, ViewItem> defaultNextPageItemFactory);

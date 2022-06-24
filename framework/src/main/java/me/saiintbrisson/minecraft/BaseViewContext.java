@@ -100,6 +100,11 @@ class BaseViewContext extends AbstractVirtualView implements ViewContext {
     }
 
     @Override
+    public final int getSize() {
+        return getContainer().getSize();
+    }
+
+    @Override
     public final void updateTitle(@NotNull final String title) {
         getAttributes().setTitle(title);
     }
@@ -167,7 +172,7 @@ class BaseViewContext extends AbstractVirtualView implements ViewContext {
     }
 
     @Override
-    public Player getPlayer() {
+    public @NotNull Player getPlayer() {
         throw new UnsupportedOperationException(
                 "This function should not be used on your platform, it is only available for reasons"
                         + " of backward compatibility with the Bukkit platform.");
@@ -175,8 +180,7 @@ class BaseViewContext extends AbstractVirtualView implements ViewContext {
 
     @Override
     public boolean isCancelled() {
-        throw new UnsupportedOperationException(
-                String.format("This context is not cancellable: %s", getClass().getName()));
+        return false;
     }
 
     @Override
@@ -200,7 +204,7 @@ class BaseViewContext extends AbstractVirtualView implements ViewContext {
     }
 
     @Override
-    public ViewSlotContext ref(final String key) {
+    public @NotNull ViewSlotContext ref(final String key) {
         ViewItem item = tryResolveRef(this, key);
         if (item == null) item = tryResolveRef(getRoot(), key);
         if (item == null) return null;

@@ -10,7 +10,7 @@ final class BukkitOpenViewContext extends OpenViewContext {
     }
 
     @Override
-    public Player getPlayer() {
+    public @NotNull Player getPlayer() {
         return BukkitViewer.toPlayerOfContext(this);
     }
 }

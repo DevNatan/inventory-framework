@@ -13,7 +13,7 @@ final class PaginatedViewContextImpl<T> extends BasePaginatedViewContext<T> {
     }
 
     @Override
-    public Player getPlayer() {
+    public @NotNull Player getPlayer() {
         return BukkitViewer.toPlayerOfContext(this);
     }
 }

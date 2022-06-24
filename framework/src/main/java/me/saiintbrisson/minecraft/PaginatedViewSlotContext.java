@@ -1,6 +1,5 @@
 package me.saiintbrisson.minecraft;
 
-import java.util.function.Consumer;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -28,14 +27,7 @@ public interface PaginatedViewSlotContext<T> extends PaginatedViewContext<T>, Vi
      */
     T getValue();
 
-    /**
-     * Defines a new item for this context, triggering an {@link
-     * AbstractVirtualView#inventoryModificationTriggered() inventory modification}.
-     *
-     * <p>If you need to change the item partially use {@link #updateItem(Consumer)}.
-     *
-     * @param item The new item that'll be set.
-     */
+    /** {@inheritDoc} */
     @Override
     PaginatedViewSlotContext<T> withItem(@Nullable Object item);
 }

@@ -14,20 +14,6 @@ public interface PaginatedVirtualView<T> extends VirtualView {
     char ITEM_SLOT_CHAR = 'O';
 
     /**
-     * Returns the total maximum number of fixed elements that a page can contain.
-     *
-     * @return The items count that a single page can contain.
-     */
-    int getPageSize();
-
-    /**
-     * Returns the total maximum number of items that a page in a layered context can contain.
-     *
-     * @return The max items count that a single page can have.
-     */
-    int getPageMaxItemsCount();
-
-    /**
      * Defines the data that will be used to populate this paginated view.
      *
      * <p>Note that this is a "static operation", your data will not be updated automatically since
@@ -50,26 +36,46 @@ public interface PaginatedVirtualView<T> extends VirtualView {
      * request data and return the correct data for each page.
      *
      * <p>Optimize your requests by specifying a limit of data to be returned, this limit being the
-     * {@link PaginatedView#getPageMaxItemsCount() maximum amount of items that the container can
-     * support}, taking into account paging nuances, such as {@link PaginatedVirtualView#getLayout()
-     * pagination layout}.
+     * {@link PaginatedViewContext#getPageMaxItemsCount()} maximum amount of items} that the
+     * container can support, taking into account paging nuances, such as {@link
+     * PaginatedVirtualView#getLayout()} pagination layout.
      *
      * <p>You can only use this method once during the view's lifecycle as it is a provider, and the
      * pagination resets with each update accordingly.
      *
-     * <p><i>This is an experimental API which is subject to change.</i>
+     * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
      *
      * @param sourceProvider The pagination data source provider.
      */
     @ApiStatus.Experimental
     void setSource(@NotNull Function<PaginatedViewContext<T>, List<? extends T>> sourceProvider);
 
+    /**
+     * The layout defined for this view by the user.
+     *
+     * <p><b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     *
+     * @return The layout defined for this view.
+     */
     @ApiStatus.Internal
     @Nullable
     String[] getLayout();
 
     void setLayout(@Nullable String... layout);
 
+    /**
+     * The paginator of this view.
+     *
+     * <p>The value returned depends on the implementation, so other paginators besides the view
+     * itself can be obtained.
+     *
+     * <p><b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     *
+     * @return The paginator of this view.
+     */
     @ApiStatus.Internal
     Paginator<T> getPaginator();
 }

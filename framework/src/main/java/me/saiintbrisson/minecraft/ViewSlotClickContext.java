@@ -1,6 +1,7 @@
 package me.saiintbrisson.minecraft;
 
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -14,48 +15,42 @@ public interface ViewSlotClickContext extends ViewSlotContext {
     /**
      * If the click was using the left mouse button.
      *
-     * @return <code>true</code> if the click was using the left mouse button or <code>false</code>
-     *     otherwise.
+     * @return If the click was using the left mouse button.
      */
     boolean isLeftClick();
 
     /**
      * If the click was using the right mouse button.
      *
-     * @return <code>true</code> if the click was using the right mouse button or <code>false</code>
-     *     otherwise.
+     * @return If the click was using the right mouse button.
      */
     boolean isRightClick();
 
     /**
      * If the click was using the middle mouse button, commonly known as the scroll button.
      *
-     * @return <code>true</code> if the click was using the middle mouse button or <code>false
-     *     </code> otherwise.
+     * @return If the click was using the middle mouse button.
      */
     boolean isMiddleClick();
 
     /**
-     * Whether the click was accompanied by a click holding the keyboard shift button.
+     * If the click was accompanied by a click holding the keyboard shift button.
      *
-     * @return <code>true</code> if it was a click holding the keyboard shift button or <code>false
-     *     </code> otherwise.
+     * @return If it was a click holding the keyboard shift button.
      */
     boolean isShiftClick();
 
     /**
      * If the click source came from a keyboard, e.g. the player's toolbar number.
      *
-     * @return <code>true</code> if the click source came from a keyboard or <code>false</code>
-     *     otherwise.
+     * @return If the click source came from a keyboard.
      */
     boolean isKeyboardClick();
 
     /**
      * If the click did not occur within any containers.
      *
-     * @return <code>true</code> if the click did not occur within any containers or <code>false
-     *     </code> otherwise.
+     * @return If the click did not occur within any containers.
      */
     boolean isOutsideClick();
 
@@ -78,5 +73,6 @@ public interface ViewSlotClickContext extends ViewSlotContext {
      */
     @NotNull
     @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.4")
     InventoryClickEvent getClickOrigin();
 }

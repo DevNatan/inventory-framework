@@ -19,7 +19,8 @@ public inline fun createView(
     content: ViewBuilder.() -> Unit
 ): AbstractView {
     val view = factory.createView(size, title, type)
-    val builder = ViewBuilder().apply(content)
-    builder.slots.forEach { view.with(it.toItem()) }
+    // TODO fix it
+//    val builder = ViewBuilder().apply(content)
+//    builder.slots.forEach { view.items[it.slot] = it.toItem() }
     return view
 }

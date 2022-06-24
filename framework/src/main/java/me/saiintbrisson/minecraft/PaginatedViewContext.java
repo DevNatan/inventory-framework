@@ -2,17 +2,18 @@ package me.saiintbrisson.minecraft;
 
 import java.util.List;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Range;
 
 /**
- * A paging context can originate from a view that supports paging.
+ * A paginated context can originate from a view that supports paging.
  *
- * <p>It contains unique properties for a context like page, page count, page change and others.
- * There is no difference between a context and a paginated context, just some new properties but
- * nothing that changes its nature, life cycle or way of working.
+ * <p>Contains unique properties for a context like page, page count, page change and others. There
+ * is no difference between a context and a paginated context, just some new properties but nothing
+ * that changes its nature, life cycle or way of working.
  *
- * <p>A context can be converted to a paginated context if its root is paginated. See {@link
- * ViewContext#paginated()}.
+ * <p>A context can be {@link ViewContext#paginated() converted to a paginated context} if its root
+ * is paginated.
  *
  * @param <T> The paginated item type.
  * @see ViewContext
@@ -20,17 +21,38 @@ import org.jetbrains.annotations.Range;
  */
 public interface PaginatedViewContext<T> extends ViewContext, PaginatedVirtualView<T> {
 
+    /**
+     * An unmodifiable list with paginated data for the current page, never returns <code>null
+     * </code> as there must be a valid context for getting data.
+     *
+     * @return An unmodifiable list with paginated data for the current page.
+     */
+    @NotNull
     List<T> getSource();
 
     /**
-     * Returns the current page.
+     * The current page index (starts from 0).
      *
-     * @return The current page of this context.
+     * @return The current page index of this context.
      */
     int getPage();
 
     /**
-     * Returns the number of pages available in that context.
+     * The current number of items present on the current page.
+     *
+     * @return The current number of items present on the current page.
+     */
+    int getPageSize();
+
+    /**
+     * The maximum number of items that a page in a layered context can have.
+     *
+     * @return The maximum number of items that a page in a layered context can have.
+     */
+    int getPageMaxItemsCount();
+
+    /**
+     * The number of pages available in that context.
      *
      * @return The total page count.
      */
@@ -53,64 +75,124 @@ public interface PaginatedViewContext<T> extends ViewContext, PaginatedVirtualVi
     int getNextPage();
 
     /**
-     * Returns <code>false</code> if the current page is the first page of the available pages or
-     * <code>false</code> otherwise.
+     * Checks if the current page is the first page of the available pages.
      *
      * @return If the current page is the first page of the available pages.
      */
     boolean hasPreviousPage();
 
     /**
-     * Returns <code>false</code> if there are more pages than the current one available or <code>
-     * false</code> otherwise.
+     * Checks if there are more pages than the current one available.
      *
      * @return If there are more pages than the current one available.
      */
     boolean hasNextPage();
 
     /**
-     * Returns `true` if the current page is the first page of the available pages or `false`
-     * otherwise.
+     * Checks that this context is on your first available page.
+     *
+     * @return Whether the {@link #getPage() current page} is the first page.
      */
     boolean isFirstPage();
 
     /**
-     * Returns `true` if the current page is the last page of the available pages or `false`
-     * otherwise.
+     * Checks that this context is on your last available page.
+     *
+     * @return Whether the {@link #getPage() current page} is the last page.
      */
     boolean isLastPage();
 
     /**
-     * Updates the current context by jumping to the specified page.
+     * Updates the current context by jumping to a specific page.
      *
-     * @param page the new page.
+     * @param page The page that'll be switched to.
      */
     void switchTo(@Range(from = 0, to = Integer.MAX_VALUE) int page);
 
-    /** Updates the current context by switching to the previous page if available. */
+    /**
+     * Updates the current context by switching to the previous page.
+     *
+     * @return If page has been switched successfully, may return <code>false</code> if there are no
+     *     more pages to go to.
+     */
     boolean switchToPreviousPage();
 
-    /** Updates the current context by switching to the next page if available. */
+    /**
+     * Updates the current context by switching to the next page.
+     *
+     * @return If page has been switched successfully, may return <code>false</code> if there are no
+     *     more pages to go to.
+     */
     boolean switchToNextPage();
 
+    /**
+     * The current position of the navigation's "previous page" item.
+     *
+     * <p><b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     *
+     * @return The position of the navigation's "previous page" item, <code>-1</code> if unset.
+     */
     @ApiStatus.Internal
     int getPreviousPageItemSlot();
 
+    /**
+     * Sets the navigation's "previous page" item position in this context.
+     *
+     * <p><b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     *
+     * @param previousPageItemSlot The new navigation's "previous page" item position.
+     */
     @ApiStatus.Internal
     void setPreviousPageItemSlot(int previousPageItemSlot);
 
+    /**
+     * The current position of the navigation's "next page" item.
+     *
+     * <p><b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     *
+     * @return The position of the navigation's "next page" item, <code>-1</code> if unset.
+     */
     @ApiStatus.Internal
     int getNextPageItemSlot();
 
+    /**
+     * Sets the navigation's "next page" item position in this context.
+     *
+     * <p><b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     *
+     * @param nextPageItemSlot The new navigation's "next page" item position.
+     */
     @ApiStatus.Internal
     void setNextPageItemSlot(int nextPageItemSlot);
 
+    /**
+     * The layout signature state of this context.
+     *
+     * <p><b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     *
+     * @return The layout signature state of this context.
+     */
     @ApiStatus.Internal
     boolean isLayoutSignatureChecked();
 
+    /**
+     * Marks layout signature state of this context as checked.
+     *
+     * <p><b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     *
+     * @param layoutSignatureChecked The new layout signature state.
+     */
     @ApiStatus.Internal
     void setLayoutSignatureChecked(boolean layoutSignatureChecked);
 
+    /** {@inheritDoc} */
     @Override
+    @NotNull
     AbstractPaginatedView<T> getRoot();
 }

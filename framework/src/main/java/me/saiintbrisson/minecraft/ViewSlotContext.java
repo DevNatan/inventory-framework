@@ -21,6 +21,14 @@ import org.jetbrains.annotations.Nullable;
  */
 public interface ViewSlotContext extends ViewContext {
 
+    /**
+     * The parent context of this context.
+     *
+     * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided.</i></b>
+     *
+     * @return The parent context of this context.
+     */
     @ApiStatus.Internal
     ViewContext getParent();
 
@@ -39,11 +47,12 @@ public interface ViewSlotContext extends ViewContext {
     void updateSlot();
 
     /**
-     * Returns the item involved in this context.
+     * The item tied to this context.
      *
      * <p>For example, if it is a click context it will be the item that was clicked. If it is a
      * rendering context it will be the item being rendered.
      *
+     * @return The item tied to this context.
      * @deprecated Use {@link #getItemWrapper()} instead.
      */
     @Deprecated
@@ -53,7 +62,8 @@ public interface ViewSlotContext extends ViewContext {
     /**
      * Returns the wrapper containing the item related to this context.
      *
-     * <p>__This API is internal and shouldn't be used!__
+     * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided.</i></b>
      *
      * @return The current item wrapper.
      */
@@ -78,6 +88,7 @@ public interface ViewSlotContext extends ViewContext {
      * <p>If you need to change the item partially use {@link #updateItem(Consumer)}.
      *
      * @param item The new item that'll be set.
+     * @return This context.
      */
     ViewSlotContext withItem(@Nullable Object item);
 
@@ -105,7 +116,10 @@ public interface ViewSlotContext extends ViewContext {
     /**
      * Checks if the item in this context has been changed.
      *
-     * <p>__This API is internal and should not be used!__
+     * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided.</i></b>
+     *
+     * @return If the item in this context has been changed.
      */
     @ApiStatus.Internal
     boolean hasChanged();
@@ -115,7 +129,8 @@ public interface ViewSlotContext extends ViewContext {
      *
      * <p>Improperly changing this property can cause unexpected side effects.
      *
-     * <p>__This API is internal and should not be used!__
+     * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided.</i></b>
      *
      * @param changed If the context item was changed.
      */

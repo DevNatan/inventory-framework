@@ -32,7 +32,7 @@ public class BukkitClickViewSlotContext extends AbstractViewSlotContext
     }
 
     @Override
-    public final Player getPlayer() {
+    public final @NotNull Player getPlayer() {
         return (Player) clickOrigin.getWhoClicked();
     }
 
@@ -77,7 +77,7 @@ public class BukkitClickViewSlotContext extends AbstractViewSlotContext
     }
 
     @Override
-    final void inventoryModificationTriggered() {
+    public final void inventoryModificationTriggered() {
         throw new IllegalStateException(
                 "You cannot update the item in the click handler context. "
                         + "Use the slot.onRender(...) or slot.onUpdate(...) and then context.setItem(...) instead.");

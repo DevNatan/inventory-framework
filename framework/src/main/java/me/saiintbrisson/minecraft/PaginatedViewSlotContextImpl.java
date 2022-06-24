@@ -36,7 +36,7 @@ final class PaginatedViewSlotContextImpl<T> extends AbstractViewSlotContext
     }
 
     @Override
-    void inventoryModificationTriggered() {
+    public void inventoryModificationTriggered() {
         throw new IllegalStateException(
                 "Direct container modifications are not allowed from a paginated context because "
                         + "rendering a paginated item is an extensive method and can cause cyclic"
@@ -87,7 +87,7 @@ final class PaginatedViewSlotContextImpl<T> extends AbstractViewSlotContext
     }
 
     @Override
-    public List<T> getSource() {
+    public @NotNull List<T> getSource() {
         return parent.getSource();
     }
 
@@ -177,7 +177,7 @@ final class PaginatedViewSlotContextImpl<T> extends AbstractViewSlotContext
     }
 
     @Override
-    public AbstractPaginatedView<T> getRoot() {
+    public @NotNull AbstractPaginatedView<T> getRoot() {
         return parent.getRoot();
     }
 
