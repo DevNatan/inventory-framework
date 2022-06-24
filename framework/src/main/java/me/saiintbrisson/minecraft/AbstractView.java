@@ -54,7 +54,6 @@ public abstract class AbstractView extends AbstractVirtualView {
             cancelOnDrop,
             cancelOnDrag,
             cancelOnClone,
-            cancelOnMoveIn,
             cancelOnMoveOut,
             cancelOnShiftClick,
             clearCursorOnClose,
@@ -240,9 +239,6 @@ public abstract class AbstractView extends AbstractVirtualView {
      */
     protected void onMoveOut(@NotNull ViewSlotMoveContext context) {}
 
-    @ApiStatus.Experimental
-    protected void onMoveIn(@NotNull ViewSlotMoveContext context) {}
-
     final void open(@NotNull Viewer viewer, @NotNull Map<String, Object> data) {
         final OpenViewContext open = internalOpen(viewer, data);
 
@@ -372,10 +368,6 @@ public abstract class AbstractView extends AbstractVirtualView {
         return cancelOnDrag;
     }
 
-    public final boolean isCancelOnMoveIn() {
-        return cancelOnMoveIn;
-    }
-
     public final boolean isCancelOnMoveOut() {
         return cancelOnMoveOut;
     }
@@ -420,11 +412,6 @@ public abstract class AbstractView extends AbstractVirtualView {
     public final void setCancelOnClone(final boolean cancelOnClone) {
         ensureNotInitialized();
         this.cancelOnClone = cancelOnClone;
-    }
-
-    public final void setCancelOnMoveIn(final boolean cancelOnMoveIn) {
-        ensureNotInitialized();
-        this.cancelOnMoveIn = cancelOnMoveIn;
     }
 
     public final void setCancelOnMoveOut(final boolean cancelOnMoveOut) {

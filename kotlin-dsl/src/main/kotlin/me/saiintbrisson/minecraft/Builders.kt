@@ -11,7 +11,6 @@ public class ViewBuilder {
     public var cancelOnDrop: Boolean = false
     public var cancelOnDrag: Boolean = false
     public var cancelOnClone: Boolean = false
-    public var cancelOnMoveIn: Boolean = false
     public var cancelOnMoveOut: Boolean = false
     public var cancelOnShiftClick: Boolean = false
     public var clearCursorOnClose: Boolean = false

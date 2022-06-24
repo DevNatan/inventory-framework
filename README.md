@@ -153,7 +153,6 @@ For example, you can cancel the click on the entire view just by changing the `c
 | cancelOnDrag               | `true`        | Cancels dragging items into the view's inventory.                                                                                                                                                                                     |
 | closeOnOutsideClick        | `true`        | Closes the view's inventory when the player clicks outside the inventory.                                                                                                                                                             |
 | cancelOnMoveOut            | `true`        | Cancels when a player tries to move items from the view's inventory to the player's inventory.                                                                                                                                        |
-| cancelOnMoveIn *(v2.4.0+)* | `true`        | Cancels when a player tries to move items from the player's inventory to the view's inventory.                                                                                                                                        |
 
 All these options can be handled by the developer himself through the View handlers.
 

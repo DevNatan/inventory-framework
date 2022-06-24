@@ -122,15 +122,6 @@ public fun ViewBuilder.onItemRelease(block: ItemReleaseBlock) {
 }
 
 /**
- * This handler is the counterpart of [onMoveOut].
- *
- * @param block The item release context handler.
- */
-public fun ViewBuilder.onMoveIn(block: SlotMoveContextBlock) {
-    moveIn = block
-}
-
-/**
  * Called when a player moves a view item out of the view's container.
  *
  * Canceling the context will cancel the move.

@@ -347,25 +347,6 @@ public final class ViewItem {
     }
 
     /**
-     * Called when the item is moved from within the view's container to another container that is
-     * not the view's container.
-     *
-     * <p>This handler requires the <a
-     * href="https://github.com/DevNatan/inventory-framework/tree/main/feature-move-io">feature-move-io</a>
-     * feature module to be enabled to work properly.
-     *
-     * <p>**Using item mutation functions in this handler is not allowed.**
-     *
-     * @param handler The move in handler.
-     * @return This item.
-     */
-    @Contract(value = "_ -> this", mutates = "this")
-    public ViewItem onMoveIn(@Nullable Consumer<ViewSlotMoveContext> handler) {
-        setMoveInHandler(handler);
-        return this;
-    }
-
-    /**
      * Called when this item is moved from outside to inside the view's container.
      *
      * <p>This handler requires the <a

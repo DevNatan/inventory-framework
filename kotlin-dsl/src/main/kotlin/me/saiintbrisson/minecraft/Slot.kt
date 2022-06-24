@@ -35,21 +35,6 @@ public fun ViewSlotBuilder.onItemRelease(block: ItemReleaseBlock) {
 }
 
 /**
- * Called when the item is moved from within the view's container to another container that is
- * not the view's container.
- *
- * This handler requires the [feature-move-io](https://github.com/DevNatan/inventory-framework/tree/main/feature-move-io)
- * feature module to be enabled to work properly.
- *
- * __Using item mutation functions in this handler is not allowed.__
- *
- * @param block The move in handler.
- */
-public fun ViewSlotBuilder.onMoveIn(block: SlotMoveContextBlock) {
-    moveIn = block
-}
-
-/**
  * Called when this item is moved from outside to inside the view's container.
  *
  * This handler requires the [feature-move-io](https://github.com/DevNatan/inventory-framework/tree/main/feature-move-io)
