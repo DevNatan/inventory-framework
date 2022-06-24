@@ -1,3 +1,4 @@
+@file:JvmSynthetic
 @file:JvmName("ViewDslExtensions")
 @file:Suppress("FunctionName")
 

@@ -1,3 +1,5 @@
+@file:JvmSynthetic
+
 package me.saiintbrisson.minecraft
 
 /**

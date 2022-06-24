@@ -1,3 +1,4 @@
+@file:JvmSynthetic
 @file:Suppress("FunctionName")
 
 package me.saiintbrisson.minecraft

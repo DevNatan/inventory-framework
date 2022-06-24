@@ -113,7 +113,6 @@ class ViewListener implements Listener {
         try {
             view.runCatching(
                     context, () -> view.getPipeline().execute(AbstractView.CLICK, slotContext));
-            plugin.getLogger().info("Pipeline launcher");
         } catch (final Throwable e) {
             plugin.getLogger().log(Level.SEVERE, "Failed to execute click pipeline", e);
             return;

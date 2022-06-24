@@ -1,3 +1,5 @@
+@file:JvmSynthetic
+
 package me.saiintbrisson.minecraft
 
 internal typealias ContextBlock = @ViewDsl ViewContext.() -> Unit
