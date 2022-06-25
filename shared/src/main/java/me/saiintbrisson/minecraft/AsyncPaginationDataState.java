@@ -10,7 +10,10 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 /**
- * Asynchronous pagination data state holder.
+ * Asynchronous paging state machine data class.
+ *
+ * <p>All contexts executed for this state machine are temporary, that is, any item that is set to
+ * the container from them will cease to exist once the event is discarded.
  *
  * @param <T> The pagination data type.
  */
@@ -20,9 +23,8 @@ public final class AsyncPaginationDataState<T> {
 
 	final CompletableFuture<T> job;
 
-	private Consumer<PaginatedViewContext<T>> loadHandler, doneHandler;
-	private BiConsumer<PaginatedViewContext<T>, Throwable> errorHandler;
-	private BiConsumer<PaginatedViewContext<T>, T> completeHandler;
+	private Consumer<PaginatedViewContext<T>> loadStarted, loadFinished, success;
+	private BiConsumer<PaginatedViewContext<T>, Throwable> error;
 
 	/**
 	 * Called when pagination data starts to load.
@@ -31,8 +33,8 @@ public final class AsyncPaginationDataState<T> {
 	 * @return This async pagination data state.
 	 */
 	@Contract(mutates = "this")
-	public AsyncPaginationDataState<T> onLoad(Consumer<PaginatedViewContext<T>> handler) {
-		this.loadHandler = handler;
+	public AsyncPaginationDataState<T> onStart(Consumer<PaginatedViewContext<T>> handler) {
+		this.loadStarted = handler;
 		return this;
 	}
 
@@ -43,8 +45,8 @@ public final class AsyncPaginationDataState<T> {
 	 * @return This async pagination data state.
 	 */
 	@Contract(mutates = "this")
-	public AsyncPaginationDataState<T> onSuccess(BiConsumer<PaginatedViewContext<T>, T> handler) {
-		this.completeHandler = handler;
+	public AsyncPaginationDataState<T> onSuccess(Consumer<PaginatedViewContext<T>> handler) {
+		this.success = handler;
 		return this;
 	}
 
@@ -56,7 +58,7 @@ public final class AsyncPaginationDataState<T> {
 	 */
 	@Contract(mutates = "this")
 	public AsyncPaginationDataState<T> onError(BiConsumer<PaginatedViewContext<T>, Throwable> handler) {
-		this.errorHandler = handler;
+		this.error = handler;
 		return this;
 	}
 
@@ -67,8 +69,8 @@ public final class AsyncPaginationDataState<T> {
 	 * @return This async pagination data state.
 	 */
 	@Contract(mutates = "this")
-	public AsyncPaginationDataState<T> onDone(Consumer<PaginatedViewContext<T>> handler) {
-		this.doneHandler = handler;
+	public AsyncPaginationDataState<T> onFinish(Consumer<PaginatedViewContext<T>> handler) {
+		this.loadFinished = handler;
 		return this;
 	}
 }
