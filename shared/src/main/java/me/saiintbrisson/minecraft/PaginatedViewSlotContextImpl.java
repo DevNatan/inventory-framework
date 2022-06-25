@@ -61,13 +61,19 @@ final class PaginatedViewSlotContextImpl<T> extends AbstractViewSlotContext
         throwPaginationDataChangedError();
     }
 
-	@Override
-	public AsyncPaginationDataState<? extends T> setSource(@NotNull CompletableFuture<? extends T> sourceFuture) {
-		throwPaginationDataChangedError();
-		return null;
-	}
+    @Override
+    public AsyncPaginationDataState<T> setSourceAsync(
+            @NotNull Function<PaginatedViewContext<T>, CompletableFuture<List<T>>> sourceFuture) {
+        throwPaginationDataChangedError();
+        return null;
+    }
 
-	@Override
+    @Override
+    public void setPagesCount(int pagesCount) {
+        throwPaginationDataChangedError();
+    }
+
+    @Override
     public @Nullable String[] getLayout() {
         return parent.getLayout();
     }
