@@ -3,6 +3,7 @@ package me.saiintbrisson.minecraft;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -242,7 +243,16 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
         this.paginator = new Paginator<>(getExpectedPageSize(), sourceProvider);
     }
 
-    private int getExpectedPageSize() {
+	@Override
+	@ApiStatus.Experimental
+	public final AsyncPaginationDataState<? extends T> setSource(@NotNull CompletableFuture<? extends T> sourceFuture) {
+		ensureNotInitialized();
+		final AsyncPaginationDataState<? extends T> state = new AsyncPaginationDataState<>(sourceFuture);
+		this.paginator = new Paginator<>(getExpectedPageSize(), state);
+		return state;
+	}
+
+	private int getExpectedPageSize() {
         return limit - offset;
     }
 

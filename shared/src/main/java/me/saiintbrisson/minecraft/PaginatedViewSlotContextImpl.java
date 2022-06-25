@@ -1,6 +1,7 @@
 package me.saiintbrisson.minecraft;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -60,7 +61,13 @@ final class PaginatedViewSlotContextImpl<T> extends AbstractViewSlotContext
         throwPaginationDataChangedError();
     }
 
-    @Override
+	@Override
+	public AsyncPaginationDataState<? extends T> setSource(@NotNull CompletableFuture<? extends T> sourceFuture) {
+		throwPaginationDataChangedError();
+		return null;
+	}
+
+	@Override
     public @Nullable String[] getLayout() {
         return parent.getLayout();
     }

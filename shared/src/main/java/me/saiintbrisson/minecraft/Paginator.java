@@ -26,17 +26,22 @@ final class Paginator<T> {
     private int pageSize;
     private List<T> source;
     private Function<PaginatedViewContext<T>, List<T>> factory;
-    private final boolean provided;
+	private AsyncPaginationDataState<T> asyncState;
+    private final boolean provided, async;
 
     @SuppressWarnings("unchecked")
     Paginator(int pageSize, @NotNull Object source) {
+		this.pageSize = pageSize;
+
         Function<PaginatedViewContext<T>, List<T>> _factory = null;
         List<T> _source = null;
-        this.pageSize = pageSize;
+		AsyncPaginationDataState<T> _asyncState = null;
 
         if (source instanceof List) _source = (List<T>) source;
         else if (source instanceof Function)
             _factory = (Function<PaginatedViewContext<T>, List<T>>) source;
+		else if (source instanceof AsyncPaginationDataState)
+			_asyncState = (AsyncPaginationDataState<T>) source;
         else
             throw new IllegalArgumentException(
                     "Unsupported pagination source type: " + source.getClass().getName());
@@ -44,6 +49,7 @@ final class Paginator<T> {
         this.factory = _factory;
         this.source = _source;
         this.provided = _factory != null;
+		this.async = _asyncState != null;
     }
 
     public boolean hasPage(int currentIndex) {
