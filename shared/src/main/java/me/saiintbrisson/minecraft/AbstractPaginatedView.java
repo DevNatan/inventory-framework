@@ -368,8 +368,6 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
             String[] layout,
             ViewItem[] preservedItems,
             Consumer<List<T>> callback) {
-        System.out.println("Trying to render layout at " + context.getPage() + "...");
-
         final Paginator<T> paginator = context.getPaginator();
         //		if (!paginator.isSync() && paginator.getPagesCount() == -1)
         //			throw new IllegalStateException(
@@ -392,7 +390,6 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
             ViewItem[] preservedItems,
             @NotNull AsyncPaginationDataState<T> asyncState,
             Consumer<List<T>> callback) {
-        System.out.println("Fetching data to render layout (async)");
         callIfNotNull(asyncState.getLoadStarted(), handler -> handler.accept(context));
 
         asyncState
@@ -404,7 +401,6 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
                                 throw new IllegalStateException(
                                         "Asynchronous pagination result cannot be null");
 
-                            System.out.println("Set data source to: " + data + ".");
                             context.getPaginator().setSource(data);
                             callIfNotNull(
                                     asyncState.getSuccess(), handler -> handler.accept(context));
@@ -430,10 +426,7 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
             String[] layout,
             ViewItem[] preservedItems,
             Consumer<List<T>> callback) {
-        System.out.println("Updating layout data (" + context.getPage() + "):");
-
         final List<T> data = context.getPaginator().getPage(context.getPage());
-        System.out.println(data);
 
         renderLayout(context, data, layout, preservedItems);
         callback.accept(data);
@@ -445,7 +438,6 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
             ViewItem[] preservedItems,
             @NotNull Function<PaginatedViewContext<T>, List<T>> factory,
             Consumer<List<T>> callback) {
-        System.out.println("Fetching data to render layout (lazy)");
         List<T> data = factory.apply(context);
         if (data == null) throw new IllegalStateException("Lazy pagination result cannot be null");
 
@@ -461,7 +453,6 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
         renderPatterns(context);
 
         final int elementsCount = elements.size();
-        System.out.println("Rendering layout with " + elementsCount + " elements...");
 
         final Stack<Integer> itemsLayer = ((BasePaginatedViewContext<T>) context).getItemsLayer();
         final int lastSlot = layout == null ? limit : itemsLayer.peek();

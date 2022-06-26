@@ -99,9 +99,6 @@ final class Paginator<T> {
     }
 
     public List<T> getPage(int index) {
-        System.out.println("Trying to get page at " + index);
-        System.out.println("Source (page size = " + pageSize + "): " + source);
-
         if (source.isEmpty()) return Collections.emptyList();
 
         // fast path -- non-sync pagination source is always updated
