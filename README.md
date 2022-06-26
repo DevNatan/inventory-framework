@@ -4,64 +4,20 @@
 [![CodeQL](https://github.com/DevNatan/inventory-framework/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/DevNatan/inventory-framework/actions/workflows/codeql-analysis.yml)
 [![Jitpack](https://jitpack.io/v/DevNatan/inventory-framework.svg)](https://jitpack.io/#DevNatan/inventory-framework)
 
-Bukkit inventory framework used in some of my projects, feel free to use it. Learn by yourself.
+**IF** (**I**nventory **F**ramework) is a Bukkit Inventory API framework that allows you to create custom inventories
+with varied interaction treatments that would be almost impossible to create manually by the developer.
 
-* [Setup](#setup)
-* [Preventing Library Conflicts](#preventing-library-conflicts)
+We provide to you with extra inventory manipulation functionality, common code for creating inventories of different types,
+resolution and detection of known platform issues that are resolved internally, high-level secure and robust API.
+
+* [Installation](https://github.com/DevNatan/inventory-framework/wiki/Installation)
+* [Documentation](https://github.com/DevNatan/inventory-framework/wiki)
 * [Getting Started](#getting-started)
     * [Options](#options)
     * [Interaction handling](#interaction-handling)
     * [Managing Data Between Contexts](#managing-data-between-contexts)
-    * [Error Handling](#error-handling)
-    * [Pagination](#pagination)
     * [Open and Close](#open-and-close)
     * [Registration](#registration)
-    * [Feature Preview](#feature-preview)
-* [Version Compatibility](#version-compatibility)
-* [Examples](#examples)
-
-## Setup
-
-Before get started, make sure you have the [JitPack repository](https://jitpack.io) included in your
-build configuration.
-
-**Gradle (build.gradle)**
-
-```groovy
-dependencies {
-    compileOnly 'com.github.DevNatan:inventory-framework:2.5'
-}
-```
-
-**Maven (pom.xml)**
-
-```xml
-<dependency>
-    <groupId>com.github.DevNatan</groupId>
-    <artifactId>inventory-framework</artifactId>
-    <version>2.5</version>
-    <scope>provided</scope>
-</dependency>
-```
-
-## Preventing Library Conflicts
-
-There is a good chance that the inventory-framework library will be used in different plugins within
-your server, these plugins share the same classpath, if a plugin is using a different version of the
-IF compared to the others there will be a **version conflict because it has been shaded** inside
-that plugin.
-
-To prevent this, we always provide the library in plugin format (.jar) to be placed in your plugins
-folder and used by all your plugins.
-
-Add the inventory framework as a dependency of your plugin to be able to access it.
-
-```yaml
-depend: [ InventoryFramework ]
-```
-
-**You can install the latest version of the InventoryFramework on
-the [Releases tab](https://github.com/DevNatan/inventory-framework/releases) on Github.**
 
 ## Getting Started
 
@@ -249,85 +205,10 @@ context.clear("my-data");
 > **Context data is transitive!** Any handler that contains a context in that specific View will inherit data from other contexts.
 
 ## Error Handling
-
-###### v2.4.1+
-
-Views are encapsulated classes that have their entire functioning determined from external events
-that are propagated to methods that handle these events within the View itself, making the subject
-that created them not have control of what happens within these methods, causing that is impossible,
-for example: doing an error handling.
-
-Before version 2.4.1, when errors occurred in Views they simply stopped working, and it was only
-possible to detect these errors through logs on the server console.
-
-You can now integrate your error handling mechanisms (like Sentry) to detect these errors and handle
-them accordingly.
-
-### Global Error Handler
-
-You can define a global error handler that will work for all Views.
-
-```java
-viewFrame.setErrorHandler((ViewContext ctx, Exception error) -> {
-        // ...
-});
-```
-
-Integrate information from the current context to propagate more detailed errors using Log4j's ThreadContext.
-```java
-private static final Logger LOGGER = LogManager.getLogger(MyViewFrame.class);
-
-viewFrame.setErrorHandler((ViewContext context, Exception error) -> {
-    ThreadContext.put("view", context.getView().getClass().getName());
-    ThreadContext.put("player", context.getPlayer().getName());
-    LOGGER.error("An error ocurred in some view", error);
-    ThreadContext.clear();
-});
-```
-
-### Per-View Error Handler
-
-You can also define error handling that will only work for a specific View.
-
-Assume that you have a View that, if an error occurs in it, you move the player or send a specific
-message that something went wrong according to the context of what your View is.
-
-```java
-import me.saiintbrisson.minecraft.View;
-
-public final class WhatIsBurdle extends View {
-
-    public WhatIsBurlde() {
-        super(...);
-        setErrorHandler((context, error) -> {
-            context.close();
-            context.getPlayer().sendMessage(
-                    "Something went wrong, please try again later."
-            );
-        });
-    }
-
-}
-```
-
-### Per-Context Error Handler
-
-It is also possible to define error handlers per player context, that is, you can define an error
-handler conditionally depending on your context information.
-
-This error handler will work in all contexts belonging to that player in that View.
-
-###### Preventing context errors to be propagated
-
-By default errors in context error handlers are propagated to the View's error handler, you can
-prevent this from happening by changing a property of the ViewContext.
-
-```java
-viewContext.setPropagateErrors(false);
-```
+Documentation has been moved to [Wiki](https://github.com/DevNatan/inventory-framework/wiki/Error-Handling-(v2.4.0-)).
 
 ## Pagination
-Documentation about pagination has been moved to [Wiki](https://github.com/DevNatan/inventory-framework/wiki/Pagination).
+Documentation has been moved to [Wiki](https://github.com/DevNatan/inventory-framework/wiki/Pagination).
 
 ## Open and Close
 
@@ -415,49 +296,5 @@ To open our view, we need to call the facade method.
 viewFrame.open(MyView.class,player);
 ```
 
-## Feature Preview
-
-###### v2.4.0+
-
-With each update we can launch a prototype of a feature so that whoever uses the IF can test and
-give feedback on it, it is possible to enable feature previews using the View feature preview
-system.
-
-By default, no prototype or feature preview is enabled, you must explicitly enable it.
-
-```java
-View.enableFeaturePreview(ViewFeature.MOVE_IN)
-```
-
-> If you have previously enabled a feature preview and it has been released and you happen to have
-> forgotten to remove that section of code, an alert will be sent to the logger for you to remove it.
-
-## Version Compatibility
-
-InventoryFramework was initially developed only for version 1.8.8, but over time support for newer
-versions has been added.
-
-Currently, inventory-framework should support any Minecraft versions due to its compatibility with
-Bukkit. If there's any issue with a different minecraft version, please report it
-in [Issue Reporting](https://github.com/DevNatan/inventory-framework/issues) section.
-
-Here is the compatibility table, see if your version is compatible before trying to use the library.
-
-| Minecraft version | Supported since | Status        | Notes |
-|-------------------|-----------------|---------------|-------|
-| 1.8               | v1.0            | ✅ Supported   |       |
-| 1.9–1.15          |                 | ⚠️ Not tested |       |
-| 1.16              | v2.3            | ✅ Supported   |       |
-| 1.17              | v2.3.2          | ✅ Supported   |       |
-| 1.18              | v2.3.2          | ✅ Supported   |       |
-
-## Examples
-There's a lot of things you can do with inventory-framework, but for now, we'll just use the simple
-one. You can make paginated pages, refreshing items and schedule tasks inside each view.
-
-See more examples in the [examples directory](https://github.com/DevNatan/inventory-framework/tree/main/examples).
-
 ## License
-
-inventory-framework is distributed under
-the [MIT license](https://github.com/DevNatan/inventory-framework/blob/main/LICENSE).
+inventory-framework is distributed under the [MIT license](https://github.com/DevNatan/inventory-framework/blob/main/LICENSE).
