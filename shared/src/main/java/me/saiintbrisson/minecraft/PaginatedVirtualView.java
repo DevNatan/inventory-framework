@@ -2,7 +2,9 @@ package me.saiintbrisson.minecraft;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -90,19 +92,26 @@ public interface PaginatedVirtualView<T> extends VirtualView {
     @ApiStatus.Experimental
     void setPagesCount(int pagesCount);
 
-    /**
-     * The layout defined for this view by the user.
-     *
-     * <p><b><i> This is an internal inventory-framework API that should not be used from outside of
-     * this library. No compatibility guarantees are provided. </i></b>
-     *
-     * @return The layout defined for this view.
-     */
-    @ApiStatus.Internal
-    @Nullable
-    String[] getLayout();
+	/**
+	 * The layout defined for this view by the user.
+	 *
+	 * <p><b><i> This is an internal inventory-framework API that should not be used from outside of
+	 * this library. No compatibility guarantees are provided. </i></b>
+	 *
+	 * @return The layout defined for this view.
+	 */
+	@ApiStatus.Internal
+	@Nullable
+	String[] getLayout();
 
-    void setLayout(@Nullable String... layout);
+	@ApiStatus.Internal
+	List<LayoutPattern> getLayoutPatterns();
+
+	void setLayout(@Nullable String... layout);
+
+    void setLayout(char character, Supplier<ViewItem> factory);
+
+    void setLayout(char character, Consumer<ViewItem> factory);
 
     /**
      * The paginator of this view.

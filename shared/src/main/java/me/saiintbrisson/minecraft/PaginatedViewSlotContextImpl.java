@@ -2,7 +2,10 @@ package me.saiintbrisson.minecraft;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
+
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.ToString;
@@ -78,12 +81,27 @@ final class PaginatedViewSlotContextImpl<T> extends AbstractViewSlotContext
         return parent.getLayout();
     }
 
-    @Override
+	@Override
+	public List<LayoutPattern> getLayoutPatterns() {
+		return parent.getLayoutPatterns();
+	}
+
+	@Override
     public void setLayout(String... layout) {
         throwPaginationDataChangedError();
     }
 
-    @Override
+	@Override
+	public void setLayout(char character, Supplier<ViewItem> factory) {
+		throwPaginationDataChangedError();
+	}
+
+	@Override
+	public void setLayout(char character, Consumer<ViewItem> factory) {
+		throwPaginationDataChangedError();
+	}
+
+	@Override
     public Paginator<T> getPaginator() {
         return parent.getPaginator();
     }

@@ -1,10 +1,13 @@
 package me.saiintbrisson.minecraft;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Stack;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,6 +31,7 @@ class BasePaginatedViewContext<T> extends BaseViewContext implements PaginatedVi
     private String[] layout;
     private Paginator<T> paginator;
     private Stack<Integer> itemsLayer;
+    private List<LayoutPattern> layoutPatterns;
 
     BasePaginatedViewContext(@NotNull AbstractView root, @Nullable ViewContainer container) {
         super(root, container);
@@ -122,17 +126,14 @@ class BasePaginatedViewContext<T> extends BaseViewContext implements PaginatedVi
     }
 
     @Override
-    public final @NotNull List<T> getSource() {
-        return Collections.unmodifiableList(getPaginator().getSource());
+    public final List<LayoutPattern> getLayoutPatterns() {
+        if (layoutPatterns != null) return layoutPatterns;
+        return getRoot().getLayoutPatterns();
     }
 
-    private void tryResolveLayout() {
-        final AbstractPaginatedView<T> root = getRoot();
-        final boolean isLayoutChecked = isLayoutSignatureChecked();
-        final String[] layout = root.useLayout(this);
-
-        // force layout resolving but do not render
-        if (!isLayoutChecked && layout != null) root.resolveLayout(this, layout, false);
+    @Override
+    public final @NotNull List<T> getSource() {
+        return Collections.unmodifiableList(getPaginator().getSource());
     }
 
     @Override
@@ -183,12 +184,40 @@ class BasePaginatedViewContext<T> extends BaseViewContext implements PaginatedVi
         paginator.setPagesCount(pagesCount);
     }
 
+    private void tryResolveLayout() {
+        final AbstractPaginatedView<T> root = getRoot();
+        final boolean isLayoutChecked = isLayoutSignatureChecked();
+        final String[] layout = root.useLayout(this);
+
+        // force layout resolving but do not render
+        if (!isLayoutChecked && layout != null) root.resolveLayout(this, layout, false);
+    }
+
     @Override
     public final void setLayout(String... layout) {
         this.layout = layout;
 
         // allow dynamic layout update
         if (isLayoutSignatureChecked()) getRoot().updateLayout(this, layout);
+    }
+
+    @Override
+    public void setLayout(char character, Supplier<ViewItem> factory) {
+        getRoot().checkReservedLayoutCharacter(character);
+        if (layoutPatterns == null) layoutPatterns = new ArrayList<>();
+
+        layoutPatterns.add(new LayoutPattern(character, factory));
+    }
+
+    @Override
+    public void setLayout(char character, Consumer<ViewItem> factory) {
+        setLayout(
+                character,
+                () -> {
+                    final ViewItem item = new ViewItem();
+                    factory.accept(item);
+                    return item;
+                });
     }
 
     @Override

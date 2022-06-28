@@ -140,6 +140,7 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
         this.limit = limit;
     }
 
+    @Override
     @ApiStatus.Internal
     public final String[] getLayout() {
         return layout;
@@ -151,21 +152,14 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
         this.layout = layout;
     }
 
+    @Override
     public final void setLayout(char character, Supplier<ViewItem> factory) {
         ensureNotInitialized();
-        if (character == EMPTY_SLOT_CHAR
-                || character == ITEM_SLOT_CHAR
-                || character == NEXT_PAGE_CHAR
-                || character == PREVIOUS_PAGE_CHAR)
-            throw new IllegalArgumentException(
-                    String.format(
-                            "The \"%c\" character is reserved in layouts"
-                                    + " and cannot be used due to backwards compatibility.",
-                            character));
-
+        checkReservedLayoutCharacter(character);
         layoutPatterns.add(new LayoutPattern(character, factory));
     }
 
+    @Override
     public final void setLayout(char identifier, @NotNull Consumer<ViewItem> layout) {
         setLayout(
                 identifier,
@@ -273,7 +267,10 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
         return limit - offset;
     }
 
-    private List<LayoutPattern> getLayoutPatterns() {
+    /** {@inheritDoc} */
+    @Override
+    @ApiStatus.Internal
+    public final List<LayoutPattern> getLayoutPatterns() {
         return layoutPatterns;
     }
 
@@ -488,7 +485,7 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
     }
 
     private void renderPatterns(@NotNull PaginatedViewContext<T> context) {
-        for (final LayoutPattern pattern : getLayoutPatterns()) {
+        for (final LayoutPattern pattern : context.getLayoutPatterns()) {
             for (final int slot : pattern.getSlots()) {
                 final ViewItem item = pattern.getFactory().get();
 
@@ -757,5 +754,16 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
     private static <T> void callIfNotNull(T handler, Consumer<T> fn) {
         if (handler == null) return;
         fn.accept(handler);
+    }
+
+    void checkReservedLayoutCharacter(char character) {
+        if (character == EMPTY_SLOT_CHAR
+                || character == ITEM_SLOT_CHAR
+                || character == NEXT_PAGE_CHAR
+                || character == PREVIOUS_PAGE_CHAR)
+            throw new IllegalArgumentException(
+                    String.format(
+                            "The \"%c\" character is reserved in layouts and cannot be used due to backwards compatibility.",
+                            character));
     }
 }
