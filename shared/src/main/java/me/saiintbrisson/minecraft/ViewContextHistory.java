@@ -6,6 +6,8 @@ import org.jetbrains.annotations.NotNull;
 @ApiStatus.Experimental
 public interface ViewContextHistory {
 
+	ViewContextStore getStore();
+
 	void back();
 
 	void back(@NotNull Viewer viewer);
