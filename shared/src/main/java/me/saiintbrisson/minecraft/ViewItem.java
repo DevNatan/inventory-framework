@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Range;
 public final class ViewItem {
 
     private static final long NO_INTERVAL = -1;
+	static final int FILL_SLOT = -2;
 
     enum State {
         UNDEFINED,
