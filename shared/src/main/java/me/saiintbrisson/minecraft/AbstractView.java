@@ -239,6 +239,10 @@ public abstract class AbstractView extends AbstractVirtualView {
      */
     protected void onMoveOut(@NotNull ViewSlotMoveContext context) {}
 
+	@ApiStatus.Experimental
+	@ApiStatus.AvailableSince("2.5.3")
+	protected void onMoveIn(@Nullable ViewSlotMoveContext context) {}
+
     final void open(@NotNull Viewer viewer, @NotNull Map<String, Object> data) {
         final OpenViewContext open = internalOpen(viewer, data);
 
