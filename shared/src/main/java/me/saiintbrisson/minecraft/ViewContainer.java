@@ -32,6 +32,9 @@ interface ViewContainer {
      */
     boolean hasItem(int slot);
 
+	@Nullable
+	ItemWrapper getItem(int slot);
+
     void renderItem(int slot, Object item);
 
     void removeItem(int slot);

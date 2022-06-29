@@ -64,7 +64,13 @@ public abstract class BukkitViewContainer implements ViewContainer {
         return getInventory().getItem(slot) != null;
     }
 
-    @Override
+	@Override
+	public @Nullable ItemWrapper getItem(int slot) {
+		if (!hasItem(slot)) return null;
+		return new ItemWrapper(getInventory().getItem(slot));
+	}
+
+	@Override
     public int getSize() {
         return getInventory().getSize();
     }
