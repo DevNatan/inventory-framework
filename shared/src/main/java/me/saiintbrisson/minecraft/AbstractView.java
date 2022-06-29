@@ -559,4 +559,27 @@ public abstract class AbstractView extends AbstractVirtualView {
     public final <T> AbstractPaginatedView<T> paginated() {
         return (AbstractPaginatedView<T>) this;
     }
+
+	final void runCatching(final ViewContext context, @NotNull final Runnable runnable) {
+		if (context != null && context.getErrorHandler() != null) {
+			tryRunOrFail(context, runnable);
+			return;
+		}
+
+		if (getErrorHandler() == null) {
+			runnable.run();
+			return;
+		}
+
+		tryRunOrFail(context, runnable);
+	}
+
+	private void tryRunOrFail(final ViewContext context, @NotNull final Runnable runnable) {
+		try {
+			runnable.run();
+		} catch (final Exception e) {
+			throwException(context, e);
+		}
+	}
+
 }

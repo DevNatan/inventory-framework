@@ -183,7 +183,7 @@ public abstract class AbstractVirtualView implements VirtualView {
                     PlatformUtils.getFactory()
                             .createSlotContext(item, (BaseViewContext) context, 0, null);
 
-            runCatching(context, () -> item.getRenderHandler().handle(renderContext));
+            context.getRoot().runCatching(context, () -> item.getRenderHandler().handle(renderContext));
             if (renderContext.hasChanged()) {
                 context.getContainer().renderItem(slot, unwrap(renderContext.getItemWrapper()));
                 renderContext.setChanged(false);
@@ -202,7 +202,7 @@ public abstract class AbstractVirtualView implements VirtualView {
         context.getContainer().renderItem(slot, unwrap(fallbackItem));
     }
 
-    private Object unwrap(Object item) {
+    final Object unwrap(Object item) {
         if (item instanceof ItemWrapper) return unwrap(((ItemWrapper) item).getValue());
 
         return item;
@@ -238,7 +238,7 @@ public abstract class AbstractVirtualView implements VirtualView {
                     PlatformUtils.getFactory()
                             .createSlotContext(item, (BaseViewContext) context, 0, null);
 
-            runCatching(context, () -> item.getUpdateHandler().handle(updateContext));
+            context.getRoot().runCatching(context, () -> item.getUpdateHandler().handle(updateContext));
             if (updateContext.hasChanged()) {
                 context.getContainer().renderItem(slot, unwrap(updateContext.getItemWrapper()));
                 updateContext.setChanged(false);
@@ -311,20 +311,6 @@ public abstract class AbstractVirtualView implements VirtualView {
     @Override
     public void inventoryModificationTriggered() {}
 
-    final void runCatching(final ViewContext context, @NotNull final Runnable runnable) {
-        if (context != null && context.getErrorHandler() != null) {
-            tryRunOrFail(context, runnable);
-            return;
-        }
-
-        if (getErrorHandler() == null) {
-            runnable.run();
-            return;
-        }
-
-        tryRunOrFail(context, runnable);
-    }
-
     boolean throwException(final ViewContext context, @NotNull final Exception exception) {
         if (context != null && context.getErrorHandler() != null) {
             context.getErrorHandler().error(context, exception);
@@ -335,6 +321,7 @@ public abstract class AbstractVirtualView implements VirtualView {
         return true;
     }
 
+
     protected final void launchError(
             final ViewErrorHandler errorHandler,
             final ViewContext context,
@@ -342,14 +329,6 @@ public abstract class AbstractVirtualView implements VirtualView {
         if (errorHandler == null) return;
 
         errorHandler.error(context, exception);
-    }
-
-    private void tryRunOrFail(final ViewContext context, @NotNull final Runnable runnable) {
-        try {
-            runnable.run();
-        } catch (final Exception e) {
-            throwException(context, e);
-        }
     }
 
     /**
