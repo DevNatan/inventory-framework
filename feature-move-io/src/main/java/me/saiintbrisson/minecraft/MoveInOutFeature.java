@@ -23,6 +23,13 @@ public final class MoveInOutFeature implements Feature<Void, Void> {
                             view.getPipeline()
                                     .intercept(AbstractView.CLICK, new BukkitMoveOutInterceptor());
                         });
+		platform.getFactory()
+			.registerModifier(
+				MODIFIER,
+				view -> {
+					view.getPipeline()
+						.intercept(AbstractView.CLICK, new BukkitMoveInInterceptor());
+				});
         return null;
     }
 
