@@ -27,6 +27,8 @@
 * Exception handler now catches page switch errors
 * Paginated view `offset` and `limit` now deprecated
 * Fixed a bug that pagination data of multiple contexts in the same view conflicts with each other
+* Asynchronous Pagination (#113)
+* Allow user defined layout in context scope
 
 # 2.5
 * Inheritable context data (#65)
