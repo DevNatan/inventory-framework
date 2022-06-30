@@ -3,6 +3,7 @@ package me.saiintbrisson.minecraft;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -229,17 +230,43 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
         this.nextPageItemFactory = nextPageItemFactory;
     }
 
+    /** {@inheritDoc} */
     public final void setSource(@NotNull List<? extends T> source) {
         ensureNotInitialized();
         this.paginator = new Paginator<>(getExpectedPageSize(), source);
     }
 
+    /** {@inheritDoc} */
     @Override
     @ApiStatus.Experimental
     public final void setSource(
             @NotNull Function<PaginatedViewContext<T>, List<? extends T>> sourceProvider) {
         ensureNotInitialized();
         this.paginator = new Paginator<>(getExpectedPageSize(), sourceProvider);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    @ApiStatus.Experimental
+    public final AsyncPaginationDataState<T> setSourceAsync(
+            @NotNull Function<PaginatedViewContext<T>, CompletableFuture<List<T>>> sourceFuture) {
+        ensureNotInitialized();
+        final AsyncPaginationDataState<T> state = new AsyncPaginationDataState<>(sourceFuture);
+        this.paginator = new Paginator<>(getExpectedPageSize(), state);
+        return state;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    @ApiStatus.Experimental
+    public void setPagesCount(int pagesCount) {
+        ensureNotInitialized();
+
+        if (this.paginator == null)
+            throw new IllegalStateException(
+                    "Paginator must be initialized before set the source size.");
+
+        this.paginator.setPagesCount(pagesCount);
     }
 
     private int getExpectedPageSize() {
@@ -336,11 +363,95 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
         }
     }
 
+    private void tryRenderLayout(
+            @NotNull PaginatedViewContext<T> context,
+            String[] layout,
+            ViewItem[] preservedItems,
+            Consumer<List<T>> callback) {
+        final Paginator<T> paginator = context.getPaginator();
+        //		if (!paginator.isSync() && paginator.getPagesCount() == -1)
+        //			throw new IllegalStateException(
+        //				"Number of pages count must be set on lazy or asynchronous pagination types." +
+        //					"Use #setPagesCount to determine the number of pages available"
+        //			);
+
+        if (paginator.isAsync())
+            renderLayoutAsync(context, layout, preservedItems, paginator.getAsyncState(), callback);
+        else if (paginator.isProvided())
+            renderLayoutLazy(context, layout, preservedItems, paginator.getFactory(), callback);
+        else {
+            renderLayoutBlocking(context, layout, preservedItems, callback);
+        }
+    }
+
+    private void renderLayoutAsync(
+            @NotNull PaginatedViewContext<T> context,
+            String[] layout,
+            ViewItem[] preservedItems,
+            @NotNull AsyncPaginationDataState<T> asyncState,
+            Consumer<List<T>> callback) {
+        callIfNotNull(asyncState.getLoadStarted(), handler -> handler.accept(context));
+
+        asyncState
+                .getJob()
+                .apply(context)
+                .whenComplete(
+                        (data, $) -> {
+                            if (data == null)
+                                throw new IllegalStateException(
+                                        "Asynchronous pagination result cannot be null");
+
+                            context.getPaginator().setSource(data);
+                            callIfNotNull(
+                                    asyncState.getSuccess(), handler -> handler.accept(context));
+                            renderLayoutBlocking(context, layout, preservedItems, callback);
+                        })
+                .exceptionally(
+                        error -> {
+                            callIfNotNull(
+                                    asyncState.getError(),
+                                    handler -> handler.accept(context, error));
+                            throwException(context, new RuntimeException(error));
+                            return null;
+                        })
+                .thenRun(
+                        () ->
+                                callIfNotNull(
+                                        asyncState.getLoadFinished(),
+                                        handler -> handler.accept(context)));
+    }
+
+    private void renderLayoutBlocking(
+            @NotNull PaginatedViewContext<T> context,
+            String[] layout,
+            ViewItem[] preservedItems,
+            Consumer<List<T>> callback) {
+        final List<T> data = context.getPaginator().getPage(context.getPage());
+
+        renderLayout(context, data, layout, preservedItems);
+        callback.accept(data);
+    }
+
+    private void renderLayoutLazy(
+            @NotNull PaginatedViewContext<T> context,
+            String[] layout,
+            ViewItem[] preservedItems,
+            @NotNull Function<PaginatedViewContext<T>, List<T>> factory,
+            Consumer<List<T>> callback) {
+        List<T> data = factory.apply(context);
+        if (data == null) throw new IllegalStateException("Lazy pagination result cannot be null");
+
+        context.getPaginator().setSource(data);
+        renderLayoutBlocking(context, layout, preservedItems, callback);
+    }
+
     private void renderLayout(
-            @NotNull PaginatedViewContext<T> context, String[] layout, ViewItem[] preservedItems) {
+            @NotNull PaginatedViewContext<T> context,
+            List<T> elements,
+            String[] layout,
+            ViewItem[] preservedItems) {
         renderPatterns(context);
 
-        final List<T> elements = context.getPaginator().getPageBlocking(context.getPage());
         final int elementsCount = elements.size();
 
         final Stack<Integer> itemsLayer = ((BasePaginatedViewContext<T>) context).getItemsLayer();
@@ -404,11 +515,11 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
         // preserved state
         final ViewItem[] items = clearLayout(context, useLayout(context));
         resolveLayout(context, layout, true);
-        renderLayout(context, layout, items);
+        tryRenderLayout(context, layout, items, null);
     }
 
     private ViewItem[] clearLayout(@NotNull PaginatedViewContext<T> context, String[] layout) {
-        final int elementsCount = context.getPaginator().getPageBlocking(context.getPage()).size();
+        final int elementsCount = context.getPaginator().getPage(context.getPage()).size();
         final Stack<Integer> itemsLayer = ((BasePaginatedViewContext<T>) context).getItemsLayer();
         final int lastSlot = layout == null ? limit : itemsLayer.peek();
         final int layerSize = getLayerSize(context, layout);
@@ -492,7 +603,9 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
 
         final String[] layout = useLayout(context);
         if (pageChecking) {
-            if (setupForRender && !context.getPaginator().hasPage(page)) return;
+            if (setupForRender
+                    && (context.getPaginator().isSync() && !context.getPaginator().hasPage(page)))
+                return;
 
             if (layout != null && !context.isLayoutSignatureChecked())
                 resolveLayout(context, layout, setupForRender);
@@ -502,9 +615,14 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
 
         if (!setupForRender) return;
 
-        renderLayout(context, layout, null);
-        updateNavigationItem(context, NAVIGATE_LEFT);
-        updateNavigationItem(context, NAVIGATE_RIGHT);
+        tryRenderLayout(
+                context,
+                layout,
+                null,
+                $ -> {
+                    updateNavigationItem(context, NAVIGATE_LEFT);
+                    updateNavigationItem(context, NAVIGATE_RIGHT);
+                });
     }
 
     private int getNavigationItemSlot(
@@ -548,8 +666,6 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
         if (item.getClickHandler() == null) {
             item.onClick(
                     click -> {
-                        click.getPlayer().sendMessage("clicked on navigation item to " + direction);
-
                         if (direction == NAVIGATE_LEFT) click.paginated().switchToPreviousPage();
                         else click.paginated().switchToNextPage();
                     });
@@ -636,5 +752,10 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
                 .filter(pattern -> pattern.getCharacter() == character)
                 .findFirst()
                 .orElse(null);
+    }
+
+    private static <T> void callIfNotNull(T handler, Consumer<T> fn) {
+        if (handler == null) return;
+        fn.accept(handler);
     }
 }

@@ -1,3 +1,5 @@
+apply from: '../publish.gradle'
+
 dependencies {
     compileOnly libs.spigot.api
     compileOnly project(':shared')

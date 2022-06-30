@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,25 +24,37 @@ final class Paginator<T> {
 
     private int pageSize;
     private List<T> source;
+    private int pagesCount = -1;
     private Function<PaginatedViewContext<T>, List<T>> factory;
-    private final boolean provided;
+    private AsyncPaginationDataState<T> asyncState;
+    private final boolean provided, async;
 
     @SuppressWarnings("unchecked")
     Paginator(int pageSize, @NotNull Object source) {
+        this.pageSize = pageSize;
+
         Function<PaginatedViewContext<T>, List<T>> _factory = null;
         List<T> _source = null;
-        this.pageSize = pageSize;
+        AsyncPaginationDataState<T> _asyncState = null;
 
         if (source instanceof List) _source = (List<T>) source;
         else if (source instanceof Function)
             _factory = (Function<PaginatedViewContext<T>, List<T>>) source;
+        else if (source instanceof AsyncPaginationDataState)
+            _asyncState = (AsyncPaginationDataState<T>) source;
         else
             throw new IllegalArgumentException(
                     "Unsupported pagination source type: " + source.getClass().getName());
 
         this.factory = _factory;
         this.source = _source;
+        this.asyncState = _asyncState;
         this.provided = _factory != null;
+        this.async = _asyncState != null;
+    }
+
+    public boolean isSync() {
+        return !async && !provided;
     }
 
     public boolean hasPage(int currentIndex) {
@@ -75,50 +86,27 @@ final class Paginator<T> {
     }
 
     /**
-     * Number of items per page.
+     * Number of pages.
      *
-     * @return The number of items per page.
+     * @return The number of pages.
      * @throws IllegalStateException If source is null.
      */
     public int count() {
         checkSource();
-        return (int) Math.ceil((double) size() / pageSize);
+        return isSync()
+                ? (int) Math.ceil((double) size() / pageSize)
+                : pagesCount == -1 ? Integer.MAX_VALUE - 1 : pagesCount;
     }
 
-    public CompletableFuture<List<T>> getPage(int index, @NotNull PaginatedViewContext<T> context) {
-        if (source != null) return CompletableFuture.completedFuture(getPageBlocking(index));
-        if (factory != null) return getPageLazy(context);
-
-        throw new IllegalStateException(
-                String.format(
-                        "No source or provider available to fetch page data on index %d.", index));
-    }
-
-    @SuppressWarnings("unchecked")
-    private CompletableFuture<List<T>> getPageLazy(@NotNull PaginatedViewContext<T> context) {
-        final Object data = factory.apply(context);
-        if (data instanceof List) {
-            final List<T> contents = (List<T>) data;
-            return CompletableFuture.completedFuture(
-                    contents.isEmpty() ? Collections.emptyList() : new ArrayList<>(contents));
-        }
-
-        if (data instanceof CompletableFuture) {
-            return ((CompletableFuture<List<T>>) factory.apply(context));
-        }
-
-        throw new IllegalArgumentException(
-                String.format(
-                        "Pagination provider return value must be a List or CompletableFuture (given %s).",
-                        data.getClass().getName()));
-    }
-
-    public List<T> getPageBlocking(int index) {
+    public List<T> getPage(int index) {
         if (source.isEmpty()) return Collections.emptyList();
+
+        // fast path -- non-sync pagination source is always updated
+        if (!isSync()) return source;
 
         int size = size();
 
-        // fast path
+        // fast path -- no need to calculate page
         if (size < pageSize) return new ArrayList<>(source);
 
         if (index < 0 || index >= count())
@@ -136,25 +124,6 @@ final class Paginator<T> {
         for (int i = base; i < until; i++) page.add(get(i));
 
         return page;
-    }
-
-    /**
-     * Updates the paging source using the factory or the given source value.
-     *
-     * @param context The pagination context.
-     * @param source The new source value (can be null).
-     * @throws IllegalStateException If factory is null.
-     */
-    void update(PaginatedViewContext<T> context, List<T> source) {
-        if (context != null && isProvided()) {
-            if (factory == null)
-                throw new IllegalStateException("Update cannot be used without a factory");
-
-            this.source = toList(factory.apply(context));
-            return;
-        }
-
-        this.source = source;
     }
 
     /**

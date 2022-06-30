@@ -1,6 +1,7 @@
 package me.saiintbrisson.minecraft;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -50,6 +51,44 @@ public interface PaginatedVirtualView<T> extends VirtualView {
      */
     @ApiStatus.Experimental
     void setSource(@NotNull Function<PaginatedViewContext<T>, List<? extends T>> sourceProvider);
+
+    /**
+     * Asynchronously defines the data that will be used to populate this paginated view.
+     *
+     * <p>The CompletableFuture parameter must be used to provide the data that will be used for
+     * paging asynchronously. The pagination data will only be rendered after the job is finished.
+     *
+     * <p>Returns an {@link AsyncPaginationDataState} that can be used to manipulate the context
+     * according to the stage of loading this data.
+     *
+     * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     *
+     * @param sourceFuture The pagination data source job.
+     */
+    @ApiStatus.Experimental
+    AsyncPaginationDataState<T> setSourceAsync(
+            @NotNull Function<PaginatedViewContext<T>, CompletableFuture<List<T>>> sourceFuture);
+
+    /**
+     * Defines the amount of pages that will be available for pagination.
+     *
+     * <p>This amount will only be used for asynchronous or lazy pagination as these are cases where
+     * the data is provided in a partitioned way, so its total size of available pages cannot be
+     * determined.
+     *
+     * <p>The source size used internally to determine the amount of page available and to delimit
+     * what data from each page will be displayed.
+     *
+     * <p>Unable to set data size for synchronous paging, resulting in an exception.
+     *
+     * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     *
+     * @param pagesCount The number of pages that'll be available to pagination.
+     */
+    @ApiStatus.Experimental
+    void setPagesCount(int pagesCount);
 
     /**
      * The layout defined for this view by the user.

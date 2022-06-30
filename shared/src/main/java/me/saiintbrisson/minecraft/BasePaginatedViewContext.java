@@ -3,6 +3,7 @@ package me.saiintbrisson.minecraft;
 import java.util.Collections;
 import java.util.List;
 import java.util.Stack;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -125,21 +126,22 @@ class BasePaginatedViewContext<T> extends BaseViewContext implements PaginatedVi
         return Collections.unmodifiableList(getPaginator().getSource());
     }
 
-    private void updateSource(Object source) {
+    private void tryResolveLayout() {
         final AbstractPaginatedView<T> root = getRoot();
         final boolean isLayoutChecked = isLayoutSignatureChecked();
         final String[] layout = root.useLayout(this);
 
         // force layout resolving but do not render
         if (!isLayoutChecked && layout != null) root.resolveLayout(this, layout, false);
-
-        setPaginator(
-                new Paginator<>(isLayoutChecked ? getItemsLayer().size() : getPageSize(), source));
     }
 
     @Override
     public final void setSource(@NotNull List<? extends T> source) {
-        updateSource(source);
+        tryResolveLayout();
+        setPaginator(
+                new Paginator<>(
+                        isLayoutSignatureChecked() ? getItemsLayer().size() : getPageSize(),
+                        source));
     }
 
     @Override
@@ -150,7 +152,35 @@ class BasePaginatedViewContext<T> extends BaseViewContext implements PaginatedVi
         if (paginator != null && paginator.isProvided())
             throw new IllegalStateException("Pagination source cannot be provided more than once");
 
-        updateSource(sourceProvider);
+        tryResolveLayout();
+        setPaginator(
+                new Paginator<>(
+                        isLayoutSignatureChecked() ? getItemsLayer().size() : getPageSize(),
+                        sourceProvider));
+    }
+
+    @Override
+    @ApiStatus.Experimental
+    public final AsyncPaginationDataState<T> setSourceAsync(
+            @NotNull Function<PaginatedViewContext<T>, CompletableFuture<List<T>>> sourceFuture) {
+        tryResolveLayout();
+
+        final AsyncPaginationDataState<T> state = new AsyncPaginationDataState<>(sourceFuture);
+        setPaginator(
+                new Paginator<>(
+                        isLayoutSignatureChecked() ? getItemsLayer().size() : getPageSize(),
+                        state));
+        return state;
+    }
+
+    @Override
+    public final void setPagesCount(int pagesCount) {
+        final Paginator<T> paginator = getPaginator();
+        if (paginator == null)
+            throw new IllegalStateException(
+                    "Paginator must be initialized before set the source size.");
+
+        paginator.setPagesCount(pagesCount);
     }
 
     @Override

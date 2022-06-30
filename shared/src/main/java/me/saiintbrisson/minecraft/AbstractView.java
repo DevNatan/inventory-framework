@@ -481,6 +481,7 @@ public abstract class AbstractView extends AbstractVirtualView {
         super.inventoryModificationTriggered();
     }
 
+    // TODO change 2nd parameter type from Exception to Throwable
     @Override
     final boolean throwException(ViewContext context, @NotNull Exception exception) {
         if (!super.throwException(context, exception)) return false;

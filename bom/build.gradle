@@ -7,7 +7,6 @@ apply from: '../publish.gradle'
 dependencies {
     compileOnlyApi project(':shared')
     compileOnlyApi project(':bukkit-api')
-    compileOnlyApi(project(':bukkit-plugin'))
     compileOnlyApi project(':feature-move-io')
     compileOnlyApi project(':kotlin-dsl')
 }
