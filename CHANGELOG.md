@@ -1,11 +1,11 @@
 # Changelog
 
-# 2.5.1 (unreleased)
+# 2.5.1-rc.1
 * Added support for more inventory types ([#58](https://github.com/DevNatan/inventory-framework/issues/58))
 * Lazy pagination source ([#72](https://github.com/DevNatan/inventory-framework/issues/72))
 * Item References ([#80](https://github.com/DevNatan/inventory-framework/issues/80))
 * Internal codebase rewrite with a new pipeline and feature system ([#89](https://github.com/DevNatan/inventory-framework/pull/89))
-* Kotlin DSL ([#90](https://github.com/DevNatan/inventory-framework/pull/90))
+* ~~Kotlin DSL ([#90](https://github.com/DevNatan/inventory-framework/pull/90))~~
 * Fixed the order of interceptors calls
 * Prohibit pagination item rendering function use ([#104](https://github.com/DevNatan/inventory-framework/pull/104))
 * Fixed a bug where when the paginated view was updated with empty source the items from the previous pagination were not cleared
