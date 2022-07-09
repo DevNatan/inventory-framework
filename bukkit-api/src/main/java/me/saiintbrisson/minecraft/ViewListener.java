@@ -24,15 +24,19 @@ import org.jetbrains.annotations.Nullable;
 class ViewListener implements Listener {
 
     private final Plugin plugin;
-    private final CompatViewFrame<?> viewFrame;
+    private final ViewFrame viewFrame;
 
     @Nullable
     private AbstractView getView(final @NotNull Player player) {
         return viewFrame.get(player);
     }
 
-    private @NotNull ViewContext getContextOrThrow(
-            @NotNull AbstractView view, @NotNull Player player) {
+    private ViewContext getContextOrThrow(@NotNull AbstractView view, @NotNull Player player) {
+        // prevent handlers being called twice by listeners that not hold this view
+        if (viewFrame.isRegistered()
+                && view.getViewFrame() != null
+                && !view.getViewFrame().equals(viewFrame)) return null;
+
         final ViewContext context =
                 view.getContext(
                         target ->
@@ -100,6 +104,8 @@ class ViewListener implements Listener {
             e.printStackTrace();
             return;
         }
+
+        if (context == null) return;
 
         final ViewSlotContext slotContext =
                 new BukkitClickViewSlotContext(

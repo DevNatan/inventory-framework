@@ -5,10 +5,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
 import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -29,11 +31,13 @@ import org.jetbrains.annotations.NotNull;
 @Getter
 @Setter
 @ToString
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public final class ViewFrame implements CompatViewFrame<ViewFrame> {
 
     private static final String BSTATS_SYSTEM_PROPERTY = "inventory-framework.enable-bstats";
 
-    @NotNull private final Plugin owner;
+    @EqualsAndHashCode.Include private final UUID id = UUID.randomUUID();
+    @EqualsAndHashCode.Include @NotNull private final Plugin owner;
 
     private ViewErrorHandler errorHandler;
 
@@ -133,9 +137,12 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
         if (isRegistered())
             throw new IllegalStateException("This ViewFrame is already registered.");
 
-        // check if there's another ViewFrame instance in the same server
         final ServicesManager servicesManager = getOwner().getServer().getServicesManager();
-        if (servicesManager.isProvidedFor(ViewFrame.class)) return this;
+
+        // check if there's another ViewFrame instance in the same server, enable metrics once
+        if (!servicesManager.isProvidedFor(ViewFrame.class)) {
+            enableMetrics();
+        }
 
         for (final AbstractView view : views.values()) {
             view.setViewFrame(this);
@@ -149,8 +156,6 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
                 .getPluginManager()
                 .registerEvents(listener = new ViewListener(plugin, this), plugin);
         servicesManager.register(ViewFrame.class, this, plugin, ServicePriority.Normal);
-
-        enableMetrics();
         return this;
     }
 

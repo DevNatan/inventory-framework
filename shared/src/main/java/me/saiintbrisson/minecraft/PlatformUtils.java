@@ -37,9 +37,7 @@ public class PlatformUtils {
 
     static void setFactory(@NotNull ViewComponentFactory factory) {
         final ViewComponentFactory curr = PlatformUtils.factory;
-        if (curr != null)
-            throw new IllegalStateException(
-                    "It is not allowed to define the View Component Factory more than once on the same platform.");
+        if (curr != null) return;
 
         PlatformUtils.factory = factory;
     }
