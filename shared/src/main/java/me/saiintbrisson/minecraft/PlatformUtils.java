@@ -37,8 +37,7 @@ public class PlatformUtils {
 
     static void setFactory(@NotNull ViewComponentFactory factory) {
         final ViewComponentFactory curr = PlatformUtils.factory;
-        if (curr != null)
-			return;
+        if (curr != null) return;
 
         PlatformUtils.factory = factory;
     }
