@@ -22,6 +22,7 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.ServicesManager;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,6 +30,8 @@ import org.jetbrains.annotations.NotNull;
 @Setter
 @ToString
 public final class ViewFrame implements CompatViewFrame<ViewFrame> {
+
+    private static final String BSTATS_SYSTEM_PROPERTY = "inventory-framework.enable-bstats";
 
     @NotNull private final Plugin owner;
 
@@ -146,7 +149,22 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
                 .getPluginManager()
                 .registerEvents(listener = new ViewListener(plugin, this), plugin);
         servicesManager.register(ViewFrame.class, this, plugin, ServicePriority.Normal);
+
+        enableMetrics();
         return this;
+    }
+
+    private void enableMetrics() {
+        final boolean metricsEnabled =
+                Boolean.parseBoolean(
+                        System.getProperty(BSTATS_SYSTEM_PROPERTY, Boolean.TRUE.toString()));
+
+        if (!metricsEnabled) return;
+
+        try {
+            new Metrics((JavaPlugin) getOwner(), 15518);
+        } catch (final Exception ignored) {
+        }
     }
 
     @Override
