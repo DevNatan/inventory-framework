@@ -11,6 +11,9 @@ import org.jetbrains.annotations.UnknownNullability;
 
 public interface ViewContext extends VirtualView {
 
+    @ApiStatus.Internal
+    Map<String, Object> getData();
+
     /**
      * An unmodifiable list of all viewers that are tied to this context.
      *
