@@ -7,36 +7,28 @@ public class ViewTypeSlotNormalizationTest {
 
     @Test
     void returnRowsWhenSizeIsGreaterThanContainerRowsCount() {
-        final ViewType type = ViewType.CHEST;
-        final int expectedContainerSizeConversion = 45;
-        final int userDefinedSizeAsRows = 5;
+        ViewType type = ViewType.CHEST;
+        int expectedContainerSize = 45;
+        int givenContainerSize = 5;
 
-        Assertions.assertEquals(
-                expectedContainerSizeConversion, type.normalize(userDefinedSizeAsRows));
+        Assertions.assertEquals(expectedContainerSize, type.normalize(givenContainerSize));
     }
 
     @Test
     void shouldThrowExceptionWhenGivenRowsDontMatchTypeConstraints() {
-        final ViewType type = ViewType.CHEST;
-        final int userDefinedSizeAsRows = 8;
+        ViewType type = ViewType.CHEST;
+        int givenContainerSize = 8;
 
         Assertions.assertThrows(
-                IllegalArgumentException.class, () -> type.normalize(userDefinedSizeAsRows));
+                IllegalArgumentException.class, () -> type.normalize(givenContainerSize));
     }
 
     @Test
     void shouldThrowExceptionWhenGivenSizeExceedsContainerConstraints() {
-        final ViewType type = ViewType.CHEST;
-        final int size = type.getMaxSize() + 1;
+        ViewType type = ViewType.CHEST;
+        int givenContainerSize = type.getMaxSize() + 1;
 
-        Assertions.assertThrows(IllegalArgumentException.class, () -> type.normalize(size));
-    }
-
-    @Test
-    void shouldThrowExceptionWhenSizeIsNotModOfContainerRows() {
-        final ViewType type = ViewType.CHEST;
-        final int size = 11;
-
-        Assertions.assertThrows(IllegalArgumentException.class, () -> type.normalize(size));
+        Assertions.assertThrows(
+                IllegalArgumentException.class, () -> type.normalize(givenContainerSize));
     }
 }
