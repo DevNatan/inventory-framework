@@ -12,7 +12,7 @@
  *
  * Violations will result in a ban of your plugin and account from bStats.
  */
-package me.saiintbrisson.minecraft.bstats;
+package me.saiintbrisson.minecraft;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -47,7 +47,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class Metrics {
+class Metrics {
 
     private final Plugin plugin;
 
