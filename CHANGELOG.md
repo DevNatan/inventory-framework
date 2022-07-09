@@ -1,5 +1,14 @@
 # Changelog
 
+# 2.5.1-rc.2
+* Fix container size normalization (#133)
+* Transfer open context data to regular context (#134)
+* Enable bStats metrics on library level (#136)
+* Allow multiple ViewFrame instances on non-bundled library (#138)
+* Update plugin com.diffplug.spotless to v6.8.0 (#125)
+* Update gradle/gradle-build-action digest to 2a7ffc9 (#128)
+* Update kotlin to v1.7.10 (#130)
+
 # 2.5.1-rc.1
 * Added support for more inventory types ([#58](https://github.com/DevNatan/inventory-framework/issues/58))
 * Lazy pagination source ([#72](https://github.com/DevNatan/inventory-framework/issues/72))
