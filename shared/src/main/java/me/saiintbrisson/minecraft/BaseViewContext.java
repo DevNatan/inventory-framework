@@ -1,5 +1,6 @@
 package me.saiintbrisson.minecraft;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -32,6 +33,11 @@ class BaseViewContext extends AbstractVirtualView implements ViewContext {
     @Override
     public final @NotNull List<Viewer> getViewers() {
         return getAttributes().getViewers();
+    }
+
+    @Override
+    public final Map<String, Object> getData() {
+        return Collections.unmodifiableMap(getAttributes().getData());
     }
 
     final void addViewer(@NotNull final Viewer viewer) {
