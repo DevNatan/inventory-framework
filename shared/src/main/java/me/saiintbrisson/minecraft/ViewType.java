@@ -73,24 +73,26 @@ public class ViewType {
     public final int normalize(final int size) {
         if (size == 0) return size;
 
-        if (size >= rows) {
+        final int fullSize;
+
+        if (size <= rows) fullSize = size * columns;
+        else {
             if (size % columns != 0)
                 throw new IllegalArgumentException(
                         format(
                                 "Container size must be a multiple of %d (given: %d)",
                                 columns, size));
 
-            final int fullSize = size * columns;
-            if (fullSize > getMaxSize())
-                throw new IllegalArgumentException(
-                        format(
-                                "Size cannot exceed container max size of %d (given: %d (%s rows))",
-                                getMaxSize(), fullSize, size));
-
-            return fullSize;
+            fullSize = size;
         }
 
-        return size * columns;
+        if (fullSize > getMaxSize())
+            throw new IllegalArgumentException(
+                    format(
+                            "Size cannot exceed container max size of %d (given: %d (%s rows))",
+                            getMaxSize(), fullSize, size));
+
+        return fullSize;
     }
 
     public int[] getResultSlots() {
