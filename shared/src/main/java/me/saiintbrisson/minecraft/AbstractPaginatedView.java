@@ -290,7 +290,6 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
                             + " in the #onRender(...) function with \"render.paginated().setSource(...)\".");
 
         super.render(context);
-
         updateContext(context.paginated(), 0, true, true);
     }
 
@@ -305,6 +304,12 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
 
     final String[] useLayout(@NotNull PaginatedViewContext<T> context) {
         return context.getLayout() == null ? layout : context.getLayout();
+    }
+
+    private void renderItemAndApplyOnContext(
+            @NotNull ViewContext context, ViewItem item, int slot) {
+        ((AbstractVirtualView) context).getItems()[slot] = item;
+        super.render(context, item, slot);
     }
 
     private void renderPaginatedItemAt(
@@ -341,7 +346,7 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
                     () -> {
                         onItemRender(slotContext, item, value);
                     });
-            render(slotContext, item, slot);
+            renderItemAndApplyOnContext(context, item, slot);
             item.setOverlay(overlay);
         } else {
             // we need to reset the initial rendering function of the overlaid item if not, when we
@@ -468,13 +473,13 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
                 // check if a non-virtual item has been defined in that slot
                 if (item != null) {
                     if (!item.isPaginationItem()) {
-                        render(context, item, targetSlot);
+                        renderItemAndApplyOnContext(context, item, targetSlot);
                         continue;
                     }
 
                     final ViewItem overlay = item.getOverlay();
                     if (overlay != null) {
-                        render(context, overlay, targetSlot);
+                        renderItemAndApplyOnContext(context, overlay, targetSlot);
                         continue;
                     }
                 }
@@ -499,7 +504,7 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
                                     item.getSlot()));
 
                 item.setSlot(slot);
-                render(context, item, slot);
+                renderItemAndApplyOnContext(context, item, slot);
             }
         }
     }
@@ -668,8 +673,7 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
                     });
         }
 
-        render(context, item.withCancelOnClick(true), expectedSlot);
-        ((BasePaginatedViewContext<T>) context).getItems()[expectedSlot] = item;
+        renderItemAndApplyOnContext(context, item.withCancelOnClick(true), expectedSlot);
     }
 
     final void resolveLayout(
