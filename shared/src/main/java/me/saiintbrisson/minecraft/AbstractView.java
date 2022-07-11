@@ -505,7 +505,13 @@ public abstract class AbstractView extends AbstractVirtualView {
     }
 
     final void remove(@NotNull CloseViewContext context, Viewer viewer) {
-        context.removeViewer(viewer);
+        synchronized (context.getViewers()) {
+            context.removeViewer(viewer);
+
+            // fast path -- only remove context if all viewers are gone
+            if (!context.getViewers().isEmpty()) return;
+        }
+
         remove(context);
     }
 
