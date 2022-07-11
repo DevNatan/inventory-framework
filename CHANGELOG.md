@@ -1,5 +1,12 @@
 # Changelog
 
+# 2.5.1
+* Click handler doesn't work in onItemRender. Thanks to @Azodox (#142)
+* Random NPE when closing inventory by. Thanks to @azodox (#141)
+* ConcurrentModificationException in while opening view (#144)
+* Dynamic title update implementation (#146)
+* Handle close if mark is applied or item is close on click (#148)
+
 # 2.5.1-rc.2
 * Fix container size normalization (#133)
 * Transfer open context data to regular context (#134)
