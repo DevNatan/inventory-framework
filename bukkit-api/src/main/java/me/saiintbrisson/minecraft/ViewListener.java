@@ -138,6 +138,10 @@ class ViewListener implements Listener {
 
         final Player player = (Player) e.getPlayer();
         final ViewContext context = getContextOrThrow(view, player);
+		if (context == null)
+			return;
+
+		// TODO move to own pipeline phase
         final CloseViewContext close = new CloseViewContext(context);
         view.runCatching(context, () -> view.onClose(close));
         view.prepareClose(close);
@@ -156,6 +160,7 @@ class ViewListener implements Listener {
                                         new IllegalStateException(
                                                 "Tried to close view without being a viewer of the context"));
 
+		// TODO move to own pipeline phase
         if (close.isCancelled()) {
             Bukkit.getScheduler()
                     .runTaskLater(
@@ -171,8 +176,10 @@ class ViewListener implements Listener {
             return;
         }
 
+		// TODO move to own pipeline phase
         if (view.isClearCursorOnClose()) player.setItemOnCursor(null);
 
+		// TODO move to own pipeline phase
         view.remove(close, viewer);
     }
 
@@ -185,7 +192,7 @@ class ViewListener implements Listener {
         e.setCancelled(view.isCancelOnDrop());
     }
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings({"unused", "deprecation"})
     @EventHandler
     public void onPickupItemOnView(final PlayerPickupItemEvent e) {
         final AbstractView view = getView(e.getPlayer());
