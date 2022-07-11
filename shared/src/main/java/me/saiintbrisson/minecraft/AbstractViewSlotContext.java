@@ -95,6 +95,11 @@ public abstract class AbstractViewSlotContext extends BaseViewContext implements
     }
 
     @Override
+    public final ViewItem resolve(int index, boolean resolveOnRoot) {
+        return parent.resolve(index, resolveOnRoot);
+    }
+
+    @Override
     public final void updateSlot() {
         final Runnable job = () -> getRoot().update(this, getBackingItem(), getSlot());
         final PlatformViewFrame<?, ?, ?> vf = getRoot().getViewFrame();

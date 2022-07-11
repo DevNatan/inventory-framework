@@ -298,7 +298,6 @@ public abstract class AbstractView extends AbstractVirtualView {
 
         context.addViewer(viewer);
         data.forEach(context::set);
-
         getPipeline().execute(OPEN, context);
         runCatching(context, () -> onOpen(context));
         return context;
@@ -506,7 +505,7 @@ public abstract class AbstractView extends AbstractVirtualView {
     }
 
     final void remove(@NotNull CloseViewContext context, Viewer viewer) {
-        context.getViewers().remove(viewer);
+        context.removeViewer(viewer);
         remove(context);
     }
 
