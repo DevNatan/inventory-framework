@@ -1,7 +1,9 @@
 package me.saiintbrisson.minecraft;
 
+import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Unmodifiable;
 
 interface ViewContainer {
 
@@ -67,6 +69,10 @@ interface ViewContainer {
      * @return The amount of vertical lines present in the container.
      */
     int getColumnsCount();
+
+    @NotNull
+    @Unmodifiable
+    List<Viewer> getViewers();
 
     void open(@NotNull Viewer viewer);
 

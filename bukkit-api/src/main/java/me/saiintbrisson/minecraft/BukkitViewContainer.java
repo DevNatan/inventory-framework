@@ -1,19 +1,36 @@
 package me.saiintbrisson.minecraft;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import me.saiintbrisson.minecraft.thirdparty.InventoryUpdate;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Unmodifiable;
 
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
 public abstract class BukkitViewContainer implements ViewContainer {
 
     @NotNull
     abstract Inventory getInventory();
+
+    @Override
+    public @NotNull @Unmodifiable List<Viewer> getViewers() {
+        return Collections.unmodifiableList(
+                new ArrayList<>(
+                        getInventory().getViewers().stream()
+                                .filter(humanEntity -> humanEntity instanceof Player)
+                                .map(humanEntity -> new BukkitViewer((Player) humanEntity))
+                                .collect(Collectors.toList())));
+    }
 
     @Override
     public void renderItem(int slot, Object item) {
@@ -86,7 +103,8 @@ public abstract class BukkitViewContainer implements ViewContainer {
 
     @Override
     public void changeTitle(@Nullable final String title) {
-        throw new UnsupportedOperationException();
+        for (final Viewer viewer : getViewers())
+            InventoryUpdate.updateInventory(((BukkitViewer) viewer).getPlayer(), title);
     }
 
     @Override
