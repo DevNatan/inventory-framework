@@ -119,6 +119,6 @@ public abstract class BukkitViewContainer implements ViewContainer {
 
     @Override
     public final void close() {
-        getInventory().getViewers().forEach(HumanEntity::closeInventory);
+        new ArrayList<>(getInventory().getViewers()).forEach(HumanEntity::closeInventory);
     }
 }

@@ -23,9 +23,5 @@ final class GlobalClickInterceptor implements PipelineInterceptor<BukkitClickVie
 
         subject.getRoot().onClick(subject);
         event.setCancelled(subject.isCancelled());
-
-        if (!subject.isCancelled()) return;
-
-        pipeline.finish();
     }
 }
