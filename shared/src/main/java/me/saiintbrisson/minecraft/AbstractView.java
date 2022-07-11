@@ -557,4 +557,18 @@ public abstract class AbstractView extends AbstractVirtualView {
     public final <T> AbstractPaginatedView<T> paginated() {
         return (AbstractPaginatedView<T>) this;
     }
+
+    /**
+     * Schedules a job to run in the next tick.
+     *
+     * @param job The job that'll be ran.
+     */
+    protected final void nextTick(@NotNull Runnable job) {
+        inventoryModificationTriggered();
+        final PlatformViewFrame<?, ?, ?> vf = getViewFrame();
+        if (vf == null)
+            throw new IllegalStateException("Cannot schedule next tick without a view frame");
+
+        vf.nextTick(job);
+    }
 }
