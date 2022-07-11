@@ -32,7 +32,9 @@ class BaseViewContext extends AbstractVirtualView implements ViewContext {
 
     @Override
     public final @NotNull List<Viewer> getViewers() {
-        return getAttributes().getViewers();
+        synchronized (getAttributes().getViewers()) {
+            return Collections.unmodifiableList(getAttributes().getViewers());
+        }
     }
 
     @Override

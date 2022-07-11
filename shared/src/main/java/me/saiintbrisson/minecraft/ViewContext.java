@@ -8,6 +8,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnknownNullability;
+import org.jetbrains.annotations.UnmodifiableView;
 
 public interface ViewContext extends VirtualView {
 
@@ -20,6 +21,7 @@ public interface ViewContext extends VirtualView {
      * @return All viewers of this context.
      */
     @NotNull
+    @UnmodifiableView
     List<Viewer> getViewers();
 
     /**
