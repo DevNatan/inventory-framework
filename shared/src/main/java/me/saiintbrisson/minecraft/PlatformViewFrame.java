@@ -54,10 +54,24 @@ public interface PlatformViewFrame<V, P, F extends PlatformViewFrame<V, P, F>>
     @NotNull
     ViewComponentFactory getFactory();
 
-    <R extends AbstractView> R open(@NotNull Class<R> viewClass, @NotNull V viewer);
+    @NotNull
+    <T extends AbstractView> T open(@NotNull Class<T> viewClass, @NotNull V viewer);
 
-    <R extends AbstractView> R open(
-            @NotNull Class<R> viewClass, @NotNull V viewer, Map<String, Object> data);
+    @NotNull
+    <T extends AbstractView> T open(
+            @NotNull Class<T> viewClass, @NotNull V viewer, Map<String, Object> data);
+
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
+    @NotNull
+    default <T extends AbstractView> T open(
+            @NotNull Class<T> viewClass, @NotNull Viewer viewer, Map<String, Object> data) {
+        throw new UnsupportedOperationException(
+                "Direct viewer opening is not supported by this ViewFrame implementation.");
+    }
 
     ViewErrorHandler getErrorHandler();
 

@@ -104,13 +104,20 @@ public class TestViewFrame implements PlatformViewFrame<Void, Void, TestViewFram
     }
 
     @Override
-    public <R extends AbstractView> R open(@NotNull Class<R> viewClass, @NotNull Void viewer) {
+    public <R extends AbstractView> @NotNull R open(
+            @NotNull Class<R> viewClass, @NotNull Void viewer) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public <R extends AbstractView> R open(
+    public <R extends AbstractView> @NotNull R open(
             @NotNull Class<R> viewClass, @NotNull Void viewer, @NotNull Map<String, Object> data) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public <T extends AbstractView> @NotNull T open(
+            @NotNull Class<T> viewClass, @NotNull Viewer viewer, Map<String, Object> data) {
         throw new UnsupportedOperationException();
     }
 

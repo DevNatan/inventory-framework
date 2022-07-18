@@ -198,15 +198,30 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
     }
 
     @Override
-    public <T extends AbstractView> T open(@NotNull Class<T> viewClass, @NotNull Player player) {
+    public <T extends AbstractView> @NotNull T open(
+            @NotNull Class<T> viewClass, @NotNull Player player) {
         return open(viewClass, player, Collections.emptyMap());
     }
 
     @Override
-    public <T extends AbstractView> T open(
+    public <T extends AbstractView> @NotNull T open(
             @NotNull Class<T> viewClass,
             @NotNull Player player,
             @NotNull Map<String, Object> data) {
+        final Viewer viewerImpl;
+        try {
+            viewerImpl = PlatformUtils.getFactory().createViewer(player);
+        } catch (final Throwable e) {
+            throw new RuntimeException(
+                    "Failed to create viewer implementation to current platform.", e);
+        }
+
+        return open(viewClass, viewerImpl, data);
+    }
+
+    @Override
+    public <T extends AbstractView> @NotNull T open(
+            @NotNull Class<T> viewClass, @NotNull Viewer viewer, Map<String, Object> data) {
         if (!isRegistered())
             throw new IllegalStateException(
                     "Attempt to open a view without having registered the view frame.");
@@ -221,10 +236,7 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
         getOwner()
                 .getServer()
                 .getScheduler()
-                .runTaskLater(
-                        getOwner(),
-                        () -> view.open(PlatformUtils.getFactory().createViewer(player), data),
-                        1L);
+                .runTaskLater(getOwner(), () -> view.open(viewer, data), 1L);
         return view;
     }
 
