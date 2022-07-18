@@ -1,5 +1,14 @@
 # Changelog
 
+# 2.5.2
+* Nested view open by context ClassCastException (#164)
+* Lately fetch update job initiator (#163)
+* Context update implementation (#162)
+* Change ViewItem click handler type (#161)
+* Update gradle to `v7.5` (#155)
+* Update gradle/gradle-build-action digest to `cd3cedc` (#157)
+* Create generate artifacts workflow (#165)
+
 # 2.5.1
 * Click handler doesn't work in onItemRender. Thanks to @Azodox (#142)
 * Random NPE when closing inventory by. Thanks to @azodox (#141)
