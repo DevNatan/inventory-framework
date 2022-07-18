@@ -34,5 +34,5 @@ jobs:
         with:
           name: inventory-framework-${{ matrix.platform.artifact-postfix }}.jar
           path: ~/${{ matrix.platform.module }}/build/libs/*.jar
-          retention-days: 3
+          retention-days: 7
           if-no-files-found: error
