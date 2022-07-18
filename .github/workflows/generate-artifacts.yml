@@ -1,6 +1,7 @@
 name: Generate Artifacts
 
 on:
+  push:
   pull_request:
   workflow_dispatch:
 
