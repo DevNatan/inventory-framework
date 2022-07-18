@@ -9,9 +9,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        name: [Bukkit]
-        module: [bukkit-plugin]
-        postfix: [bukkit]
+        include:
+          - platform: Bukkit
+            module: bukkit-plugin
+            artfifact-postfix: bukkit
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -23,15 +24,15 @@ jobs:
           distribution: 'adopt'
           server-id: github
           cache: 'gradle'
-      - name: Generate ${{ matrix.platform.name }} artifacts
+      - name: Generate ${{ matrix.platform }} artifacts
         uses: burrunan/gradle-cache-action@v1
         with:
-          arguments: ${{ matrix.platform.module }}:shadowJar
+          arguments: ${{ matrix.module }}:shadowJar
           gradle-version: wrapper
-      - name: Upload ${{ matrix.platform.name }} artifacts
+      - name: Upload ${{ matrix.platform }} artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: inventory-framework-${{ matrix.platform.artifact-postfix }}-${{ github.head_ref }}-${{ github.sha }}.jar
-          path: ~/${{ matrix.platform.module }}/build/libs/*.jar
+          name: inventory-framework-${{ matrix.artifact-postfix }}-${{ github.head_ref }}-${{ github.sha }}.jar
+          path: ~/${{ matrix.module }}/build/libs/*.jar
           retention-days: 3
           if-no-files-found: error
