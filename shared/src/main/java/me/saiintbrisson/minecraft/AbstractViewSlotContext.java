@@ -59,6 +59,11 @@ public abstract class AbstractViewSlotContext extends BaseViewContext implements
     }
 
     @Override
+    public final void update(@NotNull ViewContext context) {
+        getParent().update();
+    }
+
+    @Override
     public final void updateItem(Consumer<ItemWrapper> updater) {
         inventoryModificationTriggered();
         updater.accept(this.item);

@@ -210,7 +210,7 @@ public abstract class AbstractVirtualView implements VirtualView {
 
     /** {@inheritDoc} */
     @Override
-    public final void update() {
+    public void update() {
         throw new UnsupportedOperationException("Update aren't supported in this view");
     }
 

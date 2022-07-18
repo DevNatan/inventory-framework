@@ -1,5 +1,6 @@
 package me.saiintbrisson.minecraft;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -498,6 +499,12 @@ public abstract class AbstractView extends AbstractVirtualView {
     @Override
     final ViewItem resolve(int index) {
         return super.resolve(index);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final void update() {
+        for (final ViewContext context : new ArrayList<>(contexts)) context.update();
     }
 
     final void prepareClose(@NotNull CloseViewContext context) {
