@@ -3,6 +3,8 @@
 
 package me.saiintbrisson.minecraft
 
+import java.util.function.Consumer
+
 @ViewDsl
 public class ViewBuilder {
 
@@ -19,7 +21,7 @@ public class ViewBuilder {
     internal var open: (OpenViewContext.() -> Unit)? = null
     internal var render: ContextBlock? = null
     internal var update: ContextBlock? = null
-    internal var click: SlotContextBlock? = null
+    internal var click: SlotClickContextBlock? = null
     internal var close: (CloseViewContext.() -> Unit)? = null
     internal var hotbarInteract: HotbarInteractBlock? = null
     internal var itemHold: SlotContextBlock? = null
@@ -36,7 +38,7 @@ public class ViewSlotBuilder(@PublishedApi internal val slot: Int) {
 
     internal var render: SlotContextBlock? = null
     internal var update: SlotContextBlock? = null
-    internal var click: SlotContextBlock? = null
+    internal var click: SlotClickContextBlock? = null
     internal var itemHold: SlotContextBlock? = null
     internal var itemRelease: ItemReleaseBlock? = null
     internal var moveOut: SlotMoveContextBlock? = null
@@ -44,7 +46,10 @@ public class ViewSlotBuilder(@PublishedApi internal val slot: Int) {
 
     public fun toItem(): ViewItem {
         return ViewItem(slot).apply {
-            setHandler(click) { clickHandler = it }
+            click?.let {
+                clickHandler = Consumer { context -> it.invoke(context) }
+            }
+
             setHandler(render) { renderHandler = it }
             setHandler(update) { updateHandler = it }
         }
