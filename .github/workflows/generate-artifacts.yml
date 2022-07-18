@@ -23,15 +23,18 @@ jobs:
           cache: 'gradle'
       - name: Gradle Wrapper Validation
         uses: gradle/wrapper-validation-action@v1.0.4
+      - name: Downcase Platform Name
+        run: |
+          echo "PLATFORM=${{ matrix.platform }}" >>${GITHUB_ENV}
       - name: Generate artifacts
         uses: burrunan/gradle-cache-action@v1
         with:
-          arguments: ${{ matrix.platform.lowercase }}-plugin:shadowJar
+          arguments: ${PLATFORM}-plugin:shadowJar
           gradle-version: wrapper
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: inventory-framework-${{ matrix.platform.lowercase }}-${{ github.sha }}.jar
-          path: ${{ matrix.platform.lowercase }}-plugin/build/libs/*.jar
+          name: inventory-framework-${PLATFORM}-${{ github.sha }}.jar
+          path: ${PLATFORM}-plugin/build/libs/*.jar
           retention-days: 3
           if-no-files-found: error
