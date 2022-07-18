@@ -37,10 +37,14 @@ jobs:
           path: ${{ steps.vars.outputs.lowercase }}-plugin/build/libs/*.jar
           retention-days: 3
           if-no-files-found: error
-      - name: Comment on PR
-        if: github.event_name == 'pull_request'
-        uses: thollander/actions-comment-pull-request@v1
+      - name: Create commit comment
+        uses: peter-evans/commit-comment@v2
         with:
-          message: |
-            Generated artfiact! :wave:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          body: |
+            This is a multi-line test comment
+            - With GitHub **Markdown** :sparkles:
+            - Created by [commit-comment][1]
+              
+            [1]: https://github.com/peter-evans/commit-comment
+          path: inventory-framework-${{ steps.vars.outputs.lowercase }}-${{ github.sha }}.jar
+          position: 1
