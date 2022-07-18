@@ -24,6 +24,8 @@ jobs:
           distribution: 'adopt'
           server-id: github
           cache: 'gradle'
+      - name: Gradle Wrapper Validation
+        uses: gradle/wrapper-validation-action@v1.0.4
       - name: Generate artifacts
         uses: burrunan/gradle-cache-action@v1
         with:
