@@ -37,6 +37,9 @@ jobs:
           path: ${{ steps.vars.outputs.lowercase }}-plugin/build/libs/*.jar
           retention-days: 3
           if-no-files-found: error
+      - uses: actions/download-artifact@v1
+        with:
+          name: inventory-framework-${{ steps.vars.outputs.lowercase }}-${{ github.sha }}.jar
       - name: Create commit comment
         uses: peter-evans/commit-comment@v2
         with:
