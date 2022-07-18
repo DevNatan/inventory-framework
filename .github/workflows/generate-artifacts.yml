@@ -32,7 +32,7 @@ jobs:
       - name: Upload ${{ matrix.platform.name }} artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: inventory-framework-${{ matrix.platform.artifact-postfix }}.jar
+          name: inventory-framework-${{ matrix.platform.artifact-postfix }}-${{ github.head_ref }}-${{ github.sha }}.jar
           path: ~/${{ matrix.platform.module }}/build/libs/*.jar
-          retention-days: 7
+          retention-days: 3
           if-no-files-found: error
