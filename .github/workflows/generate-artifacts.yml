@@ -12,7 +12,7 @@ jobs:
         include:
           - platform: Bukkit
             module: bukkit-plugin
-            artfifact-postfix: bukkit
+            artifact-postfix: bukkit
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -32,7 +32,7 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: inventory-framework-${{ matrix.artifact-postfix }}-${{ github.head_ref }}-${{ github.sha }}.jar
+          name: inventory-framework-${{ matrix.artifact-postfix }}-${{ github.sha }}.jar
           path: ${{ matrix.module }}/build/libs/*.jar
           retention-days: 3
           if-no-files-found: error
