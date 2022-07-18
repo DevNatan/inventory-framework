@@ -6,4 +6,5 @@ include 'bom',
         'examples',
         'feature-move-io',
         'kotlin-dsl',
-        'shared'
+        'shared',
+        'test-utils'
