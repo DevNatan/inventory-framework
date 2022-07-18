@@ -38,14 +38,9 @@ jobs:
           retention-days: 3
           if-no-files-found: error
       - name: Comment on PR
-        uses: actions/github-script@v5
+        if: github.event_name == 'pull_request'
+        uses: thollander/actions-comment-pull-request@v1
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: 'Generated artifacts (1):
-            * Bukkit: test'
-            })
+          message: |
+            Generated artfiact! :wave:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
