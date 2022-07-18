@@ -9,10 +9,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - platform: Bukkit
-            module: bukkit-plugin
-            artifact-postfix: bukkit
+        platform: [Bukkit]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -29,12 +26,12 @@ jobs:
       - name: Generate artifacts
         uses: burrunan/gradle-cache-action@v1
         with:
-          arguments: ${{ matrix.module }}:shadowJar
+          arguments: ${{ matrix.platform.lowercase }}-plugin:shadowJar
           gradle-version: wrapper
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: inventory-framework-${{ matrix.artifact-postfix }}-${{ github.sha }}.jar
-          path: ${{ matrix.module }}/build/libs/*.jar
+          name: inventory-framework-${{ matrix.platform.lowercase }}-${{ github.sha }}.jar
+          path: ${{ matrix.platform.lowercase }}-plugin/build/libs/*.jar
           retention-days: 3
           if-no-files-found: error
