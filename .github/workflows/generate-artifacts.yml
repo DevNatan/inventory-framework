@@ -1,0 +1,38 @@
+name: Generate Artifacts
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  generate-artifacts:
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+          - name: Bukkit
+            module: bukkit-plugin
+            artifact-postfix: bukkit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup JDK 8
+        uses: actions/setup-java@v2
+        with:
+          java-version: '8'
+          distribution: 'adopt'
+          server-id: github
+          cache: 'gradle'
+      - name: Generate ${{ matrix.platform.name }} artifacts
+        uses: burrunan/gradle-cache-action@v1
+        with:
+          arguments: ${{ matrix.platform.module }}:shadowJar
+          gradle-version: wrapper
+      - name: Upload ${{ matrix.platform.name }} artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: inventory-framework-${{ matrix.platform.artifact-postfix }}.jar
+          path: ~/${{ matrix.platform.module }}/build/libs/*.jar
+          retention-days: 3
+          if-no-files-found: error
