@@ -9,10 +9,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform:
-          - name: Bukkit
-            module: bukkit-plugin
-            artifact-postfix: bukkit
+        name: [Bukkit]
+        module: [bukkit-plugin]
+        postfix: [bukkit]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
