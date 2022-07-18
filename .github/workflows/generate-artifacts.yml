@@ -22,7 +22,7 @@ jobs:
           cache: 'gradle'
       - id: vars
         name: Downcase Platform Name
-        uses: ASzc/change-string-case-action@v1
+        uses: ASzc/change-string-case-action@v2
         with:
           string: ${{ matrix.platform }}
       - name: Generate artifacts
