@@ -8,7 +8,6 @@ import org.jetbrains.annotations.NotNull;
 /** Object used to store information about the state of a View's update interval. */
 final class BukkitViewUpdateJobImpl implements ViewUpdateJob, Runnable {
 
-    private final Plugin plugin;
     private final VirtualView view;
 
     @Getter private final long delay;
@@ -18,9 +17,7 @@ final class BukkitViewUpdateJobImpl implements ViewUpdateJob, Runnable {
     private boolean interrupted;
     private boolean started;
 
-    public BukkitViewUpdateJobImpl(
-            @NotNull Plugin plugin, @NotNull VirtualView view, long delay, long interval) {
-        this.plugin = plugin;
+    public BukkitViewUpdateJobImpl(@NotNull VirtualView view, long delay, long interval) {
         this.view = view;
         this.delay = delay;
         this.interval = interval;
@@ -39,7 +36,14 @@ final class BukkitViewUpdateJobImpl implements ViewUpdateJob, Runnable {
             throw new IllegalStateException("Cannot start a interrupted view update job");
         if (task != null) throw new IllegalStateException("View update job already started");
 
+        final PlatformViewFrame<?, ?, ?> initiator = findViewFrame();
+        if (initiator == null)
+            throw new IllegalStateException(
+                    "Cannot schedule view update because there's no initiator to do this");
+
+        final Plugin plugin = (Plugin) initiator.getOwner();
         task = plugin.getServer().getScheduler().runTaskTimer(plugin, this, delay, interval);
+
         started = true;
     }
 
@@ -76,7 +80,11 @@ final class BukkitViewUpdateJobImpl implements ViewUpdateJob, Runnable {
         started = false;
     }
 
-    void interrupt() {
-        this.interrupted = !interrupted;
+    private PlatformViewFrame<?, ?, ?> findViewFrame() {
+        if (view instanceof AbstractView) return ((AbstractView) view).getViewFrame();
+        if (view instanceof ViewContext) return ((ViewContext) view).getRoot().getViewFrame();
+
+        throw new IllegalArgumentException(
+                "Unable to find view frame on: " + view.getClass().getName());
     }
 }

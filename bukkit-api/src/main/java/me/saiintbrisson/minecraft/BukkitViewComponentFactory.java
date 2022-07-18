@@ -14,7 +14,6 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -155,15 +154,8 @@ final class BukkitViewComponentFactory extends ViewComponentFactory {
             updateJob.cancel();
         }
 
-        final PlatformViewFrame<?, ?, ?> vf = findViewFrame(view);
-        if (vf == null)
-            throw new IllegalStateException(
-                    "Cannot schedule view update because there's no initiator to do this");
-
         view.setUpdateJob(
-                (updateJob =
-                        new BukkitViewUpdateJobImpl(
-                                (Plugin) vf.getOwner(), view, delayInTicks, intervalInTicks)));
+                (updateJob = new BukkitViewUpdateJobImpl(view, delayInTicks, intervalInTicks)));
         return updateJob;
     }
 
