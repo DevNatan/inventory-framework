@@ -41,7 +41,8 @@ public final class ViewItem {
 
     @Setter(AccessLevel.PUBLIC)
     private boolean closeOnClick, cancelOnClick, cancelOnShiftClick;
-    private ViewItemHandler renderHandler, updateHandler, clickHandler;
+    private ViewItemHandler renderHandler, updateHandler;
+	private Consumer<ViewSlotClickContext> clickHandler;
     private Consumer<ViewSlotMoveContext> moveInHandler, moveOutHandler;
     private Consumer<ViewSlotContext> itemHoldHandler;
     private BiConsumer<ViewSlotContext, ViewSlotContext> itemReleaseHandler;
@@ -341,7 +342,7 @@ public final class ViewItem {
      * @return This item.
      */
     @Contract(value = "_ -> this", mutates = "this")
-    public ViewItem onClick(@Nullable ViewItemHandler handler) {
+    public ViewItem onClick(@Nullable Consumer<ViewSlotClickContext> handler) {
         setClickHandler(handler);
         return this;
     }
