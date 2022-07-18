@@ -27,16 +27,16 @@ jobs:
         name: Downcase Platform Name
         uses: ASzc/change-string-case-action@v1
         with:
-          platform: ${{ matrix.platform }}
+          string: ${{ matrix.platform }}
       - name: Generate artifacts
         uses: burrunan/gradle-cache-action@v1
         with:
-          arguments: ${{ steps.vars.outputs.platform }}-plugin:shadowJar
+          arguments: ${{ steps.vars.outputs.string }}-plugin:shadowJar
           gradle-version: wrapper
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: inventory-framework-${{ steps.vars.outputs.platform }}-${{ github.sha }}.jar
-          path: ${{ steps.vars.outputs.platform }}-plugin/build/libs/*.jar
+          name: inventory-framework-${{ steps.vars.outputs.string }}-${{ github.sha }}.jar
+          path: ${{ steps.vars.outputs.string }}-plugin/build/libs/*.jar
           retention-days: 3
           if-no-files-found: error
