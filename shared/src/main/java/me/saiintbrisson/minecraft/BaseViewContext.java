@@ -164,10 +164,8 @@ class BaseViewContext extends AbstractVirtualView implements ViewContext {
     }
 
     @Override
-    @SuppressWarnings({"rawtypes", "unchecked"})
     public final void open(@NotNull Class<? extends AbstractView> viewClass) {
-        final PlatformViewFrame platformViewFrame = getRoot().getViewFrame();
-        for (final Viewer viewer : getViewers()) platformViewFrame.open(viewClass, viewer);
+        open(viewClass, Collections.emptyMap());
     }
 
     @Override
@@ -175,7 +173,11 @@ class BaseViewContext extends AbstractVirtualView implements ViewContext {
     public final void open(
             @NotNull Class<? extends AbstractView> viewClass,
             @NotNull Map<String, @Nullable Object> data) {
-        final PlatformViewFrame platformViewFrame = getRoot().getViewFrame();
+        final PlatformViewFrame platformViewFrame =
+                Objects.requireNonNull(
+                        getRoot().getViewFrame(),
+                        "Fast parent view open by context bridge is only supported if root view is registered under a ViewFrame.");
+
         for (final Viewer viewer : getViewers()) platformViewFrame.open(viewClass, viewer, data);
     }
 
