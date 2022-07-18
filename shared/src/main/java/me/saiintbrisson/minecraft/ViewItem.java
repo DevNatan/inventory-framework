@@ -42,7 +42,7 @@ public final class ViewItem {
     @Setter(AccessLevel.PUBLIC)
     private boolean closeOnClick, cancelOnClick, cancelOnShiftClick;
     private ViewItemHandler renderHandler, updateHandler;
-	private Consumer<ViewSlotClickContext> clickHandler;
+    private Consumer<ViewSlotClickContext> clickHandler;
     private Consumer<ViewSlotMoveContext> moveInHandler, moveOutHandler;
     private Consumer<ViewSlotContext> itemHoldHandler;
     private BiConsumer<ViewSlotContext, ViewSlotContext> itemReleaseHandler;
