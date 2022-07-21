@@ -13,8 +13,8 @@ import org.jetbrains.annotations.Nullable;
 public interface PaginatedViewSlotContext<T> extends PaginatedViewContext<T>, ViewSlotContext {
 
     /**
-     * The position that the current item is in relation to the pagination. Please don't confuse
-     * with the position of the item in the container, this is {@link #getSlot()}.
+     * The position that the current item is in relation to the pagination. Please don't confuse with
+     * the position of the item in the container, this is {@link #getSlot()}.
      *
      * @return The item pagination index.
      */

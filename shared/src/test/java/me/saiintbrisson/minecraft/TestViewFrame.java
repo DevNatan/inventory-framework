@@ -11,7 +11,9 @@ import org.jetbrains.annotations.NotNull;
 
 public class TestViewFrame implements PlatformViewFrame<Void, Void, TestViewFrame> {
 
-    @Getter @Setter private ViewErrorHandler errorHandler;
+    @Getter
+    @Setter
+    private ViewErrorHandler errorHandler;
 
     @Override
     public @NotNull Void getPlatform() {
@@ -24,8 +26,7 @@ public class TestViewFrame implements PlatformViewFrame<Void, Void, TestViewFram
     }
 
     @Override
-    public <C, R> @NotNull R install(
-            @NotNull Feature<C, R> feature, @NotNull UnaryOperator<C> configure) {
+    public <C, R> @NotNull R install(@NotNull Feature<C, R> feature, @NotNull UnaryOperator<C> configure) {
         throw new UnsupportedOperationException();
     }
 
@@ -75,8 +76,7 @@ public class TestViewFrame implements PlatformViewFrame<Void, Void, TestViewFram
     }
 
     @Override
-    public void setDefaultPreviousPageItem(
-            Function<PaginatedViewContext<?>, ViewItem> defaultPreviousPageItemFactory) {
+    public void setDefaultPreviousPageItem(Function<PaginatedViewContext<?>, ViewItem> defaultPreviousPageItemFactory) {
         throw new UnsupportedOperationException();
     }
 
@@ -92,8 +92,7 @@ public class TestViewFrame implements PlatformViewFrame<Void, Void, TestViewFram
     }
 
     @Override
-    public void setDefaultNextPageItem(
-            Function<PaginatedViewContext<?>, ViewItem> defaultNextPageItemFactory) {
+    public void setDefaultNextPageItem(Function<PaginatedViewContext<?>, ViewItem> defaultNextPageItemFactory) {
         throw new UnsupportedOperationException();
     }
 
@@ -104,8 +103,7 @@ public class TestViewFrame implements PlatformViewFrame<Void, Void, TestViewFram
     }
 
     @Override
-    public <R extends AbstractView> @NotNull R open(
-            @NotNull Class<R> viewClass, @NotNull Void viewer) {
+    public <R extends AbstractView> @NotNull R open(@NotNull Class<R> viewClass, @NotNull Void viewer) {
         throw new UnsupportedOperationException();
     }
 

@@ -14,15 +14,10 @@ public final class MoveInOutFeature implements Feature<Void, Void> {
     private static final String MODIFIER = "move-in-out";
 
     @Override
-    public @NotNull Void install(
-            @NotNull PlatformViewFrame<?, ?, ?> platform, @NotNull UnaryOperator<Void> configure) {
-        platform.getFactory()
-                .registerModifier(
-                        MODIFIER,
-                        view -> {
-                            view.getPipeline()
-                                    .intercept(AbstractView.CLICK, new BukkitMoveOutInterceptor());
-                        });
+    public @NotNull Void install(@NotNull PlatformViewFrame<?, ?, ?> platform, @NotNull UnaryOperator<Void> configure) {
+        platform.getFactory().registerModifier(MODIFIER, view -> {
+            view.getPipeline().intercept(AbstractView.CLICK, new BukkitMoveOutInterceptor());
+        });
         return null;
     }
 

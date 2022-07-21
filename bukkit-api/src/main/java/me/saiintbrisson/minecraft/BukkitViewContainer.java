@@ -24,12 +24,10 @@ public abstract class BukkitViewContainer implements ViewContainer {
 
     @Override
     public @NotNull @Unmodifiable List<Viewer> getViewers() {
-        return Collections.unmodifiableList(
-                new ArrayList<>(
-                        getInventory().getViewers().stream()
-                                .filter(humanEntity -> humanEntity instanceof Player)
-                                .map(humanEntity -> new BukkitViewer((Player) humanEntity))
-                                .collect(Collectors.toList())));
+        return Collections.unmodifiableList(new ArrayList<>(getInventory().getViewers().stream()
+                .filter(humanEntity -> humanEntity instanceof Player)
+                .map(humanEntity -> new BukkitViewer((Player) humanEntity))
+                .collect(Collectors.toList())));
     }
 
     @Override
@@ -48,8 +46,7 @@ public abstract class BukkitViewContainer implements ViewContainer {
         requireSupportedItem(item);
         final ItemStack target = getInventory().getItem(slot);
         if (target == null) return item == null;
-        if (item instanceof ItemStack)
-            return exactly ? target.equals(item) : target.isSimilar((ItemStack) item);
+        if (item instanceof ItemStack) return exactly ? target.equals(item) : target.isSimilar((ItemStack) item);
         if (item instanceof Material) return target.getType() == item;
 
         return false;
@@ -73,7 +70,8 @@ public abstract class BukkitViewContainer implements ViewContainer {
     protected final void requireSupportedItem(Object item) {
         if (isSupportedItem(item)) return;
 
-        throw new IllegalStateException("Unsupported item type: " + item.getClass().getName());
+        throw new IllegalStateException(
+                "Unsupported item type: " + item.getClass().getName());
     }
 
     @Override

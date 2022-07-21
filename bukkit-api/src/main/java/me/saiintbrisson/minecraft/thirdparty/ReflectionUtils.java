@@ -49,12 +49,12 @@ import org.jetbrains.annotations.Nullable;
  */
 public final class ReflectionUtils {
     /**
-     * We use reflection mainly to avoid writing a new class for version barrier. The version
-     * barrier is for NMS that uses the Minecraft version as the main package name.
+     * We use reflection mainly to avoid writing a new class for version barrier. The version barrier
+     * is for NMS that uses the Minecraft version as the main package name.
      *
-     * <p>E.g. EntityPlayer in 1.15 is in the class {@code net.minecraft.server.v1_15_R1} but in
-     * 1.14 it's in {@code net.minecraft.server.v1_14_R1} In order to maintain cross-version
-     * compatibility we cannot import these classes.
+     * <p>E.g. EntityPlayer in 1.15 is in the class {@code net.minecraft.server.v1_15_R1} but in 1.14
+     * it's in {@code net.minecraft.server.v1_14_R1} In order to maintain cross-version compatibility
+     * we cannot import these classes.
      *
      * <p>Performance is not a concern for these specific statically initialized values.
      */
@@ -103,8 +103,8 @@ public final class ReflectionUtils {
     public static final String CRAFTBUKKIT = "org.bukkit.craftbukkit." + VERSION + '.',
             NMS = v(17, "net.minecraft.").orElse("net.minecraft.server." + VERSION + '.');
     /**
-     * A nullable public accessible field only available in {@code EntityPlayer}. This can be null
-     * if the player is offline.
+     * A nullable public accessible field only available in {@code EntityPlayer}. This can be null if
+     * the player is offline.
      */
     private static final MethodHandle PLAYER_CONNECTION;
     /**
@@ -130,18 +130,12 @@ public final class ReflectionUtils {
         MethodHandle sendPacket = null, getHandle = null, connection = null;
 
         try {
-            connection =
-                    lookup.findGetter(
-                            entityPlayer, v(17, "b").orElse("playerConnection"), playerConnection);
-            getHandle =
-                    lookup.findVirtual(
-                            craftPlayer, "getHandle", MethodType.methodType(entityPlayer));
-            sendPacket =
-                    lookup.findVirtual(
-                            playerConnection,
-                            v(18, "a").orElse("sendPacket"),
-                            MethodType.methodType(
-                                    void.class, getNMSClass("network.protocol", "Packet")));
+            connection = lookup.findGetter(entityPlayer, v(17, "b").orElse("playerConnection"), playerConnection);
+            getHandle = lookup.findVirtual(craftPlayer, "getHandle", MethodType.methodType(entityPlayer));
+            sendPacket = lookup.findVirtual(
+                    playerConnection,
+                    v(18, "a").orElse("sendPacket"),
+                    MethodType.methodType(void.class, getNMSClass("network.protocol", "Packet")));
         } catch (NoSuchMethodException | NoSuchFieldException | IllegalAccessException ex) {
             ex.printStackTrace();
         }
@@ -218,14 +212,11 @@ public final class ReflectionUtils {
      * @since 1.0.0
      */
     @NotNull
-    public static CompletableFuture<Void> sendPacket(
-            @NotNull Player player, @NotNull Object... packets) {
-        return CompletableFuture.runAsync(() -> sendPacketSync(player, packets))
-                .exceptionally(
-                        ex -> {
-                            ex.printStackTrace();
-                            return null;
-                        });
+    public static CompletableFuture<Void> sendPacket(@NotNull Player player, @NotNull Object... packets) {
+        return CompletableFuture.runAsync(() -> sendPacketSync(player, packets)).exceptionally(ex -> {
+            ex.printStackTrace();
+            return null;
+        });
     }
 
     /**
@@ -323,8 +314,7 @@ public final class ReflectionUtils {
 
         public VersionHandler<T> v(int version, T handle) {
             if (version == this.version)
-                throw new IllegalArgumentException(
-                        "Cannot have duplicate version handles for version: " + version);
+                throw new IllegalArgumentException("Cannot have duplicate version handles for version: " + version);
             if (version > this.version && supports(version)) {
                 this.version = version;
                 this.handle = handle;
@@ -350,8 +340,7 @@ public final class ReflectionUtils {
 
         public CallableVersionHandler<T> v(int version, Callable<T> handle) {
             if (version == this.version)
-                throw new IllegalArgumentException(
-                        "Cannot have duplicate version handles for version: " + version);
+                throw new IllegalArgumentException("Cannot have duplicate version handles for version: " + version);
             if (version > this.version && supports(version)) {
                 this.version = version;
                 this.handle = handle;

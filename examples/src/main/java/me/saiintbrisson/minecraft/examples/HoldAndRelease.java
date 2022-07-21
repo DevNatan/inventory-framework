@@ -20,11 +20,8 @@ public final class HoldAndRelease extends View {
     }
 
     @Override
-    protected void onItemRelease(
-            @NotNull ViewSlotContext fromContext, @NotNull ViewSlotContext toContext) {
+    protected void onItemRelease(@NotNull ViewSlotContext fromContext, @NotNull ViewSlotContext toContext) {
         fromContext.resetTitle();
-        fromContext
-                .getPlayer()
-                .playSound(fromContext.getPlayer().getLocation(), "random.click", 1F, 1F);
+        fromContext.getPlayer().playSound(fromContext.getPlayer().getLocation(), "random.click", 1F, 1F);
     }
 }

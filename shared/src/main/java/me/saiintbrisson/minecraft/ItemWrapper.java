@@ -15,8 +15,7 @@ public final class ItemWrapper {
     private final Object value;
 
     ItemWrapper(@Nullable Object value) {
-        if (value instanceof ItemWrapper)
-            throw new IllegalStateException("Value cannot be a ItemWrapper");
+        if (value instanceof ItemWrapper) throw new IllegalStateException("Value cannot be a ItemWrapper");
         this.value = value;
     }
 

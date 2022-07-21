@@ -17,14 +17,12 @@ import org.jetbrains.annotations.Range;
 
 @Getter
 @ToString(callSuper = true)
-public abstract class AbstractPaginatedView<T> extends AbstractView
-        implements PaginatedVirtualView<T> {
+public abstract class AbstractPaginatedView<T> extends AbstractView implements PaginatedVirtualView<T> {
 
     static final byte NAVIGATE_LEFT = 0, NAVIGATE_RIGHT = 1;
 
     private final List<LayoutPattern> layoutPatterns = new ArrayList<>();
-    private BiConsumer<PaginatedViewContext<T>, ViewItem> previousPageItemFactory,
-            nextPageItemFactory;
+    private BiConsumer<PaginatedViewContext<T>, ViewItem> previousPageItemFactory, nextPageItemFactory;
     private int offset, limit;
     private String[] layout;
     private Paginator<T> paginator;
@@ -67,9 +65,7 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
      * @param value The paginated value.
      */
     protected abstract void onItemRender(
-            @NotNull PaginatedViewSlotContext<T> context,
-            @NotNull ViewItem viewItem,
-            @NotNull T value);
+            @NotNull PaginatedViewSlotContext<T> context, @NotNull ViewItem viewItem, @NotNull T value);
 
     /**
      * Called when pagination is switched.
@@ -161,13 +157,11 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
 
     @Override
     public final void setLayout(char identifier, @NotNull Consumer<ViewItem> layout) {
-        setLayout(
-                identifier,
-                () -> {
-                    final ViewItem item = new ViewItem();
-                    layout.accept(item);
-                    return item;
-                });
+        setLayout(identifier, () -> {
+            final ViewItem item = new ViewItem();
+            layout.accept(item);
+            return item;
+        });
     }
 
     /**
@@ -218,8 +212,7 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
         return null;
     }
 
-    public final void setNextPageItem(
-            @NotNull BiConsumer<PaginatedViewContext<T>, ViewItem> nextPageItemFactory) {
+    public final void setNextPageItem(@NotNull BiConsumer<PaginatedViewContext<T>, ViewItem> nextPageItemFactory) {
         ensureNotInitialized();
         this.nextPageItemFactory = nextPageItemFactory;
     }
@@ -233,8 +226,7 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
     /** {@inheritDoc} */
     @Override
     @ApiStatus.Experimental
-    public final void setSource(
-            @NotNull Function<PaginatedViewContext<T>, List<? extends T>> sourceProvider) {
+    public final void setSource(@NotNull Function<PaginatedViewContext<T>, List<? extends T>> sourceProvider) {
         ensureNotInitialized();
         this.paginator = new Paginator<>(getExpectedPageSize(), sourceProvider);
     }
@@ -257,8 +249,7 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
         ensureNotInitialized();
 
         if (this.paginator == null)
-            throw new IllegalStateException(
-                    "Paginator must be initialized before set the source size.");
+            throw new IllegalStateException("Paginator must be initialized before set the source size.");
 
         this.paginator.setPagesCount(pagesCount);
     }
@@ -277,17 +268,14 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
     @Override
     final void render(@NotNull ViewContext context) {
         if (context.getContainer().getType() != ViewType.CHEST)
-            throw new IllegalStateException(
-                    String.format(
-                            "Pagination is not supported in \"%s\" view type: %s."
-                                    + " Use chest type instead.",
-                            getType().getIdentifier(), getClass().getName()));
+            throw new IllegalStateException(String.format(
+                    "Pagination is not supported in \"%s\" view type: %s." + " Use chest type instead.",
+                    getType().getIdentifier(), getClass().getName()));
 
         if (paginator == null && context.paginated().getPaginator() == null)
-            throw new IllegalStateException(
-                    "At least one pagination source must be set. "
-                            + "Use #setSource in the PaginatedView constructor or set just to a context"
-                            + " in the #onRender(...) function with \"render.paginated().setSource(...)\".");
+            throw new IllegalStateException("At least one pagination source must be set. "
+                    + "Use #setSource in the PaginatedView constructor or set just to a context"
+                    + " in the #onRender(...) function with \"render.paginated().setSource(...)\".");
 
         super.render(context);
         updateContext(context.paginated(), 0, true, true);
@@ -298,16 +286,14 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
         super.update(context);
 
         final PaginatedViewContext<T> paginated = context.paginated();
-        updateContext(
-                paginated, paginated.getPage(), false /* avoid intensive page checking */, true);
+        updateContext(paginated, paginated.getPage(), false /* avoid intensive page checking */, true);
     }
 
     final String[] useLayout(@NotNull PaginatedViewContext<T> context) {
         return context.getLayout() == null ? layout : context.getLayout();
     }
 
-    private void renderItemAndApplyOnContext(
-            @NotNull ViewContext context, ViewItem item, int slot) {
+    private void renderItemAndApplyOnContext(@NotNull ViewContext context, ViewItem item, int slot) {
         ((AbstractVirtualView) context).getItems()[slot] = item;
         super.render(context, item, slot);
     }
@@ -335,17 +321,12 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
             item.setPaginationItem(true);
 
             @SuppressWarnings("unchecked")
-            final PaginatedViewSlotContext<T> slotContext =
-                    (PaginatedViewSlotContext<T>)
-                            PlatformUtils.getFactory()
-                                    .createSlotContext(
-                                            item, (BaseViewContext) context, index, value);
+            final PaginatedViewSlotContext<T> slotContext = (PaginatedViewSlotContext<T>)
+                    PlatformUtils.getFactory().createSlotContext(item, (BaseViewContext) context, index, value);
 
-            runCatching(
-                    context,
-                    () -> {
-                        onItemRender(slotContext, item, value);
-                    });
+            runCatching(context, () -> {
+                onItemRender(slotContext, item, value);
+            });
             renderItemAndApplyOnContext(context, item, slot);
             item.setOverlay(overlay);
         } else {
@@ -397,30 +378,19 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
         asyncState
                 .getJob()
                 .apply(context)
-                .whenComplete(
-                        (data, $) -> {
-                            if (data == null)
-                                throw new IllegalStateException(
-                                        "Asynchronous pagination result cannot be null");
+                .whenComplete((data, $) -> {
+                    if (data == null) throw new IllegalStateException("Asynchronous pagination result cannot be null");
 
-                            context.getPaginator().setSource(data);
-                            callIfNotNull(
-                                    asyncState.getSuccess(), handler -> handler.accept(context));
-                            renderLayoutBlocking(context, layout, preservedItems, callback);
-                        })
-                .exceptionally(
-                        error -> {
-                            callIfNotNull(
-                                    asyncState.getError(),
-                                    handler -> handler.accept(context, error));
-                            throwException(context, new RuntimeException(error));
-                            return null;
-                        })
-                .thenRun(
-                        () ->
-                                callIfNotNull(
-                                        asyncState.getLoadFinished(),
-                                        handler -> handler.accept(context)));
+                    context.getPaginator().setSource(data);
+                    callIfNotNull(asyncState.getSuccess(), handler -> handler.accept(context));
+                    renderLayoutBlocking(context, layout, preservedItems, callback);
+                })
+                .exceptionally(error -> {
+                    callIfNotNull(asyncState.getError(), handler -> handler.accept(context, error));
+                    throwException(context, new RuntimeException(error));
+                    return null;
+                })
+                .thenRun(() -> callIfNotNull(asyncState.getLoadFinished(), handler -> handler.accept(context)));
     }
 
     private void renderLayoutBlocking(
@@ -448,10 +418,7 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
     }
 
     private void renderLayout(
-            @NotNull PaginatedViewContext<T> context,
-            List<T> elements,
-            String[] layout,
-            ViewItem[] preservedItems) {
+            @NotNull PaginatedViewContext<T> context, List<T> elements, String[] layout, ViewItem[] preservedItems) {
         renderPatterns(context);
 
         final int elementsCount = elements.size();
@@ -464,10 +431,8 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
             if (layout != null && i >= layerSize) break;
 
             final int targetSlot = layout == null ? offset + i : itemsLayer.elementAt(i);
-            final ViewItem preserved =
-                    preservedItems == null || preservedItems.length <= i ? null : preservedItems[i];
-            if (i < elementsCount)
-                renderPaginatedItemAt(context, i, targetSlot, elements.get(i), preserved);
+            final ViewItem preserved = preservedItems == null || preservedItems.length <= i ? null : preservedItems[i];
+            if (i < elementsCount) renderPaginatedItemAt(context, i, targetSlot, elements.get(i), preserved);
             else {
                 final ViewItem item = context.resolve(targetSlot, true);
                 // check if a non-virtual item has been defined in that slot
@@ -496,12 +461,11 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
 
                 // pattern slot must be unset
                 if (item.getSlot() != -1)
-                    throw new IllegalStateException(
-                            String.format(
-                                    "Items defined through the layout pattern's item factory cannot have a "
-                                            + "pre-defined slot. Use `item()` instead of `slot(x)`. "
-                                            + "Expected: *unset slot*, given: %s",
-                                    item.getSlot()));
+                    throw new IllegalStateException(String.format(
+                            "Items defined through the layout pattern's item factory cannot have a "
+                                    + "pre-defined slot. Use `item()` instead of `slot(x)`. "
+                                    + "Expected: *unset slot*, given: %s",
+                            item.getSlot()));
 
                 item.setSlot(slot);
                 renderItemAndApplyOnContext(context, item, slot);
@@ -521,7 +485,8 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
     }
 
     private ViewItem[] clearLayout(@NotNull PaginatedViewContext<T> context, String[] layout) {
-        final int elementsCount = context.getPaginator().getPage(context.getPage()).size();
+        final int elementsCount =
+                context.getPaginator().getPage(context.getPage()).size();
         final Stack<Integer> itemsLayer = ((BasePaginatedViewContext<T>) context).getItemsLayer();
         final int lastSlot = layout == null ? limit : itemsLayer.peek();
         final int layerSize = getLayerSize(context, layout);
@@ -572,13 +537,11 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
     }
 
     private ViewItem resolveNavigationItem(
-            @NotNull PaginatedViewContext<T> context,
-            @Range(from = NAVIGATE_LEFT, to = NAVIGATE_RIGHT) int direction) {
+            @NotNull PaginatedViewContext<T> context, @Range(from = NAVIGATE_LEFT, to = NAVIGATE_RIGHT) int direction) {
         final AbstractPaginatedView<T> root = context.getRoot();
-        final ViewItem item =
-                direction == NAVIGATE_LEFT
-                        ? root.internalGetPreviousPageItem(context)
-                        : root.internalGetNextPageItem(context);
+        final ViewItem item = direction == NAVIGATE_LEFT
+                ? root.internalGetPreviousPageItem(context)
+                : root.internalGetNextPageItem(context);
 
         if (item != null) return item;
 
@@ -586,9 +549,7 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
         if (vf == null) return null;
 
         final Function<PaginatedViewContext<?>, ViewItem> fallback =
-                direction == NAVIGATE_LEFT
-                        ? vf.getDefaultPreviousPageItem()
-                        : vf.getDefaultNextPageItem();
+                direction == NAVIGATE_LEFT ? vf.getDefaultPreviousPageItem() : vf.getDefaultNextPageItem();
 
         if (fallback == null) return null;
 
@@ -596,48 +557,36 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
     }
 
     final void updateContext(
-            @NotNull PaginatedViewContext<T> context,
-            int page,
-            boolean pageChecking,
-            boolean setupForRender) {
+            @NotNull PaginatedViewContext<T> context, int page, boolean pageChecking, boolean setupForRender) {
         if (context instanceof ViewSlotContext)
             throw new IllegalStateException("Cannot update context using a slot context");
 
         final String[] layout = useLayout(context);
         if (pageChecking) {
             if (setupForRender
-                    && (context.getPaginator().isSync() && !context.getPaginator().hasPage(page)))
-                return;
+                    && (context.getPaginator().isSync()
+                            && !context.getPaginator().hasPage(page))) return;
 
-            if (layout != null && !context.isLayoutSignatureChecked())
-                resolveLayout(context, layout, setupForRender);
+            if (layout != null && !context.isLayoutSignatureChecked()) resolveLayout(context, layout, setupForRender);
 
             if (setupForRender) ((BasePaginatedViewContext<T>) context).setPage(page);
         }
 
         if (!setupForRender) return;
 
-        tryRenderLayout(
-                context,
-                layout,
-                null,
-                $ -> {
-                    updateNavigationItem(context, NAVIGATE_LEFT);
-                    updateNavigationItem(context, NAVIGATE_RIGHT);
-                });
+        tryRenderLayout(context, layout, null, $ -> {
+            updateNavigationItem(context, NAVIGATE_LEFT);
+            updateNavigationItem(context, NAVIGATE_RIGHT);
+        });
     }
 
     private int getNavigationItemSlot(
-            @NotNull PaginatedViewContext<T> context,
-            @Range(from = NAVIGATE_LEFT, to = NAVIGATE_RIGHT) int direction) {
-        return direction == NAVIGATE_LEFT
-                ? context.getPreviousPageItemSlot()
-                : context.getNextPageItemSlot();
+            @NotNull PaginatedViewContext<T> context, @Range(from = NAVIGATE_LEFT, to = NAVIGATE_RIGHT) int direction) {
+        return direction == NAVIGATE_LEFT ? context.getPreviousPageItemSlot() : context.getNextPageItemSlot();
     }
 
     private void updateNavigationItem(
-            @NotNull PaginatedViewContext<T> context,
-            @Range(from = NAVIGATE_LEFT, to = NAVIGATE_RIGHT) int direction) {
+            @NotNull PaginatedViewContext<T> context, @Range(from = NAVIGATE_LEFT, to = NAVIGATE_RIGHT) int direction) {
         final AbstractPaginatedView<T> root = context.getRoot();
         int expectedSlot = getNavigationItemSlot(context, direction);
         ViewItem item = null;
@@ -666,29 +615,26 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
         // the click handler should be checked for cases where the user has defined the navigation
         // item manually, so we will not override his handler
         if (item.getClickHandler() == null) {
-            item.onClick(
-                    click -> {
-                        if (direction == NAVIGATE_LEFT) click.paginated().switchToPreviousPage();
-                        else click.paginated().switchToNextPage();
-                    });
+            item.onClick(click -> {
+                if (direction == NAVIGATE_LEFT) click.paginated().switchToPreviousPage();
+                else click.paginated().switchToNextPage();
+            });
         }
 
         renderItemAndApplyOnContext(context, item.withCancelOnClick(true), expectedSlot);
     }
 
-    final void resolveLayout(
-            @NotNull PaginatedViewContext<T> context, String[] layout, boolean setupForRender) {
+    final void resolveLayout(@NotNull PaginatedViewContext<T> context, String[] layout, boolean setupForRender) {
         // since the layout is only defined once, we cache it
         // to avoid unnecessary processing every time we update the context.
         final int len = layout.length;
         final int containerRowsCount = context.getContainer().getRowsCount();
 
         if (len != containerRowsCount)
-            throw new IllegalArgumentException(
-                    String.format(
-                            "Layout columns must respect the rows count of the container"
-                                    + " (layout size: %d, container rows: %d)",
-                            len, containerRowsCount));
+            throw new IllegalArgumentException(String.format(
+                    "Layout columns must respect the rows count of the container"
+                            + " (layout size: %d, container rows: %d)",
+                    len, containerRowsCount));
 
         final int containerColumnsCount = context.getContainer().getColumnsCount();
 
@@ -700,11 +646,10 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
 
             final int layerLength = layer.length();
             if (layerLength != containerColumnsCount)
-                throw new IllegalArgumentException(
-                        String.format(
-                                "Layout layer length located at %d must respect the columns count of the"
-                                        + " container (layer length: %d, container columns: %d).",
-                                row, layerLength, containerColumnsCount));
+                throw new IllegalArgumentException(String.format(
+                        "Layout layer length located at %d must respect the columns count of the"
+                                + " container (layer length: %d, container columns: %d).",
+                        row, layerLength, containerColumnsCount));
 
             for (int column = 0; column < containerColumnsCount; column++) {
                 final int targetSlot = column + (row * containerColumnsCount);
@@ -712,32 +657,28 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
                 switch (character) {
                     case EMPTY_SLOT_CHAR:
                         break;
-                    case ITEM_SLOT_CHAR:
-                        {
-                            itemsLayer.push(targetSlot);
-                            break;
+                    case ITEM_SLOT_CHAR: {
+                        itemsLayer.push(targetSlot);
+                        break;
+                    }
+                    case PREVIOUS_PAGE_CHAR: {
+                        if (setupForRender) {
+                            resolveNavigationItem(context, NAVIGATE_LEFT);
+                            context.setPreviousPageItemSlot(targetSlot);
                         }
-                    case PREVIOUS_PAGE_CHAR:
-                        {
-                            if (setupForRender) {
-                                resolveNavigationItem(context, NAVIGATE_LEFT);
-                                context.setPreviousPageItemSlot(targetSlot);
-                            }
-                            break;
+                        break;
+                    }
+                    case NEXT_PAGE_CHAR: {
+                        if (setupForRender) {
+                            resolveNavigationItem(context, NAVIGATE_RIGHT);
+                            context.setNextPageItemSlot(targetSlot);
                         }
-                    case NEXT_PAGE_CHAR:
-                        {
-                            if (setupForRender) {
-                                resolveNavigationItem(context, NAVIGATE_RIGHT);
-                                context.setNextPageItemSlot(targetSlot);
-                            }
-                            break;
-                        }
-                    default:
-                        {
-                            final LayoutPattern pattern = getLayoutOrNull(character);
-                            if (pattern != null) pattern.getSlots().push(targetSlot);
-                        }
+                        break;
+                    }
+                    default: {
+                        final LayoutPattern pattern = getLayoutOrNull(character);
+                        if (pattern != null) pattern.getSlots().push(targetSlot);
+                    }
                 }
             }
         }
@@ -765,9 +706,8 @@ public abstract class AbstractPaginatedView<T> extends AbstractView
                 || character == ITEM_SLOT_CHAR
                 || character == NEXT_PAGE_CHAR
                 || character == PREVIOUS_PAGE_CHAR)
-            throw new IllegalArgumentException(
-                    String.format(
-                            "The \"%c\" character is reserved in layouts and cannot be used due to backwards compatibility.",
-                            character));
+            throw new IllegalArgumentException(String.format(
+                    "The \"%c\" character is reserved in layouts and cannot be used due to backwards compatibility.",
+                    character));
     }
 }

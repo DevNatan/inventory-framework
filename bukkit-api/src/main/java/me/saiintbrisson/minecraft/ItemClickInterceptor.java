@@ -13,8 +13,7 @@ final class ItemClickInterceptor implements PipelineInterceptor<BukkitClickViewS
 
     @Override
     public void intercept(
-            @NotNull PipelineContext<BukkitClickViewSlotContext> pipeline,
-            BukkitClickViewSlotContext subject) {
+            @NotNull PipelineContext<BukkitClickViewSlotContext> pipeline, BukkitClickViewSlotContext subject) {
         final InventoryClickEvent event = subject.getClickOrigin();
         if (event.getSlotType() == InventoryType.SlotType.OUTSIDE) return;
 

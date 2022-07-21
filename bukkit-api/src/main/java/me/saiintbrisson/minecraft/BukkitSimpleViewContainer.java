@@ -11,7 +11,9 @@ import org.jetbrains.annotations.NotNull;
 @RequiredArgsConstructor
 final class BukkitSimpleViewContainer extends BukkitViewContainer {
 
-    @NotNull private final Inventory inventory;
+    @NotNull
+    private final Inventory inventory;
+
     private final ViewType type;
 
     @Override

@@ -13,7 +13,8 @@ final class BukkitChestViewContainer extends BukkitViewContainer {
 
     private static final int COLUMNS = 9;
 
-    @NotNull private final Inventory inventory;
+    @NotNull
+    private final Inventory inventory;
 
     @Override
     public @NotNull ViewType getType() {

@@ -78,8 +78,7 @@ public final class ViewItem {
      */
     @ApiStatus.Experimental
     @Contract(value = "_ -> this", mutates = "this")
-    public ViewItem scheduleUpdate(
-            @Range(from = NO_INTERVAL, to = Long.MAX_VALUE) long intervalInTicks) {
+    public ViewItem scheduleUpdate(@Range(from = NO_INTERVAL, to = Long.MAX_VALUE) long intervalInTicks) {
         this.updateIntervalInTicks = Math.max(NO_INTERVAL, intervalInTicks);
         return this;
     }
@@ -129,8 +128,8 @@ public final class ViewItem {
     }
 
     /**
-     * Determines whether the interaction should be canceled based on the current value of the
-     * {@link #cancelOnClick} property, as an actor clicks on this item.
+     * Determines whether the interaction should be canceled based on the current value of the {@link
+     * #cancelOnClick} property, as an actor clicks on this item.
      *
      * @return This item.
      */
@@ -153,8 +152,8 @@ public final class ViewItem {
     }
 
     /**
-     * Determines whether the interaction should be canceled based on the current value of the
-     * {@link #cancelOnShiftClick} property, as an actor shift clicks on this item.
+     * Determines whether the interaction should be canceled based on the current value of the {@link
+     * #cancelOnShiftClick} property, as an actor shift clicks on this item.
      *
      * @return This item.
      */
@@ -206,8 +205,8 @@ public final class ViewItem {
      * several actions applied to that item.
      *
      * <p>An example of user-defined data persistence is for post-moving identification of an item
-     * inside the container, you can define a data in this item and as soon as the actor moves it
-     * the data will remain there, and you can use it any way you want.
+     * inside the container, you can define a data in this item and as soon as the actor moves it the
+     * data will remain there, and you can use it any way you want.
      *
      * <pre>
      *  slot(...).withCancelOnClick(false).withData("name", "Anna");
@@ -236,8 +235,8 @@ public final class ViewItem {
      * several actions applied to that item.
      *
      * <p>An example of user-defined data persistence is for post-moving identification of an item
-     * inside the container, you can define a data in this item and as soon as the actor moves it
-     * the data will remain there, and you can use it any way you want.
+     * inside the container, you can define a data in this item and as soon as the actor moves it the
+     * data will remain there, and you can use it any way you want.
      *
      * <pre>
      *  slot(...).withCancelOnClick(false).withData("name", "Anna")
@@ -287,8 +286,7 @@ public final class ViewItem {
      */
     @Contract(value = "_ -> this", mutates = "this")
     public ViewItem referencedBy(@Nullable String key) {
-        if (isPaginationItem())
-            throw new IllegalStateException("References are not yet supported in paginated items.");
+        if (isPaginationItem()) throw new IllegalStateException("References are not yet supported in paginated items.");
 
         setReferenceKey(key);
         return this;

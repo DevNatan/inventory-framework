@@ -15,12 +15,7 @@ public final class StaticViewConditionalRendering extends View {
         setCancelOnClick(true);
 
         firstSlot()
-                .onRender(
-                        render ->
-                                render.setItem(
-                                        shouldRenderPaper(render)
-                                                ? new ItemStack(Material.PAPER)
-                                                : null))
+                .onRender(render -> render.setItem(shouldRenderPaper(render) ? new ItemStack(Material.PAPER) : null))
                 .onClick(click -> click.set(SHOULD_RENDER_KEY, !shouldRenderPaper(click)));
     }
 

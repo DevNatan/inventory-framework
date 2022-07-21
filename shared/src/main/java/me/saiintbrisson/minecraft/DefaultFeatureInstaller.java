@@ -16,13 +16,13 @@ import org.jetbrains.annotations.NotNull;
  * @see DefaultFeatureInstaller
  */
 @RequiredArgsConstructor
-public class DefaultFeatureInstaller<P extends PlatformViewFrame<?, ?, ?>>
-        implements FeatureInstaller<P> {
+public class DefaultFeatureInstaller<P extends PlatformViewFrame<?, ?, ?>> implements FeatureInstaller<P> {
 
     // don't change this to Maps.newHashMap, we don't want Guava here
     private final Map<Class<?>, Feature<?, ?>> featureList = new HashMap<>();
 
-    @Getter private final @NotNull P platform;
+    @Getter
+    private final @NotNull P platform;
 
     @Override
     public Collection<Feature<?, ?>> getInstalledFeatures() {
@@ -35,8 +35,7 @@ public class DefaultFeatureInstaller<P extends PlatformViewFrame<?, ?, ?>>
     public <C, R> R install(@NotNull Feature<C, R> feature, @NotNull UnaryOperator<C> configure) {
         final Class<?> type = feature.getClass();
         if (featureList.containsKey(type))
-            throw new IllegalStateException(
-                    "Feature already installed, cannot install feature multiple times");
+            throw new IllegalStateException("Feature already installed, cannot install feature multiple times");
 
         // TODO handle installation error
         final Feature<C, R> value = (Feature<C, R>) feature.install(platform, configure);
@@ -51,8 +50,7 @@ public class DefaultFeatureInstaller<P extends PlatformViewFrame<?, ?, ?>>
     public void uninstall(@NotNull Feature<?, ?> feature) {
         final Class<?> type = feature.getClass();
         if (!featureList.containsKey(type))
-            throw new IllegalStateException(
-                    String.format("Feature %s not installed", type.getSimpleName()));
+            throw new IllegalStateException(String.format("Feature %s not installed", type.getSimpleName()));
 
         synchronized (featureList) {
             featureList.remove(type).uninstall(platform);

@@ -5,8 +5,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-public final class BukkitMoveOutInterceptor
-        implements PipelineInterceptor<BukkitClickViewSlotContext> {
+public final class BukkitMoveOutInterceptor implements PipelineInterceptor<BukkitClickViewSlotContext> {
 
     @Override
     public void intercept(
@@ -25,8 +24,7 @@ public final class BukkitMoveOutInterceptor
                 && action != InventoryAction.PLACE_SOME
                 && action != InventoryAction.SWAP_WITH_CURSOR) return;
 
-        final ItemStack swappedItem =
-                action == InventoryAction.SWAP_WITH_CURSOR ? event.getCurrentItem() : null;
+        final ItemStack swappedItem = action == InventoryAction.SWAP_WITH_CURSOR ? event.getCurrentItem() : null;
 
         ViewItem hold = null;
 
@@ -45,17 +43,16 @@ public final class BukkitMoveOutInterceptor
 
         if (hold == null) return;
 
-        final ViewSlotMoveContext moveContext =
-                new ViewSlotMoveContextImpl(
-                        hold,
-                        subject,
-                        event,
-                        container,
-                        event.getCursor(),
-                        swappedItem,
-                        event.getSlot(),
-                        swappedItem != null,
-                        false);
+        final ViewSlotMoveContext moveContext = new ViewSlotMoveContextImpl(
+                hold,
+                subject,
+                event,
+                container,
+                event.getCursor(),
+                swappedItem,
+                event.getSlot(),
+                swappedItem != null,
+                false);
 
         moveContext.setCancelled(subject.isCancelled());
         if (hold.getMoveOutHandler() != null) hold.getMoveInHandler().accept(moveContext);

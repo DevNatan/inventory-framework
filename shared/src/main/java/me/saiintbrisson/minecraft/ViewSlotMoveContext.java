@@ -51,8 +51,8 @@ public interface ViewSlotMoveContext extends ViewSlotClickContext {
     /**
      * Whether the source item and the target item were replaced.
      *
-     * <p>When this happens the target item goes to the sprite's cursor and the source item takes th
-     * e place of the target item.
+     * <p>When this happens the target item goes to the sprite's cursor and the source item takes th e
+     * place of the target item.
      *
      * @return Whether the source item and the target item were replaced.
      */

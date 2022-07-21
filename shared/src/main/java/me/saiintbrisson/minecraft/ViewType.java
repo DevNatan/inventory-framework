@@ -21,43 +21,42 @@ public class ViewType {
     public static final ViewType HOPPER = new ViewType("hopper", 5, 1, 5, false);
 
     @ApiStatus.Experimental
-    public static final ViewType FURNACE =
-            new ViewType("furnace", 2, 1, 1, false) {
-                private static final int RESULT_SLOT = 2;
+    public static final ViewType FURNACE = new ViewType("furnace", 2, 1, 1, false) {
+        private static final int RESULT_SLOT = 2;
 
-                @Override
-                public int[] getResultSlots() {
-                    return new int[] {RESULT_SLOT};
-                }
+        @Override
+        public int[] getResultSlots() {
+            return new int[] {RESULT_SLOT};
+        }
 
-                @Override
-                public boolean hasResultSlot() {
-                    return true;
-                }
-            };
+        @Override
+        public boolean hasResultSlot() {
+            return true;
+        }
+    };
 
     @ApiStatus.Experimental
-    public static final ViewType CRAFTING_TABLE =
-            new ViewType("crafting-table", 9, 3, 3, false) {
-                private static final int RESULT_SLOT = 3;
+    public static final ViewType CRAFTING_TABLE = new ViewType("crafting-table", 9, 3, 3, false) {
+        private static final int RESULT_SLOT = 3;
 
-                @Override
-                public int[] getResultSlots() {
-                    return new int[] {RESULT_SLOT};
-                }
+        @Override
+        public int[] getResultSlots() {
+            return new int[] {RESULT_SLOT};
+        }
 
-                @Override
-                public boolean hasResultSlot() {
-                    return true;
-                }
+        @Override
+        public boolean hasResultSlot() {
+            return true;
+        }
 
-                @Override
-                public boolean canPlayerInteractOn(int slot) {
-                    return slot != RESULT_SLOT;
-                }
-            };
+        @Override
+        public boolean canPlayerInteractOn(int slot) {
+            return slot != RESULT_SLOT;
+        }
+    };
 
-    @EqualsAndHashCode.Include private final String identifier;
+    @EqualsAndHashCode.Include
+    private final String identifier;
 
     private final int maxSize, rows, columns;
     private final boolean extendable;
@@ -79,18 +78,14 @@ public class ViewType {
         else {
             if (size % columns != 0)
                 throw new IllegalArgumentException(
-                        format(
-                                "Container size must be a multiple of %d (given: %d)",
-                                columns, size));
+                        format("Container size must be a multiple of %d (given: %d)", columns, size));
 
             fullSize = size;
         }
 
         if (fullSize > getMaxSize())
-            throw new IllegalArgumentException(
-                    format(
-                            "Size cannot exceed container max size of %d (given: %d (%s rows))",
-                            getMaxSize(), fullSize, size));
+            throw new IllegalArgumentException(format(
+                    "Size cannot exceed container max size of %d (given: %d (%s rows))", getMaxSize(), fullSize, size));
 
         return fullSize;
     }

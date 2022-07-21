@@ -67,8 +67,8 @@ public interface ViewSlotClickContext extends ViewSlotContext {
      * Returns the event from which this context originated.
      *
      * @throws IllegalStateException If this context did not originate from a click.
-     * @deprecated Platform-specific APIs will be removed from framework shared module soon. Cast
-     *     this context to a BukkitClickViewSlotContext implementation instead.
+     * @deprecated Platform-specific APIs will be removed from framework shared module soon. Cast this
+     *     context to a BukkitClickViewSlotContext implementation instead.
      * @return The event from which this context originated.
      */
     @NotNull

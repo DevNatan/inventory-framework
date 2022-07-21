@@ -12,7 +12,8 @@ import org.jetbrains.annotations.NotNull;
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public abstract class AbstractVirtualView implements VirtualView {
 
-    @ToString.Exclude private ViewItem[] items;
+    @ToString.Exclude
+    private ViewItem[] items;
 
     private ViewErrorHandler errorHandler;
 
@@ -107,8 +108,7 @@ public abstract class AbstractVirtualView implements VirtualView {
     @NotNull
     public final ViewItem slot(int slot) {
         inventoryModificationTriggered();
-        if (getItems() == null)
-            throw new IllegalStateException("VirtualView was not initialized yet");
+        if (getItems() == null) throw new IllegalStateException("VirtualView was not initialized yet");
 
         final ViewItem item = new ViewItem(slot);
         getItems()[slot] = item;
@@ -180,8 +180,7 @@ public abstract class AbstractVirtualView implements VirtualView {
 
         if (item.getRenderHandler() != null) {
             final ViewSlotContext renderContext =
-                    PlatformUtils.getFactory()
-                            .createSlotContext(item, (BaseViewContext) context, 0, null);
+                    PlatformUtils.getFactory().createSlotContext(item, (BaseViewContext) context, 0, null);
 
             runCatching(context, () -> item.getRenderHandler().handle(renderContext));
             if (renderContext.hasChanged()) {
@@ -192,12 +191,11 @@ public abstract class AbstractVirtualView implements VirtualView {
         }
 
         if (fallbackItem == null)
-            throw new IllegalArgumentException(
-                    String.format(
-                            "No item were provided and the rendering function was not defined at slot %d."
-                                    + "You must use a rendering function #slot(...).onRender(...)"
-                                    + " or a fallback item #slot(fallbackItem)",
-                            slot));
+            throw new IllegalArgumentException(String.format(
+                    "No item were provided and the rendering function was not defined at slot %d."
+                            + "You must use a rendering function #slot(...).onRender(...)"
+                            + " or a fallback item #slot(fallbackItem)",
+                    slot));
 
         context.getContainer().renderItem(slot, unwrap(fallbackItem));
     }
@@ -235,8 +233,7 @@ public abstract class AbstractVirtualView implements VirtualView {
 
         if (item.getUpdateHandler() != null) {
             final ViewSlotContext updateContext =
-                    PlatformUtils.getFactory()
-                            .createSlotContext(item, (BaseViewContext) context, 0, null);
+                    PlatformUtils.getFactory().createSlotContext(item, (BaseViewContext) context, 0, null);
 
             runCatching(context, () -> item.getUpdateHandler().handle(updateContext));
             if (updateContext.hasChanged()) {
@@ -336,9 +333,7 @@ public abstract class AbstractVirtualView implements VirtualView {
     }
 
     protected final void launchError(
-            final ViewErrorHandler errorHandler,
-            final ViewContext context,
-            @NotNull final Exception exception) {
+            final ViewErrorHandler errorHandler, final ViewContext context, @NotNull final Exception exception) {
         if (errorHandler == null) return;
 
         errorHandler.error(context, exception);
@@ -370,9 +365,7 @@ public abstract class AbstractVirtualView implements VirtualView {
 
         if (column > maxColumnsCount)
             throw new IllegalArgumentException(
-                    String.format(
-                            "Column cannot be greater than %d (given %d)",
-                            maxColumnsCount, column));
+                    String.format("Column cannot be greater than %d (given %d)", maxColumnsCount, column));
 
         return Math.max(row - 1, 0) * maxColumnsCount + Math.max(column - 1, 0);
     }

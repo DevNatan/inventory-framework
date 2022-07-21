@@ -7,8 +7,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 @ApiStatus.NonExtendable
-public interface PlatformViewFrame<V, P, F extends PlatformViewFrame<V, P, F>>
-        extends FeatureInstaller<P> {
+public interface PlatformViewFrame<V, P, F extends PlatformViewFrame<V, P, F>> extends FeatureInstaller<P> {
 
     /**
      * Registers a new view to this view frame.
@@ -58,12 +57,11 @@ public interface PlatformViewFrame<V, P, F extends PlatformViewFrame<V, P, F>>
     <T extends AbstractView> T open(@NotNull Class<T> viewClass, @NotNull V viewer);
 
     @NotNull
-    <T extends AbstractView> T open(
-            @NotNull Class<T> viewClass, @NotNull V viewer, Map<String, Object> data);
+    <T extends AbstractView> T open(@NotNull Class<T> viewClass, @NotNull V viewer, Map<String, Object> data);
 
     /**
-     * <b><i> This is an internal inventory-framework API that should not be used from outside of
-     * this library. No compatibility guarantees are provided. </i></b>
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of this
+     * library. No compatibility guarantees are provided. </i></b>
      */
     @ApiStatus.Internal
     @NotNull
@@ -86,11 +84,9 @@ public interface PlatformViewFrame<V, P, F extends PlatformViewFrame<V, P, F>>
      * @deprecated Use {@link #setNavigateBackItemFactory(BiConsumer)} instead.
      */
     @Deprecated
-    void setDefaultPreviousPageItem(
-            Function<PaginatedViewContext<?>, ViewItem> defaultPreviousPageItemFactory);
+    void setDefaultPreviousPageItem(Function<PaginatedViewContext<?>, ViewItem> defaultPreviousPageItemFactory);
 
-    F setNavigateBackItemFactory(
-            BiConsumer<PaginatedViewContext<?>, ViewItem> navigateBackItemFactory);
+    F setNavigateBackItemFactory(BiConsumer<PaginatedViewContext<?>, ViewItem> navigateBackItemFactory);
 
     Function<PaginatedViewContext<?>, ViewItem> getDefaultNextPageItem();
 
@@ -99,9 +95,7 @@ public interface PlatformViewFrame<V, P, F extends PlatformViewFrame<V, P, F>>
      * @deprecated Use {@link #setNavigateNextItemFactory(BiConsumer)} instead.
      */
     @Deprecated
-    void setDefaultNextPageItem(
-            Function<PaginatedViewContext<?>, ViewItem> defaultNextPageItemFactory);
+    void setDefaultNextPageItem(Function<PaginatedViewContext<?>, ViewItem> defaultNextPageItemFactory);
 
-    F setNavigateNextItemFactory(
-            BiConsumer<PaginatedViewContext<?>, ViewItem> navigateNextItemFactory);
+    F setNavigateNextItemFactory(BiConsumer<PaginatedViewContext<?>, ViewItem> navigateNextItemFactory);
 }

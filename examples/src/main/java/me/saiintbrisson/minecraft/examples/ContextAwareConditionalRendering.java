@@ -30,20 +30,12 @@ public final class ContextAwareConditionalRendering extends View {
         // NOTE the `context.firstSlot` and not just `firstSlot`
         //           ^^^^^^^
         context.firstSlot()
-                .onRender(
-                        render ->
-                                render.setItem(
-                                        shouldRenderPaper(render)
-                                                ? new ItemStack(Material.PAPER)
-                                                : null))
+                .onRender(render -> render.setItem(shouldRenderPaper(render) ? new ItemStack(Material.PAPER) : null))
                 .onClick(click -> click.set(SHOULD_RENDER_KEY, !shouldRenderPaper(click)))
-                .onUpdate(
-                        update -> {
-                            final boolean visible = shouldRenderPaper(update);
-                            update.getPlayer()
-                                    .sendMessage(
-                                            "Paper is now " + (visible ? "visible" : "hidden"));
-                        });
+                .onUpdate(update -> {
+                    final boolean visible = shouldRenderPaper(update);
+                    update.getPlayer().sendMessage("Paper is now " + (visible ? "visible" : "hidden"));
+                });
     }
 
     private boolean shouldRenderPaper(ViewContext context) {

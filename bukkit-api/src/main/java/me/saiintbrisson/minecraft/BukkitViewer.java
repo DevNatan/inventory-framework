@@ -11,7 +11,8 @@ import org.jetbrains.annotations.NotNull;
 @RequiredArgsConstructor
 class BukkitViewer implements Viewer {
 
-    @NotNull private final Player player;
+    @NotNull
+    private final Player player;
 
     @Override
     public void open(@NotNull final ViewContainer container) {
@@ -29,8 +30,7 @@ class BukkitViewer implements Viewer {
     public static Player toPlayerOfContext(ViewContext context) {
         final Viewer viewer = context.getViewers().get(0);
         if (viewer == null)
-            throw new IllegalStateException(
-                    "Tried to retrieve context player while it's not valid anymore.");
+            throw new IllegalStateException("Tried to retrieve context player while it's not valid anymore.");
 
         return ((BukkitViewer) viewer).getPlayer();
     }

@@ -37,23 +37,16 @@ class ViewListener implements Listener {
                 && view.getViewFrame() != null
                 && !view.getViewFrame().equals(viewFrame)) return null;
 
-        final ViewContext context =
-                view.getContext(
-                        target ->
-                                target.getViewers().stream()
-                                        .map(viewer -> (BukkitViewer) viewer)
-                                        .anyMatch(
-                                                viewer ->
-                                                        viewer.getPlayer()
-                                                                .getName()
-                                                                .equals(player.getName())));
+        final ViewContext context = view.getContext(target -> target.getViewers().stream()
+                .map(viewer -> (BukkitViewer) viewer)
+                .anyMatch(viewer -> viewer.getPlayer().getName().equals(player.getName())));
 
         // for some reason I haven't figured out which one yet, it's possible
         // that the View's inventory is open and the context doesn't exist,
         // so we check to see if it's null
         if (context == null) {
-            throw new IllegalStateException(
-                    String.format("View context cannot be null in %s", view.getClass().getName()));
+            throw new IllegalStateException(String.format(
+                    "View context cannot be null in %s", view.getClass().getName()));
         }
 
         return context;
@@ -107,18 +100,13 @@ class ViewListener implements Listener {
 
         if (context == null) return;
 
-        final ViewSlotContext slotContext =
-                new BukkitClickViewSlotContext(
-                        context.resolve(
-                                event.getSlot(),
-                                true,
-                                event.getClickedInventory() instanceof PlayerInventory),
-                        context,
-                        event);
+        final ViewSlotContext slotContext = new BukkitClickViewSlotContext(
+                context.resolve(event.getSlot(), true, event.getClickedInventory() instanceof PlayerInventory),
+                context,
+                event);
 
         try {
-            view.runCatching(
-                    context, () -> view.getPipeline().execute(AbstractView.CLICK, slotContext));
+            view.runCatching(context, () -> view.getPipeline().execute(AbstractView.CLICK, slotContext));
         } catch (final Throwable e) {
             plugin.getLogger().log(Level.SEVERE, "Failed to execute click pipeline", e);
             return;
@@ -145,33 +133,23 @@ class ViewListener implements Listener {
         view.runCatching(context, () -> view.onClose(close));
         view.prepareClose(close);
 
-        final Viewer viewer =
-                context.getViewers().stream()
-                        .filter(
-                                other ->
-                                        other instanceof BukkitViewer
-                                                && ((BukkitViewer) other)
-                                                        .getPlayer()
-                                                        .equals(player))
-                        .findFirst()
-                        .orElseThrow(
-                                () ->
-                                        new IllegalStateException(
-                                                "Tried to close view without being a viewer of the context"));
+        final Viewer viewer = context.getViewers().stream()
+                .filter(other -> other instanceof BukkitViewer
+                        && ((BukkitViewer) other).getPlayer().equals(player))
+                .findFirst()
+                .orElseThrow(
+                        () -> new IllegalStateException("Tried to close view without being a viewer of the context"));
 
         // TODO move to own pipeline phase
         if (close.isCancelled()) {
-            Bukkit.getScheduler()
-                    .runTaskLater(
-                            viewFrame.getOwner(), () -> viewer.open(close.getContainer()), 1L);
+            Bukkit.getScheduler().runTaskLater(viewFrame.getOwner(), () -> viewer.open(close.getContainer()), 1L);
 
             // set the old cursor item
             final ItemStack cursor = player.getItemOnCursor();
 
             // suppress null check since cursor can be null in legacy versions
             //noinspection ConstantConditions
-            if ((cursor != null) && cursor.getType() != Material.AIR)
-                player.setItemOnCursor(cursor);
+            if ((cursor != null) && cursor.getType() != Material.AIR) player.setItemOnCursor(cursor);
             return;
         }
 

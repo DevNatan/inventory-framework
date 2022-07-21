@@ -24,12 +24,14 @@ public class OpenViewContext extends BaseViewContext {
     private int containerSize;
 
     /** The type of the container that player will see. */
-    @Setter private ViewType containerType;
+    @Setter
+    private ViewType containerType;
 
     @Getter(AccessLevel.PACKAGE)
     private CompletableFuture<?> job;
 
-    @Setter private boolean cancelled;
+    @Setter
+    private boolean cancelled;
 
     OpenViewContext(@NotNull final AbstractView view) {
         super(view, null);
@@ -94,9 +96,8 @@ public class OpenViewContext extends BaseViewContext {
 
     @Override
     public void inventoryModificationTriggered() {
-        throw new IllegalStateException(
-                "It is not allowed to modify the inventory "
-                        + "in the opening context as the inventory was not even created. "
-                        + "Use the onRender() rendering function for this.");
+        throw new IllegalStateException("It is not allowed to modify the inventory "
+                + "in the opening context as the inventory was not even created. "
+                + "Use the onRender() rendering function for this.");
     }
 }

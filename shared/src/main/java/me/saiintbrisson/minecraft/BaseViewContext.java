@@ -23,8 +23,7 @@ class BaseViewContext extends AbstractVirtualView implements ViewContext {
     private final ViewContainer container;
     private final ViewContextAttributes attributes;
 
-    protected BaseViewContext(
-            final @NotNull AbstractView root, final @Nullable ViewContainer container) {
+    protected BaseViewContext(final @NotNull AbstractView root, final @Nullable ViewContainer container) {
         this.root = root;
         this.container = container;
         this.attributes = new ViewContextAttributes(container);
@@ -91,8 +90,7 @@ class BaseViewContext extends AbstractVirtualView implements ViewContext {
     @Override
     @NotNull
     public final ViewContainer getContainer() {
-        return Objects.requireNonNull(
-                getAttributes().getContainer(), "View context container cannot be null");
+        return Objects.requireNonNull(getAttributes().getContainer(), "View context container cannot be null");
     }
 
     @Override
@@ -136,8 +134,7 @@ class BaseViewContext extends AbstractVirtualView implements ViewContext {
     @Override
     public <T> PaginatedViewContext<T> paginated() {
         if (!(this.getRoot() instanceof PaginatedView))
-            throw new IllegalStateException(
-                    "Only paginated views can enforce paginated view context");
+            throw new IllegalStateException("Only paginated views can enforce paginated view context");
 
         return (PaginatedViewContext<T>) this;
     }
@@ -176,12 +173,10 @@ class BaseViewContext extends AbstractVirtualView implements ViewContext {
     @Override
     @SuppressWarnings({"rawtypes", "unchecked"})
     public final void open(
-            @NotNull Class<? extends AbstractView> viewClass,
-            @NotNull Map<String, @Nullable Object> data) {
-        final PlatformViewFrame platformViewFrame =
-                Objects.requireNonNull(
-                        getRoot().getViewFrame(),
-                        "Fast parent view open by context bridge is only supported if root view is registered under a ViewFrame.");
+            @NotNull Class<? extends AbstractView> viewClass, @NotNull Map<String, @Nullable Object> data) {
+        final PlatformViewFrame platformViewFrame = Objects.requireNonNull(
+                getRoot().getViewFrame(),
+                "Fast parent view open by context bridge is only supported if root view is registered under a ViewFrame.");
 
         for (final Viewer viewer : getViewers()) platformViewFrame.open(viewClass, viewer, data);
     }

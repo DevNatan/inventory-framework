@@ -11,16 +11,11 @@ public class ErrorHandlerTest {
     @Test
     void shouldCatchException() {
         AbstractView view = new AbstractView(0, null, ViewType.CHEST) {};
-        view.setErrorHandler(
-                ($, exception) -> assertTrue(exception instanceof IllegalStateException));
+        view.setErrorHandler(($, exception) -> assertTrue(exception instanceof IllegalStateException));
 
-        assertDoesNotThrow(
-                () ->
-                        view.runCatching(
-                                null,
-                                () -> {
-                                    throw new IllegalStateException();
-                                }));
+        assertDoesNotThrow(() -> view.runCatching(null, () -> {
+            throw new IllegalStateException();
+        }));
     }
 
     @Test
@@ -28,11 +23,9 @@ public class ErrorHandlerTest {
         AbstractView view = new AbstractView(0, null, ViewType.CHEST) {};
 
         try {
-            view.runCatching(
-                    null,
-                    () -> {
-                        throw new IllegalStateException();
-                    });
+            view.runCatching(null, () -> {
+                throw new IllegalStateException();
+            });
             Assertions.fail();
         } catch (IllegalStateException ignored) {
         }
@@ -44,11 +37,9 @@ public class ErrorHandlerTest {
         BaseViewContext context = new BaseViewContext(view, null);
 
         try {
-            view.runCatching(
-                    context,
-                    () -> {
-                        throw new IllegalStateException();
-                    });
+            view.runCatching(context, () -> {
+                throw new IllegalStateException();
+            });
             Assertions.fail();
         } catch (IllegalStateException ignored) {
         }
@@ -58,35 +49,24 @@ public class ErrorHandlerTest {
     void shouldHandleContextException() {
         AbstractView view = new AbstractView(0, null, ViewType.CHEST) {};
         BaseViewContext context = new BaseViewContext(view, null);
-        context.setErrorHandler(
-                ($, exception) -> assertTrue(exception instanceof IllegalStateException));
+        context.setErrorHandler(($, exception) -> assertTrue(exception instanceof IllegalStateException));
 
-        assertDoesNotThrow(
-                () ->
-                        view.runCatching(
-                                context,
-                                () -> {
-                                    throw new IllegalStateException();
-                                }));
+        assertDoesNotThrow(() -> view.runCatching(context, () -> {
+            throw new IllegalStateException();
+        }));
     }
 
     @Test
     void shouldPropagateContextException() {
         AbstractView view = new AbstractView(0, null, ViewType.CHEST) {};
-        view.setErrorHandler(
-                ($, exception) -> assertTrue(exception instanceof IllegalStateException));
+        view.setErrorHandler(($, exception) -> assertTrue(exception instanceof IllegalStateException));
 
         BaseViewContext context = new BaseViewContext(view, null);
-        context.setErrorHandler(
-                ($, exception) -> assertTrue(exception instanceof IllegalStateException));
+        context.setErrorHandler(($, exception) -> assertTrue(exception instanceof IllegalStateException));
 
-        assertDoesNotThrow(
-                () ->
-                        view.runCatching(
-                                context,
-                                () -> {
-                                    throw new IllegalStateException();
-                                }));
+        assertDoesNotThrow(() -> view.runCatching(context, () -> {
+            throw new IllegalStateException();
+        }));
     }
 
     @Test
@@ -96,16 +76,11 @@ public class ErrorHandlerTest {
 
         BaseViewContext context = new BaseViewContext(view, null);
         context.setPropagateErrors(false);
-        context.setErrorHandler(
-                ($, exception) -> assertTrue(exception instanceof IllegalStateException));
+        context.setErrorHandler(($, exception) -> assertTrue(exception instanceof IllegalStateException));
 
-        assertDoesNotThrow(
-                () ->
-                        view.runCatching(
-                                context,
-                                () -> {
-                                    throw new IllegalStateException();
-                                }));
+        assertDoesNotThrow(() -> view.runCatching(context, () -> {
+            throw new IllegalStateException();
+        }));
     }
 
     // TODO

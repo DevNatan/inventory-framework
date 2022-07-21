@@ -58,8 +58,7 @@ public final class AsyncPaginationDataState<T> {
      * @return This async pagination data state.
      */
     @Contract(mutates = "this")
-    public AsyncPaginationDataState<T> onError(
-            BiConsumer<PaginatedViewContext<T>, Throwable> handler) {
+    public AsyncPaginationDataState<T> onError(BiConsumer<PaginatedViewContext<T>, Throwable> handler) {
         this.error = handler;
         return this;
     }

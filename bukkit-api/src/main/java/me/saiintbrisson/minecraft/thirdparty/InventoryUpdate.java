@@ -67,13 +67,9 @@ public final class InventoryUpdate {
         CHAT_MESSAGE_CLASS = ReflectionUtils.getNMSClass("network.chat", "ChatMessage");
         PACKET_PLAY_OUT_OPEN_WINDOW_CLASS =
                 ReflectionUtils.getNMSClass("network.protocol.game", "PacketPlayOutOpenWindow");
-        I_CHAT_BASE_COMPONENT_CLASS =
-                ReflectionUtils.getNMSClass("network.chat", "IChatBaseComponent");
+        I_CHAT_BASE_COMPONENT_CLASS = ReflectionUtils.getNMSClass("network.chat", "IChatBaseComponent");
         // Check if we use containers, otherwise, can throw errors on older versions.
-        CONTAINERS_CLASS =
-                useContainers()
-                        ? ReflectionUtils.getNMSClass("world.inventory", "Containers")
-                        : null;
+        CONTAINERS_CLASS = useContainers() ? ReflectionUtils.getNMSClass("world.inventory", "Containers") : null;
         ENTITY_PLAYER_CLASS = ReflectionUtils.getNMSClass("server.level", "EntityPlayer");
         CONTAINER_CLASS = ReflectionUtils.getNMSClass("world.inventory", "Container");
 
@@ -84,44 +80,28 @@ public final class InventoryUpdate {
             MethodHandles.Lookup lookup = MethodHandles.lookup();
 
             // Initialize methods.
-            handle =
-                    lookup.findVirtual(
-                            CRAFT_PLAYER_CLASS,
-                            "getHandle",
-                            MethodType.methodType(ENTITY_PLAYER_CLASS));
+            handle = lookup.findVirtual(CRAFT_PLAYER_CLASS, "getHandle", MethodType.methodType(ENTITY_PLAYER_CLASS));
             bukkitView =
-                    lookup.findVirtual(
-                            CONTAINER_CLASS,
-                            "getBukkitView",
-                            MethodType.methodType(InventoryView.class));
+                    lookup.findVirtual(CONTAINER_CLASS, "getBukkitView", MethodType.methodType(InventoryView.class));
 
             // Initialize constructors.
-            chatMessageConstructor =
-                    CHAT_MESSAGE_CLASS.getConstructor(String.class, Object[].class);
-            packetPlayOutOpenWindowConstructor =
-                    (useContainers())
-                            ? PACKET_PLAY_OUT_OPEN_WINDOW_CLASS.getConstructor(
-                                    int.class, CONTAINERS_CLASS, I_CHAT_BASE_COMPONENT_CLASS)
-                            :
-                            // Older versions use Strings instead of containers, and require an int
-                            // for the inventory size.
-                            PACKET_PLAY_OUT_OPEN_WINDOW_CLASS.getConstructor(
-                                    int.class,
-                                    String.class,
-                                    I_CHAT_BASE_COMPONENT_CLASS,
-                                    int.class);
+            chatMessageConstructor = CHAT_MESSAGE_CLASS.getConstructor(String.class, Object[].class);
+            packetPlayOutOpenWindowConstructor = (useContainers())
+                    ? PACKET_PLAY_OUT_OPEN_WINDOW_CLASS.getConstructor(
+                            int.class, CONTAINERS_CLASS, I_CHAT_BASE_COMPONENT_CLASS)
+                    :
+                    // Older versions use Strings instead of containers, and require an int
+                    // for the inventory size.
+                    PACKET_PLAY_OUT_OPEN_WINDOW_CLASS.getConstructor(
+                            int.class, String.class, I_CHAT_BASE_COMPONENT_CLASS, int.class);
 
             // Initialize fields.
-            activeContainerField =
-                    (version == 17)
-                            ? ENTITY_PLAYER_CLASS.getField("bV")
-                            : (version == 18)
-                                    ? ENTITY_PLAYER_CLASS.getField("bW")
-                                    : ENTITY_PLAYER_CLASS.getField("activeContainer");
-            windowIdField =
-                    (version > 16)
-                            ? CONTAINER_CLASS.getField("j")
-                            : CONTAINER_CLASS.getField("windowId");
+            activeContainerField = (version == 17)
+                    ? ENTITY_PLAYER_CLASS.getField("bV")
+                    : (version == 18)
+                            ? ENTITY_PLAYER_CLASS.getField("bW")
+                            : ENTITY_PLAYER_CLASS.getField("activeContainer");
+            windowIdField = (version > 16) ? CONTAINER_CLASS.getField("j") : CONTAINER_CLASS.getField("windowId");
         } catch (ReflectiveOperationException exception) {
             exception.printStackTrace();
         }
@@ -149,9 +129,7 @@ public final class InventoryUpdate {
             }
 
             // Create new title.
-            Object title =
-                    chatMessageConstructor.newInstance(
-                            newTitle != null ? newTitle : "", new Object[] {});
+            Object title = chatMessageConstructor.newInstance(newTitle != null ? newTitle : "", new Object[] {});
 
             // Get activeContainer from EntityPlayer.
             Object activeContainer = activeContainerField.get(entityPlayer);
@@ -167,8 +145,7 @@ public final class InventoryUpdate {
             InventoryType type = view.getTopInventory().getType();
 
             // Workbenchs and anvils can change their title since 1.14.
-            if ((type == InventoryType.WORKBENCH || type == InventoryType.ANVIL)
-                    && !useContainers()) return;
+            if ((type == InventoryType.WORKBENCH || type == InventoryType.ANVIL) && !useContainers()) return;
 
             // You can't reopen crafting, creative and player inventory.
             if (Arrays.asList("CRAFTING", "CREATIVE", "PLAYER").contains(type.name())) return;
@@ -181,10 +158,7 @@ public final class InventoryUpdate {
 
             // If the container was added in a newer versions than the current, return.
             if (container.getContainerVersion() > ReflectionUtils.VER && useContainers()) {
-                Bukkit.getLogger()
-                        .warning(
-                                String.format(
-                                        "This container doesn't work on your current version."));
+                Bukkit.getLogger().warning(String.format("This container doesn't work on your current version."));
                 return;
             }
 
@@ -198,12 +172,9 @@ public final class InventoryUpdate {
             }
 
             // Create packet.
-            Object packet =
-                    (useContainers())
-                            ? packetPlayOutOpenWindowConstructor.newInstance(
-                                    windowId, object, title)
-                            : packetPlayOutOpenWindowConstructor.newInstance(
-                                    windowId, object, title, size);
+            Object packet = (useContainers())
+                    ? packetPlayOutOpenWindowConstructor.newInstance(windowId, object, title)
+                    : packetPlayOutOpenWindowConstructor.newInstance(windowId, object, title, size);
 
             // Send packet sync.
             ReflectionUtils.sendPacketSync(player, packet);

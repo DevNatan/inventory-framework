@@ -14,8 +14,7 @@ final class GlobalClickInterceptor implements PipelineInterceptor<BukkitClickVie
 
     @Override
     public void intercept(
-            @NotNull PipelineContext<BukkitClickViewSlotContext> pipeline,
-            BukkitClickViewSlotContext subject) {
+            @NotNull PipelineContext<BukkitClickViewSlotContext> pipeline, BukkitClickViewSlotContext subject) {
         final InventoryClickEvent event = subject.getClickOrigin();
 
         // inherit cancellation so we can un-cancel it

@@ -31,8 +31,8 @@ public interface ViewContext extends VirtualView {
      *
      * <p>Direct modifications to the container must launch an {@link
      * AbstractVirtualView#inventoryModificationTriggered()}, which signals that that function will
-     * change the container for whoever is seeing what, which, if it is not possible at that moment
-     * or if the container is not sufficiently prepared for this, it must fail. .
+     * change the container for whoever is seeing what, which, if it is not possible at that moment or
+     * if the container is not sufficiently prepared for this, it must fail. .
      *
      * @return The container of this context.
      */
@@ -86,8 +86,8 @@ public interface ViewContext extends VirtualView {
      * View#onOpen(OpenViewContext)} instead.
      *
      * <p>This method is version dependant, so it may be that your server version is not yet
-     * supported, if you try to use this method and fail (can fail silently), report it to the
-     * library developers to add support to your version.
+     * supported, if you try to use this method and fail (can fail silently), report it to the library
+     * developers to add support to your version.
      *
      * @param title The new container title.
      */
@@ -193,9 +193,7 @@ public interface ViewContext extends VirtualView {
 
     void open(@NotNull Class<? extends AbstractView> viewClass);
 
-    void open(
-            @NotNull Class<? extends AbstractView> viewClass,
-            @NotNull Map<String, @Nullable Object> data);
+    void open(@NotNull Class<? extends AbstractView> viewClass, @NotNull Map<String, @Nullable Object> data);
 
     /**
      * Attempts to resolve an item at a specified index.
@@ -204,26 +202,26 @@ public interface ViewContext extends VirtualView {
      * this library. No compatibility guarantees are provided. </i></b>
      *
      * @param index The item index.
-     * @param resolveOnRoot Search in the {@link #getRoot() context root} or just the items defined
-     *     in the context itself.
+     * @param resolveOnRoot Search in the {@link #getRoot() context root} or just the items defined in
+     *     the context itself.
      * @return The item at the specified index.
      */
     @ApiStatus.Internal
     ViewItem resolve(int index, boolean resolveOnRoot);
 
     /**
-     * Creates a new slot context instance containing within it data of an item whose reference key
-     * is the same as specified.
+     * Creates a new slot context instance containing within it data of an item whose reference key is
+     * the same as specified.
      *
-     * <p>Item reference keys are used as a bridge between one item and another, ideal when there
-     * are items that interact with each other, for example: you click on an item and another item
-     * in the container is updated.
+     * <p>Item reference keys are used as a bridge between one item and another, ideal when there are
+     * items that interact with each other, for example: you click on an item and another item in the
+     * container is updated.
      *
      * <p>In previous versions this was not possible as only updating the entire container was it
-     * possible to update an item to which the modification was applied causing side effects on
-     * other items that had rendering functions that act during the update, or, paginated views
-     * which items and layout were resolved again, so the performance using references is much
-     * better than a full container update.
+     * possible to update an item to which the modification was applied causing side effects on other
+     * items that had rendering functions that act during the update, or, paginated views which items
+     * and layout were resolved again, so the performance using references is much better than a full
+     * container update.
      *
      * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
      * such API may be changed or may be removed completely in any further release. </i></b>

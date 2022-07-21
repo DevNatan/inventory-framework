@@ -140,24 +140,19 @@ class BasePaginatedViewContext<T> extends BaseViewContext implements PaginatedVi
     public final void setSource(@NotNull List<? extends T> source) {
         tryResolveLayout();
         setPaginator(
-                new Paginator<>(
-                        isLayoutSignatureChecked() ? getItemsLayer().size() : getPageSize(),
-                        source));
+                new Paginator<>(isLayoutSignatureChecked() ? getItemsLayer().size() : getPageSize(), source));
     }
 
     @Override
     @ApiStatus.Experimental
-    public final void setSource(
-            @NotNull Function<PaginatedViewContext<T>, List<? extends T>> sourceProvider) {
+    public final void setSource(@NotNull Function<PaginatedViewContext<T>, List<? extends T>> sourceProvider) {
         final Paginator<T> paginator = getPaginator();
         if (paginator != null && paginator.isProvided())
             throw new IllegalStateException("Pagination source cannot be provided more than once");
 
         tryResolveLayout();
         setPaginator(
-                new Paginator<>(
-                        isLayoutSignatureChecked() ? getItemsLayer().size() : getPageSize(),
-                        sourceProvider));
+                new Paginator<>(isLayoutSignatureChecked() ? getItemsLayer().size() : getPageSize(), sourceProvider));
     }
 
     @Override
@@ -168,9 +163,7 @@ class BasePaginatedViewContext<T> extends BaseViewContext implements PaginatedVi
 
         final AsyncPaginationDataState<T> state = new AsyncPaginationDataState<>(sourceFuture);
         setPaginator(
-                new Paginator<>(
-                        isLayoutSignatureChecked() ? getItemsLayer().size() : getPageSize(),
-                        state));
+                new Paginator<>(isLayoutSignatureChecked() ? getItemsLayer().size() : getPageSize(), state));
         return state;
     }
 
@@ -178,8 +171,7 @@ class BasePaginatedViewContext<T> extends BaseViewContext implements PaginatedVi
     public final void setPagesCount(int pagesCount) {
         final Paginator<T> paginator = getPaginator();
         if (paginator == null)
-            throw new IllegalStateException(
-                    "Paginator must be initialized before set the source size.");
+            throw new IllegalStateException("Paginator must be initialized before set the source size.");
 
         paginator.setPagesCount(pagesCount);
     }
@@ -211,13 +203,11 @@ class BasePaginatedViewContext<T> extends BaseViewContext implements PaginatedVi
 
     @Override
     public void setLayout(char character, Consumer<ViewItem> factory) {
-        setLayout(
-                character,
-                () -> {
-                    final ViewItem item = new ViewItem();
-                    factory.accept(item);
-                    return item;
-                });
+        setLayout(character, () -> {
+            final ViewItem item = new ViewItem();
+            factory.accept(item);
+            return item;
+        });
     }
 
     @Override
