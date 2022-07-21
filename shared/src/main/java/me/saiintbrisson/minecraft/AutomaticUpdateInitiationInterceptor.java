@@ -28,11 +28,11 @@ final class AutomaticUpdateInitiationInterceptor {
             if (subject.getViewers().size() != 1) return;
 
             subject.getUpdateJob().resume();
-			calledSuccessfully();
+            calledSuccessfully();
         }
 
-		@TestOnly
-		void calledSuccessfully() {}
+        @TestOnly
+        void calledSuccessfully() {}
     }
 
     /**
@@ -50,10 +50,10 @@ final class AutomaticUpdateInitiationInterceptor {
             if (subject.getViewers().size() != 1) return;
 
             subject.getUpdateJob().pause();
-			calledSuccessfully();
-		}
+            calledSuccessfully();
+        }
 
-		@TestOnly
-		void calledSuccessfully() {}
+        @TestOnly
+        void calledSuccessfully() {}
     }
 }
