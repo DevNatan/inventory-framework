@@ -43,9 +43,9 @@ body:
   - type: input
     id: version
     attributes:
-      label: ⭐ Version
-      description: What is your current Minecraft server version?
-      placeholder: "e.g. 1.16.5"
+      label: ⭐ Versions
+      description: What is your current Minecraft server and IF version?
+      placeholder: "e.g. MC 1.16.5, IF v2.4.0"
     validations:
       required: true
   - type: textarea
