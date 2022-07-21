@@ -142,6 +142,7 @@ public abstract class AbstractViewSlotContext extends BaseViewContext implements
         return parent;
     }
 
+    /** {@inheritDoc} **/
     @Override
     public <T> PaginatedViewContext<T> paginated() {
         return parent.paginated();
