@@ -10,8 +10,11 @@ final class BukkitViewUpdateJobImpl implements ViewUpdateJob, Runnable {
 
     private final VirtualView view;
 
-    @Getter private final long delay;
-    @Getter private final long interval;
+    @Getter
+    private final long delay;
+
+    @Getter
+    private final long interval;
 
     private BukkitTask task;
     private boolean interrupted;
@@ -32,14 +35,12 @@ final class BukkitViewUpdateJobImpl implements ViewUpdateJob, Runnable {
 
     @Override
     public void start() {
-        if (interrupted)
-            throw new IllegalStateException("Cannot start a interrupted view update job");
+        if (interrupted) throw new IllegalStateException("Cannot start a interrupted view update job");
         if (task != null) throw new IllegalStateException("View update job already started");
 
         final PlatformViewFrame<?, ?, ?> initiator = findViewFrame();
         if (initiator == null)
-            throw new IllegalStateException(
-                    "Cannot schedule view update because there's no initiator to do this");
+            throw new IllegalStateException("Cannot schedule view update because there's no initiator to do this");
 
         final Plugin plugin = (Plugin) initiator.getOwner();
         task = plugin.getServer().getScheduler().runTaskTimer(plugin, this, delay, interval);

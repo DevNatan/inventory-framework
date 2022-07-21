@@ -37,17 +37,20 @@ public abstract class AbstractView extends AbstractVirtualView {
 
     static final ViewType DEFAULT_TYPE = ViewType.CHEST;
 
-    @ToString.Include private final int size;
-    @ToString.Include private final String title;
-    @ToString.Include private final @NotNull ViewType type;
+    @ToString.Include
+    private final int size;
+
+    @ToString.Include
+    private final String title;
+
+    @ToString.Include
+    private final @NotNull ViewType type;
 
     PlatformViewFrame<?, ?, ?> viewFrame;
 
-    private final Set<ViewContext> contexts =
-            Collections.newSetFromMap(Collections.synchronizedMap(new HashMap<>()));
+    private final Set<ViewContext> contexts = Collections.newSetFromMap(Collections.synchronizedMap(new HashMap<>()));
 
-    private final Pipeline<ViewContext> pipeline =
-            new Pipeline<>(OPEN, RENDER, UPDATE, CLICK, CLOSE);
+    private final Pipeline<ViewContext> pipeline = new Pipeline<>(OPEN, RENDER, UPDATE, CLICK, CLOSE);
 
     @ToString.Include
     private boolean cancelOnClick,
@@ -61,9 +64,9 @@ public abstract class AbstractView extends AbstractVirtualView {
             closeOnOutsideClick;
 
     /**
-     * An initialized view is one that has already been registered if there is a ViewFrame or has
-     * been initialized manually. It is not possible to perform certain operations if the view has
-     * already been initialized.
+     * An initialized view is one that has already been registered if there is a ViewFrame or has been
+     * initialized manually. It is not possible to perform certain operations if the view has already
+     * been initialized.
      */
     private boolean initialized;
 
@@ -93,13 +96,12 @@ public abstract class AbstractView extends AbstractVirtualView {
     /**
      * Called when this view is rendered to the player for the first time.
      *
-     * <p>This is where you will define items that will be contained non-persistently in the
-     * context.
+     * <p>This is where you will define items that will be contained non-persistently in the context.
      *
-     * <p>Using {@link View#slot(int)} here will cause a leak of items in memory or that the item
-     * that was previously defined will be overwritten as the slot item definition method is for use
-     * in the constructor only once. Instead, you should use the context item definition function
-     * {@link ViewContext#slot(int)}.
+     * <p>Using {@link View#slot(int)} here will cause a leak of items in memory or that the item that
+     * was previously defined will be overwritten as the slot item definition method is for use in the
+     * constructor only once. Instead, you should use the context item definition function {@link
+     * ViewContext#slot(int)}.
      *
      * <p>Handlers call order:
      *
@@ -130,8 +132,7 @@ public abstract class AbstractView extends AbstractVirtualView {
     /**
      * Called when the player closes the view's inventory.
      *
-     * <p>It is possible to cancel this event and have the view's inventory open again for the
-     * player.
+     * <p>It is possible to cancel this event and have the view's inventory open again for the player.
      *
      * @param context The player view context.
      */
@@ -163,16 +164,16 @@ public abstract class AbstractView extends AbstractVirtualView {
      * <p>Any function that triggers an {@link #inventoryModificationTriggered() inventory
      * modification} is prohibited from being used in this handler.
      *
-     * <p>This context is cancelable and canceling this context will cancel the click, thus
-     * canceling all subsequent interceptors causing the pipeline to terminate immediately.
+     * <p>This context is cancelable and canceling this context will cancel the click, thus canceling
+     * all subsequent interceptors causing the pipeline to terminate immediately.
      *
      * @param context The click context.
      */
     protected void onClick(@NotNull ViewSlotClickContext context) {}
 
     /**
-     * Called when the player who clicks outside the view of containers, neither the view's
-     * container nor the player's own container.
+     * Called when the player who clicks outside the view of containers, neither the view's container
+     * nor the player's own container.
      *
      * @param context The click context.
      * @deprecated Use {@link #onClick(ViewSlotContext)} with {@link
@@ -201,8 +202,8 @@ public abstract class AbstractView extends AbstractVirtualView {
     /**
      * Called when the player holds an item in the inventory.
      *
-     * <p>This handler will only work if the player manages to successfully hold the item, for
-     * example it will not be called if the click has been canceled for whatever reasons.
+     * <p>This handler will only work if the player manages to successfully hold the item, for example
+     * it will not be called if the click has been canceled for whatever reasons.
      *
      * <p>This context is non-cancelable.
      *
@@ -228,8 +229,7 @@ public abstract class AbstractView extends AbstractVirtualView {
      * @param fromContext The input context of the move.
      * @param toContext The output context of the move.
      */
-    protected void onItemRelease(
-            @NotNull ViewSlotContext fromContext, @NotNull ViewSlotContext toContext) {}
+    protected void onItemRelease(@NotNull ViewSlotContext fromContext, @NotNull ViewSlotContext toContext) {}
 
     /**
      * Called when a player moves a view item out of the view's inventory.
@@ -246,15 +246,13 @@ public abstract class AbstractView extends AbstractVirtualView {
         // wait for asynchronous open
         if (open.getJob() != null) {
             open.getJob()
-                    .whenComplete(
-                            ($, error) -> {
-                                postOpen(viewer, open);
-                            })
-                    .exceptionally(
-                            error -> {
-                                throwException(open, new RuntimeException(error));
-                                return null;
-                            });
+                    .whenComplete(($, error) -> {
+                        postOpen(viewer, open);
+                    })
+                    .exceptionally(error -> {
+                        throwException(open, new RuntimeException(error));
+                        return null;
+                    });
             return;
         }
 
@@ -264,21 +262,15 @@ public abstract class AbstractView extends AbstractVirtualView {
     private void postOpen(@NotNull Viewer viewer, @NotNull OpenViewContext openContext) {
         if (openContext.isCancelled()) return;
 
-        final String containerTitle =
-                openContext.getContainerTitle() == null ? title : openContext.getContainerTitle();
-        final ViewType containerType =
-                openContext.getContainerType() == null ? type : openContext.getContainerType();
+        final String containerTitle = openContext.getContainerTitle() == null ? title : openContext.getContainerTitle();
+        final ViewType containerType = openContext.getContainerType() == null ? type : openContext.getContainerType();
 
         // rows will be normalized to fixed container size on `createContainer`
         final int containerSize =
-                openContext.getContainerSize() == 0
-                        ? size
-                        : containerType.normalize(openContext.getContainerSize());
+                openContext.getContainerSize() == 0 ? size : containerType.normalize(openContext.getContainerSize());
 
         final ViewContainer container =
-                viewFrame
-                        .getFactory()
-                        .createContainer(this, containerSize, containerTitle, containerType);
+                viewFrame.getFactory().createContainer(this, containerSize, containerTitle, containerType);
 
         final BaseViewContext context = viewFrame.getFactory().createContext(this, container, null);
         context.setItems(new ViewItem[containerSize]);
@@ -289,13 +281,9 @@ public abstract class AbstractView extends AbstractVirtualView {
         context.getViewers().forEach(context.getContainer()::open);
     }
 
-    private OpenViewContext internalOpen(
-            @NotNull Viewer viewer, @NotNull Map<String, Object> data) {
+    private OpenViewContext internalOpen(@NotNull Viewer viewer, @NotNull Map<String, Object> data) {
         final OpenViewContext context =
-                (OpenViewContext)
-                        getViewFrame()
-                                .getFactory()
-                                .createContext(this, null, OpenViewContext.class);
+                (OpenViewContext) getViewFrame().getFactory().createContext(this, null, OpenViewContext.class);
 
         context.addViewer(viewer);
         data.forEach(context::set);
@@ -539,23 +527,22 @@ public abstract class AbstractView extends AbstractVirtualView {
     /**
      * Throws an exception if the view has already been initialized.
      *
-     * <p>This method is to be used in cases where the user may mistakenly use functions that must
-     * be used in the view constructor, in the handlers, such as: defining the data of a paginated
-     * view in the rendering function without using a context.
+     * <p>This method is to be used in cases where the user may mistakenly use functions that must be
+     * used in the view constructor, in the handlers, such as: defining the data of a paginated view
+     * in the rendering function without using a context.
      *
      * @throws IllegalStateException If this view is initialized.
      */
     protected final void ensureNotInitialized() {
         if (!isInitialized()) return;
 
-        throw new IllegalStateException(
-                "Not allowed to change the nature of the view after it has been initialized,"
-                        + " it is incorrect to use global functions of the view in render or"
-                        + " update functions, whatever method you are trying to call you"
-                        + " probably want to call the same function using the context that"
-                        + " was provided for you. For example: it is not allowed to use"
-                        + " \"setSource(...)\" in the rendering function, you must use "
-                        + "\"context.paginated().setSource()\" instead.`");
+        throw new IllegalStateException("Not allowed to change the nature of the view after it has been initialized,"
+                + " it is incorrect to use global functions of the view in render or"
+                + " update functions, whatever method you are trying to call you"
+                + " probably want to call the same function using the context that"
+                + " was provided for you. For example: it is not allowed to use"
+                + " \"setSource(...)\" in the rendering function, you must use "
+                + "\"context.paginated().setSource()\" instead.`");
     }
 
     @Override
@@ -578,8 +565,7 @@ public abstract class AbstractView extends AbstractVirtualView {
     protected final void nextTick(@NotNull Runnable job) {
         inventoryModificationTriggered();
         final PlatformViewFrame<?, ?, ?> vf = getViewFrame();
-        if (vf == null)
-            throw new IllegalStateException("Cannot schedule next tick without a view frame");
+        if (vf == null) throw new IllegalStateException("Cannot schedule next tick without a view frame");
 
         vf.nextTick(job);
     }

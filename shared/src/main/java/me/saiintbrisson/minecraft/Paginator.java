@@ -38,10 +38,8 @@ final class Paginator<T> {
         AsyncPaginationDataState<T> _asyncState = null;
 
         if (source instanceof List) _source = (List<T>) source;
-        else if (source instanceof Function)
-            _factory = (Function<PaginatedViewContext<T>, List<T>>) source;
-        else if (source instanceof AsyncPaginationDataState)
-            _asyncState = (AsyncPaginationDataState<T>) source;
+        else if (source instanceof Function) _factory = (Function<PaginatedViewContext<T>, List<T>>) source;
+        else if (source instanceof AsyncPaginationDataState) _asyncState = (AsyncPaginationDataState<T>) source;
         else
             throw new IllegalArgumentException(
                     "Unsupported pagination source type: " + source.getClass().getName());
@@ -111,10 +109,7 @@ final class Paginator<T> {
 
         if (index < 0 || index >= count())
             throw new ArrayIndexOutOfBoundsException(
-                    "Index must be between the range of 0 and "
-                            + (count() - 1)
-                            + ", given: "
-                            + index);
+                    "Index must be between the range of 0 and " + (count() - 1) + ", given: " + index);
 
         List<T> page = new LinkedList<>();
         final int base = index * pageSize;
@@ -133,10 +128,9 @@ final class Paginator<T> {
      */
     private void checkSource() {
         if (source != null) return;
-        throw new IllegalStateException(
-                String.format(
-                        "Paginator source cannot be null (page size = %d, factory = %s, is provided = %b)",
-                        pageSize, factory, provided));
+        throw new IllegalStateException(String.format(
+                "Paginator source cannot be null (page size = %d, factory = %s, is provided = %b)",
+                pageSize, factory, provided));
     }
 
     /**
@@ -160,8 +154,7 @@ final class Paginator<T> {
             return list;
         }
 
-        throw new IllegalArgumentException(
-                String.format(
-                        "Failed to convert value to list: %s", value.getClass().getSimpleName()));
+        throw new IllegalArgumentException(String.format(
+                "Failed to convert value to list: %s", value.getClass().getSimpleName()));
     }
 }

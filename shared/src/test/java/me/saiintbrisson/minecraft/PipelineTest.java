@@ -20,11 +20,9 @@ public class PipelineTest {
     public void singleActionPipeline() {
         List<String> events = new ArrayList<>();
         Pipeline<String> pipeline = new Pipeline<>(pipelinePhase);
-        pipeline.intercept(
-                pipelinePhase,
-                ($, subject) -> {
-                    events.add("intercepted " + subject);
-                });
+        pipeline.intercept(pipelinePhase, ($, subject) -> {
+            events.add("intercepted " + subject);
+        });
         pipeline.execute("some");
         assertEquals(Collections.singletonList("intercepted some"), events);
     }
@@ -33,16 +31,14 @@ public class PipelineTest {
     public void singleActionPipelineWithFail() {
         List<String> events = new ArrayList<>();
         Pipeline<String> pipeline = new Pipeline<>(pipelinePhase);
-        pipeline.intercept(
-                pipelinePhase,
-                ($, subject) -> {
-                    try {
-                        events.add("intercepted " + subject);
-                        throw new UnsupportedOperationException();
-                    } catch (final Throwable ignored) {
-                        events.add("fail " + subject);
-                    }
-                });
+        pipeline.intercept(pipelinePhase, ($, subject) -> {
+            try {
+                events.add("intercepted " + subject);
+                throw new UnsupportedOperationException();
+            } catch (final Throwable ignored) {
+                events.add("fail " + subject);
+            }
+        });
         pipeline.execute("some");
         assertEquals(Arrays.asList("intercepted some", "fail some"), events);
     }
@@ -61,118 +57,95 @@ public class PipelineTest {
     public void actionFinishOrder() {
         List<String> events = new ArrayList<>();
         Pipeline<String> pipeline = new Pipeline<>(pipelinePhase);
-        pipeline.intercept(
-                pipelinePhase,
-                (context, subject) -> {
-                    try {
-                        events.add("intercept1 " + subject);
-                        context.proceed();
-                        events.add("success1 " + subject);
-                    } catch (Throwable ignored) {
-                        events.add("fail1 " + subject);
-                    }
-                });
-        pipeline.intercept(
-                pipelinePhase,
-                (context, subject) -> {
-                    try {
-                        events.add("intercept2 " + subject);
-                        context.proceed();
-                        events.add("success2 " + subject);
-                    } catch (Throwable ignored) {
-                        events.add("fail2 " + subject);
-                    }
-                });
+        pipeline.intercept(pipelinePhase, (context, subject) -> {
+            try {
+                events.add("intercept1 " + subject);
+                context.proceed();
+                events.add("success1 " + subject);
+            } catch (Throwable ignored) {
+                events.add("fail1 " + subject);
+            }
+        });
+        pipeline.intercept(pipelinePhase, (context, subject) -> {
+            try {
+                events.add("intercept2 " + subject);
+                context.proceed();
+                events.add("success2 " + subject);
+            } catch (Throwable ignored) {
+                events.add("fail2 " + subject);
+            }
+        });
         pipeline.execute("some");
-        assertEquals(
-                Arrays.asList(
-                        "intercept1 some", "intercept2 some", "success2 some", "success1 some"),
-                events);
+        assertEquals(Arrays.asList("intercept1 some", "intercept2 some", "success2 some", "success1 some"), events);
     }
 
     @Test
     public void actionFailOrder() {
         List<String> events = new ArrayList<>();
         Pipeline<String> pipeline = new Pipeline<>(pipelinePhase);
-        pipeline.intercept(
-                pipelinePhase,
-                (context, subject) -> {
-                    try {
-                        events.add("intercept1 " + subject);
-                        context.proceed();
-                        events.add("success1 " + subject);
-                    } catch (Throwable ignored) {
-                        events.add("fail1 " + subject);
-                    }
-                });
-        pipeline.intercept(
-                pipelinePhase,
-                (context, subject) -> {
-                    try {
-                        events.add("intercept2 " + subject);
-                        throw new UnsupportedOperationException();
-                    } catch (Throwable e) {
-                        events.add("fail2 " + subject);
-                        throw e;
-                    }
-                });
+        pipeline.intercept(pipelinePhase, (context, subject) -> {
+            try {
+                events.add("intercept1 " + subject);
+                context.proceed();
+                events.add("success1 " + subject);
+            } catch (Throwable ignored) {
+                events.add("fail1 " + subject);
+            }
+        });
+        pipeline.intercept(pipelinePhase, (context, subject) -> {
+            try {
+                events.add("intercept2 " + subject);
+                throw new UnsupportedOperationException();
+            } catch (Throwable e) {
+                events.add("fail2 " + subject);
+                throw e;
+            }
+        });
         pipeline.execute("some");
-        assertEquals(
-                Arrays.asList("intercept1 some", "intercept2 some", "fail2 some", "fail1 some"),
-                events);
+        assertEquals(Arrays.asList("intercept1 some", "intercept2 some", "fail2 some", "fail1 some"), events);
     }
 
     @Test
     public void actionFinishAllOrder() {
         List<String> events = new ArrayList<>();
         Pipeline<String> p1 = new Pipeline<>(pipelinePhase);
-        p1.intercept(
-                pipelinePhase,
-                (context, subject) -> {
-                    try {
-                        events.add("intercept-p1-1 " + subject);
+        p1.intercept(pipelinePhase, (context, subject) -> {
+            try {
+                events.add("intercept-p1-1 " + subject);
 
-                        Pipeline<String> p2 = new Pipeline<>(pipelinePhase);
-                        p2.intercept(
-                                pipelinePhase,
-                                (context1, nested) -> {
-                                    events.add("intercept-p2-1 " + nested);
+                Pipeline<String> p2 = new Pipeline<>(pipelinePhase);
+                p2.intercept(pipelinePhase, (context1, nested) -> {
+                    events.add("intercept-p2-1 " + nested);
 
-                                    Pipeline<String> p3 = new Pipeline<>(pipelinePhase);
-                                    p3.intercept(
-                                            pipelinePhase,
-                                            (context2, nested2) -> {
-                                                events.add("intercept-p3-1 " + nested2);
-                                                context2.proceed();
-                                            });
+                    Pipeline<String> p3 = new Pipeline<>(pipelinePhase);
+                    p3.intercept(pipelinePhase, (context2, nested2) -> {
+                        events.add("intercept-p3-1 " + nested2);
+                        context2.proceed();
+                    });
 
-                                    p3.intercept(
-                                            pipelinePhase,
-                                            (context2, nested2) -> {
-                                                events.add("intercept-p3-2 " + nested2);
-                                                context2.proceed();
-                                            });
+                    p3.intercept(pipelinePhase, (context2, nested2) -> {
+                        events.add("intercept-p3-2 " + nested2);
+                        context2.proceed();
+                    });
 
-                                    p3.execute("p3");
-                                    context1.proceed();
-                                    events.add("success-p2-1 " + nested);
-                                });
-
-                        p2.execute("p2");
-                        context.proceed();
-                        events.add("success-p1-1 " + subject);
-                    } catch (Throwable e) {
-                        events.add("fail-p1-1 " + subject);
-                        throw e;
-                    }
+                    p3.execute("p3");
+                    context1.proceed();
+                    events.add("success-p2-1 " + nested);
                 });
 
-        p1.intercept(
-                pipelinePhase,
-                (context, subject) -> {
-                    events.add("intercept-p1-2 " + subject);
-                    context.proceed();
-                });
+                p2.execute("p2");
+                context.proceed();
+                events.add("success-p1-1 " + subject);
+            } catch (Throwable e) {
+                events.add("fail-p1-1 " + subject);
+                throw e;
+            }
+        });
+
+        p1.intercept(pipelinePhase, (context, subject) -> {
+            events.add("intercept-p1-2 " + subject);
+            context.proceed();
+        });
 
         p1.execute("p1");
         assertEquals(
@@ -202,8 +175,7 @@ public class PipelineTest {
         PipelinePhase after = new PipelinePhase("after");
         Pipeline<String> pipeline = new Pipeline<>(before);
 
-        assertThrows(
-                IllegalArgumentException.class, () -> pipeline.intercept(after, ($, $$) -> {}));
+        assertThrows(IllegalArgumentException.class, () -> pipeline.intercept(after, ($, $$) -> {}));
     }
 
     @Test
@@ -226,23 +198,18 @@ public class PipelineTest {
         checkPipelineOrder(after, before, pipeline);
     }
 
-    private void checkPipelineOrder(
-            PipelinePhase after, PipelinePhase before, Pipeline<String> pipeline) {
+    private void checkPipelineOrder(PipelinePhase after, PipelinePhase before, Pipeline<String> pipeline) {
         AtomicBoolean value = new AtomicBoolean();
 
-        pipeline.intercept(
-                after,
-                (context, $) -> {
-                    value.set(true);
-                    context.proceed();
-                });
+        pipeline.intercept(after, (context, $) -> {
+            value.set(true);
+            context.proceed();
+        });
 
-        pipeline.intercept(
-                before,
-                (context, $) -> {
-                    assertFalse(value.get());
-                    context.proceed();
-                });
+        pipeline.intercept(before, (context, $) -> {
+            assertFalse(value.get());
+            context.proceed();
+        });
 
         pipeline.execute("some");
         assertTrue(value.get());

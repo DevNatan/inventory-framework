@@ -29,10 +29,10 @@ public final class PaginatedViewEmptyState extends PaginatedView<ItemStack> {
 
     @Override
     protected void onRender(@NotNull ViewContext context) {
-        final List<ItemStack> inventoryContents =
-                Arrays.stream(context.getPlayer().getInventory().getContents())
-                        .filter(Objects::nonNull)
-                        .collect(Collectors.toList());
+        final List<ItemStack> inventoryContents = Arrays.stream(
+                        context.getPlayer().getInventory().getContents())
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
 
         context.paginated().setSource(inventoryContents);
 
@@ -49,8 +49,7 @@ public final class PaginatedViewEmptyState extends PaginatedView<ItemStack> {
     }
 
     @Override
-    protected void onItemRender(
-            PaginatedViewSlotContext<ItemStack> render, ViewItem item, ItemStack value) {
+    protected void onItemRender(PaginatedViewSlotContext<ItemStack> render, ViewItem item, ItemStack value) {
         item.withItem(value.clone());
     }
 }

@@ -21,9 +21,7 @@ public final class AdvancedHoldAndRelease extends View {
 
     @Override
     protected void onRender(@NotNull ViewContext context) {
-        context.slot(
-                position.getOrDefault(context.getPlayer().getUniqueId(), 22),
-                new ItemStack(Material.PAPER));
+        context.slot(position.getOrDefault(context.getPlayer().getUniqueId(), 22), new ItemStack(Material.PAPER));
     }
 
     @Override
@@ -33,16 +31,13 @@ public final class AdvancedHoldAndRelease extends View {
     }
 
     @Override
-    protected void onItemRelease(
-            @NotNull ViewSlotContext fromContext, @NotNull ViewSlotContext toContext) {
+    protected void onItemRelease(@NotNull ViewSlotContext fromContext, @NotNull ViewSlotContext toContext) {
         fromContext.resetTitle();
 
         // the player held the item and released it into the same slot
         if (fromContext.getSlot() == toContext.getSlot()) return;
 
-        fromContext
-                .getPlayer()
-                .playSound(fromContext.getPlayer().getLocation(), "random.click", 1F, 1F);
+        fromContext.getPlayer().playSound(fromContext.getPlayer().getLocation(), "random.click", 1F, 1F);
         position.put(fromContext.getPlayer().getUniqueId(), toContext.getSlot());
     }
 

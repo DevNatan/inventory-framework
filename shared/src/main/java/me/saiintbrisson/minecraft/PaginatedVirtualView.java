@@ -19,9 +19,9 @@ public interface PaginatedVirtualView<T> extends VirtualView {
     /**
      * Defines the data that will be used to populate this paginated view.
      *
-     * <p>Note that this is a "static operation", your data will not be updated automatically since
-     * it is not a provider, that is, during the view update the paginated items can be reordered,
-     * but they will not be repaved, for that, you need to specify a {@link #setSource(Function)
+     * <p>Note that this is a "static operation", your data will not be updated automatically since it
+     * is not a provider, that is, during the view update the paginated items can be reordered, but
+     * they will not be repaved, for that, you need to specify a {@link #setSource(Function)
      * pagination provider} that will make your pagination dynamic.
      *
      * <p>You can call this method as many times as you like followed by {@link #update()} to update
@@ -39,8 +39,8 @@ public interface PaginatedVirtualView<T> extends VirtualView {
      * request data and return the correct data for each page.
      *
      * <p>Optimize your requests by specifying a limit of data to be returned, this limit being the
-     * {@link PaginatedViewContext#getPageMaxItemsCount()} maximum amount of items} that the
-     * container can support, taking into account paging nuances, such as {@link
+     * {@link PaginatedViewContext#getPageMaxItemsCount()} maximum amount of items} that the container
+     * can support, taking into account paging nuances, such as {@link
      * PaginatedVirtualView#getLayout()} pagination layout.
      *
      * <p>You can only use this method once during the view's lifecycle as it is a provider, and the

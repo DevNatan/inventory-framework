@@ -13,7 +13,8 @@ import lombok.Getter;
 public final class PipelinePhase {
 
     /** The pipeline phase name. */
-    @Getter private final String name;
+    @Getter
+    private final String name;
 
     @Override
     public String toString() {

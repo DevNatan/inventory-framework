@@ -55,15 +55,13 @@ public class FakeInventory implements Inventory {
 
     @NotNull
     @Override
-    public HashMap<Integer, ItemStack> addItem(@NotNull ItemStack... items)
-            throws IllegalArgumentException {
+    public HashMap<Integer, ItemStack> addItem(@NotNull ItemStack... items) throws IllegalArgumentException {
         throw new UnsupportedOperationException();
     }
 
     @NotNull
     @Override
-    public HashMap<Integer, ItemStack> removeItem(@NotNull ItemStack... items)
-            throws IllegalArgumentException {
+    public HashMap<Integer, ItemStack> removeItem(@NotNull ItemStack... items) throws IllegalArgumentException {
         throw new UnsupportedOperationException();
     }
 
@@ -100,8 +98,7 @@ public class FakeInventory implements Inventory {
     }
 
     @Override
-    public boolean contains(@NotNull Material material, int amount)
-            throws IllegalArgumentException {
+    public boolean contains(@NotNull Material material, int amount) throws IllegalArgumentException {
         throw new UnsupportedOperationException();
     }
 
@@ -117,8 +114,7 @@ public class FakeInventory implements Inventory {
 
     @NotNull
     @Override
-    public HashMap<Integer, ? extends ItemStack> all(@NotNull Material material)
-            throws IllegalArgumentException {
+    public HashMap<Integer, ? extends ItemStack> all(@NotNull Material material) throws IllegalArgumentException {
         throw new UnsupportedOperationException();
     }
 

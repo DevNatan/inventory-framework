@@ -20,8 +20,7 @@ public class FakeItemStack extends ItemStack {
 
     public FakeItemStack(ItemStack item) {
         super(item.getType(), item.getAmount(), item.getDurability());
-        if (!(item instanceof FakeItemStack))
-            throw new IllegalStateException("ItemStack must be a FakeItemStack");
+        if (!(item instanceof FakeItemStack)) throw new IllegalStateException("ItemStack must be a FakeItemStack");
         setType(item.getType());
     }
 

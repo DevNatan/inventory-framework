@@ -19,8 +19,7 @@ public class ViewTypeSlotNormalizationTest {
         ViewType type = ViewType.CHEST;
         int givenContainerSize = 8;
 
-        Assertions.assertThrows(
-                IllegalArgumentException.class, () -> type.normalize(givenContainerSize));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> type.normalize(givenContainerSize));
     }
 
     @Test
@@ -28,7 +27,6 @@ public class ViewTypeSlotNormalizationTest {
         ViewType type = ViewType.CHEST;
         int givenContainerSize = type.getMaxSize() + 1;
 
-        Assertions.assertThrows(
-                IllegalArgumentException.class, () -> type.normalize(givenContainerSize));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> type.normalize(givenContainerSize));
     }
 }

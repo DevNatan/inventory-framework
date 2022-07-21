@@ -36,8 +36,12 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
 
     private static final String BSTATS_SYSTEM_PROPERTY = "inventory-framework.enable-bstats";
 
-    @EqualsAndHashCode.Include private final UUID id = UUID.randomUUID();
-    @EqualsAndHashCode.Include @NotNull private final Plugin owner;
+    @EqualsAndHashCode.Include
+    private final UUID id = UUID.randomUUID();
+
+    @EqualsAndHashCode.Include
+    @NotNull
+    private final Plugin owner;
 
     private ViewErrorHandler errorHandler;
 
@@ -52,12 +56,10 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
     @Setter(AccessLevel.NONE)
     private Listener listener;
 
-    private Function<PaginatedViewContext<?>, ViewItem> defaultPreviousPageItem,
-            defaultNextPageItem;
+    private Function<PaginatedViewContext<?>, ViewItem> defaultPreviousPageItem, defaultNextPageItem;
 
     @Getter(AccessLevel.NONE)
-    private final FeatureInstaller<ViewFrame> featureInstaller =
-            new DefaultFeatureInstaller<>(this);
+    private final FeatureInstaller<ViewFrame> featureInstaller = new DefaultFeatureInstaller<>(this);
 
     static {
         PlatformUtils.setFactory(new BukkitViewComponentFactory());
@@ -100,10 +102,9 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
         synchronized (getViews()) {
             for (final AbstractView view : views) {
                 if (getViews().containsKey(view.getClass()))
-                    throw new IllegalArgumentException(
-                            String.format(
-                                    "View %s already registered, try to use #with before #register instead.",
-                                    view.getClass().getName()));
+                    throw new IllegalArgumentException(String.format(
+                            "View %s already registered, try to use #with before #register instead.",
+                            view.getClass().getName()));
 
                 getViews().put(view.getClass(), view);
 
@@ -134,8 +135,7 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
 
     @Override
     public ViewFrame register() {
-        if (isRegistered())
-            throw new IllegalStateException("This ViewFrame is already registered.");
+        if (isRegistered()) throw new IllegalStateException("This ViewFrame is already registered.");
 
         final ServicesManager servicesManager = getOwner().getServer().getServicesManager();
 
@@ -152,17 +152,14 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
         }
 
         final Plugin plugin = getOwner();
-        plugin.getServer()
-                .getPluginManager()
-                .registerEvents(listener = new ViewListener(plugin, this), plugin);
+        plugin.getServer().getPluginManager().registerEvents(listener = new ViewListener(plugin, this), plugin);
         servicesManager.register(ViewFrame.class, this, plugin, ServicePriority.Normal);
         return this;
     }
 
     private void enableMetrics() {
         final boolean metricsEnabled =
-                Boolean.parseBoolean(
-                        System.getProperty(BSTATS_SYSTEM_PROPERTY, Boolean.TRUE.toString()));
+                Boolean.parseBoolean(System.getProperty(BSTATS_SYSTEM_PROPERTY, Boolean.TRUE.toString()));
 
         if (!metricsEnabled) return;
 
@@ -198,22 +195,18 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
     }
 
     @Override
-    public <T extends AbstractView> @NotNull T open(
-            @NotNull Class<T> viewClass, @NotNull Player player) {
+    public <T extends AbstractView> @NotNull T open(@NotNull Class<T> viewClass, @NotNull Player player) {
         return open(viewClass, player, Collections.emptyMap());
     }
 
     @Override
     public <T extends AbstractView> @NotNull T open(
-            @NotNull Class<T> viewClass,
-            @NotNull Player player,
-            @NotNull Map<String, Object> data) {
+            @NotNull Class<T> viewClass, @NotNull Player player, @NotNull Map<String, Object> data) {
         final Viewer viewerImpl;
         try {
             viewerImpl = PlatformUtils.getFactory().createViewer(player);
         } catch (final Throwable e) {
-            throw new RuntimeException(
-                    "Failed to create viewer implementation to current platform.", e);
+            throw new RuntimeException("Failed to create viewer implementation to current platform.", e);
         }
 
         return open(viewClass, viewerImpl, data);
@@ -223,20 +216,15 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
     public <T extends AbstractView> @NotNull T open(
             @NotNull Class<T> viewClass, @NotNull Viewer viewer, Map<String, Object> data) {
         if (!isRegistered())
-            throw new IllegalStateException(
-                    "Attempt to open a view without having registered the view frame.");
+            throw new IllegalStateException("Attempt to open a view without having registered the view frame.");
 
         @SuppressWarnings("unchecked")
         final T view = (T) views.get(viewClass);
 
         if (view == null)
-            throw new IllegalStateException(
-                    String.format("View %s is not registered.", viewClass.getName()));
+            throw new IllegalStateException(String.format("View %s is not registered.", viewClass.getName()));
 
-        getOwner()
-                .getServer()
-                .getScheduler()
-                .runTaskLater(getOwner(), () -> view.open(viewer, data), 1L);
+        getOwner().getServer().getScheduler().runTaskLater(getOwner(), () -> view.open(viewer, data), 1L);
         return view;
     }
 
@@ -267,35 +255,27 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
     @NotNull
     @Override
     public <C, R> R install(@NotNull Feature<C, R> feature, @NotNull UnaryOperator<C> configure) {
-        if (isRegistered())
-            throw new IllegalStateException(
-                    "Cannot register a feature after framework registration");
+        if (isRegistered()) throw new IllegalStateException("Cannot register a feature after framework registration");
 
         final R value = featureInstaller.install(feature, configure);
         getOwner()
                 .getLogger()
-                .info(
-                        String.format(
-                                "Feature %s installed",
-                                StringUtils.substringBeforeLast(
-                                        feature.getClass().getSimpleName(), "Feature")));
+                .info(String.format(
+                        "Feature %s installed",
+                        StringUtils.substringBeforeLast(feature.getClass().getSimpleName(), "Feature")));
         return value;
     }
 
     @Override
     public void uninstall(@NotNull Feature<?, ?> feature) {
-        if (isRegistered())
-            throw new IllegalStateException(
-                    "Cannot unregister a feature after framework registration");
+        if (isRegistered()) throw new IllegalStateException("Cannot unregister a feature after framework registration");
 
         featureInstaller.uninstall(feature);
         getOwner()
                 .getLogger()
-                .info(
-                        String.format(
-                                "Feature %s uninstalled",
-                                StringUtils.substringBeforeLast(
-                                        feature.getClass().getSimpleName(), "Feature")));
+                .info(String.format(
+                        "Feature %s uninstalled",
+                        StringUtils.substringBeforeLast(feature.getClass().getSimpleName(), "Feature")));
     }
 
     @Override
@@ -304,26 +284,22 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
     }
 
     @Override
-    public ViewFrame setNavigateBackItemFactory(
-            BiConsumer<PaginatedViewContext<?>, ViewItem> navigateBackItemFactory) {
-        defaultPreviousPageItem =
-                (context) -> {
-                    final ViewItem item = new ViewItem();
-                    navigateBackItemFactory.accept(context, item);
-                    return item;
-                };
+    public ViewFrame setNavigateBackItemFactory(BiConsumer<PaginatedViewContext<?>, ViewItem> navigateBackItemFactory) {
+        defaultPreviousPageItem = (context) -> {
+            final ViewItem item = new ViewItem();
+            navigateBackItemFactory.accept(context, item);
+            return item;
+        };
         return this;
     }
 
     @Override
-    public ViewFrame setNavigateNextItemFactory(
-            BiConsumer<PaginatedViewContext<?>, ViewItem> navigateNextItemFactory) {
-        defaultNextPageItem =
-                (context) -> {
-                    final ViewItem item = new ViewItem();
-                    navigateNextItemFactory.accept(context, item);
-                    return item;
-                };
+    public ViewFrame setNavigateNextItemFactory(BiConsumer<PaginatedViewContext<?>, ViewItem> navigateNextItemFactory) {
+        defaultNextPageItem = (context) -> {
+            final ViewItem item = new ViewItem();
+            navigateNextItemFactory.accept(context, item);
+            return item;
+        };
         return this;
     }
 

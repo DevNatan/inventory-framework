@@ -9,13 +9,11 @@ import org.jetbrains.annotations.NotNull;
  *
  * @see PipelineInterceptor
  */
-final class GlobalClickOutsideInterceptor
-        implements PipelineInterceptor<BukkitClickViewSlotContext> {
+final class GlobalClickOutsideInterceptor implements PipelineInterceptor<BukkitClickViewSlotContext> {
 
     @Override
     public void intercept(
-            @NotNull PipelineContext<BukkitClickViewSlotContext> pipeline,
-            BukkitClickViewSlotContext subject) {
+            @NotNull PipelineContext<BukkitClickViewSlotContext> pipeline, BukkitClickViewSlotContext subject) {
         if (subject.isCancelled()) return;
 
         final InventoryClickEvent clickEvent = subject.getClickOrigin();

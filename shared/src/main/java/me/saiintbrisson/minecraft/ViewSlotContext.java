@@ -95,8 +95,8 @@ public interface ViewSlotContext extends ViewContext {
     /**
      * Applies a patch to the current item.
      *
-     * <p>This method should be used when only a partial modification is required to be applied to
-     * the item, triggering an {@link AbstractVirtualView#inventoryModificationTriggered() inventory
+     * <p>This method should be used when only a partial modification is required to be applied to the
+     * item, triggering an {@link AbstractVirtualView#inventoryModificationTriggered() inventory
      * modification}.
      *
      * <p>If you need to update the item completely use {@link #setItem(Object)}.

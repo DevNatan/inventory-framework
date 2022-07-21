@@ -13,8 +13,7 @@ final class GlobalItemHoldInterceptor implements PipelineInterceptor<BukkitClick
 
     @Override
     public void intercept(
-            @NotNull PipelineContext<BukkitClickViewSlotContext> pipeline,
-            BukkitClickViewSlotContext subject) {
+            @NotNull PipelineContext<BukkitClickViewSlotContext> pipeline, BukkitClickViewSlotContext subject) {
         if (subject.isCancelled() || subject.getBackingItem() == null) return;
 
         final InventoryClickEvent clickEvent = subject.getClickOrigin();

@@ -13,8 +13,7 @@ import org.jetbrains.annotations.NotNull;
 @Getter
 @Setter
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
-public class BukkitClickViewSlotContext extends AbstractViewSlotContext
-        implements ViewSlotClickContext {
+public class BukkitClickViewSlotContext extends AbstractViewSlotContext implements ViewSlotClickContext {
 
     private final InventoryClickEvent clickOrigin;
 
@@ -78,8 +77,7 @@ public class BukkitClickViewSlotContext extends AbstractViewSlotContext
 
     @Override
     public final void inventoryModificationTriggered() {
-        throw new IllegalStateException(
-                "You cannot update the item in the click handler context. "
-                        + "Use the slot.onRender(...) or slot.onUpdate(...) and then context.setItem(...) instead.");
+        throw new IllegalStateException("You cannot update the item in the click handler context. "
+                + "Use the slot.onRender(...) or slot.onUpdate(...) and then context.setItem(...) instead.");
     }
 }

@@ -38,33 +38,25 @@ public abstract class ViewComponentFactory {
     public abstract void setupView(@NotNull AbstractView view);
 
     @NotNull
-    public abstract ViewContainer createContainer(
-            @NotNull VirtualView view, int size, String title, ViewType type);
+    public abstract ViewContainer createContainer(@NotNull VirtualView view, int size, String title, ViewType type);
 
     @NotNull
     public abstract Viewer createViewer(Object... parameters);
 
     @NotNull
     public abstract BaseViewContext createContext(
-            @NotNull AbstractView root,
-            ViewContainer container,
-            Class<? extends ViewContext> backingContext);
+            @NotNull AbstractView root, ViewContainer container, Class<? extends ViewContext> backingContext);
 
     @NotNull
     public abstract AbstractViewSlotContext createSlotContext(
-            ViewItem item,
-            BaseViewContext parent,
-            int paginatedItemIndex,
-            Object paginatedItemValue);
+            ViewItem item, BaseViewContext parent, int paginatedItemIndex, Object paginatedItemValue);
 
     public abstract Object createItem(@Nullable Object stack);
 
     public abstract boolean worksInCurrentPlatform();
 
     @NotNull
-    public ViewUpdateJob scheduleUpdate(
-            @NotNull VirtualView view, long delayInTicks, long intervalInTicks) {
-        throw new UnsupportedOperationException(
-                "Automatic view update is not supported in this platform");
+    public ViewUpdateJob scheduleUpdate(@NotNull VirtualView view, long delayInTicks, long intervalInTicks) {
+        throw new UnsupportedOperationException("Automatic view update is not supported in this platform");
     }
 }

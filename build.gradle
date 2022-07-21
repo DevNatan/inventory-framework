@@ -44,7 +44,8 @@ subprojects {
 
     spotless {
         java {
-            googleJavaFormat().aosp()
+            removeUnusedImports()
+            palantirJavaFormat()
         }
     }
 

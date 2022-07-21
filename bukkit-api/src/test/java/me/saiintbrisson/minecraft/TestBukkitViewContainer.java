@@ -20,15 +20,16 @@ import org.jetbrains.annotations.NotNull;
 @ToString(callSuper = true)
 class TestBukkitViewContainer extends BukkitViewContainer {
 
-    @Getter private final Inventory inventory;
+    @Getter
+    private final Inventory inventory;
+
     private final ViewType type = ViewType.CHEST;
 
     public TestBukkitViewContainer() {
         this(new FakeInventory(54, InventoryType.CHEST));
     }
 
-    public TestBukkitViewContainer(
-            @NotNull ViewType viewType, @NotNull InventoryType inventoryType) {
+    public TestBukkitViewContainer(@NotNull ViewType viewType, @NotNull InventoryType inventoryType) {
         this(new FakeInventory(viewType.getMaxSize(), inventoryType));
     }
 

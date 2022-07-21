@@ -24,7 +24,8 @@ public abstract class AbstractViewSlotContext extends BaseViewContext implements
     @Getter(AccessLevel.PACKAGE)
     private final ViewItem backingItem;
 
-    @ToString.Include private boolean cancelled;
+    @ToString.Include
+    private boolean cancelled;
 
     @Setter(AccessLevel.NONE)
     private ItemWrapper item;
@@ -94,9 +95,8 @@ public abstract class AbstractViewSlotContext extends BaseViewContext implements
 
     @Override
     public final void setPropagateErrors(boolean propagateErrors) {
-        throw new IllegalStateException(
-                "Error propagation attribute cannot be modified from a ViewSlotContext."
-                        + "You must set this in view's #onRender(...) or globally on constructor instead.");
+        throw new IllegalStateException("Error propagation attribute cannot be modified from a ViewSlotContext."
+                + "You must set this in view's #onRender(...) or globally on constructor instead.");
     }
 
     @Override
@@ -124,9 +124,7 @@ public abstract class AbstractViewSlotContext extends BaseViewContext implements
             return (T) data.get(key);
 
         throw new NoSuchElementException(
-                format(
-                        "Property \"%s\" has not been set for this item. Use #withData(key, value) to set it",
-                        key));
+                format("Property \"%s\" has not been set for this item. Use #withData(key, value) to set it", key));
     }
 
     @Override

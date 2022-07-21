@@ -40,7 +40,6 @@ public class HopperViewTypeTest {
     }
 
     private ViewContainer createHopperContainer() {
-        return new BukkitSimpleViewContainer(
-                new FakeInventory(5, InventoryType.HOPPER), ViewType.HOPPER);
+        return new BukkitSimpleViewContainer(new FakeInventory(5, InventoryType.HOPPER), ViewType.HOPPER);
     }
 }

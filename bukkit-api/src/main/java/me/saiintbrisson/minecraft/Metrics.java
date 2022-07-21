@@ -74,12 +74,11 @@ class Metrics {
             config.addDefault("logResponseStatusText", false);
             // Inform the server owners about bStats
             config.options()
-                    .header(
-                            "bStats (https://bStats.org) collects some basic information for plugin authors, like how\n"
-                                    + "many people use their plugin and their total player count. It's recommended to keep bStats\n"
-                                    + "enabled, but if you're not comfortable with this, you can turn this setting off. There is no\n"
-                                    + "performance penalty associated with having metrics enabled, and data sent to bStats is fully\n"
-                                    + "anonymous.")
+                    .header("bStats (https://bStats.org) collects some basic information for plugin authors, like how\n"
+                            + "many people use their plugin and their total player count. It's recommended to keep bStats\n"
+                            + "enabled, but if you're not comfortable with this, you can turn this setting off. There is no\n"
+                            + "performance penalty associated with having metrics enabled, and data sent to bStats is fully\n"
+                            + "anonymous.")
                     .copyDefaults(true);
             try {
                 config.save(configFile);
@@ -92,22 +91,20 @@ class Metrics {
         boolean logErrors = config.getBoolean("logFailedRequests", false);
         boolean logSentData = config.getBoolean("logSentData", false);
         boolean logResponseStatusText = config.getBoolean("logResponseStatusText", false);
-        metricsBase =
-                new MetricsBase(
-                        "bukkit",
-                        serverUUID,
-                        serviceId,
-                        enabled,
-                        this::appendPlatformData,
-                        this::appendServiceData,
-                        submitDataTask -> Bukkit.getScheduler().runTask(plugin, submitDataTask),
-                        plugin::isEnabled,
-                        (message, error) ->
-                                this.plugin.getLogger().log(Level.WARNING, message, error),
-                        (message) -> this.plugin.getLogger().log(Level.INFO, message),
-                        logErrors,
-                        logSentData,
-                        logResponseStatusText);
+        metricsBase = new MetricsBase(
+                "bukkit",
+                serverUUID,
+                serviceId,
+                enabled,
+                this::appendPlatformData,
+                this::appendServiceData,
+                submitDataTask -> Bukkit.getScheduler().runTask(plugin, submitDataTask),
+                plugin::isEnabled,
+                (message, error) -> this.plugin.getLogger().log(Level.WARNING, message, error),
+                (message) -> this.plugin.getLogger().log(Level.INFO, message),
+                logErrors,
+                logSentData,
+                logResponseStatusText);
     }
 
     /**
@@ -140,8 +137,7 @@ class Metrics {
             // Around MC 1.8 the return type was changed from an array to a collection,
             // This fixes java.lang.NoSuchMethodError:
             // org.bukkit.Bukkit.getOnlinePlayers()Ljava/util/Collection;
-            Method onlinePlayersMethod =
-                    Class.forName("org.bukkit.Server").getMethod("getOnlinePlayers");
+            Method onlinePlayersMethod = Class.forName("org.bukkit.Server").getMethod("getOnlinePlayers");
             return onlinePlayersMethod.getReturnType().equals(Collection.class)
                     ? ((Collection<?>) onlinePlayersMethod.invoke(Bukkit.getServer())).size()
                     : ((Player[]) onlinePlayersMethod.invoke(Bukkit.getServer())).length;
@@ -196,13 +192,13 @@ class Metrics {
          * @param serviceId The id of the service.
          * @param serverUuid The server uuid.
          * @param enabled Whether or not data sending is enabled.
-         * @param appendPlatformDataConsumer A consumer that receives a {@code JsonObjectBuilder}
-         *     and appends all platform-specific data.
+         * @param appendPlatformDataConsumer A consumer that receives a {@code JsonObjectBuilder} and
+         *     appends all platform-specific data.
          * @param appendServiceDataConsumer A consumer that receives a {@code JsonObjectBuilder} and
          *     appends all service-specific data.
-         * @param submitTaskConsumer A consumer that takes a runnable with the submit task. This can
-         *     be used to delegate the data collection to a another thread to prevent errors caused
-         *     by concurrency. Can be {@code null}.
+         * @param submitTaskConsumer A consumer that takes a runnable with the submit task. This can be
+         *     used to delegate the data collection to a another thread to prevent errors caused by
+         *     concurrency. Can be {@code null}.
          * @param checkServiceEnabledSupplier A supplier to check if the service is still enabled.
          * @param errorLogger A consumer that accepts log message and an error.
          * @param infoLogger A consumer that accepts info log messages.
@@ -249,19 +245,18 @@ class Metrics {
         }
 
         private void startSubmitting() {
-            final Runnable submitTask =
-                    () -> {
-                        if (!enabled || !checkServiceEnabledSupplier.get()) {
-                            // Submitting data or service is disabled
-                            scheduler.shutdown();
-                            return;
-                        }
-                        if (submitTaskConsumer != null) {
-                            submitTaskConsumer.accept(this::submitData);
-                        } else {
-                            this.submitData();
-                        }
-                    };
+            final Runnable submitTask = () -> {
+                if (!enabled || !checkServiceEnabledSupplier.get()) {
+                    // Submitting data or service is disabled
+                    scheduler.shutdown();
+                    return;
+                }
+                if (submitTaskConsumer != null) {
+                    submitTaskConsumer.accept(this::submitData);
+                } else {
+                    this.submitData();
+                }
+            };
             // Many servers tend to restart at a fixed time at xx:00 which causes an uneven
             // distribution
             // of requests on the
@@ -284,32 +279,27 @@ class Metrics {
             appendPlatformDataConsumer.accept(baseJsonBuilder);
             final JsonObjectBuilder serviceJsonBuilder = new JsonObjectBuilder();
             appendServiceDataConsumer.accept(serviceJsonBuilder);
-            JsonObjectBuilder.JsonObject[] chartData =
-                    customCharts.stream()
-                            .map(
-                                    customChart ->
-                                            customChart.getRequestJsonObject(
-                                                    errorLogger, logErrors))
-                            .filter(Objects::nonNull)
-                            .toArray(JsonObjectBuilder.JsonObject[]::new);
+            JsonObjectBuilder.JsonObject[] chartData = customCharts.stream()
+                    .map(customChart -> customChart.getRequestJsonObject(errorLogger, logErrors))
+                    .filter(Objects::nonNull)
+                    .toArray(JsonObjectBuilder.JsonObject[]::new);
             serviceJsonBuilder.appendField("id", serviceId);
             serviceJsonBuilder.appendField("customCharts", chartData);
             baseJsonBuilder.appendField("service", serviceJsonBuilder.build());
             baseJsonBuilder.appendField("serverUUID", serverUuid);
             baseJsonBuilder.appendField("metricsVersion", METRICS_VERSION);
             JsonObjectBuilder.JsonObject data = baseJsonBuilder.build();
-            scheduler.execute(
-                    () -> {
-                        try {
-                            // Send the data
-                            sendData(data);
-                        } catch (Exception e) {
-                            // Something went wrong! :(
-                            if (logErrors) {
-                                errorLogger.accept("Could not submit bStats metrics data", e);
-                            }
-                        }
-                    });
+            scheduler.execute(() -> {
+                try {
+                    // Send the data
+                    sendData(data);
+                } catch (Exception e) {
+                    // Something went wrong! :(
+                    if (logErrors) {
+                        errorLogger.accept("Could not submit bStats metrics data", e);
+                    }
+                }
+            });
         }
 
         private void sendData(JsonObjectBuilder.JsonObject data) throws Exception {
@@ -328,8 +318,7 @@ class Metrics {
             connection.setRequestProperty("Content-Type", "application/json");
             connection.setRequestProperty("User-Agent", "Metrics-Service/1");
             connection.setDoOutput(true);
-            try (DataOutputStream outputStream =
-                    new DataOutputStream(connection.getOutputStream())) {
+            try (DataOutputStream outputStream = new DataOutputStream(connection.getOutputStream())) {
                 outputStream.write(compressedData);
             }
             StringBuilder builder = new StringBuilder();
@@ -353,20 +342,15 @@ class Metrics {
                 // Maven's Relocate is clever and changes strings, too. So we have to use this
                 // little
                 // "trick" ... :D
-                final String defaultPackage =
-                        new String(new byte[] {'o', 'r', 'g', '.', 'b', 's', 't', 'a', 't', 's'});
+                final String defaultPackage = new String(new byte[] {'o', 'r', 'g', '.', 'b', 's', 't', 'a', 't', 's'});
                 final String examplePackage =
-                        new String(
-                                new byte[] {
-                                    'y', 'o', 'u', 'r', '.', 'p', 'a', 'c', 'k', 'a', 'g', 'e'
-                                });
+                        new String(new byte[] {'y', 'o', 'u', 'r', '.', 'p', 'a', 'c', 'k', 'a', 'g', 'e'});
                 // We want to make sure no one just copy & pastes the example and uses the wrong
                 // package
                 // names
                 if (MetricsBase.class.getPackage().getName().startsWith(defaultPackage)
                         || MetricsBase.class.getPackage().getName().startsWith(examplePackage)) {
-                    throw new IllegalStateException(
-                            "bStats Metrics class has not been relocated correctly!");
+                    throw new IllegalStateException("bStats Metrics class has not been relocated correctly!");
                 }
             }
         }
@@ -430,7 +414,9 @@ class Metrics {
                 // Null = skip the chart
                 return null;
             }
-            return new JsonObjectBuilder().appendField("values", valuesBuilder.build()).build();
+            return new JsonObjectBuilder()
+                    .appendField("values", valuesBuilder.build())
+                    .build();
         }
     }
 
@@ -470,7 +456,9 @@ class Metrics {
                 // Null = skip the chart
                 return null;
             }
-            return new JsonObjectBuilder().appendField("values", valuesBuilder.build()).build();
+            return new JsonObjectBuilder()
+                    .appendField("values", valuesBuilder.build())
+                    .build();
         }
     }
 
@@ -510,7 +498,9 @@ class Metrics {
                 // Null = skip the chart
                 return null;
             }
-            return new JsonObjectBuilder().appendField("values", valuesBuilder.build()).build();
+            return new JsonObjectBuilder()
+                    .appendField("values", valuesBuilder.build())
+                    .build();
         }
     }
 
@@ -540,7 +530,9 @@ class Metrics {
             for (Map.Entry<String, Integer> entry : map.entrySet()) {
                 valuesBuilder.appendField(entry.getKey(), new int[] {entry.getValue()});
             }
-            return new JsonObjectBuilder().appendField("values", valuesBuilder.build()).build();
+            return new JsonObjectBuilder()
+                    .appendField("values", valuesBuilder.build())
+                    .build();
         }
     }
 
@@ -640,7 +632,9 @@ class Metrics {
                 // Null = skip the chart
                 return null;
             }
-            return new JsonObjectBuilder().appendField("values", valuesBuilder.build()).build();
+            return new JsonObjectBuilder()
+                    .appendField("values", valuesBuilder.build())
+                    .build();
         }
     }
 
@@ -673,8 +667,8 @@ class Metrics {
     /**
      * An extremely simple JSON builder.
      *
-     * <p>While this class is neither feature-rich nor the most performant one, it's sufficient
-     * enough for its use-case.
+     * <p>While this class is neither feature-rich nor the most performant one, it's sufficient enough
+     * for its use-case.
      */
     public static class JsonObjectBuilder {
 
@@ -750,10 +744,9 @@ class Metrics {
             if (values == null) {
                 throw new IllegalArgumentException("JSON values must not be null");
             }
-            String escapedValues =
-                    Arrays.stream(values)
-                            .map(value -> "\"" + escape(value) + "\"")
-                            .collect(Collectors.joining(","));
+            String escapedValues = Arrays.stream(values)
+                    .map(value -> "\"" + escape(value) + "\"")
+                    .collect(Collectors.joining(","));
             appendFieldUnescaped(key, "[" + escapedValues + "]");
             return this;
         }
@@ -770,9 +763,7 @@ class Metrics {
                 throw new IllegalArgumentException("JSON values must not be null");
             }
             String escapedValues =
-                    Arrays.stream(values)
-                            .mapToObj(String::valueOf)
-                            .collect(Collectors.joining(","));
+                    Arrays.stream(values).mapToObj(String::valueOf).collect(Collectors.joining(","));
             appendFieldUnescaped(key, "[" + escapedValues + "]");
             return this;
         }
@@ -789,9 +780,7 @@ class Metrics {
                 throw new IllegalArgumentException("JSON values must not be null");
             }
             String escapedValues =
-                    Arrays.stream(values)
-                            .map(JsonObject::toString)
-                            .collect(Collectors.joining(","));
+                    Arrays.stream(values).map(JsonObject::toString).collect(Collectors.joining(","));
             appendFieldUnescaped(key, "[" + escapedValues + "]");
             return this;
         }
@@ -861,9 +850,9 @@ class Metrics {
         /**
          * A super simple representation of a JSON object.
          *
-         * <p>This class only exists to make methods of the {@link JsonObjectBuilder} type-safe and
-         * not allow a raw string inputs for methods like {@link
-         * JsonObjectBuilder#appendField(String, JsonObject)}.
+         * <p>This class only exists to make methods of the {@link JsonObjectBuilder} type-safe and not
+         * allow a raw string inputs for methods like {@link JsonObjectBuilder#appendField(String,
+         * JsonObject)}.
          */
         public static class JsonObject {
 

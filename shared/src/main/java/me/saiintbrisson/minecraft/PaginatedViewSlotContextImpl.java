@@ -21,8 +21,7 @@ import org.jetbrains.annotations.Range;
  */
 @Getter
 @ToString
-final class PaginatedViewSlotContextImpl<T> extends AbstractViewSlotContext
-        implements PaginatedViewSlotContext<T> {
+final class PaginatedViewSlotContextImpl<T> extends AbstractViewSlotContext implements PaginatedViewSlotContext<T> {
 
     private final int index;
     private final T value;
@@ -30,8 +29,7 @@ final class PaginatedViewSlotContextImpl<T> extends AbstractViewSlotContext
     @Getter(AccessLevel.NONE)
     private final PaginatedViewContext<T> parent;
 
-    PaginatedViewSlotContextImpl(
-            int index, @NotNull T value, ViewItem backingItem, PaginatedViewContext<T> parent) {
+    PaginatedViewSlotContextImpl(int index, @NotNull T value, ViewItem backingItem, PaginatedViewContext<T> parent) {
         super(backingItem, (BaseViewContext) parent);
         this.index = index;
         this.value = value;
@@ -58,8 +56,7 @@ final class PaginatedViewSlotContextImpl<T> extends AbstractViewSlotContext
     }
 
     @Override
-    public void setSource(
-            @NotNull Function<PaginatedViewContext<T>, List<? extends T>> sourceProvider) {
+    public void setSource(@NotNull Function<PaginatedViewContext<T>, List<? extends T>> sourceProvider) {
         throwPaginationDataChangedError();
     }
 

@@ -52,8 +52,7 @@ public class BukkitViewContainerTest {
 
     @Test
     void shouldThrowExceptionWhenRenderedSlotExceedsInventorySize() {
-        ViewContainer container =
-                new TestBukkitViewContainer(new FakeInventory(0, InventoryType.CHEST));
+        ViewContainer container = new TestBukkitViewContainer(new FakeInventory(0, InventoryType.CHEST));
         ItemStack stack = new FakeItemStack(Material.ITEM_FRAME);
         int slot = 54;
 

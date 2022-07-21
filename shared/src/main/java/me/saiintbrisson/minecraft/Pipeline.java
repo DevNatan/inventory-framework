@@ -52,8 +52,7 @@ class Pipeline<S> {
             if (curr.equals(phase)) return i;
         }
 
-        throw new IllegalArgumentException(
-                String.format("Phase %s was not registered for this pipeline", phase));
+        throw new IllegalArgumentException(String.format("Phase %s was not registered for this pipeline", phase));
     }
 
     public boolean hasPhase(final @NotNull PipelinePhase phase) {
@@ -71,16 +70,14 @@ class Pipeline<S> {
         _phases.add(phase);
     }
 
-    public void insertPhaseBefore(
-            final @NotNull PipelinePhase reference, final @NotNull PipelinePhase phase) {
+    public void insertPhaseBefore(final @NotNull PipelinePhase reference, final @NotNull PipelinePhase phase) {
         if (hasPhase(phase)) return;
 
         final int refIdx = findIndexOrThrow(reference);
         _phases.add(refIdx, phase);
     }
 
-    public void insertPhaseAfter(
-            final @NotNull PipelinePhase reference, final @NotNull PipelinePhase phase) {
+    public void insertPhaseAfter(final @NotNull PipelinePhase reference, final @NotNull PipelinePhase phase) {
         if (hasPhase(phase)) return;
 
         final int refIdx = findIndexOrThrow(reference);
@@ -89,16 +86,12 @@ class Pipeline<S> {
 
     @SuppressWarnings("unchecked")
     public void intercept(
-            final @NotNull PipelinePhase phase,
-            final @NotNull PipelineInterceptor<? extends S> interceptor) {
+            final @NotNull PipelinePhase phase, final @NotNull PipelineInterceptor<? extends S> interceptor) {
         final PipelinePhase pipelinePhase = findPhase(phase);
         if (pipelinePhase == null)
-            throw new IllegalArgumentException(
-                    String.format("Phase %s was not registered for this pipeline", phase));
+            throw new IllegalArgumentException(String.format("Phase %s was not registered for this pipeline", phase));
 
-        interceptors
-                .computeIfAbsent(phase, $ -> new ArrayList<>())
-                .add((PipelineInterceptor<S>) interceptor);
+        interceptors.computeIfAbsent(phase, $ -> new ArrayList<>()).add((PipelineInterceptor<S>) interceptor);
     }
 
     public void execute(@Nullable final S subject) {

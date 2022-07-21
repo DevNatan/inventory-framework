@@ -13,8 +13,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 /** Creates a paginated view based on items in the player inventory. */
-public final class LayeredNavigablePaginatedViewBasedOnPlayerInventory
-        extends PaginatedView<ItemStack> {
+public final class LayeredNavigablePaginatedViewBasedOnPlayerInventory extends PaginatedView<ItemStack> {
 
     public LayeredNavigablePaginatedViewBasedOnPlayerInventory() {
         super(3, "Your inventory");
@@ -43,15 +42,13 @@ public final class LayeredNavigablePaginatedViewBasedOnPlayerInventory
     @Override
     protected void onRender(@NotNull ViewContext context) {
         context.paginated()
-                .setSource(
-                        Arrays.stream(context.getPlayer().getInventory().getContents())
-                                .filter(Objects::nonNull)
-                                .collect(Collectors.toList()));
+                .setSource(Arrays.stream(context.getPlayer().getInventory().getContents())
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toList()));
     }
 
     @Override
-    protected void onItemRender(
-            PaginatedViewSlotContext<ItemStack> render, ViewItem item, ItemStack value) {
+    protected void onItemRender(PaginatedViewSlotContext<ItemStack> render, ViewItem item, ItemStack value) {
         item.withItem(value.clone());
     }
 }
