@@ -40,7 +40,7 @@ final class AutomaticUpdateInitiationInterceptor {
      * interrupted.
      */
     @RequiredArgsConstructor
-    static final class Interrupt implements PipelineInterceptor<ViewContext> {
+    static class Interrupt implements PipelineInterceptor<ViewContext> {
 
         @Override
         public void intercept(@NotNull PipelineContext<ViewContext> pipeline, ViewContext subject) {
@@ -50,6 +50,10 @@ final class AutomaticUpdateInitiationInterceptor {
             if (subject.getViewers().size() != 1) return;
 
             subject.getUpdateJob().pause();
+			calledSuccessfully();
 		}
+
+		@TestOnly
+		void calledSuccessfully() {}
     }
 }
