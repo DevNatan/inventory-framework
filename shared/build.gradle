@@ -2,6 +2,8 @@ apply from: '../publish.gradle'
 
 dependencies {
     testImplementation libs.mockito.core
+    testImplementation libs.mockito.junit
+    testRuntimeOnly libs.spigot.api
 }
 
 javadoc {

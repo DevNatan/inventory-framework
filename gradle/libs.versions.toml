@@ -36,6 +36,10 @@ version.ref = "kotlin"
 module = "org.mockito:mockito-core"
 version.ref = "mockito"
 
+[libraries.mockito-junit]
+module = "org.mockito:mockito-junit-jupiter"
+version.ref = "mockito"
+
 [plugins]
 shadowjar = { id = "com.github.johnrengelman.shadow", version.ref = "plugin-shadowjar" }
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
