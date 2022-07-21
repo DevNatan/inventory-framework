@@ -3,7 +3,7 @@ package me.saiintbrisson.minecraft;
 import static java.util.Objects.requireNonNull;
 import static me.saiintbrisson.minecraft.AbstractView.CLICK;
 import static me.saiintbrisson.minecraft.AbstractView.CLOSE;
-import static me.saiintbrisson.minecraft.AbstractView.OPEN;
+import static me.saiintbrisson.minecraft.AbstractView.RENDER;
 import static org.bukkit.Bukkit.createInventory;
 
 import lombok.AccessLevel;
@@ -122,26 +122,17 @@ final class BukkitViewComponentFactory extends ViewComponentFactory {
     }
 
     @Override
-    public @NotNull ViewUpdateJob scheduleUpdate(@NotNull VirtualView view, long delayInTicks, long intervalInTicks) {
+    public void scheduleUpdate(@NotNull VirtualView view, long delayInTicks, long intervalInTicks) {
         ViewUpdateJob updateJob = view.getUpdateJob();
         if (updateJob != null) {
             // fast path -- do not schedule if delay and interval are the same
-            if (updateJob.getDelay() == delayInTicks && updateJob.getInterval() == intervalInTicks) return updateJob;
+            if (updateJob.getDelay() == delayInTicks && updateJob.getInterval() == intervalInTicks) return;
 
             // cancel the old update job to prevent leaks
             updateJob.cancel();
         }
 
-        view.setUpdateJob((updateJob = new BukkitViewUpdateJobImpl(view, delayInTicks, intervalInTicks)));
-        return updateJob;
-    }
-
-    private PlatformViewFrame<?, ?, ?> findViewFrame(@NotNull VirtualView view) {
-        if (view instanceof AbstractView) return ((AbstractView) view).getViewFrame();
-        if (view instanceof ViewContext) return ((ViewContext) view).getRoot().getViewFrame();
-
-        throw new IllegalArgumentException(
-                "Unable to find view frame on: " + view.getClass().getName());
+        view.setUpdateJob(new BukkitViewUpdateJobImpl(view, delayInTicks, intervalInTicks));
     }
 
     private InventoryType toInventoryType(@NotNull ViewType type) {
@@ -161,13 +152,13 @@ final class BukkitViewComponentFactory extends ViewComponentFactory {
 
     private void registerInterceptors(AbstractView view) {
         final Pipeline<? super ViewContext> pipeline = view.getPipeline();
-        pipeline.intercept(OPEN, new AutomaticUpdateInitiationInterceptor.Open());
+        pipeline.intercept(RENDER, new AutomaticUpdateInitiationInterceptor.Init());
         pipeline.intercept(CLICK, new ItemClickInterceptor());
         pipeline.intercept(CLICK, new GlobalClickInterceptor());
         pipeline.intercept(CLICK, new GlobalClickOutsideInterceptor());
         pipeline.intercept(CLICK, new GlobalHotbarClickInterceptor());
         pipeline.intercept(CLICK, new GlobalItemHoldInterceptor());
         pipeline.intercept(CLICK, new CloseMarkInterceptor());
-        pipeline.intercept(CLOSE, new AutomaticUpdateInitiationInterceptor.Close());
+        pipeline.intercept(CLOSE, new AutomaticUpdateInitiationInterceptor.Interrupt());
     }
 }

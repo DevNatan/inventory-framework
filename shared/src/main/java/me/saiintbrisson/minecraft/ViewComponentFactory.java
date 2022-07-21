@@ -55,8 +55,7 @@ public abstract class ViewComponentFactory {
 
     public abstract boolean worksInCurrentPlatform();
 
-    @NotNull
-    public ViewUpdateJob scheduleUpdate(@NotNull VirtualView view, long delayInTicks, long intervalInTicks) {
+    public void scheduleUpdate(@NotNull VirtualView view, long delayInTicks, long intervalInTicks) {
         throw new UnsupportedOperationException("Automatic view update is not supported in this platform");
     }
 }

@@ -18,6 +18,8 @@ final class BukkitViewUpdateJobImpl implements ViewUpdateJob, Runnable {
 
     private BukkitTask task;
     private boolean interrupted;
+
+    @Getter
     private boolean started;
 
     public BukkitViewUpdateJobImpl(@NotNull VirtualView view, long delay, long interval) {
