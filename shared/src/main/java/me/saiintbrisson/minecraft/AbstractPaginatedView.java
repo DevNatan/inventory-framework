@@ -352,11 +352,12 @@ public abstract class AbstractPaginatedView<T> extends AbstractView implements P
             ViewItem[] preservedItems,
             Consumer<List<T>> callback) {
         final Paginator<T> paginator = context.getPaginator();
-        //		if (!paginator.isSync() && paginator.getPagesCount() == -1)
-        //			throw new IllegalStateException(
-        //				"Number of pages count must be set on lazy or asynchronous pagination types." +
-        //					"Use #setPagesCount to determine the number of pages available"
-        //			);
+
+        // GH-184 Skip layout render if signature is not checked
+        if (!context.isLayoutSignatureChecked()) {
+            callback.accept(null);
+            return;
+        }
 
         if (paginator.isAsync())
             renderLayoutAsync(context, layout, preservedItems, paginator.getAsyncState(), callback);
