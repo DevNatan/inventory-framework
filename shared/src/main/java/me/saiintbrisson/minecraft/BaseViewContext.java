@@ -130,6 +130,14 @@ class BaseViewContext extends AbstractVirtualView implements ViewContext {
         getAttributes().setPropagateErrors(propagateErrors);
     }
 
+    @Override
+    public final ViewUpdateJob getUpdateJob() {
+        ViewUpdateJob ownJob = super.getUpdateJob();
+        if (ownJob != null) return ownJob;
+
+        return getRoot().getUpdateJob();
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public <T> PaginatedViewContext<T> paginated() {
