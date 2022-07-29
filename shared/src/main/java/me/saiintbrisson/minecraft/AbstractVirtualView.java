@@ -268,7 +268,7 @@ public abstract class AbstractVirtualView implements VirtualView {
 
     /** {@inheritDoc} */
     @Override
-    public final ViewUpdateJob getUpdateJob() {
+    public ViewUpdateJob getUpdateJob() {
         return updateJob;
     }
 

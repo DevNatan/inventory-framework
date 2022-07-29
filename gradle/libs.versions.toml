@@ -4,6 +4,7 @@ spigot-api = "1.16.5-R0.1-SNAPSHOT"
 junit = "5.9.0"
 lombok = "1.18.24"
 kotlin = "1.7.10"
+mockito = "4.6.1"
 plugin-shadowjar = "7.1.2"
 plugin-ktlint = "3.11.1"
 
@@ -30,6 +31,14 @@ version.ref = "lombok"
 [libraries.kotlin]
 module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 version.ref = "kotlin"
+
+[libraries.mockito-core]
+module = "org.mockito:mockito-core"
+version.ref = "mockito"
+
+[libraries.mockito-junit]
+module = "org.mockito:mockito-junit-jupiter"
+version.ref = "mockito"
 
 [plugins]
 shadowjar = { id = "com.github.johnrengelman.shadow", version.ref = "plugin-shadowjar" }

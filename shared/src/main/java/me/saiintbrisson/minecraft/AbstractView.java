@@ -35,6 +35,7 @@ public abstract class AbstractView extends AbstractVirtualView {
     @Getter(AccessLevel.NONE)
     static final PipelinePhase CLOSE = new PipelinePhase("close");
 
+    @Getter(AccessLevel.NONE)
     static final ViewType DEFAULT_TYPE = ViewType.CHEST;
 
     @ToString.Include
@@ -455,6 +456,11 @@ public abstract class AbstractView extends AbstractVirtualView {
     /** {@inheritDoc} */
     public final String getTitle() {
         return title;
+    }
+
+    @Override
+    public final ViewUpdateJob getUpdateJob() {
+        return super.getUpdateJob();
     }
 
     /** {@inheritDoc} */

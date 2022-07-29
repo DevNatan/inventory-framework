@@ -18,6 +18,8 @@ final class BukkitViewUpdateJobImpl implements ViewUpdateJob, Runnable {
 
     private BukkitTask task;
     private boolean interrupted;
+
+    @Getter
     private boolean started;
 
     public BukkitViewUpdateJobImpl(@NotNull VirtualView view, long delay, long interval) {
@@ -50,8 +52,6 @@ final class BukkitViewUpdateJobImpl implements ViewUpdateJob, Runnable {
 
     @Override
     public void resume() {
-        if (task == null) throw new IllegalStateException("Update job not defined to be resumed");
-
         if (!started) {
             start();
             return;

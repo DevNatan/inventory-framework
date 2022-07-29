@@ -7,6 +7,8 @@ interface ViewUpdateJob {
 
     long getInterval();
 
+    boolean isStarted();
+
     /**
      * Starts this update job.
      *
