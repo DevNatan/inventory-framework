@@ -1,5 +1,17 @@
 # Changelog
 
+# 2.5.3
+* Fix scheduled updates (#175)
+* UnsupportedOperationException when use getPlayer in PaginatedViewSlotContext (#183)
+* Skip layout render if signature is not checked (#185)
+* IllegalStateException when use setSource in PaginatedView (#172)
+* Test-only workflow (#154)
+* Update code formatter (#173)
+* Update plugin com.diffplug.spotless to v6.9.0 (#182)
+* Update junit5 monorepo to v5.9.0 (#179)
+* Update ASzc/change-string-case-action action to v2 (#168)
+* Update bug report issue template (#171)
+
 # 2.5.2
 * Nested view open by context ClassCastException (#164)
 * Lately fetch update job initiator (#163)
