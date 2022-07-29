@@ -8,12 +8,13 @@ import java.util.function.Supplier;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.ToString;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
 
 /**
- * PaginatedViewSlotContext implementation that inherits a ViewSlotContext.
+ * PaginatedViewSlotContext implementation that inherits a ViewSlotContext for Bukkit platform.
  *
  * @param <T> The pagination item type.
  * @see ViewSlotContext
@@ -21,7 +22,8 @@ import org.jetbrains.annotations.Range;
  */
 @Getter
 @ToString
-final class PaginatedViewSlotContextImpl<T> extends AbstractViewSlotContext implements PaginatedViewSlotContext<T> {
+final class BukkitPaginatedViewSlotContextImpl<T> extends AbstractViewSlotContext
+        implements PaginatedViewSlotContext<T> {
 
     private final int index;
     private final T value;
@@ -29,7 +31,8 @@ final class PaginatedViewSlotContextImpl<T> extends AbstractViewSlotContext impl
     @Getter(AccessLevel.NONE)
     private final PaginatedViewContext<T> parent;
 
-    PaginatedViewSlotContextImpl(int index, @NotNull T value, ViewItem backingItem, PaginatedViewContext<T> parent) {
+    BukkitPaginatedViewSlotContextImpl(
+            int index, @NotNull T value, ViewItem backingItem, PaginatedViewContext<T> parent) {
         super(backingItem, (BaseViewContext) parent);
         this.index = index;
         this.value = value;
@@ -42,6 +45,11 @@ final class PaginatedViewSlotContextImpl<T> extends AbstractViewSlotContext impl
                 "Direct container modifications are not allowed from a paginated context because "
                         + "rendering a paginated item is an extensive method and can cause cyclic"
                         + " rendering on update, when rendering a paginated view.");
+    }
+
+    @Override
+    public @NotNull Player getPlayer() {
+        return BukkitViewer.toPlayerOfContext(this);
     }
 
     @Override
