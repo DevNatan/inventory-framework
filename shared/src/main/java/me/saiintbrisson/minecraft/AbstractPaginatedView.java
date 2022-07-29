@@ -77,6 +77,7 @@ public abstract class AbstractPaginatedView<T> extends AbstractView implements P
      */
     protected void onPageSwitch(@NotNull PaginatedViewContext<T> context) {}
 
+    /** {@inheritDoc} */
     @ApiStatus.Internal
     public final Paginator<T> getPaginator() {
         return paginator;
@@ -272,12 +273,14 @@ public abstract class AbstractPaginatedView<T> extends AbstractView implements P
                     "Pagination is not supported in \"%s\" view type: %s." + " Use chest type instead.",
                     getType().getIdentifier(), getClass().getName()));
 
-        if (paginator == null && context.paginated().getPaginator() == null)
-            throw new IllegalStateException("At least one pagination source must be set. "
-                    + "Use #setSource in the PaginatedView constructor or set just to a context"
-                    + " in the #onRender(...) function with \"render.paginated().setSource(...)\".");
-
         super.render(context);
+
+        if (context.paginated().getPaginator() == null) {
+            throw new IllegalStateException("At least one pagination source must be set. "
+                    + "Use #setSource in the PaginatedView constructor or set only to a context"
+                    + " in the #onRender(...) function with \"context.paginated().setSource(...)\".");
+        }
+
         updateContext(context.paginated(), 0, true, true);
     }
 

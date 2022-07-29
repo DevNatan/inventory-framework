@@ -295,7 +295,7 @@ public abstract class AbstractView extends AbstractVirtualView {
 
     @Override
     void render(@NotNull ViewContext context) {
-        if (!initialized) throw new IllegalStateException("Cannot render a unitialized view.");
+        if (!isInitialized()) throw new IllegalStateException("Cannot render a uninitialized view.");
 
         getPipeline().execute(RENDER, context);
         onRender(context);

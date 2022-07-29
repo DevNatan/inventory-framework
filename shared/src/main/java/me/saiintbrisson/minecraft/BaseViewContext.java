@@ -130,6 +130,7 @@ class BaseViewContext extends AbstractVirtualView implements ViewContext {
         getAttributes().setPropagateErrors(propagateErrors);
     }
 
+    /** {@inheritDoc} * */
     @Override
     public final ViewUpdateJob getUpdateJob() {
         ViewUpdateJob ownJob = super.getUpdateJob();
