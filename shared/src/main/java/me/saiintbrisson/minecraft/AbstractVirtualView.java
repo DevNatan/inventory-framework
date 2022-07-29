@@ -23,7 +23,9 @@ public abstract class AbstractVirtualView implements VirtualView {
         return items;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public final ViewItem getItem(int index) {
         return items[index];
@@ -33,29 +35,39 @@ public abstract class AbstractVirtualView implements VirtualView {
         this.items = items;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public final ViewErrorHandler getErrorHandler() {
         return errorHandler;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public final void setErrorHandler(ViewErrorHandler errorHandler) {
         this.errorHandler = errorHandler;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public final int getFirstSlot() {
         return 0;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public final int getLastSlot() {
         return items.length - 1;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Deprecated
     @ApiStatus.ScheduledForRemoval(inVersion = "2.5.3")
@@ -63,7 +75,9 @@ public abstract class AbstractVirtualView implements VirtualView {
         return new ViewItem();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Deprecated
     @ApiStatus.ScheduledForRemoval(inVersion = "2.5.3")
@@ -71,7 +85,9 @@ public abstract class AbstractVirtualView implements VirtualView {
         return new ViewItem().withItem(item);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Deprecated
     @ApiStatus.ScheduledForRemoval(inVersion = "2.5.3")
@@ -79,7 +95,9 @@ public abstract class AbstractVirtualView implements VirtualView {
         return new ViewItem().withItem(new ItemStack(material));
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Deprecated
     @ApiStatus.ScheduledForRemoval(inVersion = "2.5.3")
@@ -87,7 +105,9 @@ public abstract class AbstractVirtualView implements VirtualView {
         return new ViewItem().withItem(new ItemStack(material, amount));
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Deprecated
     @ApiStatus.ScheduledForRemoval(inVersion = "2.5.3")
@@ -95,7 +115,9 @@ public abstract class AbstractVirtualView implements VirtualView {
         return new ViewItem().withItem(new ItemStack(material, 1, durability));
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Deprecated
     @ApiStatus.ScheduledForRemoval(inVersion = "2.5.3")
@@ -103,7 +125,9 @@ public abstract class AbstractVirtualView implements VirtualView {
         return new ViewItem().withItem(new ItemStack(material, amount, durability));
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @NotNull
     public final ViewItem slot(int slot) {
@@ -115,49 +139,98 @@ public abstract class AbstractVirtualView implements VirtualView {
         return item;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @NotNull
     public final ViewItem slot(int slot, Object item) {
         return slot(slot).withItem(item);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @NotNull
     public final ViewItem slot(int row, int column) {
         return slot(convertSlot(row, column), null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @NotNull
     public final ViewItem slot(int row, int column, Object item) {
         return slot(convertSlot(row, column), item);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public final @NotNull ViewItem firstSlot() {
         return slot(getFirstSlot());
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public final @NotNull ViewItem firstSlot(Object item) {
         return slot(getFirstSlot(), item);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public final @NotNull ViewItem lastSlot() {
         return slot(getLastSlot());
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public final @NotNull ViewItem lastSlot(Object item) {
         return slot(getLastSlot(), item);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public @NotNull ViewItem availableSlot() {
+        return availableSlot(null);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public @NotNull ViewItem availableSlot(Object item) {
+        return slot(getNextAvailableSlot(), item);
+    }
+
+    /**
+     * Determines the next available slot.
+     *
+     * @return The next available slot.
+     * @throws IllegalStateException If there's no slot available.
+     */
+    int getNextAvailableSlot() {
+        for (int i = 0; i < getItems().length; i++) {
+            final ViewItem item = items[i];
+            if (item == null) return i;
+        }
+
+        return throwNoSlotAvailable();
+    }
+
+    protected final int throwNoSlotAvailable() {
+        throw new IllegalStateException("No slot available");
     }
 
     void render(@NotNull ViewContext context) {
@@ -206,7 +279,9 @@ public abstract class AbstractVirtualView implements VirtualView {
         return item;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void update() {
         throw new UnsupportedOperationException("Update aren't supported in this view");
@@ -248,7 +323,9 @@ public abstract class AbstractVirtualView implements VirtualView {
         render(context, item, slot);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @ApiStatus.Internal
     ViewItem resolve(int index) {
         // fast path -- skip -999 index on some platforms
@@ -260,50 +337,66 @@ public abstract class AbstractVirtualView implements VirtualView {
         return getItems()[index];
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public final void clear(int slot) {
         getItems()[slot] = null;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ViewUpdateJob getUpdateJob() {
         return updateJob;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public final void setUpdateJob(ViewUpdateJob updateJob) {
         this.updateJob = updateJob;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public final void scheduleUpdate(long intervalInTicks) {
         scheduleUpdate(-1, intervalInTicks);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void scheduleUpdate(long delayInTicks, long intervalInTicks) {
         inventoryModificationTriggered();
         PlatformUtils.getFactory().scheduleUpdate(this, delayInTicks, intervalInTicks);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public final void scheduleUpdate(@NotNull Duration duration) {
         scheduleUpdate(-1, Math.floorDiv(duration.getSeconds(), 20));
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public final boolean isScheduledToUpdate() {
         return updateJob != null;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @ApiStatus.Internal
     @Override
     public void inventoryModificationTriggered() {}
@@ -350,7 +443,7 @@ public abstract class AbstractVirtualView implements VirtualView {
     /**
      * Returns the slot associated with the specified row and column.
      *
-     * @param row The rows count.
+     * @param row    The rows count.
      * @param column The columns count.
      * @return The slot position based in specified row and column.
      */

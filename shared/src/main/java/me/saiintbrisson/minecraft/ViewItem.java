@@ -15,14 +15,17 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
 
-/** Mutable class that represents an item in a slot of a container. */
+/**
+ * Mutable class that represents an item in a slot of a container.
+ */
 @ToString
 @Setter(AccessLevel.PACKAGE)
 @Getter(AccessLevel.PACKAGE)
 public final class ViewItem {
 
     private static final long NO_INTERVAL = -1;
-	static final int FILL_SLOT = -2;
+    public static final int AVAILABLE_SLOT = -2;
+    public static final int UNKNOWN_SLOT = -3;
 
     enum State {
         UNDEFINED,
@@ -143,7 +146,7 @@ public final class ViewItem {
      * Determines whether the interaction should be canceled as an actor clicks on this item.
      *
      * @param cancelOnClick whether the interaction should be canceled as an actor clicks on this
-     *     item.
+     *                      item.
      * @return This item.
      */
     @Contract(value = "_ -> this", mutates = "this")
@@ -167,7 +170,7 @@ public final class ViewItem {
      * Determines whether the interaction should be canceled as an actor shift clicks on this item.
      *
      * @param cancelOnShiftClick whether the interaction should be canceled as an actor shift clicks
-     *     on this item.
+     *                           on this item.
      * @return This item.
      */
     @Contract(value = "_ -> this", mutates = "this")
@@ -220,7 +223,7 @@ public final class ViewItem {
      *  }
      * </pre>
      *
-     * @param key The property key.
+     * @param key   The property key.
      * @param value The property value.
      * @deprecated Use {@link #withData(String, Object)} instead.
      */
@@ -250,7 +253,7 @@ public final class ViewItem {
      *  }
      * </pre>
      *
-     * @param key The property key.
+     * @param key   The property key.
      * @param value The property value.
      * @return This item.
      */
@@ -400,5 +403,16 @@ public final class ViewItem {
     public ViewItem onItemRelease(@Nullable BiConsumer<ViewSlotContext, ViewSlotContext> handler) {
         setItemReleaseHandler(handler);
         return this;
+    }
+
+    /**
+     * Returns <code>true</code> if this is an item whose slot is dynamically defined during the
+     * lifecycle of the view to which it belongs, or <code>false</code> if it is static and its slot
+     * was previously defined during its initialization.
+     *
+     * @return If this is a dynamic item.
+     */
+    public boolean isDynamic() {
+        return slot == AVAILABLE_SLOT || isPaginationItem();
     }
 }

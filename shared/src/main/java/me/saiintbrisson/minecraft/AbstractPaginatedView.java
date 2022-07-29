@@ -714,4 +714,12 @@ public abstract class AbstractPaginatedView<T> extends AbstractView implements P
                     "The \"%c\" character is reserved in layouts and cannot be used due to backwards compatibility.",
                     character));
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    int getNextAvailableSlot() {
+		return super.getNextAvailableSlot();
+    }
 }

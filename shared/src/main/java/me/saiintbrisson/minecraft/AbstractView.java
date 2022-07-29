@@ -575,4 +575,23 @@ public abstract class AbstractView extends AbstractVirtualView {
 
         vf.nextTick(job);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    int getNextAvailableSlot() {
+        for (int i = 0; i < size; i++) {
+            // fast path -- skip resolution if slot isn't interactable
+            if (!type.canPlayerInteractOn(i)) continue;
+
+            // slow path -- resolve slot one by one
+            final ViewItem item = resolve(i);
+            if (item != null) continue;
+
+            return i;
+        }
+
+        return throwNoSlotAvailable();
+    }
 }
