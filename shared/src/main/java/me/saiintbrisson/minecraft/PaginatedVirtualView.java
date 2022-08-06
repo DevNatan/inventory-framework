@@ -11,11 +11,6 @@ import org.jetbrains.annotations.Nullable;
 
 public interface PaginatedVirtualView<T> extends VirtualView {
 
-    char PREVIOUS_PAGE_CHAR = '<';
-    char NEXT_PAGE_CHAR = '>';
-    char EMPTY_SLOT_CHAR = 'X';
-    char ITEM_SLOT_CHAR = 'O';
-
     /**
      * Defines the data that will be used to populate this paginated view.
      *
@@ -91,27 +86,6 @@ public interface PaginatedVirtualView<T> extends VirtualView {
      */
     @ApiStatus.Experimental
     void setPagesCount(int pagesCount);
-
-    /**
-     * The layout defined for this view by the user.
-     *
-     * <p><b><i> This is an internal inventory-framework API that should not be used from outside of
-     * this library. No compatibility guarantees are provided. </i></b>
-     *
-     * @return The layout defined for this view.
-     */
-    @ApiStatus.Internal
-    @Nullable
-    String[] getLayout();
-
-    @ApiStatus.Internal
-    List<LayoutPattern> getLayoutPatterns();
-
-    void setLayout(@Nullable String... layout);
-
-    void setLayout(char character, Supplier<ViewItem> factory);
-
-    void setLayout(char character, Consumer<ViewItem> factory);
 
     /**
      * The paginator of this view.

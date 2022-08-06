@@ -7,7 +7,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
+import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public interface VirtualView {
 
@@ -450,4 +452,25 @@ public interface VirtualView {
 	 */
 	@ApiStatus.Internal
 	void inventoryModificationTriggered();
+
+	/**
+	 * The layout defined for this view by the user.
+	 *
+	 * <p><b><i> This is an internal inventory-framework API that should not be used from outside of
+	 * this library. No compatibility guarantees are provided. </i></b>
+	 *
+	 * @return The layout defined for this view.
+	 */
+	@ApiStatus.Internal
+	@Nullable
+	String[] getLayout();
+
+	@ApiStatus.Internal
+	List<LayoutPattern> getLayoutPatterns();
+
+	void setLayout(@Nullable String... layout);
+
+	void setLayout(char character, Supplier<ViewItem> factory);
+
+	void setLayout(char character, Consumer<ViewItem> factory);
 }
