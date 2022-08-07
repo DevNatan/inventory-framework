@@ -1,4 +1,4 @@
-package me.saiintbrisson.minecraft;
+package me.saiintbrisson.minecraft.feature;
 
 import java.util.Collection;
 import java.util.function.UnaryOperator;

@@ -1,4 +1,4 @@
-package me.saiintbrisson.minecraft;
+package me.saiintbrisson.minecraft.pipeline;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
  *
  * @see PipelinePhase
  */
-class Pipeline<S> {
+public final class Pipeline<S> {
 
     private final List<PipelinePhase> _phases;
     private final Map<PipelinePhase, List<PipelineInterceptor<S>>> interceptors = new HashMap<>();

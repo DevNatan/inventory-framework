@@ -3,6 +3,8 @@ package me.saiintbrisson.minecraft;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import me.saiintbrisson.minecraft.pipeline.PipelineContext;
+import me.saiintbrisson.minecraft.pipeline.PipelineInterceptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 

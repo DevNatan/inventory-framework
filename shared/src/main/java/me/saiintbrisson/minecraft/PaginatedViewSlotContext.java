@@ -1,5 +1,6 @@
 package me.saiintbrisson.minecraft;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -29,5 +30,6 @@ public interface PaginatedViewSlotContext<T> extends PaginatedViewContext<T>, Vi
 
     /** {@inheritDoc} */
     @Override
+    @NotNull
     PaginatedViewSlotContext<T> withItem(@Nullable Object item);
 }

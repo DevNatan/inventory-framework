@@ -242,16 +242,17 @@ public final class ViewItem {
      * inside the container, you can define a data in this item and as soon as the actor moves it the
      * data will remain there, and you can use it any way you want.
      *
-     * <pre>
-     *  slot(...).withCancelOnClick(false).withData("name", "Anna")
-     *  slot(...).withCancelOnClick(false).withData("name", "James");
+     * <pre>{@code
+     *  slot(1, ...).withData("name", "Anna");
+     *  slot(2, ...).withData("name", "James");
+     *  slot(3, ...);
      *
-     *  &#64;Override
+     *  @Override
      *  protected void onItemHold(ViewSlotContext context) {
      *      String name = context.getItemData("name");
-     *      ...
+     *      // returns "Anna", "James" or null
      *  }
-     * </pre>
+     * }</pre>
      *
      * @param key   The property key.
      * @param value The property value.

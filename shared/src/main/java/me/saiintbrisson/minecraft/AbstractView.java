@@ -5,11 +5,16 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import me.saiintbrisson.minecraft.exception.InitializationException;
+import me.saiintbrisson.minecraft.pipeline.Pipeline;
+import me.saiintbrisson.minecraft.pipeline.PipelinePhase;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -40,6 +45,9 @@ public abstract class AbstractView extends AbstractVirtualView {
 
     @ToString.Include
     private final int size;
+
+    private final int columns;
+    private final int rows;
 
     @ToString.Include
     private final String title;
@@ -74,6 +82,8 @@ public abstract class AbstractView extends AbstractVirtualView {
     AbstractView(int size, String title, @NotNull ViewType type) {
         final int fixedSize = size == 0 ? type.getMaxSize() : type.normalize(size);
         this.size = fixedSize;
+        this.rows = fixedSize / type.getColumns();
+        this.columns = type.getColumns();
         this.title = title;
         this.type = type;
 
@@ -178,7 +188,7 @@ public abstract class AbstractView extends AbstractVirtualView {
      *
      * @param context The click context.
      * @deprecated Use {@link #onClick(ViewSlotContext)} with {@link
-     *     ViewSlotClickContext#isOutsideClick()} instead.
+     * ViewSlotClickContext#isOutsideClick()} instead.
      */
     @SuppressWarnings("DeprecatedIsStillUsed")
     @Deprecated
@@ -190,10 +200,10 @@ public abstract class AbstractView extends AbstractVirtualView {
      *
      * <p>This context is non-cancelable.
      *
-     * @param context The current view context.
+     * @param context      The current view context.
      * @param hotbarButton The interacted hot bar button.
      * @deprecated Use {@link #onClick(ViewSlotContext)} with {@link
-     *     ViewSlotClickContext#isKeyboardClick()} instead.
+     * ViewSlotClickContext#isKeyboardClick()} instead.
      */
     @SuppressWarnings("DeprecatedIsStillUsed")
     @Deprecated
@@ -228,7 +238,7 @@ public abstract class AbstractView extends AbstractVirtualView {
      * <p>This handler is the counterpart of {@link #onItemHold(ViewSlotContext)}.
      *
      * @param fromContext The input context of the move.
-     * @param toContext The output context of the move.
+     * @param toContext   The output context of the move.
      */
     protected void onItemRelease(@NotNull ViewSlotContext fromContext, @NotNull ViewSlotContext toContext) {}
 
@@ -299,6 +309,10 @@ public abstract class AbstractView extends AbstractVirtualView {
 
         getPipeline().execute(RENDER, context);
         onRender(context);
+
+        // force regular view layout resolution to optimize auto-slot-filling render
+        if (getLayout() != null) resolveLayout(this, getLayout());
+
         super.render(context);
     }
 
@@ -309,14 +323,18 @@ public abstract class AbstractView extends AbstractVirtualView {
         super.update(context);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public final void close() {
         // global closings must be always immediate
         closeUninterruptedly();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Deprecated
     @ApiStatus.ScheduledForRemoval(inVersion = "2.5.2")
@@ -324,7 +342,9 @@ public abstract class AbstractView extends AbstractVirtualView {
         closeUninterruptedly();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public final void closeUninterruptedly() {
         getContexts().forEach(ViewContext::close);
@@ -424,7 +444,9 @@ public abstract class AbstractView extends AbstractVirtualView {
         this.closeOnOutsideClick = closeOnOutsideClick;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected final ViewItem[] getItems() {
         return super.getItems();
@@ -442,18 +464,32 @@ public abstract class AbstractView extends AbstractVirtualView {
         return type;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public final int getSize() {
         return size;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public final int getRows() {
-        return getSize();
+        return rows;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public int getColumns() {
+        return columns;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public final String getTitle() {
         return title;
     }
@@ -463,14 +499,18 @@ public abstract class AbstractView extends AbstractVirtualView {
         return super.getUpdateJob();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public final void scheduleUpdate(long delayInTicks, long intervalInTicks) {
         ensureNotInitialized();
         super.scheduleUpdate(delayInTicks, intervalInTicks);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public final void inventoryModificationTriggered() {
         super.inventoryModificationTriggered();
@@ -488,14 +528,18 @@ public abstract class AbstractView extends AbstractVirtualView {
         return true;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @ApiStatus.Internal
     @Override
     final ViewItem resolve(int index) {
         return super.resolve(index);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public final void update() {
         for (final ViewContext context : new ArrayList<>(contexts)) context.update();
@@ -531,24 +575,63 @@ public abstract class AbstractView extends AbstractVirtualView {
     }
 
     /**
-     * Throws an exception if the view has already been initialized.
-     *
-     * <p>This method is to be used in cases where the user may mistakenly use functions that must be
+     * Throws an exception if this view has already been initialized.
+     * <p>
+     * This method is to be used in cases where the user may mistakenly use functions that must be
      * used in the view constructor, in the handlers, such as: defining the data of a paginated view
      * in the rendering function without using a context.
      *
-     * @throws IllegalStateException If this view is initialized.
+     * <p><b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     *
+     * @throws InitializationException If this view is initialized.
+     * @see <a href="https://github.com/DevNatan/inventory-framework/wiki/Errors#initializationexception">InitializationException on Wiki</a>
      */
-    protected final void ensureNotInitialized() {
+    @ApiStatus.Internal
+    protected final void ensureNotInitialized() throws InitializationException {
         if (!isInitialized()) return;
+        throw new InitializationException();
+    }
 
-        throw new IllegalStateException("Not allowed to change the nature of the view after it has been initialized,"
-                + " it is incorrect to use global functions of the view in render or"
-                + " update functions, whatever method you are trying to call you"
-                + " probably want to call the same function using the context that"
-                + " was provided for you. For example: it is not allowed to use"
-                + " \"setSource(...)\" in the rendering function, you must use "
-                + "\"context.paginated().setSource()\" instead.`");
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public String[] getLayout() {
+        return super.getLayout();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @throws InitializationException If this view is initialized.
+     **/
+    @Override
+    public void setLayout(@Nullable String... layout) throws InitializationException {
+        ensureNotInitialized();
+        super.setLayout(layout);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @throws InitializationException If this view is initialized.
+     **/
+    @Override
+    public void setLayout(char identifier, @Nullable Consumer<ViewItem> layout) throws InitializationException {
+        ensureNotInitialized();
+        super.setLayout(identifier, layout);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @throws InitializationException If this view is initialized.
+     **/
+    @Override
+    public void setLayout(char character, @Nullable Supplier<ViewItem> factory) throws InitializationException {
+        ensureNotInitialized();
+        super.setLayout(character, factory);
     }
 
     @Override
@@ -556,7 +639,9 @@ public abstract class AbstractView extends AbstractVirtualView {
         return convertSlot(row, column, getType().getRows(), getType().getColumns());
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @SuppressWarnings("unchecked")
     @Contract(value = " -> this", pure = true)
     public final <T> AbstractPaginatedView<T> paginated() {
@@ -592,6 +677,6 @@ public abstract class AbstractView extends AbstractVirtualView {
             return i;
         }
 
-        return throwNoSlotAvailable();
+        return ViewItem.AVAILABLE_SLOT;
     }
 }

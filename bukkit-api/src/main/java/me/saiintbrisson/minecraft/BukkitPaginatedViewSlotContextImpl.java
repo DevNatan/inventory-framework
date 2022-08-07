@@ -53,7 +53,7 @@ final class BukkitPaginatedViewSlotContextImpl<T> extends AbstractViewSlotContex
     }
 
     @Override
-    public PaginatedViewSlotContext<T> withItem(@Nullable Object item) {
+    public @NotNull PaginatedViewSlotContext<T> withItem(@Nullable Object item) {
         super.withItem(item);
         return this;
     }
@@ -78,16 +78,6 @@ final class BukkitPaginatedViewSlotContextImpl<T> extends AbstractViewSlotContex
     @Override
     public void setPagesCount(int pagesCount) {
         throwPaginationDataChangedError();
-    }
-
-    @Override
-    public @Nullable String[] getLayout() {
-        return parent.getLayout();
-    }
-
-    @Override
-    public List<LayoutPattern> getLayoutPatterns() {
-        return parent.getLayoutPatterns();
     }
 
     @Override

@@ -1,4 +1,4 @@
-package me.saiintbrisson.minecraft;
+package me.saiintbrisson.minecraft.pipeline;
 
 import java.util.List;
 import lombok.AccessLevel;

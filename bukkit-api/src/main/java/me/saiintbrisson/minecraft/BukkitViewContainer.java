@@ -12,6 +12,7 @@ import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
@@ -107,7 +108,7 @@ public abstract class BukkitViewContainer implements ViewContainer {
 
     @Override
     public boolean isEntityContainer() {
-        return false;
+        return getInventory() instanceof PlayerInventory;
     }
 
     @Override

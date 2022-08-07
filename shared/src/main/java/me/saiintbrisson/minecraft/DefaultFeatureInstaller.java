@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.function.UnaryOperator;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import me.saiintbrisson.minecraft.feature.Feature;
+import me.saiintbrisson.minecraft.feature.FeatureInstaller;
 import org.jetbrains.annotations.NotNull;
 
 /**

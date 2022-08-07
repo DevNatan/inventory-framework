@@ -14,6 +14,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import me.saiintbrisson.minecraft.feature.Feature;
+import me.saiintbrisson.minecraft.feature.FeatureInstaller;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;

@@ -8,6 +8,7 @@ import static org.bukkit.Bukkit.createInventory;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import me.saiintbrisson.minecraft.pipeline.Pipeline;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;

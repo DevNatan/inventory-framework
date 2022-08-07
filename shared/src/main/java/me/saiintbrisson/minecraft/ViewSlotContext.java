@@ -2,10 +2,14 @@ package me.saiintbrisson.minecraft;
 
 import java.util.NoSuchElementException;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
+
+import me.saiintbrisson.minecraft.exception.InventoryModificationException;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.UnknownNullability;
 
 /**
  * Represents a context in which there is a specific slot related to it, the main context
@@ -40,7 +44,7 @@ public interface ViewSlotContext extends ViewContext {
     int getSlot();
 
     /**
-     * Updates this slot context individually.
+     * Updates this slot.
      *
      * <p>This method is a shortcut to {@link AbstractView#update(ViewContext, int)}.
      */
@@ -72,30 +76,44 @@ public interface ViewSlotContext extends ViewContext {
     ItemWrapper getItemWrapper();
 
     /**
-     * Defines a new item for this context, triggering an {@link
-     * AbstractVirtualView#inventoryModificationTriggered() inventory modification}.
+     * Returns the current item of this context.
      *
-     * <p>If you need to change the item partially use {@link #updateItem(Consumer)}.
-     *
-     * @param item The new item that'll be set.
+     * @return The current item.
+     * @apiNote The item returned is not necessarily the item positioned in the slot, there are cases,
+     * for example in {@link ViewSlotMoveContext}, in which the current item may be the item the entity
+     * is interacting with and not a positioned item.
      */
-    void setItem(@Nullable Object item);
+    @NotNull
+    ItemWrapper getCurrentItem();
 
     /**
-     * Defines a new item for this context, triggering an {@link
-     * AbstractVirtualView#inventoryModificationTriggered() inventory modification}.
-     *
-     * <p>If you need to change the item partially use {@link #updateItem(Consumer)}.
+     * Sets the new item for this slot for this context.
+     * <p>
+     * If you need to change the item partially use {@link #updateItem(Consumer)} instead.
      *
      * @param item The new item that'll be set.
-     * @return This context.
+     * @throws InventoryModificationException When the container is changed.
      */
-    ViewSlotContext withItem(@Nullable Object item);
+    void setItem(@Nullable Object item) throws InventoryModificationException;
+
+    /**
+     * Sets the new item for this slot for this context.
+     * <p>
+     * If you need to change the item partially use {@link #updateItem(Consumer)} instead.
+     *
+     * @param item The new item that'll be set.
+     * @throws InventoryModificationException When the container is changed.
+     * @deprecated Use {@link #setItem(Object)} instead.
+     */
+    @Deprecated
+    @NotNull
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.6")
+    ViewSlotContext withItem(@Nullable Object item) throws InventoryModificationException;
 
     /**
      * Applies a patch to the current item.
-     *
-     * <p>This method should be used when only a partial modification is required to be applied to the
+     * <p>
+     * This method should be used when only a partial modification is required to be applied to the
      * item, triggering an {@link AbstractVirtualView#inventoryModificationTriggered() inventory
      * modification}.
      *
@@ -140,19 +158,49 @@ public interface ViewSlotContext extends ViewContext {
     /**
      * Returns the value of a user-defined property for the item of this slot context or throws an
      * exception if the property has not been set.
+     * <p>
+     * The properties are previously defined by {@link ViewItem#withData(String, Object)}.
      *
      * @param key The property key.
      * @param <T> The property value type.
-     * @return This item.
+     * @return The property value.
      * @throws NoSuchElementException If the property has not been set.
      */
-    <T> T data(@NotNull String key);
+    @NotNull
+    <T> T getItemData(@NotNull String key) throws NoSuchElementException;
+
+    /**
+     * Returns the value of a user-defined property for the item of this slot context or throws an
+     * exception if the property has not been set.
+     * <p>
+     * The properties are previously defined by {@link ViewItem#withData(String, Object)}.
+     *
+     * @param key The property key.
+     * @param <T> The property value type.
+     * @return The property value or the default value.
+     */
+    @UnknownNullability("Return value is defined by the availability of the property or by the"
+            + " [defaultValue] parameter in case of fallback which can be null or not.")
+    <T> T getItemData(@NotNull String key, @NotNull Supplier<T> defaultValue);
+
+    /**
+     * Returns the value of a user-defined property for the item of this slot context or throws an
+     * exception if the property has not been set.
+     * <p>
+     * The properties are previously defined by {@link ViewItem#withData(String, Object)}.
+     *
+     * @param key The property key.
+     * @param <T> The property value type.
+     * @return The property value or null.
+     */
+    @Nullable
+    <T> T getItemDataOrNull(@NotNull String key);
 
     /**
      * Converts this context to a pagination context.
-     *
-     * <p>It only works if the view that originated this context is a paginated view, throwing an
-     * IllegalStateException if the root of this context is not paginated.
+     * <p>
+     * Works only if the root of this context is a paginated view, throwing an exception if the root
+     * of this context is not paginated.
      *
      * @param <T> The pagination item type.
      * @return This context as a PaginatedViewContext.

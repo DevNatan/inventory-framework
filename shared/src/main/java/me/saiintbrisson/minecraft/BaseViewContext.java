@@ -1,247 +1,268 @@
 package me.saiintbrisson.minecraft;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.function.Supplier;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Supplier;
+
 @Getter
 @Setter
-@RequiredArgsConstructor
 @ToString(callSuper = true)
 class BaseViewContext extends AbstractVirtualView implements ViewContext {
 
-    private final AbstractView root;
-    private final ViewContainer container;
-    private final ViewContextAttributes attributes;
+	private final AbstractView root;
+	private final ViewContainer container;
 
-    protected BaseViewContext(final @NotNull AbstractView root, final @Nullable ViewContainer container) {
-        this.root = root;
-        this.container = container;
-        this.attributes = new ViewContextAttributes(container);
-    }
+	private final List<Viewer> viewers = new ArrayList<>();
+	private final Map<String, Object> contextData = new HashMap<>();
+	private String updatedTitle;
+	private boolean propagateErrors = true;
+	private boolean markedToClose;
 
-    @Override
-    public final @NotNull List<Viewer> getViewers() {
-        synchronized (getAttributes().getViewers()) {
-            return Collections.unmodifiableList(getAttributes().getViewers());
-        }
-    }
+	protected BaseViewContext(final @NotNull AbstractView root, final @Nullable ViewContainer container) {
+		this.root = root;
+		this.container = container;
+	}
 
-    @Override
-    public final Map<String, Object> getData() {
-        return Collections.unmodifiableMap(getAttributes().getData());
-    }
+	@Override
+	public final @NotNull List<Viewer> getViewers() {
+		synchronized (viewers) {
+			return Collections.unmodifiableList(viewers);
+		}
+	}
 
-    final void addViewer(@NotNull final Viewer viewer) {
-        synchronized (getAttributes().getViewers()) {
-            getAttributes().getViewers().add(viewer);
-        }
-    }
+	final void addViewer(@NotNull final Viewer viewer) {
+		synchronized (viewers) {
+			viewers.add(viewer);
+		}
+	}
 
-    final void removeViewer(@NotNull final Viewer viewer) {
-        synchronized (getAttributes().getViewers()) {
-            getAttributes().getViewers().remove(viewer);
-        }
-    }
+	final void removeViewer(@NotNull final Viewer viewer) {
+		synchronized (viewers) {
+			viewers.remove(viewer);
+		}
+	}
 
-    @Override
-    @SuppressWarnings("unchecked")
-    public final <T> T get(@NotNull final String key) {
-        return (T) getAttributes().getData().get(key);
-    }
+	@Override
+	public final Map<String, Object> getData() {
+		return Collections.unmodifiableMap(contextData);
+	}
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public <T> T get(@NotNull String key, @NotNull Supplier<T> defaultValue) {
-        synchronized (getAttributes().getData()) {
-            if (!getAttributes().getData().containsKey(key)) {
-                final T value = defaultValue.get();
-                getAttributes().getData().put(key, value);
-                return value;
-            }
+	@Override
+	@SuppressWarnings("unchecked")
+	public final <T> T get(@NotNull final String key) {
+		return (T) contextData.get(key);
+	}
 
-            return (T) getAttributes().getData().get(key);
-        }
-    }
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> T get(@NotNull String key, @NotNull Supplier<T> defaultValue) {
+		synchronized (contextData) {
+			if (!contextData.containsKey(key)) {
+				final T value = defaultValue.get();
+				contextData.put(key, value);
+				return value;
+			}
 
-    @Override
-    public final void set(@NotNull final String key, @NotNull final Object value) {
-        synchronized (getAttributes().getData()) {
-            getAttributes().getData().put(key, value);
-        }
-    }
+			return (T) contextData.get(key);
+		}
+	}
 
-    @Override
-    public final boolean has(@NotNull final String key) {
-        synchronized (getAttributes().getData()) {
-            return getAttributes().getData().containsKey(key);
-        }
-    }
+	@Override
+	public final void set(@NotNull final String key, @NotNull final Object value) {
+		synchronized (contextData) {
+			contextData.put(key, value);
+		}
+	}
 
-    @Override
-    @NotNull
-    public final ViewContainer getContainer() {
-        return Objects.requireNonNull(getAttributes().getContainer(), "View context container cannot be null");
-    }
+	@Override
+	public final boolean has(@NotNull final String key) {
+		synchronized (contextData) {
+			return contextData.containsKey(key);
+		}
+	}
 
-    @Override
-    public final @NotNull String getTitle() {
-        return getAttributes().getUpdatedTitle() != null
-                ? getAttributes().getUpdatedTitle()
-                : getRoot().getTitle();
-    }
+	@Override
+	@NotNull
+	public final ViewContainer getContainer() {
+		return Objects.requireNonNull(
+			container,
+			"Context container cannot be null"
+		);
+	}
 
-    @Override
-    public final int getRows() {
-        return getContainer().getColumnsCount();
-    }
 
-    @Override
-    public final int getSize() {
-        return getContainer().getSize();
-    }
+	@Override
+	public int getRows() {
+		return getContainer().getRowsCount();
+	}
 
-    @Override
-    public final void updateTitle(@NotNull final String title) {
-        getAttributes().setTitle(title);
-    }
+	@Override
+	public int getColumns() {
+		return getContainer().getColumnsCount();
+	}
 
-    @Override
-    public final void resetTitle() {
-        getAttributes().setTitle(null);
-    }
+	@Override
+	public int getSize() {
+		return getContainer().getSize();
+	}
 
-    @Override
-    public final boolean isPropagateErrors() {
-        return getAttributes().isPropagateErrors();
-    }
+	@Override
+	public final @Nullable String getTitle() {
+		return updatedTitle != null
+			? updatedTitle
+			: getInitialTitle();
+	}
 
-    @Override
-    public void setPropagateErrors(boolean propagateErrors) {
-        getAttributes().setPropagateErrors(propagateErrors);
-    }
+	@Override
+	public @Nullable String getInitialTitle() {
+		return getTitle();
+	}
 
-    /** {@inheritDoc} * */
-    @Override
-    public final ViewUpdateJob getUpdateJob() {
-        ViewUpdateJob ownJob = super.getUpdateJob();
-        if (ownJob != null) return ownJob;
+	@Override
+	public final @Nullable String getUpdatedTitle() {
+		return updatedTitle;
+	}
 
-        return getRoot().getUpdateJob();
-    }
+	@Override
+	public void updateTitle(@NotNull final String title) {
+		this.updatedTitle = title;
+		getContainer().changeTitle(title);
+	}
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public <T> PaginatedViewContext<T> paginated() {
-        if (!(this.getRoot() instanceof PaginatedView))
-            throw new IllegalStateException("Only paginated views can enforce paginated view context");
+	@Override
+	public void resetTitle() {
+		this.updatedTitle = null;
+		getContainer().changeTitle(null);
+	}
 
-        return (PaginatedViewContext<T>) this;
-    }
+	@Override
+	public boolean isPropagateErrors() {
+		return propagateErrors;
+	}
 
-    @Override
-    public final String getUpdatedTitle() {
-        return getAttributes().getUpdatedTitle();
-    }
+	@Override
+	public void setPropagateErrors(boolean propagateErrors) {
+		this.propagateErrors = propagateErrors;
+	}
 
-    @Override
-    public final void update() {
-        getRoot().update(this);
-    }
+	@Override
+	public final ViewUpdateJob getUpdateJob() {
+		ViewUpdateJob ownJob = super.getUpdateJob();
+		if (ownJob != null) return ownJob;
 
-    @Override
-    public final void close() {
-        getAttributes().setMarkedToClose(true);
-    }
+		return getRoot().getUpdateJob();
+	}
 
-    @Override
-    @Deprecated
-    public void closeNow() {
-        closeUninterruptedly();
-    }
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> PaginatedViewContext<T> paginated() {
+		if (!(this.getRoot() instanceof PaginatedView))
+			throw new IllegalStateException("Only paginated views can enforce paginated view context");
 
-    @Override
-    public void closeUninterruptedly() {
-        getContainer().close();
-    }
+		return (PaginatedViewContext<T>) this;
+	}
 
-    @Override
-    public final void open(@NotNull Class<? extends AbstractView> viewClass) {
-        open(viewClass, Collections.emptyMap());
-    }
+	@Override
+	public final void update() {
+		getRoot().update(this);
+	}
 
-    @Override
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    public final void open(
-            @NotNull Class<? extends AbstractView> viewClass, @NotNull Map<String, @Nullable Object> data) {
-        final PlatformViewFrame platformViewFrame = Objects.requireNonNull(
-                getRoot().getViewFrame(),
-                "Fast parent view open by context bridge is only supported if root view is registered under a ViewFrame.");
+	@Override
+	public final void close() {
+		markedToClose = true;
+	}
 
-        for (final Viewer viewer : getViewers()) platformViewFrame.open(viewClass, viewer, data);
-    }
+	@Override
+	@Deprecated
+	public void closeNow() {
+		closeUninterruptedly();
+	}
 
-    @Override
-    public @NotNull Player getPlayer() {
-        throw new UnsupportedOperationException(
-                "This function should not be used on your platform, it is only available for reasons"
-                        + " of backward compatibility with the Bukkit platform.");
-    }
+	@Override
+	public void closeUninterruptedly() {
+		getContainer().close();
+	}
 
-    @Override
-    public boolean isCancelled() {
-        return false;
-    }
+	@Override
+	public final void open(@NotNull Class<? extends AbstractView> viewClass) {
+		open(viewClass, Collections.emptyMap());
+	}
 
-    @Override
-    public void setCancelled(boolean cancelled) {
-        throw new UnsupportedOperationException(
-                String.format("This context is not cancellable: %s", getClass().getName()));
-    }
+	@Override
+	@SuppressWarnings({"rawtypes", "unchecked"})
+	public final void open(
+		@NotNull Class<? extends AbstractView> viewClass, @NotNull Map<String, @Nullable Object> data) {
+		final PlatformViewFrame platformViewFrame = Objects.requireNonNull(
+			getRoot().getViewFrame(),
+			"Fast parent view open by context bridge is only supported if root view is registered under a ViewFrame.");
 
-    @Override
-    public ViewItem resolve(int index, boolean resolveOnRoot) {
-        ViewItem item = super.resolve(index);
-        if (item == null && resolveOnRoot) return getRoot().resolve(index);
+		for (final Viewer viewer : getViewers()) platformViewFrame.open(viewClass, viewer, data);
+	}
 
-        return item;
-    }
+	@Override
+	public @NotNull Player getPlayer() {
+		throw new UnsupportedOperationException(
+			"This function should not be used on your platform, it is only available for reasons"
+				+ " of backward compatibility with the Bukkit platform.");
+	}
 
-    final ViewItem resolve(int index, boolean resolveOnRoot, boolean entityContainer) {
-        // fast path -- user is unable to set items on entity container
-        if (entityContainer) return null;
-        return resolve(index, resolveOnRoot);
-    }
+	@Override
+	public boolean isCancelled() {
+		return false;
+	}
 
-    @Override
-    public @NotNull ViewSlotContext ref(final String key) {
-        ViewItem item = tryResolveRef(this, key);
-        if (item == null) item = tryResolveRef(getRoot(), key);
-        if (item == null) return null;
+	@Override
+	public void setCancelled(boolean cancelled) {
+		throw new UnsupportedOperationException(
+			String.format("This context is not cancellable: %s", getClass().getName()));
+	}
 
-        final PlatformViewFrame<?, ?, ?> vf = getRoot().getViewFrame();
-        if (vf == null)
-            throw new IllegalStateException(
-                    "Tried to get a slot reference while context framework was not registered yet");
+	@Override
+	public ViewItem resolve(int index, boolean resolveOnRoot) {
+		ViewItem item = super.resolve(index);
+		if (item == null && resolveOnRoot) return getRoot().resolve(index);
 
-        return vf.getFactory().createSlotContext(item, this, 0, null);
-    }
+		return item;
+	}
 
-    private ViewItem tryResolveRef(final AbstractVirtualView view, final String key) {
-        for (final ViewItem item : view.getItems()) {
-            if (item == null) continue;
-            if (item.getReferenceKey() == null) continue;
-            if (item.getReferenceKey().equals(key)) return item;
-        }
-        return null;
-    }
+	final ViewItem resolve(int index, boolean resolveOnRoot, boolean entityContainer) {
+		// fast path -- user is unable to set items on entity container
+		if (entityContainer) return null;
+		return resolve(index, resolveOnRoot);
+	}
+
+	@Override
+	public @NotNull ViewSlotContext ref(final String key) {
+		ViewItem item = tryResolveRef(this, key);
+		if (item == null) item = tryResolveRef(getRoot(), key);
+		if (item == null)
+			throw new IllegalArgumentException("No reference found for key: " + key);
+
+		final PlatformViewFrame<?, ?, ?> vf = getRoot().getViewFrame();
+		if (vf == null)
+			throw new IllegalStateException(
+				"Tried to get a slot reference while context framework was not registered yet");
+
+		return vf.getFactory().createSlotContext(item, this, 0, null);
+	}
+
+	private ViewItem tryResolveRef(final AbstractVirtualView view, final String key) {
+		for (final ViewItem item : view.getItems()) {
+			if (item == null) continue;
+			if (item.getReferenceKey() == null) continue;
+			if (item.getReferenceKey().equals(key)) return item;
+		}
+		return null;
+	}
 }

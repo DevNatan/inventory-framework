@@ -1,5 +1,6 @@
 package me.saiintbrisson.minecraft;
 
+import me.saiintbrisson.minecraft.exception.InventoryModificationException;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
@@ -7,11 +8,44 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
+import java.util.Deque;
 import java.util.List;
+import java.util.Stack;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+/**
+ * VirtualView is the basis for creating a view it contains the implementation with methods that are
+ * shared between regular views and contexts which are called "unified methods".
+ * <p>
+ * We call "view" a {@link VirtualView}, "regular view" a {@link AbstractView} and implementations,
+ * and "context" a {@link ViewContext} and implementations.
+ */
 public interface VirtualView {
+
+	/**
+	 * Character used to represent the paginated view "previous page" navigation slot on a layout.
+	 */
+	@ApiStatus.Internal
+	char LAYOUT_PREVIOUS_PAGE = '<';
+
+	/**
+	 * Character used to represent the paginated view "next page" navigation slot on a layout.
+	 */
+	@ApiStatus.Internal
+	char LAYOUT_NEXT_PAGE = '>';
+
+	/**
+	 * Character used to represent a empty slot on a layout.
+	 */
+	@ApiStatus.Internal
+	char LAYOUT_EMPTY_SLOT = 'X';
+
+	/**
+	 * Character used to represent a filled slot on a layout.
+	 */
+	@ApiStatus.Internal
+	char LAYOUT_FILLED_SLOT = 'O';
 
 	/**
 	 * Finds an item at an index.
@@ -26,18 +60,27 @@ public interface VirtualView {
 	ViewItem getItem(int index);
 
 	/**
-	 * The current title of this view's container.
+	 * The current title of this view.
 	 *
-	 * @return The current title of this view's container.
+	 * @return The current title of this view, if <code>null</code> will return the default title
+	 * for this view type.
 	 */
+	@Nullable
 	String getTitle();
 
 	/**
-	 * The row count of this view.
+	 * The rows count of this view.
 	 *
-	 * @return The row count of this view.
+	 * @return The rows count of this view.
 	 */
 	int getRows();
+
+	/**
+	 * The columns count of this view.
+	 *
+	 * @return The columns count of this view.
+	 */
+	int getColumns();
 
 	/**
 	 * The size of this view.
@@ -233,7 +276,7 @@ public interface VirtualView {
 	 *     </li>
 	 *     <li>In paginated views the available slots will go from {@link PaginatedView#getOffset()}
 	 *     to {@link PaginatedView#getLimit()}.</li>
-	 *     <li>In paginated & layered views will respect layout boundaries.</li>
+	 *     <li>In paginated and layered views will respect layout boundaries.</li>
 	 *     <li>Result slots depending on the {@link AbstractView#getType() view type} will be skipped
 	 *     if they are not {@link ViewType#canPlayerInteractOn(int) interactable}.</li>
 	 * </ul>
@@ -270,7 +313,7 @@ public interface VirtualView {
 	 *     </li>
 	 *     <li>In paginated views the available slots will go from {@link PaginatedView#getOffset()}
 	 *     to {@link PaginatedView#getLimit()}.</li>
-	 *     <li>In paginated & layered views will respect layout boundaries.</li>
+	 *     <li>In paginated and layered views will respect layout boundaries.</li>
 	 *     <li>Result slots depending on the {@link AbstractView#getType() view type} will be skipped
 	 *     if they are not {@link ViewType#canPlayerInteractOn(int) interactable}.</li>
 	 * </ul>
@@ -448,10 +491,11 @@ public interface VirtualView {
 	 * <p><b><i> This is an internal inventory-framework API that should not be used from outside of
 	 * this library. No compatibility guarantees are provided. </i></b>
 	 *
-	 * @throws IllegalStateException If a direct modification to the container is not allowed.
+	 * @throws InventoryModificationException If a direct modification to the container is not allowed.
+	 * @see <a href="https://github.com/DevNatan/inventory-framework/wiki/Errors#inventorymodificationexception">InventoryModificationException on Wiki</a>
 	 */
 	@ApiStatus.Internal
-	void inventoryModificationTriggered();
+	void inventoryModificationTriggered() throws InventoryModificationException;
 
 	/**
 	 * The layout defined for this view by the user.
@@ -465,12 +509,84 @@ public interface VirtualView {
 	@Nullable
 	String[] getLayout();
 
+	/**
+	 * All layout patterns set by {@link #setLayout(char, Consumer)}.
+	 *
+	 * <p><b><i> This is an internal inventory-framework API that should not be used from outside of
+	 * this library. No compatibility guarantees are provided. </i></b>
+	 *
+	 * @return An unmodifiable view of all layout patterns available.
+	 */
 	@ApiStatus.Internal
 	List<LayoutPattern> getLayoutPatterns();
 
+	/**
+	 * The layout is a pattern of characters that you will use to determine where each item will go
+	 * on your view and is used to replace the tiring work of determining item slots manually,
+	 * it works for paginated views or regular views that use {@link #availableSlot() auto-slot-setting}.
+	 * <p>
+	 * You can use the following characters on a layout:
+	 * <ul>
+	 *     <li>{@link #LAYOUT_FILLED_SLOT O} an filled slot in the view.</li>
+	 *     <li>{@link #LAYOUT_EMPTY_SLOT X} an empty slot in the view.</li>
+	 *     <li>{@link #LAYOUT_PREVIOUS_PAGE &#60;} where "previous page" item for {@link PaginatedVirtualView paginated views} will be positioned</li>
+	 *     <li>{@link #LAYOUT_NEXT_PAGE &#62;} where "next page" item for {@link PaginatedVirtualView paginated views} will be positioned</li>
+	 * </ul>
+	 * <b>You can define layouts in two scopes:</b>
+	 * <ul>
+	 *     <li>{@link AbstractView regular view}: The same layout will be used in that view forever.</li>
+	 *     <li>{@link ViewContext context}: Only a specific context will use a layout pattern which for some reason
+	 *     must be different from the layout defined in the View or other layouts.</li>
+	 * </ul>
+	 * <p>
+	 * <b>Note:</b> If you define both layouts, for the regular view and for the context, the layout of
+	 * the context will take precedence.
+	 * <p>
+	 * <b>There are rules for creating a layout that you should pay attention to:</b>
+	 * <ul>
+	 *     <li>The width of the layout must be the same number of columns as the view.</li>
+	 *     <li>The height of the layout must be the same number of rows as the view.</li>
+	 *     <li>If you define an item in the layout and don't define it in the code an error will be thrown.</li>
+	 * </ul>
+	 * <p>
+	 *
+	 * @param layout The layout.
+	 * @see <a href="https://github.com/DevNatan/inventory-framework/wiki/Pagination#layout">Layouts on Wiki</a>
+	 */
 	void setLayout(@Nullable String... layout);
 
 	void setLayout(char character, Supplier<ViewItem> factory);
 
 	void setLayout(char character, Consumer<ViewItem> factory);
+
+	/**
+	 * The layout signature state of this context.
+	 *
+	 * <p><b><i> This is an internal inventory-framework API that should not be used from outside of
+	 * this library. No compatibility guarantees are provided. </i></b>
+	 *
+	 * @return The layout signature state of this context.
+	 */
+	@ApiStatus.Internal
+	boolean isLayoutSignatureChecked();
+
+	/**
+	 * Marks layout signature state of this context as checked.
+	 *
+	 * <p><b><i> This is an internal inventory-framework API that should not be used from outside of
+	 * this library. No compatibility guarantees are provided. </i></b>
+	 *
+	 * @param layoutSignatureChecked The new layout signature state.
+	 */
+	@ApiStatus.Internal
+	void setLayoutSignatureChecked(boolean layoutSignatureChecked);
+
+	@ApiStatus.Internal
+	Stack<Integer> getLayoutItemsLayer();
+
+	@ApiStatus.Internal
+	void setLayoutItemsLayer(Stack<Integer> layoutItemsLayer);
+
+	@ApiStatus.Internal
+	Deque<ViewItem> getReservedItems();
 }
