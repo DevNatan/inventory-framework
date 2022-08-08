@@ -3,7 +3,6 @@ package me.saiintbrisson.minecraft;
 import java.util.NoSuchElementException;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-
 import me.saiintbrisson.minecraft.exception.InventoryModificationException;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;

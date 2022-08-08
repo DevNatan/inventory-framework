@@ -16,15 +16,14 @@ final class CloseMarkInterceptor implements PipelineInterceptor<BukkitClickViewS
 
     @Override
     public void intercept(
-		@NotNull PipelineContext<BukkitClickViewSlotContext> pipeline, BukkitClickViewSlotContext subject) {
+            @NotNull PipelineContext<BukkitClickViewSlotContext> pipeline, BukkitClickViewSlotContext subject) {
         final InventoryClickEvent event = subject.getClickOrigin();
         if (event.getSlotType() == InventoryType.SlotType.OUTSIDE) return;
 
         final ViewItem item = subject.getBackingItem();
         if (item == null) return;
 
-        final boolean closeOnClick =
-			item.isCloseOnClick() || subject.isMarkedToClose();
+        final boolean closeOnClick = item.isCloseOnClick() || subject.isMarkedToClose();
         if (!closeOnClick) return;
 
         subject.closeUninterruptedly();

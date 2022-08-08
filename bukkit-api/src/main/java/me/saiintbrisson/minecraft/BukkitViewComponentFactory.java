@@ -2,8 +2,6 @@ package me.saiintbrisson.minecraft;
 
 import static java.util.Objects.requireNonNull;
 import static me.saiintbrisson.minecraft.AbstractView.CLICK;
-import static me.saiintbrisson.minecraft.AbstractView.CLOSE;
-import static me.saiintbrisson.minecraft.AbstractView.RENDER;
 import static org.bukkit.Bukkit.createInventory;
 
 import lombok.AccessLevel;

@@ -9,7 +9,7 @@ package me.saiintbrisson.minecraft.exception;
  */
 public class InventoryModificationException extends RuntimeException {
 
-	public InventoryModificationException(String message) {
-		super(message);
-	}
+    public InventoryModificationException(String message) {
+        super(message);
+    }
 }

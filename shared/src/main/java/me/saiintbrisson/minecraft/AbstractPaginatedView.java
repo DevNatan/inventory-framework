@@ -417,7 +417,7 @@ public abstract class AbstractPaginatedView<T> extends AbstractView implements P
         }
     }
 
-    private void tryRenderLayout(
+    private void tryRenderPagination(
             @NotNull PaginatedViewContext<T> context,
             String[] layout,
             ViewItem[] preservedItems,
@@ -551,7 +551,7 @@ public abstract class AbstractPaginatedView<T> extends AbstractView implements P
         // but with the same preserved state
         final ViewItem[] items = clearLayout(context, useLayout(context));
         resolveLayout(context, layout);
-        tryRenderLayout(context, layout, items, null);
+        tryRenderPagination(context, layout, items, null);
     }
 
     private ViewItem[] clearLayout(@NotNull PaginatedViewContext<T> context, String[] layout) {
@@ -644,7 +644,7 @@ public abstract class AbstractPaginatedView<T> extends AbstractView implements P
 
         if (!setupForRender) return;
 
-        tryRenderLayout(context, layout, null, $ -> {
+        tryRenderPagination(context, layout, null, $ -> {
             updateNavigationItem(context, NAVIGATE_LEFT);
             updateNavigationItem(context, NAVIGATE_RIGHT);
         });
