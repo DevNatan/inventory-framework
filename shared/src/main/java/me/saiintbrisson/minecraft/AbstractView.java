@@ -679,7 +679,7 @@ public abstract class AbstractView extends AbstractVirtualView {
     /**
      * {@inheritDoc}
      *
-     * @throws InitializationException
+     * @throws InitializationException If this view is initialized.
      */
     @Override
     public final @NotNull ViewItem availableSlot() throws InitializationException {
@@ -690,7 +690,7 @@ public abstract class AbstractView extends AbstractVirtualView {
     /**
      * {@inheritDoc}
      *
-     * @throws InitializationException
+     * @throws InitializationException If this view is initialized.
      */
     @Override
     public final @NotNull ViewItem availableSlot(Object fallbackItem) throws InitializationException {

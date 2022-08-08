@@ -94,6 +94,9 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
     }
 
     /**
+     * All registered views.
+     *
+     * @return An unmodifiable collection of all registered views.
      * @deprecated Will be removed soon.
      */
     @Deprecated
@@ -130,6 +133,9 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
     }
 
     /**
+     * Registers a view.
+     *
+     * @param views All views that'll be registered.
      * @deprecated Use {@link #register()} and {@link #with(AbstractView...)} instead.
      */
     @Deprecated
@@ -240,6 +246,9 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
     }
 
     /**
+     * Registers a view.
+     *
+     * @param view The view that'll be registered.
      * @deprecated Use {@link #with(AbstractView...)} instead.
      */
     @Deprecated
@@ -249,6 +258,9 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
     }
 
     /**
+     * Registers a view.
+     *
+     * @param views All views that'll be registered.
      * @deprecated Use {@link #with(AbstractView...)} instead.
      */
     @Deprecated

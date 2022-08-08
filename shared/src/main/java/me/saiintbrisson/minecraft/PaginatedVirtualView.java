@@ -59,6 +59,7 @@ public interface PaginatedVirtualView<T> extends VirtualView {
      * such API may be changed or may be removed completely in any further release. </i></b>
      *
      * @param sourceFuture The pagination data source job.
+     * @return Asynchronous pagination data state to the specified source.
      */
     @ApiStatus.Experimental
     AsyncPaginationDataState<T> setSourceAsync(

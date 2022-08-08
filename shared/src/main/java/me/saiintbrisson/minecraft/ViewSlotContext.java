@@ -76,11 +76,12 @@ public interface ViewSlotContext extends ViewContext {
 
     /**
      * Returns the current item of this context.
+     * <p>
+     * The item returned is not necessarily the item positioned in the slot, there are cases, for
+     * example in {@link ViewSlotMoveContext}, in which the current item may be the item the entity
+     * is interacting with and not a positioned item.
      *
      * @return The current item.
-     * @apiNote The item returned is not necessarily the item positioned in the slot, there are cases,
-     * for example in {@link ViewSlotMoveContext}, in which the current item may be the item the entity
-     * is interacting with and not a positioned item.
      */
     @NotNull
     ItemWrapper getCurrentItem();
@@ -101,6 +102,7 @@ public interface ViewSlotContext extends ViewContext {
      * If you need to change the item partially use {@link #updateItem(Consumer)} instead.
      *
      * @param item The new item that'll be set.
+     * @return This context.
      * @throws InventoryModificationException When the container is changed.
      * @deprecated Use {@link #setItem(Object)} instead.
      */
@@ -174,8 +176,9 @@ public interface ViewSlotContext extends ViewContext {
      * <p>
      * The properties are previously defined by {@link ViewItem#withData(String, Object)}.
      *
-     * @param key The property key.
-     * @param <T> The property value type.
+     * @param key          The property key.
+     * @param defaultValue The default value factory if property is not found.
+     * @param <T>          The property value type.
      * @return The property value or the default value.
      */
     @UnknownNullability("Return value is defined by the availability of the property or by the"
