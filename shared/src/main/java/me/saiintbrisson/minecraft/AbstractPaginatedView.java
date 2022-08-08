@@ -425,7 +425,7 @@ public abstract class AbstractPaginatedView<T> extends AbstractView implements P
         final Paginator<T> paginator = context.getPaginator();
 
         // GH-184 Skip layout render if signature is not checked
-        if (!context.isLayoutSignatureChecked()) {
+        if (layout != null && !context.isLayoutSignatureChecked()) {
             callback.accept(null);
             return;
         }
