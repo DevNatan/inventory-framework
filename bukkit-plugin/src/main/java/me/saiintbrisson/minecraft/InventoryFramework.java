@@ -97,13 +97,9 @@ class Test5 extends PaginatedView<Integer> {
 
     public Test5() {
         super(3, Test5.class.getName());
-        setSource(IntStream.rangeClosed(0, 4).boxed().collect(Collectors.toList()));
+        setLayout("XXXXXXXXX", "XOOOOOOOX", "XXXXXXXXX");
+        setSource(IntStream.rangeClosed(0, 2).boxed().collect(Collectors.toList()));
         availableSlot(new ItemStack(Material.REDSTONE));
-    }
-
-    @Override
-    protected void onRender(@NotNull ViewContext context) {
-        context.availableSlot(new ItemStack(Material.GOLD_INGOT));
     }
 
     @Override

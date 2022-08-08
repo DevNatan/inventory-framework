@@ -261,104 +261,8 @@ public interface VirtualView {
     @NotNull
     ViewItem lastSlot(Object item);
 
-	/**
-	 * Registers a new slot in the next available slot of this view.
-	 * <p>
-	 * On layered regular views (layout + AbstractView), layouts that have {@link PaginatedVirtualView#setLayout(char, Consumer) user-defined characters}
-	 * or that are <a href="https://github.com/DevNatan/inventory-framework/wiki/Pagination#layout-reserved-navigation-characters">non-item reserved characters</a>
-	 * will be skipped.
-	 * <pre>{@code
-	 * class MyView extends View {
-	 *
-	 *     MyView() {
-	 *         setLayout("XZZZOOOOX");
-	 *         setLayout('Z', item -> ...)
-	 *
-	 *         // will go to the layout's first available fillable ('O') slot after 'Z'
-	 *         availableSlot(...);
-	 *
-	 *         // not available since layered views slots are defined on layout resolution
-	 *         int slot = availableSlot(...).getSlot();
-	 *     }
-	 * }
-	 * }</pre>
-	 * <p>
-	 * In layered paginated views (layout + AbstractPaginatedView) will respect layout boundaries.
-	 * <pre>{@code
-	 * class MyPaginatedView extends PaginatedView<...> {
-	 *
-	 *     MyPaginatedView() {
-	 *         setLayout("XOOOOOOOOX");
-	 *
-	 *         // will go to the layout's first available fillable ('O') slot
-	 *         availableSlot(...);
-	 *
-	 *         // not available since layered views slots are defined on layout resolution
-	 *         int slot = availableSlot(...).getSlot();
-	 *     }
-	 * }
-	 * }</pre>
-	 *
-	 * <p>
-	 * If the root view has a layout and the context does not have a layout but this function is
-	 * used, the available slot will be the first slot after the slots rendered from the root view
-	 * preserving the insertion order, in which case the root view has priority.
-	 * <pre>{@code
-	 * class MyView extends View {
-	 *
-	 *     MyView() {
-	 *         setLayout("XOOOOOOOOX");
-	 *         availableSlot(...); // 1
-	 *     }
-	 *
-	 *     @Override
-	 *     protected void onRender(ViewContext context) {
-	 *         context.availableSlot(...); // 2
-	 *     }
-	 *
-	 *     @Override
-	 *     protected void onUpdate(ViewContext context) {
-	 *         context.availableSlot(...); // ❌ DON'T!! Ignored on update context
-	 *     }
-	 *
-	 *     @Override
-	 *     protected void onClick(ViewSlotClickContext context) {
-	 *         context.availableSlot(...); // ❌ DON'T!! Prohibited on slot context
-	 *     }
-	 *
-	 * }
-	 * }</pre>
-	 *
-	 * <p>
-	 * In regular views whose item is not dynamically defined, the slot the item will belong to can
-	 * be obtained from the returned item instance. Dynamic items will have their starting slot set
-	 * to {@link ViewItem#AVAILABLE_SLOT}. Use item render function to get around this and get
-	 * always the correct slot that item is placed on.
-	 * <pre>{@code
-	 * availableSlot(...).onRender(render -> {
-	 *     int slot = render.getSlot();
-	 * });
-	 * }</pre>
-	 * <p>
-	 * The definition of new slots using this method in a non-dynamic way, that is, defining these
-	 * slots in the constructor in non-regular views will be treated as regular slots respecting the
-	 * rules of a regular view and ignoring the contractions of these views if their nature
-	 * is mostly dynamic.
-	 *
-	 * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
-	 * such API may be changed or may be removed completely in any further release. </i></b>
-	 *
-	 * @return The newly created item instance.
-	 * @implNote Items of similar types that can possibly be stacked will not be stacked;
-	 * Result slots depending on the {@link AbstractView#getType() view type} will be skipped if they
-	 * are not {@link ViewType#canPlayerInteractOn(int) interactable}.</li>
-	 */
-    @ApiStatus.Experimental
-    @NotNull
-    ViewItem availableSlot();
-
     /**
-     * Registers a new slot with a fallback item in the next available slot of this view.
+     * Registers a new slot in the next available slot of this view.
      * <p>
      * On layered regular views (layout + AbstractView), layouts that have {@link PaginatedVirtualView#setLayout(char, Consumer) user-defined characters}
      * or that are <a href="https://github.com/DevNatan/inventory-framework/wiki/Pagination#layout-reserved-navigation-characters">non-item reserved characters</a>
@@ -378,23 +282,6 @@ public interface VirtualView {
      *     }
      * }
      * }</pre>
-     * <p>
-     * In layered paginated views (layout + AbstractPaginatedView) will respect layout boundaries.
-     * <pre>{@code
-     * class MyPaginatedView extends PaginatedView<...> {
-     *
-     *     MyPaginatedView() {
-     *         setLayout("XOOOOOOOOX");
-     *
-     *         // will go to the layout's first available fillable ('O') slot
-     *         availableSlot(...);
-     *
-     *         // not available since layered views slots are defined on layout resolution
-     *         int slot = availableSlot(...).getSlot();
-     *     }
-     * }
-     * }</pre>
-     *
      * <p>
      * If the root view has a layout and the context does not have a layout but this function is
      * used, the available slot will be the first slot after the slots rendered from the root view
@@ -440,6 +327,89 @@ public interface VirtualView {
      * slots in the constructor in non-regular views will be treated as regular slots respecting the
      * rules of a regular view and ignoring the contractions of these views if their nature
      * is mostly dynamic.
+     * <p>
+     * <b>Not supported on paginated views.</b>
+     *
+     * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     *
+     * @return The newly created item instance.
+     * @implNote Items of similar types that can possibly be stacked will not be stacked;
+     * Result slots depending on the {@link AbstractView#getType() view type} will be skipped if they
+     * are not {@link ViewType#canPlayerInteractOn(int) interactable}.</li>
+     */
+    @ApiStatus.Experimental
+    @NotNull
+    ViewItem availableSlot();
+
+    /**
+     * Registers a new slot with a fallback item in the next available slot of this view.
+     * <p>
+     * On layered regular views (layout + AbstractView), layouts that have {@link PaginatedVirtualView#setLayout(char, Consumer) user-defined characters}
+     * or that are <a href="https://github.com/DevNatan/inventory-framework/wiki/Pagination#layout-reserved-navigation-characters">non-item reserved characters</a>
+     * will be skipped.
+     * <pre>{@code
+     * class MyView extends View {
+     *
+     *     MyView() {
+     *         setLayout("XZZZOOOOX");
+     *         setLayout('Z', item -> ...)
+     *
+     *         // will go to the layout's first available fillable ('O') slot after 'Z'
+     *         availableSlot(...);
+     *
+     *         // not available since layered views slots are defined on layout resolution
+     *         int slot = availableSlot(...).getSlot();
+     *     }
+     * }
+     * }</pre>
+     * <p>
+     * If the root view has a layout and the context does not have a layout but this function is
+     * used, the available slot will be the first slot after the slots rendered from the root view
+     * preserving the insertion order, in which case the root view has priority.
+     * <pre>{@code
+     * class MyView extends View {
+     *
+     *     MyView() {
+     *         setLayout("XOOOOOOOOX");
+     *         availableSlot(...); // 1
+     *     }
+     *
+     *     @Override
+     *     protected void onRender(ViewContext context) {
+     *         context.availableSlot(...); // 2
+     *     }
+     *
+     *     @Override
+     *     protected void onUpdate(ViewContext context) {
+     *         context.availableSlot(...); // ❌ DON'T!! Ignored on update context
+     *     }
+     *
+     *     @Override
+     *     protected void onClick(ViewSlotClickContext context) {
+     *         context.availableSlot(...); // ❌ DON'T!! Prohibited on slot context
+     *     }
+     *
+     * }
+     * }</pre>
+     *
+     * <p>
+     * In regular views whose item is not dynamically defined, the slot the item will belong to can
+     * be obtained from the returned item instance. Dynamic items will have their starting slot set
+     * to {@link ViewItem#AVAILABLE_SLOT}. Use item render function to get around this and get
+     * always the correct slot that item is placed on.
+     * <pre>{@code
+     * availableSlot(...).onRender(render -> {
+     *     int slot = render.getSlot();
+     * });
+     * }</pre>
+     * <p>
+     * The definition of new slots using this method in a non-dynamic way, that is, defining these
+     * slots in the constructor in non-regular views will be treated as regular slots respecting the
+     * rules of a regular view and ignoring the contractions of these views if their nature
+     * is mostly dynamic.
+     * <p>
+     * <b>Not supported on paginated views.</b>
      *
      * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
      * such API may be changed or may be removed completely in any further release. </i></b>
