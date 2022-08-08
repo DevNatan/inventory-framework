@@ -10,5 +10,6 @@ with varied interaction treatments that would be almost impossible to create man
 We provide to you with extra inventory manipulation functionality, common code for creating inventories of different types,
 resolution and detection of known platform issues that are resolved internally, high-level secure and robust API.
 
+* [Installation](https://github.com/DevNatan/inventory-framework/wiki/Installation)
 * [Documentation](https://github.com/DevNatan/inventory-framework/wiki)
-* [Join our Community on Discord](https://discord.gg/pAz7HTSwEp)
+* [Code Samples](https://github.com/DevNatan/inventory-framework/tree/main/examples)
