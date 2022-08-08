@@ -23,9 +23,4 @@ public final class CloseViewContext extends BaseViewContext {
         super(parent.getRoot(), parent.getContainer());
         this.parent = parent;
     }
-
-    @Override
-    public @NotNull ViewContextAttributes getAttributes() {
-        return parent.getAttributes();
-    }
 }

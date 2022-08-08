@@ -3,6 +3,7 @@ package me.saiintbrisson.minecraft;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
+import me.saiintbrisson.minecraft.feature.FeatureInstaller;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -53,15 +54,46 @@ public interface PlatformViewFrame<V, P, F extends PlatformViewFrame<V, P, F>> e
     @NotNull
     ViewComponentFactory getFactory();
 
+    /**
+     * Opens the given view to a viewer.
+     * <p>
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of this
+     * library. No compatibility guarantees are provided. </i></b>
+     *
+     * @param viewClass The view class type.
+     * @param viewer    Who the view will be open.
+     * @param <T>       The view instance type.
+     * @return The opened view instance.
+     */
     @NotNull
     <T extends AbstractView> T open(@NotNull Class<T> viewClass, @NotNull V viewer);
 
+    /**
+     * Opens the given view to a viewer with initial data.
+     * <p>
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of this
+     * library. No compatibility guarantees are provided. </i></b>
+     *
+     * @param viewClass The view class type.
+     * @param viewer    Who the view will be open.
+     * @param data      Initial viewer context data
+     * @param <T>       The view instance type.
+     * @return The opened view instance.
+     */
     @NotNull
     <T extends AbstractView> T open(@NotNull Class<T> viewClass, @NotNull V viewer, Map<String, Object> data);
 
     /**
+     * Opens the given view to a viewer with initial data.
+     * <p>
      * <b><i> This is an internal inventory-framework API that should not be used from outside of this
      * library. No compatibility guarantees are provided. </i></b>
+     *
+     * @param viewClass The view class type.
+     * @param viewer    Who the view will be open.
+     * @param data      Initial viewer context data
+     * @param <T>       The view instance type.
+     * @return The opened view instance.
      */
     @ApiStatus.Internal
     @NotNull

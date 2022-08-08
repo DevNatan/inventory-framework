@@ -7,6 +7,7 @@ import java.util.function.Function;
 import java.util.function.UnaryOperator;
 import lombok.Getter;
 import lombok.Setter;
+import me.saiintbrisson.minecraft.feature.Feature;
 import org.jetbrains.annotations.NotNull;
 
 public class TestViewFrame implements PlatformViewFrame<Void, Void, TestViewFrame> {

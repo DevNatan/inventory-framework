@@ -14,6 +14,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import me.saiintbrisson.minecraft.feature.Feature;
+import me.saiintbrisson.minecraft.feature.FeatureInstaller;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
@@ -91,7 +93,12 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
         return (AbstractView) holder;
     }
 
-    /** @deprecated Will be removed soon. */
+    /**
+     * All registered views.
+     *
+     * @return An unmodifiable collection of all registered views.
+     * @deprecated Will be removed soon.
+     */
     @Deprecated
     public Map<Class<? extends View>, View> getRegisteredViews() {
         return Collections.unmodifiableMap(legacyViews);
@@ -125,7 +132,12 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
         return this;
     }
 
-    /** @deprecated Use {@link #register()} and {@link #with(AbstractView...)} instead. */
+    /**
+     * Registers a view.
+     *
+     * @param views All views that'll be registered.
+     * @deprecated Use {@link #register()} and {@link #with(AbstractView...)} instead.
+     */
     @Deprecated
     @ApiStatus.ScheduledForRemoval(inVersion = "2.5.2")
     public void register(@NotNull AbstractView... views) {
@@ -145,10 +157,15 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
         }
 
         for (final AbstractView view : views.values()) {
-            view.setViewFrame(this);
-            view.setInitialized(true);
-            PlatformUtils.getFactory().setupView(view);
-            owner.getLogger().info("\"" + view.getClass().getSimpleName() + "\" registered");
+            try {
+                view.setViewFrame(this);
+                view.init();
+                PlatformUtils.getFactory().setupView(view);
+                owner.getLogger().info("\"" + view.getClass().getSimpleName() + "\" registered");
+            } catch (final Exception e) {
+                throw new RuntimeException(
+                        "Failed to register view: " + view.getClass().getName(), e);
+            }
         }
 
         final Plugin plugin = getOwner();
@@ -228,14 +245,24 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
         return view;
     }
 
-    /** @deprecated Use {@link #with(AbstractView...)} instead. */
+    /**
+     * Registers a view.
+     *
+     * @param view The view that'll be registered.
+     * @deprecated Use {@link #with(AbstractView...)} instead.
+     */
     @Deprecated
     @ApiStatus.ScheduledForRemoval(inVersion = "2.5.2")
     public void addView(final AbstractView view) {
         with(view);
     }
 
-    /** @deprecated Use {@link #with(AbstractView...)} instead. */
+    /**
+     * Registers a view.
+     *
+     * @param views All views that'll be registered.
+     * @deprecated Use {@link #with(AbstractView...)} instead.
+     */
     @Deprecated
     @ApiStatus.ScheduledForRemoval(inVersion = "2.5.2")
     public void addView(final AbstractView... views) {

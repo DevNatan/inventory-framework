@@ -2,14 +2,19 @@ package me.saiintbrisson.minecraft;
 
 import static java.lang.String.format;
 
+import java.util.Deque;
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Stack;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,13 +44,33 @@ public abstract class AbstractViewSlotContext extends BaseViewContext implements
     }
 
     @Override
-    public final @NotNull ViewContextAttributes getAttributes() {
-        return parent.getAttributes();
+    public final BaseViewContext getParent() {
+        return parent;
+    }
+
+    @Override
+    public final void update() {
+        // global update cannot be a slot context
+        getRoot().update(getParent());
+    }
+
+    @Override
+    public <T> PaginatedViewContext<T> paginated() {
+        return parent.paginated();
     }
 
     @Override
     protected final ViewItem[] getItems() {
         return parent.getItems();
+    }
+
+    @Override
+    public final boolean hasChanged() {
+        return changed;
+    }
+
+    public final void setChanged(final boolean changed) {
+        this.changed = changed;
     }
 
     @Override
@@ -60,8 +85,8 @@ public abstract class AbstractViewSlotContext extends BaseViewContext implements
     }
 
     @Override
-    public final void update(@NotNull ViewContext context) {
-        getParent().update();
+    public final @NotNull ItemWrapper getCurrentItem() {
+        return item;
     }
 
     @Override
@@ -79,29 +104,9 @@ public abstract class AbstractViewSlotContext extends BaseViewContext implements
     }
 
     @Override
-    public ViewSlotContext withItem(@Nullable Object item) {
+    public @NotNull ViewSlotContext withItem(@Nullable Object item) {
         setItem(item);
         return this;
-    }
-
-    @Override
-    public final boolean hasChanged() {
-        return changed;
-    }
-
-    public final void setChanged(final boolean changed) {
-        this.changed = changed;
-    }
-
-    @Override
-    public final void setPropagateErrors(boolean propagateErrors) {
-        throw new IllegalStateException("Error propagation attribute cannot be modified from a ViewSlotContext."
-                + "You must set this in view's #onRender(...) or globally on constructor instead.");
-    }
-
-    @Override
-    public final ViewItem resolve(int index, boolean resolveOnRoot) {
-        return parent.resolve(index, resolveOnRoot);
     }
 
     @Override
@@ -117,34 +122,118 @@ public abstract class AbstractViewSlotContext extends BaseViewContext implements
     }
 
     @Override
-    public final <T> T data(@NotNull String key) {
+    public final <T> @NotNull T getItemData(@NotNull String key) {
+        return getItemData(key, () -> {
+            throw new NoSuchElementException(
+                    format("Property \"%s\" has not been set for this item. Use #withData(key, value) to set it", key));
+        });
+    }
+
+    @Override
+    public <T> @NotNull T getItemData(@NotNull String key, @NotNull Supplier<T> defaultValue) {
         final Map<String, Object> data = backingItem.getData();
         if (data != null && data.containsKey(key))
             //noinspection unchecked
             return (T) data.get(key);
 
-        throw new NoSuchElementException(
-                format("Property \"%s\" has not been set for this item. Use #withData(key, value) to set it", key));
+        return defaultValue.get();
     }
 
     @Override
-    public int getSlot() {
-        return getBackingItem().getSlot();
+    public <T> T getItemDataOrNull(@NotNull String key) {
+        return getItemData(key, () -> null);
     }
 
     @Override
-    public boolean isOnEntityContainer() {
+    public final boolean isOnEntityContainer() {
         return getContainer().isEntityContainer();
     }
 
     @Override
-    public final BaseViewContext getParent() {
-        return parent;
+    final void update(@NotNull ViewContext context) {
+        throwNotAllowedCall();
     }
 
-    /** {@inheritDoc} **/
     @Override
-    public <T> PaginatedViewContext<T> paginated() {
-        return parent.paginated();
+    public final ViewItem resolve(int index, boolean resolveOnRoot) {
+        throwNotAllowedCall();
+        return null;
+    }
+
+    @Override
+    public final String[] getLayout() {
+        throwNotAllowedCall();
+        return null;
+    }
+
+    @Override
+    public void setLayout(@Nullable String... layout) {
+        throwNotAllowedCall();
+    }
+
+    @Override
+    public void setLayout(char character, @Nullable Supplier<ViewItem> factory) {
+        throwNotAllowedCall();
+    }
+
+    @Override
+    public void setLayout(char identifier, @Nullable Consumer<ViewItem> layout) {
+        throwNotAllowedCall();
+    }
+
+    @Override
+    public void setLayoutItemsLayer(Stack<Integer> layoutItemsLayer) {
+        getParent().setLayoutItemsLayer(layoutItemsLayer);
+    }
+
+    @Override
+    public void setLayoutSignatureChecked(boolean layoutSignatureChecked) {
+        getParent().setLayoutSignatureChecked(layoutSignatureChecked);
+    }
+
+    @Override
+    public final List<LayoutPattern> getLayoutPatterns() {
+        return getParent().getLayoutPatterns();
+    }
+
+    @Override
+    public final Stack<Integer> getLayoutItemsLayer() {
+        return getParent().getLayoutItemsLayer();
+    }
+
+    @Override
+    public final Deque<ViewItem> getReservedItems() {
+        return getParent().getReservedItems();
+    }
+
+    @Override
+    public final boolean isMarkedToClose() {
+        return getParent().isMarkedToClose();
+    }
+
+    @Override
+    public final void setMarkedToClose(boolean markedToClose) {
+        getParent().setMarkedToClose(markedToClose);
+    }
+
+    @Override
+    public final boolean isPropagateErrors() {
+        return getParent().isPropagateErrors();
+    }
+
+    @Override
+    public final void setPropagateErrors(boolean propagateErrors) {
+        getParent().setPropagateErrors(propagateErrors);
+    }
+
+    @Override
+    int getNextAvailableSlot() {
+        throwNotAllowedCall();
+        return -1;
+    }
+
+    @Contract(value = " -> fail", pure = true)
+    private void throwNotAllowedCall() throws RuntimeException {
+        throw new RuntimeException("Not allowed to call these kind of method in slot context.");
     }
 }

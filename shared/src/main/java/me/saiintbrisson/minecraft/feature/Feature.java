@@ -1,6 +1,7 @@
-package me.saiintbrisson.minecraft;
+package me.saiintbrisson.minecraft.feature;
 
 import java.util.function.UnaryOperator;
+import me.saiintbrisson.minecraft.PlatformViewFrame;
 import org.jetbrains.annotations.NotNull;
 
 /**

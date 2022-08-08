@@ -1,5 +1,7 @@
 package me.saiintbrisson.minecraft;
 
+import me.saiintbrisson.minecraft.pipeline.PipelineContext;
+import me.saiintbrisson.minecraft.pipeline.PipelineInterceptor;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.jetbrains.annotations.NotNull;

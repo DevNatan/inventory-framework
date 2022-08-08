@@ -15,13 +15,17 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
 
-/** Mutable class that represents an item in a slot of a container. */
+/**
+ * Mutable class that represents an item in a slot of a container.
+ */
 @ToString
 @Setter(AccessLevel.PACKAGE)
 @Getter(AccessLevel.PACKAGE)
 public final class ViewItem {
 
     private static final long NO_INTERVAL = -1;
+    public static final int AVAILABLE_SLOT = -2;
+    public static final int UNKNOWN_SLOT = -3;
 
     enum State {
         UNDEFINED,
@@ -34,7 +38,9 @@ public final class ViewItem {
      */
     private Object item;
 
+    @Getter(AccessLevel.PUBLIC)
     private int slot;
+
     private State state = State.UNDEFINED;
     private boolean paginationItem;
     private String referenceKey;
@@ -128,6 +134,37 @@ public final class ViewItem {
     }
 
     /**
+     * Defines the item that will be used as fallback for rendering in the slot where this item is
+     * positioned. The fallback item is always static.
+     *
+     * <p>The function of the fallback item is to provide an alternative if the item's rendering
+     * functions are not quenched, thus returning the rendering to the fallback item.
+     *
+     * <pre>{@code
+     * slot(30)
+     * 	   .withItem(...)
+     *     .onRender(render -> {
+     *         render.setItem(someCondition ? null : item);
+     *     })
+     *     .onUpdate(update -> {
+     *         update.setItem(someCondition ? null : item);
+     *     });
+     * }</pre>
+     *
+     * <p>If neither of the above two conditions are satisfied, the fallback item will be rendered,
+     * otherwise the item defined in the handlers will be rendered.
+     *
+     * @param fallbackItem The new fallback item stack.
+     */
+    @Contract(mutates = "this")
+    public void setItem(Object fallbackItem) {
+        if (fallbackItem instanceof ViewItem || fallbackItem instanceof ItemWrapper)
+            throw new IllegalStateException("Fallback item cannot be a ViewItem or ItemWrapper");
+
+        this.item = fallbackItem;
+    }
+
+    /**
      * Determines whether the interaction should be canceled based on the current value of the {@link
      * #cancelOnClick} property, as an actor clicks on this item.
      *
@@ -142,7 +179,7 @@ public final class ViewItem {
      * Determines whether the interaction should be canceled as an actor clicks on this item.
      *
      * @param cancelOnClick whether the interaction should be canceled as an actor clicks on this
-     *     item.
+     *                      item.
      * @return This item.
      */
     @Contract(value = "_ -> this", mutates = "this")
@@ -166,7 +203,7 @@ public final class ViewItem {
      * Determines whether the interaction should be canceled as an actor shift clicks on this item.
      *
      * @param cancelOnShiftClick whether the interaction should be canceled as an actor shift clicks
-     *     on this item.
+     *                           on this item.
      * @return This item.
      */
     @Contract(value = "_ -> this", mutates = "this")
@@ -219,7 +256,7 @@ public final class ViewItem {
      *  }
      * </pre>
      *
-     * @param key The property key.
+     * @param key   The property key.
      * @param value The property value.
      * @deprecated Use {@link #withData(String, Object)} instead.
      */
@@ -238,18 +275,19 @@ public final class ViewItem {
      * inside the container, you can define a data in this item and as soon as the actor moves it the
      * data will remain there, and you can use it any way you want.
      *
-     * <pre>
-     *  slot(...).withCancelOnClick(false).withData("name", "Anna")
-     *  slot(...).withCancelOnClick(false).withData("name", "James");
+     * <pre><code>
+     * slot(1, ...).withData("name", "Anna");
+     * slot(2, ...).withData("name", "James");
+     * slot(3, ...);
      *
-     *  &#64;Override
-     *  protected void onItemHold(ViewSlotContext context) {
-     *      String name = context.getItemData("name");
-     *      ...
-     *  }
-     * </pre>
+     * &#64;Override
+     * protected void onItemHold(ViewSlotContext context) {
+     *     String name = context.getItemData("name");
+     *     // returns "Anna", "James" or null
+     * }
+     * </code></pre>
      *
-     * @param key The property key.
+     * @param key   The property key.
      * @param value The property value.
      * @return This item.
      */
@@ -399,5 +437,16 @@ public final class ViewItem {
     public ViewItem onItemRelease(@Nullable BiConsumer<ViewSlotContext, ViewSlotContext> handler) {
         setItemReleaseHandler(handler);
         return this;
+    }
+
+    /**
+     * Returns <code>true</code> if this is an item whose slot is dynamically defined during the
+     * lifecycle of the view to which it belongs, or <code>false</code> if it is static and its slot
+     * was previously defined during its initialization.
+     *
+     * @return If this is a dynamic item.
+     */
+    public boolean isDynamic() {
+        return slot == AVAILABLE_SLOT || isPaginationItem();
     }
 }

@@ -112,7 +112,7 @@ class ViewListener implements Listener {
             return;
         }
 
-        if (slotContext.getAttributes().isMarkedToClose())
+        if (slotContext.isMarkedToClose())
             plugin.getServer().getScheduler().runTask(plugin, slotContext::closeUninterruptedly);
     }
 

@@ -3,6 +3,7 @@ package me.saiintbrisson.minecraft;
 import java.util.function.UnaryOperator;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import me.saiintbrisson.minecraft.feature.Feature;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unused")

@@ -1,12 +1,13 @@
 package me.saiintbrisson.minecraft;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Supplier;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.bukkit.entity.Player;
@@ -15,122 +16,139 @@ import org.jetbrains.annotations.Nullable;
 
 @Getter
 @Setter
-@RequiredArgsConstructor
 @ToString(callSuper = true)
 class BaseViewContext extends AbstractVirtualView implements ViewContext {
 
     private final AbstractView root;
     private final ViewContainer container;
-    private final ViewContextAttributes attributes;
+
+    private final List<Viewer> viewers = new ArrayList<>();
+    private final Map<String, Object> contextData = new HashMap<>();
+    private String updatedTitle;
+    private boolean propagateErrors = true;
+    private boolean markedToClose;
 
     protected BaseViewContext(final @NotNull AbstractView root, final @Nullable ViewContainer container) {
         this.root = root;
         this.container = container;
-        this.attributes = new ViewContextAttributes(container);
     }
 
     @Override
     public final @NotNull List<Viewer> getViewers() {
-        synchronized (getAttributes().getViewers()) {
-            return Collections.unmodifiableList(getAttributes().getViewers());
+        synchronized (viewers) {
+            return Collections.unmodifiableList(viewers);
+        }
+    }
+
+    final void addViewer(@NotNull final Viewer viewer) {
+        synchronized (viewers) {
+            viewers.add(viewer);
+        }
+    }
+
+    final void removeViewer(@NotNull final Viewer viewer) {
+        synchronized (viewers) {
+            viewers.remove(viewer);
         }
     }
 
     @Override
     public final Map<String, Object> getData() {
-        return Collections.unmodifiableMap(getAttributes().getData());
-    }
-
-    final void addViewer(@NotNull final Viewer viewer) {
-        synchronized (getAttributes().getViewers()) {
-            getAttributes().getViewers().add(viewer);
-        }
-    }
-
-    final void removeViewer(@NotNull final Viewer viewer) {
-        synchronized (getAttributes().getViewers()) {
-            getAttributes().getViewers().remove(viewer);
-        }
+        return Collections.unmodifiableMap(contextData);
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public final <T> T get(@NotNull final String key) {
-        return (T) getAttributes().getData().get(key);
+        return (T) contextData.get(key);
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public <T> T get(@NotNull String key, @NotNull Supplier<T> defaultValue) {
-        synchronized (getAttributes().getData()) {
-            if (!getAttributes().getData().containsKey(key)) {
+        synchronized (contextData) {
+            if (!contextData.containsKey(key)) {
                 final T value = defaultValue.get();
-                getAttributes().getData().put(key, value);
+                contextData.put(key, value);
                 return value;
             }
 
-            return (T) getAttributes().getData().get(key);
+            return (T) contextData.get(key);
         }
     }
 
     @Override
     public final void set(@NotNull final String key, @NotNull final Object value) {
-        synchronized (getAttributes().getData()) {
-            getAttributes().getData().put(key, value);
+        synchronized (contextData) {
+            contextData.put(key, value);
         }
     }
 
     @Override
     public final boolean has(@NotNull final String key) {
-        synchronized (getAttributes().getData()) {
-            return getAttributes().getData().containsKey(key);
+        synchronized (contextData) {
+            return contextData.containsKey(key);
         }
     }
 
     @Override
     @NotNull
     public final ViewContainer getContainer() {
-        return Objects.requireNonNull(getAttributes().getContainer(), "View context container cannot be null");
+        return Objects.requireNonNull(container, "Context container cannot be null");
     }
 
     @Override
-    public final @NotNull String getTitle() {
-        return getAttributes().getUpdatedTitle() != null
-                ? getAttributes().getUpdatedTitle()
-                : getRoot().getTitle();
+    public int getRows() {
+        return getContainer().getRowsCount();
     }
 
     @Override
-    public final int getRows() {
+    public int getColumns() {
         return getContainer().getColumnsCount();
     }
 
     @Override
-    public final int getSize() {
+    public int getSize() {
         return getContainer().getSize();
     }
 
     @Override
-    public final void updateTitle(@NotNull final String title) {
-        getAttributes().setTitle(title);
+    public final @Nullable String getTitle() {
+        return updatedTitle != null ? updatedTitle : getInitialTitle();
     }
 
     @Override
-    public final void resetTitle() {
-        getAttributes().setTitle(null);
+    public @Nullable String getInitialTitle() {
+        return getTitle();
     }
 
     @Override
-    public final boolean isPropagateErrors() {
-        return getAttributes().isPropagateErrors();
+    public final @Nullable String getUpdatedTitle() {
+        return updatedTitle;
+    }
+
+    @Override
+    public void updateTitle(@NotNull final String title) {
+        this.updatedTitle = title;
+        getContainer().changeTitle(title);
+    }
+
+    @Override
+    public void resetTitle() {
+        this.updatedTitle = null;
+        getContainer().changeTitle(null);
+    }
+
+    @Override
+    public boolean isPropagateErrors() {
+        return propagateErrors;
     }
 
     @Override
     public void setPropagateErrors(boolean propagateErrors) {
-        getAttributes().setPropagateErrors(propagateErrors);
+        this.propagateErrors = propagateErrors;
     }
 
-    /** {@inheritDoc} * */
     @Override
     public final ViewUpdateJob getUpdateJob() {
         ViewUpdateJob ownJob = super.getUpdateJob();
@@ -149,18 +167,13 @@ class BaseViewContext extends AbstractVirtualView implements ViewContext {
     }
 
     @Override
-    public final String getUpdatedTitle() {
-        return getAttributes().getUpdatedTitle();
-    }
-
-    @Override
-    public final void update() {
+    public void update() {
         getRoot().update(this);
     }
 
     @Override
     public final void close() {
-        getAttributes().setMarkedToClose(true);
+        markedToClose = true;
     }
 
     @Override
@@ -226,7 +239,7 @@ class BaseViewContext extends AbstractVirtualView implements ViewContext {
     public @NotNull ViewSlotContext ref(final String key) {
         ViewItem item = tryResolveRef(this, key);
         if (item == null) item = tryResolveRef(getRoot(), key);
-        if (item == null) return null;
+        if (item == null) throw new IllegalArgumentException("No reference found for key: " + key);
 
         final PlatformViewFrame<?, ?, ?> vf = getRoot().getViewFrame();
         if (vf == null)
@@ -243,5 +256,14 @@ class BaseViewContext extends AbstractVirtualView implements ViewContext {
             if (item.getReferenceKey().equals(key)) return item;
         }
         return null;
+    }
+
+    @Override
+    int getNextAvailableSlot() {
+        // the context inherits the root layout so the next available slot must respect root layout,
+        // so we should check if we have any layout of our own before inheriting the root's behavior.
+        if (getLayout() != null) return super.getNextAvailableSlot();
+
+        return getRoot().getNextAvailableSlot();
     }
 }

@@ -1,13 +1,9 @@
 package me.saiintbrisson.minecraft;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Stack;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Supplier;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,20 +22,10 @@ class BasePaginatedViewContext<T> extends BaseViewContext implements PaginatedVi
 
     private int previousPageItemSlot = -1;
     private int nextPageItemSlot = -1;
-
-    private boolean layoutSignatureChecked;
-    private String[] layout;
     private Paginator<T> paginator;
-    private Stack<Integer> itemsLayer;
-    private List<LayoutPattern> layoutPatterns;
 
     BasePaginatedViewContext(@NotNull AbstractView root, @Nullable ViewContainer container) {
         super(root, container);
-    }
-
-    @ApiStatus.Internal
-    public final String[] getLayout() {
-        return layout;
     }
 
     @Override
@@ -60,9 +46,9 @@ class BasePaginatedViewContext<T> extends BaseViewContext implements PaginatedVi
 
     @Override
     public final int getPageMaxItemsCount() {
-        if (getItemsLayer() == null) throw new IllegalStateException("Layout not resolved");
+        if (getLayoutItemsLayer() == null) throw new IllegalStateException("Layout not resolved");
 
-        return getItemsLayer().size();
+        return getLayoutItemsLayer().size();
     }
 
     @Override
@@ -127,7 +113,7 @@ class BasePaginatedViewContext<T> extends BaseViewContext implements PaginatedVi
 
     @Override
     public final List<LayoutPattern> getLayoutPatterns() {
-        if (layoutPatterns != null) return layoutPatterns;
+        if (super.getLayoutPatterns() != null) return super.getLayoutPatterns();
         return getRoot().getLayoutPatterns();
     }
 
@@ -139,8 +125,7 @@ class BasePaginatedViewContext<T> extends BaseViewContext implements PaginatedVi
     @Override
     public final void setSource(@NotNull List<? extends T> source) {
         tryResolveLayout();
-        setPaginator(
-                new Paginator<>(isLayoutSignatureChecked() ? getItemsLayer().size() : getPageSize(), source));
+        setPaginator(new Paginator<>(getLayoutItemsLayer().size(), source));
     }
 
     @Override
@@ -151,8 +136,7 @@ class BasePaginatedViewContext<T> extends BaseViewContext implements PaginatedVi
             throw new IllegalStateException("Pagination source cannot be provided more than once");
 
         tryResolveLayout();
-        setPaginator(
-                new Paginator<>(isLayoutSignatureChecked() ? getItemsLayer().size() : getPageSize(), sourceProvider));
+        setPaginator(new Paginator<>(getLayoutItemsLayer().size(), sourceProvider));
     }
 
     @Override
@@ -162,8 +146,7 @@ class BasePaginatedViewContext<T> extends BaseViewContext implements PaginatedVi
         tryResolveLayout();
 
         final AsyncPaginationDataState<T> state = new AsyncPaginationDataState<>(sourceFuture);
-        setPaginator(
-                new Paginator<>(isLayoutSignatureChecked() ? getItemsLayer().size() : getPageSize(), state));
+        setPaginator(new Paginator<>(getLayoutItemsLayer().size(), state));
         return state;
     }
 
@@ -178,36 +161,20 @@ class BasePaginatedViewContext<T> extends BaseViewContext implements PaginatedVi
 
     private void tryResolveLayout() {
         final AbstractPaginatedView<T> root = getRoot();
-        final boolean isLayoutChecked = isLayoutSignatureChecked();
-        final String[] layout = root.useLayout(this);
+        if (isLayoutSignatureChecked()) return;
 
-        // force layout resolving but do not render
-        if (!isLayoutChecked && layout != null) root.resolveLayout(this, layout, false);
+        final String[] layout = root.useLayout(this);
+        if (layout == null) return;
+
+        root.resolveLayout(this, layout);
     }
 
     @Override
     public final void setLayout(String... layout) {
-        this.layout = layout;
+        super.setLayout(layout);
 
         // allow dynamic layout update
         if (isLayoutSignatureChecked()) getRoot().updateLayout(this, layout);
-    }
-
-    @Override
-    public void setLayout(char character, Supplier<ViewItem> factory) {
-        getRoot().checkReservedLayoutCharacter(character);
-        if (layoutPatterns == null) layoutPatterns = new ArrayList<>();
-
-        layoutPatterns.add(new LayoutPattern(character, factory));
-    }
-
-    @Override
-    public void setLayout(char character, Consumer<ViewItem> factory) {
-        setLayout(character, () -> {
-            final ViewItem item = new ViewItem();
-            factory.accept(item);
-            return item;
-        });
     }
 
     @Override

@@ -1,5 +1,7 @@
 package me.saiintbrisson.minecraft;
 
+import me.saiintbrisson.minecraft.pipeline.PipelineContext;
+import me.saiintbrisson.minecraft.pipeline.PipelineInterceptor;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.jetbrains.annotations.NotNull;
@@ -21,8 +23,7 @@ final class CloseMarkInterceptor implements PipelineInterceptor<BukkitClickViewS
         final ViewItem item = subject.getBackingItem();
         if (item == null) return;
 
-        final boolean closeOnClick =
-                item.isCloseOnClick() || subject.getAttributes().isMarkedToClose();
+        final boolean closeOnClick = item.isCloseOnClick() || subject.isMarkedToClose();
         if (!closeOnClick) return;
 
         subject.closeUninterruptedly();

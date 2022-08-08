@@ -15,6 +15,10 @@ public class BukkitViewSlotContext extends AbstractViewSlotContext {
         super(backingItem, parent);
     }
 
+    public int getSlot() {
+        return getBackingItem().getSlot();
+    }
+
     @Override
     public @NotNull Player getPlayer() {
         return BukkitViewer.toPlayerOfContext(this);

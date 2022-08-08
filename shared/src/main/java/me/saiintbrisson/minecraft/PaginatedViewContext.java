@@ -169,28 +169,6 @@ public interface PaginatedViewContext<T> extends ViewContext, PaginatedVirtualVi
     @ApiStatus.Internal
     void setNextPageItemSlot(int nextPageItemSlot);
 
-    /**
-     * The layout signature state of this context.
-     *
-     * <p><b><i> This is an internal inventory-framework API that should not be used from outside of
-     * this library. No compatibility guarantees are provided. </i></b>
-     *
-     * @return The layout signature state of this context.
-     */
-    @ApiStatus.Internal
-    boolean isLayoutSignatureChecked();
-
-    /**
-     * Marks layout signature state of this context as checked.
-     *
-     * <p><b><i> This is an internal inventory-framework API that should not be used from outside of
-     * this library. No compatibility guarantees are provided. </i></b>
-     *
-     * @param layoutSignatureChecked The new layout signature state.
-     */
-    @ApiStatus.Internal
-    void setLayoutSignatureChecked(boolean layoutSignatureChecked);
-
     /** {@inheritDoc} */
     @Override
     @NotNull

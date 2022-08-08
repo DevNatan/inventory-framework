@@ -7,7 +7,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.NotNull;
 
 @Getter
@@ -58,11 +57,6 @@ public class BukkitClickViewSlotContext extends AbstractViewSlotContext implemen
     @Override
     public final boolean isKeyboardClick() {
         return getClickOrigin().getClick().isKeyboardClick();
-    }
-
-    @Override
-    public final boolean isOnEntityContainer() {
-        return getClickOrigin().getClickedInventory() instanceof PlayerInventory;
     }
 
     @Override

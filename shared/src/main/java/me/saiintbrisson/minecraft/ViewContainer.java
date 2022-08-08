@@ -7,6 +7,11 @@ import org.jetbrains.annotations.Unmodifiable;
 
 interface ViewContainer {
 
+    /**
+     * The type of this container.
+     *
+     * @return The type of this container.
+     */
     @NotNull
     ViewType getType();
 

@@ -16,9 +16,9 @@ public interface ViewContext extends VirtualView {
     Map<String, Object> getData();
 
     /**
-     * An unmodifiable list of all viewers that are tied to this context.
+     * An unmodifiable collection of all viewers that are tied to this context.
      *
-     * @return All viewers of this context.
+     * @return All unmodifiable collection of all viewers.
      */
     @NotNull
     @UnmodifiableView
@@ -50,9 +50,9 @@ public interface ViewContext extends VirtualView {
     /**
      * This is just here for backwards compatibility.
      *
+     * @return The root of this context.
      * @see #getRoot()
      * @deprecated Use {@link #getRoot()} instead.
-     * @return The root of this context.
      */
     @Deprecated
     default View getView() {
@@ -64,10 +64,21 @@ public interface ViewContext extends VirtualView {
      *
      * <p>If the title has been dynamically changed, it will return {@link #getUpdatedTitle()}.
      *
-     * @return The current title, the updated title or null.
+     * @return The updated title, the current title of this view, if <code>null</code> will return
+     * the default title for this view type.
      */
     @Override
     String getTitle();
+
+    /**
+     * Returns the initial title of this context, that is, even if it has been changed,
+     * it will return the initial title.
+     *
+     * @return The initial title of this context, the current title of this view, if <code>null</code>
+     * will return the default title for this view type.
+     */
+    @Nullable
+    String getInitialTitle();
 
     /**
      * The title dynamically updated in this context.
@@ -114,6 +125,12 @@ public interface ViewContext extends VirtualView {
      */
     void setPropagateErrors(boolean propagateErrors);
 
+    @ApiStatus.Internal
+    boolean isMarkedToClose();
+
+    @ApiStatus.Internal
+    void setMarkedToClose(boolean markedToClose);
+
     /**
      * Checks if this context is cancelled.
      *
@@ -122,7 +139,7 @@ public interface ViewContext extends VirtualView {
     boolean isCancelled();
 
     /**
-     * Marks this context as cancelled.
+     * Cancels this context.
      *
      * @param cancelled The new cancellation state.
      * @throws IllegalStateException If this context is not cancellable.
@@ -144,9 +161,9 @@ public interface ViewContext extends VirtualView {
      * Gets a value of a property defined for this context for a specific key falling back to a
      * default value if the key is not returned.
      *
-     * @param key The property key.
+     * @param key          The property key.
      * @param defaultValue The value that will be returned if the property is not found.
-     * @param <T> The property value type.
+     * @param <T>          The property value type.
      * @return The property value for the given key.
      * @see #get(String)
      */
@@ -156,7 +173,7 @@ public interface ViewContext extends VirtualView {
     /**
      * Defines a property in this context.
      *
-     * @param key The property key.
+     * @param key   The property key.
      * @param value The property value.
      */
     void set(@NotNull String key, @NotNull Object value);
@@ -201,9 +218,9 @@ public interface ViewContext extends VirtualView {
      * <p><b><i> This is an internal inventory-framework API that should not be used from outside of
      * this library. No compatibility guarantees are provided. </i></b>
      *
-     * @param index The item index.
+     * @param index         The item index.
      * @param resolveOnRoot Search in the {@link #getRoot() context root} or just the items defined in
-     *     the context itself.
+     *                      the context itself.
      * @return The item at the specified index.
      */
     @ApiStatus.Internal
@@ -228,24 +245,10 @@ public interface ViewContext extends VirtualView {
      *
      * @param key The item reference key.
      * @return A new context with referenced item.
-     * @throws IllegalArgumentException If no items are found for the reference key.
+     * @throws IllegalArgumentException If no item are found for the reference key.
      * @see ViewItem#referencedBy(String)
      */
     @ApiStatus.Experimental
     @NotNull
-    ViewSlotContext ref(String key);
-
-    /**
-     * Attributes that should be used for this context.
-     *
-     * <p>These same attributes can be inherited from the parent context.
-     *
-     * <p><b><i> This is an internal inventory-framework API that should not be used from outside of
-     * this library. No compatibility guarantees are provided. </i></b>
-     *
-     * @return All attributes for this context.
-     */
-    @ApiStatus.Internal
-    @NotNull
-    ViewContextAttributes getAttributes();
+    ViewSlotContext ref(String key) throws IllegalArgumentException;
 }
