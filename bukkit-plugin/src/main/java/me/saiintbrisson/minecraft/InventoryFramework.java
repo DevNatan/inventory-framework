@@ -20,11 +20,22 @@ class Test1 extends View {
             availableSlot(new ItemStack(Material.GOLD_INGOT)).onClick(ctx -> {
                 ctx.getPlayer().sendMessage("clicked on gold ingot at " + ctx.getSlot());
             });
-
-        availableSlot(new ItemStack(Material.IRON_INGOT)).onClick(ctx -> {
-            ctx.getPlayer().sendMessage("clicked on iron ingot at " + ctx.getSlot());
-        });
     }
+
+	@Override
+	protected void onRender(@NotNull ViewContext context) {
+		context.availableSlot(new ItemStack(Material.IRON_INGOT)).onClick(ctx -> {
+			ctx.getPlayer().sendMessage("clicked on iron ingot at " + ctx.getSlot());
+		});
+
+		context.availableSlot(new ItemStack(Material.DIAMOND)).onClick(ctx -> {
+			ctx.getPlayer().sendMessage("clicked on diamond at " + ctx.getSlot());
+		});
+
+		context.availableSlot(new ItemStack(Material.REDSTONE)).onClick(ctx -> {
+			ctx.getPlayer().sendMessage("clicked on redstone at " + ctx.getSlot());
+		});
+	}
 }
 
 class Test2 extends PaginatedView<Integer> {

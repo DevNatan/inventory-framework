@@ -45,6 +45,16 @@ public abstract class AbstractViewSlotContext extends BaseViewContext implements
 	}
 
 	@Override
+	public final BaseViewContext getParent() {
+		return parent;
+	}
+
+	@Override
+	public <T> PaginatedViewContext<T> paginated() {
+		return parent.paginated();
+	}
+
+	@Override
 	protected final ViewItem[] getItems() {
 		return parent.getItems();
 	}
@@ -66,6 +76,11 @@ public abstract class AbstractViewSlotContext extends BaseViewContext implements
 
 	@Override
 	public final @NotNull ItemWrapper getItemWrapper() {
+		return item;
+	}
+
+	@Override
+	public final @NotNull ItemWrapper getCurrentItem() {
 		return item;
 	}
 
@@ -134,11 +149,6 @@ public abstract class AbstractViewSlotContext extends BaseViewContext implements
 	}
 
 	@Override
-	public final void setPropagateErrors(boolean propagateErrors) {
-		throwNotAllowedCall();
-	}
-
-	@Override
 	public final ViewItem resolve(int index, boolean resolveOnRoot) {
 		throwNotAllowedCall();
 		return null;
@@ -194,13 +204,25 @@ public abstract class AbstractViewSlotContext extends BaseViewContext implements
 	}
 
 	@Override
-	public final BaseViewContext getParent() {
-		return parent;
+	public final boolean isMarkedToClose() {
+		throwNotAllowedCall();
+		return false;
 	}
 
 	@Override
-	public <T> PaginatedViewContext<T> paginated() {
-		return parent.paginated();
+	public final void setMarkedToClose(boolean markedToClose) {
+		throwNotAllowedCall();
+	}
+
+	@Override
+	public final boolean isPropagateErrors() {
+		throwNotAllowedCall();
+		return false;
+	}
+
+	@Override
+	public final void setPropagateErrors(boolean propagateErrors) {
+		throwNotAllowedCall();
 	}
 
 	@Contract(value = " -> fail", pure = true)

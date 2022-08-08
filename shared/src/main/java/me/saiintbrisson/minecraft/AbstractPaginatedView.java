@@ -369,10 +369,6 @@ public abstract class AbstractPaginatedView<T> extends AbstractView implements P
         updateContext(paginated, paginated.getPage(), false /* avoid intensive page checking */, true);
     }
 
-    final String[] useLayout(@NotNull PaginatedViewContext<T> context) {
-        return context.getLayout() == null ? getLayout() : context.getLayout();
-    }
-
     private void renderItemAndApplyOnContext(@NotNull ViewContext context, ViewItem item, int slot) {
         ((AbstractVirtualView) context).getItems()[slot] = item;
         super.render(context, item, slot);

@@ -204,7 +204,7 @@ public interface VirtualView {
 	ViewItem slot(int row, int column);
 
 	/**
-	 * Registers a new item with an fallback item in the specified row and column.
+	 * Registers a new item with a fallback item in the specified row and column.
 	 *
 	 * <p><b>Triggers an {@link #inventoryModificationTriggered() inventory modification}.</b>
 	 *
@@ -417,6 +417,15 @@ public interface VirtualView {
 	@Deprecated
 	@ApiStatus.ScheduledForRemoval(inVersion = "2.5.3")
 	ViewItem item(@NotNull Material material, int amount, short durability);
+
+	/**
+	 * Registers the given item in the specified slot.
+	 *
+	 * @param item The item.
+	 * @param slot The slot.
+	 */
+	@ApiStatus.Internal
+	void register(@NotNull ViewItem item, int slot);
 
 	/**
 	 * Updates this view.

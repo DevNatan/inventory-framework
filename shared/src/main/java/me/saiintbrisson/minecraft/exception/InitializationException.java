@@ -7,7 +7,7 @@ package me.saiintbrisson.minecraft.exception;
  */
 public class InitializationException extends RuntimeException {
 
-    InitializationException() {
+    public InitializationException() {
         super(
                 "It is not allowed to call this function after the initialization of the view because it changes its nature."
                         + "You probably called a function that should be in the constructor in a handler (eg: onRender or onUpdate)? "

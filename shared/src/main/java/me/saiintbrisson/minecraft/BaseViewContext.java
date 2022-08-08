@@ -265,4 +265,15 @@ class BaseViewContext extends AbstractVirtualView implements ViewContext {
 		}
 		return null;
 	}
+
+	@Override
+	int getNextAvailableSlot() {
+		// the context inherits the root layout so the next available slot must respect root layout,
+		// so we should check if we have any layout of our own before inheriting the root's behavior.
+		if (getLayout() != null)
+			return super.getNextAvailableSlot();
+
+		return getRoot().getNextAvailableSlot();
+	}
+
 }

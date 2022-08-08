@@ -47,7 +47,12 @@ final class BukkitPaginatedViewSlotContextImpl<T> extends AbstractViewSlotContex
                         + " rendering on update, when rendering a paginated view.");
     }
 
-    @Override
+	@Override
+	public int getSlot() {
+		return index;
+	}
+
+	@Override
     public @NotNull Player getPlayer() {
         return BukkitViewer.toPlayerOfContext(this);
     }
