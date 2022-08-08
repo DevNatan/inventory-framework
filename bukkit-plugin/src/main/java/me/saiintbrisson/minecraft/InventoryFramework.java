@@ -1,5 +1,6 @@
 package me.saiintbrisson.minecraft;
 
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import org.bukkit.Material;
@@ -13,29 +14,42 @@ import org.jetbrains.annotations.NotNull;
 class Test1 extends View {
 
     public Test1() {
-        super(3, Test1.class.getName());
+        super(3);
+        setCancelOnClick(true);
         setLayout("XXXXXXXXX", "XOOOOOOOX", "XXXXXXXXX");
 
-        for (int i = 0; i < 5; i++)
-            availableSlot(new ItemStack(Material.GOLD_INGOT)).onClick(ctx -> {
-                ctx.getPlayer().sendMessage("clicked on gold ingot at " + ctx.getSlot());
-            });
+        availableSlot(new ItemStack(Material.GOLD_INGOT)).onClick(ctx -> {
+            ctx.getPlayer().sendMessage("clicked on gold ingot at " + ctx.getSlot());
+            ctx.update();
+        });
+
+        availableSlot()
+                .onRender(render -> render.setItem(new ItemStack(
+                        Material.REDSTONE, ThreadLocalRandom.current().nextInt(Material.REDSTONE.getMaxStackSize()))));
     }
 
-	@Override
-	protected void onRender(@NotNull ViewContext context) {
-		context.availableSlot(new ItemStack(Material.IRON_INGOT)).onClick(ctx -> {
-			ctx.getPlayer().sendMessage("clicked on iron ingot at " + ctx.getSlot());
-		});
+    @Override
+    protected void onRender(@NotNull ViewContext context) {
+        context.availableSlot(new ItemStack(Material.IRON_INGOT)).onClick(ctx -> {
+            ctx.getPlayer().sendMessage("clicked on iron ingot at " + ctx.getSlot());
+        });
 
-		context.availableSlot(new ItemStack(Material.DIAMOND)).onClick(ctx -> {
-			ctx.getPlayer().sendMessage("clicked on diamond at " + ctx.getSlot());
-		});
+        context.availableSlot()
+                .onRender(render -> {
+                    render.setItem(new ItemStack(Material.DIAMOND, render.getSlot()));
+                })
+                .onClick(click -> {
+                    click.getPlayer().sendMessage("clicked on diamond at " + click.getSlot());
+                });
+    }
 
-		context.availableSlot(new ItemStack(Material.REDSTONE)).onClick(ctx -> {
-			ctx.getPlayer().sendMessage("clicked on redstone at " + ctx.getSlot());
-		});
-	}
+    @Override
+    protected void onUpdate(@NotNull ViewContext context) {
+        context.getPlayer().sendMessage("Updated");
+        context.availableSlot(new ItemStack(Material.IRON_INGOT)).onClick(ctx -> {
+            ctx.getPlayer().sendMessage("clicked on iron ingot at " + ctx.getSlot());
+        });
+    }
 }
 
 class Test2 extends PaginatedView<Integer> {
@@ -79,12 +93,32 @@ class Test4 extends View {
     }
 }
 
+class Test5 extends PaginatedView<Integer> {
+
+    public Test5() {
+        super(3, Test5.class.getName());
+        setSource(IntStream.rangeClosed(0, 4).boxed().collect(Collectors.toList()));
+        availableSlot(new ItemStack(Material.REDSTONE));
+    }
+
+    @Override
+    protected void onRender(@NotNull ViewContext context) {
+        context.availableSlot(new ItemStack(Material.GOLD_INGOT));
+    }
+
+    @Override
+    protected void onItemRender(
+            @NotNull PaginatedViewSlotContext<Integer> context, @NotNull ViewItem viewItem, @NotNull Integer value) {
+        viewItem.withItem(new ItemStack(Material.IRON_INGOT));
+    }
+}
+
 @SuppressWarnings("unused")
 public final class InventoryFramework extends JavaPlugin {
 
     @EventHandler
     public void onEnable() {
-        ViewFrame vf = ViewFrame.of(this, new Test1(), new Test2(), new Test3(), new Test4());
+        ViewFrame vf = ViewFrame.of(this, new Test1(), new Test2(), new Test3(), new Test4(), new Test5());
         vf.register();
 
         getServer()

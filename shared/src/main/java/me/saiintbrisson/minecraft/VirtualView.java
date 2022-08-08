@@ -283,24 +283,6 @@ public interface VirtualView {
 	 * }
 	 * }</pre>
 	 * <p>
-	 * For paginated views, available slots will go from {@link PaginatedView#getOffset() offset}
-	 * to {@link PaginatedView#getLimit() limit}. Throwing an exception if limit is reached.
-	 * <pre>{@code
-	 *     class MyPaginatedView extends PaginatedView<...> {
-	 *
-	 *         MyPaginatedView() {
-	 *             setOffset(3);
-	 *             setLimit(6);
-	 *
-	 *             availableSlot(...).getSlot(); // 3
-	 *
-	 *             for (int i = 0; i <= getLimit() + 1; i++)
-	 *                 availableSlot(...); // exception on n. 7
-	 *         }
-	 *
-	 *     }
-	 * }</pre>
-	 * <p>
 	 * In layered paginated views (layout + AbstractPaginatedView) will respect layout boundaries.
 	 * <pre>{@code
 	 * class MyPaginatedView extends PaginatedView<...> {
@@ -395,24 +377,6 @@ public interface VirtualView {
      *         int slot = availableSlot(...).getSlot();
      *     }
      * }
-     * }</pre>
-     * <p>
-     * For paginated views, available slots will go from {@link PaginatedView#getOffset() offset}
-     * to {@link PaginatedView#getLimit() limit}. Throwing an exception if limit is reached.
-     * <pre>{@code
-     *     class MyPaginatedView extends PaginatedView<...> {
-     *
-     *         MyPaginatedView() {
-     *             setOffset(3);
-     *             setLimit(6);
-     *
-     *             availableSlot(...).getSlot(); // 3
-     *
-     *             for (int i = 0; i <= getLimit() + 1; i++)
-     *                 availableSlot(...); // exception on n. 7
-     *         }
-     *
-     *     }
      * }</pre>
      * <p>
      * In layered paginated views (layout + AbstractPaginatedView) will respect layout boundaries.
