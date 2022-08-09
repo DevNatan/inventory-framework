@@ -306,7 +306,7 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
     }
 
     @Override
-    public void nextTick(Runnable runnable) {
+    public void nextTick(@NotNull Runnable runnable) {
         getOwner().getServer().getScheduler().runTask(getOwner(), runnable);
     }
 

@@ -2,6 +2,7 @@ package me.saiintbrisson.minecraft;
 
 import static me.saiintbrisson.minecraft.AbstractPaginatedView.NAVIGATE_LEFT;
 import static me.saiintbrisson.minecraft.AbstractPaginatedView.NAVIGATE_RIGHT;
+import static me.saiintbrisson.minecraft.AbstractPaginatedView.resolveNavigationItem;
 
 import java.time.Duration;
 import java.util.ArrayDeque;
@@ -744,25 +745,24 @@ public abstract class AbstractVirtualView implements VirtualView {
                         break;
                     }
                     case LAYOUT_PREVIOUS_PAGE: {
-                        if (!(view instanceof PaginatedViewContext))
+                        if (!view.isPaginated())
                             throw new IllegalArgumentException(String.format(
                                     "Navigation characters (%s) on layout are reserved to paginated views and cannot be used on regular views.",
                                     LAYOUT_PREVIOUS_PAGE + ", " + LAYOUT_NEXT_PAGE));
 
                         final PaginatedViewContext<?> paginatedContext = (PaginatedViewContext<?>) view;
-                        paginatedContext.getRoot().resolveNavigationItem(paginatedContext, NAVIGATE_LEFT);
+                        resolveNavigationItem(paginatedContext, NAVIGATE_LEFT);
                         paginatedContext.setPreviousPageItemSlot(targetSlot);
                         break;
                     }
                     case LAYOUT_NEXT_PAGE: {
-                        if (!(view instanceof PaginatedViewContext))
+                        if (!view.isPaginated())
                             throw new IllegalArgumentException(String.format(
                                     "Navigation characters (%s) on layout are reserved to paginated views and cannot be used on regular views.",
                                     LAYOUT_PREVIOUS_PAGE + ", " + LAYOUT_NEXT_PAGE));
 
-                        final PaginatedViewContext<?> paginatedContext = (PaginatedViewContext<?>) view;
-                        paginatedContext.getRoot().resolveNavigationItem(paginatedContext, NAVIGATE_RIGHT);
-                        paginatedContext.setNextPageItemSlot(targetSlot);
+                        resolveNavigationItem(view, NAVIGATE_RIGHT);
+                        view.setNextPageItemSlot(targetSlot);
                         break;
                     }
                     default: {

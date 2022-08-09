@@ -693,4 +693,10 @@ public interface VirtualView {
 
     @ApiStatus.Internal
     Deque<ViewItem> getReservedItems();
+
+	@ApiStatus.Internal
+	default boolean isPaginated() {
+		return this instanceof PaginatedVirtualView;
+	}
+
 }

@@ -67,7 +67,7 @@ public class TestViewFrame implements PlatformViewFrame<Void, Void, TestViewFram
     }
 
     @Override
-    public void nextTick(Runnable runnable) {
+    public void nextTick(@NotNull Runnable runnable) {
         runnable.run();
     }
 
