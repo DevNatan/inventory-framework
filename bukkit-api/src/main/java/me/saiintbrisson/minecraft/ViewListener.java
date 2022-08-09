@@ -142,7 +142,7 @@ class ViewListener implements Listener {
 
         // TODO move to own pipeline phase
         if (close.isCancelled()) {
-            Bukkit.getScheduler().runTaskLater(viewFrame.getOwner(), () -> viewer.open(close.getContainer()), 1L);
+			view.nextTick(() -> viewer.open(close.getContainer()));
 
             // set the old cursor item
             final ItemStack cursor = player.getItemOnCursor();
