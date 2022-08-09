@@ -191,7 +191,6 @@ public abstract class AbstractPaginatedView<T> extends AbstractView implements P
 	 * @throws InitializationException If this view is initialized.
 	 */
 	@Override
-	@Deprecated
 	public final void setPreviousPageItem(
 		@NotNull BiConsumer<PaginatedViewContext<T>, ViewItem> previousPageItemFactory
 	) throws InitializationException {
@@ -495,7 +494,7 @@ public abstract class AbstractPaginatedView<T> extends AbstractView implements P
 		// and then reorder these items with the new slots of the new layout on different positions
 		// but with the same preserved state
 		final ViewItem[] items = clearLayout(context, useLayout(context));
-		resolveLayout(context, layout);
+		resolveLayout(context, context, layout);
 		tryRenderPagination(context, layout, items, null);
 	}
 
@@ -586,7 +585,7 @@ public abstract class AbstractPaginatedView<T> extends AbstractView implements P
 				&& !context.getPaginator().hasPage(page))) return;
 
 			if (layout != null && !context.isLayoutSignatureChecked())
-				resolveLayout(context, layout);
+				resolveLayout(context, context, layout);
 
 			if (setupForRender) ((BasePaginatedViewContext<T>) context).setPage(page);
 		}
@@ -614,7 +613,7 @@ public abstract class AbstractPaginatedView<T> extends AbstractView implements P
 		// already defined the slot for the pagination items, so we check if it is not defined yet
 		if (expectedSlot == -1) {
 			// check if navigation item was manually set by the user
-			item = root.resolveNavigationItem(context, direction);
+			item = resolveNavigationItem(this, context, direction);
 
 			if (item == null || item.getSlot() == -1) return;
 
@@ -623,7 +622,7 @@ public abstract class AbstractPaginatedView<T> extends AbstractView implements P
 			else context.setNextPageItemSlot(expectedSlot);
 		}
 
-		if (item == null) item = root.resolveNavigationItem(context, direction);
+		if (item == null) item = resolveNavigationItem(this, context, direction);
 
 		// ensure item is removed if it was resolved and set before and is not anymore
 		if (item == null) {

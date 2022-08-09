@@ -579,7 +579,8 @@ public abstract class AbstractView extends AbstractVirtualView {
 
         // resolve and register layout before render to optimize auto-slot-filling items render
         if (getLayout() != null) {
-            resolveLayout(this, getLayout());
+            resolveLayout(this, null, getLayout());
+
             // preserve reserved items count to be used later on context render
             reservedItemsCount =
                     getReservedItems() == null ? 0 : getReservedItems().size();

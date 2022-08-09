@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import java.time.Duration;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Deque;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -286,7 +287,7 @@ public abstract class AbstractVirtualView implements VirtualView {
 
 			// force layout resolution before render
 			if (contextLayout != null && !contextLayoutResolved)
-				resolveLayout(context, contextLayout);
+				resolveLayout(context, context, contextLayout);
 
 			// inherits the layout items layer from root if the layout was inherited
 			final Stack<Integer> layoutItemsLayer = new Stack<>();
@@ -623,39 +624,37 @@ public abstract class AbstractVirtualView implements VirtualView {
 	}
 
 	/**
-	 * Throws an exception if the given character is a reserved layout character.
-	 *
-	 * @param character The character.
-	 * @throws IllegalArgumentException If the character is reserved.
+	 * {@inheritDoc}
 	 */
-	void checkReservedLayoutCharacter(char character) throws IllegalArgumentException {
-		if (character == LAYOUT_EMPTY_SLOT
-			|| character == LAYOUT_FILLED_SLOT
-			|| character == LAYOUT_PREVIOUS_PAGE
-			|| character == LAYOUT_NEXT_PAGE)
-			throw new IllegalArgumentException(String.format(
-				"The \"%c\" character is reserved in layouts and cannot be used due to backwards compatibility.",
-				character));
-	}
-
-	@ApiStatus.Internal
 	@Override
+	@ApiStatus.Internal
 	public Stack<Integer> getLayoutItemsLayer() {
 		return layoutItemsLayer;
 	}
 
-	@ApiStatus.Internal
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
+	@ApiStatus.Internal
 	public void setLayoutItemsLayer(Stack<Integer> layoutItemsLayer) {
 		this.layoutItemsLayer = layoutItemsLayer;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
+	@ApiStatus.Internal
 	public boolean isLayoutSignatureChecked() {
 		return layoutSignatureChecked;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
+	@ApiStatus.Internal
 	public void setLayoutSignatureChecked(boolean layoutSignatureChecked) {
 		this.layoutSignatureChecked = layoutSignatureChecked;
 	}
@@ -671,7 +670,7 @@ public abstract class AbstractVirtualView implements VirtualView {
 	 * @throws IllegalStateException If it is not possible to determine the number of rows for
 	 *                               the specified view implementation.
 	 */
-	private int determineRowsCount(@NotNull VirtualView view) {
+	private static int determineRowsCount(@NotNull VirtualView view) {
 		if (view instanceof ViewContext)
 			return ((ViewContext) view).getContainer().getRowsCount();
 		if (view instanceof AbstractView) return view.getRows();
@@ -692,7 +691,7 @@ public abstract class AbstractVirtualView implements VirtualView {
 	 * @throws IllegalStateException If it is not possible to determine the number of columns for
 	 *                               the specified view implementation.
 	 */
-	private int determineColumnsCount(@NotNull VirtualView view) {
+	private static int determineColumnsCount(@NotNull VirtualView view) {
 		if (view instanceof ViewContext)
 			return ((ViewContext) view).getContainer().getColumnsCount();
 		if (view instanceof AbstractView) return view.getColumns();
@@ -711,13 +710,14 @@ public abstract class AbstractVirtualView implements VirtualView {
 	 * @param view    The target view.
 	 * @param context The resolution context.
 	 * @param layout  The layout to be resolved.
-	 * @throws IllegalArgumentException  If during resolution a page navigation item is found for a
+	 * @throws IllegalStateException     If during resolution a page navigation item is found for a
 	 *                                   view that is not paginated.
+	 * @throws IllegalArgumentException  If an invalid character is found in the layout.
 	 * @throws IndexOutOfBoundsException If the layout doesn't fit the view's container constraints.
 	 */
-	final void resolveLayout(
+	static void resolveLayout(
 		@NotNull VirtualView view,
-		@NotNull ViewContext context,
+		@Nullable ViewContext context,
 		@NotNull String[] layout
 	) {
 		// since the layout is only defined once, we cache it
@@ -762,9 +762,15 @@ public abstract class AbstractVirtualView implements VirtualView {
 						break;
 					}
 					default: {
-						final LayoutPattern pattern = getLayoutOrNull(character);
-						if (pattern != null)
-							pattern.getSlots().push(targetSlot);
+						final LayoutPattern pattern = getLayoutOrNull(view, character);
+						if (pattern == null)
+							throw new IllegalArgumentException(String.format(
+								"An unknown character was found in layout on line %d column %d. Only %s characters are valid. " +
+									"Any other character is considered a custom user pattern and must be registered with #setLayout(Character, Factory)",
+								row, column, Arrays.asList(LAYOUT_EMPTY_SLOT, LAYOUT_FILLED_SLOT, LAYOUT_PREVIOUS_PAGE, LAYOUT_NEXT_PAGE)
+							));
+
+						pattern.getSlots().push(targetSlot);
 					}
 				}
 			}
@@ -773,11 +779,12 @@ public abstract class AbstractVirtualView implements VirtualView {
 		view.setLayoutItemsLayer(itemsLayer);
 		view.setLayoutSignatureChecked(true);
 
-		if (!(view instanceof PaginatedViewContext)) return;
+		if (!(view instanceof PaginatedVirtualView))
+			return;
 
-		final Paginator<?> paginator =
-			((PaginatedViewContext<?>) view).paginated().getPaginator();
-		if (paginator == null) return;
+		final Paginator<?> paginator = ((PaginatedVirtualView<?>) view).getPaginator();
+		if (paginator == null)
+			return;
 
 		paginator.setPageSize(itemsLayer.size());
 	}
@@ -789,17 +796,20 @@ public abstract class AbstractVirtualView implements VirtualView {
 	 * @param context   The resolution context.
 	 * @param direction The navigation direction.
 	 * @param slot      The target slot.
-	 * @throws IllegalArgumentException If view or context is not paginated.
+	 * @throws IllegalStateException If view or context is not paginated.
 	 */
 	@SuppressWarnings({"unchecked", "rawtypes"})
-	private void resolveAndApplyNavigationItem(
+	private static void resolveAndApplyNavigationItem(
 		@NotNull VirtualView view,
-		@NotNull ViewContext context,
+		@Nullable ViewContext context,
 		int direction,
 		int slot
 	) {
+		// can be null on regular view layout pre render
+		if (context == null) return;
+
 		if (!view.isPaginated() || !context.isPaginated())
-			throw new IllegalArgumentException(String.format(
+			throw new IllegalStateException(String.format(
 				"Navigation characters (%s) on layout are reserved to paginated views and cannot be used on regular views.",
 				LAYOUT_PREVIOUS_PAGE + ", " + LAYOUT_NEXT_PAGE
 			));
@@ -821,14 +831,34 @@ public abstract class AbstractVirtualView implements VirtualView {
 	/**
 	 * Finds the layout pattern to the given character.
 	 *
+	 * @param view      The target view.
 	 * @param character The layout pattern character.
 	 * @return The layout pattern to the given character or <code>null</code>.
 	 */
-	private LayoutPattern getLayoutOrNull(char character) {
-		return getLayoutPatterns().stream()
+	private static LayoutPattern getLayoutOrNull(VirtualView view, char character) {
+		return view.getLayoutPatterns().stream()
 			.filter(pattern -> pattern.getCharacter() == character)
 			.findFirst()
 			.orElse(null);
+	}
+
+	/**
+	 * Throws an exception if a character is a reserved layout character.
+	 *
+	 * @param character The character.
+	 * @throws IllegalArgumentException If the character is reserved.
+	 */
+	private static void checkReservedLayoutCharacter(char character) {
+		if (!(character == LAYOUT_EMPTY_SLOT
+			|| character == LAYOUT_FILLED_SLOT
+			|| character == LAYOUT_PREVIOUS_PAGE
+			|| character == LAYOUT_NEXT_PAGE
+		)) return;
+
+		throw new IllegalArgumentException(String.format(
+			"The \"%c\" character is reserved in layouts and cannot be used due to backwards compatibility.",
+			character
+		));
 	}
 
 	@Override

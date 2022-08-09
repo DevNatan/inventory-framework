@@ -23,8 +23,8 @@ import org.jetbrains.annotations.NotNull;
 final class Paginator<T> {
 
     private int pageSize;
+	private int pagesCount = -1;
     private List<T> source;
-    private int pagesCount = -1;
     private Function<PaginatedViewContext<T>, List<T>> factory;
     private AsyncPaginationDataState<T> asyncState;
     private final boolean provided, async;
