@@ -536,28 +536,18 @@ public abstract class AbstractPaginatedView<T> extends AbstractView implements P
 		@NotNull PaginatedViewContext<T> context,
 		int direction
 	) {
-		final BiConsumer<PaginatedViewContext<T>, ViewItem> factory = direction == NAVIGATE_LEFT
-			? view.getP
-	}
+		final boolean isBackwards = direction == NAVIGATE_LEFT;
+		final BiConsumer<PaginatedViewContext<T>, ViewItem> factory = isBackwards
+			? view.getPreviousPageItemFactory()
+			: view.getNextPageItemFactory();
 
-	private static <T> ViewItem internalGetPreviousPageItem(
-		@NotNull PaginatedVirtualView<T> view,
-		@NotNull PaginatedViewContext<T> context
-	) {
-		final AbstractPaginatedView<T> root = context.getRoot().paginated();
-		if (root.getPreviousPageItemFactory() == null) return root.getPreviousPageItem(context);
-
-		final ViewItem item = new ViewItem();
-		root.getPreviousPageItemFactory().accept(context, item);
-		return item;
-	}
-
-	private ViewItem internalGetNextPageItem(@NotNull PaginatedViewContext<T> context) {
-		final AbstractPaginatedView<T> root = context.getRoot().paginated();
-		if (root.getNextPageItemFactory() == null) return root.getNextPageItem(context);
+		if (factory == null)
+			return isBackwards
+				? view.getPreviousPageItem(context)
+				: view.getNextPageItem(context);
 
 		final ViewItem item = new ViewItem();
-		root.getNextPageItemFactory().accept(context, item);
+		factory.accept(context, item);
 		return item;
 	}
 
@@ -574,10 +564,12 @@ public abstract class AbstractPaginatedView<T> extends AbstractView implements P
 		if (vf == null)
 			return null;
 
-		final Function<PaginatedViewContext<?>, ViewItem> fallback =
-			direction == NAVIGATE_LEFT ? vf.getDefaultPreviousPageItem() : vf.getDefaultNextPageItem();
+		final Function<PaginatedViewContext<?>, ViewItem> fallback = direction == NAVIGATE_LEFT
+			? vf.getDefaultPreviousPageItem()
+			: vf.getDefaultNextPageItem();
 
-		if (fallback == null) return null;
+		if (fallback == null)
+			return null;
 
 		return fallback.apply(context);
 	}
