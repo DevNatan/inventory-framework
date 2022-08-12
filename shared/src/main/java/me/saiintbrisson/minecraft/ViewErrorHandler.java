@@ -14,5 +14,5 @@ public interface ViewErrorHandler {
 	 * @param context   The current view context.
 	 * @param exception The caught exception.
 	 */
-	void error(ViewContext context, @NotNull Exception exception);
+	void error(ViewContext context, @NotNull Exception exception) throws Exception;
 }
