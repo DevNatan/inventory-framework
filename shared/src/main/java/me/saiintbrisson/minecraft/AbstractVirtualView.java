@@ -160,11 +160,7 @@ public abstract class AbstractVirtualView implements VirtualView {
 	@Override
 	@NotNull
 	public final ViewItem slot(int slot) {
-		inventoryModificationTriggered();
-
-		final ViewItem item = new ViewItem(slot);
-		apply(item, slot);
-		return item;
+		return slot(slot, null);
 	}
 
 	/**
@@ -173,7 +169,11 @@ public abstract class AbstractVirtualView implements VirtualView {
 	@Override
 	@NotNull
 	public final ViewItem slot(int slot, Object item) {
-		return slot(slot).withItem(item);
+		inventoryModificationTriggered();
+
+		final ViewItem viewItem = new ViewItem(slot).withItem(item);
+		apply(viewItem, slot);
+		return viewItem;
 	}
 
 	/**
@@ -398,7 +398,7 @@ public abstract class AbstractVirtualView implements VirtualView {
 		tryRunOrFail(context, runnable);
 	}
 
-	boolean throwException(final ViewContext context, @NotNull final Exception exception) {
+	boolean throwException(final ViewContext context, @NotNull final Exception exception) throws Exception {
 		if (context != null && context.getErrorHandler() != null) {
 			context.getErrorHandler().error(context, exception);
 			if (!context.isPropagateErrors()) return false;
@@ -409,7 +409,10 @@ public abstract class AbstractVirtualView implements VirtualView {
 	}
 
 	protected final void launchError(
-		final ViewErrorHandler errorHandler, final ViewContext context, @NotNull final Exception exception) {
+		ViewErrorHandler errorHandler,
+		ViewContext context,
+		@NotNull Exception exception
+	) throws Exception {
 		if (errorHandler == null) return;
 
 		errorHandler.error(context, exception);
@@ -419,7 +422,11 @@ public abstract class AbstractVirtualView implements VirtualView {
 		try {
 			runnable.run();
 		} catch (final Exception e) {
-			throwException(context, e);
+			try {
+				throwException(context, e);
+			} catch (Exception ex) {
+				throw new RuntimeException(ex);
+			}
 		}
 	}
 

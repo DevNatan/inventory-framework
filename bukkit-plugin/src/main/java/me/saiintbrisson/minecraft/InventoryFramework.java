@@ -128,11 +128,19 @@ class Test6 extends View {
 		super(3, Test6.class.getName());
 
 		slot(3, new ItemStack(Material.DIAMOND));
+
+		setErrorHandler((context, exception) -> {
+			context.getPlayer().sendMessage("An error ocurred while opening this inventory");
+			context.getPlayer().sendMessage(exception.toString());
+
+			throw exception;
+		});
 	}
 
 	@Override
 	protected void onRender(@NotNull ViewContext context) {
-		context.slot(4, new ItemStack(Material.GOLD_INGOT));
+		throw new IllegalStateException("deu ruim aq");
+//		context.slot(4, new ItemStack(Material.GOLD_INGOT));
 	}
 
 }
@@ -143,7 +151,7 @@ public final class InventoryFramework extends JavaPlugin {
 
 	@EventHandler
 	public void onEnable() {
-		ViewFrame vf = ViewFrame.of(this, new Test1(), new Test2(), new Test3(), new Test4(), new Test5(), new Test6());
+		ViewFrame vf = ViewFrame.of(this, new Test6());
 		vf.register();
 
 		getServer()

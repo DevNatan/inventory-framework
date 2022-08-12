@@ -310,14 +310,18 @@ public abstract class AbstractView extends AbstractVirtualView {
 		if (!isInitialized())
 			throw new IllegalStateException("Cannot render a uninitialized view.");
 
-		getPipeline().execute(RENDER, context);
-		onRender(context);
+		runCatching(context, () -> {
+			onRender(context);
+			getPipeline().execute(RENDER, context);
+		});
 	}
 
 	@Override
 	public void update(@NotNull ViewContext context) {
-		getPipeline().execute(UPDATE, context);
-		onUpdate(context);
+		runCatching(context, () -> {
+			onUpdate(context);
+			getPipeline().execute(UPDATE, context);
+		});
 	}
 
 	/**
@@ -515,7 +519,7 @@ public abstract class AbstractView extends AbstractVirtualView {
 
 	// TODO change 2nd parameter type from Exception to Throwable
 	@Override
-	final boolean throwException(ViewContext context, @NotNull Exception exception) {
+	final boolean throwException(ViewContext context, @NotNull Exception exception) throws Exception {
 		if (!super.throwException(context, exception)) return false;
 
 		final PlatformViewFrame<?, ?, ?> vf = getViewFrame();

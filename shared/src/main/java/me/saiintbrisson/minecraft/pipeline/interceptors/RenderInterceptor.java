@@ -31,11 +31,12 @@ public final class RenderInterceptor implements PipelineInterceptor<VirtualView>
 		System.out.println("Items len: " + len);
 
 		for (int i = 0; i < len; i++) {
-			// this resolve will get the items from both root and context so we render both
-			final ViewItem item = root.resolve(i, true);
+			// this resolve will get the items from both root and context, so we render both
+			final ViewItem item = context.resolve(i, true);
+			System.out.println("Item at " + i + ": " + item);
 
 			if (item == null)
-				return;
+				continue;
 
 			System.out.println("Rendering " + i + ": " + item);
 			root.render(context, item, i);
