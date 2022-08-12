@@ -1,5 +1,12 @@
 # Changelog
 
+# 2.5.4
+* Auto slot fill and layout can now be used on regular views and paginated views (#174)
+* Updated Gradle to v7.5.1 (#189)
+* Remove nextTick from view open, close and updateSlot call (#193)
+* View layout is now resolved on initialization (#196)
+* Render, update and open process was moved to pipeline interceptors (#196)
+
 # 2.5.3
 * Fix scheduled updates (#175)
 * UnsupportedOperationException when use getPlayer in PaginatedViewSlotContext (#183)
