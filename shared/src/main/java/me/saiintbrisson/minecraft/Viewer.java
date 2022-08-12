@@ -2,7 +2,7 @@ package me.saiintbrisson.minecraft;
 
 import org.jetbrains.annotations.NotNull;
 
-interface Viewer {
+public interface Viewer {
 
     void open(@NotNull final ViewContainer container);
 

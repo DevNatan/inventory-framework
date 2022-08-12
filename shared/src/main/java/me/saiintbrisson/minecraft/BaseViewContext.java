@@ -51,7 +51,8 @@ class BaseViewContext extends AbstractVirtualView implements ViewContext {
 		}
 	}
 
-	final void addViewer(@NotNull final Viewer viewer) {
+	@Override
+	public final void addViewer(@NotNull final Viewer viewer) {
 		synchronized (viewers) {
 			viewers.add(viewer);
 		}

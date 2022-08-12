@@ -1,7 +1,7 @@
 package me.saiintbrisson.minecraft;
 
 import java.util.concurrent.CompletableFuture;
-import lombok.AccessLevel;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -27,8 +27,8 @@ public class OpenViewContext extends BaseViewContext {
     @Setter
     private ViewType containerType;
 
-    @Getter(AccessLevel.PACKAGE)
-    private CompletableFuture<?> job;
+    @Getter
+    private CompletableFuture<?> asyncOpenJob;
 
     @Setter
     private boolean cancelled;
@@ -91,7 +91,7 @@ public class OpenViewContext extends BaseViewContext {
      * @param job The job that'll be waited for.
      */
     public final void waitUntil(@NotNull CompletableFuture<?> job) {
-        this.job = job;
+        this.asyncOpenJob = job;
     }
 
     @Override

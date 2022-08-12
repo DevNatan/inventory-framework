@@ -15,6 +15,10 @@ public final class IFUtils {
 		fn.accept(handler);
 	}
 
+	public static <T> T elvis(T input, T fallback) {
+		return input == null ? fallback : input;
+	}
+
 	public static String[] useLayout(
 		@NotNull VirtualView view,
 		@NotNull VirtualView context

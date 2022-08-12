@@ -53,6 +53,15 @@ public interface PlatformViewFrame<V, P, F extends PlatformViewFrame<V, P, F>> e
 	@NotNull
 	P getOwner();
 
+	/**
+	 * <p><b><i> This is an internal inventory-framework API that should not be used from outside of this
+	 * library. No compatibility guarantees are provided. </i></b>
+	 *
+	 * @return The current component factory.
+	 * @deprecated Use {@link PlatformUtils#getFactory()} instead.
+	 */
+	@Deprecated
+	@ApiStatus.Internal
 	@NotNull
 	ViewComponentFactory getFactory();
 

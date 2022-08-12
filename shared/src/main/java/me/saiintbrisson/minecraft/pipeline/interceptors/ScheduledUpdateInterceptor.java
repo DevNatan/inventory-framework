@@ -16,7 +16,7 @@ import java.time.Duration;
  * or stopped. An "update job" is created when user {@link me.saiintbrisson.minecraft.VirtualView#scheduleUpdate(Duration) schedules a update}.
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class AutomaticUpdateInitiationInterceptor {
+public final class ScheduledUpdateInterceptor {
 
 	/**
 	 * Intercepts the render pipeline phase of the view and determines whether the update job should

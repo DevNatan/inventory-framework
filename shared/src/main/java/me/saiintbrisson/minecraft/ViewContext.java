@@ -24,6 +24,9 @@ public interface ViewContext extends VirtualView {
     @UnmodifiableView
     List<Viewer> getViewers();
 
+	@ApiStatus.Internal
+	void addViewer(@NotNull Viewer viewer);
+
     /**
      * The container of this context.
      *

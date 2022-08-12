@@ -47,7 +47,8 @@ public abstract class AbstractVirtualView implements VirtualView {
 		return items[index];
 	}
 
-	final void setItems(ViewItem[] items) {
+	@Override
+	public final void setItems(ViewItem[] items) {
 		this.items = items;
 	}
 

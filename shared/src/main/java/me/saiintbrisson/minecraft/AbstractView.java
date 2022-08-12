@@ -7,11 +7,11 @@ import lombok.ToString;
 import me.saiintbrisson.minecraft.exception.InitializationException;
 import me.saiintbrisson.minecraft.pipeline.Pipeline;
 import me.saiintbrisson.minecraft.pipeline.PipelinePhase;
-import me.saiintbrisson.minecraft.pipeline.interceptors.AutomaticUpdateInitiationInterceptor;
 import me.saiintbrisson.minecraft.pipeline.interceptors.LayoutRenderInterceptor;
 import me.saiintbrisson.minecraft.pipeline.interceptors.LayoutResolutionInterceptor;
-import me.saiintbrisson.minecraft.pipeline.interceptors.PaginationRenderInterceptor;
+import me.saiintbrisson.minecraft.pipeline.interceptors.OpenInterceptor;
 import me.saiintbrisson.minecraft.pipeline.interceptors.RenderInterceptor;
+import me.saiintbrisson.minecraft.pipeline.interceptors.ScheduledUpdateInterceptor;
 import me.saiintbrisson.minecraft.pipeline.interceptors.UpdateInterceptor;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
@@ -254,55 +254,14 @@ public abstract class AbstractView extends AbstractVirtualView {
 	}
 
 	final void open(@NotNull Viewer viewer, @NotNull Map<String, Object> data) {
-		final OpenViewContext open = internalOpen(viewer, data);
-
-		// wait for asynchronous open
-		if (open.getJob() != null) {
-			open.getJob()
-				.whenComplete(($, error) -> {
-					postOpen(viewer, open);
-				})
-				.exceptionally(error -> {
-					throwException(open, new RuntimeException(error));
-					return null;
-				});
-			return;
-		}
-
-		postOpen(viewer, open);
-	}
-
-	private void postOpen(@NotNull Viewer viewer, @NotNull OpenViewContext openContext) {
-		if (openContext.isCancelled()) return;
-
-		final String containerTitle = openContext.getContainerTitle() == null ? title : openContext.getContainerTitle();
-		final ViewType containerType = openContext.getContainerType() == null ? type : openContext.getContainerType();
-
-		// rows will be normalized to fixed container size on `createContainer`
-		final int containerSize =
-			openContext.getContainerSize() == 0 ? size : containerType.normalize(openContext.getContainerSize());
-
-		final ViewContainer container =
-			viewFrame.getFactory().createContainer(this, containerSize, containerTitle, containerType);
-
-		final BaseViewContext context = viewFrame.getFactory().createContext(this, container, null);
-		context.setItems(new ViewItem[containerSize]);
-		context.addViewer(viewer);
-		openContext.getData().forEach(context::set);
-		contexts.add(context);
-		render(context);
-		context.getViewers().forEach(context.getContainer()::open);
-	}
-
-	private OpenViewContext internalOpen(@NotNull Viewer viewer, @NotNull Map<String, Object> data) {
-		final OpenViewContext context =
-			(OpenViewContext) getViewFrame().getFactory().createContext(this, null, OpenViewContext.class);
+		final OpenViewContext context = (OpenViewContext) getViewFrame().getFactory().createContext(this, null, OpenViewContext.class);
 
 		context.addViewer(viewer);
 		data.forEach(context::set);
-		getPipeline().execute(OPEN, context);
-		runCatching(context, () -> onOpen(context));
-		return context;
+		runCatching(context, () -> {
+			runCatching(context, () -> onOpen(context));
+			getPipeline().execute(OPEN, context);
+		});
 	}
 
 	@Override
@@ -357,6 +316,10 @@ public abstract class AbstractView extends AbstractVirtualView {
 
 	final ViewContext getContext(@NotNull Predicate<ViewContext> predicate) {
 		return contexts.stream().filter(predicate).findFirst().orElse(null);
+	}
+
+	public final void registerContext(@NotNull ViewContext context) {
+		contexts.add(context);
 	}
 
 	public final boolean isCancelOnClick() {
@@ -453,7 +416,7 @@ public abstract class AbstractView extends AbstractVirtualView {
 		return super.getItems();
 	}
 
-	final Pipeline<VirtualView> getPipeline() {
+	public final Pipeline<VirtualView> getPipeline() {
 		return pipeline;
 	}
 
@@ -587,12 +550,13 @@ public abstract class AbstractView extends AbstractVirtualView {
 
 	@ApiStatus.OverrideOnly
 	protected void beforeInit() {
+		pipeline.intercept(OPEN, new OpenInterceptor());
 		pipeline.intercept(INIT, new LayoutResolutionInterceptor());
 		pipeline.intercept(INIT, new LayoutRenderInterceptor());
 		pipeline.intercept(RENDER, new RenderInterceptor());
-		pipeline.intercept(RENDER, new AutomaticUpdateInitiationInterceptor.Render());
+		pipeline.intercept(RENDER, new ScheduledUpdateInterceptor.Render());
 		pipeline.intercept(UPDATE, new UpdateInterceptor());
-		pipeline.intercept(CLOSE, new AutomaticUpdateInitiationInterceptor.Close());
+		pipeline.intercept(CLOSE, new ScheduledUpdateInterceptor.Close());
 	}
 
 	final void init() {

@@ -50,6 +50,9 @@ public interface VirtualView {
 	@ApiStatus.Internal
 	ViewItem[] getItems();
 
+	@ApiStatus.Internal
+	void setItems(ViewItem[] items);
+
 	/**
 	 * Finds an item at an index.
 	 *
