@@ -33,11 +33,11 @@ public final class ScheduledUpdateInterceptor {
 			if (subject.getViewers().size() != 1) return;
 
 			subject.getUpdateJob().resume();
-			calledSuccessfully();
+			onIntercept();
 		}
 
 		@TestOnly
-		void calledSuccessfully() {
+		void onIntercept() {
 		}
 	}
 
@@ -56,11 +56,11 @@ public final class ScheduledUpdateInterceptor {
 			if (subject.getViewers().size() != 1) return;
 
 			subject.getUpdateJob().pause();
-			calledSuccessfully();
+			onIntercept();
 		}
 
 		@TestOnly
-		void calledSuccessfully() {
+		void onIntercept() {
 		}
 	}
 }

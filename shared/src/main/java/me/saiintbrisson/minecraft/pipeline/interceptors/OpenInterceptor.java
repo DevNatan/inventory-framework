@@ -11,10 +11,16 @@ import me.saiintbrisson.minecraft.Viewer;
 import me.saiintbrisson.minecraft.pipeline.PipelineContext;
 import me.saiintbrisson.minecraft.pipeline.PipelineInterceptor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.TestOnly;
 
 import static me.saiintbrisson.minecraft.IFUtils.elvis;
 
-public final class OpenInterceptor implements PipelineInterceptor<OpenViewContext> {
+public class OpenInterceptor implements PipelineInterceptor<OpenViewContext> {
+
+	static final String ASYNC_UPDATE_JOB_EXECUTION_ERROR_MESSAGE = "An error occurred in the opening asynchronous job.";
+
+	@TestOnly
+	boolean skipOpen = false;
 
 	@Override
 	public void intercept(
@@ -27,11 +33,13 @@ public final class OpenInterceptor implements PipelineInterceptor<OpenViewContex
 		}
 
 		context.getAsyncOpenJob()
-			.whenComplete(($, error) -> finishOpen(pipeline, context))
+			.thenRun(() -> finishOpen(pipeline, context))
 			.exceptionally(error -> {
+				System.out.println("async job completed with " + error);
+
 				// TODO invalidate context
 				pipeline.finish();
-				throw new RuntimeException("An error occurred in the opening asynchronous job.", error);
+				throw new RuntimeException(ASYNC_UPDATE_JOB_EXECUTION_ERROR_MESSAGE, error);
 			});
 	}
 
@@ -39,6 +47,8 @@ public final class OpenInterceptor implements PipelineInterceptor<OpenViewContex
 		@NotNull PipelineContext<OpenViewContext> pipeline,
 		@NotNull OpenViewContext openContext
 	) {
+		if (skipOpen) return;
+
 		if (openContext.isCancelled()) {
 			pipeline.finish();
 			return;

@@ -107,11 +107,13 @@ public final class Pipeline<S> {
         context.execute(subject);
     }
 
-    public void execute(@NotNull final PipelinePhase phase, @Nullable final S subject) {
+    public PipelineContext<S> execute(@NotNull final PipelinePhase phase, @Nullable final S subject) {
         final List<PipelineInterceptor<S>> pipelineInterceptors = interceptors.get(phase);
-        if (pipelineInterceptors == null) return;
+        if (pipelineInterceptors == null)
+			return null;
 
         final PipelineContext<S> context = new PipelineContext<>(pipelineInterceptors);
         context.execute(subject);
+		return context;
     }
 }

@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -44,23 +45,28 @@ class BaseViewContext extends AbstractVirtualView implements ViewContext {
 		getRoot().update(this);
 	}
 
+	@ApiStatus.Internal
+	public List<Viewer> internalGetViewers() {
+		return viewers;
+	}
+
 	@Override
 	public final @NotNull List<Viewer> getViewers() {
-		synchronized (viewers) {
-			return Collections.unmodifiableList(viewers);
+		synchronized (internalGetViewers()) {
+			return Collections.unmodifiableList(internalGetViewers());
 		}
 	}
 
 	@Override
 	public final void addViewer(@NotNull final Viewer viewer) {
-		synchronized (viewers) {
-			viewers.add(viewer);
+		synchronized (internalGetViewers()) {
+			internalGetViewers().add(viewer);
 		}
 	}
 
 	final void removeViewer(@NotNull final Viewer viewer) {
-		synchronized (viewers) {
-			viewers.remove(viewer);
+		synchronized (internalGetViewers()) {
+			internalGetViewers().remove(viewer);
 		}
 	}
 

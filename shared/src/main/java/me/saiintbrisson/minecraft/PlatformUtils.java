@@ -1,5 +1,6 @@
 package me.saiintbrisson.minecraft;
 
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 
@@ -33,7 +34,8 @@ public class PlatformUtils {
                 + "that is functional on the current platform.");
     }
 
-    static void setFactory(@NotNull ViewComponentFactory factory) {
+	@ApiStatus.Internal
+    public static void setFactory(@NotNull ViewComponentFactory factory) {
         final ViewComponentFactory curr = PlatformUtils.factory;
         if (curr != null) return;
 

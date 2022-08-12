@@ -139,7 +139,6 @@ class Test6 extends View {
 
 	@Override
 	protected void onRender(@NotNull ViewContext context) {
-		throw new IllegalStateException("deu ruim aq");
 //		context.slot(4, new ItemStack(Material.GOLD_INGOT));
 	}
 

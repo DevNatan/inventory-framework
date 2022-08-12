@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 import me.saiintbrisson.minecraft.feature.Feature;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class TestViewFrame implements PlatformViewFrame<Void, Void, TestViewFrame> {
 
@@ -129,4 +130,29 @@ public class TestViewFrame implements PlatformViewFrame<Void, Void, TestViewFram
     public void uninstall(@NotNull Feature<?, ?> feature) {
         throw new UnsupportedOperationException();
     }
+
+	@Override
+	public TestViewFrame withPreviousPageItem(@Nullable BiConsumer<PaginatedViewContext<?>, ViewItem> previousPageItemFactory) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public TestViewFrame withNextPageItem(@Nullable BiConsumer<PaginatedViewContext<?>, ViewItem> nextPageItemFactory) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public TestViewFrame withErrorHandler(@NotNull ViewErrorHandler errorHandler) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public BiConsumer<PaginatedViewContext<?>, ViewItem> getPreviousPageItem() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public BiConsumer<PaginatedViewContext<?>, ViewItem> getNextPageItem() {
+		throw new UnsupportedOperationException();
+	}
 }

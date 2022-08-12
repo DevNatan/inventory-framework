@@ -32,12 +32,12 @@ import java.util.function.Supplier;
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
 public abstract class AbstractView extends AbstractVirtualView {
 
-	static final PipelinePhase OPEN = new PipelinePhase("open");
-	static final PipelinePhase INIT = new PipelinePhase("init");
-	static final PipelinePhase RENDER = new PipelinePhase("render");
-	static final PipelinePhase UPDATE = new PipelinePhase("update");
-	static final PipelinePhase CLICK = new PipelinePhase("click");
-	static final PipelinePhase CLOSE = new PipelinePhase("close");
+	public static final PipelinePhase OPEN = new PipelinePhase("open");
+	public static final PipelinePhase INIT = new PipelinePhase("init");
+	public static final PipelinePhase RENDER = new PipelinePhase("render");
+	public static final PipelinePhase UPDATE = new PipelinePhase("update");
+	public static final PipelinePhase CLICK = new PipelinePhase("click");
+	public static final PipelinePhase CLOSE = new PipelinePhase("close");
 	static final ViewType DEFAULT_TYPE = ViewType.CHEST;
 
 	@ToString.Include
