@@ -1,6 +1,6 @@
 # Changelog
 
-# 2.5.4
+# 2.5.4 (unreleased)
 * Auto slot fill and layout can now be used on regular views and paginated views (#174)
 * Updated Gradle to v7.5.1 (#189)
 * Remove nextTick from view open, close and updateSlot call (#193)
