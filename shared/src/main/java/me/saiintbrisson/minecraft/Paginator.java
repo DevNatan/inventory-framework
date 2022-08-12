@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
  */
 @Getter
 @Setter
-final class Paginator<T> {
+public final class Paginator<T> {
 
     private int pageSize;
 	private int pagesCount = -1;

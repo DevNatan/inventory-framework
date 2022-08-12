@@ -9,6 +9,7 @@ import lombok.ToString;
 @Getter
 @ToString
 @RequiredArgsConstructor
+public
 class LayoutPattern {
 
     private final char character;

@@ -18,8 +18,8 @@ import org.jetbrains.annotations.Contract;
  *
  * @param <T> The pagination data type.
  */
-@Getter(AccessLevel.PACKAGE)
-@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
+@Getter
+@RequiredArgsConstructor
 public final class AsyncPaginationDataState<T> {
 
     private final Function<PaginatedViewContext<T>, CompletableFuture<List<T>>> job;

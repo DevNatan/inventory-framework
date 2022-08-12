@@ -196,6 +196,7 @@ public interface ViewContext extends VirtualView {
      * @return This context as a PaginatedViewContext.
      * @throws IllegalStateException If the root of this context cannot be converted to a paginated.
      */
+	@Override
     <T> PaginatedViewContext<T> paginated();
 
     /**
@@ -211,20 +212,6 @@ public interface ViewContext extends VirtualView {
     void open(@NotNull Class<? extends AbstractView> viewClass);
 
     void open(@NotNull Class<? extends AbstractView> viewClass, @NotNull Map<String, @Nullable Object> data);
-
-    /**
-     * Attempts to resolve an item at a specified index.
-     *
-     * <p><b><i> This is an internal inventory-framework API that should not be used from outside of
-     * this library. No compatibility guarantees are provided. </i></b>
-     *
-     * @param index         The item index.
-     * @param resolveOnRoot Search in the {@link #getRoot() context root} or just the items defined in
-     *                      the context itself.
-     * @return The item at the specified index.
-     */
-    @ApiStatus.Internal
-    ViewItem resolve(int index, boolean resolveOnRoot);
 
     /**
      * Creates a new slot context instance containing within it data of an item whose reference key is

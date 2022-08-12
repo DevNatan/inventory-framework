@@ -59,7 +59,7 @@ public interface ViewSlotContext extends ViewContext {
      * @deprecated Use {@link #getItemWrapper()} instead.
      */
     @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.4")
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.5")
     ItemStack getItem();
 
     /**

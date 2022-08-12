@@ -151,25 +151,6 @@ public interface PaginatedVirtualView<T> extends VirtualView {
 	void setNextPageItemSlot(int nextPageItemSlot);
 
 	/**
-	 * The item that will be used to represent the backward navigation item.
-	 *
-	 * <p>Sample code:
-	 *
-	 * <pre><code>
-	 * &#64;Override
-	 * protected ViewItem getPreviousPageItem(PaginatedViewContext&#60;T&#62; context) {
-	 *     return item(fallbackItem);
-	 * }
-	 * </code></pre>
-	 *
-	 * @param context The pagination context.
-	 * @return The backward navigation item.
-	 * @deprecated Use {@link #setPreviousPageItem(BiConsumer)} on constructor instead.
-	 */
-	@Deprecated
-	ViewItem getPreviousPageItem(@NotNull PaginatedViewContext<T> context);
-
-	/**
 	 * <p><b><i> This is an internal inventory-framework API that should not be used from outside of
 	 * this library. No compatibility guarantees are provided. </i></b>
 	 */
@@ -209,25 +190,6 @@ public interface PaginatedVirtualView<T> extends VirtualView {
 	 * @throws InitializationException If this view is initialized.
 	 */
 	void setPreviousPageItem(@NotNull BiConsumer<PaginatedViewContext<T>, ViewItem> previousPageItemFactory);
-
-	/**
-	 * The item that will be used to represent the forward navigation item.
-	 *
-	 * <p>Sample code:
-	 *
-	 * <pre><code>
-	 * &#64;Override
-	 * protected ViewItem getNextPageItem(PaginatedViewContext&#60;T&#62; context) {
-	 *     return item(fallbackItem);
-	 * }
-	 * </code></pre>
-	 *
-	 * @param context The pagination context.
-	 * @return The forward navigation item.
-	 * @deprecated Use {@link #setNextPageItem(BiConsumer)} on constructor instead.
-	 */
-	@Deprecated
-	ViewItem getNextPageItem(@NotNull PaginatedViewContext<T> context);
 
 	/**
 	 * <p><b><i> This is an internal inventory-framework API that should not be used from outside of

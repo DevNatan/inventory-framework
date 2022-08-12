@@ -88,7 +88,7 @@ final class BukkitViewComponentFactory extends ViewComponentFactory {
     @Override
     @NotNull
     public AbstractViewSlotContext createSlotContext(
-            ViewItem item, BaseViewContext parent, int paginatedItemIndex, Object paginatedItemValue) {
+            ViewItem item, ViewContext parent, int paginatedItemIndex, Object paginatedItemValue) {
         return paginatedItemValue == null
                 ? new BukkitViewSlotContext(item, parent)
                 : new BukkitPaginatedViewSlotContextImpl<>(

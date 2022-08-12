@@ -3,10 +3,11 @@ package me.saiintbrisson.minecraft;
 import lombok.Getter;
 import lombok.ToString;
 import me.saiintbrisson.minecraft.exception.InitializationException;
+import me.saiintbrisson.minecraft.pipeline.PipelinePhase;
+import me.saiintbrisson.minecraft.pipeline.interceptors.PaginationRenderInterceptor;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.Range;
 
 import java.util.List;
 import java.util.Stack;
@@ -16,15 +17,22 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import static me.saiintbrisson.minecraft.ViewItem.UNSET;
+
 @Getter
 @ToString(callSuper = true)
 public abstract class AbstractPaginatedView<T> extends AbstractView implements PaginatedVirtualView<T> {
+
+	static final PipelinePhase PAGINATION_RENDER = new PipelinePhase("pagination-render");
+
+	private int offset, limit;
 
 	/* inherited from PaginatedVirtualView */
 	private BiConsumer<PaginatedViewContext<T>, ViewItem> previousPageItemFactory, nextPageItemFactory;
 	private Paginator<T> paginator;
 
-	private int offset, limit;
+	private int previousPageItemSlot = UNSET;
+	private int nextPageItemSlot = UNSET;
 
 	AbstractPaginatedView(int rows, String title, @NotNull ViewType type) {
 		super(rows, title, type);
@@ -112,7 +120,10 @@ public abstract class AbstractPaginatedView<T> extends AbstractView implements P
 	 * @param value    The paginated value.
 	 */
 	protected abstract void onItemRender(
-		@NotNull PaginatedViewSlotContext<T> context, @NotNull ViewItem viewItem, @NotNull T value);
+		@NotNull PaginatedViewSlotContext<T> context,
+		@NotNull ViewItem viewItem,
+		@NotNull T value
+	);
 
 	/**
 	 * Called when pagination is switched.
@@ -151,6 +162,38 @@ public abstract class AbstractPaginatedView<T> extends AbstractView implements P
 
 	/**
 	 * {@inheritDoc}
+	 */
+	@Override
+	public final int getPreviousPageItemSlot() {
+		return previousPageItemSlot;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public final void setPreviousPageItemSlot(int previousPageItemSlot) {
+		this.previousPageItemSlot = previousPageItemSlot;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public final int getNextPageItemSlot() {
+		return nextPageItemSlot;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public final void setNextPageItemSlot(int nextPageItemSlot) {
+		this.nextPageItemSlot = nextPageItemSlot;
+	}
+
+	/**
+	 * {@inheritDoc}
 	 **/
 	@Override
 	public final void setLayout(@Nullable String... layout) {
@@ -177,11 +220,44 @@ public abstract class AbstractPaginatedView<T> extends AbstractView implements P
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * The item that will be used to represent the backward navigation item.
+	 *
+	 * <p>Sample code:
+	 *
+	 * <pre><code>
+	 * &#64;Override
+	 * protected ViewItem getPreviousPageItem(PaginatedViewContext&#60;T&#62; context) {
+	 *     return item(fallbackItem);
+	 * }
+	 * </code></pre>
+	 *
+	 * @param context The pagination context.
+	 * @return The backward navigation item.
+	 * @deprecated Use {@link #setPreviousPageItem(BiConsumer)} on constructor instead.
 	 */
-	@Override
 	@Deprecated
 	public ViewItem getPreviousPageItem(@NotNull PaginatedViewContext<T> context) {
+		return null;
+	}
+
+	/**
+	 * The item that will be used to represent the forward navigation item.
+	 *
+	 * <p>Sample code:
+	 *
+	 * <pre><code>
+	 * &#64;Override
+	 * protected ViewItem getNextPageItem(PaginatedViewContext&#60;T&#62; context) {
+	 *     return item(fallbackItem);
+	 * }
+	 * </code></pre>
+	 *
+	 * @param context The pagination context.
+	 * @return The forward navigation item.
+	 * @deprecated Use {@link #setNextPageItem(BiConsumer)} on constructor instead.
+	 */
+	@Deprecated
+	public ViewItem getNextPageItem(@NotNull PaginatedViewContext<T> context) {
 		return null;
 	}
 
@@ -196,15 +272,6 @@ public abstract class AbstractPaginatedView<T> extends AbstractView implements P
 	) throws InitializationException {
 		ensureNotInitialized();
 		this.previousPageItemFactory = previousPageItemFactory;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	@Deprecated
-	public ViewItem getNextPageItem(@NotNull PaginatedViewContext<T> context) {
-		return null;
 	}
 
 	/**
@@ -280,7 +347,7 @@ public abstract class AbstractPaginatedView<T> extends AbstractView implements P
 	 * {@inheritDoc}
 	 */
 	@Override
-	final void render(@NotNull ViewContext context) {
+	public void render(@NotNull ViewContext context) {
 		if (context.getContainer().getType() != ViewType.CHEST)
 			throw new IllegalStateException(String.format(
 				"Pagination is not supported in \"%s\" view type: %s." + " Use chest type instead.",
@@ -301,7 +368,7 @@ public abstract class AbstractPaginatedView<T> extends AbstractView implements P
 	 * {@inheritDoc}
 	 */
 	@Override
-	final void update(@NotNull ViewContext context) {
+	public final void update(@NotNull ViewContext context) {
 		super.update(context);
 
 		final PaginatedViewContext<T> paginated = context.paginated();
@@ -310,164 +377,6 @@ public abstract class AbstractPaginatedView<T> extends AbstractView implements P
 
 	private int getExpectedPageSize() {
 		return limit - offset;
-	}
-
-	private void renderItemAndApplyOnContext(@NotNull ViewContext context, ViewItem item, int slot) {
-		((AbstractVirtualView) context).getItems()[slot] = item;
-		super.render(context, item, slot);
-	}
-
-	private void renderPaginatedItemAt(
-		@NotNull PaginatedViewContext<T> context,
-		int index,
-		int slot,
-		@NotNull T value,
-		@Nullable ViewItem override) {
-		// TODO replace this with a more sophisticated overlay detection
-		ViewItem overlay = context.resolve(slot, true);
-		if (overlay != null && overlay.isPaginationItem()) overlay = null;
-
-		// overlapping items are those that are already in the inventory but the IF is trying to
-		// render them, if it is an overlapped item it means that during the layout cleanup it was
-		// detected that they should ot have been removed, so they are not removed and during layout
-		// rendering they are not re-rendered.
-		if (override == null) {
-			final ViewItem item = new ViewItem(slot);
-			item.setPaginationItem(true);
-
-			@SuppressWarnings("unchecked") final PaginatedViewSlotContext<T> slotContext = (PaginatedViewSlotContext<T>)
-				PlatformUtils.getFactory().createSlotContext(item, (BaseViewContext) context, index, value);
-
-			runCatching(context, () -> {
-				onItemRender(slotContext, item, value);
-			});
-			renderItemAndApplyOnContext(context, item, slot);
-			item.setOverlay(overlay);
-		} else {
-			// we need to reset the initial rendering function of the overlaid item if not, when we
-			// get to the rendering stage of the overlaid item, he overlaid item's rendering
-			// function will be called first and will render the wrong item
-			override.setUpdateHandler(null);
-
-			// only if there's a fallback item available, clearing it without checking will cause
-			// "No item were provided and the rendering function was not defined at slot..."
-			if (override.getItem() != null) override.setRenderHandler(null);
-
-			override.setSlot(slot);
-			override.setOverlay(overlay);
-			((BasePaginatedViewContext<T>) context).getItems()[slot] = override;
-		}
-	}
-
-	private void tryRenderPagination(
-		@NotNull PaginatedViewContext<T> context,
-		String[] layout,
-		ViewItem[] preservedItems,
-		Consumer<List<T>> callback) {
-		final Paginator<T> paginator = context.getPaginator();
-
-		// GH-184 Skip layout render if signature is not checked
-		if (layout != null && !context.isLayoutSignatureChecked()) {
-			callback.accept(null);
-			return;
-		}
-
-		if (paginator.isAsync())
-			renderLayoutAsync(context, layout, preservedItems, paginator.getAsyncState(), callback);
-		else if (paginator.isProvided())
-			renderLayoutLazy(context, layout, preservedItems, paginator.getFactory(), callback);
-		else {
-			renderLayoutBlocking(context, layout, preservedItems, callback);
-		}
-	}
-
-	private void renderLayoutAsync(
-		@NotNull PaginatedViewContext<T> context,
-		String[] layout,
-		ViewItem[] preservedItems,
-		@NotNull AsyncPaginationDataState<T> asyncState,
-		Consumer<List<T>> callback) {
-		callIfNotNull(asyncState.getLoadStarted(), handler -> handler.accept(context));
-
-		asyncState
-			.getJob()
-			.apply(context)
-			.whenComplete((data, $) -> {
-				if (data == null)
-					throw new IllegalStateException("Asynchronous pagination result cannot be null");
-
-				context.getPaginator().setSource(data);
-				callIfNotNull(asyncState.getSuccess(), handler -> handler.accept(context));
-				renderLayoutBlocking(context, layout, preservedItems, callback);
-			})
-			.exceptionally(error -> {
-				callIfNotNull(asyncState.getError(), handler -> handler.accept(context, error));
-				throwException(context, new RuntimeException(error));
-				return null;
-			})
-			.thenRun(() -> callIfNotNull(asyncState.getLoadFinished(), handler -> handler.accept(context)));
-	}
-
-	private void renderLayoutBlocking(
-		@NotNull PaginatedViewContext<T> context,
-		String[] layout,
-		ViewItem[] preservedItems,
-		Consumer<List<T>> callback) {
-		final List<T> data = context.getPaginator().getPage(context.getPage());
-
-		renderLayout(context, data, layout, preservedItems);
-		callback.accept(data);
-	}
-
-	private void renderLayoutLazy(
-		@NotNull PaginatedViewContext<T> context,
-		String[] layout,
-		ViewItem[] preservedItems,
-		@NotNull Function<PaginatedViewContext<T>, List<T>> factory,
-		Consumer<List<T>> callback) {
-		List<T> data = factory.apply(context);
-		if (data == null) throw new IllegalStateException("Lazy pagination result cannot be null");
-
-		context.getPaginator().setSource(data);
-		renderLayoutBlocking(context, layout, preservedItems, callback);
-	}
-
-	private void renderLayout(
-		@NotNull PaginatedViewContext<T> context, List<T> elements, String[] layout, ViewItem[] preservedItems) {
-		renderPatterns(context);
-
-		final int elementsCount = elements.size();
-
-		final Stack<Integer> itemsLayer = context.getLayoutItemsLayer();
-		final int lastSlot = layout == null ? limit : itemsLayer.peek();
-		final int layerSize = getLayerSize(context, layout);
-
-		for (int i = 0; i <= lastSlot; i++) {
-			if (layout != null && i >= layerSize) break;
-
-			final int targetSlot = layout == null ? offset + i : itemsLayer.elementAt(i);
-			final ViewItem preserved = preservedItems == null || preservedItems.length <= i ? null : preservedItems[i];
-			if (i < elementsCount)
-				renderPaginatedItemAt(context, i, targetSlot, elements.get(i), preserved);
-			else {
-				final ViewItem item = context.resolve(targetSlot, true);
-				// check if a non-virtual item has been defined in that slot
-				if (item != null) {
-					if (!item.isPaginationItem()) {
-						renderItemAndApplyOnContext(context, item, targetSlot);
-						continue;
-					}
-
-					final ViewItem overlay = item.getOverlay();
-					if (overlay != null) {
-						renderItemAndApplyOnContext(context, overlay, targetSlot);
-						continue;
-					}
-				}
-
-				removeAt(context, targetSlot);
-			}
-		}
 	}
 
 	private void renderPatterns(@NotNull PaginatedViewContext<T> context) {
@@ -484,7 +393,7 @@ public abstract class AbstractPaginatedView<T> extends AbstractView implements P
 						item.getSlot()));
 
 				item.setSlot(slot);
-				renderItemAndApplyOnContext(context, item, slot);
+//				renderItemAndApplyOnContext(context, item, slot);
 			}
 		}
 	}
@@ -494,8 +403,8 @@ public abstract class AbstractPaginatedView<T> extends AbstractView implements P
 		// and then reorder these items with the new slots of the new layout on different positions
 		// but with the same preserved state
 		final ViewItem[] items = clearLayout(context, useLayout(context));
-		resolveLayout(context, context, layout);
-		tryRenderPagination(context, layout, items, null);
+//		resolveLayout(context, context, layout);
+//		tryRenderPagination(context, layout, items, null);
 	}
 
 	private ViewItem[] clearLayout(@NotNull PaginatedViewContext<T> context, String[] layout) {
@@ -530,49 +439,6 @@ public abstract class AbstractPaginatedView<T> extends AbstractView implements P
 		return layout == null ? 0 /* ignored */ : context.getLayoutItemsLayer().size();
 	}
 
-	private static <T> ViewItem internalNavigationItem(
-		@NotNull PaginatedVirtualView<T> view,
-		@NotNull PaginatedViewContext<T> context,
-		int direction
-	) {
-		final boolean isBackwards = direction == NAVIGATE_LEFT;
-		final BiConsumer<PaginatedViewContext<T>, ViewItem> factory = isBackwards
-			? view.getPreviousPageItemFactory()
-			: view.getNextPageItemFactory();
-
-		if (factory == null)
-			return isBackwards
-				? view.getPreviousPageItem(context)
-				: view.getNextPageItem(context);
-
-		final ViewItem item = new ViewItem();
-		factory.accept(context, item);
-		return item;
-	}
-
-	static <T> ViewItem resolveNavigationItem(
-		@NotNull AbstractPaginatedView<T> view,
-		@NotNull PaginatedViewContext<T> context,
-		int direction
-	) {
-		final ViewItem item = internalNavigationItem(view, context, direction);
-		if (item != null)
-			return item;
-
-		final PlatformViewFrame<?, ?, ?> vf = view.getViewFrame();
-		if (vf == null)
-			return null;
-
-		final Function<PaginatedViewContext<?>, ViewItem> fallback = direction == NAVIGATE_LEFT
-			? vf.getDefaultPreviousPageItem()
-			: vf.getDefaultNextPageItem();
-
-		if (fallback == null)
-			return null;
-
-		return fallback.apply(context);
-	}
-
 	final void updateContext(
 		@NotNull PaginatedViewContext<T> context, int page, boolean pageChecking, boolean setupForRender) {
 		if (context instanceof ViewSlotContext)
@@ -583,68 +449,20 @@ public abstract class AbstractPaginatedView<T> extends AbstractView implements P
 			if (setupForRender
 				&& (context.getPaginator().isSync()
 				&& !context.getPaginator().hasPage(page))) return;
+// TODO
+//			if (layout != null && !context.isLayoutSignatureChecked())
+//				resolveLayout(context, context, layout);
 
-			if (layout != null && !context.isLayoutSignatureChecked())
-				resolveLayout(context, context, layout);
-
-			if (setupForRender) ((BasePaginatedViewContext<T>) context).setPage(page);
+			if (setupForRender) context.setPage(page);
 		}
 
 		if (!setupForRender) return;
 
-		tryRenderPagination(context, layout, null, $ -> {
-			updateNavigationItem(context, NAVIGATE_LEFT);
-			updateNavigationItem(context, NAVIGATE_RIGHT);
-		});
-	}
-
-	private int getNavigationItemSlot(
-		@NotNull PaginatedViewContext<T> context, @Range(from = NAVIGATE_LEFT, to = NAVIGATE_RIGHT) int direction) {
-		return direction == NAVIGATE_LEFT ? context.getPreviousPageItemSlot() : context.getNextPageItemSlot();
-	}
-
-	private void updateNavigationItem(
-		@NotNull PaginatedViewContext<T> context, @Range(from = NAVIGATE_LEFT, to = NAVIGATE_RIGHT) int direction) {
-		final AbstractPaginatedView<T> root = context.getRoot();
-		int expectedSlot = getNavigationItemSlot(context, direction);
-		ViewItem item = null;
-
-		// it is recommended to use layout for pagination, so at this stage the layout may have
-		// already defined the slot for the pagination items, so we check if it is not defined yet
-		if (expectedSlot == -1) {
-			// check if navigation item was manually set by the user
-			item = resolveNavigationItem(this, context, direction);
-
-			if (item == null || item.getSlot() == -1) return;
-
-			expectedSlot = item.getSlot();
-			if (direction == NAVIGATE_LEFT) context.setPreviousPageItemSlot(expectedSlot);
-			else context.setNextPageItemSlot(expectedSlot);
-		}
-
-		if (item == null) item = resolveNavigationItem(this, context, direction);
-
-		// ensure item is removed if it was resolved and set before and is not anymore
-		if (item == null) {
-			root.removeAt(context, expectedSlot);
-			return;
-		}
-
-		// the click handler should be checked for cases where the user has defined the navigation
-		// item manually, so we will not override his handler
-		if (item.getClickHandler() == null) {
-			item.onClick(click -> {
-				if (direction == NAVIGATE_LEFT) click.paginated().switchToPreviousPage();
-				else click.paginated().switchToNextPage();
-			});
-		}
-
-		renderItemAndApplyOnContext(context, item.withCancelOnClick(true), expectedSlot);
-	}
-
-	private static <T> void callIfNotNull(T handler, Consumer<T> fn) {
-		if (handler == null) return;
-		fn.accept(handler);
+		// TODO
+//		tryRenderPagination(context, layout, null, $ -> {
+//			updateNavigationItem(context, NAVIGATE_LEFT);
+//			updateNavigationItem(context, NAVIGATE_RIGHT);
+//		});
 	}
 
 	/**
@@ -653,5 +471,21 @@ public abstract class AbstractPaginatedView<T> extends AbstractView implements P
 	@Override
 	int getNextAvailableSlot() {
 		return super.getNextAvailableSlot();
+	}
+
+	@ApiStatus.Internal
+	public void callItemRender(
+		@NotNull PaginatedViewSlotContext<T> context,
+		@NotNull ViewItem viewItem,
+		@NotNull T value
+	) {
+		onItemRender(context, viewItem, value);
+	}
+
+	@Override
+	@ApiStatus.OverrideOnly
+	protected void beforeInit() {
+		getPipeline().insertPhaseBefore(RENDER, PAGINATION_RENDER);
+		getPipeline().intercept(PAGINATION_RENDER, new PaginationRenderInterceptor());
 	}
 }

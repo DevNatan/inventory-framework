@@ -19,13 +19,13 @@ import org.jetbrains.annotations.Range;
  * Mutable class that represents an item in a slot of a container.
  */
 @ToString
-@Setter(AccessLevel.PACKAGE)
-@Getter(AccessLevel.PACKAGE)
+@Setter
+@Getter
 public final class ViewItem {
 
-    private static final long NO_INTERVAL = -1;
-    public static final int AVAILABLE_SLOT = -2;
-    public static final int UNKNOWN_SLOT = -3;
+	static final int UNSET = -1;
+	public static final int AVAILABLE = -2;
+    private static final long NO_INTERVAL = -3;
 
     enum State {
         UNDEFINED,
@@ -72,7 +72,7 @@ public final class ViewItem {
      *
      * @param slot The slot that this item will be placed initially.
      */
-    ViewItem(int slot) {
+    public ViewItem(int slot) {
         this.slot = slot;
     }
 
@@ -447,6 +447,6 @@ public final class ViewItem {
      * @return If this is a dynamic item.
      */
     public boolean isDynamic() {
-        return slot == AVAILABLE_SLOT || isPaginationItem();
+        return slot == AVAILABLE || isPaginationItem();
     }
 }

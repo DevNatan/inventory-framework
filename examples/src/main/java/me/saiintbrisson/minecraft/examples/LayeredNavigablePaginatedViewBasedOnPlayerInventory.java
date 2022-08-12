@@ -30,12 +30,12 @@ public final class LayeredNavigablePaginatedViewBasedOnPlayerInventory extends P
     }
 
     @Override
-    public ViewItem getPreviousPageItem(PaginatedViewContext<ItemStack> context) {
+    public ViewItem getPreviousPageItem(@NotNull PaginatedViewContext<ItemStack> context) {
         return item(new ItemStack(Material.ARROW));
     }
 
     @Override
-    public ViewItem getNextPageItem(PaginatedViewContext<ItemStack> context) {
+    public ViewItem getNextPageItem(@NotNull PaginatedViewContext<ItemStack> context) {
         return item(new ItemStack(Material.ARROW));
     }
 

@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.concurrent.atomic.AtomicBoolean;
 import me.saiintbrisson.minecraft.pipeline.Pipeline;
+import me.saiintbrisson.minecraft.pipeline.interceptors.AutomaticUpdateInitiationInterceptor;
 import org.junit.jupiter.api.Test;
 
 class ScheduleUpdateTest {
@@ -19,7 +20,7 @@ class ScheduleUpdateTest {
     @Test
     public void givenUpdateJobStartWhenNoViewersAvailableThenSkipUpdateJobStart() {
         Pipeline<ViewContext> pipeline = new Pipeline<>(RENDER);
-        pipeline.intercept(RENDER, new AutomaticUpdateInitiationInterceptor.Init() {
+        pipeline.intercept(RENDER, new AutomaticUpdateInitiationInterceptor.Render() {
             @Override
             void calledSuccessfully() {
                 fail("Cannot only be started on the first viewer");
@@ -38,7 +39,7 @@ class ScheduleUpdateTest {
     @Test
     public void givenUpdateJobStartWhenMoreThanOneViewerAvailableThenSkipUpdateJobStart() {
         Pipeline<ViewContext> pipeline = new Pipeline<>(RENDER);
-        pipeline.intercept(RENDER, new AutomaticUpdateInitiationInterceptor.Init() {
+        pipeline.intercept(RENDER, new AutomaticUpdateInitiationInterceptor.Render() {
             @Override
             void calledSuccessfully() {
                 fail("Cannot only be started on the first viewer");
@@ -59,7 +60,7 @@ class ScheduleUpdateTest {
     public void givenUpdateJobStartWhenOneViewerIsAvailableThenJobIsStarted() {
         AtomicBoolean intercepted = new AtomicBoolean();
         Pipeline<ViewContext> pipeline = new Pipeline<>(RENDER);
-        pipeline.intercept(RENDER, new AutomaticUpdateInitiationInterceptor.Init() {
+        pipeline.intercept(RENDER, new AutomaticUpdateInitiationInterceptor.Render() {
             @Override
             void calledSuccessfully() {
                 intercepted.set(true);
@@ -81,13 +82,13 @@ class ScheduleUpdateTest {
     public void whenPipelinesCalledExpectUpdateStartedAndEndedProperly() {
         AtomicBoolean started = new AtomicBoolean(false);
         Pipeline<ViewContext> pipeline = new Pipeline<>(RENDER, CLOSE);
-        pipeline.intercept(RENDER, new AutomaticUpdateInitiationInterceptor.Init() {
+        pipeline.intercept(RENDER, new AutomaticUpdateInitiationInterceptor.Render() {
             @Override
             void calledSuccessfully() {
                 started.set(true);
             }
         });
-        pipeline.intercept(CLOSE, new AutomaticUpdateInitiationInterceptor.Interrupt() {
+        pipeline.intercept(CLOSE, new AutomaticUpdateInitiationInterceptor.Close() {
             @Override
             void calledSuccessfully() {
                 started.set(false);
@@ -113,13 +114,13 @@ class ScheduleUpdateTest {
     public void givenMoreThanOneViewerWhenPipelinesCalledExpectUpdateNotInterrupted() {
         AtomicBoolean started = new AtomicBoolean(false);
         Pipeline<ViewContext> pipeline = new Pipeline<>(RENDER, CLOSE);
-        pipeline.intercept(RENDER, new AutomaticUpdateInitiationInterceptor.Init() {
+        pipeline.intercept(RENDER, new AutomaticUpdateInitiationInterceptor.Render() {
             @Override
             void calledSuccessfully() {
                 started.set(true);
             }
         });
-        pipeline.intercept(CLOSE, new AutomaticUpdateInitiationInterceptor.Interrupt() {
+        pipeline.intercept(CLOSE, new AutomaticUpdateInitiationInterceptor.Close() {
             @Override
             void calledSuccessfully() {
                 started.set(false);

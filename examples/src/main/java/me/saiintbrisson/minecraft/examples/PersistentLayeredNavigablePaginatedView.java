@@ -11,6 +11,7 @@ import me.saiintbrisson.minecraft.ViewItem;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
 
 public final class PersistentLayeredNavigablePaginatedView extends PaginatedView<Integer> {
 
@@ -26,12 +27,12 @@ public final class PersistentLayeredNavigablePaginatedView extends PaginatedView
     }
 
     @Override
-    public ViewItem getPreviousPageItem(PaginatedViewContext<Integer> context) {
+    public ViewItem getPreviousPageItem(@NotNull PaginatedViewContext<Integer> context) {
         return item(new ItemStack(Material.ARROW));
     }
 
     @Override
-    public ViewItem getNextPageItem(PaginatedViewContext<Integer> context) {
+    public ViewItem getNextPageItem(@NotNull PaginatedViewContext<Integer> context) {
         return item(new ItemStack(Material.ARROW));
     }
 
