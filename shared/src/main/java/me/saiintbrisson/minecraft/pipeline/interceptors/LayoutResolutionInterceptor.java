@@ -31,7 +31,7 @@ import static me.saiintbrisson.minecraft.VirtualView.LAYOUT_PREVIOUS_PAGE;
  * Called during the initialization phase of a view to pre-resolve its layout if defined, or called
  * during the render phase to resolve the layout of a context.
  * <p>
- * Initial resolution is handled by {@link #handleInitialResolution(PipelineContext, AbstractView)}.
+ * Initial resolution is handled by {@link #handleInitialResolution(AbstractView)}.
  * Context-scope resolution is handled by {@link #resolveLayout(VirtualView, ViewContext, String[])}.
  */
 public final class LayoutResolutionInterceptor implements PipelineInterceptor<VirtualView> {
@@ -41,9 +41,12 @@ public final class LayoutResolutionInterceptor implements PipelineInterceptor<Vi
 		@NotNull PipelineContext<VirtualView> pipeline,
 		VirtualView subject
 	) {
+		if (subject.isLayoutSignatureChecked())
+			return;
+
 		// layout resolution interceptor is only called to regular views on init
 		if (subject instanceof AbstractView) {
-			handleInitialResolution(pipeline, (AbstractView) subject);
+			handleInitialResolution((AbstractView) subject);
 			return;
 		}
 
@@ -65,10 +68,7 @@ public final class LayoutResolutionInterceptor implements PipelineInterceptor<Vi
 	 *
 	 * @param view The view.
 	 */
-	private void handleInitialResolution(
-		@NotNull PipelineContext<VirtualView> pipeline,
-		@NotNull AbstractView view
-	) {
+	private void handleInitialResolution(@NotNull AbstractView view) {
 		view.ensureNotInitialized();
 
 		final String[] layout = view.getLayout();
@@ -81,8 +81,7 @@ public final class LayoutResolutionInterceptor implements PipelineInterceptor<Vi
 			: view.getReservedItems().size()
 		);
 
-		// proceed to layout renderization interceptor
-		pipeline.proceed();
+		resolveLayout(view, null, layout);
 	}
 
 	/**
@@ -148,6 +147,7 @@ public final class LayoutResolutionInterceptor implements PipelineInterceptor<Vi
 		@Nullable ViewContext context,
 		@NotNull String[] layout
 	) {
+		System.out.println("Resolving layout of " + view.getClass().getName());
 		final int rows = layout.length;
 		final int containerRowsCount = determineRowsCount(view);
 
