@@ -26,7 +26,7 @@ public final class RenderInterceptor implements PipelineInterceptor<VirtualView>
 
 		// we prioritize the amount of items in the context because the priority is in the context
 		// and the size of items in the context is proportional to the size of its container
-		final int len = context.getItems().length;
+		final int len = context.getContainer().getSize();
 
 		for (int i = 0; i < len; i++) {
 			// this resolve will get the items from both root and context, so we render both

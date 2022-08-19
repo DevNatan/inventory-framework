@@ -25,7 +25,7 @@ public final class UpdateInterceptor implements PipelineInterceptor<VirtualView>
 
 		// we prioritize the amount of items in the context because the priority is in the context
 		// and the size of items in the context is proportional to the size of its container
-		final int len = context.getItems().length;
+		final int len = context.getContainer().getSize();
 
 		for (int i = 0; i < len; i++) {
 			context.inventoryModificationTriggered();
