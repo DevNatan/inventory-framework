@@ -142,8 +142,8 @@ public final class AvailableSlotRenderInterceptor implements PipelineInterceptor
 
 			// register item on root view since dynamically rendered items are not registered on init,
 			// so we need to register then on the first time that it's get rendered
-			if (targetingRoot)
-				root.apply(next, targetSlot);
+			if (targetingRoot) root.apply(next, targetSlot);
+			else context.apply(next, targetSlot);
 
 			root.render(context, next, targetSlot);
 		}

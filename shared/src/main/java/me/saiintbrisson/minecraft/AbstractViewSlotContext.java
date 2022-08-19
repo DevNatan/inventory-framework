@@ -56,7 +56,7 @@ public abstract class AbstractViewSlotContext extends BaseViewContext implements
 
 	@Override
 	public final void update() {
-		// global update cannot be a slot context
+		// global update context cannot be a slot context
 		getRoot().update(getParent());
 	}
 
