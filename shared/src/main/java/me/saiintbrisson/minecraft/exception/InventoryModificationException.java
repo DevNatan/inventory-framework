@@ -9,7 +9,7 @@ package me.saiintbrisson.minecraft.exception;
  */
 public class InventoryModificationException extends InventoryFrameworkException {
 
-	public InventoryModificationException(String message) {
-		super(message, null);
-	}
+    public InventoryModificationException(String message) {
+        super(message, null);
+    }
 }

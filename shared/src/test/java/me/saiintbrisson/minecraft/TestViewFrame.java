@@ -131,28 +131,29 @@ public class TestViewFrame implements PlatformViewFrame<Void, Void, TestViewFram
         throw new UnsupportedOperationException();
     }
 
-	@Override
-	public TestViewFrame withPreviousPageItem(@Nullable BiConsumer<PaginatedViewContext<?>, ViewItem> previousPageItemFactory) {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public TestViewFrame withPreviousPageItem(
+            @Nullable BiConsumer<PaginatedViewContext<?>, ViewItem> previousPageItemFactory) {
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public TestViewFrame withNextPageItem(@Nullable BiConsumer<PaginatedViewContext<?>, ViewItem> nextPageItemFactory) {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public TestViewFrame withNextPageItem(@Nullable BiConsumer<PaginatedViewContext<?>, ViewItem> nextPageItemFactory) {
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public TestViewFrame withErrorHandler(@NotNull ViewErrorHandler errorHandler) {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public TestViewFrame withErrorHandler(@NotNull ViewErrorHandler errorHandler) {
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public BiConsumer<PaginatedViewContext<?>, ViewItem> getPreviousPageItem() {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public BiConsumer<PaginatedViewContext<?>, ViewItem> getPreviousPageItem() {
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public BiConsumer<PaginatedViewContext<?>, ViewItem> getNextPageItem() {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public BiConsumer<PaginatedViewContext<?>, ViewItem> getNextPageItem() {
+        throw new UnsupportedOperationException();
+    }
 }

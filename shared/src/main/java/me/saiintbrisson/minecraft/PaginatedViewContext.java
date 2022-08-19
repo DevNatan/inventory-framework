@@ -37,8 +37,8 @@ public interface PaginatedViewContext<T> extends ViewContext, PaginatedVirtualVi
      */
     int getPage();
 
-	@ApiStatus.Internal
-	void setPage(int page);
+    @ApiStatus.Internal
+    void setPage(int page);
 
     /**
      * The current number of items present on the current page.

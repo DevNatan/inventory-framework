@@ -34,7 +34,7 @@ public class PlatformUtils {
                 + "that is functional on the current platform.");
     }
 
-	@ApiStatus.Internal
+    @ApiStatus.Internal
     public static void setFactory(@NotNull ViewComponentFactory factory) {
         final ViewComponentFactory curr = PlatformUtils.factory;
         if (curr != null) return;

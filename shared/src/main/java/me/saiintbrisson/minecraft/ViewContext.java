@@ -24,8 +24,8 @@ public interface ViewContext extends VirtualView {
     @UnmodifiableView
     List<Viewer> getViewers();
 
-	@ApiStatus.Internal
-	void addViewer(@NotNull Viewer viewer);
+    @ApiStatus.Internal
+    void addViewer(@NotNull Viewer viewer);
 
     /**
      * The container of this context.
@@ -199,7 +199,7 @@ public interface ViewContext extends VirtualView {
      * @return This context as a PaginatedViewContext.
      * @throws IllegalStateException If the root of this context cannot be converted to a paginated.
      */
-	@Override
+    @Override
     <T> PaginatedViewContext<T> paginated();
 
     /**

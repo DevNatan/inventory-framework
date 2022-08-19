@@ -10,45 +10,45 @@ import org.jetbrains.annotations.NotNull;
  */
 public class View extends AbstractView implements InventoryHolder {
 
-	public View() {
-		this(0);
-	}
+    public View() {
+        this(0);
+    }
 
-	public View(int size) {
-		this(size, null);
-	}
+    public View(int size) {
+        this(size, null);
+    }
 
-	public View(String title) {
-		this(0, title);
-	}
+    public View(String title) {
+        this(0, title);
+    }
 
-	@ApiStatus.Experimental
-	public View(String title, @NotNull ViewType type) {
-		this(0, title, type);
-	}
+    @ApiStatus.Experimental
+    public View(String title, @NotNull ViewType type) {
+        this(0, title, type);
+    }
 
-	@ApiStatus.Experimental
-	public View(@NotNull ViewType type) {
-		this(0, null, type);
-	}
+    @ApiStatus.Experimental
+    public View(@NotNull ViewType type) {
+        this(0, null, type);
+    }
 
-	public View(int size, String title) {
-		this(size, title, ViewType.CHEST);
-	}
+    public View(int size, String title) {
+        this(size, title, ViewType.CHEST);
+    }
 
-	@ApiStatus.Experimental
-	public View(int size, String title, @NotNull ViewType type) {
-		super(size, title, type);
-	}
+    @ApiStatus.Experimental
+    public View(int size, String title, @NotNull ViewType type) {
+        super(size, title, type);
+    }
 
-	@NotNull
-	@Override
-	public final Inventory getInventory() {
-		throw new IllegalStateException("View inventory cannot be accessed");
-	}
+    @NotNull
+    @Override
+    public final Inventory getInventory() {
+        throw new IllegalStateException("View inventory cannot be accessed");
+    }
 
-	@Override
-	public final String toString() {
-		return super.toString();
-	}
+    @Override
+    public final String toString() {
+        return super.toString();
+    }
 }

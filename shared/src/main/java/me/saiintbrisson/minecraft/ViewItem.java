@@ -23,8 +23,8 @@ import org.jetbrains.annotations.Range;
 @Getter
 public final class ViewItem {
 
-	static final int UNSET = -1;
-	public static final int AVAILABLE = -2;
+    static final int UNSET = -1;
+    public static final int AVAILABLE = -2;
     private static final long NO_INTERVAL = -3;
 
     enum State {
@@ -449,5 +449,4 @@ public final class ViewItem {
     public boolean isDynamic() {
         return slot == AVAILABLE || isPaginationItem();
     }
-
 }

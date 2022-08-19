@@ -11,12 +11,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class PaginationNavigationItemManagerInterceptor implements PipelineInterceptor<VirtualView> {
 
-	@Override
-	public void intercept(@NotNull PipelineContext<VirtualView> pipeline, VirtualView subject) {
-		if (!subject.isPaginated())
-			return;
-
-
-	}
-
+    @Override
+    public void intercept(@NotNull PipelineContext<VirtualView> pipeline, VirtualView subject) {
+        if (!subject.isPaginated()) return;
+    }
 }

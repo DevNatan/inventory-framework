@@ -12,9 +12,9 @@ public final class PipelineContext<S> {
 
     private int index;
 
-	boolean isFinished() {
-		return index == -1;
-	}
+    boolean isFinished() {
+        return index == -1;
+    }
 
     /** Finishes current pipeline execution */
     public void finish() {
