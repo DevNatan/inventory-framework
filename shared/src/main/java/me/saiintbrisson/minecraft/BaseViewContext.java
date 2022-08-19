@@ -243,7 +243,6 @@ class BaseViewContext extends AbstractVirtualView implements ViewContext {
 	public ViewItem resolve(int index, boolean resolveOnRoot) {
 		ViewItem item = super.resolve(index, resolveOnRoot);
 		if (item == null && resolveOnRoot) {
-			System.out.println("Resolve on root " + index);
 			return getRoot().resolve(index, resolveOnRoot);
 		}
 
@@ -281,10 +280,22 @@ class BaseViewContext extends AbstractVirtualView implements ViewContext {
 
 	@Override
 	int getNextAvailableSlot() {
-		// the context inherits the root layout so the next available slot must respect root layout,
-		// so we should check if we have any layout of our own before inheriting the root's behavior.
-		if (getLayout() != null) return super.getNextAvailableSlot();
+		final ViewContainer container = getContainer();
+		if (getRoot().isLayoutSignatureChecked())
+			return ViewItem.AVAILABLE;
 
-		return getRoot().getNextAvailableSlot();
+		if (getLayout() == null) {
+			for (int i = 0; i < container.getSize(); i++) {
+				// fast path -- skip resolution if slot isn't interactable
+				if (!container.getType().canPlayerInteractOn(i)) continue;
+
+				// slow path -- resolve slot one by one
+				if (resolve(i, true) != null) continue;
+
+				return i;
+			}
+		}
+
+		return ViewItem.AVAILABLE;
 	}
 }

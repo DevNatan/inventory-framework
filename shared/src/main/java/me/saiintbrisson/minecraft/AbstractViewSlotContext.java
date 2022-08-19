@@ -175,8 +175,7 @@ public abstract class AbstractViewSlotContext extends BaseViewContext implements
 
 	@Override
 	public final String[] getLayout() {
-		throwNotAllowedCall();
-		return null;
+		return parent.getLayout();
 	}
 
 	@Override

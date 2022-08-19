@@ -449,4 +449,5 @@ public final class ViewItem {
     public boolean isDynamic() {
         return slot == AVAILABLE || isPaginationItem();
     }
+
 }

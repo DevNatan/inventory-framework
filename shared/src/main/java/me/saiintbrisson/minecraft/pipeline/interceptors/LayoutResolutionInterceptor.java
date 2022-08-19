@@ -16,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Stack;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -51,13 +52,12 @@ public final class LayoutResolutionInterceptor implements PipelineInterceptor<Vi
 		}
 
 		final ViewContext context = (ViewContext) subject;
-		final AbstractView root = context.getRoot();
+		final String[] layout = context.getLayout();
+		if (layout == null)
+			return;
 
-		resolveLayout(
-			root,
-			context,
-			useLayout(root, context)
-		);
+		System.out.println("Resolving layout");
+		resolveLayout(context, context, layout);
 	}
 
 	/**
@@ -145,9 +145,9 @@ public final class LayoutResolutionInterceptor implements PipelineInterceptor<Vi
 	private void resolveLayout(
 		@NotNull VirtualView view,
 		@Nullable ViewContext context,
-		@NotNull String[] layout
+		String[] layout
 	) {
-		System.out.println("Resolving layout of " + view.getClass().getName());
+		System.out.println("Resolving layout of " + view.getClass().getName() + " w/ " + (context == null ? "null context" : context.getClass().getName()));
 		final int rows = layout.length;
 		final int containerRowsCount = determineRowsCount(view);
 
@@ -188,14 +188,19 @@ public final class LayoutResolutionInterceptor implements PipelineInterceptor<Vi
 						break;
 					}
 					default: {
-						final LayoutPattern pattern = getLayoutOrNull(view, character);
-						if (pattern == null)
+						final LayoutPattern pattern = getLayoutOrNull(view, context, character);
+
+						// TODO keep this message as warning but remove this exception since
+						//      user can provide context-specific layout pattern with root layout
+						if (pattern == null) {
 							throw new IllegalArgumentException(String.format(
-								"An unknown character was found in layout on line %d column %d. Only %s characters are valid. " +
-									"Any other character is considered a custom user pattern and must be registered with #setLayout(Character, Factory)",
+								"An unknown character \"" + character + "\" was found in layout on line %d column %d. Only %s characters are valid. " +
+									"Any other character is considered a custom user pattern and must be registered with #setLayout(Character, Supplier<ViewItem>)",
 								row, column, Arrays.asList(LAYOUT_EMPTY_SLOT, LAYOUT_FILLED_SLOT, LAYOUT_PREVIOUS_PAGE, LAYOUT_NEXT_PAGE)
 							));
+						}
 
+						System.out.println("Pattern \"" + character + "\" applied @ " + targetSlot);
 						pattern.getSlots().push(targetSlot);
 					}
 				}
@@ -331,29 +336,22 @@ public final class LayoutResolutionInterceptor implements PipelineInterceptor<Vi
 	 * Finds the layout pattern to the given character.
 	 *
 	 * @param view      The target view.
+	 * @param context   The resolution context.
 	 * @param character The layout pattern character.
 	 * @return The layout pattern to the given character or <code>null</code>.
 	 */
-	private LayoutPattern getLayoutOrNull(VirtualView view, char character) {
-		return view.getLayoutPatterns().stream()
+	private LayoutPattern getLayoutOrNull(VirtualView view, ViewContext context, char character) {
+		List<LayoutPattern> layoutPatternList = null;
+		if (context != null)
+			layoutPatternList = context.getLayoutPatterns();
+
+		if (layoutPatternList == null || layoutPatternList.isEmpty())
+			layoutPatternList = (context == null ? view : context.getRoot()).getLayoutPatterns();
+
+		return layoutPatternList.stream()
 			.filter(pattern -> pattern.getCharacter() == character)
 			.findFirst()
 			.orElse(null);
-	}
-
-	/**
-	 * Uses the layout that is not null between the two views.
-	 *
-	 * @param root    The view root.
-	 * @param context The context.
-	 * @return If the context layout is null, it returns the root layout, otherwise it returns the
-	 * context layout.
-	 */
-	private String[] useLayout(
-		@NotNull VirtualView root,
-		@NotNull VirtualView context
-	) {
-		return context.getLayout() == null ? root.getLayout() : context.getLayout();
 	}
 
 }

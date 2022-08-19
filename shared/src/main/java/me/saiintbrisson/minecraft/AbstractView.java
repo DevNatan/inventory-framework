@@ -7,7 +7,8 @@ import lombok.ToString;
 import me.saiintbrisson.minecraft.exception.InitializationException;
 import me.saiintbrisson.minecraft.pipeline.Pipeline;
 import me.saiintbrisson.minecraft.pipeline.PipelinePhase;
-import me.saiintbrisson.minecraft.pipeline.interceptors.LayoutRenderInterceptor;
+import me.saiintbrisson.minecraft.pipeline.interceptors.AvailableSlotRenderInterceptor;
+import me.saiintbrisson.minecraft.pipeline.interceptors.LayoutPatternRenderInterceptor;
 import me.saiintbrisson.minecraft.pipeline.interceptors.LayoutResolutionInterceptor;
 import me.saiintbrisson.minecraft.pipeline.interceptors.OpenInterceptor;
 import me.saiintbrisson.minecraft.pipeline.interceptors.RenderInterceptor;
@@ -97,7 +98,7 @@ public abstract class AbstractView extends AbstractVirtualView {
 	}
 
 	/**
-	 * Called when this view is rendered to the player for the first time.
+	 * Called __once__ when this view is rendered to the player for the first time.
 	 *
 	 * <p>This is where you will define items that will be contained non-persistently in the context.
 	 *
@@ -552,7 +553,10 @@ public abstract class AbstractView extends AbstractVirtualView {
 	protected void beforeInit() {
 		pipeline.intercept(OPEN, new OpenInterceptor());
 		pipeline.intercept(INIT, new LayoutResolutionInterceptor());
-		pipeline.intercept(INIT, new LayoutRenderInterceptor());
+		pipeline.intercept(INIT, new LayoutPatternRenderInterceptor());
+		pipeline.intercept(RENDER, new LayoutResolutionInterceptor() /* context scope */);
+		pipeline.intercept(RENDER, new LayoutPatternRenderInterceptor() /* context scope */);
+		pipeline.intercept(RENDER, new AvailableSlotRenderInterceptor());
 		pipeline.intercept(RENDER, new RenderInterceptor());
 		pipeline.intercept(RENDER, new ScheduledUpdateInterceptor.Render());
 		pipeline.intercept(UPDATE, new UpdateInterceptor());
@@ -681,18 +685,16 @@ public abstract class AbstractView extends AbstractVirtualView {
 	 */
 	@Override
 	int getNextAvailableSlot() {
-		if (getLayout() != null) return ViewItem.AVAILABLE;
+		if (getLayout() == null) {
+			for (int i = 0; i < size; i++) {
+				// fast path -- skip resolution if slot isn't interactable
+				if (!type.canPlayerInteractOn(i)) continue;
 
-		for (int i = 0; i < size; i++) {
-			// fast path -- skip resolution if slot isn't interactable
-			if (!type.canPlayerInteractOn(i)) continue;
+				// slow path -- resolve slot one by one
+				if (getItem(i) != null) continue;
 
-			// slow path -- resolve slot one by one
-			final ViewItem item = resolve(i, false);
-			if (item != null)
-				continue;
-
-			return i;
+				return i;
+			}
 		}
 
 		return ViewItem.AVAILABLE;

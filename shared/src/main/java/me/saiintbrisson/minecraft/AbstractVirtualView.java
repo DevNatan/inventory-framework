@@ -151,7 +151,6 @@ public abstract class AbstractVirtualView implements VirtualView {
 		if (getItems() == null)
 			throw new IllegalStateException("VirtualView was not initialized yet");
 
-		System.out.println("Applied " + item + " at " + slot);
 		getItems()[slot] = item;
 	}
 
@@ -259,16 +258,7 @@ public abstract class AbstractVirtualView implements VirtualView {
 	 *
 	 * @return The next available slot.
 	 */
-	int getNextAvailableSlot() {
-		if (getLayout() != null) return ViewItem.AVAILABLE;
-
-		for (int i = 0; i < getItems().length; i++) {
-			final ViewItem item = items[i];
-			if (item == null) return i;
-		}
-
-		return ViewItem.AVAILABLE;
-	}
+	abstract int getNextAvailableSlot();
 
 	/**
 	 * {@inheritDoc}

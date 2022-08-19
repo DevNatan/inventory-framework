@@ -19,7 +19,6 @@ public final class RenderInterceptor implements PipelineInterceptor<VirtualView>
 		if (!(view instanceof ViewContext))
 			throw new IllegalStateException("Render interceptor must be called with a context as subject.");
 
-		System.out.println("On render interceptor");
 		final ViewContext context = (ViewContext) view;
 		context.inventoryModificationTriggered();
 
@@ -28,17 +27,13 @@ public final class RenderInterceptor implements PipelineInterceptor<VirtualView>
 		// we prioritize the amount of items in the context because the priority is in the context
 		// and the size of items in the context is proportional to the size of its container
 		final int len = context.getItems().length;
-		System.out.println("Items len: " + len);
 
 		for (int i = 0; i < len; i++) {
 			// this resolve will get the items from both root and context, so we render both
 			final ViewItem item = context.resolve(i, true);
-			System.out.println("Item at " + i + ": " + item);
-
 			if (item == null)
 				continue;
 
-			System.out.println("Rendering " + i + ": " + item);
 			root.render(context, item, i);
 		}
 	}

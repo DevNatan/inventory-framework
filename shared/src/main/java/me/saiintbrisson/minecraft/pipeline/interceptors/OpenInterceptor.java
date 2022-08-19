@@ -35,8 +35,6 @@ public class OpenInterceptor implements PipelineInterceptor<OpenViewContext> {
 		context.getAsyncOpenJob()
 			.thenRun(() -> finishOpen(pipeline, context))
 			.exceptionally(error -> {
-				System.out.println("async job completed with " + error);
-
 				// TODO invalidate context
 				pipeline.finish();
 				throw new RuntimeException(ASYNC_UPDATE_JOB_EXECUTION_ERROR_MESSAGE, error);
