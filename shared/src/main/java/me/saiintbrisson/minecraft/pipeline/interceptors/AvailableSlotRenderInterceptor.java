@@ -8,10 +8,14 @@ import me.saiintbrisson.minecraft.ViewContext;
 import me.saiintbrisson.minecraft.ViewItem;
 import me.saiintbrisson.minecraft.VirtualView;
 import me.saiintbrisson.minecraft.exception.SlotFillExceededException;
+import me.saiintbrisson.minecraft.exception.UnresolvedLayoutException;
 import me.saiintbrisson.minecraft.pipeline.PipelineContext;
 import me.saiintbrisson.minecraft.pipeline.PipelineInterceptor;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Renders items defined by {@link VirtualView#availableSlot()}.
+ */
 public final class AvailableSlotRenderInterceptor implements PipelineInterceptor<VirtualView> {
 
     @Override
@@ -23,12 +27,12 @@ public final class AvailableSlotRenderInterceptor implements PipelineInterceptor
         final AbstractView root = context.getRoot();
 
         // just render reserved items since root layout is always resolved on init
-        if (root.getLayout() != null) renderReservedItems(root, context, root.getLayoutItemsLayer(), true);
+        if (root.isLayoutSignatureChecked()) renderReservedItems(root, context, root.getLayoutItemsLayer(), true);
 
         final String[] contextLayout = context.getLayout();
         if (contextLayout != null) {
             if (!context.isLayoutSignatureChecked())
-                throw new IllegalStateException("Context layout must be resolved before render");
+                throw new UnresolvedLayoutException("Context layout must be resolved before render", null);
 
             // inherits the layout items layer from root if the layout was inherited
             renderReservedItems(root, context, context.getLayoutItemsLayer(), false);
@@ -48,6 +52,8 @@ public final class AvailableSlotRenderInterceptor implements PipelineInterceptor
 
         // skip if reserved items defined by auto-slot-filling was already consumed
         if (reservedItems == null || reservedItems.isEmpty()) return;
+
+        System.out.println("render reserved items");
 
         // we force the use of the items layer of the layout here if the context has a valid layout
         // because the context ALWAYS takes priority over the regular view, so in cases where there

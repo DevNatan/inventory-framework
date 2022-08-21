@@ -73,7 +73,7 @@ public abstract class AbstractView extends AbstractVirtualView {
      */
     private boolean initialized;
 
-    AbstractView(int size, String title, @NotNull ViewType type) {
+    protected AbstractView(int size, String title, @NotNull ViewType type) {
         final int fixedSize = size == 0 ? type.getMaxSize() : type.normalize(size);
         this.size = fixedSize;
         this.rows = fixedSize / type.getColumns();
