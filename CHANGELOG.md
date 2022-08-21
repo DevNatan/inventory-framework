@@ -6,6 +6,8 @@
 * Remove nextTick from view open, close and updateSlot call (#193)
 * View layout is now resolved on initialization (#196)
 * Render, update and open process was moved to pipeline interceptors (#196)
+* Pagination source now can be only set once.
+* Dynamic layout change is not allowed.
 
 # 2.5.3
 * Fix scheduled updates (#175)
