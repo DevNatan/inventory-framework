@@ -20,10 +20,10 @@ import org.jetbrains.annotations.TestOnly;
  */
 public class AvailableSlotRenderInterceptor implements PipelineInterceptor<VirtualView> {
 
-	@TestOnly
-	boolean isSuppressContainerException() {
-		return false;
-	}
+    @TestOnly
+    boolean isSuppressContainerException() {
+        return false;
+    }
 
     @Override
     public void intercept(@NotNull PipelineContext<VirtualView> pipeline, VirtualView view) {
@@ -34,8 +34,7 @@ public class AvailableSlotRenderInterceptor implements PipelineInterceptor<Virtu
         final AbstractView root = context.getRoot();
 
         // just render reserved items since root layout is always resolved on init
-        if (root.isLayoutSignatureChecked())
-			renderReservedItems(root, context, root.getLayoutItemsLayer(), true);
+        if (root.isLayoutSignatureChecked()) renderReservedItems(root, context, root.getLayoutItemsLayer(), true);
 
         final String[] contextLayout = context.getLayout();
 
@@ -45,8 +44,8 @@ public class AvailableSlotRenderInterceptor implements PipelineInterceptor<Virtu
 
             renderReservedItems(root, context, context.getLayoutItemsLayer(), false);
         } else {
-			// inherits the layout items layer from root if the layout was inherited
-			renderReservedItems(root, context, root.getLayoutItemsLayer(), false);
+            // inherits the layout items layer from root if the layout was inherited
+            renderReservedItems(root, context, root.getLayoutItemsLayer(), false);
         }
     }
 
@@ -107,7 +106,7 @@ public class AvailableSlotRenderInterceptor implements PipelineInterceptor<Virtu
         if (!targetingRoot && !hasAnyAvailableLayout)
 			offset = root.getReservedItemsCount();
 
-		System.out.println("layout items layer: " + layoutItemsLayer);
+        System.out.println("layout items layer: " + layoutItemsLayer);
         for (int i = offset; i < reservedItemsCount; i++) {
             final int targetSlot;
             try {
@@ -132,15 +131,14 @@ public class AvailableSlotRenderInterceptor implements PipelineInterceptor<Virtu
             // so we need to register then on the first time that it's get rendered
             if (targetingRoot) root.apply(next, targetSlot);
             else {
-				context.apply(next, targetSlot);
-			}
+                context.apply(next, targetSlot);
+            }
 
             try {
-				root.render(context, next, targetSlot);
-			} catch (ContainerException e) {
-				if (!isSuppressContainerException())
-					throw e;
-			}
+                root.render(context, next, targetSlot);
+            } catch (ContainerException e) {
+                if (!isSuppressContainerException()) throw e;
+            }
         }
     }
 }
