@@ -455,6 +455,9 @@ public abstract class AbstractVirtualView implements VirtualView {
      **/
     @Override
     public void setLayout(@Nullable String... layout) {
+		if (getLayout() != null)
+			throw new IllegalStateException("Layout can only be set once.");
+
         this.layout = layout;
     }
 

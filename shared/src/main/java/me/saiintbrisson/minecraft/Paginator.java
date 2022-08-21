@@ -29,6 +29,10 @@ public final class Paginator<T> {
     private AsyncPaginationDataState<T> asyncState;
     private final boolean provided, async;
 
+	Paginator(@NotNull Object source) {
+		this(0, source);
+	}
+
     @SuppressWarnings("unchecked")
     Paginator(int pageSize, @NotNull Object source) {
         this.pageSize = pageSize;

@@ -1,18 +1,5 @@
 package me.saiintbrisson.minecraft.pipeline.interceptors;
 
-import static me.saiintbrisson.minecraft.IFUtils.callIfNotNull;
-import static me.saiintbrisson.minecraft.IFUtils.checkContainerType;
-import static me.saiintbrisson.minecraft.IFUtils.checkPaginationSourceAvailability;
-import static me.saiintbrisson.minecraft.IFUtils.useLayout;
-import static me.saiintbrisson.minecraft.IFUtils.useLayoutItemsLayer;
-import static me.saiintbrisson.minecraft.IFUtils.useLayoutItemsLayerSize;
-import static me.saiintbrisson.minecraft.PaginatedVirtualView.NAVIGATE_LEFT;
-import static me.saiintbrisson.minecraft.PaginatedVirtualView.NAVIGATE_RIGHT;
-
-import java.util.List;
-import java.util.Stack;
-import java.util.function.Consumer;
-import java.util.function.Function;
 import me.saiintbrisson.minecraft.AsyncPaginationDataState;
 import me.saiintbrisson.minecraft.PaginatedViewContext;
 import me.saiintbrisson.minecraft.PaginatedViewSlotContext;
@@ -20,267 +7,284 @@ import me.saiintbrisson.minecraft.Paginator;
 import me.saiintbrisson.minecraft.PlatformUtils;
 import me.saiintbrisson.minecraft.ViewContext;
 import me.saiintbrisson.minecraft.ViewItem;
-import me.saiintbrisson.minecraft.ViewSlotContext;
 import me.saiintbrisson.minecraft.pipeline.PipelineContext;
 import me.saiintbrisson.minecraft.pipeline.PipelineInterceptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+import java.util.Stack;
+import java.util.function.Consumer;
+import java.util.function.Function;
+
+import static me.saiintbrisson.minecraft.IFUtils.callIfNotNull;
+import static me.saiintbrisson.minecraft.IFUtils.checkContainerType;
+import static me.saiintbrisson.minecraft.IFUtils.checkPaginationSourceAvailability;
+import static me.saiintbrisson.minecraft.IFUtils.useLayoutItemsLayer;
+import static me.saiintbrisson.minecraft.IFUtils.useLayoutItemsLayerSize;
+import static me.saiintbrisson.minecraft.PaginatedVirtualView.NAVIGATE_LEFT;
+import static me.saiintbrisson.minecraft.PaginatedVirtualView.NAVIGATE_RIGHT;
+
 public final class PaginationRenderInterceptor implements PipelineInterceptor<ViewContext> {
 
-    @Override
-    public void intercept(@NotNull PipelineContext<ViewContext> pipeline, ViewContext context) {
-        checkContainerType(context);
+	@Override
+	public void intercept(@NotNull PipelineContext<ViewContext> pipeline, ViewContext context) {
+		checkContainerType(context);
+		checkPaginationSourceAvailability(context);
 
-        // proceed to regular renderization
-        pipeline.proceed();
-        checkPaginationSourceAvailability(context);
+		final PaginatedViewContext<?> paginatedContext = context.paginated();
+		final String[] layout = useLayout(context);
 
-        updateContext(context.paginated(), 0, true, true);
-    }
+		final Paginator<?> paginator = paginatedContext.getPaginator() == null
+			? paginatedContext.getRoot().getPaginator()
+			: paginatedContext.getPaginator();
 
-    private <T> void updateContext(
-            @NotNull PaginatedViewContext<T> context, int page, boolean pageChecking, boolean setupForRender) {
-        if (context instanceof ViewSlotContext)
-            throw new IllegalStateException("Cannot update context using a slot context");
+		tryRenderPagination(context.paginated(), layout, null, paginator, $ -> {
+			updateNavigationItem(paginatedContext, NAVIGATE_LEFT);
+			updateNavigationItem(paginatedContext, NAVIGATE_RIGHT);
+		});
+	}
 
-        final String[] layout = useLayout(context.getRoot(), context);
-        if (pageChecking) {
-            if (setupForRender
-                    && (context.getPaginator().isSync()
-                            && !context.getPaginator().hasPage(page))) return;
+	/**
+	 * Attempts to render pagination data in a context.
+	 *
+	 * @param context        The pagination context.
+	 * @param layout         The layout that'll be used as base to renderization.
+	 * @param preservedItems Preserved items from previous renders.
+	 * @param callback       Callback containing paging data
+	 * @param <T>            The pagination data type.
+	 */
+	private <T> void tryRenderPagination(
+		@NotNull PaginatedViewContext<T> context,
+		String[] layout,
+		@SuppressWarnings("SameParameterValue") ViewItem[] preservedItems,
+		Paginator<T> paginator,
+		Consumer<List<T>> callback
+	) {
+		System.out.println("try render pagination: " + paginator);
 
-            if (layout != null && !context.isLayoutSignatureChecked())
-                throw new IllegalStateException("Layout not resolved");
+		if (paginator.isAsync())
+			handleAsyncSourceProvider(
+				context,
+				layout,
+				preservedItems,
+				paginator,
+				callback
+			);
+		else if (paginator.isProvided())
+			handleLazySourceProvider(context, layout, preservedItems, paginator, callback);
+		else
+			renderSource(context, layout, preservedItems, null, paginator, callback);
+	}
 
-            if (setupForRender) context.setPage(page);
-        }
+	/**
+	 * Returns the position of the navigation item for the specified direction.
+	 * <p>
+	 * The item slot is defined during {@link LayoutResolutionInterceptor layout resolution}.
+	 *
+	 * @param context   The pagination context.
+	 * @param direction The navigation direction.
+	 * @return Current navigation (of the specified direction) item slot.
+	 */
+	private int getNavigationItemSlot(@NotNull PaginatedViewContext<?> context, int direction) {
+		return direction == NAVIGATE_LEFT ? context.getPreviousPageItemSlot() : context.getNextPageItemSlot();
+	}
 
-        if (!setupForRender) return;
+	private <T> void updateNavigationItem(@NotNull PaginatedViewContext<T> context, int direction) {
+		//		final AbstractPaginatedView<T> root = context.getRoot();
+		//		int expectedSlot = getNavigationItemSlot(context, direction);
+		//		ViewItem item = null;
+		//
+		//		// it is recommended to use layout for pagination, so at this stage the layout may have
+		//		// already defined the slot for the pagination items, so we check if it is not defined yet
+		//		if (expectedSlot == -1) {
+		//			// check if navigation item was manually set by the user
+		//			item = resolveNavigationItem(this, context, direction);
+		//
+		//			if (item == null || item.getSlot() == -1) return;
+		//
+		//			expectedSlot = item.getSlot();
+		//			if (direction == NAVIGATE_LEFT) context.setPreviousPageItemSlot(expectedSlot);
+		//			else context.setNextPageItemSlot(expectedSlot);
+		//		}
+		//
+		//		if (item == null) item = resolveNavigationItem(this, context, direction);
+		//
+		//		// ensure item is removed if it was resolved and set before and is not anymore
+		//		if (item == null) {
+		//			root.removeAt(context, expectedSlot);
+		//			return;
+		//		}
+		//
+		//		// the click handler should be checked for cases where the user has defined the navigation
+		//		// item manually, so we will not override his handler
+		//		if (item.getClickHandler() == null) {
+		//			item.onClick(click -> {
+		//				if (direction == NAVIGATE_LEFT) click.paginated().switchToPreviousPage();
+		//				else click.paginated().switchToNextPage();
+		//			});
+		//		}
+		//
+		//		renderItemAndApplyOnContext(context, item.withCancelOnClick(true), expectedSlot);
+	}
 
-        tryRenderPagination(context, layout, null, $ -> {
-            updateNavigationItem(context, NAVIGATE_LEFT);
-            updateNavigationItem(context, NAVIGATE_RIGHT);
-        });
-    }
+	private <T> void handleAsyncSourceProvider(
+		@NotNull PaginatedViewContext<T> context,
+		String[] layout,
+		ViewItem[] preservedItems,
+		@NotNull Paginator<T> paginator,
+		Consumer<List<T>> callback
+	) {
+		AsyncPaginationDataState<T> asyncState = paginator.getAsyncState();
+		callIfNotNull(asyncState.getLoadStarted(), handler -> handler.accept(context));
 
-    /**
-     * Attempts to render pagination data in a context.
-     *
-     * @param context        The pagination context.
-     * @param layout         The layout that'll be used as base to renderization.
-     * @param preservedItems Preserved items from previous renders.
-     * @param callback       Callback containing paging data
-     * @param <T>            The pagination data type.
-     */
-    private <T> void tryRenderPagination(
-            @NotNull PaginatedViewContext<T> context,
-            String[] layout,
-            ViewItem[] preservedItems,
-            Consumer<List<T>> callback) {
-        final Paginator<T> paginator = context.getPaginator();
+		asyncState
+			.getJob()
+			.apply(context)
+			.whenComplete((data, $) -> {
+				if (data == null)
+					throw new IllegalStateException("Asynchronous pagination result cannot be null");
 
-        // GH-184 Skip layout render if signature is not checked
-        if (layout != null && !context.isLayoutSignatureChecked()) {
-            callback.accept(null);
-            return;
-        }
+//				context.getPaginator().setSource(data);
 
-        if (paginator.isAsync())
-            renderPaginationAsync(context, layout, preservedItems, paginator.getAsyncState(), callback);
-        else if (paginator.isProvided())
-            renderPaginationLazy(context, layout, preservedItems, paginator.getFactory(), callback);
-        else {
-            renderPaginationBlocking(context, layout, preservedItems, callback);
-        }
-    }
+				callIfNotNull(asyncState.getSuccess(), handler -> handler.accept(context));
+				renderSource(context, layout, preservedItems, data, paginator, callback);
+			})
+			.exceptionally(error -> {
+				callIfNotNull(asyncState.getError(), handler -> handler.accept(context, error));
+				throw new RuntimeException("Failed to retrieve pagination data", error);
+			})
+			.thenRun(() -> callIfNotNull(asyncState.getLoadFinished(), handler -> handler.accept(context)));
+	}
 
-    /**
-     * Returns the position of the navigation item for the specified direction.
-     * <p>
-     * The item slot is defined during {@link LayoutResolutionInterceptor layout resolution}.
-     *
-     * @param context   The pagination context.
-     * @param direction The navigation direction.
-     * @return Current navigation (of the specified direction) item slot.
-     */
-    private int getNavigationItemSlot(@NotNull PaginatedViewContext<?> context, int direction) {
-        return direction == NAVIGATE_LEFT ? context.getPreviousPageItemSlot() : context.getNextPageItemSlot();
-    }
+	private <T> void handleLazySourceProvider(
+		@NotNull PaginatedViewContext<T> context,
+		String[] layout,
+		ViewItem[] preservedItems,
+		@NotNull Paginator<T> paginator,
+		Consumer<List<T>> callback
+	) {
+		Function<PaginatedViewContext<T>, List<T>> factory = paginator.getFactory();
+		List<T> data = factory.apply(context);
+		if (data == null)
+			throw new IllegalStateException("Lazy pagination result cannot be null");
 
-    private <T> void updateNavigationItem(@NotNull PaginatedViewContext<T> context, int direction) {
-        //		final AbstractPaginatedView<T> root = context.getRoot();
-        //		int expectedSlot = getNavigationItemSlot(context, direction);
-        //		ViewItem item = null;
-        //
-        //		// it is recommended to use layout for pagination, so at this stage the layout may have
-        //		// already defined the slot for the pagination items, so we check if it is not defined yet
-        //		if (expectedSlot == -1) {
-        //			// check if navigation item was manually set by the user
-        //			item = resolveNavigationItem(this, context, direction);
-        //
-        //			if (item == null || item.getSlot() == -1) return;
-        //
-        //			expectedSlot = item.getSlot();
-        //			if (direction == NAVIGATE_LEFT) context.setPreviousPageItemSlot(expectedSlot);
-        //			else context.setNextPageItemSlot(expectedSlot);
-        //		}
-        //
-        //		if (item == null) item = resolveNavigationItem(this, context, direction);
-        //
-        //		// ensure item is removed if it was resolved and set before and is not anymore
-        //		if (item == null) {
-        //			root.removeAt(context, expectedSlot);
-        //			return;
-        //		}
-        //
-        //		// the click handler should be checked for cases where the user has defined the navigation
-        //		// item manually, so we will not override his handler
-        //		if (item.getClickHandler() == null) {
-        //			item.onClick(click -> {
-        //				if (direction == NAVIGATE_LEFT) click.paginated().switchToPreviousPage();
-        //				else click.paginated().switchToNextPage();
-        //			});
-        //		}
-        //
-        //		renderItemAndApplyOnContext(context, item.withCancelOnClick(true), expectedSlot);
-    }
+		renderSource(context, layout, preservedItems, data, paginator, callback);
+	}
 
-    private <T> void renderPaginationAsync(
-            @NotNull PaginatedViewContext<T> context,
-            String[] layout,
-            ViewItem[] preservedItems,
-            @NotNull AsyncPaginationDataState<T> asyncState,
-            Consumer<List<T>> callback) {
-        callIfNotNull(asyncState.getLoadStarted(), handler -> handler.accept(context));
+	private <T> void renderSource(
+		@NotNull PaginatedViewContext<T> context,
+		String[] layout,
+		ViewItem[] preservedItems,
+		List<T> source,
+		Paginator<T> paginator,
+		Consumer<List<T>> callback
+	) {
+		final List<T> data = source == null
+			? paginator.getPage(context.getPage())
+			: source;
 
-        asyncState
-                .getJob()
-                .apply(context)
-                .whenComplete((data, $) -> {
-                    if (data == null) throw new IllegalStateException("Asynchronous pagination result cannot be null");
+		renderPagination(context, data, layout, preservedItems);
+		callback.accept(data);
+	}
 
-                    context.getPaginator().setSource(data);
-                    callIfNotNull(asyncState.getSuccess(), handler -> handler.accept(context));
-                    renderPaginationBlocking(context, layout, preservedItems, callback);
-                })
-                .exceptionally(error -> {
-                    callIfNotNull(asyncState.getError(), handler -> handler.accept(context, error));
-                    throw new RuntimeException("Failed to retrieve pagination data", error);
-                })
-                .thenRun(() -> callIfNotNull(asyncState.getLoadFinished(), handler -> handler.accept(context)));
-    }
+	private <T> void renderPagination(
+		@NotNull PaginatedViewContext<T> context, List<T> elements, String[] layout, ViewItem[] preservedItems) {
+		//		renderPatterns(context);
 
-    private <T> void renderPaginationLazy(
-            @NotNull PaginatedViewContext<T> context,
-            String[] layout,
-            ViewItem[] preservedItems,
-            @NotNull Function<PaginatedViewContext<T>, List<T>> factory,
-            Consumer<List<T>> callback) {
-        List<T> data = factory.apply(context);
-        if (data == null) throw new IllegalStateException("Lazy pagination result cannot be null");
+		final int elementsCount = elements.size();
+		final Stack<Integer> layoutItemsLayer = useLayoutItemsLayer(context.getRoot(), context);
+		final int lastSlot = layout == null ? context.getRoot().getLimit() : layoutItemsLayer.peek();
+		final int layerSize = useLayoutItemsLayerSize(layoutItemsLayer, layout);
 
-        context.getPaginator().setSource(data);
-        renderPaginationBlocking(context, layout, preservedItems, callback);
-    }
+		for (int i = 0; i <= lastSlot; i++) {
+			if (layout != null && i >= layerSize) break;
 
-    private <T> void renderPaginationBlocking(
-            @NotNull PaginatedViewContext<T> context,
-            String[] layout,
-            ViewItem[] preservedItems,
-            Consumer<List<T>> callback) {
-        final List<T> data = context.getPaginator().getPage(context.getPage());
+			final int targetSlot = layout == null ? context.getRoot().getOffset() + i : layoutItemsLayer.elementAt(i);
+			final ViewItem preserved = preservedItems == null || preservedItems.length <= i ? null : preservedItems[i];
+			if (i < elementsCount)
+				renderPaginatedItemAt(context, i, targetSlot, elements.get(i), preserved);
+			else {
+				final ViewItem item = context.resolve(targetSlot, true);
+				// check if a non-virtual item has been defined in that slot
+				if (item != null) {
+					if (!item.isPaginationItem()) {
+						renderItemAndApplyOnContext(context, item, targetSlot);
+						continue;
+					}
 
-        renderPagination(context, data, layout, preservedItems);
-        callback.accept(data);
-    }
+					final ViewItem overlay = item.getOverlay();
+					if (overlay != null) {
+						renderItemAndApplyOnContext(context, overlay, targetSlot);
+						continue;
+					}
+				}
 
-    private <T> void renderPagination(
-            @NotNull PaginatedViewContext<T> context, List<T> elements, String[] layout, ViewItem[] preservedItems) {
-        //		renderPatterns(context);
+				removeAt(context, targetSlot);
+			}
+		}
+	}
 
-        final int elementsCount = elements.size();
-        final Stack<Integer> layoutItemsLayer = useLayoutItemsLayer(context.getRoot(), context);
-        final int lastSlot = layout == null ? context.getRoot().getLimit() : layoutItemsLayer.peek();
-        final int layerSize = useLayoutItemsLayerSize(layoutItemsLayer, layout);
+	private void removeAt(@NotNull ViewContext context, int slot) {
+		context.clear(slot);
+		context.getContainer().removeItem(slot);
+	}
 
-        for (int i = 0; i <= lastSlot; i++) {
-            if (layout != null && i >= layerSize) break;
+	private void renderItemAndApplyOnContext(@NotNull ViewContext context, ViewItem item, int slot) {
+		context.getItems()[slot] = item;
+		context.getRoot().render(context, item, slot);
+	}
 
-            final int targetSlot = layout == null ? context.getRoot().getOffset() + i : layoutItemsLayer.elementAt(i);
-            final ViewItem preserved = preservedItems == null || preservedItems.length <= i ? null : preservedItems[i];
-            if (i < elementsCount) renderPaginatedItemAt(context, i, targetSlot, elements.get(i), preserved);
-            else {
-                final ViewItem item = context.resolve(targetSlot, true);
-                // check if a non-virtual item has been defined in that slot
-                if (item != null) {
-                    if (!item.isPaginationItem()) {
-                        renderItemAndApplyOnContext(context, item, targetSlot);
-                        continue;
-                    }
+	private <T> void renderPaginatedItemAt(
+		@NotNull PaginatedViewContext<T> context,
+		int index,
+		int slot,
+		@NotNull T value,
+		@Nullable ViewItem override) {
+		// TODO replace this with a more sophisticated overlay detection
+		ViewItem overlay = context.resolve(slot, true);
+		if (overlay != null && overlay.isPaginationItem()) overlay = null;
 
-                    final ViewItem overlay = item.getOverlay();
-                    if (overlay != null) {
-                        renderItemAndApplyOnContext(context, overlay, targetSlot);
-                        continue;
-                    }
-                }
+		// overlapping items are those that are already in the inventory but the IF is trying to
+		// render them, if it is an overlapped item it means that during the layout cleanup it was
+		// detected that they should ot have been removed, so they are not removed and during layout
+		// rendering they are not re-rendered.
+		if (override == null) {
+			final ViewItem item = new ViewItem(slot);
+			item.setPaginationItem(true);
 
-                removeAt(context, targetSlot);
-            }
-        }
-    }
+			@SuppressWarnings("unchecked") final PaginatedViewSlotContext<T> slotContext = (PaginatedViewSlotContext<T>)
+				PlatformUtils.getFactory().createSlotContext(item, context, index, value);
 
-    private void removeAt(@NotNull ViewContext context, int slot) {
-        context.clear(slot);
-        context.getContainer().removeItem(slot);
-    }
+			context.getRoot().runCatching(context, () -> {
+				context.getRoot().callItemRender(slotContext, item, value);
+			});
+			renderItemAndApplyOnContext(context, item, slot);
+			item.setOverlay(overlay);
+		} else {
+			// we need to reset the initial rendering function of the overlaid item if not, when we
+			// get to the rendering stage of the overlaid item, he overlaid item's rendering
+			// function will be called first and will render the wrong item
+			override.setUpdateHandler(null);
 
-    private void renderItemAndApplyOnContext(@NotNull ViewContext context, ViewItem item, int slot) {
-        context.getItems()[slot] = item;
-        context.getRoot().render(context, item, slot);
-    }
+			// only if there's a fallback item available, clearing it without checking will cause
+			// "No item were provided and the rendering function was not defined at slot..."
+			if (override.getItem() != null) override.setRenderHandler(null);
 
-    private <T> void renderPaginatedItemAt(
-            @NotNull PaginatedViewContext<T> context,
-            int index,
-            int slot,
-            @NotNull T value,
-            @Nullable ViewItem override) {
-        // TODO replace this with a more sophisticated overlay detection
-        ViewItem overlay = context.resolve(slot, true);
-        if (overlay != null && overlay.isPaginationItem()) overlay = null;
+			override.setSlot(slot);
+			override.setOverlay(overlay);
+			context.apply(overlay, slot);
+		}
+	}
 
-        // overlapping items are those that are already in the inventory but the IF is trying to
-        // render them, if it is an overlapped item it means that during the layout cleanup it was
-        // detected that they should ot have been removed, so they are not removed and during layout
-        // rendering they are not re-rendered.
-        if (override == null) {
-            final ViewItem item = new ViewItem(slot);
-            item.setPaginationItem(true);
+	private String[] useLayout(@NotNull ViewContext context) {
+		if (context.isLayoutSignatureChecked())
+			return context.getLayout();
 
-            @SuppressWarnings("unchecked")
-            final PaginatedViewSlotContext<T> slotContext = (PaginatedViewSlotContext<T>)
-                    PlatformUtils.getFactory().createSlotContext(item, context, index, value);
+		if (!context.getRoot().isLayoutSignatureChecked())
+			return null;
 
-            context.getRoot().runCatching(context, () -> {
-                context.getRoot().callItemRender(slotContext, item, value);
-            });
-            renderItemAndApplyOnContext(context, item, slot);
-            item.setOverlay(overlay);
-        } else {
-            // we need to reset the initial rendering function of the overlaid item if not, when we
-            // get to the rendering stage of the overlaid item, he overlaid item's rendering
-            // function will be called first and will render the wrong item
-            override.setUpdateHandler(null);
+		return context.getRoot().getLayout();
+	}
 
-            // only if there's a fallback item available, clearing it without checking will cause
-            // "No item were provided and the rendering function was not defined at slot..."
-            if (override.getItem() != null) override.setRenderHandler(null);
-
-            override.setSlot(slot);
-            override.setOverlay(overlay);
-            context.apply(overlay, slot);
-        }
-    }
 }

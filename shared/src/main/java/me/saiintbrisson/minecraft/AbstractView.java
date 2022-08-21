@@ -246,15 +246,15 @@ public abstract class AbstractView extends AbstractVirtualView {
     protected void onMoveOut(@NotNull ViewSlotMoveContext context) {}
 
     final void open(@NotNull Viewer viewer, @NotNull Map<String, Object> data) {
+		if (!isInitialized()) throw new IllegalStateException("Cannot open a uninitialized view.");
+
         final OpenViewContext context =
-                (OpenViewContext) getViewFrame().getFactory().createContext(this, null, OpenViewContext.class);
+                (OpenViewContext) PlatformUtils.getFactory().createContext(this, null, OpenViewContext.class);
 
         context.addViewer(viewer);
         data.forEach(context::set);
-        runCatching(context, () -> {
-            runCatching(context, () -> onOpen(context));
-            getPipeline().execute(OPEN, context);
-        });
+		onOpen(context);
+		getPipeline().execute(OPEN, context);
     }
 
     @Override
@@ -540,7 +540,8 @@ public abstract class AbstractView extends AbstractVirtualView {
 
     @ApiStatus.OverrideOnly
     protected void beforeInit() {
-        pipeline.intercept(OPEN, new OpenInterceptor());
+		final Pipeline<VirtualView> pipeline = getPipeline();
+		pipeline.intercept(OPEN, new OpenInterceptor());
         pipeline.intercept(INIT, new LayoutResolutionInterceptor());
         pipeline.intercept(INIT, new LayoutPatternRenderInterceptor());
         pipeline.intercept(RENDER, new LayoutResolutionInterceptor() /* context scope */);
@@ -555,7 +556,7 @@ public abstract class AbstractView extends AbstractVirtualView {
     final void init() {
         ensureNotInitialized();
         beforeInit();
-        pipeline.execute(INIT, this);
+        getPipeline().execute(INIT, this);
         setInitialized(true);
     }
 
