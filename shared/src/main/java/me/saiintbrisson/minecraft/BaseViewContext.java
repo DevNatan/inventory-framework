@@ -19,7 +19,7 @@ import java.util.function.Supplier;
 @Getter
 @Setter
 @ToString(callSuper = true)
-class BaseViewContext extends AbstractVirtualView implements ViewContext {
+public class BaseViewContext extends AbstractVirtualView implements ViewContext {
 
 	private final AbstractView root;
 	private final ViewContainer container;
@@ -112,11 +112,11 @@ class BaseViewContext extends AbstractVirtualView implements ViewContext {
 		}
 	}
 
-	@Override
-	@NotNull
-	public final ViewContainer getContainer() {
-		return Objects.requireNonNull(container, "Context container cannot be null");
-	}
+    @Override
+    @NotNull
+    public final ViewContainer getContainer() {
+        return container;
+    }
 
 	@Override
 	public int getRows() {
