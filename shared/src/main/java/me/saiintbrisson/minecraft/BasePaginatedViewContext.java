@@ -197,4 +197,5 @@ class BasePaginatedViewContext<T> extends BaseViewContext implements PaginatedVi
 			getContainer().getType().getColumns()
 		);
 	}
+
 }

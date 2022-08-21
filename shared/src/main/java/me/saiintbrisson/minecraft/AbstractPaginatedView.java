@@ -445,14 +445,6 @@ public abstract class AbstractPaginatedView<T> extends AbstractView implements P
 		//		});
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	int getNextAvailableSlot() {
-		return super.getNextAvailableSlot();
-	}
-
 	@ApiStatus.Internal
 	public void callItemRender(
 		@NotNull PaginatedViewSlotContext<T> context, @NotNull ViewItem viewItem, @NotNull T value) {
@@ -463,7 +455,6 @@ public abstract class AbstractPaginatedView<T> extends AbstractView implements P
 	@ApiStatus.OverrideOnly
 	protected void beforeInit() {
 		super.beforeInit();
-		System.out.println("abstract view befoe init");
 		getPipeline().intercept(RENDER, new PaginationRenderInterceptor());
 	}
 }

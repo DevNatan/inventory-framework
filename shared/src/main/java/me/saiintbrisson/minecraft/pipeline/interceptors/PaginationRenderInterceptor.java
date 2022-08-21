@@ -1,5 +1,6 @@
 package me.saiintbrisson.minecraft.pipeline.interceptors;
 
+import me.saiintbrisson.minecraft.AbstractPaginatedView;
 import me.saiintbrisson.minecraft.AsyncPaginationDataState;
 import me.saiintbrisson.minecraft.PaginatedViewContext;
 import me.saiintbrisson.minecraft.PaginatedViewSlotContext;
@@ -68,8 +69,6 @@ public final class PaginationRenderInterceptor implements PipelineInterceptor<Vi
 		Paginator<T> paginator,
 		Consumer<List<T>> callback
 	) {
-		System.out.println("try render pagination: " + paginator);
-
 		if (paginator.isAsync())
 			handleAsyncSourceProvider(
 				context,
@@ -203,15 +202,30 @@ public final class PaginationRenderInterceptor implements PipelineInterceptor<Vi
 		@NotNull PaginatedViewContext<T> context, List<T> elements, String[] layout, ViewItem[] preservedItems) {
 		//		renderPatterns(context);
 
+		final AbstractPaginatedView<T> root = context.getRoot();
 		final int elementsCount = elements.size();
-		final Stack<Integer> layoutItemsLayer = useLayoutItemsLayer(context.getRoot(), context);
-		final int lastSlot = layout == null ? context.getRoot().getLimit() : layoutItemsLayer.peek();
+		final Stack<Integer> layoutItemsLayer = useLayoutItemsLayer(root, context);
+		final int lastSlot = layout == null ? root.getLimit() : layoutItemsLayer.peek();
 		final int layerSize = useLayoutItemsLayerSize(layoutItemsLayer, layout);
+		final int reservedOffset = root.getReservedItemsCount() + context.getReservedItemsCount();
 
 		for (int i = 0; i <= lastSlot; i++) {
 			if (layout != null && i >= layerSize) break;
 
-			final int targetSlot = layout == null ? context.getRoot().getOffset() + i : layoutItemsLayer.elementAt(i);
+			int targetSlot;
+			if (layout == null)
+				targetSlot = root.getOffset() + reservedOffset + i;
+			else {
+				try {
+					targetSlot = layoutItemsLayer.elementAt(reservedOffset + i);
+				} catch (ArrayIndexOutOfBoundsException e) {
+					// the only way to get this exception is if the reserved items have pulled the
+					// paging items to the right because the loop only goes to the last slot of the
+					// slot items layer, so it's impossible to fall here normally.
+					break;
+				}
+			}
+
 			final ViewItem preserved = preservedItems == null || preservedItems.length <= i ? null : preservedItems[i];
 			if (i < elementsCount)
 				renderPaginatedItemAt(context, i, targetSlot, elements.get(i), preserved);
