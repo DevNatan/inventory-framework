@@ -1,14 +1,10 @@
 package me.saiintbrisson.minecraft;
 
-import static me.saiintbrisson.minecraft.AbstractPaginatedView.NAVIGATE_LEFT;
-import static me.saiintbrisson.minecraft.AbstractPaginatedView.NAVIGATE_RIGHT;
-
 import java.time.Duration;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Stack;
 import java.util.function.Consumer;
@@ -37,7 +33,8 @@ public abstract class AbstractVirtualView implements VirtualView {
     private Deque<ViewItem> reservedItems;
     int reservedItemsCount;
 
-    protected ViewItem[] getItems() {
+    @Override
+    public ViewItem[] getItems() {
         return items;
     }
 
@@ -49,7 +46,8 @@ public abstract class AbstractVirtualView implements VirtualView {
         return items[index];
     }
 
-    final void setItems(ViewItem[] items) {
+    @Override
+    public final void setItems(ViewItem[] items) {
         this.items = items;
     }
 
@@ -88,7 +86,7 @@ public abstract class AbstractVirtualView implements VirtualView {
      */
     @Override
     @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.3")
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.5")
     public final ViewItem item() {
         return new ViewItem();
     }
@@ -98,7 +96,7 @@ public abstract class AbstractVirtualView implements VirtualView {
      */
     @Override
     @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.3")
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.5")
     public final ViewItem item(@NotNull ItemStack item) {
         return new ViewItem().withItem(item);
     }
@@ -108,7 +106,7 @@ public abstract class AbstractVirtualView implements VirtualView {
      */
     @Override
     @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.3")
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.5")
     public final ViewItem item(@NotNull Material material) {
         return new ViewItem().withItem(new ItemStack(material));
     }
@@ -118,7 +116,7 @@ public abstract class AbstractVirtualView implements VirtualView {
      */
     @Override
     @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.3")
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.5")
     public final ViewItem item(@NotNull Material material, int amount) {
         return new ViewItem().withItem(new ItemStack(material, amount));
     }
@@ -128,7 +126,7 @@ public abstract class AbstractVirtualView implements VirtualView {
      */
     @Override
     @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.3")
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.5")
     public final ViewItem item(@NotNull Material material, short durability) {
         return new ViewItem().withItem(new ItemStack(material, 1, durability));
     }
@@ -138,7 +136,7 @@ public abstract class AbstractVirtualView implements VirtualView {
      */
     @Override
     @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.3")
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.5")
     public final ViewItem item(@NotNull Material material, int amount, short durability) {
         return new ViewItem().withItem(new ItemStack(material, amount, durability));
     }
@@ -148,7 +146,7 @@ public abstract class AbstractVirtualView implements VirtualView {
      */
     @Override
     @ApiStatus.Internal
-    public final void register(@NotNull ViewItem item, int slot) {
+    public final void apply(@Nullable ViewItem item, int slot) {
         if (getItems() == null) throw new IllegalStateException("VirtualView was not initialized yet");
 
         getItems()[slot] = item;
@@ -160,11 +158,7 @@ public abstract class AbstractVirtualView implements VirtualView {
     @Override
     @NotNull
     public final ViewItem slot(int slot) {
-        inventoryModificationTriggered();
-
-        final ViewItem item = new ViewItem(slot);
-        register(item, slot);
-        return item;
+        return slot(slot, null);
     }
 
     /**
@@ -173,7 +167,11 @@ public abstract class AbstractVirtualView implements VirtualView {
     @Override
     @NotNull
     public final ViewItem slot(int slot, Object item) {
-        return slot(slot).withItem(item);
+        inventoryModificationTriggered();
+
+        final ViewItem viewItem = new ViewItem(slot).withItem(item);
+        apply(viewItem, slot);
+        return viewItem;
     }
 
     /**
@@ -242,7 +240,7 @@ public abstract class AbstractVirtualView implements VirtualView {
         final int slot = getNextAvailableSlot();
 
         // item slot will be resolved after layout resolution
-        if (slot == ViewItem.AVAILABLE_SLOT) {
+        if (slot == ViewItem.AVAILABLE) {
             final ViewItem viewItem = new ViewItem(slot).withItem(item);
             if (reservedItems == null) reservedItems = new ArrayDeque<>();
 
@@ -258,129 +256,22 @@ public abstract class AbstractVirtualView implements VirtualView {
      *
      * @return The next available slot.
      */
-    int getNextAvailableSlot() {
-        if (getLayout() != null) return ViewItem.AVAILABLE_SLOT;
+    abstract int getNextAvailableSlot();
 
-        for (int i = 0; i < getItems().length; i++) {
-            final ViewItem item = items[i];
-            if (item == null) return i;
-        }
-
-        return ViewItem.AVAILABLE_SLOT;
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void render() {
+        throw new UnsupportedOperationException("This view cannot render itself");
     }
 
-    void render(@NotNull ViewContext context) {
-        for (int i = 0; i < getItems().length; i++) {
-            render(context, i);
-        }
-
-        final String[] contextLayout = context.getLayout();
-
-        // context layout will be used as fallback to render context-scope defined items
-        if (contextLayout != null || getLayout() != null) {
-            final boolean inheritedFromRoot = contextLayout == null && getLayout() != null;
-            final boolean contextLayoutResolved = context.isLayoutSignatureChecked();
-
-            // force layout resolution before render
-            if (contextLayout != null && !contextLayoutResolved) resolveLayout(context, contextLayout);
-
-            // inherits the layout items layer from root if the layout was inherited
-            final Stack<Integer> layoutItemsLayer = new Stack<>();
-            layoutItemsLayer.addAll(!contextLayoutResolved ? getLayoutItemsLayer() : context.getLayoutItemsLayer());
-
-            // drops all items that have been rendered before as these slots have already been filled,
-            // the next slots will be used to render the items in context
-            int dropCount = reservedItemsCount;
-            while (dropCount > 0) {
-                layoutItemsLayer.removeElementAt(0);
-                dropCount--;
-            }
-
-            renderLayout(context, context, layoutItemsLayer, inheritedFromRoot);
-        }
-    }
-
-    final void renderLayout(
-            @NotNull VirtualView view,
-            @Nullable ViewContext context,
-            Stack<Integer> layoutItemsLayer,
-            boolean inheritedFromRoot) {
-        if (!inheritedFromRoot && !view.isLayoutSignatureChecked())
-            throw new IllegalStateException("Layout must be resolved before render");
-
-        final Deque<ViewItem> reservedItems = view.getReservedItems();
-
-        // skip if reserved items defined by auto-slot-filling was already consumed
-        if (reservedItems == null || reservedItems.isEmpty()) return;
-
-        final int reservedItemsCount = reservedItems.size();
-        for (int i = 0; i < reservedItemsCount; i++) {
-            final int targetSlot;
-            try {
-                targetSlot = layoutItemsLayer.elementAt(i);
-            } catch (final ArrayIndexOutOfBoundsException e) {
-                throw new RuntimeException("No more slots available on layout.", e);
-            }
-
-            final ViewItem next;
-
-            try {
-                // remove first to preserve insertion order
-                next = reservedItems.removeFirst();
-            } catch (final NoSuchElementException ignored) {
-                break;
-            }
-
-            // register item on view since dynamically rendered items are not registered, so we need
-            // to register then on the first time that it's get rendered
-            view.register(next, targetSlot);
-
-            if (context != null) render(context, next, targetSlot);
-        }
-    }
-
-    protected final void render(@NotNull ViewContext context, int slot) {
-        final ViewItem item = context.resolve(slot, true);
-        if (item == null) return;
-
-        render(context, item, slot);
-    }
-
-    protected final void render(@NotNull ViewContext context, @NotNull ViewItem item, int slot) {
-        inventoryModificationTriggered();
-
-        // the item's slot has not yet been determined because of using the auto-set slot function
-        // and must be applied during rendering.
-        if (item.getSlot() == ViewItem.AVAILABLE_SLOT) item.setSlot(slot);
-
-        final Object fallbackItem = item.getItem();
-
-        if (item.getRenderHandler() != null) {
-            final ViewSlotContext renderContext =
-                    PlatformUtils.getFactory().createSlotContext(item, (BaseViewContext) context, 0, null);
-
-            runCatching(context, () -> item.getRenderHandler().handle(renderContext));
-            if (renderContext.hasChanged()) {
-                context.getContainer().renderItem(slot, unwrap(renderContext.getItemWrapper()));
-                renderContext.setChanged(false);
-                return;
-            }
-        }
-
-        if (fallbackItem == null)
-            throw new IllegalArgumentException(String.format(
-                    "No item were provided and the rendering function was not defined at slot %d."
-                            + "You must use a rendering function #slot(...).onRender(...)"
-                            + " or a fallback item #slot(fallbackItem)",
-                    slot));
-
-        context.getContainer().renderItem(slot, unwrap(fallbackItem));
-    }
-
-    private Object unwrap(Object item) {
-        if (item instanceof ItemWrapper) return unwrap(((ItemWrapper) item).getValue());
-
-        return item;
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void render(@NotNull ViewContext context) {
+        throw new UnsupportedOperationException("This view cannot render");
     }
 
     /**
@@ -388,50 +279,23 @@ public abstract class AbstractVirtualView implements VirtualView {
      */
     @Override
     public void update() {
-        throw new UnsupportedOperationException("Update aren't supported in this view");
-    }
-
-    void update(@NotNull ViewContext context) {
-        for (int i = 0; i < getItems().length; i++) update(context, i);
-    }
-
-    final void update(@NotNull ViewContext context, int slot) {
-        inventoryModificationTriggered();
-
-        final ViewItem item = context.resolve(slot, true);
-        if (item == null) {
-            context.getContainer().removeItem(slot);
-            return;
-        }
-
-        update(context, item, slot);
-    }
-
-    final void update(@NotNull ViewContext context, ViewItem item, int slot) {
-        inventoryModificationTriggered();
-
-        if (item.getUpdateHandler() != null) {
-            final ViewSlotContext updateContext =
-                    PlatformUtils.getFactory().createSlotContext(item, (BaseViewContext) context, 0, null);
-
-            runCatching(context, () -> item.getUpdateHandler().handle(updateContext));
-            if (updateContext.hasChanged()) {
-                context.getContainer().renderItem(slot, unwrap(updateContext.getItemWrapper()));
-                updateContext.setChanged(false);
-                return;
-            }
-        }
-
-        // update handler can be used as an empty function, so we fall back to the render handler to
-        // update the fallback item properly
-        render(context, item, slot);
+        throw new UnsupportedOperationException("This view cannot update itself");
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
+    public void update(@NotNull ViewContext context) {
+        throw new UnsupportedOperationException("This view cannot update");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     @ApiStatus.Internal
-    ViewItem resolve(int index) {
+    public ViewItem resolve(int index, boolean resolveOnRoot) {
         // fast path -- skip -999 index on some platforms
         if (index < 0) return null;
 
@@ -505,7 +369,7 @@ public abstract class AbstractVirtualView implements VirtualView {
     @Override
     public void inventoryModificationTriggered() {}
 
-    final void runCatching(final ViewContext context, @NotNull final Runnable runnable) {
+    public final void runCatching(ViewContext context, @NotNull Runnable runnable) {
         if (context != null && context.getErrorHandler() != null) {
             tryRunOrFail(context, runnable);
             return;
@@ -519,7 +383,7 @@ public abstract class AbstractVirtualView implements VirtualView {
         tryRunOrFail(context, runnable);
     }
 
-    boolean throwException(final ViewContext context, @NotNull final Exception exception) {
+    boolean throwException(final ViewContext context, @NotNull final Exception exception) throws Exception {
         if (context != null && context.getErrorHandler() != null) {
             context.getErrorHandler().error(context, exception);
             if (!context.isPropagateErrors()) return false;
@@ -529,8 +393,8 @@ public abstract class AbstractVirtualView implements VirtualView {
         return true;
     }
 
-    protected final void launchError(
-            final ViewErrorHandler errorHandler, final ViewContext context, @NotNull final Exception exception) {
+    protected final void launchError(ViewErrorHandler errorHandler, ViewContext context, @NotNull Exception exception)
+            throws Exception {
         if (errorHandler == null) return;
 
         errorHandler.error(context, exception);
@@ -540,7 +404,11 @@ public abstract class AbstractVirtualView implements VirtualView {
         try {
             runnable.run();
         } catch (final Exception e) {
-            throwException(context, e);
+            try {
+                throwException(context, e);
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
         }
     }
 
@@ -618,184 +486,39 @@ public abstract class AbstractVirtualView implements VirtualView {
     }
 
     /**
-     * Throws an exception if the given character is a reserved layout character.
-     *
-     * @param character The character.
-     * @throws IllegalArgumentException If the character is reserved.
+     * {@inheritDoc}
      */
-    void checkReservedLayoutCharacter(char character) throws IllegalArgumentException {
-        if (character == LAYOUT_EMPTY_SLOT
-                || character == LAYOUT_FILLED_SLOT
-                || character == LAYOUT_PREVIOUS_PAGE
-                || character == LAYOUT_NEXT_PAGE)
-            throw new IllegalArgumentException(String.format(
-                    "The \"%c\" character is reserved in layouts and cannot be used due to backwards compatibility.",
-                    character));
-    }
-
-    @ApiStatus.Internal
     @Override
+    @ApiStatus.Internal
     public Stack<Integer> getLayoutItemsLayer() {
         return layoutItemsLayer;
     }
 
-    @ApiStatus.Internal
+    /**
+     * {@inheritDoc}
+     */
     @Override
+    @ApiStatus.Internal
     public void setLayoutItemsLayer(Stack<Integer> layoutItemsLayer) {
         this.layoutItemsLayer = layoutItemsLayer;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
+    @ApiStatus.Internal
     public boolean isLayoutSignatureChecked() {
         return layoutSignatureChecked;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
+    @ApiStatus.Internal
     public void setLayoutSignatureChecked(boolean layoutSignatureChecked) {
         this.layoutSignatureChecked = layoutSignatureChecked;
-    }
-
-    /**
-     * Determines the number of rows for the specified view.
-     * <p>
-     * If the view is a context it uses the number of rows of the {@link ViewContext#getContainer() context's container},
-     * if it is a regular view it uses the number of rows of the {@link AbstractView#getType() view's type}.
-     *
-     * @param view The view.
-     * @return The columns count for the given view.
-     * @throws IllegalStateException If it is not possible to determine the number of rows for
-     *                               the specified view implementation.
-     */
-    private int determineRowsCount(@NotNull VirtualView view) {
-        if (view instanceof ViewContext)
-            return ((ViewContext) view).getContainer().getRowsCount();
-        if (view instanceof AbstractView) return view.getRows();
-
-        throw new IllegalStateException(String.format(
-                "Unsupported view implementation, cannot determine rows count: %s",
-                view.getClass().getName()));
-    }
-
-    /**
-     * Determines the number of columns for the specified view.
-     * <p>
-     * If the view is a context it uses the number of columns of the {@link ViewContext#getContainer() context's container},
-     * if it is a regular view it uses the number of columns of the {@link AbstractView#getType() view's type}.
-     *
-     * @param view The view.
-     * @return The columns count for the given view.
-     * @throws IllegalStateException If it is not possible to determine the number of columns for
-     *                               the specified view implementation.
-     */
-    private int determineColumnsCount(@NotNull VirtualView view) {
-        if (view instanceof ViewContext)
-            return ((ViewContext) view).getContainer().getColumnsCount();
-        if (view instanceof AbstractView) return view.getColumns();
-
-        throw new IllegalStateException(String.format(
-                "Unsupported view implementation, cannot determine columns count: %s",
-                view.getClass().getName()));
-    }
-
-    /**
-     * Resolves the given layout to the given view.
-     * <p>
-     * Reads the specified layout, checks if it is within the view size constraints, it defines the
-     * layout items layer and determines the page size if the specified view is paginated.
-     *
-     * @param view   The target view.
-     * @param layout The layout to be resolved.
-     * @throws IllegalArgumentException  If during resolution a page navigation item is found for a
-     *                                   view that is not paginated.
-     * @throws IndexOutOfBoundsException If the layout doesn't fit the view's container constraints.
-     */
-    final void resolveLayout(@NotNull VirtualView view, @NotNull String[] layout) {
-        // since the layout is only defined once, we cache it
-        // to avoid unnecessary processing every time we update the context.
-        final int rows = layout.length;
-        final int containerRowsCount = determineRowsCount(view);
-
-        if (rows != containerRowsCount)
-            throw new IndexOutOfBoundsException(String.format(
-                    "Layout columns must respect the rows count of the container" + " (given: %d, expect: %d)",
-                    rows, containerRowsCount));
-
-        final int containerColumnsCount = determineColumnsCount(view);
-        final Stack<Integer> itemsLayer = new Stack<>();
-
-        for (int row = 0; row < rows; row++) {
-            final String layer = layout[row];
-
-            final int layerLength = layer.length();
-            if (layerLength != containerColumnsCount)
-                throw new IndexOutOfBoundsException(String.format(
-                        "Layout layer length located at %d must respect the columns count of the"
-                                + " container (given: %d, expect: %d).",
-                        row, layerLength, containerColumnsCount));
-
-            for (int column = 0; column < containerColumnsCount; column++) {
-                final int targetSlot = column + (row * containerColumnsCount);
-                final char character = layer.charAt(column);
-                switch (character) {
-                    case LAYOUT_EMPTY_SLOT:
-                        break;
-                    case LAYOUT_FILLED_SLOT: {
-                        itemsLayer.push(targetSlot);
-                        break;
-                    }
-                    case LAYOUT_PREVIOUS_PAGE: {
-                        if (!(view instanceof PaginatedViewContext))
-                            throw new IllegalArgumentException(String.format(
-                                    "Navigation characters (%s) on layout are reserved to paginated views and cannot be used on regular views.",
-                                    LAYOUT_PREVIOUS_PAGE + ", " + LAYOUT_NEXT_PAGE));
-
-                        final PaginatedViewContext<?> paginatedContext = (PaginatedViewContext<?>) view;
-                        paginatedContext.getRoot().resolveNavigationItem(paginatedContext, NAVIGATE_LEFT);
-                        paginatedContext.setPreviousPageItemSlot(targetSlot);
-                        break;
-                    }
-                    case LAYOUT_NEXT_PAGE: {
-                        if (!(view instanceof PaginatedViewContext))
-                            throw new IllegalArgumentException(String.format(
-                                    "Navigation characters (%s) on layout are reserved to paginated views and cannot be used on regular views.",
-                                    LAYOUT_PREVIOUS_PAGE + ", " + LAYOUT_NEXT_PAGE));
-
-                        final PaginatedViewContext<?> paginatedContext = (PaginatedViewContext<?>) view;
-                        paginatedContext.getRoot().resolveNavigationItem(paginatedContext, NAVIGATE_RIGHT);
-                        paginatedContext.setNextPageItemSlot(targetSlot);
-                        break;
-                    }
-                    default: {
-                        final LayoutPattern pattern = getLayoutOrNull(character);
-                        if (pattern != null) pattern.getSlots().push(targetSlot);
-                    }
-                }
-            }
-        }
-
-        view.setLayoutItemsLayer(itemsLayer);
-        view.setLayoutSignatureChecked(true);
-
-        if (!(view instanceof PaginatedViewContext)) return;
-
-        final Paginator<?> paginator =
-                ((PaginatedViewContext<?>) view).paginated().getPaginator();
-        if (paginator == null) return;
-
-        paginator.setPageSize(itemsLayer.size());
-    }
-
-    /**
-     * Finds the layout pattern to the given character.
-     *
-     * @param character The layout pattern character.
-     * @return The layout pattern to the given character or <code>null</code>.
-     */
-    private LayoutPattern getLayoutOrNull(char character) {
-        return getLayoutPatterns().stream()
-                .filter(pattern -> pattern.getCharacter() == character)
-                .findFirst()
-                .orElse(null);
     }
 
     @Override
@@ -804,7 +527,33 @@ public abstract class AbstractVirtualView implements VirtualView {
         return reservedItems;
     }
 
+    public int getReservedItemsCount() {
+        return reservedItemsCount;
+    }
+
+    @ApiStatus.Internal
+    public void setReservedItemsCount(int reservedItemsCount) {
+        this.reservedItemsCount = reservedItemsCount;
+    }
+
     final String[] useLayout(@NotNull VirtualView context) {
         return context.getLayout() == null ? getLayout() : context.getLayout();
+    }
+
+    /**
+     * Throws an exception if a character is a reserved layout character.
+     *
+     * @param character The character.
+     * @throws IllegalArgumentException If the character is reserved.
+     */
+    private static void checkReservedLayoutCharacter(char character) {
+        if (!(character == LAYOUT_EMPTY_SLOT
+                || character == LAYOUT_FILLED_SLOT
+                || character == LAYOUT_PREVIOUS_PAGE
+                || character == LAYOUT_NEXT_PAGE)) return;
+
+        throw new IllegalArgumentException(String.format(
+                "The \"%c\" character is reserved in layouts and cannot be used due to backwards compatibility.",
+                character));
     }
 }

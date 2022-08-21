@@ -7,9 +7,9 @@ package me.saiintbrisson.minecraft.exception;
  *
  * @see <a href="https://github.com/DevNatan/inventory-framework/wiki/Errors#inventorymodificationexception">InventoryModificationException on Wiki</a>
  */
-public class InventoryModificationException extends RuntimeException {
+public class InventoryModificationException extends InventoryFrameworkException {
 
     public InventoryModificationException(String message) {
-        super(message);
+        super(message, null);
     }
 }

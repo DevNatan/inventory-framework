@@ -20,11 +20,11 @@ import org.jetbrains.annotations.NotNull;
  */
 @Getter
 @Setter
-final class Paginator<T> {
+public final class Paginator<T> {
 
     private int pageSize;
-    private List<T> source;
     private int pagesCount = -1;
+    private List<T> source;
     private Function<PaginatedViewContext<T>, List<T>> factory;
     private AsyncPaginationDataState<T> asyncState;
     private final boolean provided, async;

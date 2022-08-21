@@ -37,6 +37,9 @@ public interface PaginatedViewContext<T> extends ViewContext, PaginatedVirtualVi
      */
     int getPage();
 
+    @ApiStatus.Internal
+    void setPage(int page);
+
     /**
      * The current number of items present on the current page.
      *
@@ -124,50 +127,6 @@ public interface PaginatedViewContext<T> extends ViewContext, PaginatedVirtualVi
      *     more pages to go to.
      */
     boolean switchToNextPage();
-
-    /**
-     * The current position of the navigation's "previous page" item.
-     *
-     * <p><b><i> This is an internal inventory-framework API that should not be used from outside of
-     * this library. No compatibility guarantees are provided. </i></b>
-     *
-     * @return The position of the navigation's "previous page" item, <code>-1</code> if unset.
-     */
-    @ApiStatus.Internal
-    int getPreviousPageItemSlot();
-
-    /**
-     * Sets the navigation's "previous page" item position in this context.
-     *
-     * <p><b><i> This is an internal inventory-framework API that should not be used from outside of
-     * this library. No compatibility guarantees are provided. </i></b>
-     *
-     * @param previousPageItemSlot The new navigation's "previous page" item position.
-     */
-    @ApiStatus.Internal
-    void setPreviousPageItemSlot(int previousPageItemSlot);
-
-    /**
-     * The current position of the navigation's "next page" item.
-     *
-     * <p><b><i> This is an internal inventory-framework API that should not be used from outside of
-     * this library. No compatibility guarantees are provided. </i></b>
-     *
-     * @return The position of the navigation's "next page" item, <code>-1</code> if unset.
-     */
-    @ApiStatus.Internal
-    int getNextPageItemSlot();
-
-    /**
-     * Sets the navigation's "next page" item position in this context.
-     *
-     * <p><b><i> This is an internal inventory-framework API that should not be used from outside of
-     * this library. No compatibility guarantees are provided. </i></b>
-     *
-     * @param nextPageItemSlot The new navigation's "next page" item position.
-     */
-    @ApiStatus.Internal
-    void setNextPageItemSlot(int nextPageItemSlot);
 
     /** {@inheritDoc} */
     @Override

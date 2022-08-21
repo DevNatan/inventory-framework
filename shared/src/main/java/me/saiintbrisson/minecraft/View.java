@@ -5,7 +5,9 @@ import org.bukkit.inventory.InventoryHolder;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
-/** Bukkit platform View backward compatible implementation. */
+/**
+ * Bukkit platform View backward compatible implementation.
+ */
 public class View extends AbstractView implements InventoryHolder {
 
     public View() {
@@ -37,16 +39,6 @@ public class View extends AbstractView implements InventoryHolder {
     @ApiStatus.Experimental
     public View(int size, String title, @NotNull ViewType type) {
         super(size, title, type);
-    }
-
-    @Override
-    final void render(@NotNull ViewContext context) {
-        super.render(context);
-    }
-
-    @Override
-    final void update(@NotNull ViewContext context) {
-        super.update(context);
     }
 
     @NotNull

@@ -46,6 +46,12 @@ public interface VirtualView {
     @ApiStatus.Internal
     char LAYOUT_FILLED_SLOT = 'O';
 
+    @ApiStatus.Internal
+    ViewItem[] getItems();
+
+    @ApiStatus.Internal
+    void setItems(ViewItem[] items);
+
     /**
      * Finds an item at an index.
      *
@@ -117,7 +123,7 @@ public interface VirtualView {
      * @deprecated Use {@link #closeUninterruptedly()} instead.
      */
     @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.2")
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.5")
     void closeNow();
 
     /**
@@ -315,7 +321,7 @@ public interface VirtualView {
      * <p>
      * In regular views whose item is not dynamically defined, the slot the item will belong to can
      * be obtained from the returned item instance. Dynamic items will have their starting slot set
-     * to {@link ViewItem#AVAILABLE_SLOT}. Use item render function to get around this and get
+     * to {@link ViewItem#AVAILABLE}. Use item render function to get around this and get
      * always the correct slot that item is placed on.
      * <pre><code>
      * availableSlot(...).onRender(render -&#60; {
@@ -400,7 +406,7 @@ public interface VirtualView {
      * <p>
      * In regular views whose item is not dynamically defined, the slot the item will belong to can
      * be obtained from the returned item instance. Dynamic items will have their starting slot set
-     * to {@link ViewItem#AVAILABLE_SLOT}. Use item render function to get around this and get
+     * to {@link ViewItem#AVAILABLE}. Use item render function to get around this and get
      * always the correct slot that item is placed on.
      * <pre><code>
      * availableSlot(...).onRender(render -&#60; {
@@ -441,7 +447,7 @@ public interface VirtualView {
      * @deprecated Mutable item instances will be provided and should no longer be created.
      */
     @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.3")
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.5")
     ViewItem item();
 
     /**
@@ -454,7 +460,7 @@ public interface VirtualView {
      * @deprecated Mutable item instances will be provided and should no longer be created.
      */
     @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.3")
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.5")
     ViewItem item(@NotNull ItemStack item);
 
     /**
@@ -467,7 +473,7 @@ public interface VirtualView {
      * @deprecated Mutable item instances will be provided and should no longer be created.
      */
     @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.3")
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.5")
     ViewItem item(@NotNull Material material);
 
     /**
@@ -481,7 +487,7 @@ public interface VirtualView {
      * @deprecated Mutable item instances will be provided and should no longer be created.
      */
     @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.3")
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.5")
     ViewItem item(@NotNull Material material, short durability);
 
     /**
@@ -495,7 +501,7 @@ public interface VirtualView {
      * @deprecated Mutable item instances will be provided and should no longer be created.
      */
     @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.3")
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.5")
     ViewItem item(@NotNull Material material, int amount);
 
     /**
@@ -510,7 +516,7 @@ public interface VirtualView {
      * @deprecated Mutable item instances will be provided and should no longer be created.
      */
     @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.3")
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.5")
     ViewItem item(@NotNull Material material, int amount, short durability);
 
     /**
@@ -520,14 +526,7 @@ public interface VirtualView {
      * @param slot The slot.
      */
     @ApiStatus.Internal
-    void register(@NotNull ViewItem item, int slot);
-
-    /**
-     * Updates this view.
-     *
-     * <p><b>Triggers an {@link #inventoryModificationTriggered() inventory modification}.</b>
-     */
-    void update();
+    void apply(@Nullable ViewItem item, int slot);
 
     /**
      * Clears an item at the specified position.
@@ -693,4 +692,67 @@ public interface VirtualView {
 
     @ApiStatus.Internal
     Deque<ViewItem> getReservedItems();
+
+    /**
+     * Converts this context to a paginated view.
+     * <p>
+     * Only works if the view that originated this context {@link #isPaginated() is paginated}.
+     *
+     * @param <T> The pagination item type.
+     * @return This context as a PaginatedVirtualView.
+     * @throws IllegalStateException If this view is not paginated.
+     */
+    <T> PaginatedVirtualView<T> paginated();
+
+    @ApiStatus.Internal
+    default boolean isPaginated() {
+        return this instanceof PaginatedVirtualView;
+    }
+
+    /**
+     * Attempts to resolve an item at a specified index.
+     *
+     * <p><b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     *
+     * @param index         The item index.
+     * @param resolveOnRoot Search on root in view itself.
+     * @return The item at the specified index.
+     */
+    @ApiStatus.Internal
+    ViewItem resolve(int index, boolean resolveOnRoot);
+
+    /**
+     * Renders this view.
+     */
+    void render();
+
+    /**
+     * Renders this view in the specified context.
+     *
+     * <p><b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     *
+     * @param context The context.
+     */
+    @ApiStatus.Internal
+    @ApiStatus.OverrideOnly
+    void render(@NotNull ViewContext context);
+
+    /**
+     * Updates this view.
+     */
+    void update();
+
+    /**
+     * Updates this view in the specified context.
+     *
+     * <p><b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     *
+     * @param context The context.
+     */
+    @ApiStatus.Internal
+    @ApiStatus.OverrideOnly
+    void update(@NotNull ViewContext context);
 }

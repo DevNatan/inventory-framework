@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,21 +35,37 @@ class BaseViewContext extends AbstractVirtualView implements ViewContext {
     }
 
     @Override
+    public void render() {
+        getRoot().render(this);
+    }
+
+    @Override
+    public void update(@NotNull ViewContext context) {
+        getRoot().update(this);
+    }
+
+    @ApiStatus.Internal
+    public List<Viewer> internalGetViewers() {
+        return viewers;
+    }
+
+    @Override
     public final @NotNull List<Viewer> getViewers() {
-        synchronized (viewers) {
-            return Collections.unmodifiableList(viewers);
+        synchronized (internalGetViewers()) {
+            return Collections.unmodifiableList(internalGetViewers());
         }
     }
 
-    final void addViewer(@NotNull final Viewer viewer) {
-        synchronized (viewers) {
-            viewers.add(viewer);
+    @Override
+    public final void addViewer(@NotNull final Viewer viewer) {
+        synchronized (internalGetViewers()) {
+            internalGetViewers().add(viewer);
         }
     }
 
     final void removeViewer(@NotNull final Viewer viewer) {
-        synchronized (viewers) {
-            viewers.remove(viewer);
+        synchronized (internalGetViewers()) {
+            internalGetViewers().remove(viewer);
         }
     }
 
@@ -223,8 +240,10 @@ class BaseViewContext extends AbstractVirtualView implements ViewContext {
 
     @Override
     public ViewItem resolve(int index, boolean resolveOnRoot) {
-        ViewItem item = super.resolve(index);
-        if (item == null && resolveOnRoot) return getRoot().resolve(index);
+        ViewItem item = super.resolve(index, resolveOnRoot);
+        if (item == null && resolveOnRoot) {
+            return getRoot().resolve(index, resolveOnRoot);
+        }
 
         return item;
     }
@@ -260,10 +279,21 @@ class BaseViewContext extends AbstractVirtualView implements ViewContext {
 
     @Override
     int getNextAvailableSlot() {
-        // the context inherits the root layout so the next available slot must respect root layout,
-        // so we should check if we have any layout of our own before inheriting the root's behavior.
-        if (getLayout() != null) return super.getNextAvailableSlot();
+        final ViewContainer container = getContainer();
+        if (getRoot().isLayoutSignatureChecked()) return ViewItem.AVAILABLE;
 
-        return getRoot().getNextAvailableSlot();
+        if (getLayout() == null) {
+            for (int i = 0; i < container.getSize(); i++) {
+                // fast path -- skip resolution if slot isn't interactable
+                if (!container.getType().canPlayerInteractOn(i)) continue;
+
+                // slow path -- resolve slot one by one
+                if (resolve(i, true) != null) continue;
+
+                return i;
+            }
+        }
+
+        return ViewItem.AVAILABLE;
     }
 }

@@ -1,26 +1,28 @@
-package me.saiintbrisson.minecraft;
+package me.saiintbrisson.minecraft.pipeline.interceptors;
 
+import java.time.Duration;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import me.saiintbrisson.minecraft.ViewContext;
 import me.saiintbrisson.minecraft.pipeline.PipelineContext;
 import me.saiintbrisson.minecraft.pipeline.PipelineInterceptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 
 /**
- * It has subclasses that are intercepts of a view's lifecycle that determine whether an update job
- * should be started or stopped.
+ * Intercepts view's open and close lifecycle that determine whether an update job should be started
+ * or stopped. An "update job" is created when user {@link me.saiintbrisson.minecraft.VirtualView#scheduleUpdate(Duration) schedules a update}.
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-final class AutomaticUpdateInitiationInterceptor {
+public final class ScheduledUpdateInterceptor {
 
     /**
-     * Intercepts the {@link AbstractView#RENDER} pipeline phase of the view and determines whether
-     * the update job should be resumed.
+     * Intercepts the render pipeline phase of the view and determines whether the update job should
+     * be started/resumed.
      */
     @RequiredArgsConstructor
-    static class Init implements PipelineInterceptor<ViewContext> {
+    public static class Render implements PipelineInterceptor<ViewContext> {
 
         @Override
         public void intercept(@NotNull PipelineContext<ViewContext> pipeline, ViewContext subject) {
@@ -30,19 +32,19 @@ final class AutomaticUpdateInitiationInterceptor {
             if (subject.getViewers().size() != 1) return;
 
             subject.getUpdateJob().resume();
-            calledSuccessfully();
+            onIntercept();
         }
 
         @TestOnly
-        void calledSuccessfully() {}
+        void onIntercept() {}
     }
 
     /**
-     * Intercepts the {@link AbstractView#CLOSE} pipeline phase of the view and determines whether the update job should be
-     * interrupted.
+     * Intercepts the close pipeline phase of the view and determines whether the update job should
+     * be interrupted.
      */
     @RequiredArgsConstructor
-    static class Interrupt implements PipelineInterceptor<ViewContext> {
+    public static class Close implements PipelineInterceptor<ViewContext> {
 
         @Override
         public void intercept(@NotNull PipelineContext<ViewContext> pipeline, ViewContext subject) {
@@ -52,10 +54,10 @@ final class AutomaticUpdateInitiationInterceptor {
             if (subject.getViewers().size() != 1) return;
 
             subject.getUpdateJob().pause();
-            calledSuccessfully();
+            onIntercept();
         }
 
         @TestOnly
-        void calledSuccessfully() {}
+        void onIntercept() {}
     }
 }

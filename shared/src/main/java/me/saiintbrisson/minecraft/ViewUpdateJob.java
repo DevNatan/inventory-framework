@@ -1,7 +1,7 @@
 package me.saiintbrisson.minecraft;
 
 /** Object used to store information about the state of a View's update interval. */
-interface ViewUpdateJob {
+public interface ViewUpdateJob {
 
     long getDelay();
 

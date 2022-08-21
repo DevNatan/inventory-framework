@@ -2,6 +2,7 @@ package me.saiintbrisson.minecraft;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -33,7 +34,7 @@ final class BukkitPaginatedViewSlotContextImpl<T> extends AbstractViewSlotContex
 
     BukkitPaginatedViewSlotContextImpl(
             int index, @NotNull T value, ViewItem backingItem, PaginatedViewContext<T> parent) {
-        super(backingItem, (BaseViewContext) parent);
+        super(backingItem, parent);
         this.index = index;
         this.value = value;
         this.parent = parent;
@@ -127,6 +128,11 @@ final class BukkitPaginatedViewSlotContextImpl<T> extends AbstractViewSlotContex
     }
 
     @Override
+    public void setPage(int page) {
+        parent.setPage(page);
+    }
+
+    @Override
     public int getPagesCount() {
         return parent.getPagesCount();
     }
@@ -207,8 +213,28 @@ final class BukkitPaginatedViewSlotContextImpl<T> extends AbstractViewSlotContex
     }
 
     @Override
+    public BiConsumer<PaginatedViewContext<T>, ViewItem> getPreviousPageItemFactory() {
+        return parent.getPreviousPageItemFactory();
+    }
+
+    @Override
+    public BiConsumer<PaginatedViewContext<T>, ViewItem> getNextPageItemFactory() {
+        return parent.getNextPageItemFactory();
+    }
+
+    @Override
     public @NotNull AbstractPaginatedView<T> getRoot() {
         return parent.getRoot();
+    }
+
+    @Override
+    public void setPreviousPageItem(@NotNull BiConsumer<PaginatedViewContext<T>, ViewItem> previousPageItemFactory) {
+        throwPaginationDataChangedError();
+    }
+
+    @Override
+    public void setNextPageItem(@NotNull BiConsumer<PaginatedViewContext<T>, ViewItem> nextPageItemFactory) {
+        throwPaginationDataChangedError();
     }
 
     @SuppressWarnings("unchecked")

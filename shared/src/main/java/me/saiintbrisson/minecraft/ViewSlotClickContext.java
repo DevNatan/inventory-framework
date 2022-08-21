@@ -73,6 +73,6 @@ public interface ViewSlotClickContext extends ViewSlotContext {
      */
     @NotNull
     @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.4")
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.5")
     InventoryClickEvent getClickOrigin();
 }

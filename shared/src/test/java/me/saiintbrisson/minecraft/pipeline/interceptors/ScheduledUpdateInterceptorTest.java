@@ -1,4 +1,4 @@
-package me.saiintbrisson.minecraft;
+package me.saiintbrisson.minecraft.pipeline.interceptors;
 
 import static me.saiintbrisson.minecraft.AbstractView.CLOSE;
 import static me.saiintbrisson.minecraft.AbstractView.RENDER;
@@ -11,17 +11,20 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.concurrent.atomic.AtomicBoolean;
+import me.saiintbrisson.minecraft.ViewContext;
+import me.saiintbrisson.minecraft.ViewUpdateJob;
+import me.saiintbrisson.minecraft.Viewer;
 import me.saiintbrisson.minecraft.pipeline.Pipeline;
 import org.junit.jupiter.api.Test;
 
-class ScheduleUpdateTest {
+class ScheduledUpdateInterceptorTest {
 
     @Test
     public void givenUpdateJobStartWhenNoViewersAvailableThenSkipUpdateJobStart() {
         Pipeline<ViewContext> pipeline = new Pipeline<>(RENDER);
-        pipeline.intercept(RENDER, new AutomaticUpdateInitiationInterceptor.Init() {
+        pipeline.intercept(RENDER, new ScheduledUpdateInterceptor.Render() {
             @Override
-            void calledSuccessfully() {
+            void onIntercept() {
                 fail("Cannot only be started on the first viewer");
             }
         });
@@ -38,9 +41,9 @@ class ScheduleUpdateTest {
     @Test
     public void givenUpdateJobStartWhenMoreThanOneViewerAvailableThenSkipUpdateJobStart() {
         Pipeline<ViewContext> pipeline = new Pipeline<>(RENDER);
-        pipeline.intercept(RENDER, new AutomaticUpdateInitiationInterceptor.Init() {
+        pipeline.intercept(RENDER, new ScheduledUpdateInterceptor.Render() {
             @Override
-            void calledSuccessfully() {
+            void onIntercept() {
                 fail("Cannot only be started on the first viewer");
             }
         });
@@ -59,9 +62,9 @@ class ScheduleUpdateTest {
     public void givenUpdateJobStartWhenOneViewerIsAvailableThenJobIsStarted() {
         AtomicBoolean intercepted = new AtomicBoolean();
         Pipeline<ViewContext> pipeline = new Pipeline<>(RENDER);
-        pipeline.intercept(RENDER, new AutomaticUpdateInitiationInterceptor.Init() {
+        pipeline.intercept(RENDER, new ScheduledUpdateInterceptor.Render() {
             @Override
-            void calledSuccessfully() {
+            void onIntercept() {
                 intercepted.set(true);
             }
         });
@@ -81,15 +84,15 @@ class ScheduleUpdateTest {
     public void whenPipelinesCalledExpectUpdateStartedAndEndedProperly() {
         AtomicBoolean started = new AtomicBoolean(false);
         Pipeline<ViewContext> pipeline = new Pipeline<>(RENDER, CLOSE);
-        pipeline.intercept(RENDER, new AutomaticUpdateInitiationInterceptor.Init() {
+        pipeline.intercept(RENDER, new ScheduledUpdateInterceptor.Render() {
             @Override
-            void calledSuccessfully() {
+            void onIntercept() {
                 started.set(true);
             }
         });
-        pipeline.intercept(CLOSE, new AutomaticUpdateInitiationInterceptor.Interrupt() {
+        pipeline.intercept(CLOSE, new ScheduledUpdateInterceptor.Close() {
             @Override
-            void calledSuccessfully() {
+            void onIntercept() {
                 started.set(false);
             }
         });
@@ -113,15 +116,15 @@ class ScheduleUpdateTest {
     public void givenMoreThanOneViewerWhenPipelinesCalledExpectUpdateNotInterrupted() {
         AtomicBoolean started = new AtomicBoolean(false);
         Pipeline<ViewContext> pipeline = new Pipeline<>(RENDER, CLOSE);
-        pipeline.intercept(RENDER, new AutomaticUpdateInitiationInterceptor.Init() {
+        pipeline.intercept(RENDER, new ScheduledUpdateInterceptor.Render() {
             @Override
-            void calledSuccessfully() {
+            void onIntercept() {
                 started.set(true);
             }
         });
-        pipeline.intercept(CLOSE, new AutomaticUpdateInitiationInterceptor.Interrupt() {
+        pipeline.intercept(CLOSE, new ScheduledUpdateInterceptor.Close() {
             @Override
-            void calledSuccessfully() {
+            void onIntercept() {
                 started.set(false);
             }
         });

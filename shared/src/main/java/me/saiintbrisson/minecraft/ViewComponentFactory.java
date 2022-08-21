@@ -49,7 +49,7 @@ public abstract class ViewComponentFactory {
 
     @NotNull
     public abstract AbstractViewSlotContext createSlotContext(
-            ViewItem item, BaseViewContext parent, int paginatedItemIndex, Object paginatedItemValue);
+            ViewItem item, ViewContext parent, int paginatedItemIndex, Object paginatedItemValue);
 
     public abstract Object createItem(@Nullable Object stack);
 

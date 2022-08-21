@@ -24,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
 public abstract class AbstractViewSlotContext extends BaseViewContext implements ViewSlotContext {
 
     @Getter(AccessLevel.NONE)
-    private final BaseViewContext parent;
+    private final ViewContext parent;
 
     @Getter(AccessLevel.PACKAGE)
     private final ViewItem backingItem;
@@ -37,20 +37,25 @@ public abstract class AbstractViewSlotContext extends BaseViewContext implements
 
     private boolean changed;
 
-    AbstractViewSlotContext(ViewItem backingItem, @NotNull final BaseViewContext parent) {
+    AbstractViewSlotContext(ViewItem backingItem, @NotNull final ViewContext parent) {
         super(parent.getRoot(), parent.getContainer());
         this.backingItem = backingItem;
         this.parent = parent;
     }
 
     @Override
-    public final BaseViewContext getParent() {
+    public final ViewContext getParent() {
         return parent;
     }
 
     @Override
+    public void render(@NotNull ViewContext context) {
+        getRoot().render(getParent());
+    }
+
+    @Override
     public final void update() {
-        // global update cannot be a slot context
+        // global update context cannot be a slot context
         getRoot().update(getParent());
     }
 
@@ -60,8 +65,8 @@ public abstract class AbstractViewSlotContext extends BaseViewContext implements
     }
 
     @Override
-    protected final ViewItem[] getItems() {
-        return parent.getItems();
+    public final ViewItem[] getItems() {
+        throw new UnsupportedOperationException("Cannot access items from slot context, use parent context instead");
     }
 
     @Override
@@ -150,7 +155,12 @@ public abstract class AbstractViewSlotContext extends BaseViewContext implements
     }
 
     @Override
-    final void update(@NotNull ViewContext context) {
+    public final void update(@NotNull ViewContext context) {
+        throwNotAllowedCall();
+    }
+
+    @Override
+    public final void render() {
         throwNotAllowedCall();
     }
 
@@ -162,8 +172,7 @@ public abstract class AbstractViewSlotContext extends BaseViewContext implements
 
     @Override
     public final String[] getLayout() {
-        throwNotAllowedCall();
-        return null;
+        return parent.getLayout();
     }
 
     @Override

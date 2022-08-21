@@ -29,6 +29,7 @@ import org.bukkit.plugin.ServicesManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 @Getter
 @Setter
@@ -58,7 +59,7 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
     @Setter(AccessLevel.NONE)
     private Listener listener;
 
-    private Function<PaginatedViewContext<?>, ViewItem> defaultPreviousPageItem, defaultNextPageItem;
+    private BiConsumer<PaginatedViewContext<?>, ViewItem> previousPageItem, nextPageItem;
 
     @Getter(AccessLevel.NONE)
     private final FeatureInstaller<ViewFrame> featureInstaller = new DefaultFeatureInstaller<>(this);
@@ -139,7 +140,7 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
      * @deprecated Use {@link #register()} and {@link #with(AbstractView...)} instead.
      */
     @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.2")
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.5")
     public void register(@NotNull AbstractView... views) {
         with(views);
         register();
@@ -252,7 +253,7 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
      * @deprecated Use {@link #with(AbstractView...)} instead.
      */
     @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.2")
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.5")
     public void addView(final AbstractView view) {
         with(view);
     }
@@ -264,7 +265,7 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
      * @deprecated Use {@link #with(AbstractView...)} instead.
      */
     @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.2")
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.5")
     public void addView(final AbstractView... views) {
         with(views);
     }
@@ -306,27 +307,68 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
     }
 
     @Override
-    public void nextTick(Runnable runnable) {
+    public void nextTick(@NotNull Runnable runnable) {
         getOwner().getServer().getScheduler().runTask(getOwner(), runnable);
     }
 
     @Override
+    public BiConsumer<PaginatedViewContext<?>, ViewItem> getPreviousPageItem() {
+        return previousPageItem;
+    }
+
+    @Override
+    public Function<PaginatedViewContext<?>, ViewItem> getDefaultPreviousPageItem() {
+        return (context) -> new ViewItem();
+    }
+
+    @Override
+    public void setDefaultPreviousPageItem(Function<PaginatedViewContext<?>, ViewItem> defaultPreviousPageItemFactory) {
+        this.previousPageItem = (context, item) -> defaultPreviousPageItemFactory.apply(context);
+    }
+
+    @Override
+    public ViewFrame withPreviousPageItem(
+            @Nullable BiConsumer<PaginatedViewContext<?>, ViewItem> previousPageItemFactory) {
+        this.previousPageItem = previousPageItemFactory;
+        return this;
+    }
+
+    @Override
     public ViewFrame setNavigateBackItemFactory(BiConsumer<PaginatedViewContext<?>, ViewItem> navigateBackItemFactory) {
-        defaultPreviousPageItem = (context) -> {
-            final ViewItem item = new ViewItem();
-            navigateBackItemFactory.accept(context, item);
-            return item;
-        };
+        this.previousPageItem = navigateBackItemFactory;
+        return this;
+    }
+
+    @Override
+    public BiConsumer<PaginatedViewContext<?>, ViewItem> getNextPageItem() {
+        return nextPageItem;
+    }
+
+    @Override
+    public Function<PaginatedViewContext<?>, ViewItem> getDefaultNextPageItem() {
+        return (context) -> new ViewItem();
+    }
+
+    @Override
+    public void setDefaultNextPageItem(Function<PaginatedViewContext<?>, ViewItem> defaultNextPageItemFactory) {
+        this.nextPageItem = (context, item) -> defaultNextPageItemFactory.apply(context);
+    }
+
+    @Override
+    public ViewFrame withNextPageItem(@Nullable BiConsumer<PaginatedViewContext<?>, ViewItem> nextPageItemFactory) {
+        this.nextPageItem = nextPageItemFactory;
         return this;
     }
 
     @Override
     public ViewFrame setNavigateNextItemFactory(BiConsumer<PaginatedViewContext<?>, ViewItem> navigateNextItemFactory) {
-        defaultNextPageItem = (context) -> {
-            final ViewItem item = new ViewItem();
-            navigateNextItemFactory.accept(context, item);
-            return item;
-        };
+        this.nextPageItem = navigateNextItemFactory;
+        return this;
+    }
+
+    @Override
+    public ViewFrame withErrorHandler(@NotNull ViewErrorHandler errorHandler) {
+        this.errorHandler = errorHandler;
         return this;
     }
 

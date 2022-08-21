@@ -1,10 +1,12 @@
 package me.saiintbrisson.minecraft;
 
+import static me.saiintbrisson.minecraft.ViewItem.UNSET;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -17,12 +19,13 @@ import org.jetbrains.annotations.Nullable;
 @ToString(callSuper = true)
 class BasePaginatedViewContext<T> extends BaseViewContext implements PaginatedViewContext<T> {
 
-    @Setter(AccessLevel.PACKAGE)
     private int page;
 
-    private int previousPageItemSlot = -1;
-    private int nextPageItemSlot = -1;
+    /* inherited from PaginatedVirtualView */
+    private BiConsumer<PaginatedViewContext<T>, ViewItem> previousPageItemFactory, nextPageItemFactory;
     private Paginator<T> paginator;
+    private int previousPageItemSlot = UNSET;
+    private int nextPageItemSlot = UNSET;
 
     BasePaginatedViewContext(@NotNull AbstractView root, @Nullable ViewContainer container) {
         super(root, container);
@@ -31,6 +34,11 @@ class BasePaginatedViewContext<T> extends BaseViewContext implements PaginatedVi
     @Override
     public final int getPage() {
         return page;
+    }
+
+    @Override
+    public void setPage(int page) {
+        this.page = page;
     }
 
     @Override
@@ -112,6 +120,16 @@ class BasePaginatedViewContext<T> extends BaseViewContext implements PaginatedVi
     }
 
     @Override
+    public void setPreviousPageItem(@NotNull BiConsumer<PaginatedViewContext<T>, ViewItem> previousPageItemFactory) {
+        throw new UnsupportedOperationException("Navigation items cannot be set in context scope");
+    }
+
+    @Override
+    public void setNextPageItem(@NotNull BiConsumer<PaginatedViewContext<T>, ViewItem> nextPageItemFactory) {
+        throw new UnsupportedOperationException("Navigation items cannot be set in context scope");
+    }
+
+    @Override
     public final List<LayoutPattern> getLayoutPatterns() {
         if (super.getLayoutPatterns() != null) return super.getLayoutPatterns();
         return getRoot().getLayoutPatterns();
@@ -166,7 +184,8 @@ class BasePaginatedViewContext<T> extends BaseViewContext implements PaginatedVi
         final String[] layout = root.useLayout(this);
         if (layout == null) return;
 
-        root.resolveLayout(this, layout);
+        // TODO
+        //		resolveLayout(this, this, layout);
     }
 
     @Override

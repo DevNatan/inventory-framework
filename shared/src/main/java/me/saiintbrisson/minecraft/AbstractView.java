@@ -15,6 +15,13 @@ import lombok.ToString;
 import me.saiintbrisson.minecraft.exception.InitializationException;
 import me.saiintbrisson.minecraft.pipeline.Pipeline;
 import me.saiintbrisson.minecraft.pipeline.PipelinePhase;
+import me.saiintbrisson.minecraft.pipeline.interceptors.AvailableSlotRenderInterceptor;
+import me.saiintbrisson.minecraft.pipeline.interceptors.LayoutPatternRenderInterceptor;
+import me.saiintbrisson.minecraft.pipeline.interceptors.LayoutResolutionInterceptor;
+import me.saiintbrisson.minecraft.pipeline.interceptors.OpenInterceptor;
+import me.saiintbrisson.minecraft.pipeline.interceptors.RenderInterceptor;
+import me.saiintbrisson.minecraft.pipeline.interceptors.ScheduledUpdateInterceptor;
+import me.saiintbrisson.minecraft.pipeline.interceptors.UpdateInterceptor;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -25,41 +32,22 @@ import org.jetbrains.annotations.Nullable;
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
 public abstract class AbstractView extends AbstractVirtualView {
 
-    @Getter(AccessLevel.NONE)
-    static final PipelinePhase OPEN = new PipelinePhase("open");
-
-    @Getter(AccessLevel.NONE)
-    static final PipelinePhase RENDER = new PipelinePhase("render");
-
-    @Getter(AccessLevel.NONE)
-    static final PipelinePhase UPDATE = new PipelinePhase("update");
-
-    @Getter(AccessLevel.NONE)
-    static final PipelinePhase CLICK = new PipelinePhase("click");
-
-    @Getter(AccessLevel.NONE)
-    static final PipelinePhase CLOSE = new PipelinePhase("close");
-
-    @Getter(AccessLevel.NONE)
+    public static final PipelinePhase OPEN = new PipelinePhase("open");
+    public static final PipelinePhase INIT = new PipelinePhase("init");
+    public static final PipelinePhase RENDER = new PipelinePhase("render");
+    public static final PipelinePhase UPDATE = new PipelinePhase("update");
+    public static final PipelinePhase CLICK = new PipelinePhase("click");
+    public static final PipelinePhase CLOSE = new PipelinePhase("close");
     static final ViewType DEFAULT_TYPE = ViewType.CHEST;
 
     @ToString.Include
     private final int size;
 
-    private final int columns;
-    private final int rows;
-
     @ToString.Include
     private final String title;
 
     @ToString.Include
-    private final @NotNull ViewType type;
-
-    PlatformViewFrame<?, ?, ?> viewFrame;
-
-    private final Set<ViewContext> contexts = Collections.newSetFromMap(Collections.synchronizedMap(new HashMap<>()));
-
-    private final Pipeline<ViewContext> pipeline = new Pipeline<>(OPEN, RENDER, UPDATE, CLICK, CLOSE);
+    private final ViewType type;
 
     @ToString.Include
     private boolean cancelOnClick,
@@ -71,6 +59,12 @@ public abstract class AbstractView extends AbstractVirtualView {
             cancelOnShiftClick,
             clearCursorOnClose,
             closeOnOutsideClick;
+
+    private final int columns;
+    private final int rows;
+    PlatformViewFrame<?, ?, ?> viewFrame;
+    private final Set<ViewContext> contexts = Collections.newSetFromMap(Collections.synchronizedMap(new HashMap<>()));
+    private final Pipeline<VirtualView> pipeline = new Pipeline<>(INIT, OPEN, RENDER, UPDATE, CLICK, CLOSE);
 
     /**
      * An initialized view is one that has already been registered if there is a ViewFrame or has been
@@ -105,7 +99,7 @@ public abstract class AbstractView extends AbstractVirtualView {
     protected void onOpen(@NotNull OpenViewContext context) {}
 
     /**
-     * Called when this view is rendered to the player for the first time.
+     * Called __once__ when this view is rendered to the player for the first time.
      *
      * <p>This is where you will define items that will be contained non-persistently in the context.
      *
@@ -163,7 +157,7 @@ public abstract class AbstractView extends AbstractVirtualView {
      * @deprecated Use {@link #onClick(ViewSlotClickContext)} instead.
      */
     @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.4")
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.5")
     protected void onClick(@NotNull ViewSlotContext context) {}
 
     /**
@@ -192,7 +186,7 @@ public abstract class AbstractView extends AbstractVirtualView {
      */
     @SuppressWarnings("DeprecatedIsStillUsed")
     @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.3")
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.5")
     protected void onClickOutside(@NotNull ViewContext context) {}
 
     /**
@@ -207,7 +201,7 @@ public abstract class AbstractView extends AbstractVirtualView {
      */
     @SuppressWarnings("DeprecatedIsStillUsed")
     @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.3")
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.5")
     protected void onHotbarInteract(@NotNull ViewContext context, int hotbarButton) {}
 
     /**
@@ -252,71 +246,33 @@ public abstract class AbstractView extends AbstractVirtualView {
     protected void onMoveOut(@NotNull ViewSlotMoveContext context) {}
 
     final void open(@NotNull Viewer viewer, @NotNull Map<String, Object> data) {
-        final OpenViewContext open = internalOpen(viewer, data);
-
-        // wait for asynchronous open
-        if (open.getJob() != null) {
-            open.getJob()
-                    .whenComplete(($, error) -> {
-                        postOpen(viewer, open);
-                    })
-                    .exceptionally(error -> {
-                        throwException(open, new RuntimeException(error));
-                        return null;
-                    });
-            return;
-        }
-
-        postOpen(viewer, open);
-    }
-
-    private void postOpen(@NotNull Viewer viewer, @NotNull OpenViewContext openContext) {
-        if (openContext.isCancelled()) return;
-
-        final String containerTitle = openContext.getContainerTitle() == null ? title : openContext.getContainerTitle();
-        final ViewType containerType = openContext.getContainerType() == null ? type : openContext.getContainerType();
-
-        // rows will be normalized to fixed container size on `createContainer`
-        final int containerSize =
-                openContext.getContainerSize() == 0 ? size : containerType.normalize(openContext.getContainerSize());
-
-        final ViewContainer container =
-                viewFrame.getFactory().createContainer(this, containerSize, containerTitle, containerType);
-
-        final BaseViewContext context = viewFrame.getFactory().createContext(this, container, null);
-        context.setItems(new ViewItem[containerSize]);
-        context.addViewer(viewer);
-        openContext.getData().forEach(context::set);
-        contexts.add(context);
-        render(context);
-        context.getViewers().forEach(context.getContainer()::open);
-    }
-
-    private OpenViewContext internalOpen(@NotNull Viewer viewer, @NotNull Map<String, Object> data) {
         final OpenViewContext context =
                 (OpenViewContext) getViewFrame().getFactory().createContext(this, null, OpenViewContext.class);
 
         context.addViewer(viewer);
         data.forEach(context::set);
-        getPipeline().execute(OPEN, context);
-        runCatching(context, () -> onOpen(context));
-        return context;
+        runCatching(context, () -> {
+            runCatching(context, () -> onOpen(context));
+            getPipeline().execute(OPEN, context);
+        });
     }
 
     @Override
-    void render(@NotNull ViewContext context) {
+    public void render(@NotNull ViewContext context) {
         if (!isInitialized()) throw new IllegalStateException("Cannot render a uninitialized view.");
 
-        getPipeline().execute(RENDER, context);
-        onRender(context);
-        super.render(context);
+        runCatching(context, () -> {
+            onRender(context);
+            getPipeline().execute(RENDER, context);
+        });
     }
 
     @Override
-    void update(@NotNull ViewContext context) {
-        getPipeline().execute(UPDATE, context);
-        onUpdate(context);
-        super.update(context);
+    public void update(@NotNull ViewContext context) {
+        runCatching(context, () -> {
+            onUpdate(context);
+            getPipeline().execute(UPDATE, context);
+        });
     }
 
     /**
@@ -333,7 +289,7 @@ public abstract class AbstractView extends AbstractVirtualView {
      */
     @Override
     @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.2")
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.5")
     public final void closeNow() {
         closeUninterruptedly();
     }
@@ -352,6 +308,10 @@ public abstract class AbstractView extends AbstractVirtualView {
 
     final ViewContext getContext(@NotNull Predicate<ViewContext> predicate) {
         return contexts.stream().filter(predicate).findFirst().orElse(null);
+    }
+
+    public final void registerContext(@NotNull ViewContext context) {
+        contexts.add(context);
     }
 
     public final boolean isCancelOnClick() {
@@ -444,11 +404,11 @@ public abstract class AbstractView extends AbstractVirtualView {
      * {@inheritDoc}
      */
     @Override
-    protected final ViewItem[] getItems() {
+    public final ViewItem[] getItems() {
         return super.getItems();
     }
 
-    final Pipeline<ViewContext> getPipeline() {
+    public final Pipeline<VirtualView> getPipeline() {
         return pipeline;
     }
 
@@ -514,7 +474,7 @@ public abstract class AbstractView extends AbstractVirtualView {
 
     // TODO change 2nd parameter type from Exception to Throwable
     @Override
-    final boolean throwException(ViewContext context, @NotNull Exception exception) {
+    final boolean throwException(ViewContext context, @NotNull Exception exception) throws Exception {
         if (!super.throwException(context, exception)) return false;
 
         final PlatformViewFrame<?, ?, ?> vf = getViewFrame();
@@ -529,8 +489,16 @@ public abstract class AbstractView extends AbstractVirtualView {
      */
     @ApiStatus.Internal
     @Override
-    final ViewItem resolve(int index) {
-        return super.resolve(index);
+    public final ViewItem resolve(int index, boolean resolveOnRoot) {
+        return super.resolve(index, resolveOnRoot);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final void render() {
+        for (final ViewContext context : new ArrayList<>(contexts)) context.render();
     }
 
     /**
@@ -570,22 +538,24 @@ public abstract class AbstractView extends AbstractVirtualView {
         this.initialized = initialized;
     }
 
+    @ApiStatus.OverrideOnly
+    protected void beforeInit() {
+        pipeline.intercept(OPEN, new OpenInterceptor());
+        pipeline.intercept(INIT, new LayoutResolutionInterceptor());
+        pipeline.intercept(INIT, new LayoutPatternRenderInterceptor());
+        pipeline.intercept(RENDER, new LayoutResolutionInterceptor() /* context scope */);
+        pipeline.intercept(RENDER, new LayoutPatternRenderInterceptor() /* context scope */);
+        pipeline.intercept(RENDER, new AvailableSlotRenderInterceptor());
+        pipeline.intercept(RENDER, new RenderInterceptor());
+        pipeline.intercept(RENDER, new ScheduledUpdateInterceptor.Render());
+        pipeline.intercept(UPDATE, new UpdateInterceptor());
+        pipeline.intercept(CLOSE, new ScheduledUpdateInterceptor.Close());
+    }
+
     final void init() {
         ensureNotInitialized();
-
-        // register default interceptors
-        pipeline.intercept(RENDER, new AutomaticUpdateInitiationInterceptor.Init());
-        pipeline.intercept(CLOSE, new AutomaticUpdateInitiationInterceptor.Interrupt());
-
-        // resolve and register layout before render to optimize auto-slot-filling items render
-        if (getLayout() != null) {
-            resolveLayout(this, getLayout());
-            // preserve reserved items count to be used later on context render
-            reservedItemsCount =
-                    getReservedItems() == null ? 0 : getReservedItems().size();
-            renderLayout(this, null, getLayoutItemsLayer(), false);
-        }
-
+        beforeInit();
+        pipeline.execute(INIT, this);
         setInitialized(true);
     }
 
@@ -603,7 +573,7 @@ public abstract class AbstractView extends AbstractVirtualView {
      * @see <a href="https://github.com/DevNatan/inventory-framework/wiki/Errors#initializationexception">InitializationException on Wiki</a>
      */
     @ApiStatus.Internal
-    protected final void ensureNotInitialized() throws InitializationException {
+    public final void ensureNotInitialized() throws InitializationException {
         if (!isInitialized()) return;
         throw new InitializationException();
     }
@@ -703,19 +673,95 @@ public abstract class AbstractView extends AbstractVirtualView {
      */
     @Override
     int getNextAvailableSlot() {
-        if (getLayout() != null) return ViewItem.AVAILABLE_SLOT;
+        if (getLayout() == null) {
+            for (int i = 0; i < size; i++) {
+                // fast path -- skip resolution if slot isn't interactable
+                if (!type.canPlayerInteractOn(i)) continue;
 
-        for (int i = 0; i < size; i++) {
-            // fast path -- skip resolution if slot isn't interactable
-            if (!type.canPlayerInteractOn(i)) continue;
+                // slow path -- resolve slot one by one
+                if (getItem(i) != null) continue;
 
-            // slow path -- resolve slot one by one
-            final ViewItem item = resolve(i);
-            if (item != null) continue;
-
-            return i;
+                return i;
+            }
         }
 
-        return ViewItem.AVAILABLE_SLOT;
+        return ViewItem.AVAILABLE;
+    }
+
+    /**
+     * Renders a item.
+     *
+     * <p><b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     *
+     * @param context The context.
+     * @param item    The item.
+     * @param slot    The target slot.
+     */
+    @ApiStatus.Internal
+    public final void render(@NotNull ViewContext context, @NotNull ViewItem item, int slot) {
+        inventoryModificationTriggered();
+
+        // the item's slot has not yet been determined because of using the auto-set slot function
+        // and must be applied during rendering.
+        if (item.getSlot() == ViewItem.AVAILABLE) item.setSlot(slot);
+
+        final Object fallbackItem = item.getItem();
+
+        if (item.getRenderHandler() != null) {
+            final ViewSlotContext renderContext = PlatformUtils.getFactory().createSlotContext(item, context, 0, null);
+
+            runCatching(context, () -> item.getRenderHandler().handle(renderContext));
+            if (renderContext.hasChanged()) {
+                context.getContainer().renderItem(slot, unwrap(renderContext.getItemWrapper()));
+                renderContext.setChanged(false);
+                return;
+            }
+        }
+
+        if (fallbackItem == null)
+            throw new IllegalArgumentException(String.format(
+                    "No item were provided and the rendering function was not defined at slot %d."
+                            + "You must use a rendering function #slot(...).onRender(...)"
+                            + " or a fallback item #slot(fallbackItem)",
+                    slot));
+
+        context.getContainer().renderItem(slot, unwrap(fallbackItem));
+    }
+
+    /**
+     * Updates a item.
+     *
+     * <p><b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     *
+     * @param context The context.
+     * @param item    The item.
+     * @param slot    The target slot.
+     */
+    @ApiStatus.Internal
+    public final void update(@NotNull ViewContext context, ViewItem item, int slot) {
+        inventoryModificationTriggered();
+
+        if (item.getUpdateHandler() != null) {
+            final ViewSlotContext updateContext = PlatformUtils.getFactory().createSlotContext(item, context, 0, null);
+
+            runCatching(context, () -> item.getUpdateHandler().handle(updateContext));
+            if (updateContext.hasChanged()) {
+                context.getContainer().renderItem(slot, unwrap(updateContext.getItemWrapper()));
+                updateContext.setChanged(false);
+                return;
+            }
+        }
+
+        // update handler can be used as an empty function, so we fall back to the render handler to
+        // update the fallback item properly
+        render(context, item, slot);
+    }
+
+    private Object unwrap(Object item) {
+        if (item instanceof ItemWrapper) return unwrap(((ItemWrapper) item).getValue());
+
+        return item;
     }
 }

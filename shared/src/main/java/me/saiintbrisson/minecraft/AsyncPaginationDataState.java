@@ -5,7 +5,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.Contract;
@@ -18,8 +17,8 @@ import org.jetbrains.annotations.Contract;
  *
  * @param <T> The pagination data type.
  */
-@Getter(AccessLevel.PACKAGE)
-@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
+@Getter
+@RequiredArgsConstructor
 public final class AsyncPaginationDataState<T> {
 
     private final Function<PaginatedViewContext<T>, CompletableFuture<List<T>>> job;

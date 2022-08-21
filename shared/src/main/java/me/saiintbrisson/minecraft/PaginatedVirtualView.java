@@ -2,11 +2,17 @@ package me.saiintbrisson.minecraft;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
+import me.saiintbrisson.minecraft.exception.InitializationException;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 public interface PaginatedVirtualView<T> extends VirtualView {
+
+    byte NAVIGATE_LEFT = 0;
+
+    byte NAVIGATE_RIGHT = 1;
 
     /**
      * Defines the data that will be used to populate this paginated view.
@@ -98,4 +104,130 @@ public interface PaginatedVirtualView<T> extends VirtualView {
      */
     @ApiStatus.Internal
     Paginator<T> getPaginator();
+
+    /**
+     * The current position of the navigation's "previous page" item.
+     *
+     * <p><b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     *
+     * @return The position of the navigation's "previous page" item, <code>-1</code> if unset.
+     */
+    @ApiStatus.Internal
+    int getPreviousPageItemSlot();
+
+    /**
+     * Sets the navigation's "previous page" item position in this context.
+     *
+     * <p><b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     *
+     * @param previousPageItemSlot The new navigation's "previous page" item position.
+     */
+    @ApiStatus.Internal
+    void setPreviousPageItemSlot(int previousPageItemSlot);
+
+    /**
+     * The current position of the navigation's "next page" item.
+     *
+     * <p><b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     *
+     * @return The position of the navigation's "next page" item, <code>-1</code> if unset.
+     */
+    @ApiStatus.Internal
+    int getNextPageItemSlot();
+
+    /**
+     * Sets the navigation's "next page" item position in this context.
+     *
+     * <p><b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     *
+     * @param nextPageItemSlot The new navigation's "next page" item position.
+     */
+    @ApiStatus.Internal
+    void setNextPageItemSlot(int nextPageItemSlot);
+
+    /**
+     * <p><b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
+    BiConsumer<PaginatedViewContext<T>, ViewItem> getPreviousPageItemFactory();
+
+    /**
+     * The factory that will be used to create the "previous page" navigation item.
+     * <p>
+     * The first parameter is the current context and the second parameter is a mutable instance of
+     * {@link ViewItem} that will be used to determine the navigation item.
+     *
+     * <pre>{@code
+     * setPreviousPageItem((context, item) -> {
+     *     item.withItem(...);
+     * });
+     * }</pre>
+     * <p>
+     * You can hide the item if the context is on the first page by simply ignoring the factory
+     * <pre>{@code
+     * setPreviousPageItem((context, item) -> {
+     *     if (!context.hasPreviousPage())
+     *         return;
+     *
+     *      item.withItem(...);
+     * });
+     * }</pre>
+     * <p>
+     * or setting the fallback item to null.
+     * <pre>{@code
+     * setPreviousPageItem((context, item) -> {
+     *     item.withItem(context.hasPreviousPage() ? ... : null);
+     * });
+     * }</pre>
+     *
+     * @param previousPageItemFactory The navigation item factory.
+     * @throws InitializationException If this view is initialized.
+     */
+    void setPreviousPageItem(@NotNull BiConsumer<PaginatedViewContext<T>, ViewItem> previousPageItemFactory);
+
+    /**
+     * <p><b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
+    BiConsumer<PaginatedViewContext<T>, ViewItem> getNextPageItemFactory();
+
+    /**
+     * The factory that will be used to create the "next page" navigation item.
+     * <p>
+     * The first parameter is the current context and the second parameter is a mutable instance of
+     * {@link ViewItem} that will be used to determine the navigation item.
+     *
+     * <pre>{@code
+     * setNextPageItem((context, item) -> {
+     *     item.withItem(...);
+     * });
+     * }</pre>
+     * <p>
+     * You can hide the item if there are no more pages available by simply ignoring the factory
+     * <pre>{@code
+     * setNextPageItem((context, item) -> {
+     *     if (!context.hasNextPage())
+     *         return;
+     *
+     *      item.withItem(...);
+     * });
+     * }</pre>
+     * <p>
+     * or setting the fallback item to null.
+     * <pre>{@code
+     * setNextPageItem((context, item) -> {
+     *     item.withItem(context.hasNextPage() ? ... : null);
+     * });
+     * }</pre>
+     *
+     * @param nextPageItemFactory The navigation item factory.
+     * @throws InitializationException If this view is initialized.
+     */
+    void setNextPageItem(@NotNull BiConsumer<PaginatedViewContext<T>, ViewItem> nextPageItemFactory);
 }
