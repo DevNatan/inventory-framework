@@ -10,6 +10,7 @@
 * Dynamic layout change is not allowed (#201)
 * Handle pagination source and pagination source renderization independently (#201)
 * Fix "At least one pagination source must be set.." (#201)
+* New shortcut handlers #rendered and #updated to ViewItem (#201)
 
 # 2.5.3
 * Fix scheduled updates (#175)
