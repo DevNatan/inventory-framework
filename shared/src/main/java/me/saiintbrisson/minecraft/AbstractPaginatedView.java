@@ -40,6 +40,11 @@ public abstract class AbstractPaginatedView<T> extends AbstractView implements P
 		this.limit = getItems().length - 1;
 	}
 
+	@Override
+	protected void onRender(@NotNull ViewContext context) {
+		super.onRender(context);
+	}
+
 	/**
 	 * Where pagination will start.
 	 *

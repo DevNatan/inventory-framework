@@ -33,13 +33,20 @@ public final class PaginationRenderInterceptor implements PipelineInterceptor<Vi
 		checkPaginationSourceAvailability(context);
 
 		final PaginatedViewContext<?> paginatedContext = context.paginated();
-		final String[] layout = useLayout(context);
+		final Paginator<?> contextPaginator = paginatedContext.getPaginator();
 
-		final Paginator<?> paginator = paginatedContext.getPaginator() == null
+		// we need to set a value for the source size of the paginator here because,
+		// unlike the regular paginated view which sets an expected size of the paginator using
+		// `offset` and `limit` as a base, in context nothing is used because we expect it to be
+		// set only during synchronous pagination renderization phase.
+		if (contextPaginator != null && contextPaginator.isSync())
+			contextPaginator.setPageSize(contextPaginator.getSource().size());
+
+		final Paginator<?> paginator = contextPaginator == null
 			? paginatedContext.getRoot().getPaginator()
-			: paginatedContext.getPaginator();
+			: contextPaginator;
 
-		tryRenderPagination(context.paginated(), layout, null, paginator, $ -> {
+		tryRenderPagination(context.paginated(), useLayout(context), null, paginator, $ -> {
 			updateNavigationItem(paginatedContext, NAVIGATE_LEFT);
 			updateNavigationItem(paginatedContext, NAVIGATE_RIGHT);
 		});
@@ -147,6 +154,9 @@ public final class PaginationRenderInterceptor implements PipelineInterceptor<Vi
 
 //				context.getPaginator().setSource(data);
 
+				// set before async success handler call to allow user now how much data was loaded
+				paginator.setPageSize(data.size());
+
 				callIfNotNull(asyncState.getSuccess(), handler -> handler.accept(context));
 				renderSource(context, layout, preservedItems, data, paginator, callback);
 			})
@@ -169,6 +179,7 @@ public final class PaginationRenderInterceptor implements PipelineInterceptor<Vi
 		if (data == null)
 			throw new IllegalStateException("Lazy pagination result cannot be null");
 
+		paginator.setPageSize(data.size());
 		renderSource(context, layout, preservedItems, data, paginator, callback);
 	}
 
