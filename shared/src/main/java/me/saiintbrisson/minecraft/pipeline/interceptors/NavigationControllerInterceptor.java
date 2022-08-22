@@ -59,6 +59,7 @@ public final class NavigationControllerInterceptor implements PipelineIntercepto
         }
 
         final ViewItem item = new ViewItem();
+		item.setNavigationItem(true);
         factory.accept(context, item);
         return item;
     }
@@ -92,6 +93,9 @@ public final class NavigationControllerInterceptor implements PipelineIntercepto
 
             // prioritize layout
             targetSlot = layoutSlot == UNSET ? item.getSlot() : layoutSlot;
+
+			// prevent user from using #withSlot again on render function
+			item.setNavigationItem(false);
         }
 
         if (targetSlot == UNSET) return;
