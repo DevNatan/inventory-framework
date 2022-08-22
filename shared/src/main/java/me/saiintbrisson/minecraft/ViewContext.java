@@ -28,6 +28,9 @@ public interface ViewContext extends VirtualView {
 	@ApiStatus.Internal
 	void addViewer(@NotNull Viewer viewer);
 
+	@ApiStatus.Internal
+	void removeViewer(@NotNull Viewer viewer);
+
 	/**
 	 * The container of this context.
 	 *
@@ -149,6 +152,15 @@ public interface ViewContext extends VirtualView {
 	 * @throws IllegalStateException If this context is not cancellable.
 	 */
 	void setCancelled(boolean cancelled);
+
+	/**
+	 * Allows this context be cancelled.
+	 *
+	 * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
+	 * this library. No compatibility guarantees are provided.</i></b>
+	 */
+	@ApiStatus.Internal
+	void allowCancellation();
 
 	/**
 	 * Gets a value of a property defined for this context for a specific key.

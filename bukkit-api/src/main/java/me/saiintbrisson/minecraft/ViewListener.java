@@ -129,9 +129,9 @@ class ViewListener implements Listener {
         if (context == null) return;
 
         // TODO move to own pipeline phase
-        final CloseViewContext close = new CloseViewContext(context);
-        view.runCatching(context, () -> view.onClose(close));
-        view.prepareClose(close);
+		context.allowCancellation();
+        view.runCatching(context, () -> view.onClose(context));
+        view.prepareClose(context);
 
         final Viewer viewer = context.getViewers().stream()
                 .filter(other -> other instanceof BukkitViewer
@@ -141,23 +141,25 @@ class ViewListener implements Listener {
                         () -> new IllegalStateException("Tried to close view without being a viewer of the context"));
 
         // TODO move to own pipeline phase
-        if (close.isCancelled()) {
-            Bukkit.getScheduler().runTaskLater(viewFrame.getOwner(), () -> viewer.open(close.getContainer()), 1L);
+        if (context.isCancelled()) {
+			context.allowCancellation();
+			view.nextTick(() -> viewer.open(context.getContainer()));
 
             // set the old cursor item
             final ItemStack cursor = player.getItemOnCursor();
 
             // suppress null check since cursor can be null in legacy versions
             //noinspection ConstantConditions
-            if ((cursor != null) && cursor.getType() != Material.AIR) player.setItemOnCursor(cursor);
-            return;
+            if ((cursor != null) && cursor.getType() != Material.AIR)
+				player.setItemOnCursor(cursor);
+			return;
         }
 
         // TODO move to own pipeline phase
         if (view.isClearCursorOnClose()) player.setItemOnCursor(null);
 
         // TODO move to own pipeline phase
-        view.remove(close, viewer);
+        view.remove(context, viewer);
     }
 
     @SuppressWarnings("unused")

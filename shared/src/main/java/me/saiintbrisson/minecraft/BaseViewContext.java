@@ -29,6 +29,8 @@ class BaseViewContext extends AbstractVirtualView implements ViewContext {
 	private String updatedTitle;
 	private boolean propagateErrors = true;
 	private boolean markedToClose;
+	private boolean cancellationAllowed;
+	private boolean cancelled;
 
 	protected BaseViewContext(final @NotNull AbstractView root, final @Nullable ViewContainer container) {
 		this.root = root;
@@ -64,7 +66,8 @@ class BaseViewContext extends AbstractVirtualView implements ViewContext {
 		}
 	}
 
-	final void removeViewer(@NotNull final Viewer viewer) {
+	@Override
+	public final void removeViewer(@NotNull final Viewer viewer) {
 		synchronized (internalGetViewers()) {
 			internalGetViewers().remove(viewer);
 		}
@@ -230,13 +233,29 @@ class BaseViewContext extends AbstractVirtualView implements ViewContext {
 
 	@Override
 	public boolean isCancelled() {
-		return false;
+		if (!isCancellationAllowed())
+			return false;
+
+		return cancelled;
 	}
 
 	@Override
 	public void setCancelled(boolean cancelled) {
+		if (cancellationAllowed) {
+			this.cancelled = cancelled;
+			return;
+		}
+
 		throw new UnsupportedOperationException(
 			String.format("This context is not cancellable: %s", getClass().getName()));
+	}
+
+	@Override
+	@ApiStatus.Internal
+	public void allowCancellation() {
+		cancellationAllowed = !cancellationAllowed;
+		if (!cancellationAllowed)
+			cancelled = false;
 	}
 
 	@Override
