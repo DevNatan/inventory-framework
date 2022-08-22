@@ -142,10 +142,8 @@ class BasePaginatedViewContext<T> extends BaseViewContext implements PaginatedVi
 
     private void checkUniquePaginationSource() {
         if (getPaginator() != null)
-            throw new IllegalStateException(
-                    "Pagination source can only be set once. If you need dynamic source use " +
-						"pagination source provider or asynchronous pagination source instead."
-			);
+            throw new IllegalStateException("Pagination source can only be set once. If you need dynamic source use "
+                    + "pagination source provider or asynchronous pagination source instead.");
     }
 
     @Override

@@ -30,7 +30,8 @@ public final class PersistentNavigablePaginatedView extends PaginatedView<Intege
     }
 
     @Override
-    protected void onItemRender(@NotNull PaginatedViewSlotContext<Integer> render, @NotNull ViewItem item, @NotNull Integer value) {
+    protected void onItemRender(
+            @NotNull PaginatedViewSlotContext<Integer> render, @NotNull ViewItem item, @NotNull Integer value) {
         item.withItem(createPaginationItemStack(value));
     }
 

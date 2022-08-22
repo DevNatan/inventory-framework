@@ -31,7 +31,8 @@ public final class PaginatedViewBasedOnPlayerInventory extends PaginatedView<Ite
     }
 
     @Override
-    protected void onItemRender(@NotNull PaginatedViewSlotContext<ItemStack> render, @NotNull ViewItem item, @NotNull ItemStack value) {
+    protected void onItemRender(
+            @NotNull PaginatedViewSlotContext<ItemStack> render, @NotNull ViewItem item, @NotNull ItemStack value) {
         item.withItem(value.clone());
     }
 }

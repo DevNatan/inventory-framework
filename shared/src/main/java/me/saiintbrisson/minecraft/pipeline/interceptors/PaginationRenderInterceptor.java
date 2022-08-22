@@ -78,7 +78,7 @@ public final class PaginationRenderInterceptor implements PipelineInterceptor<Vi
     }
 
     @SuppressWarnings("unchecked")
-	private <T> void handleAsyncSourceProvider(
+    private <T> void handleAsyncSourceProvider(
             @NotNull PaginatedViewContext<T> context,
             String[] layout,
             ViewItem[] preservedItems,
@@ -273,10 +273,10 @@ public final class PaginationRenderInterceptor implements PipelineInterceptor<Vi
             // fallback to fillable view area
 
             if (pageSize == UNSET) {
-				@SuppressWarnings("deprecation")
-				final int fillableArea = root.getLimit() - root.getOffset();
-				pageSize = fillableArea;
-			}
+                @SuppressWarnings("deprecation")
+                final int fillableArea = root.getLimit() - root.getOffset();
+                pageSize = fillableArea;
+            }
         }
 
         return pageSize;

@@ -48,7 +48,8 @@ public final class LayeredNavigablePaginatedViewBasedOnPlayerInventory extends P
     }
 
     @Override
-    protected void onItemRender(@NotNull PaginatedViewSlotContext<ItemStack> render, @NotNull ViewItem item, @NotNull ItemStack value) {
+    protected void onItemRender(
+            @NotNull PaginatedViewSlotContext<ItemStack> render, @NotNull ViewItem item, @NotNull ItemStack value) {
         item.withItem(value.clone());
     }
 }
