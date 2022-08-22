@@ -1,5 +1,7 @@
 package me.saiintbrisson.minecraft;
 
+import static me.saiintbrisson.minecraft.ViewItem.UNSET;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -8,6 +10,7 @@ import java.util.List;
 import java.util.function.Function;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -20,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
  */
 @Getter
 @Setter
+@ToString
 public final class Paginator<T> {
 
     private int pageSize;
@@ -29,9 +33,9 @@ public final class Paginator<T> {
     private AsyncPaginationDataState<T> asyncState;
     private final boolean provided, async;
 
-	Paginator(@NotNull Object source) {
-		this(0, source);
-	}
+    Paginator(@NotNull Object source) {
+        this(0, source);
+    }
 
     @SuppressWarnings("unchecked")
     Paginator(int pageSize, @NotNull Object source) {
@@ -95,9 +99,7 @@ public final class Paginator<T> {
      */
     public int count() {
         checkSource();
-        return isSync()
-                ? (int) Math.ceil((double) size() / pageSize)
-                : pagesCount == -1 ? Integer.MAX_VALUE - 1 : pagesCount;
+        return isSync() ? (int) Math.ceil((double) size() / pageSize) : pagesCount == UNSET ? UNSET : pagesCount;
     }
 
     public List<T> getPage(int index) {

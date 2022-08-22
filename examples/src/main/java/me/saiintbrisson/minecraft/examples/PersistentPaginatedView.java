@@ -10,6 +10,7 @@ import me.saiintbrisson.minecraft.ViewItem;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
 
 public final class PersistentPaginatedView extends PaginatedView<Integer> {
 
@@ -21,7 +22,8 @@ public final class PersistentPaginatedView extends PaginatedView<Integer> {
     }
 
     @Override
-    protected void onItemRender(PaginatedViewSlotContext<Integer> render, ViewItem item, Integer value) {
+    protected void onItemRender(
+            @NotNull PaginatedViewSlotContext<Integer> render, @NotNull ViewItem item, @NotNull Integer value) {
         item.withItem(createPaginationItemStack(value));
     }
 

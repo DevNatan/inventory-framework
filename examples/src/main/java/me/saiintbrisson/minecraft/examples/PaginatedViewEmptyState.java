@@ -49,7 +49,8 @@ public final class PaginatedViewEmptyState extends PaginatedView<ItemStack> {
     }
 
     @Override
-    protected void onItemRender(PaginatedViewSlotContext<ItemStack> render, ViewItem item, ItemStack value) {
+    protected void onItemRender(
+            @NotNull PaginatedViewSlotContext<ItemStack> render, @NotNull ViewItem item, @NotNull ItemStack value) {
         item.withItem(value.clone());
     }
 }

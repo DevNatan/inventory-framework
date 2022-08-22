@@ -9,11 +9,12 @@ import org.jetbrains.annotations.Nullable;
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public final class PipelineContext<S> {
 
-	@Getter
-	private final @Nullable PipelinePhase phase;
+    @Getter
+    private final @Nullable PipelinePhase phase;
+
     private final List<PipelineInterceptor<S>> interceptors;
 
-	private S subject;
+    private S subject;
     private int index;
 
     /** Finishes current pipeline execution */

@@ -223,18 +223,18 @@ public final class LayoutResolutionInterceptor implements PipelineInterceptor<Vi
     private void resolveAndApplyNavigationItem(
             @NotNull VirtualView view, @Nullable ViewContext context, int direction, int slot) {
         // can be null on regular view layout pre render (on initialization)
-        if (context == null) return;
+        if (context != null) {
+            if (!view.isPaginated() || !context.isPaginated())
+                throw new IllegalStateException(String.format(
+                        "Navigation characters (%s) on layout are reserved to paginated views and cannot be used on regular views.",
+                        LAYOUT_PREVIOUS_PAGE + ", " + LAYOUT_NEXT_PAGE));
 
-        if (!view.isPaginated() || !context.isPaginated())
-            throw new IllegalStateException(String.format(
-                    "Navigation characters (%s) on layout are reserved to paginated views and cannot be used on regular views.",
-                    LAYOUT_PREVIOUS_PAGE + ", " + LAYOUT_NEXT_PAGE));
+            final AbstractPaginatedView root = view instanceof ViewContext
+                    ? ((PaginatedViewContext<?>) view).getRoot()
+                    : (AbstractPaginatedView<?>) view;
 
-        final AbstractPaginatedView root = view instanceof ViewContext
-                ? ((PaginatedViewContext<?>) view).getRoot()
-                : (AbstractPaginatedView<?>) view;
-
-        getInternalNavigationItemWithFallback(root, (PaginatedViewContext) context, direction);
+            getInternalNavigationItemWithFallback(root, (PaginatedViewContext) context, direction);
+        }
 
         final PaginatedVirtualView paginatedView = view.paginated();
         if (direction == NAVIGATE_LEFT) paginatedView.setPreviousPageItemSlot(slot);

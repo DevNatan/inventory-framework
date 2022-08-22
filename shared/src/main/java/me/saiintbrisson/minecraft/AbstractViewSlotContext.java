@@ -48,16 +48,15 @@ public abstract class AbstractViewSlotContext extends BaseViewContext implements
         return parent;
     }
 
-	@Override
-	public List<Viewer> internalGetViewers() {
-		return parent.getViewers();
-	}
+    @Override
+    public List<Viewer> internalGetViewers() {
+        return parent.getViewers();
+    }
 
-	@Override
-	public void allowCancellation() {
-	}
+    @Override
+    public void allowCancellation() {}
 
-	@Override
+    @Override
     public void render(@NotNull ViewContext context) {
         getRoot().render(getParent());
     }

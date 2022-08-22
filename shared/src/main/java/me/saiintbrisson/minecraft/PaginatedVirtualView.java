@@ -37,11 +37,43 @@ public interface PaginatedVirtualView<T> extends VirtualView {
      * request data and return the correct data for each page.
      *
      * <p>Optimize your requests by specifying a limit of data to be returned, this limit being the
-     * {@link PaginatedViewContext#getPageMaxItemsCount()} maximum amount of items} that the container
-     * can support, taking into account paging nuances, such as {@link
-     * PaginatedVirtualView#getLayout()} pagination layout.
+     * {@link PaginatedViewContext#getPageSize() page size} that the container can support, taking
+     * into account paging nuances, such as {@link PaginatedVirtualView#getLayout()} pagination layout.
      *
-     * <p>You can only use this method once during the view's lifecycle as it is a provider, and the
+     * <pre><code>
+     * interface Data {
+     *     List&#60;T&#62; getRecords();
+     *     int getTotalPages();
+     * }
+     *
+     * interface DataRepository&#60;T&#62; {
+     *     Data getData(int page, int limit);
+     * }
+     *
+     * class MyView extends PaginatedView&#60;T&#62; {
+     *
+     *   MyView(DataRepository dataRepository) {
+     *       setLayout(
+     *           "XXXXXXXXX",
+     *           "XOOOOOOOX,
+     *           "XXXXXXXXX
+     *       );
+     *
+     *       setSource(context -&#62; {
+     *           Data data = dataRepository.getData(
+     *               context.getPage(),
+     *               context.getPageSize()
+     *           );
+     *
+     *           context.setPagesCount(data.getTotalPages());
+     *           return data.getRecords();
+     *       });
+     *   }
+     *
+     * }
+     * </code></pre>
+     * <p>
+     * You can only use this method once during the view's lifecycle as it is a provider, and the
      * pagination resets with each update accordingly.
      *
      * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
@@ -69,7 +101,7 @@ public interface PaginatedVirtualView<T> extends VirtualView {
      */
     @ApiStatus.Experimental
     AsyncPaginationDataState<T> setSourceAsync(
-            @NotNull Function<PaginatedViewContext<T>, CompletableFuture<List<T>>> sourceFuture);
+            @NotNull Function<PaginatedViewContext<T>, CompletableFuture<List<? extends T>>> sourceFuture);
 
     /**
      * Defines the amount of pages that will be available for pagination.
