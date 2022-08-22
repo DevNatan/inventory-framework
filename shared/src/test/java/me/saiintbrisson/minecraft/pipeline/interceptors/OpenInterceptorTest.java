@@ -1,6 +1,7 @@
 package me.saiintbrisson.minecraft.pipeline.interceptors;
 
 import static me.saiintbrisson.minecraft.AbstractView.OPEN;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -33,6 +34,6 @@ public class OpenInterceptorTest {
             throw new IllegalStateException();
         }));
 
-        pipeline.execute(OPEN, context);
+        assertDoesNotThrow(() -> pipeline.execute(OPEN, context));
     }
 }

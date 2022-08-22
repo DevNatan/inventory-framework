@@ -45,7 +45,7 @@ public interface ViewSlotContext extends ViewContext {
     /**
      * Updates this slot.
      *
-     * <p>This method is a shortcut to {@link AbstractView#update(ViewContext, int)}.
+     * <p>This method is a shortcut to {@link AbstractView#update(ViewContext, ViewItem, int)}.
      */
     void updateSlot();
 

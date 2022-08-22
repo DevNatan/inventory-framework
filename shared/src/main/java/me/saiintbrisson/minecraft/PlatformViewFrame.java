@@ -120,7 +120,7 @@ public interface PlatformViewFrame<V, P, F extends PlatformViewFrame<V, P, F>> e
      * own or from the context, with the fallback being the item that will be defined from here.
      *
      * <pre><code>
-     *     withPreviousPageItem(($, item) -> item.withItem(...))
+     *     withPreviousPageItem(($, item) -&#62; item.withItem(...))
      * </code></pre>
      * <p>
      * You can set individual navigation items for {@link AbstractPaginatedView paginated views}
@@ -138,7 +138,7 @@ public interface PlatformViewFrame<V, P, F extends PlatformViewFrame<V, P, F>> e
      * own or from the context, with the fallback being the item that will be defined from here.
      *
      * <pre><code>
-     *     withNextPageItem(($, item) -> item.withItem(...))
+     *     withNextPageItem(($, item) -&#62; item.withItem(...))
      * </code></pre>
      * <p>
      * You can set individual navigation items for {@link AbstractPaginatedView paginated views}
@@ -183,7 +183,7 @@ public interface PlatformViewFrame<V, P, F extends PlatformViewFrame<V, P, F>> e
      * <p>
      * {@link ViewErrorHandler} is a <code>@FunctionalInterface</code> so you can use lambda.
      * <pre><code>
-     *     viewFrame.withErrorHandler((context, exception) -> { ... });
+     *     viewFrame.withErrorHandler((context, exception) -&#62; { ... });
      * </code></pre>
      *
      * @param errorHandler The global error handler.

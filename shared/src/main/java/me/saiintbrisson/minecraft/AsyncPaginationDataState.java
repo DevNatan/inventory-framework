@@ -7,7 +7,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 
 /**
@@ -18,7 +17,7 @@ import org.jetbrains.annotations.Contract;
  *
  * @param <T> The pagination data type.
  */
-@Getter(onMethod_ = {@ApiStatus.Internal})
+@Getter // TODO mark getters as @ApiStatus.Internal
 @RequiredArgsConstructor
 public final class AsyncPaginationDataState<T> {
 
