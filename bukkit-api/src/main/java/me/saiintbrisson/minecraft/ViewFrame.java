@@ -242,7 +242,7 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
         if (view == null)
             throw new IllegalStateException(String.format("View %s is not registered.", viewClass.getName()));
 
-        getOwner().getServer().getScheduler().runTaskLater(getOwner(), () -> view.open(viewer, data), 1L);
+        nextTick(() -> view.open(viewer, data));
         return view;
     }
 
