@@ -456,5 +456,6 @@ public abstract class AbstractPaginatedView<T> extends AbstractView implements P
 	protected void beforeInit() {
 		super.beforeInit();
 		getPipeline().intercept(RENDER, new PaginationRenderInterceptor());
+		getPipeline().intercept(UPDATE, new PaginationRenderInterceptor());
 	}
 }

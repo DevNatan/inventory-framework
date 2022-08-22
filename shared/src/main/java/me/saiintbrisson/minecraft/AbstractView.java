@@ -743,8 +743,6 @@ public abstract class AbstractView extends AbstractVirtualView {
      */
     @ApiStatus.Internal
     public final void update(@NotNull ViewContext context, ViewItem item, int slot) {
-        inventoryModificationTriggered();
-
         if (item.getUpdateHandler() != null) {
             final ViewSlotContext updateContext = PlatformUtils.getFactory().createSlotContext(item, context, 0, null);
 

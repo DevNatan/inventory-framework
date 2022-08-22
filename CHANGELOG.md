@@ -11,6 +11,8 @@
 * Handle pagination source and pagination source renderization independently (#201)
 * Fix "At least one pagination source must be set.." (#201)
 * New shortcut handlers #rendered and #updated to ViewItem (#201)
+* Rendering functions allowed back on pagination item render (#201)
+* Layout now rendered dynamically when source is updated (#201)
 
 # 2.5.3
 * Fix scheduled updates (#175)

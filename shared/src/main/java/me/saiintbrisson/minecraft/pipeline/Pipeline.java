@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.TestOnly;
 
 /**
  * The pipeline is a structure containing a sequence of functions (blocks/lambdas) that are called
@@ -94,7 +95,8 @@ public final class Pipeline<S> {
         interceptors.computeIfAbsent(phase, $ -> new ArrayList<>()).add((PipelineInterceptor<S>) interceptor);
     }
 
-    public void execute(@Nullable final S subject) {
+	@TestOnly
+	void execute(@Nullable final S subject) {
         final List<PipelineInterceptor<S>> pipelineInterceptors = new LinkedList<>();
         for (final PipelinePhase phase : _phases) {
             final List<PipelineInterceptor<S>> interceptors = this.interceptors.get(phase);
@@ -103,7 +105,7 @@ public final class Pipeline<S> {
             pipelineInterceptors.addAll(interceptors);
         }
 
-        final PipelineContext<S> context = new PipelineContext<>(pipelineInterceptors);
+        final PipelineContext<S> context = new PipelineContext<>(null, pipelineInterceptors);
         context.execute(subject);
     }
 
@@ -111,7 +113,7 @@ public final class Pipeline<S> {
         final List<PipelineInterceptor<S>> pipelineInterceptors = interceptors.get(phase);
         if (pipelineInterceptors == null) return null;
 
-        final PipelineContext<S> context = new PipelineContext<>(pipelineInterceptors);
+        final PipelineContext<S> context = new PipelineContext<>(phase, pipelineInterceptors);
         context.execute(subject);
         return context;
     }

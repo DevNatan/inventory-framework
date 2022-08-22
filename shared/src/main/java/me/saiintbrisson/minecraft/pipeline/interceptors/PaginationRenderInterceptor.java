@@ -13,11 +13,14 @@ import me.saiintbrisson.minecraft.pipeline.PipelineInterceptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Stack;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import static me.saiintbrisson.minecraft.AbstractView.RENDER;
 import static me.saiintbrisson.minecraft.IFUtils.callIfNotNull;
 import static me.saiintbrisson.minecraft.IFUtils.checkContainerType;
 import static me.saiintbrisson.minecraft.IFUtils.checkPaginationSourceAvailability;
@@ -40,8 +43,10 @@ public final class PaginationRenderInterceptor implements PipelineInterceptor<Vi
 		// unlike the regular paginated view which sets an expected size of the paginator using
 		// `offset` and `limit` as a base, in context nothing is used because we expect it to be
 		// set only during synchronous pagination renderization phase.
-		if (contextPaginator != null && contextPaginator.isSync())
-			contextPaginator.setPageSize(contextPaginator.getSource().size());
+		if (Objects.equals(RENDER, pipeline.getPhase())
+			&& contextPaginator != null
+			&& contextPaginator.isSync()
+		) contextPaginator.setPageSize(contextPaginator.getSource().size());
 
 		final Paginator<?> paginator = contextPaginator == null
 			? paginatedContext.getRoot().getPaginator()
@@ -149,9 +154,7 @@ public final class PaginationRenderInterceptor implements PipelineInterceptor<Vi
 			.apply(context)
 			.whenComplete((data, $) -> {
 				if (data == null)
-					throw new IllegalStateException("Asynchronous pagination result cannot be null");
-
-//				context.getPaginator().setSource(data);
+					data = Collections.emptyList();
 
 				// set before async success handler call to allow user now how much data was loaded
 				paginator.setPageSize(data.size());

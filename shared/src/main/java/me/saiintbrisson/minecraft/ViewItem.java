@@ -392,6 +392,8 @@ public final class ViewItem {
 
 	/**
 	 * Called when the item is updated.
+	 * <p>
+	 * Shortcut to {@code onUpdate(update -> update.setItem(itemFactory.get());}
 	 *
 	 * <p>It is allowed to change the item that will be displayed in this handler using the context
 	 * mutation functions, e.g.: {@link ViewSlotContext#setItem(Object)}.
@@ -409,8 +411,6 @@ public final class ViewItem {
 
 	/**
 	 * Called when a player clicks on the item.
-	 * <p>
-	 * Shortcut to {@code onUpdate(update -> update.setItem(itemFactory.get());}
 	 *
 	 * <p>This handler works on any container that the actor has access to and only works if the
 	 * interaction has not been cancelled.
