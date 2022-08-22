@@ -54,6 +54,10 @@ public abstract class AbstractViewSlotContext extends BaseViewContext implements
 	}
 
 	@Override
+	public void allowCancellation() {
+	}
+
+	@Override
     public void render(@NotNull ViewContext context) {
         getRoot().render(getParent());
     }

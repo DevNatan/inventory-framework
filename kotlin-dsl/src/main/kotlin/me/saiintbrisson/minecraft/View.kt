@@ -32,7 +32,7 @@ public fun ViewBuilder.onOpen(block: OpenViewContext.() -> Unit) {
  *
  * @param block The close context handler.
  */
-public fun ViewBuilder.onClose(block: CloseViewContext.() -> Unit) {
+public fun ViewBuilder.onClose(block: ViewContext.() -> Unit) {
     close = block
 }
 

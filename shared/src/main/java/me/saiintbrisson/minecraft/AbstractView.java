@@ -509,11 +509,11 @@ public abstract class AbstractView extends AbstractVirtualView {
         for (final ViewContext context : new ArrayList<>(contexts)) context.update();
     }
 
-    final void prepareClose(@NotNull CloseViewContext context) {
+    final void prepareClose(@NotNull ViewContext context) {
         getPipeline().execute(CLOSE, context);
     }
 
-    final void remove(@NotNull CloseViewContext context, Viewer viewer) {
+    final void remove(@NotNull ViewContext context, Viewer viewer) {
         synchronized (context.getViewers()) {
             context.removeViewer(viewer);
 
