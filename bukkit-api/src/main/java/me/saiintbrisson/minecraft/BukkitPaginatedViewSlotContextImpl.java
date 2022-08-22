@@ -138,12 +138,12 @@ final class BukkitPaginatedViewSlotContextImpl<T> extends AbstractViewSlotContex
     }
 
     @Override
-    public @Range(from = 0, to = Integer.MAX_VALUE) int getPreviousPage() {
+    public int getPreviousPage() {
         return parent.getPreviousPage();
     }
 
     @Override
-    public @Range(from = 1, to = Integer.MAX_VALUE) int getNextPage() {
+    public int getNextPage() {
         return parent.getNextPage();
     }
 

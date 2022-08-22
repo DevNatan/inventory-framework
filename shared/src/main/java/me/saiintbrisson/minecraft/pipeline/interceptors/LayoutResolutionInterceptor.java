@@ -144,7 +144,6 @@ public final class LayoutResolutionInterceptor implements PipelineInterceptor<Vi
         final int containerColumnsCount = determineColumnsCount(view);
         final Stack<Integer> itemsLayer = new Stack<>();
 
-		System.out.println("resolving layout " + Arrays.toString(layout));
         for (int row = 0; row < rows; row++) {
             final String layer = layout[row];
 
@@ -237,7 +236,6 @@ public final class LayoutResolutionInterceptor implements PipelineInterceptor<Vi
 			getInternalNavigationItemWithFallback(root, (PaginatedViewContext) context, direction);
 		}
 
-		System.out.println("set navigation " + direction + " of " + view.getClass().getSimpleName() + " to " + slot);
         final PaginatedVirtualView paginatedView = view.paginated();
         if (direction == NAVIGATE_LEFT) paginatedView.setPreviousPageItemSlot(slot);
         else paginatedView.setNextPageItemSlot(slot);

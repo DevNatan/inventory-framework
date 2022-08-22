@@ -25,6 +25,7 @@ import static me.saiintbrisson.minecraft.IFUtils.checkContainerType;
 import static me.saiintbrisson.minecraft.IFUtils.checkPaginationSourceAvailability;
 import static me.saiintbrisson.minecraft.IFUtils.useLayoutItemsLayer;
 import static me.saiintbrisson.minecraft.IFUtils.useLayoutItemsLayerSize;
+import static me.saiintbrisson.minecraft.ViewItem.UNSET;
 
 public final class PaginationRenderInterceptor implements PipelineInterceptor<ViewContext> {
 
@@ -34,16 +35,21 @@ public final class PaginationRenderInterceptor implements PipelineInterceptor<Vi
 		checkPaginationSourceAvailability(context);
 
 		final PaginatedViewContext<?> paginatedContext = context.paginated();
+		final AbstractPaginatedView<?> root = paginatedContext.getRoot();
 		final Paginator<?> contextPaginator = paginatedContext.getPaginator();
 
-		// we need to set a value for the source size of the paginator here because,
-		// unlike the regular paginated view which sets an expected size of the paginator using
-		// `offset` and `limit` as a base, in context nothing is used because we expect it to be
-		// set only during synchronous pagination renderization phase.
+		// determine initial page size if it's not already set this can be set on layout resolution
 		if (Objects.equals(RENDER, pipeline.getPhase())
 			&& contextPaginator != null
-			&& contextPaginator.isSync()
-		) contextPaginator.setPageSize(contextPaginator.getSource().size());
+			&& contextPaginator.getPageSize() == 0
+		) {
+			int pageSize = determineInitialPageSize(root, paginatedContext);
+			if (pageSize == UNSET)
+				throw new IllegalStateException("Unable to determine context page size");
+
+			// inherit page size from root paginator or use layout layer size as page size
+			contextPaginator.setPageSize(pageSize);
+		}
 
 		final Paginator<?> paginator = contextPaginator == null
 			? paginatedContext.getRoot().getPaginator()
@@ -101,7 +107,7 @@ public final class PaginationRenderInterceptor implements PipelineInterceptor<Vi
 					data = Collections.emptyList();
 
 				// set before async success handler call to allow user now how much data was loaded
-				paginator.setPageSize(data.size());
+				paginator.setSource(data);
 
 				callIfNotNull(asyncState.getSuccess(), handler -> handler.accept(context));
 				renderSource(context, layout, preservedItems, data, paginator);
@@ -124,7 +130,7 @@ public final class PaginationRenderInterceptor implements PipelineInterceptor<Vi
 		if (data == null)
 			throw new IllegalStateException("Lazy pagination result cannot be null");
 
-		paginator.setPageSize(data.size());
+		paginator.setSource(data);
 		renderSource(context, layout, preservedItems, data, paginator);
 	}
 
@@ -144,7 +150,6 @@ public final class PaginationRenderInterceptor implements PipelineInterceptor<Vi
 
 	private <T> void renderPagination(
 		@NotNull PaginatedViewContext<T> context, List<T> elements, String[] layout, ViewItem[] preservedItems) {
-		//		renderPatterns(context);
 
 		final AbstractPaginatedView<T> root = context.getRoot();
 		final int elementsCount = elements.size();
@@ -254,6 +259,50 @@ public final class PaginationRenderInterceptor implements PipelineInterceptor<Vi
 			return null;
 
 		return context.getRoot().getLayout();
+	}
+
+	/**
+	 * Tries to determine initial context paginator page size.
+	 * <p>
+	 * Is necessary to inherit the page size here if the context has not explicitly defined a
+	 * source because this value is only set during layout resolution, and if the context does
+	 * not have a layout nothing will be defined, so we will need to:
+	 * <ul>
+	 *     <li>Use layout items layer size to determine page size;</li>
+	 *     <li>Inherit the page size from root source if available;</li>
+	 *     <li>Set page size as the total size of the root (limit - offset);</li>
+	 * </ul>
+	 *
+	 * @return The page size or {@link ViewItem#UNSET}.
+	 */
+	private int determineInitialPageSize(
+		AbstractPaginatedView<?> root,
+		PaginatedViewContext<?> context
+	) {
+		// first context-scope layout because it's always prioritized
+		int pageSize = context.isLayoutSignatureChecked()
+			? context.getLayoutItemsLayer().size()
+			: UNSET;
+
+		// fallback to root layout
+		if (pageSize == UNSET) {
+			pageSize = root.isLayoutSignatureChecked()
+				? root.getLayoutItemsLayer().size()
+				: UNSET;
+		}
+
+		if (pageSize == UNSET) {
+			// root source page size if available
+			pageSize = root.getPaginator() != null
+				? root.getPaginator().getPageSize()
+				: UNSET;
+
+			// fallback to fillable view area
+			if (pageSize == UNSET)
+				pageSize = root.getLimit() - root.getOffset();
+		}
+
+		return pageSize;
 	}
 
 }

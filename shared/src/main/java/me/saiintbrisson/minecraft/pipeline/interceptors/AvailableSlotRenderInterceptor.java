@@ -106,7 +106,6 @@ public class AvailableSlotRenderInterceptor implements PipelineInterceptor<Virtu
         if (!targetingRoot && !hasAnyAvailableLayout)
 			offset = root.getReservedItemsCount();
 
-        System.out.println("layout items layer: " + layoutItemsLayer);
         for (int i = offset; i < reservedItemsCount; i++) {
             final int targetSlot;
             try {

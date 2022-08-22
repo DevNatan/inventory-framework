@@ -153,7 +153,7 @@ class BasePaginatedViewContext<T> extends BaseViewContext implements PaginatedVi
 	@Override
 	public final void setSource(@NotNull List<? extends T> source) {
 		checkUniquePaginationSource();
-		setPaginator(new Paginator<>(0, source));
+		setPaginator(new Paginator<>(source));
 	}
 
 	@Override

@@ -66,7 +66,6 @@ public interface PaginatedViewContext<T> extends ViewContext, PaginatedVirtualVi
      *
      * @return The index of the previous page.
      */
-    @Range(from = 0, to = Integer.MAX_VALUE)
     int getPreviousPage();
 
     /**
@@ -74,7 +73,6 @@ public interface PaginatedViewContext<T> extends ViewContext, PaginatedVirtualVi
      *
      * @return The index of the next page.
      */
-    @Range(from = 1, to = Integer.MAX_VALUE)
     int getNextPage();
 
     /**
@@ -110,7 +108,7 @@ public interface PaginatedViewContext<T> extends ViewContext, PaginatedVirtualVi
      *
      * @param page The page that'll be switched to.
      */
-    void switchTo(@Range(from = 0, to = Integer.MAX_VALUE) int page);
+    void switchTo(int page);
 
     /**
      * Updates the current context by switching to the previous page.

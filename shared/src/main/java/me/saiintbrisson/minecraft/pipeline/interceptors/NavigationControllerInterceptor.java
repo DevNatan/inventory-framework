@@ -98,7 +98,6 @@ public final class NavigationControllerInterceptor implements PipelineIntercepto
 		int targetSlot = layoutSlot;
 
 		if (item != null) {
-			System.out.println("not null item");
 			checkIndeterministicNavigationSlot(layoutSlot, item.getSlot());
 			checkAmbiguousNavigationSlot(layoutSlot, item.getSlot());
 
@@ -106,7 +105,6 @@ public final class NavigationControllerInterceptor implements PipelineIntercepto
 			targetSlot = layoutSlot == UNSET
 				? item.getSlot()
 				: layoutSlot;
-			System.out.println("targetSlot = " + targetSlot);
 		}
 
 		if (targetSlot == UNSET)
@@ -135,7 +133,6 @@ public final class NavigationControllerInterceptor implements PipelineIntercepto
 			});
 		}
 
-		System.out.println("item of " + direction + " is " + item);
 		renderItemAndApplyOnContext(context, item.withCancelOnClick(true), targetSlot);
 	}
 

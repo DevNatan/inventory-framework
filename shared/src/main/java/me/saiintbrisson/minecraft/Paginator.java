@@ -11,6 +11,8 @@ import lombok.Setter;
 import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
 
+import static me.saiintbrisson.minecraft.ViewItem.UNSET;
+
 /**
  * Utility class to handle paging related data.
  *
@@ -99,7 +101,7 @@ public final class Paginator<T> {
         checkSource();
         return isSync()
                 ? (int) Math.ceil((double) size() / pageSize)
-                : pagesCount == -1 ? Integer.MAX_VALUE - 1 : pagesCount;
+                : pagesCount == UNSET ? UNSET : pagesCount;
 	}
 
     public List<T> getPage(int index) {
