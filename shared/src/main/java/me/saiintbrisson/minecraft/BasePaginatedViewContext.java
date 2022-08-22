@@ -93,6 +93,9 @@ class BasePaginatedViewContext<T> extends BaseViewContext implements PaginatedVi
 	@Override
 	public final void switchTo(final int page) {
 		final AbstractPaginatedView<T> root = getRoot().paginated();
+		if (!getPaginator().hasPage(page))
+			return;
+
 		root.runCatching(this, () -> {
 			setPage(page);
 			update();
