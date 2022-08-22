@@ -4,8 +4,11 @@
 * Auto slot fill and layout can now be used on regular views and paginated views (#174)
 * Updated Gradle to v7.5.1 (#189)
 * Remove nextTick from view open, close and updateSlot call (#193)
+* Update plugin com.diffplug.spotless to v6.9.1 (#194)
 * View layout is now resolved on initialization (#196)
 * Render, update and open process was moved to pipeline interceptors (#196)
+* Update mockito monorepo to v4.7.0 (#197)
+* Add license scan report and status (#198)
 * Pagination source now can be only set once (#201)
 * Dynamic layout change is not allowed (#201)
 * Handle pagination source and pagination source renderization independently (#201)
@@ -14,6 +17,7 @@
 * Rendering functions allowed back on pagination item render (#201)
 * Layout now rendered dynamically when source is updated (#201)
 * Fix Bukkit player retrieval on close handler (#202)
+* Remove nextTick from updateSlot call (#203)
 
 # 2.5.3
 * Fix scheduled updates (#175)
