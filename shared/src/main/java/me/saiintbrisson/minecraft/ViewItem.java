@@ -19,15 +19,18 @@ import java.util.function.Supplier;
 
 /**
  * Mutable class that represents an item in a slot of a container.
+ * <p>
+ * <b><i> Setters of this class are internal inventory-framework API that should not be used from
+ * outside of this library. No compatibility guarantees are provided. </i></b>
  */
 @ToString
-@Setter
-@Getter
+@Setter(onMethod_ = {@ApiStatus.Internal})
+@Getter()
 public final class ViewItem {
 
-	static final int UNSET = -1;
+	public static final int UNSET = -1;
 	public static final int AVAILABLE = -2;
-	private static final long NO_INTERVAL = -3;
+	public static final long NO_INTERVAL = -3;
 
 	enum State {
 		UNDEFINED,
@@ -45,6 +48,7 @@ public final class ViewItem {
 
 	private State state = State.UNDEFINED;
 	private boolean paginationItem;
+	private boolean navigationItem;
 	private String referenceKey;
 
 	@Setter(AccessLevel.PUBLIC)
@@ -72,10 +76,31 @@ public final class ViewItem {
 	/**
 	 * Creates a new ViewItem instance with a defined slot.
 	 *
+	 * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
+	 * this library. No compatibility guarantees are provided.</i></b>
+	 *
 	 * @param slot The slot that this item will be placed initially.
 	 */
+	@ApiStatus.Internal
 	public ViewItem(int slot) {
 		this.slot = slot;
+	}
+
+	/**
+	 * Sets the slot that this item will be positioned.
+	 *
+	 * @param slot The new item slot.
+	 * @return This item.
+	 * @throws IllegalStateException If this item isn't a {@link #isNavigationItem() navigation item}.
+	 */
+	@ApiStatus.AvailableSince("2.5.4")
+	@Contract(value = "_ -> this", mutates = "this")
+	public ViewItem withSlot(int slot) {
+		if (!isNavigationItem())
+			throw new IllegalStateException("Only navigation item slot can be changed.");
+
+		this.slot = slot;
+		return this;
 	}
 
 	/**

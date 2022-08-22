@@ -18,15 +18,6 @@ public final class IFUtils {
         return input == null ? fallback : input;
     }
 
-    public static String[] useLayout(@NotNull VirtualView view, @NotNull VirtualView context) {
-        return context.getLayout() == null ? view.getLayout() : context.getLayout();
-    }
-
-    public static <T> Paginator<T> usePaginator(
-            @NotNull PaginatedVirtualView<T> view, @NotNull PaginatedViewContext<T> context) {
-        return context.getPaginator() == null ? view.getPaginator() : context.getPaginator();
-    }
-
     public static int useLayoutItemsLayerSize(@NotNull Stack<Integer> layoutItemsLayer, String[] layout) {
         return layout == null ? 0 /* ignored */ : layoutItemsLayer.size();
     }

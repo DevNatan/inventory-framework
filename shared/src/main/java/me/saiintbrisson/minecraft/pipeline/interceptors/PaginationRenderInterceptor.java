@@ -17,7 +17,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Stack;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static me.saiintbrisson.minecraft.AbstractView.RENDER;
@@ -26,8 +25,6 @@ import static me.saiintbrisson.minecraft.IFUtils.checkContainerType;
 import static me.saiintbrisson.minecraft.IFUtils.checkPaginationSourceAvailability;
 import static me.saiintbrisson.minecraft.IFUtils.useLayoutItemsLayer;
 import static me.saiintbrisson.minecraft.IFUtils.useLayoutItemsLayerSize;
-import static me.saiintbrisson.minecraft.PaginatedVirtualView.NAVIGATE_LEFT;
-import static me.saiintbrisson.minecraft.PaginatedVirtualView.NAVIGATE_RIGHT;
 
 public final class PaginationRenderInterceptor implements PipelineInterceptor<ViewContext> {
 
@@ -52,10 +49,12 @@ public final class PaginationRenderInterceptor implements PipelineInterceptor<Vi
 			? paginatedContext.getRoot().getPaginator()
 			: contextPaginator;
 
-		tryRenderPagination(context.paginated(), useLayout(context), null, paginator, $ -> {
-			updateNavigationItem(paginatedContext, NAVIGATE_LEFT);
-			updateNavigationItem(paginatedContext, NAVIGATE_RIGHT);
-		});
+		try {
+			tryRenderPagination(context.paginated(), useLayout(context), null, paginator);
+		} catch (Exception e) {
+			pipeline.finish();
+			throw e;
+		}
 	}
 
 	/**
@@ -64,87 +63,32 @@ public final class PaginationRenderInterceptor implements PipelineInterceptor<Vi
 	 * @param context        The pagination context.
 	 * @param layout         The layout that'll be used as base to renderization.
 	 * @param preservedItems Preserved items from previous renders.
-	 * @param callback       Callback containing paging data
 	 * @param <T>            The pagination data type.
 	 */
 	private <T> void tryRenderPagination(
 		@NotNull PaginatedViewContext<T> context,
 		String[] layout,
 		@SuppressWarnings("SameParameterValue") ViewItem[] preservedItems,
-		Paginator<T> paginator,
-		Consumer<List<T>> callback
+		Paginator<T> paginator
 	) {
 		if (paginator.isAsync())
 			handleAsyncSourceProvider(
 				context,
 				layout,
 				preservedItems,
-				paginator,
-				callback
+				paginator
 			);
 		else if (paginator.isProvided())
-			handleLazySourceProvider(context, layout, preservedItems, paginator, callback);
+			handleLazySourceProvider(context, layout, preservedItems, paginator);
 		else
-			renderSource(context, layout, preservedItems, null, paginator, callback);
-	}
-
-	/**
-	 * Returns the position of the navigation item for the specified direction.
-	 * <p>
-	 * The item slot is defined during {@link LayoutResolutionInterceptor layout resolution}.
-	 *
-	 * @param context   The pagination context.
-	 * @param direction The navigation direction.
-	 * @return Current navigation (of the specified direction) item slot.
-	 */
-	private int getNavigationItemSlot(@NotNull PaginatedViewContext<?> context, int direction) {
-		return direction == NAVIGATE_LEFT ? context.getPreviousPageItemSlot() : context.getNextPageItemSlot();
-	}
-
-	private <T> void updateNavigationItem(@NotNull PaginatedViewContext<T> context, int direction) {
-		//		final AbstractPaginatedView<T> root = context.getRoot();
-		//		int expectedSlot = getNavigationItemSlot(context, direction);
-		//		ViewItem item = null;
-		//
-		//		// it is recommended to use layout for pagination, so at this stage the layout may have
-		//		// already defined the slot for the pagination items, so we check if it is not defined yet
-		//		if (expectedSlot == -1) {
-		//			// check if navigation item was manually set by the user
-		//			item = resolveNavigationItem(this, context, direction);
-		//
-		//			if (item == null || item.getSlot() == -1) return;
-		//
-		//			expectedSlot = item.getSlot();
-		//			if (direction == NAVIGATE_LEFT) context.setPreviousPageItemSlot(expectedSlot);
-		//			else context.setNextPageItemSlot(expectedSlot);
-		//		}
-		//
-		//		if (item == null) item = resolveNavigationItem(this, context, direction);
-		//
-		//		// ensure item is removed if it was resolved and set before and is not anymore
-		//		if (item == null) {
-		//			root.removeAt(context, expectedSlot);
-		//			return;
-		//		}
-		//
-		//		// the click handler should be checked for cases where the user has defined the navigation
-		//		// item manually, so we will not override his handler
-		//		if (item.getClickHandler() == null) {
-		//			item.onClick(click -> {
-		//				if (direction == NAVIGATE_LEFT) click.paginated().switchToPreviousPage();
-		//				else click.paginated().switchToNextPage();
-		//			});
-		//		}
-		//
-		//		renderItemAndApplyOnContext(context, item.withCancelOnClick(true), expectedSlot);
+			renderSource(context, layout, preservedItems, null, paginator);
 	}
 
 	private <T> void handleAsyncSourceProvider(
 		@NotNull PaginatedViewContext<T> context,
 		String[] layout,
 		ViewItem[] preservedItems,
-		@NotNull Paginator<T> paginator,
-		Consumer<List<T>> callback
+		@NotNull Paginator<T> paginator
 	) {
 		AsyncPaginationDataState<T> asyncState = paginator.getAsyncState();
 		callIfNotNull(asyncState.getLoadStarted(), handler -> handler.accept(context));
@@ -160,7 +104,7 @@ public final class PaginationRenderInterceptor implements PipelineInterceptor<Vi
 				paginator.setPageSize(data.size());
 
 				callIfNotNull(asyncState.getSuccess(), handler -> handler.accept(context));
-				renderSource(context, layout, preservedItems, data, paginator, callback);
+				renderSource(context, layout, preservedItems, data, paginator);
 			})
 			.exceptionally(error -> {
 				callIfNotNull(asyncState.getError(), handler -> handler.accept(context, error));
@@ -173,8 +117,7 @@ public final class PaginationRenderInterceptor implements PipelineInterceptor<Vi
 		@NotNull PaginatedViewContext<T> context,
 		String[] layout,
 		ViewItem[] preservedItems,
-		@NotNull Paginator<T> paginator,
-		Consumer<List<T>> callback
+		@NotNull Paginator<T> paginator
 	) {
 		Function<PaginatedViewContext<T>, List<T>> factory = paginator.getFactory();
 		List<T> data = factory.apply(context);
@@ -182,7 +125,7 @@ public final class PaginationRenderInterceptor implements PipelineInterceptor<Vi
 			throw new IllegalStateException("Lazy pagination result cannot be null");
 
 		paginator.setPageSize(data.size());
-		renderSource(context, layout, preservedItems, data, paginator, callback);
+		renderSource(context, layout, preservedItems, data, paginator);
 	}
 
 	private <T> void renderSource(
@@ -190,15 +133,13 @@ public final class PaginationRenderInterceptor implements PipelineInterceptor<Vi
 		String[] layout,
 		ViewItem[] preservedItems,
 		List<T> source,
-		Paginator<T> paginator,
-		Consumer<List<T>> callback
+		Paginator<T> paginator
 	) {
 		final List<T> data = source == null
 			? paginator.getPage(context.getPage())
 			: source;
 
 		renderPagination(context, data, layout, preservedItems);
-		callback.accept(data);
 	}
 
 	private <T> void renderPagination(
