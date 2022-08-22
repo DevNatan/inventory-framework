@@ -39,13 +39,13 @@ public abstract class AbstractVirtualView implements VirtualView {
 		return items;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final ViewItem getItem(int index) {
-		return items[index];
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final ViewItem getItem(int index) {
+        return getItems()[index];
+    }
 
 	@Override
 	public final void setItems(ViewItem[] items) {
@@ -241,14 +241,14 @@ public abstract class AbstractVirtualView implements VirtualView {
 	public @NotNull ViewItem availableSlot(Object item) {
 		final int slot = getNextAvailableSlot();
 
-		// item slot will be resolved after layout resolution
-		if (slot == ViewItem.AVAILABLE) {
-			final ViewItem viewItem = new ViewItem(slot).withItem(item);
-			if (reservedItems == null) reservedItems = new ArrayDeque<>();
+        // item slot will be resolved after layout resolution
+        if (slot == ViewItem.AVAILABLE) {
+            final ViewItem viewItem = new ViewItem(slot).withItem(item);
+            if (getReservedItems() == null) reservedItems = new ArrayDeque<>();
 
-			reservedItems.add(viewItem);
-			return viewItem;
-		}
+            getReservedItems().add(viewItem);
+            return viewItem;
+        }
 
 		return slot(slot, item);
 	}

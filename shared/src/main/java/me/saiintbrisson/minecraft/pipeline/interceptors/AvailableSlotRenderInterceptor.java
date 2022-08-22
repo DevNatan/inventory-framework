@@ -7,12 +7,23 @@ import me.saiintbrisson.minecraft.AbstractView;
 import me.saiintbrisson.minecraft.ViewContext;
 import me.saiintbrisson.minecraft.ViewItem;
 import me.saiintbrisson.minecraft.VirtualView;
+import me.saiintbrisson.minecraft.exception.ContainerException;
 import me.saiintbrisson.minecraft.exception.SlotFillExceededException;
+import me.saiintbrisson.minecraft.exception.UnresolvedLayoutException;
 import me.saiintbrisson.minecraft.pipeline.PipelineContext;
 import me.saiintbrisson.minecraft.pipeline.PipelineInterceptor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.TestOnly;
 
-public final class AvailableSlotRenderInterceptor implements PipelineInterceptor<VirtualView> {
+/**
+ * Renders items defined by {@link VirtualView#availableSlot()}.
+ */
+public class AvailableSlotRenderInterceptor implements PipelineInterceptor<VirtualView> {
+
+    @TestOnly
+    boolean isSuppressContainerException() {
+        return false;
+    }
 
     @Override
     public void intercept(@NotNull PipelineContext<VirtualView> pipeline, VirtualView view) {
@@ -23,16 +34,17 @@ public final class AvailableSlotRenderInterceptor implements PipelineInterceptor
         final AbstractView root = context.getRoot();
 
         // just render reserved items since root layout is always resolved on init
-        if (root.getLayout() != null) renderReservedItems(root, context, root.getLayoutItemsLayer(), true);
+        if (root.isLayoutSignatureChecked()) renderReservedItems(root, context, root.getLayoutItemsLayer(), true);
 
         final String[] contextLayout = context.getLayout();
+
         if (contextLayout != null) {
             if (!context.isLayoutSignatureChecked())
-                throw new IllegalStateException("Context layout must be resolved before render");
+                throw new UnresolvedLayoutException("Context layout must be resolved before render", null);
 
-            // inherits the layout items layer from root if the layout was inherited
             renderReservedItems(root, context, context.getLayoutItemsLayer(), false);
         } else {
+            // inherits the layout items layer from root if the layout was inherited
             renderReservedItems(root, context, root.getLayoutItemsLayer(), false);
         }
     }
@@ -94,6 +106,7 @@ public final class AvailableSlotRenderInterceptor implements PipelineInterceptor
         if (!targetingRoot && !hasAnyAvailableLayout)
 			offset = root.getReservedItemsCount();
 
+        System.out.println("layout items layer: " + layoutItemsLayer);
         for (int i = offset; i < reservedItemsCount; i++) {
             final int targetSlot;
             try {
@@ -117,9 +130,15 @@ public final class AvailableSlotRenderInterceptor implements PipelineInterceptor
             // register item on root view since dynamically rendered items are not registered on init,
             // so we need to register then on the first time that it's get rendered
             if (targetingRoot) root.apply(next, targetSlot);
-            else context.apply(next, targetSlot);
+            else {
+                context.apply(next, targetSlot);
+            }
 
-            root.render(context, next, targetSlot);
+            try {
+                root.render(context, next, targetSlot);
+            } catch (ContainerException e) {
+                if (!isSuppressContainerException()) throw e;
+            }
         }
     }
 }
