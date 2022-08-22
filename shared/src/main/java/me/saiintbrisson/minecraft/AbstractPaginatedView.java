@@ -320,7 +320,7 @@ public abstract class AbstractPaginatedView<T> extends AbstractView implements P
     @Override
     @ApiStatus.Experimental
     public final AsyncPaginationDataState<T> setSourceAsync(
-            @NotNull Function<PaginatedViewContext<T>, CompletableFuture<List<T>>> sourceFuture)
+            @NotNull Function<PaginatedViewContext<T>, CompletableFuture<List<? extends T>>> sourceFuture)
             throws InitializationException {
         ensureNotInitialized();
         final AsyncPaginationDataState<T> state = new AsyncPaginationDataState<>(sourceFuture);

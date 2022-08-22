@@ -53,6 +53,7 @@ class BasePaginatedViewContext<T> extends BaseViewContext implements PaginatedVi
     }
 
     @Override
+    @Deprecated
     public final int getPageMaxItemsCount() {
         if (getLayoutItemsLayer() == null) throw new IllegalStateException("Layout not resolved");
 
@@ -142,8 +143,9 @@ class BasePaginatedViewContext<T> extends BaseViewContext implements PaginatedVi
     private void checkUniquePaginationSource() {
         if (getPaginator() != null)
             throw new IllegalStateException(
-                    "Pagination source can only be set once. If you need dynamic or changeable source"
-                            + " use pagination source provider or asynchronous pagination source instead.");
+                    "Pagination source can only be set once. If you need dynamic source use " +
+						"pagination source provider or asynchronous pagination source instead."
+			);
     }
 
     @Override
@@ -162,7 +164,7 @@ class BasePaginatedViewContext<T> extends BaseViewContext implements PaginatedVi
     @Override
     @ApiStatus.Experimental
     public final AsyncPaginationDataState<T> setSourceAsync(
-            @NotNull Function<PaginatedViewContext<T>, CompletableFuture<List<T>>> sourceFuture) {
+            @NotNull Function<PaginatedViewContext<T>, CompletableFuture<List<? extends T>>> sourceFuture) {
         checkUniquePaginationSource();
 
         final AsyncPaginationDataState<T> state = new AsyncPaginationDataState<>(sourceFuture);

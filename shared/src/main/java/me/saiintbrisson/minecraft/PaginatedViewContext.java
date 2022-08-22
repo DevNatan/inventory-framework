@@ -50,7 +50,9 @@ public interface PaginatedViewContext<T> extends ViewContext, PaginatedVirtualVi
      * The maximum number of items that a page in a layered context can have.
      *
      * @return The maximum number of items that a page in a layered context can have.
+     * @deprecated Use {@link #getPageSize()} instead.
      */
+    @Deprecated
     int getPageMaxItemsCount();
 
     /**
@@ -113,7 +115,7 @@ public interface PaginatedViewContext<T> extends ViewContext, PaginatedVirtualVi
      * Updates the current context by switching to the previous page.
      *
      * @return If page has been switched successfully, may return <code>false</code> if there are no
-     *     more pages to go to.
+     * more pages to go to.
      */
     boolean switchToPreviousPage();
 
@@ -121,11 +123,13 @@ public interface PaginatedViewContext<T> extends ViewContext, PaginatedVirtualVi
      * Updates the current context by switching to the next page.
      *
      * @return If page has been switched successfully, may return <code>false</code> if there are no
-     *     more pages to go to.
+     * more pages to go to.
      */
     boolean switchToNextPage();
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @NotNull
     AbstractPaginatedView<T> getRoot();

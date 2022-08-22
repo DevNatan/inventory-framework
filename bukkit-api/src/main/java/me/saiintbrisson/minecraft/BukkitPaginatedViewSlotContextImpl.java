@@ -75,7 +75,7 @@ final class BukkitPaginatedViewSlotContextImpl<T> extends AbstractViewSlotContex
 
     @Override
     public AsyncPaginationDataState<T> setSourceAsync(
-            @NotNull Function<PaginatedViewContext<T>, CompletableFuture<List<T>>> sourceFuture) {
+            @NotNull Function<PaginatedViewContext<T>, CompletableFuture<List<? extends T>>> sourceFuture) {
         throwPaginationDataChangedError();
         return null;
     }
@@ -112,6 +112,7 @@ final class BukkitPaginatedViewSlotContextImpl<T> extends AbstractViewSlotContex
     }
 
     @Override
+    @Deprecated
     public int getPageMaxItemsCount() {
         return parent.getPageMaxItemsCount();
     }

@@ -77,7 +77,8 @@ public final class PaginationRenderInterceptor implements PipelineInterceptor<Vi
         else renderSource(context, layout, preservedItems, null, paginator);
     }
 
-    private <T> void handleAsyncSourceProvider(
+    @SuppressWarnings("unchecked")
+	private <T> void handleAsyncSourceProvider(
             @NotNull PaginatedViewContext<T> context,
             String[] layout,
             ViewItem[] preservedItems,
@@ -92,10 +93,13 @@ public final class PaginationRenderInterceptor implements PipelineInterceptor<Vi
                     if (data == null) data = Collections.emptyList();
 
                     // set before async success handler call to allow user now how much data was loaded
-                    paginator.setSource(data);
+                    paginator.setSource((List<T>) data);
 
                     callIfNotNull(asyncState.getSuccess(), handler -> handler.accept(context));
-                    renderSource(context, layout, preservedItems, data, paginator);
+                    callIfNotNull(
+                            asyncState.getCompletedSuccessfully(),
+                            handler -> handler.accept(context, paginator.getSource()));
+                    renderSource(context, layout, preservedItems, (List<T>) data, paginator);
                 })
                 .exceptionally(error -> {
                     callIfNotNull(asyncState.getError(), handler -> handler.accept(context, error));
@@ -209,9 +213,7 @@ public final class PaginationRenderInterceptor implements PipelineInterceptor<Vi
             final PaginatedViewSlotContext<T> slotContext = (PaginatedViewSlotContext<T>)
                     PlatformUtils.getFactory().createSlotContext(item, context, index, value);
 
-            context.getRoot().runCatching(context, () -> {
-                context.getRoot().callItemRender(slotContext, item, value);
-            });
+            context.getRoot().runCatching(context, () -> context.getRoot().callItemRender(slotContext, item, value));
             renderItemAndApplyOnContext(context, item, slot);
             item.setOverlay(overlay);
         } else {
@@ -269,7 +271,12 @@ public final class PaginationRenderInterceptor implements PipelineInterceptor<Vi
             pageSize = root.getPaginator() != null ? root.getPaginator().getPageSize() : UNSET;
 
             // fallback to fillable view area
-            if (pageSize == UNSET) pageSize = root.getLimit() - root.getOffset();
+
+            if (pageSize == UNSET) {
+				@SuppressWarnings("deprecation")
+				final int fillableArea = root.getLimit() - root.getOffset();
+				pageSize = fillableArea;
+			}
         }
 
         return pageSize;
