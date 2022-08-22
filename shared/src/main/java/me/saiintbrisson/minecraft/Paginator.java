@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.function.Function;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -20,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
  */
 @Getter
 @Setter
+@ToString
 public final class Paginator<T> {
 
     private int pageSize;
@@ -72,8 +74,8 @@ public final class Paginator<T> {
      */
     public int size() {
         checkSource();
-        return source.size();
-    }
+		return source.size();
+	}
 
     /**
      * Gets an item at a specific position from source.
@@ -98,7 +100,7 @@ public final class Paginator<T> {
         return isSync()
                 ? (int) Math.ceil((double) size() / pageSize)
                 : pagesCount == -1 ? Integer.MAX_VALUE - 1 : pagesCount;
-    }
+	}
 
     public List<T> getPage(int index) {
         if (source.isEmpty()) return Collections.emptyList();
