@@ -13,6 +13,7 @@
 * New shortcut handlers #rendered and #updated to ViewItem (#201)
 * Rendering functions allowed back on pagination item render (#201)
 * Layout now rendered dynamically when source is updated (#201)
+* Fix Bukkit player retrieval on close handler (#202)
 
 # 2.5.3
 * Fix scheduled updates (#175)
