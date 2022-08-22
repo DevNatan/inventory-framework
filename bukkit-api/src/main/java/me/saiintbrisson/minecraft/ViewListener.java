@@ -2,7 +2,6 @@ package me.saiintbrisson.minecraft;
 
 import java.util.logging.Level;
 import lombok.RequiredArgsConstructor;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -109,7 +108,7 @@ class ViewListener implements Listener {
             view.runCatching(context, () -> view.getPipeline().execute(AbstractView.CLICK, slotContext));
         } catch (final Throwable e) {
             plugin.getLogger().log(Level.SEVERE, "Failed to execute click pipeline", e);
-			event.setCancelled(true);
+            event.setCancelled(true);
             return;
         }
 
@@ -130,7 +129,7 @@ class ViewListener implements Listener {
         if (context == null) return;
 
         // TODO move to own pipeline phase
-		context.allowCancellation();
+        context.allowCancellation();
         view.runCatching(context, () -> view.onClose(context));
         view.prepareClose(context);
 
@@ -143,17 +142,16 @@ class ViewListener implements Listener {
 
         // TODO move to own pipeline phase
         if (context.isCancelled()) {
-			context.allowCancellation();
-			view.nextTick(() -> viewer.open(context.getContainer()));
+            context.allowCancellation();
+            view.nextTick(() -> viewer.open(context.getContainer()));
 
             // set the old cursor item
             final ItemStack cursor = player.getItemOnCursor();
 
             // suppress null check since cursor can be null in legacy versions
             //noinspection ConstantConditions
-            if ((cursor != null) && cursor.getType() != Material.AIR)
-				player.setItemOnCursor(cursor);
-			return;
+            if ((cursor != null) && cursor.getType() != Material.AIR) player.setItemOnCursor(cursor);
+            return;
         }
 
         // TODO move to own pipeline phase

@@ -12,7 +12,6 @@ import lombok.ToString;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.Range;
 
 /**
  * PaginatedViewSlotContext implementation that inherits a ViewSlotContext for Bukkit platform.

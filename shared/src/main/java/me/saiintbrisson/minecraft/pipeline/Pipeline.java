@@ -95,8 +95,8 @@ public final class Pipeline<S> {
         interceptors.computeIfAbsent(phase, $ -> new ArrayList<>()).add((PipelineInterceptor<S>) interceptor);
     }
 
-	@TestOnly
-	void execute(@Nullable final S subject) {
+    @TestOnly
+    void execute(@Nullable final S subject) {
         final List<PipelineInterceptor<S>> pipelineInterceptors = new LinkedList<>();
         for (final PipelinePhase phase : _phases) {
             final List<PipelineInterceptor<S>> interceptors = this.interceptors.get(phase);

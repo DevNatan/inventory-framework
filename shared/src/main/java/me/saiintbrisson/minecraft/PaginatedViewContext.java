@@ -3,7 +3,6 @@ package me.saiintbrisson.minecraft;
 import java.util.List;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Range;
 
 /**
  * A paginated context can originate from a view that supports paging.

@@ -46,6 +46,7 @@ public abstract class ViewComponentFactory {
     @NotNull
     public abstract BaseViewContext createContext(
             @NotNull AbstractView root, ViewContainer container, Class<? extends ViewContext> backingContext);
+
     @NotNull
     public abstract AbstractViewSlotContext createSlotContext(
             ViewItem item, ViewContext parent, int paginatedItemIndex, Object paginatedItemValue);

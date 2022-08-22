@@ -54,9 +54,7 @@ public class AvailableSlotRenderInterceptor implements PipelineInterceptor<Virtu
             @NotNull ViewContext context,
             Stack<Integer> layoutItemsLayer,
             boolean targetingRoot) {
-        final Deque<ViewItem> reservedItems = !targetingRoot
-			? context.getReservedItems()
-			: root.getReservedItems();
+        final Deque<ViewItem> reservedItems = !targetingRoot ? context.getReservedItems() : root.getReservedItems();
 
         // skip if reserved items defined by auto-slot-filling was already consumed
         if (reservedItems == null || reservedItems.isEmpty()) return;
@@ -65,8 +63,7 @@ public class AvailableSlotRenderInterceptor implements PipelineInterceptor<Virtu
         // because the context ALWAYS takes priority over the regular view, so in cases where there
         // is layout in both the regular view and the context, we use the context layout to render
         // the items defined in the regular view constructor or rendering function.
-        if (targetingRoot && context.isLayoutSignatureChecked())
-			layoutItemsLayer = context.getLayoutItemsLayer();
+        if (targetingRoot && context.isLayoutSignatureChecked()) layoutItemsLayer = context.getLayoutItemsLayer();
 
         final boolean wasRootReservedItemsRendered =
                 !targetingRoot && root.isLayoutSignatureChecked() && root.getReservedItems() != null;
@@ -92,10 +89,9 @@ public class AvailableSlotRenderInterceptor implements PipelineInterceptor<Virtu
 
         final int reservedItemsCount = reservedItems.size();
 
-		// allow context reserved items count be accessed by other interceptors since
-		// reserved items queue will be cleared after get rendered
-		if (!targetingRoot)
-			context.setReservedItemsCount(reservedItems.size());
+        // allow context reserved items count be accessed by other interceptors since
+        // reserved items queue will be cleared after get rendered
+        if (!targetingRoot) context.setReservedItemsCount(reservedItems.size());
 
         int offset = 0;
 
@@ -103,8 +99,7 @@ public class AvailableSlotRenderInterceptor implements PipelineInterceptor<Virtu
         // be rendered in both regular view and context, when user set in render function and/or
         // constructor, do the same layout logic and push items remainders, so they don't overwrite.
         final boolean hasAnyAvailableLayout = root.isLayoutSignatureChecked() || context.isLayoutSignatureChecked();
-        if (!targetingRoot && !hasAnyAvailableLayout)
-			offset = root.getReservedItemsCount();
+        if (!targetingRoot && !hasAnyAvailableLayout) offset = root.getReservedItemsCount();
 
         for (int i = offset; i < reservedItemsCount; i++) {
             final int targetSlot;
