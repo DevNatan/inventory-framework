@@ -27,7 +27,7 @@ public final class ItemWrapper {
      *
      * @return A Bukkit ItemStack.
      */
-    private ItemStack asBukkitItem() {
+    public ItemStack asBukkitItem() {
         return value == null ? null : (ItemStack) value;
     }
 
@@ -36,7 +36,7 @@ public final class ItemWrapper {
      *
      * @return <code>true</code> if this has any valid item or <code>false</code> otherwise.
      */
-    private boolean isEmpty() {
+    public boolean isEmpty() {
         return value == null;
     }
 

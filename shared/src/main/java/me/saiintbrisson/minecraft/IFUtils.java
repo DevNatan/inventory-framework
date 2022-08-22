@@ -45,7 +45,10 @@ public final class IFUtils {
     }
 
     public static void checkPaginationSourceAvailability(@NotNull ViewContext context) {
-        if (context.paginated().getPaginator() != null) return;
+		PaginatedViewContext<?> paginatedContext = context.paginated();
+        if (paginatedContext.getRoot().getPaginator() != null
+			|| paginatedContext.getPaginator() != null)
+			return;
 
         throw new IllegalStateException("At least one pagination source must be set. "
                 + "Use #setSource in the PaginatedView constructor or set only to a context"

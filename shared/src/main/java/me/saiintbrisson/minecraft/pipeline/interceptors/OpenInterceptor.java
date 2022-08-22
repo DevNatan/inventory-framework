@@ -10,12 +10,13 @@ import me.saiintbrisson.minecraft.ViewContext;
 import me.saiintbrisson.minecraft.ViewItem;
 import me.saiintbrisson.minecraft.ViewType;
 import me.saiintbrisson.minecraft.Viewer;
+import me.saiintbrisson.minecraft.VirtualView;
 import me.saiintbrisson.minecraft.pipeline.PipelineContext;
 import me.saiintbrisson.minecraft.pipeline.PipelineInterceptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 
-public class OpenInterceptor implements PipelineInterceptor<OpenViewContext> {
+public class OpenInterceptor implements PipelineInterceptor<VirtualView> {
 
     static final String ASYNC_UPDATE_JOB_EXECUTION_ERROR_MESSAGE = "An error occurred in the opening asynchronous job.";
 
@@ -23,20 +24,24 @@ public class OpenInterceptor implements PipelineInterceptor<OpenViewContext> {
     boolean skipOpen = false;
 
     @Override
-    public void intercept(@NotNull PipelineContext<OpenViewContext> pipeline, OpenViewContext context) {
-        if (context.getAsyncOpenJob() == null) {
-            finishOpen(pipeline, context);
+    public void intercept(@NotNull PipelineContext<VirtualView> pipeline, VirtualView context) {
+		if (!(context instanceof OpenViewContext))
+			return;
+
+		final OpenViewContext openContext = (OpenViewContext) context;
+        if (openContext.getAsyncOpenJob() == null) {
+            finishOpen(pipeline, openContext);
             return;
         }
 
-        context.getAsyncOpenJob().thenRun(() -> finishOpen(pipeline, context)).exceptionally(error -> {
+		openContext.getAsyncOpenJob().thenRun(() -> finishOpen(pipeline, openContext)).exceptionally(error -> {
             // TODO invalidate context
             pipeline.finish();
             throw new RuntimeException(ASYNC_UPDATE_JOB_EXECUTION_ERROR_MESSAGE, error);
         });
     }
 
-    private void finishOpen(@NotNull PipelineContext<OpenViewContext> pipeline, @NotNull OpenViewContext openContext) {
+    private void finishOpen(@NotNull PipelineContext<VirtualView> pipeline, @NotNull OpenViewContext openContext) {
         if (skipOpen) return;
 
         if (openContext.isCancelled()) {
@@ -59,7 +64,8 @@ public class OpenInterceptor implements PipelineInterceptor<OpenViewContext> {
         final ViewContext generatedContext = PlatformUtils.getFactory().createContext(root, container, null);
 
         generatedContext.setItems(new ViewItem[containerSize]);
-        for (final Viewer viewer : openContext.getViewers()) generatedContext.addViewer(viewer);
+        for (final Viewer viewer : openContext.getViewers())
+			generatedContext.addViewer(viewer);
 
         // ensure data inheritance from open context to lifecycle context
         openContext.getData().forEach(generatedContext::set);

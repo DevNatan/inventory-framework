@@ -2,19 +2,19 @@ package me.saiintbrisson.minecraft.pipeline;
 
 import java.util.List;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.Nullable;
 
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public final class PipelineContext<S> {
 
-    private S subject;
+	@Getter
+	private final @Nullable PipelinePhase phase;
     private final List<PipelineInterceptor<S>> interceptors;
 
+	private S subject;
     private int index;
-
-    boolean isFinished() {
-        return index == -1;
-    }
 
     /** Finishes current pipeline execution */
     public void finish() {
