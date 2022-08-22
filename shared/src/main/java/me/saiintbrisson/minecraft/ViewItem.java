@@ -23,7 +23,7 @@ import org.jetbrains.annotations.Range;
  * outside of this library. No compatibility guarantees are provided. </i></b>
  */
 @ToString
-@Setter(onMethod_ = {@ApiStatus.Internal})
+@Setter // TODO mark setters as @ApiStatus.Internal
 @Getter()
 public final class ViewItem {
 
@@ -90,7 +90,7 @@ public final class ViewItem {
      *
      * @param slot The new item slot.
      * @return This item.
-     * @throws IllegalStateException If this item isn't a {@link #isNavigationItem() navigation item}.
+     * @throws IllegalStateException If this item is not a navigation item.
      */
     @ApiStatus.AvailableSince("2.5.4")
     @Contract(value = "_ -> this", mutates = "this")

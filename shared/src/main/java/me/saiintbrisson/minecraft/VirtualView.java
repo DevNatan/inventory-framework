@@ -757,15 +757,23 @@ public interface VirtualView {
     void update(@NotNull ViewContext context);
 
     /**
+     * The reserved items count for this view.
+     *
      * <p><b><i> This is an internal inventory-framework API that should not be used from outside of
      * this library. No compatibility guarantees are provided. </i></b>
+     *
+     * @return The reserved items count.
      */
     @ApiStatus.Internal
     int getReservedItemsCount();
 
     /**
+     * Sets the reserved items count for this view.
+     *
      * <p><b><i> This is an internal inventory-framework API that should not be used from outside of
      * this library. No compatibility guarantees are provided. </i></b>
+     *
+     * @param reservedItemsCount The new reserved items count.
      */
     @ApiStatus.Internal
     void setReservedItemsCount(int reservedItemsCount);

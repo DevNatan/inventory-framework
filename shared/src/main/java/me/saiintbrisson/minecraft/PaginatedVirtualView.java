@@ -184,6 +184,8 @@ public interface PaginatedVirtualView<T> extends VirtualView {
     /**
      * <p><b><i> This is an internal inventory-framework API that should not be used from outside of
      * this library. No compatibility guarantees are provided. </i></b>
+     *
+     * @return The navigation item factory for this view.
      */
     @ApiStatus.Internal
     BiConsumer<PaginatedViewContext<T>, ViewItem> getPreviousPageItemFactory();
@@ -225,6 +227,8 @@ public interface PaginatedVirtualView<T> extends VirtualView {
     /**
      * <p><b><i> This is an internal inventory-framework API that should not be used from outside of
      * this library. No compatibility guarantees are provided. </i></b>
+     *
+     * @return The navigation item factory for this view.
      */
     @ApiStatus.Internal
     BiConsumer<PaginatedViewContext<T>, ViewItem> getNextPageItemFactory();
