@@ -125,14 +125,7 @@ public abstract class AbstractViewSlotContext extends BaseViewContext implements
 
     @Override
     public final void updateSlot() {
-        final Runnable job = () -> getRoot().update(this, getBackingItem(), getSlot());
-        final PlatformViewFrame<?, ?, ?> vf = getRoot().getViewFrame();
-        if (vf == null) {
-            job.run();
-            return;
-        }
-
-        getRoot().getViewFrame().nextTick(job);
+        getRoot().update(this, getBackingItem(), getSlot());
     }
 
     @Override
