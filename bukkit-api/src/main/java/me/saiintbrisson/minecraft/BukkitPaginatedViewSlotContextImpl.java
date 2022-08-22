@@ -12,7 +12,6 @@ import lombok.ToString;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.Range;
 
 /**
  * PaginatedViewSlotContext implementation that inherits a ViewSlotContext for Bukkit platform.
@@ -76,7 +75,7 @@ final class BukkitPaginatedViewSlotContextImpl<T> extends AbstractViewSlotContex
 
     @Override
     public AsyncPaginationDataState<T> setSourceAsync(
-            @NotNull Function<PaginatedViewContext<T>, CompletableFuture<List<T>>> sourceFuture) {
+            @NotNull Function<PaginatedViewContext<T>, CompletableFuture<List<? extends T>>> sourceFuture) {
         throwPaginationDataChangedError();
         return null;
     }
@@ -113,6 +112,7 @@ final class BukkitPaginatedViewSlotContextImpl<T> extends AbstractViewSlotContex
     }
 
     @Override
+    @Deprecated
     public int getPageMaxItemsCount() {
         return parent.getPageMaxItemsCount();
     }
@@ -138,12 +138,12 @@ final class BukkitPaginatedViewSlotContextImpl<T> extends AbstractViewSlotContex
     }
 
     @Override
-    public @Range(from = 0, to = Integer.MAX_VALUE) int getPreviousPage() {
+    public int getPreviousPage() {
         return parent.getPreviousPage();
     }
 
     @Override
-    public @Range(from = 1, to = Integer.MAX_VALUE) int getNextPage() {
+    public int getNextPage() {
         return parent.getNextPage();
     }
 

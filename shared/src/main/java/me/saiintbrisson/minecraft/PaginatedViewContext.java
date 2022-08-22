@@ -3,7 +3,6 @@ package me.saiintbrisson.minecraft;
 import java.util.List;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Range;
 
 /**
  * A paginated context can originate from a view that supports paging.
@@ -51,7 +50,9 @@ public interface PaginatedViewContext<T> extends ViewContext, PaginatedVirtualVi
      * The maximum number of items that a page in a layered context can have.
      *
      * @return The maximum number of items that a page in a layered context can have.
+     * @deprecated Use {@link #getPageSize()} instead.
      */
+    @Deprecated
     int getPageMaxItemsCount();
 
     /**
@@ -66,7 +67,6 @@ public interface PaginatedViewContext<T> extends ViewContext, PaginatedVirtualVi
      *
      * @return The index of the previous page.
      */
-    @Range(from = 0, to = Integer.MAX_VALUE)
     int getPreviousPage();
 
     /**
@@ -74,7 +74,6 @@ public interface PaginatedViewContext<T> extends ViewContext, PaginatedVirtualVi
      *
      * @return The index of the next page.
      */
-    @Range(from = 1, to = Integer.MAX_VALUE)
     int getNextPage();
 
     /**
@@ -110,13 +109,13 @@ public interface PaginatedViewContext<T> extends ViewContext, PaginatedVirtualVi
      *
      * @param page The page that'll be switched to.
      */
-    void switchTo(@Range(from = 0, to = Integer.MAX_VALUE) int page);
+    void switchTo(int page);
 
     /**
      * Updates the current context by switching to the previous page.
      *
      * @return If page has been switched successfully, may return <code>false</code> if there are no
-     *     more pages to go to.
+     * more pages to go to.
      */
     boolean switchToPreviousPage();
 
@@ -124,11 +123,13 @@ public interface PaginatedViewContext<T> extends ViewContext, PaginatedVirtualVi
      * Updates the current context by switching to the next page.
      *
      * @return If page has been switched successfully, may return <code>false</code> if there are no
-     *     more pages to go to.
+     * more pages to go to.
      */
     boolean switchToNextPage();
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @NotNull
     AbstractPaginatedView<T> getRoot();

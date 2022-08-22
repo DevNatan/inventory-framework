@@ -25,20 +25,22 @@ public class OpenInterceptor implements PipelineInterceptor<VirtualView> {
 
     @Override
     public void intercept(@NotNull PipelineContext<VirtualView> pipeline, VirtualView context) {
-		if (!(context instanceof OpenViewContext))
-			return;
+        if (!(context instanceof OpenViewContext)) return;
 
-		final OpenViewContext openContext = (OpenViewContext) context;
+        final OpenViewContext openContext = (OpenViewContext) context;
         if (openContext.getAsyncOpenJob() == null) {
             finishOpen(pipeline, openContext);
             return;
         }
 
-		openContext.getAsyncOpenJob().thenRun(() -> finishOpen(pipeline, openContext)).exceptionally(error -> {
-            // TODO invalidate context
-            pipeline.finish();
-            throw new RuntimeException(ASYNC_UPDATE_JOB_EXECUTION_ERROR_MESSAGE, error);
-        });
+        openContext
+                .getAsyncOpenJob()
+                .thenRun(() -> finishOpen(pipeline, openContext))
+                .exceptionally(error -> {
+                    // TODO invalidate context
+                    pipeline.finish();
+                    throw new RuntimeException(ASYNC_UPDATE_JOB_EXECUTION_ERROR_MESSAGE, error);
+                });
     }
 
     private void finishOpen(@NotNull PipelineContext<VirtualView> pipeline, @NotNull OpenViewContext openContext) {
@@ -64,8 +66,7 @@ public class OpenInterceptor implements PipelineInterceptor<VirtualView> {
         final ViewContext generatedContext = PlatformUtils.getFactory().createContext(root, container, null);
 
         generatedContext.setItems(new ViewItem[containerSize]);
-        for (final Viewer viewer : openContext.getViewers())
-			generatedContext.addViewer(viewer);
+        for (final Viewer viewer : openContext.getViewers()) generatedContext.addViewer(viewer);
 
         // ensure data inheritance from open context to lifecycle context
         openContext.getData().forEach(generatedContext::set);

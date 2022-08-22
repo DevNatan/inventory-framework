@@ -7,6 +7,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 
 /**
@@ -17,14 +18,15 @@ import org.jetbrains.annotations.Contract;
  *
  * @param <T> The pagination data type.
  */
-@Getter
+@Getter(onMethod_ = {@ApiStatus.Internal})
 @RequiredArgsConstructor
 public final class AsyncPaginationDataState<T> {
 
-    private final Function<PaginatedViewContext<T>, CompletableFuture<List<T>>> job;
+    private final Function<PaginatedViewContext<T>, CompletableFuture<List<? extends T>>> job;
 
     private Consumer<PaginatedViewContext<T>> loadStarted, loadFinished, success;
     private BiConsumer<PaginatedViewContext<T>, Throwable> error;
+    private BiConsumer<PaginatedViewContext<T>, List<? extends T>> completedSuccessfully;
 
     /**
      * Called when pagination data starts to load.
@@ -43,10 +45,23 @@ public final class AsyncPaginationDataState<T> {
      *
      * @param handler The success handler.
      * @return This async pagination data state.
+     * @deprecated Use {@link #onSuccess(BiConsumer)} isntead.
      */
     @Contract(mutates = "this")
     public AsyncPaginationDataState<T> onSuccess(Consumer<PaginatedViewContext<T>> handler) {
         this.success = handler;
+        return this;
+    }
+
+    /**
+     * Called when the pagination data successfully loads.
+     *
+     * @param handler The success handler.
+     * @return This async pagination data state.
+     */
+    @Contract(mutates = "this")
+    public AsyncPaginationDataState<T> onSuccess(BiConsumer<PaginatedViewContext<T>, List<? extends T>> handler) {
+        this.completedSuccessfully = handler;
         return this;
     }
 
