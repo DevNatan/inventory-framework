@@ -44,12 +44,12 @@ public class OpenInterceptor implements PipelineInterceptor<VirtualView> {
     }
 
     private void finishOpen(@NotNull PipelineContext<VirtualView> pipeline, @NotNull OpenViewContext openContext) {
-        if (skipOpen) return;
-
         if (openContext.isCancelled()) {
             pipeline.finish();
             return;
         }
+
+		if (skipOpen) return;
 
         final AbstractView root = openContext.getRoot();
         final String containerTitle = elvis(openContext.getContainerTitle(), root.getTitle());
