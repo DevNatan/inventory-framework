@@ -38,7 +38,11 @@ public abstract class AbstractViewSlotContext extends BaseViewContext implements
     private boolean changed;
 
     AbstractViewSlotContext(ViewItem backingItem, @NotNull final ViewContext parent) {
-        super(parent.getRoot(), parent.getContainer());
+        this(backingItem, parent, parent.getContainer());
+    }
+
+    AbstractViewSlotContext(ViewItem backingItem, @NotNull final ViewContext parent, ViewContainer container) {
+        super(parent.getRoot(), container);
         this.backingItem = backingItem;
         this.parent = parent;
     }

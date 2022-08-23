@@ -22,7 +22,7 @@ final class GlobalClickInterceptor implements PipelineInterceptor<BukkitClickVie
         // inherit cancellation so we can un-cancel it
         subject.setCancelled(event.isCancelled() || subject.getRoot().isCancelOnClick());
 
-        subject.getRoot().onClick(subject);
+        subject.getRoot().runCatching(subject, () -> subject.getRoot().onClick(subject));
         event.setCancelled(subject.isCancelled());
     }
 }
