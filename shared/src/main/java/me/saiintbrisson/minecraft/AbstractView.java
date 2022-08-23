@@ -1,5 +1,7 @@
 package me.saiintbrisson.minecraft;
 
+import static me.saiintbrisson.minecraft.IFUtils.unwrap;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -245,6 +247,16 @@ public abstract class AbstractView extends AbstractVirtualView {
      * @param context The player view context.
      */
     protected void onMoveOut(@NotNull ViewSlotMoveContext context) {}
+
+    /**
+     * {@inheritDoc}
+     * @throws InitializationException If this view is initialized.
+     */
+    @Override
+    public @NotNull ViewItem slot(int slot, Object item) {
+        ensureNotInitialized();
+        return super.slot(slot, item);
+    }
 
     final void open(@NotNull Viewer viewer, @NotNull Map<String, Object> data) {
         if (!isInitialized()) throw new IllegalStateException("Cannot open a uninitialized view.");
@@ -539,62 +551,13 @@ public abstract class AbstractView extends AbstractVirtualView {
         this.initialized = initialized;
     }
 
-    @ApiStatus.OverrideOnly
-    protected void beforeInit() {
-        final Pipeline<VirtualView> pipeline = getPipeline();
-        pipeline.intercept(OPEN, new OpenInterceptor());
-        pipeline.intercept(INIT, new LayoutResolutionInterceptor());
-        pipeline.intercept(INIT, new LayoutPatternRenderInterceptor());
-        pipeline.intercept(RENDER, new LayoutResolutionInterceptor() /* context scope */);
-        pipeline.intercept(RENDER, new LayoutPatternRenderInterceptor() /* context scope */);
-        pipeline.intercept(RENDER, new AvailableSlotRenderInterceptor());
-        pipeline.intercept(RENDER, new RenderInterceptor());
-        pipeline.intercept(RENDER, new ScheduledUpdateInterceptor.Render());
-        pipeline.intercept(UPDATE, new UpdateInterceptor());
-        pipeline.intercept(CLOSE, new ScheduledUpdateInterceptor.Close());
-    }
-
-    final void init() {
-        ensureNotInitialized();
-        beforeInit();
-        getPipeline().execute(INIT, this);
-        setInitialized(true);
-    }
-
-    /**
-     * Throws an exception if this view has already been initialized.
-     * <p>
-     * This method is to be used in cases where the user may mistakenly use functions that must be
-     * used in the view constructor, in the handlers, such as: defining the data of a paginated view
-     * in the rendering function without using a context.
-     *
-     * <p><b><i> This is an internal inventory-framework API that should not be used from outside of
-     * this library. No compatibility guarantees are provided. </i></b>
-     *
-     * @throws InitializationException If this view is initialized.
-     * @see <a href="https://github.com/DevNatan/inventory-framework/wiki/Errors#initializationexception">InitializationException on Wiki</a>
-     */
-    @ApiStatus.Internal
-    public final void ensureNotInitialized() throws InitializationException {
-        if (!isInitialized()) return;
-        throw new InitializationException();
-    }
-
-    /**
-     * {@inheritDoc}
-     **/
-    @Override
-    public String[] getLayout() {
-        return super.getLayout();
-    }
-
     /**
      * {@inheritDoc}
      *
      * @throws InitializationException If this view is initialized.
      **/
     @Override
-    public void setLayout(@Nullable String... layout) throws InitializationException {
+    public final void setLayout(@Nullable String... layout) {
         ensureNotInitialized();
         super.setLayout(layout);
     }
@@ -605,7 +568,7 @@ public abstract class AbstractView extends AbstractVirtualView {
      * @throws InitializationException If this view is initialized.
      **/
     @Override
-    public void setLayout(char identifier, @Nullable Consumer<ViewItem> layout) throws InitializationException {
+    public final void setLayout(char identifier, @Nullable Consumer<ViewItem> layout) {
         ensureNotInitialized();
         super.setLayout(identifier, layout);
     }
@@ -614,16 +577,22 @@ public abstract class AbstractView extends AbstractVirtualView {
      * {@inheritDoc}
      *
      * @throws InitializationException If this view is initialized.
-     **/
+     */
     @Override
-    public void setLayout(char character, @Nullable Supplier<ViewItem> factory) throws InitializationException {
+    public final void setLayout(char character, @Nullable Supplier<ViewItem> factory) {
         ensureNotInitialized();
         super.setLayout(character, factory);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @throws InitializationException If this view is initialized.
+     */
     @Override
-    final int convertSlot(int row, int column) {
-        return convertSlot(row, column, getType().getRows(), getType().getColumns());
+    public final void setErrorHandler(ViewErrorHandler errorHandler) {
+        ensureNotInitialized();
+        super.setErrorHandler(errorHandler);
     }
 
     /**
@@ -640,7 +609,7 @@ public abstract class AbstractView extends AbstractVirtualView {
      *
      * @param job The job that'll be run.
      */
-    protected final void nextTick(@NotNull Runnable job) {
+    public final void nextTick(@NotNull Runnable job) {
         inventoryModificationTriggered();
         final PlatformViewFrame<?, ?, ?> vf = getViewFrame();
         if (vf == null) throw new IllegalStateException("Cannot schedule next tick without a view frame");
@@ -650,13 +619,10 @@ public abstract class AbstractView extends AbstractVirtualView {
 
     /**
      * {@inheritDoc}
-     *
-     * @throws InitializationException If this view is initialized.
      */
     @Override
-    public final @NotNull ViewItem availableSlot() throws InitializationException {
-        ensureNotInitialized();
-        return super.availableSlot();
+    final int convertSlot(int row, int column) {
+        return IFUtils.convertSlot(row, column, getType().getRows(), getType().getColumns());
     }
 
     /**
@@ -665,7 +631,7 @@ public abstract class AbstractView extends AbstractVirtualView {
      * @throws InitializationException If this view is initialized.
      */
     @Override
-    public final @NotNull ViewItem availableSlot(Object fallbackItem) throws InitializationException {
+    public final @NotNull ViewItem availableSlot(Object fallbackItem) {
         ensureNotInitialized();
         return super.availableSlot(fallbackItem);
     }
@@ -764,9 +730,44 @@ public abstract class AbstractView extends AbstractVirtualView {
         render(context, item, slot);
     }
 
-    private Object unwrap(Object item) {
-        if (item instanceof ItemWrapper) return unwrap(((ItemWrapper) item).getValue());
+    /**
+     * Throws an exception if this view has already been initialized.
+     * <p>
+     * This method is to be used in cases where the user may mistakenly use functions that must be
+     * used in the view constructor, in the handlers, such as: defining the data of a paginated view
+     * in the rendering function without using a context.
+     *
+     * <p><b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     *
+     * @throws InitializationException If this view is initialized.
+     * @see <a href="https://github.com/DevNatan/inventory-framework/wiki/Errors#initializationexception">InitializationException on Wiki</a>
+     */
+    @ApiStatus.Internal
+    public final void ensureNotInitialized() {
+        if (!isInitialized()) return;
+        throw new InitializationException();
+    }
 
-        return item;
+    @ApiStatus.OverrideOnly
+    void beforeInit() {
+        final Pipeline<VirtualView> pipeline = getPipeline();
+        pipeline.intercept(OPEN, new OpenInterceptor());
+        pipeline.intercept(INIT, new LayoutResolutionInterceptor());
+        pipeline.intercept(INIT, new LayoutPatternRenderInterceptor());
+        pipeline.intercept(RENDER, new LayoutResolutionInterceptor() /* context scope */);
+        pipeline.intercept(RENDER, new LayoutPatternRenderInterceptor() /* context scope */);
+        pipeline.intercept(RENDER, new AvailableSlotRenderInterceptor());
+        pipeline.intercept(RENDER, new RenderInterceptor());
+        pipeline.intercept(RENDER, new ScheduledUpdateInterceptor.Render());
+        pipeline.intercept(UPDATE, new UpdateInterceptor());
+        pipeline.intercept(CLOSE, new ScheduledUpdateInterceptor.Close());
+    }
+
+    final void init() {
+        ensureNotInitialized();
+        beforeInit();
+        getPipeline().execute(INIT, this);
+        setInitialized(true);
     }
 }

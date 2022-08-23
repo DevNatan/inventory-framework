@@ -315,4 +315,10 @@ public class BaseViewContext extends AbstractVirtualView implements ViewContext 
 
         return ViewItem.AVAILABLE;
     }
+
+    @Override
+    final int convertSlot(int row, int column) {
+        ViewContainer container = getContainer();
+        return IFUtils.convertSlot(row, column, container.getRowsCount(), container.getColumnsCount());
+    }
 }

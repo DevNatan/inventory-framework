@@ -5,24 +5,18 @@ import static me.saiintbrisson.minecraft.ViewItem.UNSET;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Supplier;
 import lombok.Getter;
 import lombok.ToString;
 import me.saiintbrisson.minecraft.exception.InitializationException;
-import me.saiintbrisson.minecraft.pipeline.PipelinePhase;
 import me.saiintbrisson.minecraft.pipeline.interceptors.NavigationControllerInterceptor;
 import me.saiintbrisson.minecraft.pipeline.interceptors.PaginationRenderInterceptor;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 @Getter
 @ToString(callSuper = true)
 public abstract class AbstractPaginatedView<T> extends AbstractView implements PaginatedVirtualView<T> {
-
-    static final PipelinePhase PAGE_SWITCH = new PipelinePhase("page-switch");
 
     private int offset, limit;
 
@@ -37,59 +31,6 @@ public abstract class AbstractPaginatedView<T> extends AbstractView implements P
         super(rows, title, type);
         this.offset = 0;
         this.limit = getItems().length - 1;
-    }
-
-    @Override
-    protected void onRender(@NotNull ViewContext context) {
-        super.onRender(context);
-    }
-
-    /**
-     * Where pagination will start.
-     *
-     * @return The first slot that pagination can reach in the container.
-     * @deprecated Offset and limit will be replaced by layout.
-     */
-    @Deprecated
-    public final int getOffset() {
-        return offset;
-    }
-
-    /**
-     * Defines the slot that pagination will start in the container.
-     *
-     * @param offset Where pagination will start.
-     * @throws InitializationException If this view is initialized.
-     * @deprecated Offset and limit will be replaced by layout.
-     */
-    @Deprecated
-    public final void setOffset(int offset) throws InitializationException {
-        ensureNotInitialized();
-        this.offset = offset;
-    }
-
-    /**
-     * Where pagination will end.
-     *
-     * @return The last slot that pagination can reach in the container.
-     * @deprecated Offset and limit will be replaced by layout.
-     */
-    @Deprecated
-    public final int getLimit() {
-        return limit;
-    }
-
-    /**
-     * Defines the last slot that pagination can reach in the container.
-     *
-     * @param limit Where pagination will end.
-     * @throws InitializationException If this view is initialized.
-     * @deprecated Offset and limit will be replaced by layout.
-     */
-    @Deprecated
-    public final void setLimit(int limit) throws InitializationException {
-        ensureNotInitialized();
-        this.limit = limit;
     }
 
     /**
@@ -137,6 +78,54 @@ public abstract class AbstractPaginatedView<T> extends AbstractView implements P
     protected void onPageSwitch(@NotNull PaginatedViewContext<T> context) {}
 
     /**
+     * Where pagination will start.
+     *
+     * @return The first slot that pagination can reach in the container.
+     * @deprecated Offset and limit will be replaced by layout.
+     */
+    @Deprecated
+    public final int getOffset() {
+        return offset;
+    }
+
+    /**
+     * Defines the slot that pagination will start in the container.
+     *
+     * @param offset Where pagination will start.
+     * @throws InitializationException If this view is initialized.
+     * @deprecated Offset and limit will be replaced by layout.
+     */
+    @Deprecated
+    public final void setOffset(int offset) {
+        ensureNotInitialized();
+        this.offset = offset;
+    }
+
+    /**
+     * Where pagination will end.
+     *
+     * @return The last slot that pagination can reach in the container.
+     * @deprecated Offset and limit will be replaced by layout.
+     */
+    @Deprecated
+    public final int getLimit() {
+        return limit;
+    }
+
+    /**
+     * Defines the last slot that pagination can reach in the container.
+     *
+     * @param limit Where pagination will end.
+     * @throws InitializationException If this view is initialized.
+     * @deprecated Offset and limit will be replaced by layout.
+     */
+    @Deprecated
+    public final void setLimit(int limit) {
+        ensureNotInitialized();
+        this.limit = limit;
+    }
+
+    /**
      * {@inheritDoc}
      */
     @ApiStatus.Internal
@@ -164,6 +153,7 @@ public abstract class AbstractPaginatedView<T> extends AbstractView implements P
      * {@inheritDoc}
      */
     @Override
+    @ApiStatus.Internal
     public final int getPreviousPageItemSlot() {
         return previousPageItemSlot;
     }
@@ -172,6 +162,7 @@ public abstract class AbstractPaginatedView<T> extends AbstractView implements P
      * {@inheritDoc}
      */
     @Override
+    @ApiStatus.Internal
     public final void setPreviousPageItemSlot(int previousPageItemSlot) {
         this.previousPageItemSlot = previousPageItemSlot;
     }
@@ -180,6 +171,7 @@ public abstract class AbstractPaginatedView<T> extends AbstractView implements P
      * {@inheritDoc}
      */
     @Override
+    @ApiStatus.Internal
     public final int getNextPageItemSlot() {
         return nextPageItemSlot;
     }
@@ -188,35 +180,9 @@ public abstract class AbstractPaginatedView<T> extends AbstractView implements P
      * {@inheritDoc}
      */
     @Override
+    @ApiStatus.Internal
     public final void setNextPageItemSlot(int nextPageItemSlot) {
         this.nextPageItemSlot = nextPageItemSlot;
-    }
-
-    /**
-     * {@inheritDoc}
-     **/
-    @Override
-    public final void setLayout(@Nullable String... layout) {
-        ensureNotInitialized();
-        super.setLayout(layout);
-    }
-
-    /**
-     * {@inheritDoc}
-     **/
-    @Override
-    public final void setLayout(char character, Supplier<ViewItem> factory) {
-        ensureNotInitialized();
-        super.setLayout(character, factory);
-    }
-
-    /**
-     * {@inheritDoc}
-     **/
-    @Override
-    public final void setLayout(char identifier, @Nullable Consumer<ViewItem> layout) {
-        ensureNotInitialized();
-        super.setLayout(identifier, layout);
     }
 
     /**
@@ -270,8 +236,7 @@ public abstract class AbstractPaginatedView<T> extends AbstractView implements P
      */
     @Override
     public final void setPreviousPageItem(
-            @NotNull BiConsumer<PaginatedViewContext<T>, ViewItem> previousPageItemFactory)
-            throws InitializationException {
+            @NotNull BiConsumer<PaginatedViewContext<T>, ViewItem> previousPageItemFactory) {
         ensureNotInitialized();
         this.previousPageItemFactory = previousPageItemFactory;
     }
@@ -282,8 +247,7 @@ public abstract class AbstractPaginatedView<T> extends AbstractView implements P
      * @throws InitializationException If this view is initialized.
      */
     @Override
-    public final void setNextPageItem(@NotNull BiConsumer<PaginatedViewContext<T>, ViewItem> nextPageItemFactory)
-            throws InitializationException {
+    public final void setNextPageItem(@NotNull BiConsumer<PaginatedViewContext<T>, ViewItem> nextPageItemFactory) {
         ensureNotInitialized();
         this.nextPageItemFactory = nextPageItemFactory;
     }
@@ -294,7 +258,7 @@ public abstract class AbstractPaginatedView<T> extends AbstractView implements P
      * @throws InitializationException If this view is initialized.
      */
     @Override
-    public final void setSource(@NotNull List<? extends T> source) throws InitializationException {
+    public final void setSource(@NotNull List<? extends T> source) {
         ensureNotInitialized();
         this.paginator = new Paginator<>(getExpectedPageSize(), source);
     }
@@ -306,8 +270,7 @@ public abstract class AbstractPaginatedView<T> extends AbstractView implements P
      */
     @Override
     @ApiStatus.Experimental
-    public final void setSource(@NotNull Function<PaginatedViewContext<T>, List<? extends T>> sourceProvider)
-            throws InitializationException {
+    public final void setSource(@NotNull Function<PaginatedViewContext<T>, List<? extends T>> sourceProvider) {
         ensureNotInitialized();
         this.paginator = new Paginator<>(getExpectedPageSize(), sourceProvider);
     }
@@ -320,8 +283,7 @@ public abstract class AbstractPaginatedView<T> extends AbstractView implements P
     @Override
     @ApiStatus.Experimental
     public final AsyncPaginationDataState<T> setSourceAsync(
-            @NotNull Function<PaginatedViewContext<T>, CompletableFuture<List<? extends T>>> sourceFuture)
-            throws InitializationException {
+            @NotNull Function<PaginatedViewContext<T>, CompletableFuture<List<? extends T>>> sourceFuture) {
         ensureNotInitialized();
         final AsyncPaginationDataState<T> state = new AsyncPaginationDataState<>(sourceFuture);
         this.paginator = new Paginator<>(getExpectedPageSize(), state);
@@ -335,13 +297,13 @@ public abstract class AbstractPaginatedView<T> extends AbstractView implements P
      */
     @Override
     @ApiStatus.Experimental
-    public void setPagesCount(int pagesCount) throws InitializationException {
+    public final void setPagesCount(int pagesCount) {
         ensureNotInitialized();
 
-        if (this.paginator == null)
+        if (getPaginator() == null)
             throw new IllegalStateException("Paginator must be initialized before set the source size.");
 
-        this.paginator.setPagesCount(pagesCount);
+        getPaginator().setPagesCount(pagesCount);
     }
 
     private int getExpectedPageSize() {
@@ -356,7 +318,7 @@ public abstract class AbstractPaginatedView<T> extends AbstractView implements P
 
     @Override
     @ApiStatus.OverrideOnly
-    protected void beforeInit() {
+    void beforeInit() {
         super.beforeInit();
         getPipeline().intercept(RENDER, new PaginationRenderInterceptor());
         getPipeline().intercept(RENDER, new NavigationControllerInterceptor());
