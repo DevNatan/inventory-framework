@@ -60,6 +60,7 @@ public final class ViewItem {
     private Map<String, Object> data;
     private long updateIntervalInTicks = NO_INTERVAL;
     private ViewItem overlay;
+    private boolean removed;
 
     /**
      * Creates a new ViewItem instance.
