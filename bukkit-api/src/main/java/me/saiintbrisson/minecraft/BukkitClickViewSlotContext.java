@@ -17,10 +17,11 @@ public class BukkitClickViewSlotContext extends AbstractViewSlotContext implemen
     private final InventoryClickEvent clickOrigin;
 
     BukkitClickViewSlotContext(
-            final ViewItem backingItem,
-            @NotNull final BaseViewContext parent,
-            @NotNull final InventoryClickEvent clickOrigin) {
-        super(backingItem, parent);
+            ViewItem backingItem,
+            @NotNull BaseViewContext parent,
+            @NotNull InventoryClickEvent clickOrigin,
+            @NotNull ViewContainer container) {
+        super(backingItem, parent, container);
         this.clickOrigin = clickOrigin;
     }
 

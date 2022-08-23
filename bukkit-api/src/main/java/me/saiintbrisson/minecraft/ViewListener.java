@@ -80,6 +80,7 @@ class ViewListener implements Listener {
         }
     }
 
+    @SuppressWarnings("unused")
     @EventHandler
     public void onClick(final InventoryClickEvent event) {
         if (!(event.getWhoClicked() instanceof Player)) return;
@@ -99,10 +100,12 @@ class ViewListener implements Listener {
 
         if (context == null) return;
 
+        final boolean isEntityContainer = event.getClickedInventory() instanceof PlayerInventory;
+        final ViewContainer container =
+                !isEntityContainer ? context.getContainer() : new BukkitEntityViewContainer(player.getInventory());
+
         final ViewSlotContext slotContext = new BukkitClickViewSlotContext(
-                context.resolve(event.getSlot(), true, event.getClickedInventory() instanceof PlayerInventory),
-                context,
-                event);
+                context.resolve(event.getSlot(), true, isEntityContainer), context, event, container);
 
         try {
             view.runCatching(context, () -> view.getPipeline().execute(AbstractView.CLICK, slotContext));

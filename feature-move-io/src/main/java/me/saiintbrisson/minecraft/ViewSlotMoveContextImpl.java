@@ -26,7 +26,7 @@ final class ViewSlotMoveContextImpl extends BukkitClickViewSlotContext implement
             int targetSlot,
             boolean swap,
             boolean stack) {
-        super(backingItem, parent, clickOrigin);
+        super(backingItem, parent, clickOrigin, targetContainer);
         this.targetContainer = targetContainer;
         this.targetItem = new ItemWrapper(targetItem);
         this.swappedItem = new ItemWrapper(swappedItem);
