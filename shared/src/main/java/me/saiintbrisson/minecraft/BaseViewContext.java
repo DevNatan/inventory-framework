@@ -10,6 +10,7 @@ import java.util.function.Supplier;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import me.saiintbrisson.minecraft.exception.UnknownReferenceException;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -272,7 +273,7 @@ public class BaseViewContext extends AbstractVirtualView implements ViewContext 
     }
 
     @Override
-    public @NotNull ViewSlotContext ref(final String key) {
+    public @NotNull ViewSlotContext ref(@NotNull String key) {
         ViewItem item = tryResolveRef(this, key);
         if (item == null) item = tryResolveRef(getRoot(), key);
         if (item == null) throw new IllegalArgumentException("No reference found for key: " + key);
@@ -283,6 +284,15 @@ public class BaseViewContext extends AbstractVirtualView implements ViewContext 
                     "Tried to get a slot reference while context framework was not registered yet");
 
         return vf.getFactory().createSlotContext(item, this, 0, null);
+    }
+
+    @Override
+    public @Nullable ViewSlotContext refOrNull(@NotNull String key) {
+        try {
+            return ref(key);
+        } catch (UnknownReferenceException ignored) {
+            return null;
+        }
     }
 
     private ViewItem tryResolveRef(final AbstractVirtualView view, final String key) {

@@ -3,6 +3,7 @@ package me.saiintbrisson.minecraft;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
+import me.saiintbrisson.minecraft.exception.UnknownReferenceException;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -247,12 +248,37 @@ public interface ViewContext extends VirtualView {
      *
      * @param key The item reference key.
      * @return A new context with referenced item.
-     * @throws IllegalArgumentException If no item are found for the reference key.
+     * @throws UnknownReferenceException If no item are found for the reference key.
      * @see ViewItem#referencedBy(String)
      */
-    @ApiStatus.Experimental
     @NotNull
-    ViewSlotContext ref(String key) throws IllegalArgumentException;
+    @ApiStatus.Experimental
+    ViewSlotContext ref(@NotNull String key) throws UnknownReferenceException;
+
+    /**
+     * Creates a new slot context instance containing within it data of an item whose reference key is
+     * the same as specified.
+     *
+     * <p>Item reference keys are used as a bridge between one item and another, ideal when there are
+     * items that interact with each other, for example: you click on an item and another item in the
+     * container is updated.
+     *
+     * <p>In previous versions this was not possible as only updating the entire container was it
+     * possible to update an item to which the modification was applied causing side effects on other
+     * items that had rendering functions that act during the update, or, paginated views which items
+     * and layout were resolved again, so the performance using references is much better than a full
+     * container update.
+     *
+     * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     *
+     * @param key The item reference key.
+     * @return A new context with referenced item or null.
+     * @see ViewItem#referencedBy(String)
+     */
+    @Nullable
+    @ApiStatus.Experimental
+    ViewSlotContext refOrNull(@NotNull String key);
 
     /**
      * Invalidates this context.
