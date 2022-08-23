@@ -1,12 +1,12 @@
 package me.saiintbrisson.minecraft.pipeline.interceptors;
 
 import static me.saiintbrisson.minecraft.AbstractView.OPEN;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executors;
 import me.saiintbrisson.minecraft.OpenViewContext;
 import me.saiintbrisson.minecraft.VirtualView;
 import me.saiintbrisson.minecraft.pipeline.Pipeline;
@@ -30,10 +30,13 @@ public class OpenInterceptorTest {
 
         OpenViewContext context = mock(OpenViewContext.class);
 
-        when(context.getAsyncOpenJob()).thenReturn(CompletableFuture.supplyAsync(() -> {
-            throw new IllegalStateException();
-        }));
+        when(context.getAsyncOpenJob())
+                .thenReturn(CompletableFuture.supplyAsync(
+                        () -> {
+                            throw new IllegalStateException();
+                        },
+                        Executors.newFixedThreadPool(1)));
 
-        assertDoesNotThrow(() -> pipeline.execute(OPEN, context));
+        pipeline.execute(OPEN, context);
     }
 }

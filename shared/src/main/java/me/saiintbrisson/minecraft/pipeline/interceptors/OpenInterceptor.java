@@ -18,8 +18,6 @@ import org.jetbrains.annotations.TestOnly;
 
 public class OpenInterceptor implements PipelineInterceptor<VirtualView> {
 
-    static final String ASYNC_UPDATE_JOB_EXECUTION_ERROR_MESSAGE = "An error occurred in the opening asynchronous job.";
-
     @TestOnly
     boolean skipOpen = false;
 
@@ -39,17 +37,17 @@ public class OpenInterceptor implements PipelineInterceptor<VirtualView> {
                 .exceptionally(error -> {
                     // TODO invalidate context
                     pipeline.finish();
-                    throw new RuntimeException(ASYNC_UPDATE_JOB_EXECUTION_ERROR_MESSAGE, error);
+                    throw new RuntimeException("An error occurred in the opening asynchronous job.", error);
                 });
     }
 
     private void finishOpen(@NotNull PipelineContext<VirtualView> pipeline, @NotNull OpenViewContext openContext) {
-        if (skipOpen) return;
-
         if (openContext.isCancelled()) {
             pipeline.finish();
             return;
         }
+
+        if (skipOpen) return;
 
         final AbstractView root = openContext.getRoot();
         final String containerTitle = elvis(openContext.getContainerTitle(), root.getTitle());
