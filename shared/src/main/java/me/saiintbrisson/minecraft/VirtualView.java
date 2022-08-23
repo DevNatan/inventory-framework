@@ -514,8 +514,11 @@ public interface VirtualView {
 
     /**
      * Clears an item at the specified position.
+     * <p>
+     * The slot will only be cleaned on the next update, so if you want it cleaned immediately
+     * update the view using.
      *
-     * @param index The item index.
+     * @param index The slot position.
      */
     void clear(int index);
 

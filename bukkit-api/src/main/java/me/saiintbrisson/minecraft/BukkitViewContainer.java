@@ -65,7 +65,7 @@ public abstract class BukkitViewContainer implements ViewContainer {
 
     @Override
     public boolean isSupportedItem(Object item) {
-        return item instanceof ItemStack || item instanceof Material;
+        return item == null || item instanceof ItemStack || item instanceof Material;
     }
 
     protected final void requireSupportedItem(Object item) {

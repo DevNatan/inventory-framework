@@ -296,7 +296,8 @@ public class BaseViewContext extends AbstractVirtualView implements ViewContext 
     }
 
     private ViewItem tryResolveRef(final AbstractVirtualView view, final String key) {
-        for (final ViewItem item : view.getItems()) {
+        VirtualView target = view instanceof ViewSlotContext ? ((ViewSlotContext) view).getParent() : view;
+        for (final ViewItem item : target.getItems()) {
             if (item == null) continue;
             if (item.getReferenceKey() == null) continue;
             if (item.getReferenceKey().equals(key)) return item;

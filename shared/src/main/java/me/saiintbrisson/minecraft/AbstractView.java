@@ -714,6 +714,15 @@ public abstract class AbstractView extends AbstractVirtualView {
      */
     @ApiStatus.Internal
     public final void update(@NotNull ViewContext context, ViewItem item, int slot) {
+        if (item.isRemoved()) {
+            try {
+                context.getContainer().renderItem(slot, null);
+            } catch (Exception e) {
+                throw new ContainerException(null, e);
+            }
+            return;
+        }
+
         if (item.getUpdateHandler() != null) {
             final ViewSlotContext updateContext = PlatformUtils.getFactory().createSlotContext(item, context, 0, null);
 

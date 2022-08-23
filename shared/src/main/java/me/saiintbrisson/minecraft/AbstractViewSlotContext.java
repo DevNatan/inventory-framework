@@ -53,6 +53,22 @@ public abstract class AbstractViewSlotContext extends BaseViewContext implements
     }
 
     @Override
+    public void clear() {
+        ViewItem rootItem = getRoot().getItem(getSlot());
+        if (rootItem != null) {
+            rootItem.setRemoved(true);
+            getRoot().clear(getSlot());
+            return;
+        }
+
+        ViewItem contextItem = getParent().getItem(getSlot());
+        if (contextItem == null) return;
+
+        contextItem.setRemoved(true);
+        getParent().clear(getSlot());
+    }
+
+    @Override
     public List<Viewer> internalGetViewers() {
         return parent.getViewers();
     }

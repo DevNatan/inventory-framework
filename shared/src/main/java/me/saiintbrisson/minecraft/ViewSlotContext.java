@@ -36,6 +36,15 @@ public interface ViewSlotContext extends ViewContext {
     ViewContext getParent();
 
     /**
+     * Clears this slot from the current context.
+     * <p>
+     * The slot will only be cleaned on the next update, so if you want it cleaned immediately
+     * update the slot using {@link #updateSlot()}
+     */
+    @ApiStatus.Experimental
+    void clear();
+
+    /**
      * Returns the slot position of this context in the current container.
      *
      * @return The slot position of this context.
