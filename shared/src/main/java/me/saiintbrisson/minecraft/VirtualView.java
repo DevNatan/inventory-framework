@@ -176,8 +176,6 @@ public interface VirtualView {
     /**
      * Registers a new item in the specified slot.
      *
-     * <p><b>Triggers an {@link #inventoryModificationTriggered() inventory modification}.</b>
-     *
      * @param slot The item slot.
      * @return The newly created item instance.
      */
@@ -186,8 +184,6 @@ public interface VirtualView {
 
     /**
      * Registers a new item with a fallback item in the specified slot.
-     *
-     * <p><b>Triggers an {@link #inventoryModificationTriggered() inventory modification}.</b>
      *
      * @param slot The item slot.
      * @param item The fallback item.
@@ -199,8 +195,6 @@ public interface VirtualView {
     /**
      * Registers a new item in the specified row and column.
      *
-     * <p><b>Triggers an {@link #inventoryModificationTriggered() inventory modification}.</b>
-     *
      * @param row    The item slot row.
      * @param column The item slot column.
      * @return The newly created item instance.
@@ -210,8 +204,6 @@ public interface VirtualView {
 
     /**
      * Registers a new item with a fallback item in the specified row and column.
-     *
-     * <p><b>Triggers an {@link #inventoryModificationTriggered() inventory modification}.</b>
      *
      * @param row    The slot row.
      * @param column The slot column.
@@ -224,8 +216,6 @@ public interface VirtualView {
     /**
      * Registers a new item in the first slot of this view.
      *
-     * <p><b>Triggers an {@link #inventoryModificationTriggered() inventory modification}.</b>
-     *
      * @return The newly created item instance.
      * @see #getFirstSlot()
      */
@@ -234,8 +224,6 @@ public interface VirtualView {
 
     /**
      * Registers a new item with a fallback item in the first slot of this view.
-     *
-     * <p><b>Triggers an {@link #inventoryModificationTriggered() inventory modification}.</b>
      *
      * @param item The fallback item.
      * @return The newly created item instance.
@@ -247,8 +235,6 @@ public interface VirtualView {
     /**
      * Registers a new item in the last slot of this view.
      *
-     * <p><b>Triggers an {@link #inventoryModificationTriggered() inventory modification}.</b>
-     *
      * @return The newly created item instance.
      * @see #getLastSlot()
      */
@@ -257,8 +243,6 @@ public interface VirtualView {
 
     /**
      * Registers a new item with a fallback item in the last slot of this view.
-     *
-     * <p><b>Triggers an {@link #inventoryModificationTriggered() inventory modification}.</b>
      *
      * @param item The fallback item.
      * @return The newly created item instance.

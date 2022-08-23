@@ -43,4 +43,22 @@ public final class IFUtils {
                 + "Use #setSource in the PaginatedView constructor or set only to a context"
                 + " in the #onRender(...) function with \"context.paginated().setSource(...)\".");
     }
+
+    public static int convertSlot(int row, int column, int maxRowsCount, int maxColumnsCount) {
+        if (row > maxRowsCount)
+            throw new IllegalArgumentException(
+                    String.format("Row cannot be greater than %d (given %d)", maxRowsCount, row));
+
+        if (column > maxColumnsCount)
+            throw new IllegalArgumentException(
+                    String.format("Column cannot be greater than %d (given %d)", maxColumnsCount, column));
+
+        return Math.max(row - 1, 0) * maxColumnsCount + Math.max(column - 1, 0);
+    }
+
+    static Object unwrap(Object item) {
+        if (item instanceof ItemWrapper) return unwrap(((ItemWrapper) item).getValue());
+
+        return item;
+    }
 }

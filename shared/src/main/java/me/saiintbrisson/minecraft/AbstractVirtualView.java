@@ -61,7 +61,7 @@ public abstract class AbstractVirtualView implements VirtualView {
     /**
      * {@inheritDoc}
      */
-    public final void setErrorHandler(ViewErrorHandler errorHandler) {
+    public void setErrorHandler(ViewErrorHandler errorHandler) {
         this.errorHandler = errorHandler;
     }
 
@@ -166,7 +166,7 @@ public abstract class AbstractVirtualView implements VirtualView {
      */
     @Override
     @NotNull
-    public final ViewItem slot(int slot, Object item) {
+    public ViewItem slot(int slot, Object item) {
         inventoryModificationTriggered();
 
         final ViewItem viewItem = new ViewItem(slot).withItem(item);
@@ -228,7 +228,7 @@ public abstract class AbstractVirtualView implements VirtualView {
      * {@inheritDoc}
      */
     @Override
-    public @NotNull ViewItem availableSlot() {
+    public final @NotNull ViewItem availableSlot() {
         return availableSlot(null);
     }
 
@@ -423,21 +423,7 @@ public abstract class AbstractVirtualView implements VirtualView {
      * @param column The columns count.
      * @return The slot position based in specified row and column.
      */
-    int convertSlot(int row, int column) {
-        throw new IllegalArgumentException("Slot conversion not supported");
-    }
-
-    protected final int convertSlot(int row, int column, int maxRowsCount, int maxColumnsCount) {
-        if (row > maxRowsCount)
-            throw new IllegalArgumentException(
-                    String.format("Row cannot be greater than %d (given %d)", maxRowsCount, row));
-
-        if (column > maxColumnsCount)
-            throw new IllegalArgumentException(
-                    String.format("Column cannot be greater than %d (given %d)", maxColumnsCount, column));
-
-        return Math.max(row - 1, 0) * maxColumnsCount + Math.max(column - 1, 0);
-    }
+    abstract int convertSlot(int row, int column);
 
     /**
      * {@inheritDoc}
@@ -448,6 +434,9 @@ public abstract class AbstractVirtualView implements VirtualView {
         return layoutPatterns;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @ApiStatus.Internal
     public String[] getLayout() {
