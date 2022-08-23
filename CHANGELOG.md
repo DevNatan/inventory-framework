@@ -18,6 +18,11 @@
 * Layout now rendered dynamically when source is updated (#201)
 * Fix Bukkit player retrieval on close handler (#202)
 * Remove nextTick from updateSlot call (#203)
+* Allow users to ignore navigation item factory (#205)
+* Slot conversion fix (#208)
+* Allow slot clear on update (#209)
+* Custom UnknownReferenceException and nullable ref (#210)
+* Instantiate entity container properly, fixes `isOnEntityContainer` checks (#211) 
 
 # 2.5.3
 * Fix scheduled updates (#175)
