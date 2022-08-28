@@ -346,8 +346,13 @@ public abstract class AbstractVirtualView implements VirtualView {
      */
     @Override
     public void scheduleUpdate(long delayInTicks, long intervalInTicks) {
-        inventoryModificationTriggered();
-        PlatformUtils.getFactory().scheduleUpdate(this, delayInTicks, intervalInTicks);
+        final PlatformViewFrame<?, ?, ?> initiator = IFUtils.findViewFrame(this);
+        if (initiator == null) throw new IllegalStateException("No initiator to schedule update.");
+
+        final Job old = getUpdateJob();
+        if (old != null && old.isStarted()) old.cancel();
+
+        setUpdateJob(new ViewUpdateJobImpl(this, initiator, delayInTicks, intervalInTicks));
     }
 
     /**
