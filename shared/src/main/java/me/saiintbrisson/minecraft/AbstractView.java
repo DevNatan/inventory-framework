@@ -5,6 +5,7 @@ import static me.saiintbrisson.minecraft.IFUtils.unwrap;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -249,7 +250,20 @@ public abstract class AbstractView extends AbstractVirtualView {
     protected void onMoveOut(@NotNull ViewSlotMoveContext context) {}
 
     /**
+     * Called when a context is resumed.
+     * <p>
+     * Currently, there is only one way to resume a context, which is through
+     * {@link ViewContext#back()} the "context" parameter being the context that was resumed and
+     * the "subject" the context in which the function was executed.
+     *
+     * @param context The resumed context.
+     * @param subject By what context the context was resumed.
+     */
+    protected void onResume(@NotNull ViewContext context, @NotNull ViewContext subject) {}
+
+    /**
      * {@inheritDoc}
+     *
      * @throws InitializationException If this view is initialized.
      */
     @Override
@@ -258,13 +272,14 @@ public abstract class AbstractView extends AbstractVirtualView {
         return super.slot(slot, item);
     }
 
-    final void open(@NotNull Viewer viewer, @NotNull Map<String, Object> data) {
+    final void open(@NotNull Viewer viewer, @NotNull Map<String, Object> data, @Nullable ViewContext initiator) {
         if (!isInitialized()) throw new IllegalStateException("Cannot open a uninitialized view.");
 
         final OpenViewContext context =
                 (OpenViewContext) PlatformUtils.getFactory().createContext(this, null, OpenViewContext.class);
 
         context.addViewer(viewer);
+        context.setPrevious((BaseViewContext) initiator);
         data.forEach(context::set);
         onOpen(context);
         getPipeline().execute(OPEN, context);
@@ -286,6 +301,33 @@ public abstract class AbstractView extends AbstractVirtualView {
             onUpdate(context);
             getPipeline().execute(UPDATE, context);
         });
+    }
+
+    /**
+     * Resumes a context.
+     * <p>
+     * Basically this will open the context expecting that this context has already been initialized
+     * and populated previously.
+     *
+     * @param target  The context that will be resumed.
+     * @param subject The context that asked for that context to be resumed.
+     */
+    void resume(@NotNull BaseViewContext target, @NotNull BaseViewContext subject) {
+        target.setPrevious(subject);
+
+        // we need to copy since this will be and close -> open -> close operation
+        // and open the target for each viewer from the subject context
+        final List<Viewer> viewers = new ArrayList<>(subject.internalGetViewers());
+        System.out.println("coming viewers (" + viewers.size() + ") " + viewers);
+
+        viewers.forEach(viewer -> {
+            target.addViewer(viewer);
+            target.getContainer().open(viewer);
+        });
+
+        final AbstractView root = target.getRoot();
+        root.registerContext(target);
+        root.onResume(target, subject);
     }
 
     /**

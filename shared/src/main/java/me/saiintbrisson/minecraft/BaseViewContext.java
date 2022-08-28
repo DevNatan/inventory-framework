@@ -31,6 +31,7 @@ public class BaseViewContext extends AbstractVirtualView implements ViewContext 
     private boolean markedToClose;
     private boolean cancellationAllowed;
     private boolean cancelled;
+    private BaseViewContext previous;
 
     protected BaseViewContext(final @NotNull AbstractView root, final @Nullable ViewContainer container) {
         this.root = root;
@@ -55,7 +56,7 @@ public class BaseViewContext extends AbstractVirtualView implements ViewContext 
     @Override
     public final @NotNull List<Viewer> getViewers() {
         synchronized (internalGetViewers()) {
-            return Collections.unmodifiableList(internalGetViewers());
+            return internalGetViewers();
         }
     }
 
@@ -193,7 +194,7 @@ public class BaseViewContext extends AbstractVirtualView implements ViewContext 
     }
 
     @Override
-    public final void close() {
+    public void close() {
         markedToClose = true;
     }
 
@@ -221,7 +222,12 @@ public class BaseViewContext extends AbstractVirtualView implements ViewContext 
                 getRoot().getViewFrame(),
                 "Fast parent view open by context bridge is only supported if root view is registered under a ViewFrame.");
 
-        for (final Viewer viewer : getViewers()) platformViewFrame.open(viewClass, viewer, data);
+        for (final Viewer viewer : getViewers())
+            platformViewFrame.open(
+                    viewClass,
+                    viewer,
+                    data,
+                    this instanceof ViewSlotContext ? ((ViewSlotContext) this).getParent() : this);
     }
 
     @Override
@@ -331,5 +337,22 @@ public class BaseViewContext extends AbstractVirtualView implements ViewContext 
     final int convertSlot(int row, int column) {
         ViewContainer container = getContainer();
         return IFUtils.convertSlot(row, column, container.getRowsCount(), container.getColumnsCount());
+    }
+
+    public void setPrevious(BaseViewContext previous) {
+        if (previous instanceof ViewSlotContext)
+            throw new IllegalStateException("Previous context cannot be a slot context.");
+
+        this.previous = previous;
+    }
+
+    @Override
+    @Nullable
+    public ViewContext back() {
+        final BaseViewContext prev = getPrevious();
+        if (prev == null) return null;
+
+        getRoot().resume(prev, this);
+        return prev;
     }
 }
