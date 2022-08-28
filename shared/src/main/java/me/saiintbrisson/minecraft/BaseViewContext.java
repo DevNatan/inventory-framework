@@ -31,6 +31,7 @@ public class BaseViewContext extends AbstractVirtualView implements ViewContext 
     private boolean markedToClose;
     private boolean cancellationAllowed;
     private boolean cancelled;
+    private BaseViewContext previous;
 
     protected BaseViewContext(final @NotNull AbstractView root, final @Nullable ViewContainer container) {
         this.root = root;
@@ -331,5 +332,15 @@ public class BaseViewContext extends AbstractVirtualView implements ViewContext 
     final int convertSlot(int row, int column) {
         ViewContainer container = getContainer();
         return IFUtils.convertSlot(row, column, container.getRowsCount(), container.getColumnsCount());
+    }
+
+    @Override
+    @Nullable
+    public ViewContext back() {
+        final BaseViewContext prev = getPrevious();
+        if (prev == null) return null;
+
+        getRoot().resume(prev, this);
+        return prev;
     }
 }

@@ -266,4 +266,9 @@ public abstract class AbstractViewSlotContext extends BaseViewContext implements
     private void throwNotAllowedCall() throws RuntimeException {
         throw new RuntimeException("Not allowed to call these kind of method in slot context.");
     }
+
+    @Override
+    public ViewContext back() {
+        return getParent().back();
+    }
 }

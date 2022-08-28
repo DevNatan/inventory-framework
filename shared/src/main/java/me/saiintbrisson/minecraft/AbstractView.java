@@ -5,6 +5,7 @@ import static me.saiintbrisson.minecraft.IFUtils.unwrap;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -249,7 +250,20 @@ public abstract class AbstractView extends AbstractVirtualView {
     protected void onMoveOut(@NotNull ViewSlotMoveContext context) {}
 
     /**
+     * Called when a context is resumed.
+     * <p>
+     * Currently, there is only one way to resume a context, which is through
+     * {@link ViewContext#back()} the "context" parameter being the context that was resumed and
+     * the "subject" the context in which the function was executed.
+     *
+     * @param context The resumed context.
+     * @param subject By what context the context was resumed.
+     */
+    protected void onResume(@NotNull ViewContext context, @NotNull ViewContext subject) {}
+
+    /**
      * {@inheritDoc}
+     *
      * @throws InitializationException If this view is initialized.
      */
     @Override
@@ -286,6 +300,37 @@ public abstract class AbstractView extends AbstractVirtualView {
             onUpdate(context);
             getPipeline().execute(UPDATE, context);
         });
+    }
+
+    /**
+     * Opens a context to a viewer.
+     *
+     * @param context The context.
+     * @param viewer  The viewer.
+     */
+    void open(ViewContext context, Viewer viewer) {
+        context.getContainer().open(viewer);
+    }
+
+    /**
+     * Resumes a context.
+     * <p>
+     * Basically this will open the context expecting that this context has already been initialized
+     * and populated previously.
+     *
+     * @param target  The context that will be resumed.
+     * @param subject The context that asked for that context to be resumed.
+     */
+    void resume(@NotNull BaseViewContext target, @NotNull BaseViewContext subject) {
+        target.setPrevious(subject);
+
+        // we need to copy since this will be and close -> open -> close operation
+        List<Viewer> viewers = new ArrayList<>(subject.getViewers());
+
+        // open the target for each viewer from the subject context
+        viewers.forEach(viewer -> open(target, viewer));
+
+        onResume(target, subject);
     }
 
     /**

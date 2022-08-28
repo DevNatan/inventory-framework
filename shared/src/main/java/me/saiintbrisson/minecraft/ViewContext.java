@@ -3,6 +3,7 @@ package me.saiintbrisson.minecraft;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
+import me.saiintbrisson.minecraft.exception.InvalidatedContextException;
 import me.saiintbrisson.minecraft.exception.UnknownReferenceException;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.ApiStatus;
@@ -288,4 +289,30 @@ public interface ViewContext extends VirtualView {
      */
     @ApiStatus.Internal
     default void invalidate() {}
+
+    /**
+     * Backs to the view that was previously open by resuming it.
+     * <p>
+     * This function will use the saved the state of the entire previous context and will evaluate
+     * it, this will only work with transitions from the previous context, that is, for the context
+     * to be saved and registered you will have to have the current context open through the
+     * previous context using {@link ViewContext#open(Class)} or {@link ViewContext#open(Class, Map)}.
+     * <p>
+     * Using this will not call the root {@link AbstractView#onOpen(OpenViewContext) onOpen} nor
+     * {@link AbstractView#onRender(ViewContext) onRender}.
+     * <p>
+     * You can track when a context is resumed by this function with
+     * {@link AbstractView#onResume(ViewContext, ViewContext) onResume}.
+     *
+     * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     *
+     * @return The context associated to the previously open view, or <code>null</code> if there is
+     * nothing to back.
+     * @throws InvalidatedContextException If the context to be returned has been invalidated for
+     *                                     some reason and can no longer be returned.
+     */
+    @ApiStatus.Experimental
+    @Nullable
+    ViewContext back();
 }
