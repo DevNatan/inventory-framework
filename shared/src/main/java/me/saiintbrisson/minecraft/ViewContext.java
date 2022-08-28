@@ -288,18 +288,6 @@ public interface ViewContext extends VirtualView {
     @ApiStatus.Internal
     default void invalidate() {}
 
-    //	/**
-    //	 * If this context has any view to back.
-    //	 *
-    //	 * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
-    //	 * such API may be changed or may be removed completely in any further release. </i></b>
-    //	 *
-    //	 * @return <code>true</code> if this context can back or <code>false</code> otherwise.
-    //	 * @see #back()
-    //	 */
-    //	@ApiStatus.Experimental
-    //	boolean canBack();
-
     /**
      * Backs to the view that was previously open by resuming it.
      * <p>
