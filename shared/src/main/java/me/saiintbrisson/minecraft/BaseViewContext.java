@@ -25,7 +25,7 @@ public class BaseViewContext extends AbstractVirtualView implements ViewContext 
     private final ViewContainer container;
 
     private final List<Viewer> viewers = new ArrayList<>();
-    private final Map<String, Object> contextData = new HashMap<>();
+    private final Map<String, Object> data = new HashMap<>();
     private String updatedTitle;
     private boolean propagateErrors = true;
     private boolean markedToClose;
@@ -75,42 +75,52 @@ public class BaseViewContext extends AbstractVirtualView implements ViewContext 
     }
 
     @Override
-    public final Map<String, Object> getData() {
-        return Collections.unmodifiableMap(contextData);
+    public Map<String, Object> getData() {
+        return data;
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public final <T> T get(@NotNull final String key) {
-        return (T) contextData.get(key);
+        return (T) getData().get(key);
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public <T> T get(@NotNull String key, @NotNull Supplier<T> defaultValue) {
-        synchronized (contextData) {
-            if (!contextData.containsKey(key)) {
+        synchronized (getData()) {
+            if (!getData().containsKey(key)) {
                 final T value = defaultValue.get();
-                contextData.put(key, value);
+                getData().put(key, value);
                 return value;
             }
 
-            return (T) contextData.get(key);
+            return (T) getData().get(key);
         }
     }
 
     @Override
     public final void set(@NotNull final String key, @NotNull final Object value) {
-        synchronized (contextData) {
-            contextData.put(key, value);
+        synchronized (getData()) {
+            getData().put(key, value);
         }
     }
 
     @Override
     public final boolean has(@NotNull final String key) {
-        synchronized (contextData) {
-            return contextData.containsKey(key);
+        synchronized (getData()) {
+            return getData().containsKey(key);
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public final <T> T remove(@NotNull String key) {
+        synchronized (getData()) {
+            Object value = getData().remove(key);
+            if (value != null) return (T) value;
+        }
+        return null;
     }
 
     @Override
