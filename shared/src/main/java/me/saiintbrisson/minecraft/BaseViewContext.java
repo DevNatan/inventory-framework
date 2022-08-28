@@ -25,7 +25,7 @@ public class BaseViewContext extends AbstractVirtualView implements ViewContext 
     private final ViewContainer container;
 
     private final List<Viewer> viewers = new ArrayList<>();
-    private final Map<String, Object> contextData = new HashMap<>();
+    private final Map<String, Object> data = new HashMap<>();
     private String updatedTitle;
     private boolean propagateErrors = true;
     private boolean markedToClose;
@@ -81,42 +81,42 @@ public class BaseViewContext extends AbstractVirtualView implements ViewContext 
     @Override
     @SuppressWarnings("unchecked")
     public final <T> T get(@NotNull final String key) {
-        return (T) getContextData().get(key);
+        return (T) getData().get(key);
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public <T> T get(@NotNull String key, @NotNull Supplier<T> defaultValue) {
-        synchronized (getContextData()) {
-            if (!getContextData().containsKey(key)) {
+        synchronized (getData()) {
+            if (!getData().containsKey(key)) {
                 final T value = defaultValue.get();
-                getContextData().put(key, value);
+                getData().put(key, value);
                 return value;
             }
 
-            return (T) getContextData().get(key);
+            return (T) getData().get(key);
         }
     }
 
     @Override
     public final void set(@NotNull final String key, @NotNull final Object value) {
-        synchronized (getContextData()) {
-            getContextData().put(key, value);
+        synchronized (getData()) {
+            getData().put(key, value);
         }
     }
 
     @Override
     public final boolean has(@NotNull final String key) {
-        synchronized (getContextData()) {
-            return getContextData().containsKey(key);
+        synchronized (getData()) {
+            return getData().containsKey(key);
         }
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public final <T> T remove(@NotNull String key) {
-        synchronized (getContextData()) {
-            Object value = getContextData().remove(key);
+        synchronized (getData()) {
+            Object value = getData().remove(key);
             if (value != null) return (T) value;
         }
         return null;
