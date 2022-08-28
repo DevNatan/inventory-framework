@@ -318,7 +318,6 @@ public abstract class AbstractView extends AbstractVirtualView {
         // we need to copy since this will be and close -> open -> close operation
         // and open the target for each viewer from the subject context
         final List<Viewer> viewers = new ArrayList<>(subject.internalGetViewers());
-        System.out.println("coming viewers (" + viewers.size() + ") " + viewers);
 
         viewers.forEach(viewer -> {
             target.addViewer(viewer);
