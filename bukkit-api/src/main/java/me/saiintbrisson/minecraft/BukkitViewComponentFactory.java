@@ -120,20 +120,6 @@ final class BukkitViewComponentFactory extends ViewComponentFactory {
                 "Unsupported item type \"%s\": %s", stack.getClass().getName(), stack));
     }
 
-    @Override
-    public void scheduleUpdate(@NotNull VirtualView view, long delayInTicks, long intervalInTicks) {
-        ViewUpdateJob updateJob = view.getUpdateJob();
-        if (updateJob != null) {
-            // fast path -- do not schedule if delay and interval are the same
-            if (updateJob.getDelay() == delayInTicks && updateJob.getInterval() == intervalInTicks) return;
-
-            // cancel the old update job to prevent leaks
-            updateJob.cancel();
-        }
-
-        view.setUpdateJob(new BukkitViewUpdateJobImpl(view, delayInTicks, intervalInTicks));
-    }
-
     private InventoryType toInventoryType(@NotNull ViewType type) {
         if (type == ViewType.HOPPER) return InventoryType.HOPPER;
         if (type == ViewType.FURNACE) return InventoryType.FURNACE;

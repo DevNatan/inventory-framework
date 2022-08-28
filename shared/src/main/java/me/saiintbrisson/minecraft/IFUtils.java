@@ -5,6 +5,7 @@ import java.util.function.Consumer;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class IFUtils {
@@ -60,5 +61,14 @@ public final class IFUtils {
         if (item instanceof ItemWrapper) return unwrap(((ItemWrapper) item).getValue());
 
         return item;
+    }
+
+    public static PlatformViewFrame<?, ?, ?> findViewFrame(@Nullable VirtualView view) {
+        if (view == null) return null;
+        if (view instanceof AbstractView) return ((AbstractView) view).getViewFrame();
+        if (view instanceof ViewContext) return ((ViewContext) view).getRoot().getViewFrame();
+
+        throw new IllegalArgumentException(
+                "Unable to find view frame on: " + view.getClass().getName());
     }
 }

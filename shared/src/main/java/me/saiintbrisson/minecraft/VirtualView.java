@@ -531,7 +531,7 @@ public interface VirtualView {
      * @return The update job for this view.
      */
     @ApiStatus.Internal
-    ViewUpdateJob getUpdateJob();
+    Job getUpdateJob();
 
     /**
      * Sets the update job for this view.
@@ -542,7 +542,7 @@ public interface VirtualView {
      * @param updateJob The new update job.
      */
     @ApiStatus.Internal
-    void setUpdateJob(ViewUpdateJob updateJob);
+    void setUpdateJob(Job updateJob);
 
     /**
      * Defines the automatic update interval time for this view.

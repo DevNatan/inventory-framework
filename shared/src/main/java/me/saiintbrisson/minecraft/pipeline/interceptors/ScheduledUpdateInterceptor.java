@@ -31,7 +31,7 @@ public final class ScheduledUpdateInterceptor {
             // only init update job IN THE FIRST viewer
             if (subject.getViewers().size() != 1) return;
 
-            subject.getUpdateJob().resume();
+            subject.getUpdateJob().start();
             onIntercept();
         }
 
@@ -53,7 +53,7 @@ public final class ScheduledUpdateInterceptor {
             // only pause update job if there's no more viewers in this context
             if (subject.getViewers().size() != 1) return;
 
-            subject.getUpdateJob().pause();
+            subject.getUpdateJob().cancel();
             onIntercept();
         }
 

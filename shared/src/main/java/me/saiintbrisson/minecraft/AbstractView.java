@@ -504,11 +504,6 @@ public abstract class AbstractView extends AbstractVirtualView {
         return title;
     }
 
-    @Override
-    public final ViewUpdateJob getUpdateJob() {
-        return super.getUpdateJob();
-    }
-
     /**
      * {@inheritDoc}
      */
