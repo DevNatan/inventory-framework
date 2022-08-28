@@ -262,6 +262,11 @@ public abstract class AbstractViewSlotContext extends BaseViewContext implements
         return -1;
     }
 
+    @Override
+    public Map<String, Object> getContextData() {
+        return ((BaseViewContext) getParent()).getContextData();
+    }
+
     @Contract(value = " -> fail", pure = true)
     private void throwNotAllowedCall() throws RuntimeException {
         throw new RuntimeException("Not allowed to call these kind of method in slot context.");

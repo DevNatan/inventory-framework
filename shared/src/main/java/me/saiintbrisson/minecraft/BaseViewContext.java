@@ -75,41 +75,51 @@ public class BaseViewContext extends AbstractVirtualView implements ViewContext 
 
     @Override
     public final Map<String, Object> getData() {
-        return Collections.unmodifiableMap(contextData);
+        return Collections.unmodifiableMap(getContextData());
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public final <T> T get(@NotNull final String key) {
-        return (T) contextData.get(key);
+        return (T) getContextData().get(key);
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public <T> T get(@NotNull String key, @NotNull Supplier<T> defaultValue) {
-        synchronized (contextData) {
-            if (!contextData.containsKey(key)) {
+        synchronized (getContextData()) {
+            if (!getContextData().containsKey(key)) {
                 final T value = defaultValue.get();
-                contextData.put(key, value);
+                getContextData().put(key, value);
                 return value;
             }
 
-            return (T) contextData.get(key);
+            return (T) getContextData().get(key);
         }
     }
 
     @Override
     public final void set(@NotNull final String key, @NotNull final Object value) {
-        synchronized (contextData) {
-            contextData.put(key, value);
+        synchronized (getContextData()) {
+            getContextData().put(key, value);
         }
     }
 
     @Override
     public final boolean has(@NotNull final String key) {
-        synchronized (contextData) {
-            return contextData.containsKey(key);
+        synchronized (getContextData()) {
+            return getContextData().containsKey(key);
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public final <T> T remove(@NotNull String key) {
+        synchronized (getContextData()) {
+            Object value = getContextData().remove(key);
+            if (value != null) return (T) value;
+        }
+        return null;
     }
 
     @Override
