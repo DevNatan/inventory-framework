@@ -203,6 +203,14 @@ public interface ViewContext extends VirtualView {
     boolean has(@NotNull String key);
 
     /**
+     * Removes a property.
+     *
+     * @param key The property key.
+     * @return The current property value before removal or <code>null</code>.
+     */
+    <T> T remove(@NotNull String key);
+
+    /**
      * Converts this context to a paginated context.
      *
      * <p>Only works if the view that originated this context is a paginated view, throwing an
