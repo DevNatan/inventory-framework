@@ -77,7 +77,7 @@ class BasePaginatedViewContext<T> extends BaseViewContext implements PaginatedVi
 
     @Override
     public final boolean hasNextPage() {
-        return getPaginator().hasPage(getPage() + 1);
+        return usePaginator().hasPage(getPage() + 1);
     }
 
     @Override
@@ -137,7 +137,7 @@ class BasePaginatedViewContext<T> extends BaseViewContext implements PaginatedVi
 
     @Override
     public final @NotNull List<T> getSource() {
-        return Collections.unmodifiableList(getPaginator().getSource());
+        return Collections.unmodifiableList(usePaginator().getSource());
     }
 
     private void checkUniquePaginationSource() {
@@ -182,5 +182,9 @@ class BasePaginatedViewContext<T> extends BaseViewContext implements PaginatedVi
     @Override
     public final @NotNull AbstractPaginatedView<T> getRoot() {
         return super.getRoot().paginated();
+    }
+
+    private Paginator<T> usePaginator() {
+        return getPaginator() == null ? getRoot().getPaginator() : getPaginator();
     }
 }
