@@ -263,8 +263,8 @@ public abstract class AbstractViewSlotContext extends BaseViewContext implements
     }
 
     @Override
-    public Map<String, Object> getContextData() {
-        return ((BaseViewContext) getParent()).getContextData();
+    public final Map<String, Object> getData() {
+        return getParent().getData();
     }
 
     @Contract(value = " -> fail", pure = true)
