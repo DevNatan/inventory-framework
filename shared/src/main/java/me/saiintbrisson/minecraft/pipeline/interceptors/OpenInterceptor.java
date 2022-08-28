@@ -3,10 +3,10 @@ package me.saiintbrisson.minecraft.pipeline.interceptors;
 import static me.saiintbrisson.minecraft.IFUtils.elvis;
 
 import me.saiintbrisson.minecraft.AbstractView;
+import me.saiintbrisson.minecraft.BaseViewContext;
 import me.saiintbrisson.minecraft.OpenViewContext;
 import me.saiintbrisson.minecraft.PlatformUtils;
 import me.saiintbrisson.minecraft.ViewContainer;
-import me.saiintbrisson.minecraft.ViewContext;
 import me.saiintbrisson.minecraft.ViewItem;
 import me.saiintbrisson.minecraft.ViewType;
 import me.saiintbrisson.minecraft.Viewer;
@@ -61,9 +61,11 @@ public class OpenInterceptor implements PipelineInterceptor<VirtualView> {
         final ViewContainer container =
                 PlatformUtils.getFactory().createContainer(root, containerSize, containerTitle, containerType);
 
-        final ViewContext generatedContext = PlatformUtils.getFactory().createContext(root, container, null);
+        final BaseViewContext generatedContext = PlatformUtils.getFactory().createContext(root, container, null);
 
         generatedContext.setItems(new ViewItem[containerSize]);
+        generatedContext.setPrevious(openContext.getPrevious());
+
         for (final Viewer viewer : openContext.getViewers()) generatedContext.addViewer(viewer);
 
         // ensure data inheritance from open context to lifecycle context

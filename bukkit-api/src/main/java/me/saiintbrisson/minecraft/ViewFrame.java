@@ -233,6 +233,15 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
     @Override
     public <T extends AbstractView> @NotNull T open(
             @NotNull Class<T> viewClass, @NotNull Viewer viewer, Map<String, Object> data) {
+        return open(viewClass, viewer, data, null);
+    }
+
+    @Override
+    public <T extends AbstractView> @NotNull T open(
+            @NotNull Class<T> viewClass,
+            @NotNull Viewer viewer,
+            Map<String, Object> data,
+            @Nullable ViewContext initiator) {
         if (!isRegistered())
             throw new IllegalStateException("Attempt to open a view without having registered the view frame.");
 
@@ -242,7 +251,7 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
         if (view == null)
             throw new IllegalStateException(String.format("View %s is not registered.", viewClass.getName()));
 
-        nextTick(() -> view.open(viewer, data));
+        nextTick(() -> view.open(viewer, data, initiator));
         return view;
     }
 

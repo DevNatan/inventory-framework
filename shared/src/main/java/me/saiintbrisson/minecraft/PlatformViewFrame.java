@@ -114,6 +114,30 @@ public interface PlatformViewFrame<V, P, F extends PlatformViewFrame<V, P, F>> e
     }
 
     /**
+     * Opens the given view to a viewer with initial data.
+     * <p>
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of this
+     * library. No compatibility guarantees are provided. </i></b>
+     *
+     * @param viewClass The view class type.
+     * @param viewer    Who the view will be open.
+     * @param data      Initial viewer context data
+     * @param initiator   The open initiator.
+     * @param <T>       The view instance type.
+     * @return The opened view instance.
+     */
+    @ApiStatus.Internal
+    @NotNull
+    default <T extends AbstractView> T open(
+            @NotNull Class<T> viewClass,
+            @NotNull Viewer viewer,
+            Map<String, Object> data,
+            @Nullable ViewContext initiator) {
+        throw new UnsupportedOperationException(
+                "Direct viewer opening is not supported by this ViewFrame implementation.");
+    }
+
+    /**
      * Defines what will be the default backward navigation item for all registered views.
      * <p>
      * If the view has a navigation item defined, it will use the navigation item itself, either its

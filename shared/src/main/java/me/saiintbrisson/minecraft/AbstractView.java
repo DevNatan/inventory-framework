@@ -272,13 +272,14 @@ public abstract class AbstractView extends AbstractVirtualView {
         return super.slot(slot, item);
     }
 
-    final void open(@NotNull Viewer viewer, @NotNull Map<String, Object> data) {
+    final void open(@NotNull Viewer viewer, @NotNull Map<String, Object> data, @Nullable ViewContext initiator) {
         if (!isInitialized()) throw new IllegalStateException("Cannot open a uninitialized view.");
 
         final OpenViewContext context =
                 (OpenViewContext) PlatformUtils.getFactory().createContext(this, null, OpenViewContext.class);
 
         context.addViewer(viewer);
+        context.setPrevious((BaseViewContext) initiator);
         data.forEach(context::set);
         onOpen(context);
         getPipeline().execute(OPEN, context);
@@ -303,16 +304,6 @@ public abstract class AbstractView extends AbstractVirtualView {
     }
 
     /**
-     * Opens a context to a viewer.
-     *
-     * @param context The context.
-     * @param viewer  The viewer.
-     */
-    void open(ViewContext context, Viewer viewer) {
-        context.getContainer().open(viewer);
-    }
-
-    /**
      * Resumes a context.
      * <p>
      * Basically this will open the context expecting that this context has already been initialized
@@ -325,12 +316,18 @@ public abstract class AbstractView extends AbstractVirtualView {
         target.setPrevious(subject);
 
         // we need to copy since this will be and close -> open -> close operation
-        List<Viewer> viewers = new ArrayList<>(subject.getViewers());
+        // and open the target for each viewer from the subject context
+        final List<Viewer> viewers = new ArrayList<>(subject.internalGetViewers());
+        System.out.println("coming viewers (" + viewers.size() + ") " + viewers);
 
-        // open the target for each viewer from the subject context
-        viewers.forEach(viewer -> open(target, viewer));
+        viewers.forEach(viewer -> {
+            target.addViewer(viewer);
+            target.getContainer().open(viewer);
+        });
 
-        onResume(target, subject);
+        final AbstractView root = target.getRoot();
+        root.registerContext(target);
+        root.onResume(target, subject);
     }
 
     /**
