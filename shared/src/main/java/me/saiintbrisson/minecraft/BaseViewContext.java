@@ -74,8 +74,8 @@ public class BaseViewContext extends AbstractVirtualView implements ViewContext 
     }
 
     @Override
-    public final Map<String, Object> getData() {
-        return Collections.unmodifiableMap(getContextData());
+    public Map<String, Object> getData() {
+        return data;
     }
 
     @Override
