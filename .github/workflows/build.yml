@@ -14,7 +14,7 @@ jobs:
         java-version: '8'
         distribution: 'temurin'
     - name: Build with Gradle
-      uses: gradle/gradle-build-action@cd3cedc781988c804f626f4cd2dc51d0bdf02a12
+      uses: gradle/gradle-build-action@1761dcff1325d8cb9775a28df9cfb73fa093c3c9
       with:
         arguments: build -x test
   test:
@@ -29,6 +29,6 @@ jobs:
           java-version: '8'
           distribution: 'temurin'
       - name: Test with Gradle
-        uses: gradle/gradle-build-action@64a1064eca4dce12f511de38c4afb06707e4e7fc
+        uses: gradle/gradle-build-action@1761dcff1325d8cb9775a28df9cfb73fa093c3c9
         with:
           arguments: test
