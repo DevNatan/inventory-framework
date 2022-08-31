@@ -27,7 +27,7 @@ public class OpenViewContext extends BaseViewContext {
     private ViewType containerType;
 
     @Getter
-    private CompletableFuture<?> asyncOpenJob;
+    private CompletableFuture<Void> asyncOpenJob;
 
     @Setter
     private boolean cancelled;
@@ -89,7 +89,7 @@ public class OpenViewContext extends BaseViewContext {
      *
      * @param job The job that'll be waited for.
      */
-    public final void waitUntil(@NotNull CompletableFuture<?> job) {
+    public final void waitUntil(@NotNull CompletableFuture<Void> job) {
         this.asyncOpenJob = job;
     }
 

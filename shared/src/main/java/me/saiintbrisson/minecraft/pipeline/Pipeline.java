@@ -2,6 +2,7 @@ package me.saiintbrisson.minecraft.pipeline;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -110,10 +111,8 @@ public final class Pipeline<S> {
     }
 
     public PipelineContext<S> execute(@NotNull final PipelinePhase phase, @Nullable final S subject) {
-        final List<PipelineInterceptor<S>> pipelineInterceptors = interceptors.get(phase);
-        if (pipelineInterceptors == null) return null;
-
-        final PipelineContext<S> context = new PipelineContext<>(phase, pipelineInterceptors);
+        final PipelineContext<S> context =
+                new PipelineContext<>(phase, interceptors.getOrDefault(phase, Collections.emptyList()));
         context.execute(subject);
         return context;
     }

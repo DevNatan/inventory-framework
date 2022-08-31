@@ -6,7 +6,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executors;
+import java.util.concurrent.CompletionException;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import me.saiintbrisson.minecraft.OpenViewContext;
 import me.saiintbrisson.minecraft.VirtualView;
 import me.saiintbrisson.minecraft.pipeline.Pipeline;
@@ -17,7 +19,7 @@ import org.junit.jupiter.api.Test;
 public class OpenInterceptorTest {
 
     @Test
-    void shouldFinishPipelineWhenAsyncJobFail() {
+    void shouldFinishPipelineWhenAsyncJobFail() throws InterruptedException {
         Pipeline<VirtualView> pipeline = new Pipeline<>(OPEN);
         OpenInterceptor interceptor = new OpenInterceptor();
 
@@ -26,17 +28,23 @@ public class OpenInterceptorTest {
         interceptor.skipOpen = true;
 
         pipeline.intercept(OPEN, interceptor);
-        pipeline.intercept(OPEN, ($, $$) -> fail("Pipeline must be finished"));
 
         OpenViewContext context = mock(OpenViewContext.class);
 
-        when(context.getAsyncOpenJob())
-                .thenReturn(CompletableFuture.supplyAsync(
-                        () -> {
-                            throw new IllegalStateException();
-                        },
-                        Executors.newFixedThreadPool(1)));
+        CountDownLatch lock = new CountDownLatch(1);
+        CompletableFuture<Void> job = CompletableFuture.runAsync(() -> {
+                    throw new IllegalStateException();
+                })
+                .whenComplete(($, $$) -> lock.countDown());
+        when(context.getAsyncOpenJob()).thenReturn(job);
 
+        lock.await(2, TimeUnit.SECONDS);
         pipeline.execute(OPEN, context);
+
+        try {
+            job.join();
+            fail();
+        } catch (CompletionException ignored) {
+        }
     }
 }

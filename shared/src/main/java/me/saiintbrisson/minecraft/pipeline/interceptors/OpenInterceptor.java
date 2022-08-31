@@ -37,7 +37,7 @@ public class OpenInterceptor implements PipelineInterceptor<VirtualView> {
                 .exceptionally(error -> {
                     // TODO invalidate context
                     pipeline.finish();
-                    throw new RuntimeException("An error occurred in the opening asynchronous job.", error);
+                    throw new IllegalStateException("An error occurred in the opening asynchronous job.", error);
                 });
     }
 

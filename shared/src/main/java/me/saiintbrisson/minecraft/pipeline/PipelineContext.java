@@ -54,4 +54,8 @@ public final class PipelineContext<S> {
         subject = initial;
         proceed();
     }
+
+    public boolean isFinished() {
+        return index == -1;
+    }
 }
