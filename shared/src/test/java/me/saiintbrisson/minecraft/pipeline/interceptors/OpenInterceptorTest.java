@@ -1,18 +1,17 @@
 package me.saiintbrisson.minecraft.pipeline.interceptors;
 
 import static me.saiintbrisson.minecraft.AbstractView.OPEN;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import me.saiintbrisson.minecraft.OpenViewContext;
 import me.saiintbrisson.minecraft.VirtualView;
 import me.saiintbrisson.minecraft.pipeline.Pipeline;
-import me.saiintbrisson.minecraft.pipeline.PipelineContext;
 import org.junit.jupiter.api.Test;
 
 // TODO container properties inheritance
@@ -34,17 +33,19 @@ public class OpenInterceptorTest {
         OpenViewContext context = mock(OpenViewContext.class);
 
         CountDownLatch lock = new CountDownLatch(1);
-        when(context.getAsyncOpenJob())
-                .thenReturn(CompletableFuture.<Void>supplyAsync(() -> {
-                            throw new IllegalStateException();
-                        })
-                        .whenComplete(($, $$) -> lock.countDown()));
+        CompletableFuture<Void> job = CompletableFuture.runAsync(() -> {
+                    throw new IllegalStateException();
+                })
+                .whenComplete(($, $$) -> lock.countDown());
+        when(context.getAsyncOpenJob()).thenReturn(job);
 
         lock.await(2, TimeUnit.SECONDS);
+        pipeline.execute(OPEN, context);
 
-        PipelineContext<?> pipelineContext = pipeline.execute(OPEN, context);
-        assertTrue(
-                pipelineContext.isFinished(),
-                "Pipeline context must finish after exception thrown inside open interceptor job");
+        try {
+            job.join();
+            fail();
+        } catch (CompletionException ignored) {
+        }
     }
 }
