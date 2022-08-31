@@ -5,10 +5,14 @@ import java.util.Map;
 import java.util.function.Consumer;
 import lombok.AccessLevel;
 import lombok.Getter;
+import me.saiintbrisson.minecraft.logging.Logger;
+import me.saiintbrisson.minecraft.logging.NoopLogger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class ViewComponentFactory {
+
+    private static final Logger noopLogger = new NoopLogger();
 
     @Getter(AccessLevel.PROTECTED)
     private final Map<String, Consumer<AbstractView>> modifiers = new HashMap<>();
@@ -58,4 +62,8 @@ public abstract class ViewComponentFactory {
     public abstract Object createItem(@Nullable Object stack);
 
     public abstract boolean worksInCurrentPlatform();
+
+    public Logger getLogger() {
+        return noopLogger;
+    }
 }
