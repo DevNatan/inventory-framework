@@ -350,7 +350,14 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
 
     @Override
     public Function<PaginatedViewContext<?>, ViewItem> getDefaultPreviousPageItem() {
-        return (context) -> new ViewItem();
+        return previousPageItem == null
+                ? null
+                : (context) -> {
+                    ViewItem item = new ViewItem();
+                    item.setNavigationItem(true);
+                    previousPageItem.accept(context, item);
+                    return item;
+                };
     }
 
     @Override
@@ -378,7 +385,14 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
 
     @Override
     public Function<PaginatedViewContext<?>, ViewItem> getDefaultNextPageItem() {
-        return (context) -> new ViewItem();
+        return nextPageItem == null
+                ? null
+                : (context) -> {
+                    ViewItem item = new ViewItem();
+                    item.setNavigationItem(true);
+                    nextPageItem.accept(context, item);
+                    return item;
+                };
     }
 
     @Override

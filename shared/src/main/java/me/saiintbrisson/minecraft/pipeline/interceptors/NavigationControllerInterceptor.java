@@ -61,6 +61,7 @@ public final class NavigationControllerInterceptor implements PipelineIntercepto
         final ViewItem item = new ViewItem();
         item.setNavigationItem(true);
         factory.accept(context, item);
+        item.setNavigationItem(false);
         return item;
     }
 
@@ -85,17 +86,19 @@ public final class NavigationControllerInterceptor implements PipelineIntercepto
     private <T> void updateNavigationItem(@NotNull PaginatedViewContext<T> context, int direction) {
         ViewItem item = resolveNavigationItem(context, direction);
         final int layoutSlot = getNavigationItemSlot(context, direction);
+        checkUndefinedLayoutNavigationItem(item, layoutSlot, direction);
+
         int targetSlot = layoutSlot;
 
+        System.out.println("Navigation to " + direction + ", layoutSlot = " + layoutSlot);
+
         if (item != null) {
+            System.out.println("Navigation item to " + direction + " = " + item);
             checkIndeterministicNavigationSlot(layoutSlot, item.getSlot());
             checkAmbiguousNavigationSlot(layoutSlot, item.getSlot());
 
             // prioritize layout
             targetSlot = layoutSlot == UNSET ? item.getSlot() : layoutSlot;
-
-            // prevent user from using #withSlot again on render function
-            item.setNavigationItem(false);
         }
 
         if (targetSlot == UNSET) return;
@@ -152,5 +155,18 @@ public final class NavigationControllerInterceptor implements PipelineIntercepto
                         + "it is not allowed to use both definition in layout (at %d) and "
                         + "manual definition of navigation item slot (at %d) together, choose only one.",
                 layoutSlot, itemSlot));
+    }
+
+    private void checkUndefinedLayoutNavigationItem(ViewItem item, int layoutSlot, int direction) {
+        if (layoutSlot != UNSET && item == null) {
+            final String label = direction == NAVIGATE_LEFT
+                    ? "left (" + LAYOUT_PREVIOUS_PAGE + ")"
+                    : "right (" + LAYOUT_NEXT_PAGE + ")";
+
+            throw new IllegalStateException(String.format(
+                    "Navigation item for the direction \"%s\" was defined in the layout at slot %d but"
+                            + " we could not find it. There must be a navigation item defined. See more: %s",
+                    label, layoutSlot, "https://github.com/DevNatan/inventory-framework/wiki/Pagination#navigation"));
+        }
     }
 }
