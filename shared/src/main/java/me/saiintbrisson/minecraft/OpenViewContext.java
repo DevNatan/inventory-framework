@@ -1,6 +1,5 @@
 package me.saiintbrisson.minecraft;
 
-import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import lombok.Getter;
 import lombok.Setter;

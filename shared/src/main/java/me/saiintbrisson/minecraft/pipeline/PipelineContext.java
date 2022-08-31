@@ -55,7 +55,7 @@ public final class PipelineContext<S> {
         proceed();
     }
 
-	public boolean isFinished() {
-		return index == -1;
-	}
+    public boolean isFinished() {
+        return index == -1;
+    }
 }
