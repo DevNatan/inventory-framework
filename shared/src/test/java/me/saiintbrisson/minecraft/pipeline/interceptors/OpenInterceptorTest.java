@@ -28,7 +28,6 @@ public class OpenInterceptorTest {
         interceptor.skipOpen = true;
 
         pipeline.intercept(OPEN, interceptor);
-        pipeline.intercept(OPEN, ($, $$) -> fail("Pipeline must be finished"));
 
         OpenViewContext context = mock(OpenViewContext.class);
 
