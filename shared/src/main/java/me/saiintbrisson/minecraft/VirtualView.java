@@ -1,5 +1,7 @@
 package me.saiintbrisson.minecraft;
 
+import me.saiintbrisson.minecraft.event.EventListener;
+import me.saiintbrisson.minecraft.event.EventSubscription;
 import java.util.Deque;
 import java.util.List;
 import java.util.Stack;
@@ -715,19 +717,27 @@ public interface VirtualView {
 	void setReservedItemsCount(int reservedItemsCount);
 
 	/**
-	 * Emits an event.
-	 * <p>
-	 * This event can be "heard" from another place using with {@link #on(String, Consumer)}.
-	 *
-	 * <p>
-	 * <a href="https://github.com/DevNatan/inventory-framework/tree/main/feature-eventbus">EventBus</a> feature needs to be installed.
+	 * Emits a typed event.
 	 *
 	 * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
 	 * such API may be changed or may be removed completely in any further release. </i></b>
 	 *
 	 * @param event The event to be emitted.
-	 * @param value The value that will be propagated through this event.
-	 * @throws MissingFeatureException EventBus feature is not installed.
+	 * @see #on(Class, Consumer)
+	 * @since 2.5.4
+	 */
+	@ApiStatus.Experimental
+	@ApiStatus.AvailableSince("2.5.4")
+	void emit(@NotNull Object event);
+
+	/**
+	 * Emits a generic keyed event.
+	 *
+	 * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
+	 * such API may be changed or may be removed completely in any further release. </i></b>
+	 *
+	 * @param event The event name to be emitted.
+	 * @param value The event value.
 	 * @see #on(String, Consumer)
 	 * @since 2.5.4
 	 */
@@ -736,22 +746,33 @@ public interface VirtualView {
 	void emit(@NotNull String event, Object value);
 
 	/**
-	 * Listens for an event.
-	 * <p>
-	 * Events can be emitted with {@link #emit(String, Object)}.
-	 * <a href="https://github.com/DevNatan/inventory-framework/tree/main/feature-eventbus">EventBus</a> feature needs to be installed.
+	 * Listens for a generic event.
 	 *
 	 * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
 	 * such API may be changed or may be removed completely in any further release. </i></b>
 	 *
 	 * @param event    The event to be listened.
 	 * @param listener Function that will be executed when the event occurs.
-	 * @throws MissingFeatureException EventBus feature is not installed.
 	 * @see #emit(String, Object)
 	 * @since 2.5.4
 	 */
 	@ApiStatus.Experimental
 	@ApiStatus.AvailableSince("2.5.4")
-	<T> void on(@NotNull String event, @NotNull Consumer<T> listener);
+	<T> EventSubscription on(@NotNull String event, @NotNull EventListener<T> listener);
+
+	/**
+	 * Listens for a typed event.
+	 *
+	 * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
+	 * such API may be changed or may be removed completely in any further release. </i></b>
+	 *
+	 * @param event    The event to be listened.
+	 * @param listener Function that will be executed when the event occurs.
+	 * @see #emit(Object)
+	 * @since 2.5.4
+	 */
+	@ApiStatus.Experimental
+	@ApiStatus.AvailableSince("2.5.4")
+	<T> EventSubscription on(@NotNull Class<? extends T> event, @NotNull EventListener<T> listener);
 
 }

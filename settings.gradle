@@ -8,5 +8,4 @@ include 'bom',
         'examples',
         'feature-move-io',
         'kotlin-dsl',
-        'shared',
-        'test'
+        'shared'
