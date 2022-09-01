@@ -2,7 +2,9 @@ package me.saiintbrisson.minecraft;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.TestOnly;
 
 public interface Job {
 
@@ -32,7 +34,9 @@ public interface Job {
     @ApiStatus.Internal
     default void loop() {}
 
+    @ApiStatus.Internal
     @RequiredArgsConstructor
+    @ToString
     class InternalJobImpl implements Job {
 
         private final Runnable job;
@@ -53,6 +57,11 @@ public interface Job {
         @Override
         public void loop() {
             job.run();
+        }
+
+        @TestOnly
+        public void setStarted(boolean started) {
+            this.started = started;
         }
     }
 }

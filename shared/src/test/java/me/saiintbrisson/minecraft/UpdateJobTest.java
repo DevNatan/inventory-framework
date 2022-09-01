@@ -9,7 +9,6 @@ import static org.mockito.Mockito.when;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import me.saiintbrisson.minecraft.test.TestViewFrame;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 
 public class UpdateJobTest {
@@ -17,12 +16,7 @@ public class UpdateJobTest {
     @Test
     void shouldThrowExceptionWhenStartingInterruptedTask() {
         AtomicBoolean ran = new AtomicBoolean();
-        AbstractView view = new AbstractView(0, "Test", ViewType.CHEST) {
-            @Override
-            protected void onUpdate(@NotNull ViewContext context) {
-                System.out.println("updated");
-            }
-        };
+        AbstractView view = new AbstractView(0, "Test", ViewType.CHEST) {};
 
         Job job = createJob(() -> ran.set(true));
         PlatformViewFrame<?, ?, ?> initiator = mock(TestViewFrame.class);
@@ -31,8 +25,12 @@ public class UpdateJobTest {
         view.setViewFrame(initiator);
         view.scheduleUpdate(0, 0);
 
+        assertNotNull(view.updateSchedule, "Update must be scheduled after #scheduleUpdate call");
+
+        view.initUpdateScheduler();
+
         Job updateJob = view.getUpdateJob();
-        assertNotNull(updateJob, "Update job must be set after schedule update");
+        assertNotNull(job, "Update job must be set after schedule update");
 
         updateJob.start();
         assertTrue(updateJob.isStarted(), "Update job must be started after #start call");

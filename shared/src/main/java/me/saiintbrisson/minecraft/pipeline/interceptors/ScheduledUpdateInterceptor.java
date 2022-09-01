@@ -4,6 +4,7 @@ import java.time.Duration;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import me.saiintbrisson.minecraft.Job;
 import me.saiintbrisson.minecraft.ViewContext;
 import me.saiintbrisson.minecraft.pipeline.PipelineContext;
 import me.saiintbrisson.minecraft.pipeline.PipelineInterceptor;
@@ -12,7 +13,9 @@ import org.jetbrains.annotations.TestOnly;
 
 /**
  * Intercepts view's open and close lifecycle that determine whether an update job should be started
- * or stopped. An "update job" is created when user {@link me.saiintbrisson.minecraft.VirtualView#scheduleUpdate(Duration) schedules a update}.
+ * or stopped. An "update job" is created when user schedules an update.
+ *
+ * @see me.saiintbrisson.minecraft.AbstractView#scheduleUpdate(Duration)
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ScheduledUpdateInterceptor {
@@ -26,12 +29,14 @@ public final class ScheduledUpdateInterceptor {
 
         @Override
         public void intercept(@NotNull PipelineContext<ViewContext> pipeline, ViewContext subject) {
-            if (subject.getUpdateJob() == null) return;
+            Job updateJob = subject.getRoot().getUpdateJob();
+
+            if (updateJob == null || updateJob.isStarted()) return;
 
             // only init update job IN THE FIRST viewer
             if (subject.getViewers().size() != 1) return;
 
-            subject.getUpdateJob().start();
+            updateJob.start();
             onIntercept();
         }
 
@@ -48,12 +53,13 @@ public final class ScheduledUpdateInterceptor {
 
         @Override
         public void intercept(@NotNull PipelineContext<ViewContext> pipeline, ViewContext subject) {
-            if (subject.getUpdateJob() == null) return;
+            Job updateJob = subject.getRoot().getUpdateJob();
+            if (updateJob == null || !updateJob.isStarted()) return;
 
             // only pause update job if there's no more viewers in this context
             if (subject.getViewers().size() != 1) return;
 
-            subject.getUpdateJob().cancel();
+            updateJob.cancel();
             onIntercept();
         }
 

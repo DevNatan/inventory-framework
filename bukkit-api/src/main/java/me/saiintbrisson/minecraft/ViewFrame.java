@@ -328,8 +328,9 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
 
             @Override
             public void start() {
-                task = getOwner().getServer().getScheduler().runTaskTimer(getOwner(), this::loop, delay, interval);
+                if (super.isStarted()) return;
                 super.start();
+                task = getOwner().getServer().getScheduler().runTaskTimer(getOwner(), this::loop, delay, interval);
             }
 
             @Override

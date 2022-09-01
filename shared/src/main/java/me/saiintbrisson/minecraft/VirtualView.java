@@ -1,6 +1,5 @@
 package me.saiintbrisson.minecraft;
 
-import java.time.Duration;
 import java.util.Deque;
 import java.util.List;
 import java.util.Stack;
@@ -521,63 +520,6 @@ public interface VirtualView {
      * @param index The slot position.
      */
     void clear(int index);
-
-    /**
-     * The update job for this view.
-     *
-     * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
-     * this library. No compatibility guarantees are provided.</i></b>
-     *
-     * @return The update job for this view.
-     */
-    @ApiStatus.Internal
-    Job getUpdateJob();
-
-    /**
-     * Sets the update job for this view.
-     *
-     * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
-     * this library. No compatibility guarantees are provided.</i></b>
-     *
-     * @param updateJob The new update job.
-     */
-    @ApiStatus.Internal
-    void setUpdateJob(Job updateJob);
-
-    /**
-     * Checks if this view is set to update automatically.
-     *
-     * @return <code>true</code> if it will update automatically or <code>false</code> otherwise.
-     */
-    boolean isScheduledToUpdate();
-
-    /**
-     * Schedules this view to update every fixed interval by calling {@link #update()}.
-     * <p>
-     * The job will only remain active as long as there are viewers present in this view.
-     *
-     * @param intervalInTicks The interval between updates.
-     */
-    void scheduleUpdate(long intervalInTicks);
-
-    /**
-     * Schedules this view to update every fixed interval by calling {@link #update()}.
-     * <p>
-     * The job will only remain active as long as there are viewers present in this view.
-     *
-     * @param delayInTicks    The initial delay before job start.
-     * @param intervalInTicks The interval between updates.
-     */
-    void scheduleUpdate(long delayInTicks, long intervalInTicks);
-
-    /**
-     * Schedules this view to update every fixed interval by calling {@link #update()}.
-     * <p>
-     * The job will only remain active as long as there are viewers present in this view.
-     *
-     * @param interval The interval between updates.
-     */
-    void scheduleUpdate(@NotNull Duration interval);
 
     /**
      * Thrown when a method explicitly needs to specify that it will directly modify the view's

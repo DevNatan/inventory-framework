@@ -1,6 +1,5 @@
 package me.saiintbrisson.minecraft;
 
-import java.time.Duration;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
@@ -25,7 +24,6 @@ public abstract class AbstractVirtualView implements VirtualView {
     private ViewItem[] items;
 
     private ViewErrorHandler errorHandler;
-    private Job updateJob;
     private final List<LayoutPattern> layoutPatterns = new ArrayList<>();
     private String[] layout;
     private Stack<Integer> layoutItemsLayer;
@@ -320,67 +318,6 @@ public abstract class AbstractVirtualView implements VirtualView {
     /**
      * {@inheritDoc}
      */
-    @Override
-    public final Job getUpdateJob() {
-        return updateJob;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final void setUpdateJob(Job updateJob) {
-        this.updateJob = updateJob;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void scheduleUpdate(long delayInTicks, long intervalInTicks) {
-        if (intervalInTicks <= -1)
-            throw new IllegalArgumentException("Schedule update interval in ticks must be greater than -1.");
-
-        final PlatformViewFrame<?, ?, ?> initiator = IFUtils.findViewFrame(this);
-        if (initiator == null) throw new IllegalStateException("No initiator to schedule update.");
-
-        final Job old = getUpdateJob();
-        if (old != null && old.isStarted()) old.cancel();
-
-        final Job job = Objects.requireNonNull(
-                initiator.schedule(this::update, intervalInTicks, delayInTicks),
-                "Job scheduled by initiator cannot be null.");
-
-        setUpdateJob(job);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final void scheduleUpdate(long intervalInTicks) {
-        scheduleUpdate(-1, intervalInTicks);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final void scheduleUpdate(@NotNull Duration interval) {
-        scheduleUpdate(-1, Math.floorDiv(interval.getSeconds(), 20 /* 1 second in ticks */));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final boolean isScheduledToUpdate() {
-        return updateJob != null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     @ApiStatus.Internal
     @Override
     public void inventoryModificationTriggered() {}
@@ -544,10 +481,6 @@ public abstract class AbstractVirtualView implements VirtualView {
     @ApiStatus.Internal
     public void setReservedItemsCount(int reservedItemsCount) {
         this.reservedItemsCount = reservedItemsCount;
-    }
-
-    final String[] useLayout(@NotNull VirtualView context) {
-        return context.getLayout() == null ? getLayout() : context.getLayout();
     }
 
     /**
