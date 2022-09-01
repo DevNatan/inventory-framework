@@ -226,6 +226,17 @@ public interface PlatformViewFrame<V, P, F extends PlatformViewFrame<V, P, F>> e
     void nextTick(@NotNull Runnable runnable);
 
     /**
+     * Schedules a function to be run after a given delay in a fixed interval.
+     *
+     * @param job     The task that'll be run
+     * @param interval The run interval.
+     * @param delay    The initial delay to run the task.
+     */
+    @ApiStatus.Internal
+    @NotNull
+    Job schedule(@NotNull Runnable job, long interval, long delay);
+
+    /**
      * The factory for the navigation backwards item.
      *
      * <p><b><i> This is an internal inventory-framework API that should not be used from outside of

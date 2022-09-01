@@ -27,6 +27,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.ServicesManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -318,6 +319,31 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
     @Override
     public void nextTick(@NotNull Runnable runnable) {
         getOwner().getServer().getScheduler().runTask(getOwner(), runnable);
+    }
+
+    @Override
+    public @NotNull Job schedule(@NotNull Runnable job, long interval, long delay) {
+        // TODO create Job impl -- no anonymous object
+        return new Job() {
+            BukkitTask task;
+
+            @Override
+            public boolean isStarted() {
+                return task != null;
+            }
+
+            @Override
+            public void start() {
+                task = getOwner().getServer().getScheduler().runTaskTimer(getOwner(), job, delay, interval);
+            }
+
+            @Override
+            public void cancel() {
+                if (task == null) return;
+                task.cancel();
+                task = null;
+            }
+        };
     }
 
     @Override

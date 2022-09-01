@@ -18,5 +18,4 @@ public interface Job {
      * Cancels this job if started.
      */
     void cancel();
-
 }

@@ -47,7 +47,7 @@ public class TestViewFrame implements PlatformViewFrame<Void, Void, TestViewFram
 
     @Override
     public TestViewFrame remove(@NotNull AbstractView... views) {
-		throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -77,12 +77,12 @@ public class TestViewFrame implements PlatformViewFrame<Void, Void, TestViewFram
 
     @Override
     public void nextTick(@NotNull Runnable runnable) {
-		throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public @NotNull Job schedule(@NotNull Runnable runnable, long interval, long delay) {
-		throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException();
     }
 
     @Override
