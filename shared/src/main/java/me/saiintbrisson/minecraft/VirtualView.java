@@ -545,33 +545,39 @@ public interface VirtualView {
     void setUpdateJob(Job updateJob);
 
     /**
-     * Defines the automatic update interval time for this view.
-     *
-     * @param intervalInTicks The (interval in ticks) to wait between updates.
-     */
-    void scheduleUpdate(long intervalInTicks);
-
-    /**
-     * Defines the automatic update interval time for this view.
-     *
-     * @param delayInTicks    The delay (in ticks) to wait before running the task.
-     * @param intervalInTicks The interval (in ticks) to wait between updates.
-     */
-    void scheduleUpdate(long delayInTicks, long intervalInTicks);
-
-    /**
-     * Defines the automatic update interval time for this view.
-     *
-     * @param duration The duration to wait between updates.
-     */
-    void scheduleUpdate(@NotNull Duration duration);
-
-    /**
      * Checks if this view is set to update automatically.
      *
      * @return <code>true</code> if it will update automatically or <code>false</code> otherwise.
      */
     boolean isScheduledToUpdate();
+
+    /**
+     * Schedules this view to update every fixed interval by calling {@link #update()}.
+     * <p>
+     * The job will only remain active as long as there are viewers present in this view.
+     *
+     * @param intervalInTicks The interval between updates.
+     */
+    void scheduleUpdate(long intervalInTicks);
+
+    /**
+     * Schedules this view to update every fixed interval by calling {@link #update()}.
+     * <p>
+     * The job will only remain active as long as there are viewers present in this view.
+     *
+     * @param delayInTicks    The initial delay before job start.
+     * @param intervalInTicks The interval between updates.
+     */
+    void scheduleUpdate(long delayInTicks, long intervalInTicks);
+
+    /**
+     * Schedules this view to update every fixed interval by calling {@link #update()}.
+     * <p>
+     * The job will only remain active as long as there are viewers present in this view.
+     *
+     * @param interval The interval between updates.
+     */
+    void scheduleUpdate(@NotNull Duration interval);
 
     /**
      * Thrown when a method explicitly needs to specify that it will directly modify the view's

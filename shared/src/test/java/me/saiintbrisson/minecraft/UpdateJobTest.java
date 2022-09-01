@@ -2,8 +2,8 @@ package me.saiintbrisson.minecraft;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -24,41 +24,27 @@ public class UpdateJobTest {
             }
         };
 
-        Job job = createJob();
-        Runnable runnable = () -> System.out.println("runnable exec");
+        Job job = createJob(() -> ran.set(true));
         PlatformViewFrame<?, ?, ?> initiator = mock(TestViewFrame.class);
-        when(initiator.schedule(eq(runnable), anyLong(), anyLong())).thenReturn(job);
+        when(initiator.schedule(any(), anyLong(), anyLong())).thenReturn(job);
 
-        System.out.println("job = " + job);
         view.setViewFrame(initiator);
         view.scheduleUpdate(0, 0);
-        assertNotNull(view.getUpdateJob(), "Update job must be set after schedule update");
 
         Job updateJob = view.getUpdateJob();
+        assertNotNull(updateJob, "Update job must be set after schedule update");
+
         updateJob.start();
         assertTrue(updateJob.isStarted(), "Update job must be started after #start call");
-
-        System.out.println("view.getUpdateJob() = " + view.getUpdateJob());
         assertTrue(ran.get(), "Job must be ran at least one time");
     }
 
-    private Job createJob() {
-        return new Job() {
-            boolean started;
-
-            @Override
-            public boolean isStarted() {
-                return started;
-            }
-
+    private Job createJob(Runnable loop) {
+        return new Job.InternalJobImpl(loop) {
             @Override
             public void start() {
-                started = true;
-            }
-
-            @Override
-            public void cancel() {
-                started = false;
+                super.start();
+                this.loop();
             }
         };
     }

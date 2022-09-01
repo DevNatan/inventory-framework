@@ -337,15 +337,10 @@ public abstract class AbstractVirtualView implements VirtualView {
      * {@inheritDoc}
      */
     @Override
-    public final void scheduleUpdate(long intervalInTicks) {
-        scheduleUpdate(-1, intervalInTicks);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public void scheduleUpdate(long delayInTicks, long intervalInTicks) {
+        if (intervalInTicks <= -1)
+            throw new IllegalArgumentException("Schedule update interval in ticks must be greater than -1.");
+
         final PlatformViewFrame<?, ?, ?> initiator = IFUtils.findViewFrame(this);
         if (initiator == null) throw new IllegalStateException("No initiator to schedule update.");
 
@@ -363,8 +358,16 @@ public abstract class AbstractVirtualView implements VirtualView {
      * {@inheritDoc}
      */
     @Override
-    public final void scheduleUpdate(@NotNull Duration duration) {
-        scheduleUpdate(-1, Math.floorDiv(duration.getSeconds(), 20));
+    public final void scheduleUpdate(long intervalInTicks) {
+        scheduleUpdate(-1, intervalInTicks);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final void scheduleUpdate(@NotNull Duration interval) {
+        scheduleUpdate(-1, Math.floorDiv(interval.getSeconds(), 20 /* 1 second in ticks */));
     }
 
     /**

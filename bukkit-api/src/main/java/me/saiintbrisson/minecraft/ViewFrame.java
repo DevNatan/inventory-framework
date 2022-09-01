@@ -323,22 +323,18 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
 
     @Override
     public @NotNull Job schedule(@NotNull Runnable job, long interval, long delay) {
-        // TODO create Job impl -- no anonymous object
-        return new Job() {
+        return new Job.InternalJobImpl(job) {
             BukkitTask task;
 
             @Override
-            public boolean isStarted() {
-                return task != null;
-            }
-
-            @Override
             public void start() {
-                task = getOwner().getServer().getScheduler().runTaskTimer(getOwner(), job, delay, interval);
+                task = getOwner().getServer().getScheduler().runTaskTimer(getOwner(), this::loop, delay, interval);
+                super.start();
             }
 
             @Override
             public void cancel() {
+                super.cancel();
                 if (task == null) return;
                 task.cancel();
                 task = null;
