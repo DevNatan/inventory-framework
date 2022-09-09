@@ -1,6 +1,5 @@
 package me.saiintbrisson.minecraft;
 
-import java.time.Duration;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
@@ -25,7 +24,6 @@ public abstract class AbstractVirtualView implements VirtualView {
     private ViewItem[] items;
 
     private ViewErrorHandler errorHandler;
-    private ViewUpdateJob updateJob;
     private final List<LayoutPattern> layoutPatterns = new ArrayList<>();
     private String[] layout;
     private Stack<Integer> layoutItemsLayer;
@@ -320,55 +318,6 @@ public abstract class AbstractVirtualView implements VirtualView {
     /**
      * {@inheritDoc}
      */
-    @Override
-    public ViewUpdateJob getUpdateJob() {
-        return updateJob;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final void setUpdateJob(ViewUpdateJob updateJob) {
-        this.updateJob = updateJob;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final void scheduleUpdate(long intervalInTicks) {
-        scheduleUpdate(-1, intervalInTicks);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void scheduleUpdate(long delayInTicks, long intervalInTicks) {
-        inventoryModificationTriggered();
-        PlatformUtils.getFactory().scheduleUpdate(this, delayInTicks, intervalInTicks);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final void scheduleUpdate(@NotNull Duration duration) {
-        scheduleUpdate(-1, Math.floorDiv(duration.getSeconds(), 20));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final boolean isScheduledToUpdate() {
-        return updateJob != null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     @ApiStatus.Internal
     @Override
     public void inventoryModificationTriggered() {}
@@ -532,10 +481,6 @@ public abstract class AbstractVirtualView implements VirtualView {
     @ApiStatus.Internal
     public void setReservedItemsCount(int reservedItemsCount) {
         this.reservedItemsCount = reservedItemsCount;
-    }
-
-    final String[] useLayout(@NotNull VirtualView context) {
-        return context.getLayout() == null ? getLayout() : context.getLayout();
     }
 
     /**

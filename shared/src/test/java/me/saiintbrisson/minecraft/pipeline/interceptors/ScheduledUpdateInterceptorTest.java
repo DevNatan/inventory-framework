@@ -11,8 +11,9 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.concurrent.atomic.AtomicBoolean;
+import me.saiintbrisson.minecraft.AbstractView;
+import me.saiintbrisson.minecraft.Job;
 import me.saiintbrisson.minecraft.ViewContext;
-import me.saiintbrisson.minecraft.ViewUpdateJob;
 import me.saiintbrisson.minecraft.Viewer;
 import me.saiintbrisson.minecraft.pipeline.Pipeline;
 import org.junit.jupiter.api.Test;
@@ -29,11 +30,12 @@ class ScheduledUpdateInterceptorTest {
             }
         });
 
-        ViewContext context = mock(ViewContext.class);
-        when(context.getViewers()).thenReturn(Collections.emptyList());
+        AbstractView view = new AbstractView() {};
+        view.setUpdateJob(new Job.InternalJobImpl(() -> {}));
 
-        ViewUpdateJob job = mock(ViewUpdateJob.class);
-        when(context.getUpdateJob()).thenReturn(job);
+        ViewContext context = mock(ViewContext.class);
+        when(context.getRoot()).thenReturn(view);
+        when(context.getViewers()).thenReturn(Collections.emptyList());
 
         pipeline.execute(RENDER, context);
     }
@@ -48,12 +50,14 @@ class ScheduledUpdateInterceptorTest {
             }
         });
 
+        AbstractView view = new AbstractView() {};
+        view.setUpdateJob(new Job.InternalJobImpl(() -> {}));
+
         ViewContext context = mock(ViewContext.class);
+        when(context.getRoot()).thenReturn(view);
+
         Viewer viewer = mock(Viewer.class);
         when(context.getViewers()).thenReturn(Arrays.asList(viewer, viewer));
-
-        ViewUpdateJob job = mock(ViewUpdateJob.class);
-        when(context.getUpdateJob()).thenReturn(job);
 
         pipeline.execute(RENDER, context);
     }
@@ -69,19 +73,21 @@ class ScheduledUpdateInterceptorTest {
             }
         });
 
+        AbstractView view = new AbstractView() {};
+        view.setUpdateJob(new Job.InternalJobImpl(() -> {}));
+
         ViewContext context = mock(ViewContext.class);
+        when(context.getRoot()).thenReturn(view);
+
         Viewer viewer = mock(Viewer.class);
         when(context.getViewers()).thenReturn(Collections.singletonList(viewer));
-
-        ViewUpdateJob job = mock(ViewUpdateJob.class);
-        when(context.getUpdateJob()).thenReturn(job);
 
         pipeline.execute(RENDER, context);
         assertTrue(intercepted.get());
     }
 
     @Test
-    public void whenPipelinesCalledExpectUpdateStartedAndEndedProperly() {
+    public void whenPipelineStartExpectUpdateStartedAndEndedProperly() {
         AtomicBoolean started = new AtomicBoolean(false);
         Pipeline<ViewContext> pipeline = new Pipeline<>(RENDER, CLOSE);
         pipeline.intercept(RENDER, new ScheduledUpdateInterceptor.Render() {
@@ -97,13 +103,14 @@ class ScheduledUpdateInterceptorTest {
             }
         });
 
+        AbstractView view = new AbstractView() {};
+        view.setUpdateJob(new Job.InternalJobImpl(() -> {}));
+
         ViewContext context = mock(ViewContext.class);
+        when(context.getRoot()).thenReturn(view);
+
         Viewer viewer = mock(Viewer.class);
         when(context.getViewers()).thenReturn(Collections.singletonList(viewer));
-
-        ViewUpdateJob job = mock(ViewUpdateJob.class);
-        when(job.isStarted()).thenReturn(true);
-        when(context.getUpdateJob()).thenReturn(job);
 
         pipeline.execute(RENDER, context);
         assertTrue(started.get());
@@ -129,13 +136,14 @@ class ScheduledUpdateInterceptorTest {
             }
         });
 
+        AbstractView view = new AbstractView() {};
+        view.setUpdateJob(new Job.InternalJobImpl(() -> {}));
+
         ViewContext context = mock(ViewContext.class);
+        when(context.getRoot()).thenReturn(view);
+
         Viewer viewer = mock(Viewer.class);
         when(context.getViewers()).thenReturn(Collections.singletonList(viewer));
-
-        ViewUpdateJob job = mock(ViewUpdateJob.class);
-        when(job.isStarted()).thenReturn(true);
-        when(context.getUpdateJob()).thenReturn(job);
 
         pipeline.execute(RENDER, context);
         assertTrue(started.get());

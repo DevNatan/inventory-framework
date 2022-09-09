@@ -3,6 +3,7 @@ apply from: '../publish.gradle'
 dependencies {
     testImplementation libs.mockito.core
     testImplementation libs.mockito.junit
+    testImplementation projects.test
     testRuntimeOnly libs.spigot.api
 }
 

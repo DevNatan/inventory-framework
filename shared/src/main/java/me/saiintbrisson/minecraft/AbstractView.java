@@ -2,11 +2,13 @@ package me.saiintbrisson.minecraft;
 
 import static me.saiintbrisson.minecraft.IFUtils.unwrap;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -30,6 +32,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.TestOnly;
 
 @Getter(AccessLevel.PACKAGE)
 @Setter(AccessLevel.PACKAGE)
@@ -70,12 +73,20 @@ public abstract class AbstractView extends AbstractVirtualView {
     private final Set<ViewContext> contexts = Collections.newSetFromMap(Collections.synchronizedMap(new HashMap<>()));
     private final Pipeline<VirtualView> pipeline = new Pipeline<>(INIT, OPEN, RENDER, UPDATE, CLICK, CLOSE);
 
+    private Job updateJob;
+    long[] updateSchedule;
+
     /**
      * An initialized view is one that has already been registered if there is a ViewFrame or has been
      * initialized manually. It is not possible to perform certain operations if the view has already
      * been initialized.
      */
     private boolean initialized;
+
+    @TestOnly
+    protected AbstractView() {
+        this(0, null, ViewType.CHEST);
+    }
 
     protected AbstractView(int size, String title, @NotNull ViewType type) {
         final int fixedSize = size == 0 ? type.getMaxSize() : type.normalize(size);
@@ -504,20 +515,6 @@ public abstract class AbstractView extends AbstractVirtualView {
         return title;
     }
 
-    @Override
-    public final ViewUpdateJob getUpdateJob() {
-        return super.getUpdateJob();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final void scheduleUpdate(long delayInTicks, long intervalInTicks) {
-        ensureNotInitialized();
-        super.scheduleUpdate(delayInTicks, intervalInTicks);
-    }
-
     /**
      * {@inheritDoc}
      */
@@ -799,6 +796,83 @@ public abstract class AbstractView extends AbstractVirtualView {
         throw new InitializationException();
     }
 
+    /**
+     * The update job for this view.
+     *
+     * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided.</i></b>
+     *
+     * @return The update job for this view.
+     */
+    @ApiStatus.Internal
+    public final Job getUpdateJob() {
+        return updateJob;
+    }
+
+    /**
+     * Sets the update job for this view.
+     *
+     * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided.</i></b>
+     *
+     * @param updateJob The new update job.
+     */
+    @ApiStatus.Internal
+    public final void setUpdateJob(Job updateJob) {
+        this.updateJob = updateJob;
+    }
+
+    /**
+     * Checks if this view is set to update automatically.
+     *
+     * @return <code>true</code> if it will update automatically or <code>false</code> otherwise.
+     */
+    public final boolean isScheduledToUpdate() {
+        return updateJob != null || updateSchedule != null;
+    }
+
+    /**
+     * Schedules this view to update every fixed interval by calling {@link #update()}.
+     * <p>
+     * The job will only remain active as long as there are viewers present in this view.
+     *
+     * @param delayInTicks    The initial delay before job start.
+     * @param intervalInTicks The interval between updates.
+     */
+    public final void scheduleUpdate(long delayInTicks, long intervalInTicks) {
+        ensureNotInitialized();
+
+        if (intervalInTicks <= -1)
+            throw new IllegalArgumentException("Schedule update interval in ticks must be greater than -1.");
+
+        final Job old = getUpdateJob();
+        if (old != null && old.isStarted()) old.cancel();
+
+        updateSchedule = new long[] {delayInTicks, intervalInTicks};
+    }
+
+    /**
+     * Schedules this view to update every fixed interval by calling {@link #update()}.
+     * <p>
+     * The job will only remain active as long as there are viewers present in this view.
+     *
+     * @param intervalInTicks The interval between updates.
+     */
+    public final void scheduleUpdate(long intervalInTicks) {
+        scheduleUpdate(-1, intervalInTicks);
+    }
+
+    /**
+     * Schedules this view to update every fixed interval by calling {@link #update()}.
+     * <p>
+     * The job will only remain active as long as there are viewers present in this view.
+     *
+     * @param interval The interval between updates.
+     */
+    public final void scheduleUpdate(@NotNull Duration interval) {
+        scheduleUpdate(-1, Math.floorDiv(interval.getSeconds(), 20 /* 1 second in ticks */));
+    }
+
     @ApiStatus.OverrideOnly
     void beforeInit() {
         final Pipeline<VirtualView> pipeline = getPipeline();
@@ -814,10 +888,24 @@ public abstract class AbstractView extends AbstractVirtualView {
         pipeline.intercept(CLOSE, new ScheduledUpdateInterceptor.Close());
     }
 
+    void initUpdateScheduler() {
+        final long[] timing = updateSchedule;
+        if (timing == null) return;
+
+        final PlatformViewFrame<?, ?, ?> initiator = IFUtils.findViewFrame(this);
+        if (initiator == null) throw new IllegalStateException("No initiator to schedule update.");
+
+        final Job job = Objects.requireNonNull(
+                initiator.schedule(this::update, timing[1], timing[0]), "Job scheduled by initiator cannot be null.");
+
+        setUpdateJob(job);
+    }
+
     final void init() {
         ensureNotInitialized();
         beforeInit();
         getPipeline().execute(INIT, this);
+        initUpdateScheduler();
         setInitialized(true);
     }
 }

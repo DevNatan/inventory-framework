@@ -1,4 +1,4 @@
-package me.saiintbrisson.minecraft;
+package me.saiintbrisson.minecraft.test;
 
 import java.util.Collection;
 import java.util.Map;
@@ -7,6 +7,14 @@ import java.util.function.Function;
 import java.util.function.UnaryOperator;
 import lombok.Getter;
 import lombok.Setter;
+import me.saiintbrisson.minecraft.AbstractView;
+import me.saiintbrisson.minecraft.Job;
+import me.saiintbrisson.minecraft.PaginatedViewContext;
+import me.saiintbrisson.minecraft.PlatformViewFrame;
+import me.saiintbrisson.minecraft.ViewComponentFactory;
+import me.saiintbrisson.minecraft.ViewErrorHandler;
+import me.saiintbrisson.minecraft.ViewItem;
+import me.saiintbrisson.minecraft.Viewer;
 import me.saiintbrisson.minecraft.feature.Feature;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -39,7 +47,7 @@ public class TestViewFrame implements PlatformViewFrame<Void, Void, TestViewFram
 
     @Override
     public TestViewFrame remove(@NotNull AbstractView... views) {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -69,7 +77,12 @@ public class TestViewFrame implements PlatformViewFrame<Void, Void, TestViewFram
 
     @Override
     public void nextTick(@NotNull Runnable runnable) {
-        runnable.run();
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public @NotNull Job schedule(@NotNull Runnable runnable, long interval, long delay) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
