@@ -45,17 +45,17 @@ public final class BukkitMoveOutInterceptor implements PipelineInterceptor<Bukki
 
         if (hold == null) return;
 
-        final ViewSlotMoveContext moveContext = new ViewSlotMoveContextImpl(
+        final ViewSlotMoveContext moveContext = new BukkitViewSlotMoveClickContextImpl(
+                event,
                 hold,
                 subject,
-                event,
                 container,
                 event.getCursor(),
                 swappedItem,
+                hold.getSlot(),
                 event.getSlot(),
                 swappedItem != null,
                 false);
-
         moveContext.setCancelled(subject.isCancelled());
         if (hold.getMoveOutHandler() != null) hold.getMoveInHandler().accept(moveContext);
 

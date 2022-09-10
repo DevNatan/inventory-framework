@@ -23,8 +23,7 @@ public final class UpdateInterceptor implements PipelineInterceptor<VirtualView>
 
         final AbstractView root = context.getRoot();
 
-        // we prioritize the amount of items in the context because the priority is in the context
-        // and the size of items in the context is proportional to the size of its container
+        // size of items in the context is proportional to the size of its container
         final int len = context.getContainer().getSize();
 
         for (int i = 0; i < len; i++) {
@@ -32,7 +31,11 @@ public final class UpdateInterceptor implements PipelineInterceptor<VirtualView>
             final ViewItem item = context.resolve(i, true);
 
             if (item == null) {
-                context.getContainer().removeItem(i);
+                final boolean modified = root.triggerSlotRender(context, null, null, i);
+
+                // default behavior if slot render wasn't modified
+                if (!modified) context.getContainer().removeItem(i);
+
                 continue;
             }
 

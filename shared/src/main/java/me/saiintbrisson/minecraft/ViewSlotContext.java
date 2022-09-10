@@ -39,7 +39,10 @@ public interface ViewSlotContext extends ViewContext {
      * Clears this slot from the current context.
      * <p>
      * The slot will only be cleaned on the next update, so if you want it cleaned immediately
-     * update the slot using {@link #updateSlot()}
+     * update the slot using {@link #updateSlot()}.
+     *
+     * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
      */
     @ApiStatus.Experimental
     void clear();
@@ -219,4 +222,11 @@ public interface ViewSlotContext extends ViewContext {
      */
     @Override
     <T> PaginatedViewContext<T> paginated();
+
+    /**
+     * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     */
+    @ApiStatus.Experimental
+    boolean isRegistered();
 }

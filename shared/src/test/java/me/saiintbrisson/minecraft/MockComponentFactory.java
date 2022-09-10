@@ -33,7 +33,7 @@ public class MockComponentFactory extends ViewComponentFactory {
 
     @Override
     public @NotNull AbstractViewSlotContext createSlotContext(
-            ViewItem item, ViewContext parent, int paginatedItemIndex, Object paginatedItemValue) {
+            int slot, ViewItem item, ViewContext parent, int paginatedItemIndex, Object paginatedItemValue) {
         return mock(AbstractViewSlotContext.class);
     }
 

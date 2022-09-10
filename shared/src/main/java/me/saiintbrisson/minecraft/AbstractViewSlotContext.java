@@ -9,7 +9,6 @@ import java.util.NoSuchElementException;
 import java.util.Stack;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -23,37 +22,42 @@ import org.jetbrains.annotations.Nullable;
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
 public abstract class AbstractViewSlotContext extends BaseViewContext implements ViewSlotContext {
 
-    @Getter(AccessLevel.NONE)
-    private final ViewContext parent;
+    @ToString.Include
+    private final int slot;
 
-    @Getter(AccessLevel.PACKAGE)
+    private final ViewContext parent;
     private final ViewItem backingItem;
 
     @ToString.Include
     private boolean cancelled;
 
-    @Setter(AccessLevel.NONE)
-    private ItemWrapper item;
+    @ToString.Include
+    protected ItemWrapper item;
 
+    @ToString.Include
     private boolean changed;
 
-    AbstractViewSlotContext(ViewItem backingItem, @NotNull final ViewContext parent) {
-        this(backingItem, parent, parent.getContainer());
-    }
-
-    AbstractViewSlotContext(ViewItem backingItem, @NotNull final ViewContext parent, ViewContainer container) {
+    AbstractViewSlotContext(
+            int slot, ViewItem backingItem, @NotNull final ViewContext parent, ViewContainer container) {
         super(parent.getRoot(), container);
+        this.slot = slot;
         this.backingItem = backingItem;
         this.parent = parent;
     }
 
     @Override
-    public final ViewContext getParent() {
+    public ViewContext getParent() {
         return parent;
     }
 
     @Override
     public void clear() {
+        // fast path -- simply removes item if it's on entity container
+        if (isOnEntityContainer()) {
+            getContainer().removeItem(getSlot());
+            return;
+        }
+
         ViewItem rootItem = getRoot().getItem(getSlot());
         if (rootItem != null) {
             rootItem.setRemoved(true);
@@ -268,7 +272,7 @@ public abstract class AbstractViewSlotContext extends BaseViewContext implements
     }
 
     @Contract(value = " -> fail", pure = true)
-    private void throwNotAllowedCall() throws RuntimeException {
+    protected final void throwNotAllowedCall() throws RuntimeException {
         throw new RuntimeException("Not allowed to call these kind of method in slot context.");
     }
 
@@ -280,5 +284,10 @@ public abstract class AbstractViewSlotContext extends BaseViewContext implements
     @Override
     public void close() {
         getParent().close();
+    }
+
+    @Override
+    public boolean isRegistered() {
+        return backingItem != null;
     }
 }

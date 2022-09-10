@@ -19,12 +19,13 @@ public class ContextDataInheritanceTest {
         ViewContext parentContext = mock(BaseViewContext.class);
         when(parentContext.getData()).thenReturn(data);
 
-        AbstractViewSlotContext slotContext = new AbstractViewSlotContext(new ViewItem(), parentContext) {
-            @Override
-            public int getSlot() {
-                return 0;
-            }
-        };
+        AbstractViewSlotContext slotContext =
+                new AbstractViewSlotContext(new ViewItem(), parentContext, parentContext.getContainer()) {
+                    @Override
+                    public int getSlot() {
+                        return 0;
+                    }
+                };
         assertEquals(
                 parentContext.get(key),
                 (String) slotContext.get(key),
@@ -35,12 +36,13 @@ public class ContextDataInheritanceTest {
     void shouldSlotContextPropagateDataToParent() {
         String key = "inherited";
         ViewContext parentContext = mock(BaseViewContext.class);
-        AbstractViewSlotContext slotContext = new AbstractViewSlotContext(new ViewItem(), parentContext) {
-            @Override
-            public int getSlot() {
-                return 0;
-            }
-        };
+        AbstractViewSlotContext slotContext =
+                new AbstractViewSlotContext(new ViewItem(), parentContext, parentContext.getContainer()) {
+                    @Override
+                    public int getSlot() {
+                        return 0;
+                    }
+                };
         slotContext.set(key, "value");
         assertEquals(
                 slotContext.get(key),

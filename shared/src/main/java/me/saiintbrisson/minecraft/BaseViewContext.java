@@ -16,6 +16,8 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static me.saiintbrisson.minecraft.ViewItem.UNSET;
+
 @Getter
 @Setter
 @ToString(callSuper = true)
@@ -291,7 +293,7 @@ public class BaseViewContext extends AbstractVirtualView implements ViewContext 
             throw new IllegalStateException(
                     "Tried to get a slot reference while context framework was not registered yet");
 
-        return vf.getFactory().createSlotContext(item, this, 0, null);
+        return vf.getFactory().createSlotContext(item.getSlot(), item, this, getContainer(), UNSET, null);
     }
 
     @Override

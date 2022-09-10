@@ -6,10 +6,8 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.ToString;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,39 +20,16 @@ import org.jetbrains.annotations.Nullable;
  */
 @Getter
 @ToString
-final class BukkitPaginatedViewSlotContextImpl<T> extends AbstractViewSlotContext
-        implements PaginatedViewSlotContext<T> {
+final class BukkitPaginatedViewSlotContextImpl<T> extends BukkitViewSlotContext implements PaginatedViewSlotContext<T> {
 
     private final int index;
     private final T value;
 
-    @Getter(AccessLevel.NONE)
-    private final PaginatedViewContext<T> parent;
-
     BukkitPaginatedViewSlotContextImpl(
-            int index, @NotNull T value, ViewItem backingItem, PaginatedViewContext<T> parent) {
-        super(backingItem, parent);
+            int index, T value, int slot, ViewItem backingItem, ViewContext parent, ViewContainer container) {
+        super(slot, backingItem, parent, container);
         this.index = index;
         this.value = value;
-        this.parent = parent;
-    }
-
-    @Override
-    public void inventoryModificationTriggered() {
-        throw new IllegalStateException(
-                "Direct container modifications are not allowed from a paginated context because "
-                        + "rendering a paginated item is an extensive method and can cause cyclic"
-                        + " rendering on update, when rendering a paginated view.");
-    }
-
-    @Override
-    public int getSlot() {
-        return index;
-    }
-
-    @Override
-    public @NotNull Player getPlayer() {
-        return BukkitViewer.toPlayerOfContext(this);
     }
 
     @Override
@@ -65,176 +40,176 @@ final class BukkitPaginatedViewSlotContextImpl<T> extends AbstractViewSlotContex
 
     @Override
     public void setSource(@NotNull List<? extends T> source) {
-        throwPaginationDataChangedError();
+        throwNotAllowedCall();
     }
 
     @Override
     public void setSource(@NotNull Function<PaginatedViewContext<T>, List<? extends T>> sourceProvider) {
-        throwPaginationDataChangedError();
+        throwNotAllowedCall();
     }
 
     @Override
     public AsyncPaginationDataState<T> setSourceAsync(
             @NotNull Function<PaginatedViewContext<T>, CompletableFuture<List<? extends T>>> sourceFuture) {
-        throwPaginationDataChangedError();
+        throwNotAllowedCall();
         return null;
     }
 
     @Override
     public void setPagesCount(int pagesCount) {
-        throwPaginationDataChangedError();
+        throwNotAllowedCall();
     }
 
     @Override
     public void setLayout(String... layout) {
-        throwPaginationDataChangedError();
+        throwNotAllowedCall();
     }
 
     @Override
     public void setLayout(char character, Supplier<ViewItem> factory) {
-        throwPaginationDataChangedError();
+        throwNotAllowedCall();
     }
 
     @Override
     public void setLayout(char character, Consumer<ViewItem> factory) {
-        throwPaginationDataChangedError();
+        throwNotAllowedCall();
     }
 
     @Override
     public Paginator<T> getPaginator() {
-        return parent.getPaginator();
+        return getParent().getPaginator();
     }
 
     @Override
     @Deprecated
     public int getPageSize() {
-        return parent.getPageSize();
+        return getParent().getPageSize();
     }
 
     @Override
     @Deprecated
     public int getPageMaxItemsCount() {
-        return parent.getPageMaxItemsCount();
+        return getParent().getPageMaxItemsCount();
     }
 
     @Override
     public @NotNull List<T> getSource() {
-        return parent.getSource();
+        return getParent().getSource();
     }
 
     @Override
     public int getPage() {
-        return parent.getPage();
+        return getParent().getPage();
     }
 
     @Override
     public void setPage(int page) {
-        parent.setPage(page);
+        getParent().setPage(page);
     }
 
     @Override
     public int getPagesCount() {
-        return parent.getPagesCount();
+        return getParent().getPagesCount();
     }
 
     @Override
     public int getPreviousPage() {
-        return parent.getPreviousPage();
+        return getParent().getPreviousPage();
     }
 
     @Override
     public int getNextPage() {
-        return parent.getNextPage();
+        return getParent().getNextPage();
     }
 
     @Override
     public boolean hasPreviousPage() {
-        return parent.hasPreviousPage();
+        return getParent().hasPreviousPage();
     }
 
     @Override
     public boolean hasNextPage() {
-        return parent.hasNextPage();
+        return getParent().hasNextPage();
     }
 
     @Override
     public boolean isFirstPage() {
-        return parent.isFirstPage();
+        return getParent().isFirstPage();
     }
 
     @Override
     public boolean isLastPage() {
-        return parent.isLastPage();
+        return getParent().isLastPage();
     }
 
     @Override
     public void switchTo(int page) {
-        parent.switchTo(page);
+        getParent().switchTo(page);
     }
 
     @Override
     public boolean switchToPreviousPage() {
-        return parent.switchToPreviousPage();
+        return getParent().switchToPreviousPage();
     }
 
     @Override
     public boolean switchToNextPage() {
-        return parent.switchToNextPage();
+        return getParent().switchToNextPage();
     }
 
     @Override
     public int getPreviousPageItemSlot() {
-        return parent.getPreviousPageItemSlot();
+        return getParent().getPreviousPageItemSlot();
     }
 
     @Override
     public void setPreviousPageItemSlot(int previousPageItemSlot) {
-        throwPaginationDataChangedError();
+        throwNotAllowedCall();
     }
 
     @Override
     public int getNextPageItemSlot() {
-        return parent.getNextPageItemSlot();
+        return getParent().getNextPageItemSlot();
     }
 
     @Override
     public void setNextPageItemSlot(int nextPageItemSlot) {
-        throwPaginationDataChangedError();
+        throwNotAllowedCall();
     }
 
     @Override
     public boolean isLayoutSignatureChecked() {
-        return parent.isLayoutSignatureChecked();
+        return getParent().isLayoutSignatureChecked();
     }
 
     @Override
     public void setLayoutSignatureChecked(boolean layoutSignatureChecked) {
-        throwPaginationDataChangedError();
+        throwNotAllowedCall();
     }
 
     @Override
     public BiConsumer<PaginatedViewContext<T>, ViewItem> getPreviousPageItemFactory() {
-        return parent.getPreviousPageItemFactory();
+        return getParent().getPreviousPageItemFactory();
     }
 
     @Override
     public BiConsumer<PaginatedViewContext<T>, ViewItem> getNextPageItemFactory() {
-        return parent.getNextPageItemFactory();
+        return getParent().getNextPageItemFactory();
     }
 
     @Override
     public @NotNull AbstractPaginatedView<T> getRoot() {
-        return parent.getRoot();
+        return getParent().getRoot();
     }
 
     @Override
     public void setPreviousPageItem(@NotNull BiConsumer<PaginatedViewContext<T>, ViewItem> previousPageItemFactory) {
-        throwPaginationDataChangedError();
+        throwNotAllowedCall();
     }
 
     @Override
     public void setNextPageItem(@NotNull BiConsumer<PaginatedViewContext<T>, ViewItem> nextPageItemFactory) {
-        throwPaginationDataChangedError();
+        throwNotAllowedCall();
     }
 
     @SuppressWarnings("unchecked")
@@ -243,8 +218,16 @@ final class BukkitPaginatedViewSlotContextImpl<T> extends AbstractViewSlotContex
         return this;
     }
 
-    private void throwPaginationDataChangedError() {
+    @Override
+    public PaginatedViewContext<T> getParent() {
+        return super.getParent().paginated();
+    }
+
+    @Override
+    public void inventoryModificationTriggered() {
         throw new IllegalStateException(
-                "It is not possible to change pagination data in a paginated item rendering context.");
+                "Direct container modifications are not allowed from a paginated context because "
+                        + "rendering a paginated item is an extensive method and can cause cyclic"
+                        + " rendering on update, when rendering a paginated view.");
     }
 }

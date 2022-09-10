@@ -3,36 +3,30 @@ package me.saiintbrisson.minecraft;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Bukkit platform ViewSlotClickContext implementation with click origin property.
+ */
 @Getter
 @Setter
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
-public class BukkitClickViewSlotContext extends AbstractViewSlotContext implements ViewSlotClickContext {
+public class BukkitClickViewSlotContext extends BukkitViewSlotContext implements ViewSlotClickContext {
 
     private final InventoryClickEvent clickOrigin;
 
     BukkitClickViewSlotContext(
-            ViewItem backingItem,
-            @NotNull BaseViewContext parent,
+            int slot,
             @NotNull InventoryClickEvent clickOrigin,
-            @NotNull ViewContainer container) {
-        super(backingItem, parent, container);
+            ViewItem backingItem,
+            ViewContext parent,
+            ViewContainer container) {
+        super(slot, backingItem, parent, container);
         this.clickOrigin = clickOrigin;
-    }
-
-    @Override
-    public final int getSlot() {
-        return getClickOrigin().getSlot();
-    }
-
-    @Override
-    public final @NotNull Player getPlayer() {
-        return (Player) clickOrigin.getWhoClicked();
+        this.item = new ItemWrapper(clickOrigin.getCurrentItem());
     }
 
     @Override
@@ -66,13 +60,8 @@ public class BukkitClickViewSlotContext extends AbstractViewSlotContext implemen
     }
 
     @Override
-    public @NotNull String getClickIdentifier() {
+    @NotNull
+    public final String getClickIdentifier() {
         return getClickOrigin().getClick().name();
-    }
-
-    @Override
-    public final void inventoryModificationTriggered() {
-        throw new IllegalStateException("You cannot update the item in the click handler context. "
-                + "Use the slot.onRender(...) or slot.onUpdate(...) and then context.setItem(...) instead.");
     }
 }

@@ -7,31 +7,34 @@ import org.jetbrains.annotations.NotNull;
 
 @Getter
 @ToString(callSuper = true)
-final class ViewSlotMoveContextImpl extends BukkitClickViewSlotContext implements ViewSlotMoveContext {
+final class BukkitViewSlotMoveClickContextImpl extends BukkitClickViewSlotContext implements ViewSlotMoveContext {
 
-    @ToString.Exclude
-    private final ViewContainer targetContainer;
-
-    private final ItemWrapper targetItem, swappedItem;
     private final int targetSlot;
+    private final ItemWrapper targetItem, swappedItem;
     private final boolean swap, stack;
 
-    ViewSlotMoveContextImpl(
-            ViewItem backingItem,
-            @NotNull BaseViewContext parent,
+    BukkitViewSlotMoveClickContextImpl(
             @NotNull InventoryClickEvent clickOrigin,
-            ViewContainer targetContainer,
+            ViewItem backingItem,
+            ViewContext parent,
+            ViewContainer container,
             Object targetItem,
             Object swappedItem,
+            int slot,
             int targetSlot,
             boolean swap,
             boolean stack) {
-        super(backingItem, parent, clickOrigin, targetContainer);
-        this.targetContainer = targetContainer;
+        super(slot, clickOrigin, backingItem, parent, container);
+        this.targetSlot = targetSlot;
         this.targetItem = new ItemWrapper(targetItem);
         this.swappedItem = new ItemWrapper(swappedItem);
-        this.targetSlot = targetSlot;
         this.swap = swap;
         this.stack = stack;
+    }
+
+    @Override
+    public @NotNull ViewContainer getTargetContainer() {
+        // there's no way to determine target container for now :(
+        return getContainer();
     }
 }
