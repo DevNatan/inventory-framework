@@ -19,8 +19,10 @@ public abstract class ViewComponentFactory {
      * @param id       The modifier identifier.
      * @param modifier The modifier consumer instance.
      */
-    void registerModifier(@NotNull String id, @NotNull Consumer<AbstractView> modifier) {
-        modifiers.put(id, modifier);
+    public final void registerModifier(@NotNull String id, @NotNull Consumer<AbstractView> modifier) {
+        synchronized (modifiers) {
+            modifiers.put(id, modifier);
+        }
     }
 
     /**
@@ -28,8 +30,10 @@ public abstract class ViewComponentFactory {
      *
      * @param id The modifier identifier.
      */
-    void unregisterModifier(@NotNull String id) {
-        modifiers.remove(id);
+    public final void unregisterModifier(@NotNull String id) {
+        synchronized (modifiers) {
+            modifiers.remove(id);
+        }
     }
 
     @NotNull

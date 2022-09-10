@@ -908,4 +908,18 @@ public abstract class AbstractView extends AbstractVirtualView {
         initUpdateScheduler();
         setInitialized(true);
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public void emit(@NotNull String event, Object value) {
+        super.emit(event, value);
+        getContexts().forEach(context -> context.emit(event, value));
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void emit(@NotNull Object event) {
+        super.emit(event);
+        getContexts().forEach(context -> context.emit(event));
+    }
 }

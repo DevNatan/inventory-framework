@@ -11,6 +11,9 @@ import java.util.function.Supplier;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
+import me.saiintbrisson.minecraft.event.EventBus;
+import me.saiintbrisson.minecraft.event.EventListener;
+import me.saiintbrisson.minecraft.event.EventSubscription;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
@@ -30,6 +33,12 @@ public abstract class AbstractVirtualView implements VirtualView {
     private boolean layoutSignatureChecked;
     private Deque<ViewItem> reservedItems;
     int reservedItemsCount;
+
+    final EventBus eventBus = new EventBus();
+
+    public EventBus getEventBus() {
+        return eventBus;
+    }
 
     @Override
     public ViewItem[] getItems() {
@@ -316,6 +325,7 @@ public abstract class AbstractVirtualView implements VirtualView {
     }
 
     /**
+     *
      * {@inheritDoc}
      */
     @ApiStatus.Internal
@@ -498,5 +508,25 @@ public abstract class AbstractVirtualView implements VirtualView {
         throw new IllegalArgumentException(String.format(
                 "The \"%c\" character is reserved in layouts and cannot be used due to backwards compatibility.",
                 character));
+    }
+
+    @Override
+    public <T> EventSubscription on(@NotNull Class<? extends T> event, @NotNull EventListener<T> listener) {
+        return getEventBus().listen(event, listener);
+    }
+
+    @Override
+    public <T> EventSubscription on(@NotNull String event, @NotNull EventListener<T> listener) {
+        return getEventBus().listen(event, listener);
+    }
+
+    @Override
+    public void emit(@NotNull Object event) {
+        getEventBus().emit(event, null);
+    }
+
+    @Override
+    public void emit(@NotNull String event, Object value) {
+        getEventBus().emit(event, value);
     }
 }

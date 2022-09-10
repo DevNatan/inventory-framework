@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Stack;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import me.saiintbrisson.minecraft.event.EventListener;
+import me.saiintbrisson.minecraft.event.EventSubscription;
 import me.saiintbrisson.minecraft.exception.InventoryModificationException;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -522,6 +524,7 @@ public interface VirtualView {
     void clear(int index);
 
     /**
+     *
      * Thrown when a method explicitly needs to specify that it will directly modify the view's
      * container when executed, that method is overridden by implementations whose direct modification
      * of the container is not allowed, throwing an exception.
@@ -712,4 +715,63 @@ public interface VirtualView {
      */
     @ApiStatus.Internal
     void setReservedItemsCount(int reservedItemsCount);
+
+    /**
+     * Emits a typed event.
+     *
+     * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     *
+     * @param event The event to be emitted.
+     * @see #on(Class, EventListener)
+     * @since 2.5.4
+     */
+    @ApiStatus.Experimental
+    @ApiStatus.AvailableSince("2.5.4")
+    void emit(@NotNull Object event);
+
+    /**
+     * Emits a generic keyed event.
+     *
+     * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     *
+     * @param event The event name to be emitted.
+     * @param value The event value.
+     * @see #on(String, EventListener)
+     * @since 2.5.4
+     */
+    @ApiStatus.Experimental
+    @ApiStatus.AvailableSince("2.5.4")
+    void emit(@NotNull String event, Object value);
+
+    /**
+     * Listens for a generic event.
+     *
+     * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     *
+     * @param event    The event to be listened.
+     * @param listener Function that will be executed when the event occurs.
+     * @see #emit(String, Object)
+     * @since 2.5.4
+     */
+    @ApiStatus.Experimental
+    @ApiStatus.AvailableSince("2.5.4")
+    <T> EventSubscription on(@NotNull String event, @NotNull EventListener<T> listener);
+
+    /**
+     * Listens for a typed event.
+     *
+     * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     *
+     * @param event    The event to be listened.
+     * @param listener Function that will be executed when the event occurs.
+     * @see #emit(Object)
+     * @since 2.5.4
+     */
+    @ApiStatus.Experimental
+    @ApiStatus.AvailableSince("2.5.4")
+    <T> EventSubscription on(@NotNull Class<? extends T> event, @NotNull EventListener<T> listener);
 }
