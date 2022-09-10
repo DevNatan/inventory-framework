@@ -723,7 +723,7 @@ public interface VirtualView {
      * such API may be changed or may be removed completely in any further release. </i></b>
      *
      * @param event The event to be emitted.
-     * @see #on(Class, Consumer)
+     * @see #on(Class, EventListener)
      * @since 2.5.4
      */
     @ApiStatus.Experimental
@@ -738,7 +738,7 @@ public interface VirtualView {
      *
      * @param event The event name to be emitted.
      * @param value The event value.
-     * @see #on(String, Consumer)
+     * @see #on(String, EventListener)
      * @since 2.5.4
      */
     @ApiStatus.Experimental
