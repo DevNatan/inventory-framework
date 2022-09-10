@@ -47,9 +47,8 @@ class BasePaginatedViewContext<T> extends BaseViewContext implements PaginatedVi
     }
 
     @Override
-    @Deprecated
     public final int getPageSize() {
-        return getPaginator().getPageSize();
+        return usePaginator().getPageSize();
     }
 
     @Override

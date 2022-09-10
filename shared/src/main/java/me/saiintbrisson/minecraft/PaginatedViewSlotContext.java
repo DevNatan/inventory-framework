@@ -17,12 +17,20 @@ public interface PaginatedViewSlotContext<T> extends PaginatedViewContext<T>, Vi
     PaginatedViewContext<T> getParent();
 
     /**
-     * The position that the current item is in relation to the pagination. Please don't confuse with
-     * the position of the item in the container, this is {@link #getSlot()}.
+     * Pagination index of the slot relative to the total amount of data.
+     * <p>
+     * Can be used identifier since it's unique for all pages.
      *
-     * @return The item pagination index.
+     * @return The pagination index (0 to source size).
      */
-    int getIndex();
+    long getIndex();
+
+    /**
+     * Pagination index of the slot for the current page.
+     *
+     * @return The pagination index (0 to page size).
+     */
+    int getIndexOnCurrentPage();
 
     /**
      * The paged value tied to this context.
@@ -31,7 +39,9 @@ public interface PaginatedViewSlotContext<T> extends PaginatedViewContext<T>, Vi
      */
     T getValue();
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @NotNull
     PaginatedViewSlotContext<T> withItem(@Nullable Object item);

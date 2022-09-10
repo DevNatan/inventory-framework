@@ -33,6 +33,16 @@ final class BukkitPaginatedViewSlotContextImpl<T> extends BukkitViewSlotContext 
     }
 
     @Override
+    public long getIndex() {
+        return getIndexOnCurrentPage() + ((long) getPageSize() * getPage());
+    }
+
+    @Override
+    public int getIndexOnCurrentPage() {
+        return index;
+    }
+
+    @Override
     public @NotNull PaginatedViewSlotContext<T> withItem(@Nullable Object item) {
         super.withItem(item);
         return this;
@@ -81,7 +91,6 @@ final class BukkitPaginatedViewSlotContextImpl<T> extends BukkitViewSlotContext 
     }
 
     @Override
-    @Deprecated
     public int getPageSize() {
         return getParent().getPageSize();
     }
