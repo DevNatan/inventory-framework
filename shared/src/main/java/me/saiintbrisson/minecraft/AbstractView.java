@@ -870,7 +870,7 @@ public abstract class AbstractView extends AbstractVirtualView {
      * @param interval The interval between updates.
      */
     public final void scheduleUpdate(@NotNull Duration interval) {
-        scheduleUpdate(-1, Math.floorDiv(interval.getSeconds(), 20 /* 1 second in ticks */));
+        scheduleUpdate(-1, interval.getSeconds() * 20 /* 1 second = 20 ticks */);
     }
 
     @ApiStatus.OverrideOnly
