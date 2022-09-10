@@ -21,8 +21,8 @@ public abstract class ViewComponentFactory {
      */
     public final void registerModifier(@NotNull String id, @NotNull Consumer<AbstractView> modifier) {
         synchronized (modifiers) {
-			modifiers.put(id, modifier);
-		}
+            modifiers.put(id, modifier);
+        }
     }
 
     /**
@@ -32,8 +32,8 @@ public abstract class ViewComponentFactory {
      */
     public final void unregisterModifier(@NotNull String id) {
         synchronized (modifiers) {
-			modifiers.remove(id);
-		}
+            modifiers.remove(id);
+        }
     }
 
     @NotNull

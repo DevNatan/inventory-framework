@@ -1,4 +1,3 @@
 package me.saiintbrisson.minecraft.event;
 
-public interface Event {
-}
+public interface Event {}

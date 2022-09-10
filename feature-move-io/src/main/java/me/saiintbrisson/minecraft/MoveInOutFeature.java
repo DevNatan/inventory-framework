@@ -16,7 +16,7 @@ public final class MoveInOutFeature implements Feature<Void, Void> {
 
     @Override
     public @NotNull Void install(@NotNull PlatformViewFrame<?, ?, ?> platform, @NotNull UnaryOperator<Void> configure) {
-		platform.getFactory().registerModifier(MODIFIER, view -> {
+        platform.getFactory().registerModifier(MODIFIER, view -> {
             view.getPipeline().intercept(AbstractView.CLICK, new BukkitMoveOutInterceptor());
         });
         return null;

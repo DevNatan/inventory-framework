@@ -99,11 +99,7 @@ public abstract class AbstractView extends AbstractVirtualView {
         setItems(new ViewItem[fixedSize]);
     }
 
-	protected AbstractView() {
-		this(0, null, ViewType.CHEST);
-	}
-
-	/**
+    /**
      * Called before the inventory is opened to the player.
      *
      * <p>This handler is often called "pre-rendering" because it is possible to set the title and
@@ -913,17 +909,17 @@ public abstract class AbstractView extends AbstractVirtualView {
         setInitialized(true);
     }
 
-	/** {@inheritDoc} */
-	@Override
-	public void emit(@NotNull String event, Object value) {
-		super.emit(event, value);
-		getContexts().forEach(context -> context.emit(event, value));
-	}
+    /** {@inheritDoc} */
+    @Override
+    public void emit(@NotNull String event, Object value) {
+        super.emit(event, value);
+        getContexts().forEach(context -> context.emit(event, value));
+    }
 
-	/** {@inheritDoc} */
-	@Override
-	public void emit(@NotNull Object event) {
-		super.emit(event);
-		getContexts().forEach(context -> context.emit(event));
-	}
+    /** {@inheritDoc} */
+    @Override
+    public void emit(@NotNull Object event) {
+        super.emit(event);
+        getContexts().forEach(context -> context.emit(event));
+    }
 }
