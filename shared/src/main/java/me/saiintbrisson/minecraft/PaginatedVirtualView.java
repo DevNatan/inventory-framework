@@ -35,43 +35,6 @@ public interface PaginatedVirtualView<T> extends VirtualView {
      * <p>Provider's {@link PaginatedViewContext first parameter} can be used to determine which is
      * {@link PaginatedViewContext#getPage() the current page} of the context, use to sub-split your
      * request data and return the correct data for each page.
-     *
-     * <p>Optimize your requests by specifying a limit of data to be returned, this limit being the
-     * {@link PaginatedViewContext#getPageSize() page size} that the container can support, taking
-     * into account paging nuances, such as {@link PaginatedVirtualView#getLayout()} pagination layout.
-     *
-     * <pre><code>
-     * interface Data {
-     *     List&#60;T&#62; getRecords();
-     *     int getTotalPages();
-     * }
-     *
-     * interface DataRepository&#60;T&#62; {
-     *     Data getData(int page, int limit);
-     * }
-     *
-     * class MyView extends PaginatedView&#60;T&#62; {
-     *
-     *   MyView(DataRepository dataRepository) {
-     *       setLayout(
-     *           "XXXXXXXXX",
-     *           "XOOOOOOOX,
-     *           "XXXXXXXXX
-     *       );
-     *
-     *       setSource(context -&#62; {
-     *           Data data = dataRepository.getData(
-     *               context.getPage(),
-     *               context.getPageSize()
-     *           );
-     *
-     *           context.setPagesCount(data.getTotalPages());
-     *           return data.getRecords();
-     *       });
-     *   }
-     *
-     * }
-     * </code></pre>
      * <p>
      * You can only use this method once during the view's lifecycle as it is a provider, and the
      * pagination resets with each update accordingly.

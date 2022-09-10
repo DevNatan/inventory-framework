@@ -1,9 +1,6 @@
 package me.saiintbrisson.minecraft;
 
-import static me.saiintbrisson.minecraft.ViewItem.UNSET;
-
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -59,7 +56,7 @@ public final class Paginator<T> {
         this.async = _asyncState != null;
     }
 
-    public boolean isSync() {
+    public boolean isStatic() {
         return !async && !provided;
     }
 
@@ -99,19 +96,16 @@ public final class Paginator<T> {
      */
     public int count() {
         checkSource();
-        return isSync() ? (int) Math.ceil((double) size() / pageSize) : pagesCount == UNSET ? UNSET : pagesCount;
+        return (int) Math.ceil((double) size() / getPageSize());
     }
 
     public List<T> getPage(int index) {
         if (source.isEmpty()) return Collections.emptyList();
 
-        // fast path -- non-sync pagination source is always updated
-        if (!isSync()) return source;
-
         int size = size();
 
         // fast path -- no need to calculate page
-        if (size < pageSize) return new ArrayList<>(source);
+        if (size < getPageSize()) return new ArrayList<>(source);
 
         if (index < 0 || index >= count())
             throw new ArrayIndexOutOfBoundsException(
@@ -137,30 +131,5 @@ public final class Paginator<T> {
         throw new IllegalStateException(String.format(
                 "Paginator source cannot be null (page size = %d, factory = %s, is provided = %b)",
                 pageSize, factory, provided));
-    }
-
-    /**
-     * Converts a given value to a List. Accepts {@link List}, {@link Collection} and {@link
-     * Iterable}.
-     *
-     * @param value The value.
-     * @param <T> The paginator target type.
-     * @return The value converted to a List.
-     * @throws IllegalArgumentException If unable to convert the value.
-     */
-    @SuppressWarnings("unchecked")
-    private static <T> List<T> toList(@NotNull Object value) {
-        if (value instanceof List) return (List<T>) value;
-        if (value instanceof Collection) return new ArrayList<>((Collection<? extends T>) value);
-
-        if (value instanceof Iterable) {
-            final List<T> list = new ArrayList<>();
-            for (final T item : (Iterable<? extends T>) value) list.add(item);
-
-            return list;
-        }
-
-        throw new IllegalArgumentException(String.format(
-                "Failed to convert value to list: %s", value.getClass().getSimpleName()));
     }
 }
