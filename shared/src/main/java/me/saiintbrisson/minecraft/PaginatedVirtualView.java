@@ -116,6 +116,8 @@ public interface PaginatedVirtualView<T> extends VirtualView {
      *
      * <p><b><i> This is an internal inventory-framework API that should not be used from outside of
      * this library. No compatibility guarantees are provided. </i></b>
+     * <p>
+     * Internal API. Use {@link #setPreviousPageItem(BiConsumer)} instead.
      *
      * @param previousPageItemSlot The new navigation's "previous page" item position.
      */
@@ -138,6 +140,8 @@ public interface PaginatedVirtualView<T> extends VirtualView {
      *
      * <p><b><i> This is an internal inventory-framework API that should not be used from outside of
      * this library. No compatibility guarantees are provided. </i></b>
+     * <p>
+     * Internal API. Use {@link #setNextPageItem(BiConsumer)} instead.
      *
      * @param nextPageItemSlot The new navigation's "next page" item position.
      */
