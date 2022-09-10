@@ -376,7 +376,9 @@ public abstract class AbstractView extends AbstractVirtualView {
     }
 
     public final void registerContext(@NotNull ViewContext context) {
-        contexts.add(context);
+        synchronized (contexts) {
+			contexts.add(context);
+		}
     }
 
     public final boolean isCancelOnClick() {
