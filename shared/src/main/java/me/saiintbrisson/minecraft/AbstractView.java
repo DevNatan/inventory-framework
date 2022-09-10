@@ -389,8 +389,8 @@ public abstract class AbstractView extends AbstractVirtualView {
 
     public final void registerContext(@NotNull ViewContext context) {
         synchronized (contexts) {
-			contexts.add(context);
-		}
+            contexts.add(context);
+        }
     }
 
     public final boolean isCancelOnClick() {
@@ -712,8 +712,8 @@ public abstract class AbstractView extends AbstractVirtualView {
     @ApiStatus.Internal
     public final boolean triggerSlotRender(ViewContext parent, ViewSlotContext context, ViewItem item, int slot) {
         final ViewSlotContext renderContext = context == null
-			? PlatformUtils.getFactory().createSlotContext(slot, item, parent, parent.getContainer(), UNSET, null)
-			: context;
+                ? PlatformUtils.getFactory().createSlotContext(slot, item, parent, parent.getContainer(), UNSET, null)
+                : context;
 
         runCatching(context, () -> onSlotRender(renderContext));
 
@@ -789,8 +789,8 @@ public abstract class AbstractView extends AbstractVirtualView {
         }
 
         if (item.getUpdateHandler() != null) {
-            final ViewSlotContext updateContext =
-                    PlatformUtils.getFactory().createSlotContext(slot, item, context, context.getContainer(), UNSET, null);
+            final ViewSlotContext updateContext = PlatformUtils.getFactory()
+                    .createSlotContext(slot, item, context, context.getContainer(), UNSET, null);
 
             runCatching(context, () -> item.getUpdateHandler().handle(updateContext));
             if (updateContext.hasChanged()) {

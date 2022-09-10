@@ -1,5 +1,7 @@
 package me.saiintbrisson.minecraft;
 
+import static me.saiintbrisson.minecraft.ViewItem.UNSET;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -15,8 +17,6 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import static me.saiintbrisson.minecraft.ViewItem.UNSET;
 
 @Getter
 @Setter
