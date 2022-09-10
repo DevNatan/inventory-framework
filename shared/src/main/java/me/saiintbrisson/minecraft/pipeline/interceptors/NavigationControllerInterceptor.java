@@ -90,10 +90,7 @@ public final class NavigationControllerInterceptor implements PipelineIntercepto
 
         int targetSlot = layoutSlot;
 
-        System.out.println("Navigation to " + direction + ", layoutSlot = " + layoutSlot);
-
         if (item != null) {
-            System.out.println("Navigation item to " + direction + " = " + item);
             checkIndeterministicNavigationSlot(layoutSlot, item.getSlot());
             checkAmbiguousNavigationSlot(layoutSlot, item.getSlot());
 
