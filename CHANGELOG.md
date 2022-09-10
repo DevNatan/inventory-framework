@@ -8,7 +8,7 @@
 * Fixed "Update job not started" (#232)
 * Bump com.diffplug.spotless from 6.9.1 to 6.10.0 (#214)
 * New Event Bus feature (#234)
-* Fixed page switch issues due to dynamic pagination source (#233)
+* Fixed page switch issues due to dynamic pagination source (#233, #238)
 * Fixed wrong update interval when using schedule update with Duration as parameter (#236)
 * Try to fix ConcurrentModificationException on open (#237)
 * Fixed fallback navigation item retrieval compatibility (#228)
@@ -17,6 +17,7 @@
 * Fixed context `getCurrentItem` always returning null (#235)
 * New `onSlotRender` handler prototype (#235)
 * Now `clear()` supports immediate clear when context is on entity container (#235)
+* Provide unique element index for pagination (#239)
 
 # 2.5.4-beta (23-09-2022)
 * Auto slot fill and layout can now be used on regular views and paginated views (#174)
