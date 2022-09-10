@@ -1,6 +1,7 @@
 package me.saiintbrisson.minecraft;
 
 import static me.saiintbrisson.minecraft.IFUtils.unwrap;
+import static me.saiintbrisson.minecraft.ViewItem.UNSET;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -137,6 +138,17 @@ public abstract class AbstractView extends AbstractVirtualView {
      * @param context The player view context.
      */
     protected void onRender(@NotNull ViewContext context) {}
+
+    /**
+     * Called when a slot (even if it's a pseudo slot) is rendered.
+     *
+     * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     *
+     * @param context The slot render context.
+     */
+    @ApiStatus.Experimental
+    protected void onSlotRender(@NotNull ViewSlotContext context) {}
 
     /**
      * Called when the view is updated for a player.
@@ -377,8 +389,8 @@ public abstract class AbstractView extends AbstractVirtualView {
 
     public final void registerContext(@NotNull ViewContext context) {
         synchronized (contexts) {
-			contexts.add(context);
-		}
+            contexts.add(context);
+        }
     }
 
     public final boolean isCancelOnClick() {
@@ -697,6 +709,25 @@ public abstract class AbstractView extends AbstractVirtualView {
         return ViewItem.AVAILABLE;
     }
 
+    @ApiStatus.Internal
+    public final boolean triggerSlotRender(ViewContext parent, ViewSlotContext context, ViewItem item, int slot) {
+        final ViewSlotContext renderContext = context == null
+                ? PlatformUtils.getFactory().createSlotContext(slot, item, parent, parent.getContainer(), UNSET, null)
+                : context;
+
+        runCatching(context, () -> onSlotRender(renderContext));
+
+        if (item != null) runCatching(context, () -> item.getRenderHandler().handle(renderContext));
+
+        if (renderContext.hasChanged()) {
+            renderContext.getContainer().renderItem(slot, unwrap(renderContext.getItemWrapper()));
+            renderContext.setChanged(false);
+            return true;
+        }
+
+        return false;
+    }
+
     /**
      * Renders a item.
      *
@@ -718,14 +749,8 @@ public abstract class AbstractView extends AbstractVirtualView {
         final Object fallbackItem = item.getItem();
 
         if (item.getRenderHandler() != null) {
-            final ViewSlotContext renderContext = PlatformUtils.getFactory().createSlotContext(item, context, 0, null);
-
-            runCatching(context, () -> item.getRenderHandler().handle(renderContext));
-            if (renderContext.hasChanged()) {
-                context.getContainer().renderItem(slot, unwrap(renderContext.getItemWrapper()));
-                renderContext.setChanged(false);
-                return;
-            }
+            final boolean modified = triggerSlotRender(context, null, item, slot);
+            if (modified) return;
         }
 
         if (fallbackItem == null)
@@ -764,7 +789,8 @@ public abstract class AbstractView extends AbstractVirtualView {
         }
 
         if (item.getUpdateHandler() != null) {
-            final ViewSlotContext updateContext = PlatformUtils.getFactory().createSlotContext(item, context, 0, null);
+            final ViewSlotContext updateContext = PlatformUtils.getFactory()
+                    .createSlotContext(slot, item, context, context.getContainer(), UNSET, null);
 
             runCatching(context, () -> item.getUpdateHandler().handle(updateContext));
             if (updateContext.hasChanged()) {
@@ -911,14 +937,12 @@ public abstract class AbstractView extends AbstractVirtualView {
         setInitialized(true);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void emit(@NotNull String event, Object value) {
         super.emit(event, value);
         getContexts().forEach(context -> context.emit(event, value));
     }
 
-    /** {@inheritDoc} */
     @Override
     public void emit(@NotNull Object event) {
         super.emit(event);

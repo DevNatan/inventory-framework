@@ -18,7 +18,6 @@ public final class ItemWrapper {
 
     ItemWrapper(@Nullable Object value) {
         this.value = value instanceof ItemWrapper ? ((ItemWrapper) value).getValue() : value;
-
         checkValueType();
     }
 

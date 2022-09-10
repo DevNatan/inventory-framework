@@ -104,8 +104,11 @@ class ViewListener implements Listener {
         final ViewContainer container =
                 !isEntityContainer ? context.getContainer() : new BukkitEntityViewContainer(player.getInventory());
 
-        final ViewSlotContext slotContext = new BukkitClickViewSlotContext(
-                context.resolve(event.getSlot(), true, isEntityContainer), context, event, container);
+        final ViewItem item = context.resolve(event.getSlot(), true, isEntityContainer);
+
+        // TODO use platform to create this instance
+        final ViewSlotContext slotContext =
+                new BukkitClickViewSlotContext(event.getSlot(), event, item, context, container);
 
         try {
             view.runCatching(context, () -> view.getPipeline().execute(AbstractView.CLICK, slotContext));

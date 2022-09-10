@@ -13,6 +13,9 @@ import org.jetbrains.annotations.Nullable;
  */
 public interface PaginatedViewSlotContext<T> extends PaginatedViewContext<T>, ViewSlotContext {
 
+    @Override
+    PaginatedViewContext<T> getParent();
+
     /**
      * The position that the current item is in relation to the pagination. Please don't confuse with
      * the position of the item in the container, this is {@link #getSlot()}.

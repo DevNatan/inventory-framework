@@ -6,21 +6,21 @@ import lombok.ToString;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Bukkit platform ViewSlotContext implementation.
+ */
 @Getter
 @Setter
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
 public class BukkitViewSlotContext extends AbstractViewSlotContext {
 
-    BukkitViewSlotContext(ViewItem backingItem, @NotNull ViewContext parent) {
-        super(backingItem, parent);
-    }
-
-    public int getSlot() {
-        return getBackingItem().getSlot();
+    BukkitViewSlotContext(int slot, ViewItem backingItem, @NotNull ViewContext parent, ViewContainer container) {
+        super(slot, backingItem, parent, container);
     }
 
     @Override
-    public @NotNull Player getPlayer() {
+    @NotNull
+    public final Player getPlayer() {
         return BukkitViewer.toPlayerOfContext(this);
     }
 }

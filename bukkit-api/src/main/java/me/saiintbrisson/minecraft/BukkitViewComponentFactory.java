@@ -2,6 +2,7 @@ package me.saiintbrisson.minecraft;
 
 import static java.util.Objects.requireNonNull;
 import static me.saiintbrisson.minecraft.AbstractView.CLICK;
+import static me.saiintbrisson.minecraft.ViewItem.UNSET;
 import static org.bukkit.Bukkit.createInventory;
 
 import lombok.AccessLevel;
@@ -84,15 +85,13 @@ final class BukkitViewComponentFactory extends ViewComponentFactory {
                 : new ViewContextImpl(view, container);
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     @NotNull
     public AbstractViewSlotContext createSlotContext(
-            ViewItem item, ViewContext parent, int paginatedItemIndex, Object paginatedItemValue) {
-        return paginatedItemValue == null
-                ? new BukkitViewSlotContext(item, parent)
-                : new BukkitPaginatedViewSlotContextImpl<>(
-                        paginatedItemIndex, paginatedItemValue, item, (PaginatedViewContext) parent);
+            int slot, ViewItem item, ViewContext parent, ViewContainer container, int index, Object value) {
+        return index == UNSET
+                ? new BukkitViewSlotContext(slot, item, parent, container)
+                : new BukkitPaginatedViewSlotContextImpl<>(index, value, slot, item, parent, container);
     }
 
     @Override

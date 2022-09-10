@@ -210,8 +210,8 @@ public final class PaginationRenderInterceptor implements PipelineInterceptor<Vi
             item.setPaginationItem(true);
 
             @SuppressWarnings("unchecked")
-            final PaginatedViewSlotContext<T> slotContext = (PaginatedViewSlotContext<T>)
-                    PlatformUtils.getFactory().createSlotContext(item, context, index, value);
+            final PaginatedViewSlotContext<T> slotContext = (PaginatedViewSlotContext<T>) PlatformUtils.getFactory()
+                    .createSlotContext(slot, item, context, context.getContainer(), index, value);
 
             context.getRoot().runCatching(context, () -> context.getRoot().callItemRender(slotContext, item, value));
             renderItemAndApplyOnContext(context, item, slot);

@@ -31,7 +31,10 @@ public final class RenderInterceptor implements PipelineInterceptor<VirtualView>
         for (int i = 0; i < len; i++) {
             // this resolve will get the items from both root and context, so we render both
             final ViewItem item = context.resolve(i, true);
-            if (item == null) continue;
+            if (item == null) {
+                root.triggerSlotRender(context, null, null, i);
+                continue;
+            }
 
             root.render(context, item, i);
         }

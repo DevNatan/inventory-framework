@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @see ViewSlotContext
  */
-public interface ViewSlotClickContext extends ViewSlotContext {
+public interface ViewSlotClickContext extends ViewSlotContext, UnmodifiableViewContext {
 
     /**
      * If the click was using the left mouse button.
