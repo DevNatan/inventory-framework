@@ -99,7 +99,7 @@ public final class PaginationRenderInterceptor implements PipelineInterceptor<Vi
                     callIfNotNull(
                             asyncState.getCompletedSuccessfully(),
                             handler -> handler.accept(context, paginator.getSource()));
-                    renderSource(context, layout, preservedItems, (List<T>) data, paginator);
+                    renderSource(context, layout, preservedItems, null, paginator);
                 })
                 .exceptionally(error -> {
                     callIfNotNull(asyncState.getError(), handler -> handler.accept(context, error));
@@ -118,7 +118,7 @@ public final class PaginationRenderInterceptor implements PipelineInterceptor<Vi
         if (data == null) throw new IllegalStateException("Lazy pagination result cannot be null");
 
         paginator.setSource(data);
-        renderSource(context, layout, preservedItems, data, paginator);
+        renderSource(context, layout, preservedItems, null, paginator);
     }
 
     private <T> void renderSource(
@@ -234,7 +234,6 @@ public final class PaginationRenderInterceptor implements PipelineInterceptor<Vi
 
     private String[] useLayout(@NotNull ViewContext context) {
         if (context.isLayoutSignatureChecked()) return context.getLayout();
-
         if (!context.getRoot().isLayoutSignatureChecked()) return null;
 
         return context.getRoot().getLayout();
