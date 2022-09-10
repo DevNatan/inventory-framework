@@ -1,5 +1,23 @@
 # Changelog
 
+# 2.5.4-rc.1 (10-09-2022) (unreleased)
+* New context history feature (#120)
+* Fixed context data inheritance (#219)
+* Fixed NullPointerException in context paginator (#224)
+* Update IF-specific bStats charts (#227)
+* Fixed "Update job not started" (#232)
+* Bump com.diffplug.spotless from 6.9.1 to 6.10.0 (#214)
+* New Event Bus feature (#234)
+* Fixed page switch issues due to dynamic pagination source (#233)
+* Fixed wrong update interval when using schedule update with Duration as parameter (#236)
+* Try to fix ConcurrentModificationException on open (#237)
+* Fixed fallback navigation item retrieval compatibility (#228)
+* Allows nullable values on pagination sources (#235)
+* Fixed pagination context `getSlot()` returning index instead of current slot (#235)
+* Fixed context `getCurrentItem` always returning null (#235)
+* New `onSlotRender` handler prototype (#235)
+* Now `clear()` supports immediate clear when context is on entity container (#235)
+
 # 2.5.4-beta (23-09-2022)
 * Auto slot fill and layout can now be used on regular views and paginated views (#174)
 * Updated Gradle to v7.5.1 (#189)
