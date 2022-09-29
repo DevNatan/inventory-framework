@@ -9,8 +9,16 @@ import java.util.function.Function;
 import lombok.Getter;
 import lombok.ToString;
 import me.saiintbrisson.minecraft.exception.InitializationException;
+import me.saiintbrisson.minecraft.pipeline.Pipeline;
+import me.saiintbrisson.minecraft.pipeline.interceptors.AvailableSlotRenderInterceptor;
+import me.saiintbrisson.minecraft.pipeline.interceptors.LayoutPatternRenderInterceptor;
+import me.saiintbrisson.minecraft.pipeline.interceptors.LayoutResolutionInterceptor;
 import me.saiintbrisson.minecraft.pipeline.interceptors.NavigationControllerInterceptor;
+import me.saiintbrisson.minecraft.pipeline.interceptors.OpenInterceptor;
 import me.saiintbrisson.minecraft.pipeline.interceptors.PaginationRenderInterceptor;
+import me.saiintbrisson.minecraft.pipeline.interceptors.RenderInterceptor;
+import me.saiintbrisson.minecraft.pipeline.interceptors.ScheduledUpdateInterceptor;
+import me.saiintbrisson.minecraft.pipeline.interceptors.UpdateInterceptor;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -319,10 +327,20 @@ public abstract class AbstractPaginatedView<T> extends AbstractView implements P
     @Override
     @ApiStatus.OverrideOnly
     void beforeInit() {
-        super.beforeInit();
-        getPipeline().intercept(RENDER, new PaginationRenderInterceptor());
-        getPipeline().intercept(RENDER, new NavigationControllerInterceptor());
-        getPipeline().intercept(UPDATE, new PaginationRenderInterceptor());
-        getPipeline().intercept(UPDATE, new NavigationControllerInterceptor());
+        final Pipeline<VirtualView> pipeline = getPipeline();
+        pipeline.intercept(OPEN, new OpenInterceptor());
+        pipeline.intercept(INIT, new LayoutResolutionInterceptor());
+        pipeline.intercept(INIT, new LayoutPatternRenderInterceptor());
+        pipeline.intercept(RENDER, new LayoutResolutionInterceptor() /* context scope */);
+        pipeline.intercept(RENDER, new PaginationRenderInterceptor());
+        pipeline.intercept(RENDER, new LayoutPatternRenderInterceptor() /* context scope */);
+        pipeline.intercept(RENDER, new AvailableSlotRenderInterceptor());
+        pipeline.intercept(RENDER, new RenderInterceptor());
+        pipeline.intercept(RENDER, new NavigationControllerInterceptor());
+        pipeline.intercept(RENDER, new ScheduledUpdateInterceptor.Render());
+        pipeline.intercept(UPDATE, new UpdateInterceptor());
+        pipeline.intercept(UPDATE, new PaginationRenderInterceptor());
+        pipeline.intercept(UPDATE, new NavigationControllerInterceptor());
+        pipeline.intercept(CLOSE, new ScheduledUpdateInterceptor.Close());
     }
 }

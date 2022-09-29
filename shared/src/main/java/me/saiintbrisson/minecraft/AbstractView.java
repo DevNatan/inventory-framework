@@ -901,6 +901,7 @@ public abstract class AbstractView extends AbstractVirtualView {
         scheduleUpdate(-1, interval.getSeconds() * 20 /* 1 second = 20 ticks */);
     }
 
+    // TODO apply it's own pipeline order for each view kind
     @ApiStatus.OverrideOnly
     void beforeInit() {
         final Pipeline<VirtualView> pipeline = getPipeline();
@@ -929,11 +930,13 @@ public abstract class AbstractView extends AbstractVirtualView {
         setUpdateJob(job);
     }
 
-    final void init() {
+    final void init(boolean forTests) {
         ensureNotInitialized();
-        beforeInit();
-        getPipeline().execute(INIT, this);
-        initUpdateScheduler();
+        if (!forTests) {
+            beforeInit();
+            getPipeline().execute(INIT, this);
+            initUpdateScheduler();
+        }
         setInitialized(true);
     }
 

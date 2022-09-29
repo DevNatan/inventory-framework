@@ -9,8 +9,12 @@ import me.saiintbrisson.minecraft.VirtualView;
 import me.saiintbrisson.minecraft.pipeline.PipelineContext;
 import me.saiintbrisson.minecraft.pipeline.PipelineInterceptor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.TestOnly;
 
 public final class LayoutPatternRenderInterceptor implements PipelineInterceptor<VirtualView> {
+
+    @TestOnly
+    public boolean skipRender = false;
 
     @Override
     public void intercept(@NotNull PipelineContext<VirtualView> pipeline, VirtualView view) {
@@ -21,6 +25,9 @@ public final class LayoutPatternRenderInterceptor implements PipelineInterceptor
         final AbstractView root = applyOnRoot ? (AbstractView) view : ((ViewContext) view).getRoot();
         for (final LayoutPattern pattern : patterns) {
             final ViewItem item = pattern.getFactory().get();
+            System.out.println("called pattern get factory " + item);
+
+            if (skipRender) continue;
 
             for (final int slot : pattern.getSlots()) {
                 if (applyOnRoot) {

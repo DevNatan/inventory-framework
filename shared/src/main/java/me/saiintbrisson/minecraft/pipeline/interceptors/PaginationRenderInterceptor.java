@@ -25,8 +25,12 @@ import me.saiintbrisson.minecraft.pipeline.PipelineContext;
 import me.saiintbrisson.minecraft.pipeline.PipelineInterceptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.TestOnly;
 
 public final class PaginationRenderInterceptor implements PipelineInterceptor<ViewContext> {
+
+    @TestOnly
+    public boolean skipRender = false;
 
     @Override
     public void intercept(@NotNull PipelineContext<ViewContext> pipeline, ViewContext context) {
@@ -188,6 +192,8 @@ public final class PaginationRenderInterceptor implements PipelineInterceptor<Vi
 
     private void renderItemAndApplyOnContext(@NotNull ViewContext context, ViewItem item, int slot) {
         context.getItems()[slot] = item;
+
+        if (skipRender) return;
         context.getRoot().render(context, item, slot);
     }
 
@@ -197,6 +203,8 @@ public final class PaginationRenderInterceptor implements PipelineInterceptor<Vi
             int slot,
             @NotNull T value,
             @Nullable ViewItem override) {
+        if (skipRender) return;
+
         // TODO replace this with a more sophisticated overlay detection
         ViewItem overlay = context.resolve(slot, true);
         if (overlay != null && overlay.isPaginationItem()) overlay = null;

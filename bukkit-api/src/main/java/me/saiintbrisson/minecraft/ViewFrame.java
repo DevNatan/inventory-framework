@@ -161,7 +161,7 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
         for (final AbstractView view : views.values()) {
             try {
                 view.setViewFrame(this);
-                view.init();
+                view.init(false);
                 PlatformUtils.getFactory().setupView(view);
                 owner.getLogger().info("\"" + view.getClass().getSimpleName() + "\" registered");
             } catch (final Exception e) {

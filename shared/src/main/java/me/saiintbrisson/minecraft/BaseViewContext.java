@@ -186,7 +186,7 @@ public class BaseViewContext extends AbstractVirtualView implements ViewContext 
     @SuppressWarnings("unchecked")
     @Override
     public <T> PaginatedViewContext<T> paginated() {
-        if (!(this.getRoot() instanceof PaginatedView))
+        if (!(this.getRoot() instanceof AbstractPaginatedView))
             throw new IllegalStateException("Only paginated views can enforce paginated view context");
 
         return (PaginatedViewContext<T>) this;
