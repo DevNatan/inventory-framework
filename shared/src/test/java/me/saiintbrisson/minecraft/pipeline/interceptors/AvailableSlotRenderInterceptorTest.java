@@ -13,6 +13,8 @@ import java.util.Deque;
 import java.util.Stack;
 import me.saiintbrisson.minecraft.AbstractView;
 import me.saiintbrisson.minecraft.BaseViewContext;
+import me.saiintbrisson.minecraft.MockComponentFactory;
+import me.saiintbrisson.minecraft.PlatformUtils;
 import me.saiintbrisson.minecraft.ViewContainer;
 import me.saiintbrisson.minecraft.ViewContext;
 import me.saiintbrisson.minecraft.ViewItem;
@@ -71,7 +73,12 @@ public class AvailableSlotRenderInterceptorTest {
         ViewContainer container = mock(ViewContainer.class);
         when(context.getContainer()).thenReturn(container);
 
-        pipeline.execute(RENDER, context);
+        PlatformUtils.setFactory(new MockComponentFactory());
+        try {
+            pipeline.execute(RENDER, context);
+        } finally {
+            PlatformUtils.removeFactory();
+        }
 
         ViewItem item = root.getItem(expectedSlot);
         assertNotNull(item, "An item must be set at the target slot respecting layout items layer");
@@ -112,10 +119,15 @@ public class AvailableSlotRenderInterceptorTest {
         ViewContainer container = mock(ViewContainer.class);
         when(context.getContainer()).thenReturn(container);
 
-        assertThrows(
-                SlotFillExceededException.class,
-                () -> pipeline.execute(RENDER, context),
-                "An SlotFillExceededException must be thrown");
+        PlatformUtils.setFactory(new MockComponentFactory());
+        try {
+            assertThrows(
+                    SlotFillExceededException.class,
+                    () -> pipeline.execute(RENDER, context),
+                    "An SlotFillExceededException must be thrown");
+        } finally {
+            PlatformUtils.removeFactory();
+        }
 
         assertEquals(itemsLayerLength, root.getLayoutItemsLayer().size());
 
@@ -156,10 +168,13 @@ public class AvailableSlotRenderInterceptorTest {
         when(context.getReservedItems()).thenReturn(reservedItems);
         when(context.getRoot()).thenReturn(root);
 
+        PlatformUtils.setFactory(new MockComponentFactory());
         try {
             pipeline.execute(RENDER, context);
         } catch (ContainerException ignored) {
             // will be called cause there's no container available on context to render
+        } finally {
+            PlatformUtils.removeFactory();
         }
 
         assertEquals(ITEMS_LAYER_SLOTS.length, root.getLayoutItemsLayer().size());
@@ -211,10 +226,13 @@ public class AvailableSlotRenderInterceptorTest {
         when(context.getReservedItems()).thenReturn(reservedItems);
         when(context.getRoot()).thenReturn(root);
 
+        PlatformUtils.setFactory(new MockComponentFactory());
         try {
             pipeline.execute(RENDER, context);
         } catch (ContainerException ignored) {
             // will be called cause there's no container available on context to render
+        } finally {
+            PlatformUtils.removeFactory();
         }
 
         assertEquals(ITEMS_LAYER_SLOTS.length, root.getLayoutItemsLayer().size());

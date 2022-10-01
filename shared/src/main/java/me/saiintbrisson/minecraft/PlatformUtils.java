@@ -43,7 +43,7 @@ public class PlatformUtils {
     }
 
     @TestOnly
-    static void removeFactory() {
+    public static void removeFactory() {
         PlatformUtils.factory = null;
     }
 
