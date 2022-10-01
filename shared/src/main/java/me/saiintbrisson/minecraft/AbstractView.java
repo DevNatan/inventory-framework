@@ -23,7 +23,7 @@ import me.saiintbrisson.minecraft.exception.InitializationException;
 import me.saiintbrisson.minecraft.pipeline.Pipeline;
 import me.saiintbrisson.minecraft.pipeline.PipelinePhase;
 import me.saiintbrisson.minecraft.pipeline.interceptors.AvailableSlotRenderInterceptor;
-import me.saiintbrisson.minecraft.pipeline.interceptors.LayoutPatternRenderInterceptor;
+import me.saiintbrisson.minecraft.pipeline.interceptors.LayoutPatternApplierInterceptor;
 import me.saiintbrisson.minecraft.pipeline.interceptors.LayoutResolutionInterceptor;
 import me.saiintbrisson.minecraft.pipeline.interceptors.OpenInterceptor;
 import me.saiintbrisson.minecraft.pipeline.interceptors.RenderInterceptor;
@@ -710,14 +710,17 @@ public abstract class AbstractView extends AbstractVirtualView {
     }
 
     @ApiStatus.Internal
-    public final boolean triggerSlotRender(ViewContext parent, ViewSlotContext context, ViewItem item, int slot) {
+    public final boolean render(ViewContext parent, ViewSlotContext context, ViewItem item, int slot) {
         final ViewSlotContext renderContext = context == null
                 ? PlatformUtils.getFactory().createSlotContext(slot, item, parent, parent.getContainer(), UNSET, null)
                 : context;
 
         runCatching(context, () -> onSlotRender(renderContext));
 
-        if (item != null) runCatching(context, () -> item.getRenderHandler().handle(renderContext));
+        if (item != null) {
+            ViewItemHandler renderHandler = item.getRenderHandler();
+            if (renderHandler != null) runCatching(context, () -> renderHandler.handle(renderContext));
+        }
 
         if (renderContext.hasChanged()) {
             renderContext.getContainer().renderItem(slot, unwrap(renderContext.getItemWrapper()));
@@ -734,9 +737,9 @@ public abstract class AbstractView extends AbstractVirtualView {
      * <p><b><i> This is an internal inventory-framework API that should not be used from outside of
      * this library. No compatibility guarantees are provided. </i></b>
      *
-     * @param context The context.
-     * @param item    The item.
-     * @param slot    The target slot.
+     * @param context             The context.
+     * @param item                The item.
+     * @param slot                The target slot.
      */
     @ApiStatus.Internal
     public final void render(@NotNull ViewContext context, @NotNull ViewItem item, int slot) {
@@ -746,19 +749,16 @@ public abstract class AbstractView extends AbstractVirtualView {
         // and must be applied during rendering.
         if (item.getSlot() == ViewItem.AVAILABLE) item.setSlot(slot);
 
+        if (render(context, null, item, slot) /* modified */) return;
+
         final Object fallbackItem = item.getItem();
-
-        if (item.getRenderHandler() != null) {
-            final boolean modified = triggerSlotRender(context, null, item, slot);
-            if (modified) return;
-        }
-
-        if (fallbackItem == null)
+        if (fallbackItem == null) {
             throw new IllegalArgumentException(String.format(
                     "No item were provided and the rendering function was not defined at slot %d."
                             + "You must use a rendering function #slot(...).onRender(...)"
                             + " or a fallback item #slot(fallbackItem)",
                     slot));
+        }
 
         try {
             context.getContainer().renderItem(slot, unwrap(fallbackItem));
@@ -907,9 +907,9 @@ public abstract class AbstractView extends AbstractVirtualView {
         final Pipeline<VirtualView> pipeline = getPipeline();
         pipeline.intercept(OPEN, new OpenInterceptor());
         pipeline.intercept(INIT, new LayoutResolutionInterceptor());
-        pipeline.intercept(INIT, new LayoutPatternRenderInterceptor());
+        pipeline.intercept(INIT, new LayoutPatternApplierInterceptor());
         pipeline.intercept(RENDER, new LayoutResolutionInterceptor() /* context scope */);
-        pipeline.intercept(RENDER, new LayoutPatternRenderInterceptor() /* context scope */);
+        pipeline.intercept(RENDER, new LayoutPatternApplierInterceptor() /* context scope */);
         pipeline.intercept(RENDER, new AvailableSlotRenderInterceptor());
         pipeline.intercept(RENDER, new RenderInterceptor());
         pipeline.intercept(RENDER, new ScheduledUpdateInterceptor.Render());

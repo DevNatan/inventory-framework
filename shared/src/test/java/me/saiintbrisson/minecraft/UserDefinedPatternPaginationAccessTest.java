@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.Arrays;
 import java.util.List;
 import me.saiintbrisson.minecraft.pipeline.Pipeline;
-import me.saiintbrisson.minecraft.pipeline.interceptors.LayoutPatternRenderInterceptor;
+import me.saiintbrisson.minecraft.pipeline.interceptors.LayoutPatternApplierInterceptor;
 import me.saiintbrisson.minecraft.pipeline.interceptors.LayoutResolutionInterceptor;
 import me.saiintbrisson.minecraft.pipeline.interceptors.NavigationControllerInterceptor;
 import me.saiintbrisson.minecraft.pipeline.interceptors.PaginationRenderInterceptor;
@@ -36,7 +36,7 @@ public class UserDefinedPatternPaginationAccessTest {
         Pipeline<VirtualView> pipeline = new Pipeline<>(RENDER);
         pipeline.intercept(RENDER, new LayoutResolutionInterceptor());
         pipeline.intercept(RENDER, createPaginationRenderInterceptor());
-        pipeline.intercept(RENDER, createLayoutPatternRenderInterceptor());
+        pipeline.intercept(RENDER, new LayoutPatternApplierInterceptor());
         pipeline.intercept(RENDER, new NavigationControllerInterceptor());
         assertDoesNotThrow(() -> pipeline.execute(RENDER, context));
     }
@@ -59,19 +59,13 @@ public class UserDefinedPatternPaginationAccessTest {
         Pipeline<VirtualView> pipeline = new Pipeline<>(RENDER);
         pipeline.intercept(RENDER, new LayoutResolutionInterceptor());
         pipeline.intercept(RENDER, createPaginationRenderInterceptor());
-        pipeline.intercept(RENDER, createLayoutPatternRenderInterceptor());
+        pipeline.intercept(RENDER, new LayoutPatternApplierInterceptor());
         pipeline.intercept(RENDER, new NavigationControllerInterceptor());
         assertDoesNotThrow(() -> pipeline.execute(RENDER, context));
     }
 
     private PaginationRenderInterceptor createPaginationRenderInterceptor() {
         PaginationRenderInterceptor interceptor = new PaginationRenderInterceptor();
-        interceptor.skipRender = true;
-        return interceptor;
-    }
-
-    private LayoutPatternRenderInterceptor createLayoutPatternRenderInterceptor() {
-        LayoutPatternRenderInterceptor interceptor = new LayoutPatternRenderInterceptor();
         interceptor.skipRender = true;
         return interceptor;
     }
