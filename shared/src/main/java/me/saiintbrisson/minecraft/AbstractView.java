@@ -20,6 +20,7 @@ import lombok.Setter;
 import lombok.ToString;
 import me.saiintbrisson.minecraft.exception.ContainerException;
 import me.saiintbrisson.minecraft.exception.InitializationException;
+import me.saiintbrisson.minecraft.logging.Logger;
 import me.saiintbrisson.minecraft.pipeline.Pipeline;
 import me.saiintbrisson.minecraft.pipeline.PipelinePhase;
 import me.saiintbrisson.minecraft.pipeline.interceptors.AvailableSlotRenderInterceptor;
@@ -73,6 +74,7 @@ public abstract class AbstractView extends AbstractVirtualView {
     PlatformViewFrame<?, ?, ?> viewFrame;
     private final Set<ViewContext> contexts = Collections.newSetFromMap(Collections.synchronizedMap(new HashMap<>()));
     private final Pipeline<VirtualView> pipeline = new Pipeline<>(INIT, OPEN, RENDER, UPDATE, CLICK, CLOSE);
+    private Logger logger;
 
     private Job updateJob;
     long[] updateSchedule;
@@ -290,9 +292,13 @@ public abstract class AbstractView extends AbstractVirtualView {
      * @throws InitializationException If this view is initialized.
      */
     @Override
-    public @NotNull ViewItem slot(int slot, Object item) {
+    public final @NotNull ViewItem slot(int slot, Object item) {
         ensureNotInitialized();
         return super.slot(slot, item);
+    }
+
+    public final @NotNull Logger getLogger() {
+        return logger == null ? PlatformUtils.getFactory().getLogger() : logger;
     }
 
     final void open(@NotNull Viewer viewer, @NotNull Map<String, Object> data, @Nullable ViewContext initiator) {

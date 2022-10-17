@@ -16,6 +16,7 @@ import lombok.Setter;
 import lombok.ToString;
 import me.saiintbrisson.minecraft.feature.Feature;
 import me.saiintbrisson.minecraft.feature.FeatureInstaller;
+import me.saiintbrisson.minecraft.logging.BukkitLogger;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
@@ -158,9 +159,14 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
             enableMetrics();
         }
 
+        boolean isShaded =
+                !getOwner().getDescription().getMain().equals("me.saiintbrisson.minecraft.InventoryFramework");
+
         for (final AbstractView view : views.values()) {
             try {
                 view.setViewFrame(this);
+                view.setLogger(
+                        new BukkitLogger(getOwner().getLogger(), view.getClass().getSimpleName(), isShaded));
                 view.init(false);
                 PlatformUtils.getFactory().setupView(view);
                 owner.getLogger().info("\"" + view.getClass().getSimpleName() + "\" registered");
