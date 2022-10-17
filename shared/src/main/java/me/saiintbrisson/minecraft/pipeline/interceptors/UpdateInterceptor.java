@@ -31,7 +31,7 @@ public final class UpdateInterceptor implements PipelineInterceptor<VirtualView>
             final ViewItem item = context.resolve(i, true);
 
             if (item == null) {
-                final boolean modified = root.triggerSlotRender(context, null, null, i);
+                final boolean modified = root.render(context, null, null, i);
 
                 // default behavior if slot render wasn't modified
                 if (!modified) context.getContainer().removeItem(i);
