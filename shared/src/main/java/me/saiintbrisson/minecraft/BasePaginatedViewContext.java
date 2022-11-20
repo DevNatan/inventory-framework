@@ -43,7 +43,7 @@ class BasePaginatedViewContext<T> extends BaseViewContext implements PaginatedVi
 
     @Override
     public final int getPagesCount() {
-        return getPaginator().count();
+        return usePaginator().count();
     }
 
     @Override
