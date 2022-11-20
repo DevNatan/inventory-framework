@@ -16,6 +16,8 @@ import me.saiintbrisson.minecraft.pipeline.PipelineInterceptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 
+import java.util.ArrayList;
+
 public class OpenInterceptor implements PipelineInterceptor<VirtualView> {
 
     @TestOnly
@@ -72,6 +74,9 @@ public class OpenInterceptor implements PipelineInterceptor<VirtualView> {
         openContext.getData().forEach(generatedContext::set);
         root.registerContext(generatedContext);
         root.render(generatedContext);
-        generatedContext.getViewers().forEach(container::open);
+
+		for (final Viewer viewer : new ArrayList<>(generatedContext.getViewers())) {
+			container.open(viewer);
+		}
     }
 }
