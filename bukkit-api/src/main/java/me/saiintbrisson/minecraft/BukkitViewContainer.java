@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Unmodifiable;
 public abstract class BukkitViewContainer implements ViewContainer {
 
     @NotNull
-    abstract Inventory getInventory();
+    public abstract Inventory getInventory();
 
     @Override
     public @NotNull @Unmodifiable List<Viewer> getViewers() {
@@ -31,7 +31,12 @@ public abstract class BukkitViewContainer implements ViewContainer {
                 .collect(Collectors.toList())));
     }
 
-    @Override
+	@Override
+	public ItemWrapper getItem(int slot) {
+		return new ItemWrapper(getInventory().getItem(slot));
+	}
+
+	@Override
     public void renderItem(int slot, Object item) {
         requireSupportedItem(item);
         getInventory().setItem(slot, convertItem(item));

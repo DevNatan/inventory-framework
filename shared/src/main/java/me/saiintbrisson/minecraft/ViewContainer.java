@@ -7,6 +7,8 @@ import org.jetbrains.annotations.Unmodifiable;
 
 public interface ViewContainer {
 
+	ItemWrapper getItem(int slot);
+
     /**
      * The type of this container.
      *
