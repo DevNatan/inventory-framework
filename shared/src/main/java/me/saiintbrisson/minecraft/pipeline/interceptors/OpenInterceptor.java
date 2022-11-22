@@ -2,6 +2,7 @@ package me.saiintbrisson.minecraft.pipeline.interceptors;
 
 import static me.saiintbrisson.minecraft.IFUtils.elvis;
 
+import java.util.ArrayList;
 import me.saiintbrisson.minecraft.AbstractView;
 import me.saiintbrisson.minecraft.BaseViewContext;
 import me.saiintbrisson.minecraft.OpenViewContext;
@@ -72,6 +73,9 @@ public class OpenInterceptor implements PipelineInterceptor<VirtualView> {
         openContext.getData().forEach(generatedContext::set);
         root.registerContext(generatedContext);
         root.render(generatedContext);
-        generatedContext.getViewers().forEach(container::open);
+
+        for (final Viewer viewer : new ArrayList<>(generatedContext.getViewers())) {
+            container.open(viewer);
+        }
     }
 }
