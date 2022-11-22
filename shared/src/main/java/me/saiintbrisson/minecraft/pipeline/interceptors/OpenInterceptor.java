@@ -2,6 +2,7 @@ package me.saiintbrisson.minecraft.pipeline.interceptors;
 
 import static me.saiintbrisson.minecraft.IFUtils.elvis;
 
+import java.util.ArrayList;
 import me.saiintbrisson.minecraft.AbstractView;
 import me.saiintbrisson.minecraft.BaseViewContext;
 import me.saiintbrisson.minecraft.OpenViewContext;
@@ -15,8 +16,6 @@ import me.saiintbrisson.minecraft.pipeline.PipelineContext;
 import me.saiintbrisson.minecraft.pipeline.PipelineInterceptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
-
-import java.util.ArrayList;
 
 public class OpenInterceptor implements PipelineInterceptor<VirtualView> {
 
@@ -75,8 +74,8 @@ public class OpenInterceptor implements PipelineInterceptor<VirtualView> {
         root.registerContext(generatedContext);
         root.render(generatedContext);
 
-		for (final Viewer viewer : new ArrayList<>(generatedContext.getViewers())) {
-			container.open(viewer);
-		}
+        for (final Viewer viewer : new ArrayList<>(generatedContext.getViewers())) {
+            container.open(viewer);
+        }
     }
 }
