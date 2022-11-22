@@ -36,6 +36,9 @@ import org.jetbrains.annotations.Nullable;
  */
 public final class LayoutResolutionInterceptor implements PipelineInterceptor<VirtualView> {
 
+    private static final List<Character> reservedLayoutCharacters =
+            Arrays.asList(LAYOUT_EMPTY_SLOT, LAYOUT_FILLED_SLOT, LAYOUT_PREVIOUS_PAGE, LAYOUT_NEXT_PAGE);
+
     @Override
     public void intercept(@NotNull PipelineContext<VirtualView> pipeline, VirtualView subject) {
         if (subject.isLayoutSignatureChecked()) return;
@@ -175,20 +178,27 @@ public final class LayoutResolutionInterceptor implements PipelineInterceptor<Vi
                     default: {
                         final LayoutPattern pattern = getLayoutOrNull(view, context, character);
 
-                        // TODO keep this message as warning but remove this exception since
-                        //      user can provide context-specific layout pattern with root layout
                         if (pattern == null) {
+                            // If we do not find the character in either of the two (context & root)
+                            // layouts it means hat the user has defined the layout in root and is
+                            // applying the character in the rendering function, as the root layout
+                            // is resolved during initialization and not rendering we must ignore
+                            // this since there is nothing that can be done
+                            // TODO support this somehow, maybe "LayoutPatternRestorerInterceptor"?
+                            if (view instanceof AbstractView) {
+                                throw new IllegalStateException(
+                                        "Defining the layout in the view constructor and applying "
+                                                + "custom layout pattern in the render function is not yet "
+                                                + "supported. Move the #setLayout(String[]) declaration to "
+                                                + "the rendering function (#onRender).");
+                            }
+
                             throw new IllegalArgumentException(String.format(
-                                    "An unknown character \"" + character
-                                            + "\" was found in layout on line %d column %d. Only %s characters are valid. "
-                                            + "Any other character is considered a custom user pattern and must be registered with #setLayout(Character, Supplier<ViewItem>)",
-                                    row,
-                                    column,
-                                    Arrays.asList(
-                                            LAYOUT_EMPTY_SLOT,
-                                            LAYOUT_FILLED_SLOT,
-                                            LAYOUT_PREVIOUS_PAGE,
-                                            LAYOUT_NEXT_PAGE)));
+                                    "An unknown character %c was found in layout "
+                                            + "on line %d column %d. Only %s characters are valid. "
+                                            + "Any other character is considered a custom user pattern "
+                                            + "and must be registered with #setLayout(Character, ?)",
+                                    character, row, column, reservedLayoutCharacters));
                         }
 
                         pattern.getSlots().push(targetSlot);
@@ -226,8 +236,9 @@ public final class LayoutResolutionInterceptor implements PipelineInterceptor<Vi
         if (context != null) {
             if (!view.isPaginated() || !context.isPaginated())
                 throw new IllegalStateException(String.format(
-                        "Navigation characters (%s) on layout are reserved to paginated views and cannot be used on regular views.",
-                        LAYOUT_PREVIOUS_PAGE + ", " + LAYOUT_NEXT_PAGE));
+                        "Navigation characters (%s and %s) on layout are reserved to paginated views"
+                                + " and cannot be used on regular views.",
+                        LAYOUT_PREVIOUS_PAGE, LAYOUT_NEXT_PAGE));
 
             final AbstractPaginatedView root = view instanceof ViewContext
                     ? ((PaginatedViewContext<?>) view).getRoot()
@@ -310,12 +321,13 @@ public final class LayoutResolutionInterceptor implements PipelineInterceptor<Vi
      * @return The layout pattern to the given character or <code>null</code>.
      */
     private LayoutPattern getLayoutOrNull(VirtualView view, ViewContext context, char character) {
-        List<LayoutPattern> layoutPatternList = null;
-        if (context != null) layoutPatternList = context.getLayoutPatterns();
+        LayoutPattern pattern = findLayout(character, view.getLayoutPatterns());
+        if (pattern == null && context != null) pattern = findLayout(character, context.getLayoutPatterns());
 
-        if (layoutPatternList == null || layoutPatternList.isEmpty())
-            layoutPatternList = (context == null ? view : context.getRoot()).getLayoutPatterns();
+        return pattern;
+    }
 
+    private LayoutPattern findLayout(char character, List<LayoutPattern> layoutPatternList) {
         return layoutPatternList.stream()
                 .filter(pattern -> pattern.getCharacter() == character)
                 .findFirst()

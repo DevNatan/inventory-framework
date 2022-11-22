@@ -559,6 +559,7 @@ public interface VirtualView {
      * @return An unmodifiable view of all layout patterns available.
      */
     @ApiStatus.Internal
+    @NotNull
     List<LayoutPattern> getLayoutPatterns();
 
     /**

@@ -907,7 +907,6 @@ public abstract class AbstractView extends AbstractVirtualView {
         scheduleUpdate(-1, interval.getSeconds() * 20 /* 1 second = 20 ticks */);
     }
 
-    // TODO apply it's own pipeline order for each view kind
     @ApiStatus.OverrideOnly
     void beforeInit() {
         final Pipeline<VirtualView> pipeline = getPipeline();

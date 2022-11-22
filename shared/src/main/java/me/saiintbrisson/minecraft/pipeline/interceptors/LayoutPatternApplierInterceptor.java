@@ -20,7 +20,7 @@ public final class LayoutPatternApplierInterceptor implements PipelineIntercepto
     @Override
     public void intercept(@NotNull PipelineContext<VirtualView> pipeline, VirtualView view) {
         final List<LayoutPattern> patterns = view.getLayoutPatterns();
-        if (patterns == null || patterns.isEmpty()) return;
+        if (patterns.isEmpty()) return;
 
         final boolean applyOnRoot = view instanceof AbstractView;
         final AbstractView root = applyOnRoot ? (AbstractView) view : ((ViewContext) view).getRoot();

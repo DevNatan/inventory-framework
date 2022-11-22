@@ -226,7 +226,7 @@ public abstract class AbstractViewSlotContext extends BaseViewContext implements
     }
 
     @Override
-    public final List<LayoutPattern> getLayoutPatterns() {
+    public final @NotNull List<LayoutPattern> getLayoutPatterns() {
         return getParent().getLayoutPatterns();
     }
 

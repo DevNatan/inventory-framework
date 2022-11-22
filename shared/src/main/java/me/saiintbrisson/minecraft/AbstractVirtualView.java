@@ -389,7 +389,7 @@ public abstract class AbstractVirtualView implements VirtualView {
      */
     @Override
     @ApiStatus.Internal
-    public List<LayoutPattern> getLayoutPatterns() {
+    public @NotNull List<LayoutPattern> getLayoutPatterns() {
         return layoutPatterns;
     }
 
