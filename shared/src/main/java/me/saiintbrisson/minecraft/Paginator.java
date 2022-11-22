@@ -122,12 +122,16 @@ public final class Paginator<T> {
     }
 
     /**
-     * Throws an exception if {@link #source} is null.
+     * Throws an exception if {@link #provided} is false and {@link #source} is null.
      *
-     * @throws IllegalStateException If {@link #source} is null.
+     * @throws IllegalStateException If {@link #provided} is false {@link #source} is null.
      */
     private void checkSource() {
-        if (source != null) return;
+        if (source != null
+                // GH-245 ignores dynamic data as it is set during each update and is not available for
+                // checking at that point
+                || provided) return;
+
         throw new IllegalStateException(String.format(
                 "Paginator source cannot be null (page size = %d, factory = %s, is provided = %b)",
                 pageSize, factory, provided));
