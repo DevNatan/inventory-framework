@@ -9,6 +9,7 @@ name: Publish package
 
 on:
   workflow_dispatch:
+  push:
   release:
     types: [ created ]
 
