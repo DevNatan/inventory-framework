@@ -3,8 +3,18 @@ apply plugin: 'maven-publish'
 project.afterEvaluate {
     final def project = it
     publishing {
+        repositories {
+            maven {
+                name = 'OSSRH'
+                url = 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
+                credentials {
+                    username = System.getenv("USERNAME")
+                    password = System.getenv("TOKEN")
+                }
+            }
+        }
         publications {
-            jitpack(MavenPublication) {
+            gpr(MavenPublication) {
                 configurePublication(project, it)
             }
         }
