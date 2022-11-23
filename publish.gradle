@@ -5,8 +5,8 @@ project.afterEvaluate {
     publishing {
         repositories {
             maven {
-                name = 'OSSRH'
-                url = 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
+                name = 'GithubPackages'
+                url = 'https://maven.pkg.github.com/DevNatan/inventory-framework'
                 credentials {
                     username = System.getenv("USERNAME")
                     password = System.getenv("TOKEN")
