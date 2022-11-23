@@ -3,8 +3,18 @@ apply plugin: 'maven-publish'
 project.afterEvaluate {
     final def project = it
     publishing {
+        repositories {
+            maven {
+                name = 'GithubPackages'
+                url = 'https://maven.pkg.github.com/DevNatan/inventory-framework'
+                credentials {
+                    username = System.getenv("USERNAME")
+                    password = System.getenv("TOKEN")
+                }
+            }
+        }
         publications {
-            jitpack(MavenPublication) {
+            gpr(MavenPublication) {
                 configurePublication(project, it)
             }
         }
