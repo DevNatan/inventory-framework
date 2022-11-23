@@ -8,6 +8,7 @@
 name: Publish package
 
 on:
+  workflow-dispatch:
   release:
     types: [created]
 
