@@ -2,7 +2,7 @@
 
 [![Build](https://github.com/DevNatan/inventory-framework/actions/workflows/build.yml/badge.svg)](https://github.com/DevNatan/inventory-framework/actions/workflows/build.yml)
 [![CodeQL](https://github.com/DevNatan/inventory-framework/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/DevNatan/inventory-framework/actions/workflows/codeql-analysis.yml)
-[![Jitpack](https://jitpack.io/v/DevNatan/inventory-framework.svg)](https://jitpack.io/#DevNatan/inventory-framework)
+[![Publication](https://github.com/DevNatan/inventory-framework/actions/workflows/publish.yml/badge.svg)](https://github.com/DevNatan/inventory-framework/releases)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FDevNatan%2Finventory-framework.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FDevNatan%2Finventory-framework?ref=badge_shield)
 
 **IF** (**I**nventory **F**ramework) is a Bukkit Inventory API framework that allows you to create custom inventories
