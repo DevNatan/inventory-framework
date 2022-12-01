@@ -1,0 +1,15 @@
+<idea-plugin>
+    <id>me.devnatan.inventoryframework.tooling</id>
+    <name>InventoryFramework Tooling</name>
+    <vendor>DevNatan</vendor>
+
+    <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.lang</depends>
+    <depends>com.intellij.modules.externalSystem</depends>
+    <depends>com.intellij.modules.java</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <fileEditorProvider implementation="me.devnatan.inventoryframework.tooling.PreviewFileEditorProvider"/>
+
+    </extensions>
+</idea-plugin>
