@@ -41,6 +41,10 @@ version.ref = "mockito"
 module = "org.mockito:mockito-junit-jupiter"
 version.ref = "mockito"
 
+[libraries.kyori-adventure-api]
+module = "net.kyori:adventure-api"
+version.ref = "kyori-adventure-api"
+
 [plugins]
 shadowjar = { id = "com.github.johnrengelman.shadow", version.ref = "plugin-shadowjar" }
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
