@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.Supplier;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -393,27 +392,6 @@ public final class ViewItem {
      */
     @Contract(value = "_ -> this", mutates = "this")
     public ViewItem rendered(@Nullable Supplier<@Nullable Object> itemFactory) {
-        setRenderHandler(itemFactory == null ? null : render -> render.setItem(itemFactory.get()));
-        return this;
-    }
-
-    /**
-     * Called when the item is rendered.
-     * <p>
-     * Shortcut to {@code onRender(render -> render.setItem(itemFactory.get());}
-     *
-     * <p>This handler is called every time the item or the view that owns it is updated.
-     *
-     * <p>It is allowed to change the item that will be displayed in this handler using the context
-     * mutation functions, e.g.: {@link ViewSlotContext#setItem(Object)}.
-     *
-     * <p>An item can be re-rendered individually using {@link ViewSlotContext#updateSlot()}.
-     *
-     * @param itemFactory The render handler item factory, the item that'll be rendered on update.
-     * @return This item.
-     */
-    @Contract(value = "_ -> this", mutates = "this")
-    public ViewItem rendered(@Nullable Function<ViewSlotContext, @Nullable Object> itemFactory) {
         setRenderHandler(itemFactory == null ? null : render -> render.setItem(itemFactory.get()));
         return this;
     }
