@@ -5,6 +5,7 @@ dependencies {
     testImplementation libs.mockito.junit
     testImplementation projects.test
     testRuntimeOnly libs.spigot.api
+    compileOnly libs.kyori.adventure.api
 }
 
 javadoc {

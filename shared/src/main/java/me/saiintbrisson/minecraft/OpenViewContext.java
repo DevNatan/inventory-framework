@@ -4,6 +4,8 @@ import java.util.concurrent.CompletableFuture;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import net.kyori.adventure.text.TextComponent;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -67,6 +69,16 @@ public class OpenViewContext extends BaseViewContext {
      */
     public final void setContainerTitle(@Nullable final String containerTitle) {
         this.containerTitle = containerTitle;
+    }
+
+    /**
+     * Defines the title of the container for this context.
+     *
+     * @param containerTitle The new title of the container that'll be created.
+     */
+    @ApiStatus.Experimental
+    public final void setContainerTitle(@Nullable TextComponent containerTitle) {
+        this.containerTitle = containerTitle == null ? null : containerTitle.content();
     }
 
     /**
