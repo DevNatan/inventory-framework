@@ -1,31 +1,14 @@
-package me.devnatan.inventoryframework.tooling
+package br.com.devsrsouza.kotlinbukkitapi.tooling.menu
 
-data class ViewDeclaration(
-    val title: String,
+data class MenuDeclaration(
+    val displayname: String,
     val lines: Int,
-    val slots: List<SlotDeclaration>,
-    val type: ViewType
+    val slots: List<MenuSlotDeclaration>
 )
 
-sealed class ViewType(
-    val width: Int,
-    val scale: Int,
-    val singleLineHeight: Int,
-    val lineDiff: Int
-) {
-
-    object Chest : ViewType(
-        width = 176,
-        scale = 2,
-        singleLineHeight = 42,
-        lineDiff = 18,
-    )
-
-}
-
-data class SlotDeclaration(
-    val line: Int,
-    val slot: Int,
-    val item: String,
-    val isSelected: Boolean
+data class MenuSlotDeclaration(
+        val line: Int,
+        val slot: Int,
+        val item: String,
+        val isSelected: Boolean = false
 )
