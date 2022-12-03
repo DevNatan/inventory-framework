@@ -34,12 +34,11 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.TestOnly;
 
 @Getter(AccessLevel.PACKAGE)
 @Setter(AccessLevel.PACKAGE)
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
-public abstract class AbstractView extends AbstractVirtualView {
+public abstract class AbstractView extends AbstractVirtualView implements ViewConfig {
 
     public static final PipelinePhase OPEN = new PipelinePhase("open");
     public static final PipelinePhase INIT = new PipelinePhase("init");
@@ -86,7 +85,8 @@ public abstract class AbstractView extends AbstractVirtualView {
      */
     private boolean initialized;
 
-    @TestOnly
+    private final ViewInitialProperties initialProperties = new ViewInitialProperties();
+
     protected AbstractView() {
         this(0, null, ViewType.CHEST);
     }
@@ -101,6 +101,14 @@ public abstract class AbstractView extends AbstractVirtualView {
 
         setItems(new ViewItem[fixedSize]);
     }
+
+    /**
+     * Called before view registration.
+     * <p>
+     * Use this function to set default values for contexts for this view.
+     * As a reference, the data defined here was previously defined in the constructor.
+     */
+    protected void onInit() {}
 
     /**
      * Called before the inventory is opened to the player.
@@ -743,9 +751,9 @@ public abstract class AbstractView extends AbstractVirtualView {
      * <p><b><i> This is an internal inventory-framework API that should not be used from outside of
      * this library. No compatibility guarantees are provided. </i></b>
      *
-     * @param context             The context.
-     * @param item                The item.
-     * @param slot                The target slot.
+     * @param context The context.
+     * @param item    The item.
+     * @param slot    The target slot.
      */
     @ApiStatus.Internal
     public final void render(@NotNull ViewContext context, @NotNull ViewItem item, int slot) {
@@ -956,5 +964,41 @@ public abstract class AbstractView extends AbstractVirtualView {
     public void emit(@NotNull Object event) {
         super.emit(event);
         getContexts().forEach(context -> context.emit(event));
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Can be overridden for a specific context on {@link #onOpen(OpenViewContext)} with
+     * {@link OpenViewContext#setContainerType(ViewType)}.
+     */
+    @Override
+    public final void setContainerType(ViewType type) {
+        ensureNotInitialized();
+        this.initialProperties.setType(type);
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Can be overridden for a specific context on {@link #onOpen(OpenViewContext)} with
+     * {@link OpenViewContext#setContainerTitle(String)}.
+     */
+    @Override
+    public final void setContainerTitle(String title) {
+        ensureNotInitialized();
+        this.initialProperties.setTitle(title);
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Can be overridden for a specific context on {@link #onOpen(OpenViewContext)} with
+     * {@link OpenViewContext#setContainerSize(int)}.
+     */
+    @Override
+    public final void setContainerSize(int size) {
+        ensureNotInitialized();
+        this.initialProperties.setSize(size);
     }
 }
