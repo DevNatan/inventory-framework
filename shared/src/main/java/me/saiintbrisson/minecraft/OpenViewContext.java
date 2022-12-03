@@ -1,6 +1,7 @@
 package me.saiintbrisson.minecraft;
 
 import java.util.concurrent.CompletableFuture;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -13,24 +14,18 @@ import org.jetbrains.annotations.Nullable;
  * before the rendering intent.
  */
 @Getter
+@Setter
 @ToString(callSuper = true)
-public class OpenViewContext extends BaseViewContext {
+public class OpenViewContext extends BaseViewContext implements ViewConfig {
 
-    /** The title of the container that player will see. */
     private String containerTitle;
-
-    /** The size of the container that player will see. */
     private int containerSize;
-
-    /** The type of the container that player will see. */
-    @Setter
     private ViewType containerType;
+    private boolean cancelled;
 
     @Getter
+    @Setter(AccessLevel.NONE)
     private CompletableFuture<Void> asyncOpenJob;
-
-    @Setter
-    private boolean cancelled;
 
     OpenViewContext(@NotNull final AbstractView view) {
         super(view, null);
@@ -58,30 +53,6 @@ public class OpenViewContext extends BaseViewContext {
     @Deprecated
     public final void setInventorySize(final int inventorySize) {
         setContainerSize(inventorySize);
-    }
-
-    /**
-     * Defines the title of the container for this context.
-     *
-     * @param containerTitle The new title of the container that'll be created.
-     */
-    public final void setContainerTitle(@Nullable final String containerTitle) {
-        this.containerTitle = containerTitle;
-    }
-
-    /**
-     * Defines the size of the container for this context, can be the total number of slots or the
-     * number of horizontal lines in the container.
-     *
-     * @param containerSize The new container size.
-     */
-    public final void setContainerSize(final int containerSize) {
-        if (getContainerType() == null)
-            throw new IllegalStateException(
-                    "Cannot find a defined or fallback view type to determine the container size. "
-                            + "Set it via #setContainerType or on root view constructor");
-
-        this.containerSize = containerSize;
     }
 
     /**

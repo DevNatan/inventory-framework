@@ -8,8 +8,10 @@ import org.jetbrains.annotations.NotNull;
 
 public final class HoldAndRelease extends View {
 
-    public HoldAndRelease() {
-        super(3, "Hold and Release");
+    @Override
+    protected void onInit() {
+        setContainerSize(3);
+        setContainerTitle("Hold and Release");
         firstSlot(new ItemStack(Material.PAPER));
     }
 

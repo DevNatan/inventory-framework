@@ -2,7 +2,6 @@ package me.saiintbrisson.minecraft;
 
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -10,33 +9,58 @@ import org.jetbrains.annotations.NotNull;
  */
 public class View extends AbstractView implements InventoryHolder {
 
+    /**
+     * @deprecated Use {@link #onInit()} instead.
+     */
+    @Deprecated
     public View() {
         this(0);
     }
 
+    /**
+     * @deprecated Use {@link #onInit()} instead.
+     */
+    @Deprecated
     public View(int size) {
         this(size, null);
     }
 
+    /**
+     * @deprecated Use {@link #onInit()} instead.
+     */
+    @Deprecated
     public View(String title) {
         this(0, title);
     }
 
-    @ApiStatus.Experimental
+    /**
+     * @deprecated Use {@link #onInit()} instead.
+     */
+    @Deprecated
     public View(String title, @NotNull ViewType type) {
         this(0, title, type);
     }
 
-    @ApiStatus.Experimental
+    /**
+     * @deprecated Use {@link #onInit()} instead.
+     */
+    @Deprecated
     public View(@NotNull ViewType type) {
         this(0, null, type);
     }
 
+    /**
+     * @deprecated Use {@link #onInit()} instead.
+     */
+    @Deprecated
     public View(int size, String title) {
         this(size, title, ViewType.CHEST);
     }
 
-    @ApiStatus.Experimental
+    /**
+     * @deprecated Use {@link #onInit()} instead.
+     */
+    @Deprecated
     public View(int size, String title, @NotNull ViewType type) {
         super(size, title, type);
     }

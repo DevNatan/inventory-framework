@@ -9,8 +9,10 @@ public final class AmountSelector extends View {
 
     private static final String CURRENT_AMOUNT_KEY = "current-amount";
 
-    public AmountSelector() {
-        super(3, "Amount Selector");
+    @Override
+    protected void onInit() {
+        setContainerSize(3);
+        setContainerTitle("Amount Selector");
         setCancelOnClick(true);
 
         // item with current value

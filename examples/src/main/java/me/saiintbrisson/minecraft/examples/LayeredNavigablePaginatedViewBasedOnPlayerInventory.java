@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import me.saiintbrisson.minecraft.PaginatedView;
-import me.saiintbrisson.minecraft.PaginatedViewContext;
 import me.saiintbrisson.minecraft.PaginatedViewSlotContext;
 import me.saiintbrisson.minecraft.ViewContext;
 import me.saiintbrisson.minecraft.ViewItem;
@@ -15,28 +14,22 @@ import org.jetbrains.annotations.NotNull;
 /** Creates a paginated view based on items in the player inventory. */
 public final class LayeredNavigablePaginatedViewBasedOnPlayerInventory extends PaginatedView<ItemStack> {
 
-    public LayeredNavigablePaginatedViewBasedOnPlayerInventory() {
-        super(3, "Your inventory");
+    @Override
+    protected void onInit() {
+        setContainerSize(3);
+        setContainerTitle("Your Inventory");
         setCancelOnClick(true);
 
         // "O"'s are items and "X"'s are empty slots
         // "<" and ">" are navigation items
         setLayout("XXXXXXXXX", "XOOOOOOOX", "XXX<X>XXX");
+        setPreviousPageItem(($, $$) -> new ItemStack(Material.ARROW));
+        setNextPageItem(($, $$) -> new ItemStack(Material.ARROW));
 
         firstSlot(new ItemStack(Material.ARROW))
                 .onClick(click -> click.paginated().switchToPreviousPage());
         lastSlot(new ItemStack(Material.ARROW))
                 .onClick(click -> click.paginated().switchToNextPage());
-    }
-
-    @Override
-    public ViewItem getPreviousPageItem(@NotNull PaginatedViewContext<ItemStack> context) {
-        return item(new ItemStack(Material.ARROW));
-    }
-
-    @Override
-    public ViewItem getNextPageItem(@NotNull PaginatedViewContext<ItemStack> context) {
-        return item(new ItemStack(Material.ARROW));
     }
 
     @Override

@@ -4,11 +4,15 @@ import me.saiintbrisson.minecraft.View;
 import me.saiintbrisson.minecraft.ViewContext;
 import org.jetbrains.annotations.NotNull;
 
-/** Updates current view every 5 ticks. */
+/**
+ * Updates current view every 5 ticks.
+ */
 public final class ScheduledUpdate extends View {
 
-    public ScheduledUpdate() {
-        super(3, "Scooter Turtle");
+    @Override
+    protected void onInit() {
+        setContainerSize(3);
+        setContainerTitle("Scooter Turtle");
 
         // 5 ticks
         scheduleUpdate(20L * 5);

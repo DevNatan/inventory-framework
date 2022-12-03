@@ -9,8 +9,10 @@ import org.jetbrains.annotations.NotNull;
 /** Prevents players from moving items out of the view's inventory. */
 public final class PreventingItemMoveOut extends View {
 
-    public PreventingItemMoveOut() {
-        super(3, "Conditional rendering");
+    @Override
+    protected void onInit() {
+        setContainerSize(3);
+        setContainerTitle("Conditional rendering");
 
         // Move out only works on item that player can move!
         slot(3, new ItemStack(Material.PAPER)).setCancelOnClick(false);

@@ -12,8 +12,10 @@ import org.jetbrains.annotations.NotNull;
 /** Creates a paginated view based on items in the player inventory. */
 public final class PaginatedViewBasedOnPlayerInventory extends PaginatedView<ItemStack> {
 
-    public PaginatedViewBasedOnPlayerInventory() {
-        super(3, "Your inventory");
+    @Override
+    protected void onInit() {
+        setContainerSize(3);
+        setContainerTitle("Your inventory");
         setCancelOnClick(true);
         setOffset(1);
         setLimit(26);

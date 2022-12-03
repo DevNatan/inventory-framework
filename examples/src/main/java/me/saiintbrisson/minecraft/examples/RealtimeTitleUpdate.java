@@ -8,8 +8,10 @@ import org.bukkit.inventory.ItemStack;
 /** Updates the current container title or resets it to default title. */
 public final class RealtimeTitleUpdate extends View {
 
-    public RealtimeTitleUpdate() {
-        super(3, "Initial title");
+    @Override
+    protected void onInit() {
+        setContainerSize(3);
+        setContainerTitle("Initial title");
         setCancelOnClick(true);
 
         slot(1, new ItemStack(Material.SUGAR_CANE))

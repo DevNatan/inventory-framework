@@ -7,8 +7,10 @@ import org.jetbrains.annotations.NotNull;
 
 public final class RenderingFunction extends View {
 
-    public RenderingFunction() {
-        super(3, "Scooter Turtle");
+    @Override
+    protected void onInit() {
+        setContainerSize(3);
+        setContainerTitle("Scooter Turtle");
     }
 
     @Override

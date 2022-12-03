@@ -18,8 +18,10 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class PaginatedViewEmptyState extends PaginatedView<ItemStack> {
 
-    public PaginatedViewEmptyState() {
-        super(3, "Empty state");
+    @Override
+    protected void onInit() {
+        setContainerSize(3);
+        setContainerTitle("Empty state");
         setCancelOnClick(true);
 
         // "O"'s are items and "X"'s are empty slots

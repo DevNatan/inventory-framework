@@ -8,8 +8,10 @@ import org.jetbrains.annotations.NotNull;
 
 public final class GlobalClickHandling extends View {
 
-    public GlobalClickHandling() {
-        super(3, "Global click handling");
+    @Override
+    protected void onInit() {
+        setContainerSize(3);
+        setContainerTitle("Global click handling");
 
         slot(1, new ItemStack(Material.DIAMOND));
         slot(2, new ItemStack(Material.GOLD_INGOT));
