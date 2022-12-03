@@ -949,7 +949,7 @@ public abstract class AbstractView extends AbstractVirtualView implements ViewCo
         ensureNotInitialized();
         if (!forTests) {
             beforeInit();
-			onInit();
+            onInit();
             getPipeline().execute(INIT, this);
             initUpdateScheduler();
         }
