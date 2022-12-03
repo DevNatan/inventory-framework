@@ -6,6 +6,7 @@ import java.util.Deque;
 import java.util.List;
 import java.util.Objects;
 import java.util.Stack;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import lombok.AccessLevel;
@@ -423,7 +424,7 @@ public abstract class AbstractVirtualView implements VirtualView {
             return;
         }
 
-        layoutPatterns.add(new LayoutPattern(character, factory));
+        layoutPatterns.add(new LayoutPattern(character, ($) -> factory.get()));
     }
 
     /**
@@ -437,6 +438,21 @@ public abstract class AbstractVirtualView implements VirtualView {
                     .accept(item);
             return item;
         });
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public void setLayout(char character, BiConsumer<Integer, ViewItem> factory) {
+        checkReservedLayoutCharacter(character);
+
+        if (factory == null) {
+            layoutPatterns.removeIf(pattern -> pattern.getCharacter() == character);
+            return;
+        }
+
+        layoutPatterns.add(new LayoutPattern(character, index -> new ViewItem()));
     }
 
     /**
