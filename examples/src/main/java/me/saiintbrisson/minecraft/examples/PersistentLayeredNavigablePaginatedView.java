@@ -5,7 +5,6 @@ import static java.util.Objects.requireNonNull;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import me.saiintbrisson.minecraft.PaginatedView;
-import me.saiintbrisson.minecraft.PaginatedViewContext;
 import me.saiintbrisson.minecraft.PaginatedViewSlotContext;
 import me.saiintbrisson.minecraft.ViewItem;
 import org.bukkit.Material;
@@ -15,8 +14,12 @@ import org.jetbrains.annotations.NotNull;
 
 public final class PersistentLayeredNavigablePaginatedView extends PaginatedView<Integer> {
 
-    public PersistentLayeredNavigablePaginatedView() {
-        super(6, "Paginated view");
+    @Override
+    protected void onInit() {
+        setContainerSize(6);
+        setContainerTitle("Paginated view");
+        setPreviousPageItem(($, $$) -> new ItemStack(Material.ARROW));
+        setNextPageItem(($, $$) -> new ItemStack(Material.ARROW));
 
         // pagination source
         setSource(IntStream.rangeClosed(0, 100).boxed().collect(Collectors.toList()));
@@ -24,16 +27,6 @@ public final class PersistentLayeredNavigablePaginatedView extends PaginatedView
         // "O"'s are items and "X"'s are empty slots
         // "<" and ">" are navigation items
         setLayout("XXXXXXXXX", "XOOOOOOOX", "XOOOOOOOX", "XOOOOOOOX", "XOOOOOOOX", "XXX<X>XXX");
-    }
-
-    @Override
-    public ViewItem getPreviousPageItem(@NotNull PaginatedViewContext<Integer> context) {
-        return item(new ItemStack(Material.ARROW));
-    }
-
-    @Override
-    public ViewItem getNextPageItem(@NotNull PaginatedViewContext<Integer> context) {
-        return item(new ItemStack(Material.ARROW));
     }
 
     @Override

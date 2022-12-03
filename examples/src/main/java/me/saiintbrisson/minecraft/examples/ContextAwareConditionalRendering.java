@@ -15,8 +15,10 @@ public final class ContextAwareConditionalRendering extends View {
 
     private static final String SHOULD_RENDER_KEY = "should-render";
 
-    public ContextAwareConditionalRendering() {
-        super(3, "Conditional rendering");
+    @Override
+    protected void onInit() {
+        setContainerSize(3);
+        setContainerTitle("Conditional rendering");
         setCancelOnClick(true);
     }
 

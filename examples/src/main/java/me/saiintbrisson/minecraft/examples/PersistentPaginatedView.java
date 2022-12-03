@@ -14,8 +14,10 @@ import org.jetbrains.annotations.NotNull;
 
 public final class PersistentPaginatedView extends PaginatedView<Integer> {
 
-    public PersistentPaginatedView() {
-        super(6, "Paginated view");
+    @Override
+    protected void onInit() {
+        setContainerSize(6);
+        setContainerTitle("Paginated view");
 
         // pagination source
         setSource(IntStream.rangeClosed(0, 53).boxed().collect(Collectors.toList()));

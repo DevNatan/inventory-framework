@@ -12,8 +12,10 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class ItemUpdateOnAutomaticUpdate extends View {
 
-    public ItemUpdateOnAutomaticUpdate() {
-        super(3, "Scooter Turtle");
+    @Override
+    protected void onInit() {
+        setContainerSize(3);
+        setContainerTitle("Scooter Turtle");
 
         // 5 ticks
         scheduleUpdate(20L * 5);

@@ -5,13 +5,17 @@ import me.saiintbrisson.minecraft.ViewContext;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-/** When the player clicks on the paper the item is hidden or displayed. */
+/**
+ * When the player clicks on the paper the item is hidden or displayed.
+ */
 public final class StaticViewConditionalRendering extends View {
 
     private static final String SHOULD_RENDER_KEY = "should-render";
 
-    public StaticViewConditionalRendering() {
-        super(3, "Conditional rendering");
+    @Override
+    protected void onInit() {
+        setContainerSize(3);
+        setContainerTitle("Conditional rendering");
         setCancelOnClick(true);
 
         firstSlot()

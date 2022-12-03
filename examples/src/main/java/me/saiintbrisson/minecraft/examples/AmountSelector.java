@@ -9,15 +9,17 @@ public final class AmountSelector extends View {
 
     private static final String CURRENT_AMOUNT_KEY = "current-amount";
 
-    public AmountSelector() {
-        super(3, "Amount Selector");
+    @Override
+    protected void onInit() {
+        setContainerSize(3);
+        setContainerTitle("Amount Selector");
         setCancelOnClick(true);
 
         // item with current value
         slot(2, 5)
-                .onRender(render -> render.setItem(new ItemStack(
+                .rendered(render -> new ItemStack(
                         Material.PAPER,
-                        Math.min(render.get(CURRENT_AMOUNT_KEY, () -> 1), Material.PAPER.getMaxStackSize()))));
+                        Math.min(render.get(CURRENT_AMOUNT_KEY, () -> 1), Material.PAPER.getMaxStackSize())));
 
         // increment
         slot(2, 7, new ItemStack(Material.ARROW)).onClick(click -> updateAmount(click, +1));

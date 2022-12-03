@@ -108,6 +108,7 @@ public abstract class AbstractView extends AbstractVirtualView implements ViewCo
      * Use this function to set default values for contexts for this view.
      * As a reference, the data defined here was previously defined in the constructor.
      */
+    // TODO provide a more fluent API to set view options
     protected void onInit() {}
 
     /**

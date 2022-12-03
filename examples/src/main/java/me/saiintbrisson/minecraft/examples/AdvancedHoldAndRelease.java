@@ -15,8 +15,10 @@ public final class AdvancedHoldAndRelease extends View {
 
     private final Map<UUID, Integer> position = new HashMap<>();
 
-    public AdvancedHoldAndRelease() {
-        super(3, "Take an item");
+    @Override
+    protected void onInit() {
+        setContainerSize(3);
+        setContainerTitle("Take an item");
     }
 
     @Override
