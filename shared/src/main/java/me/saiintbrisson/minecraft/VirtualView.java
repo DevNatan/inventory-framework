@@ -3,6 +3,7 @@ package me.saiintbrisson.minecraft;
 import java.util.Deque;
 import java.util.List;
 import java.util.Stack;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import me.saiintbrisson.minecraft.event.EventListener;
@@ -596,9 +597,13 @@ public interface VirtualView {
      */
     void setLayout(@Nullable String... layout);
 
+    @Deprecated
     void setLayout(char character, Supplier<ViewItem> factory);
 
+    @Deprecated
     void setLayout(char character, Consumer<ViewItem> factory);
+
+    void setLayout(char character, BiConsumer<Integer, ViewItem> factory);
 
     /**
      * The layout signature state of this context.

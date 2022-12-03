@@ -24,8 +24,10 @@ public final class LayoutPatternApplierInterceptor implements PipelineIntercepto
 
         final boolean applyOnRoot = view instanceof AbstractView;
         final AbstractView root = applyOnRoot ? (AbstractView) view : ((ViewContext) view).getRoot();
+
+        int iterationIndex = 0;
         for (final LayoutPattern pattern : patterns) {
-            final ViewItem item = pattern.getFactory().get();
+            final ViewItem item = pattern.getFactory().apply(iterationIndex++);
 
             for (final int slot : pattern.getSlots()) (applyOnRoot ? root : view).apply(item, slot);
         }
