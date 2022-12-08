@@ -10,8 +10,8 @@ public final class GlobalClickHandling extends View {
 
     @Override
     protected void onInit() {
-        setContainerSize(3);
-        setContainerTitle("Global click handling");
+        size(3);
+        title("Global click handling");
 
         slot(1, new ItemStack(Material.DIAMOND));
         slot(2, new ItemStack(Material.GOLD_INGOT));

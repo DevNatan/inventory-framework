@@ -16,8 +16,8 @@ public final class PersistentPaginatedView extends PaginatedView<Integer> {
 
     @Override
     protected void onInit() {
-        setContainerSize(6);
-        setContainerTitle("Paginated view");
+        size(6);
+        title("Paginated view");
 
         // pagination source
         setSource(IntStream.rangeClosed(0, 53).boxed().collect(Collectors.toList()));

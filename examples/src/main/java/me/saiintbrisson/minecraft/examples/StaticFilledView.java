@@ -8,8 +8,8 @@ public final class StaticFilledView extends View {
 
     @Override
     protected void onInit() {
-        setContainerSize(3);
-        setContainerTitle("Scooter Turtle");
+        size(3);
+        title("Scooter Turtle");
 
         slot(1, new ItemStack(Material.GOLD_INGOT));
         slot(3, 5, new ItemStack(Material.DIAMOND));

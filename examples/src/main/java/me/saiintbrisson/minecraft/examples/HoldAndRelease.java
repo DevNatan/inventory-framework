@@ -10,8 +10,8 @@ public final class HoldAndRelease extends View {
 
     @Override
     protected void onInit() {
-        setContainerSize(3);
-        setContainerTitle("Hold and Release");
+        size(3);
+        title("Hold and Release");
         firstSlot(new ItemStack(Material.PAPER));
     }
 

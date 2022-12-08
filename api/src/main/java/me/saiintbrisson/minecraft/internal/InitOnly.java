@@ -10,5 +10,5 @@ import java.lang.annotation.Target;
  * InitializationException.
  */
 @Retention(RetentionPolicy.CLASS)
-@Target(ElementType.METHOD)
+@Target({ElementType.METHOD, ElementType.TYPE_USE})
 public @interface InitOnly {}

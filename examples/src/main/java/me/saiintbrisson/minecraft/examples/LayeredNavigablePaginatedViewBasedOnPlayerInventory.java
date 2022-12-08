@@ -16,8 +16,8 @@ public final class LayeredNavigablePaginatedViewBasedOnPlayerInventory extends P
 
     @Override
     protected void onInit() {
-        setContainerSize(3);
-        setContainerTitle("Your Inventory");
+        size(3);
+        title("Your Inventory");
         setCancelOnClick(true);
 
         // "O"'s are items and "X"'s are empty slots

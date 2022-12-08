@@ -10,8 +10,8 @@ public final class RealtimeTitleUpdate extends View {
 
     @Override
     protected void onInit() {
-        setContainerSize(3);
-        setContainerTitle("Initial title");
+        size(3);
+        title("Initial title");
         setCancelOnClick(true);
 
         slot(1, new ItemStack(Material.SUGAR_CANE))

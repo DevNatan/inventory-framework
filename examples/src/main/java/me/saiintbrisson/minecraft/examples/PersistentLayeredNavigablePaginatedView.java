@@ -16,8 +16,8 @@ public final class PersistentLayeredNavigablePaginatedView extends PaginatedView
 
     @Override
     protected void onInit() {
-        setContainerSize(6);
-        setContainerTitle("Paginated view");
+        size(6);
+        title("Paginated view");
         setPreviousPageItem(($, $$) -> new ItemStack(Material.ARROW));
         setNextPageItem(($, $$) -> new ItemStack(Material.ARROW));
 

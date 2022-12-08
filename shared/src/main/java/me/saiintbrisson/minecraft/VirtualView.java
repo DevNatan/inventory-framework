@@ -6,6 +6,8 @@ import java.util.Stack;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+
+import me.devnatan.inventoryframework.state.StateOwner;
 import me.saiintbrisson.minecraft.event.EventListener;
 import me.saiintbrisson.minecraft.event.EventSubscription;
 import me.saiintbrisson.minecraft.exception.InventoryModificationException;
@@ -22,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
  * We call "view" a {@link VirtualView}, "regular view" a {@link AbstractView} and implementations,
  * and "context" a {@link ViewContext} and implementations.
  */
-public interface VirtualView {
+public interface VirtualView extends StateOwner {
 
     /**
      * Character used to represent the paginated view "previous page" navigation slot on a layout.

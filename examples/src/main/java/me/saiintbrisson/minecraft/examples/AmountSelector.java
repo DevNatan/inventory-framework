@@ -11,8 +11,8 @@ public final class AmountSelector extends View {
 
     @Override
     protected void onInit() {
-        setContainerSize(3);
-        setContainerTitle("Amount Selector");
+        size(3);
+        title("Amount Selector");
         setCancelOnClick(true);
 
         // item with current value

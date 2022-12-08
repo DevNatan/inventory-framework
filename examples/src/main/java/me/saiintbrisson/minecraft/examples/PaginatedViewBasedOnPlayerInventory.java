@@ -14,8 +14,8 @@ public final class PaginatedViewBasedOnPlayerInventory extends PaginatedView<Ite
 
     @Override
     protected void onInit() {
-        setContainerSize(3);
-        setContainerTitle("Your inventory");
+        size(3);
+        title("Your inventory");
         setCancelOnClick(true);
         setOffset(1);
         setLimit(26);

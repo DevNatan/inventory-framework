@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
+
+import me.devnatan.inventoryframework.state.State;
 import me.saiintbrisson.minecraft.exception.InitializationException;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -65,6 +67,9 @@ public interface PaginatedVirtualView<T> extends VirtualView {
     @ApiStatus.Experimental
     AsyncPaginationDataState<T> setSourceAsync(
             @NotNull Function<PaginatedViewContext<T>, CompletableFuture<List<? extends T>>> sourceFuture);
+
+	@ApiStatus.Experimental
+	void setSource(State<? extends T> value);
 
     /**
      * Defines the amount of pages that will be available for pagination.

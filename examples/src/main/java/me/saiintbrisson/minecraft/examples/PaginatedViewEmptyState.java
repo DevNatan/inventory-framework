@@ -20,8 +20,8 @@ public final class PaginatedViewEmptyState extends PaginatedView<ItemStack> {
 
     @Override
     protected void onInit() {
-        setContainerSize(3);
-        setContainerTitle("Empty state");
+        size(3);
+        title("Empty state");
         setCancelOnClick(true);
 
         // "O"'s are items and "X"'s are empty slots

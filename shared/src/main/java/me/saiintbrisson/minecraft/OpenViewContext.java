@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import me.devnatan.inventoryframework.config.ViewConfig;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,11 +37,11 @@ public class OpenViewContext extends BaseViewContext implements ViewConfig {
      * Defines the title of the inventory for this context.
      *
      * @param inventoryTitle The new title of the inventory that'll be created.
-     * @deprecated Use {@link #setContainerTitle(String)} instead.
+     * @deprecated Use {@link #title(String)} instead.
      */
     @Deprecated
     public final void setInventoryTitle(@Nullable final String inventoryTitle) {
-        setContainerTitle(inventoryTitle);
+        title(inventoryTitle);
     }
 
     /**
@@ -48,11 +49,11 @@ public class OpenViewContext extends BaseViewContext implements ViewConfig {
      * number of horizontal lines in the inventory.
      *
      * @param inventorySize The new inventory size.
-     * @deprecated Use {@link #setContainerSize(int)} instead.
+     * @deprecated Use {@link #size(int)} instead.
      */
     @Deprecated
     public final void setInventorySize(final int inventorySize) {
-        setContainerSize(inventorySize);
+        size(inventorySize);
     }
 
     /**

@@ -11,8 +11,8 @@ public final class PreventingItemMoveOut extends View {
 
     @Override
     protected void onInit() {
-        setContainerSize(3);
-        setContainerTitle("Conditional rendering");
+        size(3);
+        title("Conditional rendering");
 
         // Move out only works on item that player can move!
         slot(3, new ItemStack(Material.PAPER)).setCancelOnClick(false);

@@ -9,8 +9,8 @@ public final class RenderingFunction extends View {
 
     @Override
     protected void onInit() {
-        setContainerSize(3);
-        setContainerTitle("Scooter Turtle");
+        size(3);
+        title("Scooter Turtle");
     }
 
     @Override

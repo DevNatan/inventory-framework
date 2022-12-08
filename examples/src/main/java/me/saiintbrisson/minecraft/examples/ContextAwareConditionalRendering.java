@@ -1,11 +1,12 @@
 package me.saiintbrisson.minecraft.examples;
 
+import me.devnatan.inventoryframework.config.ViewConfig;
+import me.devnatan.inventoryframework.state.State;
 import me.saiintbrisson.minecraft.View;
 import me.saiintbrisson.minecraft.ViewContext;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Renders a paper if the name of the player viewing the View is "JohnDoe". When the player clicks
@@ -13,34 +14,35 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class ContextAwareConditionalRendering extends View {
 
-    private static final String SHOULD_RENDER_KEY = "should-render";
+	private final State<Boolean> paperVisibilityState = state(() -> false);
 
-    @Override
-    protected void onInit() {
-        setContainerSize(3);
-        setContainerTitle("Conditional rendering");
-        setCancelOnClick(true);
-    }
+	@Override
+	protected ViewConfig configure() {
+		// TODO cancel on click
+		return ViewConfig.create().size(3).title("Conditional rendering");
+	}
 
-    @Override
-    protected void onRender(@NotNull ViewContext context) {
+	@Override
+    protected void onRender(ViewContext context) {
         final Player player = context.getPlayer();
 
         // item will render only if player name is "JohnDoe"
-        if (!player.getName().equals("JohnDoe")) return;
+        if (!player.getName().equals("JohnDoe"))
+			return;
 
         // NOTE the `context.firstSlot` and not just `firstSlot`
         //           ^^^^^^^
         context.firstSlot()
-                .onRender(render -> render.setItem(shouldRenderPaper(render) ? new ItemStack(Material.PAPER) : null))
-                .onClick(click -> click.set(SHOULD_RENDER_KEY, !shouldRenderPaper(click)))
+                .rendered(() -> isPaperVisible() ? new ItemStack(Material.PAPER) : null)
+                .onClick(click -> paperVisibilityState.update(click, !isPaperVisible()))
                 .onUpdate(update -> {
-                    final boolean visible = shouldRenderPaper(update);
+                    final boolean visible = isPaperVisible();
                     update.getPlayer().sendMessage("Paper is now " + (visible ? "visible" : "hidden"));
                 });
     }
 
-    private boolean shouldRenderPaper(ViewContext context) {
-        return context.get(SHOULD_RENDER_KEY, () -> true);
-    }
+	private boolean isPaperVisible() {
+		return paperVisibilityState.get();
+	}
+
 }

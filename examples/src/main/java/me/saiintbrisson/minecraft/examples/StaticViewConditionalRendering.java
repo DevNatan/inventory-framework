@@ -14,8 +14,8 @@ public final class StaticViewConditionalRendering extends View {
 
     @Override
     protected void onInit() {
-        setContainerSize(3);
-        setContainerTitle("Conditional rendering");
+        size(3);
+        title("Conditional rendering");
         setCancelOnClick(true);
 
         firstSlot()

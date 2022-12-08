@@ -12,12 +12,17 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import me.devnatan.inventoryframework.config.ViewConfig;
+import me.devnatan.inventoryframework.state.ComputedState;
+import me.devnatan.inventoryframework.state.MultitonState;
+import me.devnatan.inventoryframework.state.State;
 import me.saiintbrisson.minecraft.exception.ContainerException;
 import me.saiintbrisson.minecraft.exception.InitializationException;
 import me.saiintbrisson.minecraft.internal.Job;
@@ -39,7 +44,7 @@ import org.jetbrains.annotations.Nullable;
 @Getter(AccessLevel.PACKAGE)
 @Setter(AccessLevel.PACKAGE)
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
-public abstract class AbstractView extends AbstractVirtualView implements ViewConfig {
+public abstract class AbstractView extends AbstractVirtualView {
 
     public static final PipelinePhase OPEN = new PipelinePhase("open");
     public static final PipelinePhase INIT = new PipelinePhase("init");
@@ -112,6 +117,13 @@ public abstract class AbstractView extends AbstractVirtualView implements ViewCo
     // TODO provide a more fluent API to set view options
     protected void onInit() {}
 
+	protected void onInit(ViewConfig config) {
+	}
+
+	protected ViewConfig configure() {
+		return null;
+	}
+
     /**
      * Called before the inventory is opened to the player.
      *
@@ -122,9 +134,9 @@ public abstract class AbstractView extends AbstractVirtualView implements ViewCo
      * <p>It is not possible to manipulate the inventory in this handler, if it happens an exception
      * will be thrown.
      *
-     * @param context The player view context.
+     * @param open The player view context.
      */
-    protected void onOpen(@NotNull OpenViewContext context) {}
+    protected void onOpen(@NotNull OpenViewContext open) {}
 
     /**
      * Called __once__ when this view is rendered to the player for the first time.
@@ -149,6 +161,7 @@ public abstract class AbstractView extends AbstractVirtualView implements ViewCo
      *
      * @param context The player view context.
      */
+	@ApiStatus.OverrideOnly
     protected void onRender(@NotNull ViewContext context) {}
 
     /**
@@ -973,10 +986,10 @@ public abstract class AbstractView extends AbstractVirtualView implements ViewCo
      * {@inheritDoc}
      * <p>
      * Can be overridden for a specific context on {@link #onOpen(OpenViewContext)} with
-     * {@link OpenViewContext#setContainerType(ViewType)}.
+     * {@link OpenViewContext#type(ViewType)}.
      */
     @Override
-    public final void setContainerType(ViewType type) {
+    public final void type(ViewType type) {
         ensureNotInitialized();
         this.initialProperties.setType(type);
     }
@@ -985,10 +998,10 @@ public abstract class AbstractView extends AbstractVirtualView implements ViewCo
      * {@inheritDoc}
      * <p>
      * Can be overridden for a specific context on {@link #onOpen(OpenViewContext)} with
-     * {@link OpenViewContext#setContainerTitle(String)}.
+     * {@link OpenViewContext#title(String)}.
      */
     @Override
-    public final void setContainerTitle(String title) {
+    public final void title(String title) {
         ensureNotInitialized();
         this.initialProperties.setTitle(title);
     }
@@ -997,11 +1010,27 @@ public abstract class AbstractView extends AbstractVirtualView implements ViewCo
      * {@inheritDoc}
      * <p>
      * Can be overridden for a specific context on {@link #onOpen(OpenViewContext)} with
-     * {@link OpenViewContext#setContainerSize(int)}.
+     * {@link OpenViewContext#size(int)}.
      */
     @Override
-    public final void setContainerSize(int size) {
+    public final void size(int size) {
         ensureNotInitialized();
         this.initialProperties.setSize(size);
     }
+
+	public <T> State<T> state(Supplier<T> initialValue)  {
+
+	}
+
+	public <T> State<T> scopedState(Function<ViewContext, T> initialValue) {
+	}
+
+	public <T> ComputedState<T> computedState(Supplier<T> factory)  {
+
+	}
+
+	public <K, T> MultitonState<K, T> multitonState(Function<K, T> factory)  {
+
+	}
+
 }
