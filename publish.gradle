@@ -3,18 +3,8 @@ apply plugin: 'maven-publish'
 project.afterEvaluate {
     final def project = it
     publishing {
-        repositories {
-            maven {
-                name = 'GithubPackages'
-                url = 'https://maven.pkg.github.com/DevNatan/inventory-framework'
-                credentials {
-                    username = System.getenv("USERNAME")
-                    password = System.getenv("TOKEN")
-                }
-            }
-        }
         publications {
-            gpr(MavenPublication) {
+            jitpack(MavenPublication) {
                 configurePublication(project, it)
             }
         }
@@ -32,7 +22,6 @@ def configurePublication(Project project, Publication publication) {
     final def base = 'inventory-framework'
     def fixedName = base + '-' + project.name
     if (project.name == 'bom') fixedName = base
-    if (project.name == 'framework') fixedName = base + '-shared'
 
     publication.artifactId = fixedName
 
