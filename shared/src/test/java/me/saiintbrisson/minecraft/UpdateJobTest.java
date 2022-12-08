@@ -8,6 +8,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.concurrent.atomic.AtomicBoolean;
+import me.saiintbrisson.minecraft.internal.Job;
 import me.saiintbrisson.minecraft.test.TestViewFrame;
 import org.junit.jupiter.api.Test;
 

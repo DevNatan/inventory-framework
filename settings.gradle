@@ -9,4 +9,5 @@ include 'bom',
         'feature-move-io',
         'kotlin-dsl',
         'shared',
-        'test'
+        'test',
+        'api'
