@@ -20,6 +20,7 @@ import lombok.Setter;
 import lombok.ToString;
 import me.saiintbrisson.minecraft.exception.ContainerException;
 import me.saiintbrisson.minecraft.exception.InitializationException;
+import me.saiintbrisson.minecraft.internal.Job;
 import me.saiintbrisson.minecraft.logging.Logger;
 import me.saiintbrisson.minecraft.pipeline.Pipeline;
 import me.saiintbrisson.minecraft.pipeline.PipelinePhase;

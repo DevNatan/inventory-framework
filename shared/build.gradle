@@ -1,9 +1,10 @@
 apply from: '../publish.gradle'
 
 dependencies {
+    api projects.api
+    testImplementation projects.test
     testImplementation libs.mockito.core
     testImplementation libs.mockito.junit
-    testImplementation projects.test
     testRuntimeOnly libs.spigot.api
 }
 

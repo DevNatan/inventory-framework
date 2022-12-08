@@ -6,8 +6,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Marks a method that can be called only before view initialization,
- * otherwise it will throw a {@link me.saiintbrisson.minecraft.exception.InitializationException}.
+ * Marks a method that can be called only before view initialization, otherwise it will throw a
+ * InitializationException.
  */
 @Retention(RetentionPolicy.CLASS)
 @Target(ElementType.METHOD)

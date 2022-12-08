@@ -16,6 +16,7 @@ import lombok.Setter;
 import lombok.ToString;
 import me.saiintbrisson.minecraft.feature.Feature;
 import me.saiintbrisson.minecraft.feature.FeatureInstaller;
+import me.saiintbrisson.minecraft.internal.Job;
 import me.saiintbrisson.minecraft.logging.BukkitLogger;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.entity.Player;

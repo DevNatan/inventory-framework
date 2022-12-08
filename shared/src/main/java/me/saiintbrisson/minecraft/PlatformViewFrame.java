@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import me.saiintbrisson.minecraft.feature.FeatureInstaller;
+import me.saiintbrisson.minecraft.internal.Job;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
