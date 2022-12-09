@@ -7,6 +7,5 @@ import org.jetbrains.annotations.ApiStatus;
 @ApiStatus.Experimental
 public interface Paginated<T> {
 
-	void onPaginatedItemRender(PaginatedViewSlotContext<T> context, ViewItem item, T value);
-
+    void onPaginatedItemRender(PaginatedViewSlotContext<T> context, ViewItem item, T value);
 }

@@ -1,11 +1,11 @@
 package me.saiintbrisson.minecraft.examples;
 
 import me.devnatan.inventoryframework.config.ViewConfig;
-import me.devnatan.inventoryframework.state.State;
 import me.saiintbrisson.minecraft.View;
 import me.saiintbrisson.minecraft.ViewContext;
 import me.saiintbrisson.minecraft.ViewSlotContext;
 import me.saiintbrisson.minecraft.ViewSlotMoveContext;
+import me.saiintbrisson.minecraft.state.State;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -13,18 +13,18 @@ import org.jetbrains.annotations.NotNull;
 
 public final class AdvancedHoldAndRelease extends View {
 
-	private static final int DEFAULT_POSITION = 22;
+    private static final int DEFAULT_POSITION = 22;
 
-	private final State<Integer> position = state(() -> DEFAULT_POSITION);
+    private final State<Integer> position = state(() -> DEFAULT_POSITION);
 
-	@Override
-	protected ViewConfig configure() {
-		return ViewConfig.create().title("Take an item").size(3);
-	}
+    @Override
+    protected ViewConfig configure() {
+        return ViewConfig.create().title("Take an item").size(3);
+    }
 
     @Override
     protected void onRender(@NotNull ViewContext context) {
-		context.slot(position.get(), new ItemStack(Material.PAPER));
+        context.slot(position.get(), new ItemStack(Material.PAPER));
     }
 
     @Override
@@ -38,13 +38,12 @@ public final class AdvancedHoldAndRelease extends View {
         fromContext.resetTitle();
 
         // the player held the item and released it into the same slot
-        if (fromContext.getSlot() == toContext.getSlot())
-			return;
+        if (fromContext.getSlot() == toContext.getSlot()) return;
 
-		position.update(fromContext, toContext.getSlot());
+        position.update(fromContext, toContext.getSlot());
 
-		final Player player = fromContext.getPlayer();
-		player.playSound(player.getLocation(), "random.click", 1F, 1F);
+        final Player player = fromContext.getPlayer();
+        player.playSound(player.getLocation(), "random.click", 1F, 1F);
     }
 
     @Override

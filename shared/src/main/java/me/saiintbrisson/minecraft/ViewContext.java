@@ -3,10 +3,9 @@ package me.saiintbrisson.minecraft;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
-
-import me.devnatan.inventoryframework.state.StateOwner;
 import me.saiintbrisson.minecraft.exception.InvalidatedContextException;
 import me.saiintbrisson.minecraft.exception.UnknownReferenceException;
+import me.saiintbrisson.minecraft.state.StateOwner;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;

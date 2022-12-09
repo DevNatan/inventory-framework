@@ -1,9 +1,9 @@
 package me.saiintbrisson.minecraft.examples;
 
 import me.devnatan.inventoryframework.config.ViewConfig;
-import me.devnatan.inventoryframework.state.State;
 import me.saiintbrisson.minecraft.View;
 import me.saiintbrisson.minecraft.ViewContext;
+import me.saiintbrisson.minecraft.state.State;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -14,21 +14,20 @@ import org.bukkit.inventory.ItemStack;
  */
 public final class ContextAwareConditionalRendering extends View {
 
-	private final State<Boolean> paperVisibilityState = state(() -> false);
+    private final State<Boolean> paperVisibilityState = state(() -> false);
 
-	@Override
-	protected ViewConfig configure() {
-		// TODO cancel on click
-		return ViewConfig.create().size(3).title("Conditional rendering");
-	}
+    @Override
+    protected ViewConfig configure() {
+        // TODO cancel on click
+        return ViewConfig.create().size(3).title("Conditional rendering");
+    }
 
-	@Override
+    @Override
     protected void onRender(ViewContext context) {
         final Player player = context.getPlayer();
 
         // item will render only if player name is "JohnDoe"
-        if (!player.getName().equals("JohnDoe"))
-			return;
+        if (!player.getName().equals("JohnDoe")) return;
 
         // NOTE the `context.firstSlot` and not just `firstSlot`
         //           ^^^^^^^
@@ -41,8 +40,7 @@ public final class ContextAwareConditionalRendering extends View {
                 });
     }
 
-	private boolean isPaperVisible() {
-		return paperVisibilityState.get();
-	}
-
+    private boolean isPaperVisible() {
+        return paperVisibilityState.get();
+    }
 }

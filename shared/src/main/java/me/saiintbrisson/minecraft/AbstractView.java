@@ -12,7 +12,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import lombok.AccessLevel;
@@ -20,9 +19,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import me.devnatan.inventoryframework.config.ViewConfig;
-import me.devnatan.inventoryframework.state.ComputedState;
-import me.devnatan.inventoryframework.state.MultitonState;
-import me.devnatan.inventoryframework.state.State;
 import me.saiintbrisson.minecraft.exception.ContainerException;
 import me.saiintbrisson.minecraft.exception.InitializationException;
 import me.saiintbrisson.minecraft.internal.Job;
@@ -36,6 +32,8 @@ import me.saiintbrisson.minecraft.pipeline.interceptors.OpenInterceptor;
 import me.saiintbrisson.minecraft.pipeline.interceptors.RenderInterceptor;
 import me.saiintbrisson.minecraft.pipeline.interceptors.ScheduledUpdateInterceptor;
 import me.saiintbrisson.minecraft.pipeline.interceptors.UpdateInterceptor;
+import me.saiintbrisson.minecraft.state.IntState;
+import me.saiintbrisson.minecraft.state.State;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -117,12 +115,11 @@ public abstract class AbstractView extends AbstractVirtualView {
     // TODO provide a more fluent API to set view options
     protected void onInit() {}
 
-	protected void onInit(ViewConfig config) {
-	}
+    protected void onInit(ViewConfig config) {}
 
-	protected ViewConfig configure() {
-		return null;
-	}
+    protected ViewConfig configure() {
+        return null;
+    }
 
     /**
      * Called before the inventory is opened to the player.
@@ -161,7 +158,7 @@ public abstract class AbstractView extends AbstractVirtualView {
      *
      * @param context The player view context.
      */
-	@ApiStatus.OverrideOnly
+    @ApiStatus.OverrideOnly
     protected void onRender(@NotNull ViewContext context) {}
 
     /**
@@ -982,55 +979,11 @@ public abstract class AbstractView extends AbstractVirtualView {
         getContexts().forEach(context -> context.emit(event));
     }
 
-    /**
-     * {@inheritDoc}
-     * <p>
-     * Can be overridden for a specific context on {@link #onOpen(OpenViewContext)} with
-     * {@link OpenViewContext#type(ViewType)}.
-     */
-    @Override
-    public final void type(ViewType type) {
-        ensureNotInitialized();
-        this.initialProperties.setType(type);
+    public <T> State<T> state(T initialValue) {
+        throw new UnsupportedOperationException();
     }
 
-    /**
-     * {@inheritDoc}
-     * <p>
-     * Can be overridden for a specific context on {@link #onOpen(OpenViewContext)} with
-     * {@link OpenViewContext#title(String)}.
-     */
-    @Override
-    public final void title(String title) {
-        ensureNotInitialized();
-        this.initialProperties.setTitle(title);
+    public IntState state(int initialValue) {
+        throw new UnsupportedOperationException();
     }
-
-    /**
-     * {@inheritDoc}
-     * <p>
-     * Can be overridden for a specific context on {@link #onOpen(OpenViewContext)} with
-     * {@link OpenViewContext#size(int)}.
-     */
-    @Override
-    public final void size(int size) {
-        ensureNotInitialized();
-        this.initialProperties.setSize(size);
-    }
-
-	public <T> State<T> state(Supplier<T> initialValue)  {
-
-	}
-
-	public <T> State<T> scopedState(Function<ViewContext, T> initialValue) {
-	}
-
-	public <T> ComputedState<T> computedState(Supplier<T> factory)  {
-
-	}
-
-	public <K, T> MultitonState<K, T> multitonState(Function<K, T> factory)  {
-
-	}
-
 }
