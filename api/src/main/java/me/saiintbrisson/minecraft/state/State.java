@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 @ApiStatus.Experimental
 public interface State<T> {
 
+    @ApiStatus.Internal
     long getId();
 
     T get(@NotNull StateOwner holder);
