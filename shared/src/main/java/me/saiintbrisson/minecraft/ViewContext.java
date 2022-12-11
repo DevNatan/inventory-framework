@@ -5,14 +5,13 @@ import java.util.Map;
 import java.util.function.Supplier;
 import me.saiintbrisson.minecraft.exception.InvalidatedContextException;
 import me.saiintbrisson.minecraft.exception.UnknownReferenceException;
-import me.saiintbrisson.minecraft.state.StateOwner;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnknownNullability;
 
-public interface ViewContext extends VirtualView, StateOwner {
+public interface ViewContext extends VirtualView {
 
     @ApiStatus.Internal
     Map<String, Object> getData();
@@ -100,7 +99,7 @@ public interface ViewContext extends VirtualView, StateOwner {
      * Updates the container title for everyone that's viewing it.
      *
      * <p>This should not be used before the container is opened, if you need to set the __initial
-     * title__ use {@link OpenViewContext#title(String)} on {@link
+     * title__ use {@link OpenViewContext#setContainerTitle(String)} on {@link
      * View#onOpen(OpenViewContext)} instead.
      *
      * <p>This method is version dependant, so it may be that your server version is not yet
