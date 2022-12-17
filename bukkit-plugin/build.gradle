@@ -7,8 +7,6 @@ plugins {
 dependencies {
     implementation(project(':shared'))
     implementation(project(':bukkit-api'))
-    implementation(project(':feature-move-io'))
-    implementation(project(':kotlin-dsl'))
 }
 
 shadowJar {
