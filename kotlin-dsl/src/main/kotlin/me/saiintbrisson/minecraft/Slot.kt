@@ -54,9 +54,9 @@ public fun ViewSlotBuilder.onMoveOut(block: SlotMoveContextBlock) {
  * This handler is called every time the item or the view that owns it is updated.
  *
  * It is allowed to change the item that will be displayed in this handler using the context
- * mutation functions, e.g.: [ViewSlotContext.setItem].
+ * mutation functions, e.g.: [IFSlotContext.setItem].
  *
- * An item can be re-rendered individually using [ViewSlotContext.updateSlot].
+ * An item can be re-rendered individually using [IFSlotContext.updateSlot].
  *
  * @param block The render handler.
  * @return This item.
@@ -69,9 +69,9 @@ public fun ViewSlotBuilder.onRender(block: SlotContextBlock) {
  * Called when the item is updated.
  *
  * It is allowed to change the item that will be displayed in this handler using the context
- * mutation functions, e.g.: [ViewSlotContext.setItem].
+ * mutation functions, e.g.: [IFSlotContext.setItem].
  *
- * An item can be updated individually using [ViewSlotContext.updateItem].
+ * An item can be updated individually using [IFSlotContext.updateItem].
  *
  * @param block The update handler.
  */

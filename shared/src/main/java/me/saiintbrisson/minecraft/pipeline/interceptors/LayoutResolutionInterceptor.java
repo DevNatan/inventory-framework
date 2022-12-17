@@ -1,27 +1,27 @@
 package me.saiintbrisson.minecraft.pipeline.interceptors;
 
+import static me.devnatan.inventoryframework.VirtualView.LAYOUT_EMPTY_SLOT;
+import static me.devnatan.inventoryframework.VirtualView.LAYOUT_FILLED_SLOT;
+import static me.devnatan.inventoryframework.VirtualView.LAYOUT_NEXT_PAGE;
+import static me.devnatan.inventoryframework.VirtualView.LAYOUT_PREVIOUS_PAGE;
 import static me.saiintbrisson.minecraft.PaginatedVirtualView.NAVIGATE_LEFT;
 import static me.saiintbrisson.minecraft.PaginatedVirtualView.NAVIGATE_RIGHT;
-import static me.saiintbrisson.minecraft.VirtualView.LAYOUT_EMPTY_SLOT;
-import static me.saiintbrisson.minecraft.VirtualView.LAYOUT_FILLED_SLOT;
-import static me.saiintbrisson.minecraft.VirtualView.LAYOUT_NEXT_PAGE;
-import static me.saiintbrisson.minecraft.VirtualView.LAYOUT_PREVIOUS_PAGE;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
+import me.devnatan.inventoryframework.IFContext;
+import me.devnatan.inventoryframework.VirtualView;
+import me.devnatan.inventoryframework.pagination.IFPaginatedContext;
 import me.saiintbrisson.minecraft.AbstractPaginatedView;
 import me.saiintbrisson.minecraft.AbstractView;
 import me.saiintbrisson.minecraft.LayoutPattern;
-import me.saiintbrisson.minecraft.PaginatedViewContext;
 import me.saiintbrisson.minecraft.PaginatedVirtualView;
 import me.saiintbrisson.minecraft.Paginator;
 import me.saiintbrisson.minecraft.PlatformViewFrame;
-import me.saiintbrisson.minecraft.ViewContext;
 import me.saiintbrisson.minecraft.ViewItem;
-import me.saiintbrisson.minecraft.VirtualView;
 import me.saiintbrisson.minecraft.pipeline.PipelineContext;
 import me.saiintbrisson.minecraft.pipeline.PipelineInterceptor;
 import org.jetbrains.annotations.NotNull;
@@ -32,7 +32,7 @@ import org.jetbrains.annotations.Nullable;
  * during the render phase to resolve the layout of a context.
  * <p>
  * Initial resolution is handled by {@link #handleInitialResolution(AbstractView)}.
- * Context-scope resolution is handled by {@link #resolveLayout(VirtualView, ViewContext, String[])}.
+ * Context-scope resolution is handled by {@link #resolveLayout(VirtualView, IFContext, String[])}.
  */
 public final class LayoutResolutionInterceptor implements PipelineInterceptor<VirtualView> {
 
@@ -46,7 +46,7 @@ public final class LayoutResolutionInterceptor implements PipelineInterceptor<Vi
             return;
         }
 
-        final ViewContext context = (ViewContext) subject;
+        final IFContext context = (IFContext) subject;
         final String[] layout = context.getLayout();
         if (layout == null) return;
 
@@ -77,7 +77,7 @@ public final class LayoutResolutionInterceptor implements PipelineInterceptor<Vi
     /**
      * Determines the number of rows for the specified view.
      * <p>
-     * If the view is a context it uses the number of rows of the {@link ViewContext#getContainer() context's container},
+     * If the view is a context it uses the number of rows of the {@link IFContext#getContainer() context's container},
      * if it is a regular view it uses the number of rows of the {@link AbstractView#getType() view's type}.
      *
      * @param view The view.
@@ -86,8 +86,7 @@ public final class LayoutResolutionInterceptor implements PipelineInterceptor<Vi
      *                               the specified view implementation.
      */
     private static int determineRowsCount(@NotNull VirtualView view) {
-        if (view instanceof ViewContext)
-            return ((ViewContext) view).getContainer().getRowsCount();
+        if (view instanceof IFContext) return ((IFContext) view).getContainer().getRowsCount();
         if (view instanceof AbstractView) return view.getRows();
 
         throw new IllegalStateException(String.format(
@@ -98,7 +97,7 @@ public final class LayoutResolutionInterceptor implements PipelineInterceptor<Vi
     /**
      * Determines the number of columns for the specified view.
      * <p>
-     * If the view is a context it uses the number of columns of the {@link ViewContext#getContainer() context's container},
+     * If the view is a context it uses the number of columns of the {@link IFContext#getContainer() context's container},
      * if it is a regular view it uses the number of columns of the {@link AbstractView#getType() view's type}.
      *
      * @param view The view.
@@ -107,8 +106,7 @@ public final class LayoutResolutionInterceptor implements PipelineInterceptor<Vi
      *                               the specified view implementation.
      */
     private static int determineColumnsCount(@NotNull VirtualView view) {
-        if (view instanceof ViewContext)
-            return ((ViewContext) view).getContainer().getColumnsCount();
+        if (view instanceof IFContext) return ((IFContext) view).getContainer().getColumnsCount();
         if (view instanceof AbstractView) return view.getColumns();
 
         throw new IllegalStateException(String.format(
@@ -132,7 +130,7 @@ public final class LayoutResolutionInterceptor implements PipelineInterceptor<Vi
      * @throws IllegalArgumentException  If an invalid character is found in the layout.
      * @throws IndexOutOfBoundsException If the layout doesn't fit the view's container constraints.
      */
-    private void resolveLayout(@NotNull VirtualView view, @Nullable ViewContext context, String[] layout) {
+    private void resolveLayout(@NotNull VirtualView view, @Nullable IFContext context, String[] layout) {
         final int rows = layout.length;
         final int containerRowsCount = determineRowsCount(view);
 
@@ -221,7 +219,7 @@ public final class LayoutResolutionInterceptor implements PipelineInterceptor<Vi
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
     private void resolveAndApplyNavigationItem(
-            @NotNull VirtualView view, @Nullable ViewContext context, int direction, int slot) {
+            @NotNull VirtualView view, @Nullable IFContext context, int direction, int slot) {
         // can be null on regular view layout pre render (on initialization)
         if (context != null) {
             if (!view.isPaginated() || !context.isPaginated())
@@ -229,11 +227,11 @@ public final class LayoutResolutionInterceptor implements PipelineInterceptor<Vi
                         "Navigation characters (%s) on layout are reserved to paginated views and cannot be used on regular views.",
                         LAYOUT_PREVIOUS_PAGE + ", " + LAYOUT_NEXT_PAGE));
 
-            final AbstractPaginatedView root = view instanceof ViewContext
-                    ? ((PaginatedViewContext<?>) view).getRoot()
+            final AbstractPaginatedView root = view instanceof IFContext
+                    ? ((IFPaginatedContext<?>) view).getRoot()
                     : (AbstractPaginatedView<?>) view;
 
-            getInternalNavigationItemWithFallback(root, (PaginatedViewContext) context, direction);
+            getInternalNavigationItemWithFallback(root, (IFPaginatedContext) context, direction);
         }
 
         final PaginatedVirtualView paginatedView = view.paginated();
@@ -253,14 +251,14 @@ public final class LayoutResolutionInterceptor implements PipelineInterceptor<Vi
      * @return The item that will be used for navigation.
      */
     private <T> ViewItem getInternalNavigationItemWithFallback(
-            @NotNull AbstractPaginatedView<T> view, @NotNull PaginatedViewContext<T> context, int direction) {
+            @NotNull AbstractPaginatedView<T> view, @NotNull IFPaginatedContext<T> context, int direction) {
         final ViewItem item = getInternalNavigationItem(view, context, direction);
         if (item != null) return item;
 
         final PlatformViewFrame<?, ?, ?> vf = view.getViewFrame();
         if (vf == null) return null;
 
-        final Function<PaginatedViewContext<?>, ViewItem> fallback =
+        final Function<IFPaginatedContext<?>, ViewItem> fallback =
                 direction == NAVIGATE_LEFT ? vf.getDefaultPreviousPageItem() : vf.getDefaultNextPageItem();
 
         if (fallback == null) return null;
@@ -280,9 +278,9 @@ public final class LayoutResolutionInterceptor implements PipelineInterceptor<Vi
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
     private <T> ViewItem getInternalNavigationItem(
-            @NotNull PaginatedVirtualView<T> view, @NotNull PaginatedViewContext<T> context, int direction) {
+            @NotNull PaginatedVirtualView<T> view, @NotNull IFPaginatedContext<T> context, int direction) {
         final boolean isBackwards = direction == NAVIGATE_LEFT;
-        final BiConsumer<PaginatedViewContext<T>, ViewItem> factory =
+        final BiConsumer<IFPaginatedContext<T>, ViewItem> factory =
                 isBackwards ? view.getPreviousPageItemFactory() : view.getNextPageItemFactory();
 
         if (factory == null) {
@@ -292,8 +290,8 @@ public final class LayoutResolutionInterceptor implements PipelineInterceptor<Vi
                         : ((AbstractPaginatedView) view).getNextPageItem(context);
 
             return isBackwards
-                    ? ((PaginatedViewContext) view).getRoot().getPreviousPageItem(context)
-                    : ((PaginatedViewContext) view).getRoot().getNextPageItem(context);
+                    ? ((IFPaginatedContext) view).getRoot().getPreviousPageItem(context)
+                    : ((IFPaginatedContext) view).getRoot().getNextPageItem(context);
         }
 
         final ViewItem item = new ViewItem();
@@ -309,7 +307,7 @@ public final class LayoutResolutionInterceptor implements PipelineInterceptor<Vi
      * @param character The layout pattern character.
      * @return The layout pattern to the given character or <code>null</code>.
      */
-    private LayoutPattern getLayoutOrNull(VirtualView view, ViewContext context, char character) {
+    private LayoutPattern getLayoutOrNull(VirtualView view, IFContext context, char character) {
         List<LayoutPattern> layoutPatternList = null;
         if (context != null) layoutPatternList = context.getLayoutPatterns();
 

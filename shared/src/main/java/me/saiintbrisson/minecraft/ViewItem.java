@@ -10,6 +10,10 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import me.devnatan.inventoryframework.IFContext;
+import me.devnatan.inventoryframework.IFSlotClickContext;
+import me.devnatan.inventoryframework.IFSlotContext;
+import me.devnatan.inventoryframework.IFSlotMoveContext;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -53,10 +57,10 @@ public final class ViewItem {
     @Setter(AccessLevel.PUBLIC)
     private boolean closeOnClick, cancelOnClick, cancelOnShiftClick;
     private ViewItemHandler renderHandler, updateHandler;
-    private Consumer<ViewSlotClickContext> clickHandler;
-    private Consumer<ViewSlotMoveContext> moveInHandler, moveOutHandler;
-    private Consumer<ViewSlotContext> itemHoldHandler;
-    private BiConsumer<ViewSlotContext, ViewSlotContext> itemReleaseHandler;
+    private Consumer<IFSlotClickContext> clickHandler;
+    private Consumer<IFSlotMoveContext> moveInHandler, moveOutHandler;
+    private Consumer<IFSlotContext> itemHoldHandler;
+    private BiConsumer<IFSlotContext, IFSlotContext> itemReleaseHandler;
     private Map<String, Object> data;
     private long updateIntervalInTicks = NO_INTERVAL;
     private ViewItem overlay;
@@ -346,7 +350,7 @@ public final class ViewItem {
      *
      * @param key The item reference key.
      * @return This item.
-     * @see ViewContext#ref(String)
+     * @see IFContext#ref(String)
      */
     @Contract(value = "_ -> this", mutates = "this")
     public ViewItem referencedBy(@Nullable String key) {
@@ -362,9 +366,9 @@ public final class ViewItem {
      * <p>This handler is called every time the item or the view that owns it is updated.
      *
      * <p>It is allowed to change the item that will be displayed in this handler using the context
-     * mutation functions, e.g.: {@link ViewSlotContext#setItem(Object)}.
+     * mutation functions, e.g.: {@link IFSlotContext#setItem(Object)}.
      *
-     * <p>An item can be re-rendered individually using {@link ViewSlotContext#updateSlot()}.
+     * <p>An item can be re-rendered individually using {@link IFSlotContext#updateSlot()}.
      *
      * @param handler The render handler.
      * @return This item.
@@ -383,9 +387,9 @@ public final class ViewItem {
      * <p>This handler is called every time the item or the view that owns it is updated.
      *
      * <p>It is allowed to change the item that will be displayed in this handler using the context
-     * mutation functions, e.g.: {@link ViewSlotContext#setItem(Object)}.
+     * mutation functions, e.g.: {@link IFSlotContext#setItem(Object)}.
      *
-     * <p>An item can be re-rendered individually using {@link ViewSlotContext#updateSlot()}.
+     * <p>An item can be re-rendered individually using {@link IFSlotContext#updateSlot()}.
      *
      * @param itemFactory The render handler item factory, the item that'll be rendered on update.
      * @return This item.
@@ -400,9 +404,9 @@ public final class ViewItem {
      * Called when the item is updated.
      *
      * <p>It is allowed to change the item that will be displayed in this handler using the context
-     * mutation functions, e.g.: {@link ViewSlotContext#setItem(Object)}.
+     * mutation functions, e.g.: {@link IFSlotContext#setItem(Object)}.
      *
-     * <p>An item can be updated individually using {@link ViewSlotContext#updateSlot()}.
+     * <p>An item can be updated individually using {@link IFSlotContext#updateSlot()}.
      *
      * @param handler The update handler.
      * @return This item.
@@ -419,9 +423,9 @@ public final class ViewItem {
      * Shortcut to {@code onUpdate(update -> update.setItem(itemFactory.get());}
      *
      * <p>It is allowed to change the item that will be displayed in this handler using the context
-     * mutation functions, e.g.: {@link ViewSlotContext#setItem(Object)}.
+     * mutation functions, e.g.: {@link IFSlotContext#setItem(Object)}.
      *
-     * <p>An item can be updated individually using {@link ViewSlotContext#updateSlot()}.
+     * <p>An item can be updated individually using {@link IFSlotContext#updateSlot()}.
      *
      * @param itemFactory The update handler item factory, the item that'll be rendered on update.
      * @return This item.
@@ -444,7 +448,7 @@ public final class ViewItem {
      * @return This item.
      */
     @Contract(value = "_ -> this", mutates = "this")
-    public ViewItem onClick(@Nullable Consumer<ViewSlotClickContext> handler) {
+    public ViewItem onClick(@Nullable Consumer<IFSlotClickContext> handler) {
         setClickHandler(handler);
         return this;
     }
@@ -462,7 +466,7 @@ public final class ViewItem {
      * @return This item.
      */
     @Contract(value = "_ -> this", mutates = "this")
-    public ViewItem onMoveOut(@Nullable Consumer<ViewSlotMoveContext> handler) {
+    public ViewItem onMoveOut(@Nullable Consumer<IFSlotMoveContext> handler) {
         setMoveOutHandler(handler);
         return this;
     }
@@ -481,7 +485,7 @@ public final class ViewItem {
      * @return This item.
      */
     @Contract(value = "_ -> this", mutates = "this")
-    public ViewItem onItemHold(@Nullable Consumer<ViewSlotContext> handler) {
+    public ViewItem onItemHold(@Nullable Consumer<IFSlotContext> handler) {
         setItemHoldHandler(handler);
         return this;
     }
@@ -500,7 +504,7 @@ public final class ViewItem {
      * @return This item.
      */
     @Contract(value = "_ -> this", mutates = "this")
-    public ViewItem onItemRelease(@Nullable BiConsumer<ViewSlotContext, ViewSlotContext> handler) {
+    public ViewItem onItemRelease(@Nullable BiConsumer<IFSlotContext, IFSlotContext> handler) {
         setItemReleaseHandler(handler);
         return this;
     }

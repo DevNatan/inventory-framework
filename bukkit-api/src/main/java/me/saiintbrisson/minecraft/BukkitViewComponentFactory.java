@@ -7,6 +7,8 @@ import static org.bukkit.Bukkit.createInventory;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import me.devnatan.inventoryframework.IFContext;
+import me.devnatan.inventoryframework.VirtualView;
 import me.saiintbrisson.minecraft.pipeline.Pipeline;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -76,7 +78,7 @@ final class BukkitViewComponentFactory extends ViewComponentFactory {
     public @NotNull BaseViewContext createContext(
             final @NotNull AbstractView view,
             final ViewContainer container,
-            final Class<? extends ViewContext> backingContext) {
+            final Class<? extends IFContext> backingContext) {
         if (backingContext != null && OpenViewContext.class.isAssignableFrom(backingContext))
             return new BukkitOpenViewContext(view);
 
@@ -88,7 +90,7 @@ final class BukkitViewComponentFactory extends ViewComponentFactory {
     @Override
     @NotNull
     public AbstractViewSlotContext createSlotContext(
-            int slot, ViewItem item, ViewContext parent, ViewContainer container, int index, Object value) {
+            int slot, ViewItem item, IFContext parent, ViewContainer container, int index, Object value) {
         return index == UNSET
                 ? new BukkitViewSlotContext(slot, item, parent, container)
                 : new BukkitPaginatedViewSlotContextImpl<>(index, value, slot, item, parent, container);
@@ -135,7 +137,7 @@ final class BukkitViewComponentFactory extends ViewComponentFactory {
     }
 
     private void registerInterceptors(AbstractView view) {
-        final Pipeline<? super ViewContext> pipeline = view.getPipeline();
+        final Pipeline<? super IFContext> pipeline = view.getPipeline();
         pipeline.intercept(CLICK, new ItemClickInterceptor());
         pipeline.intercept(CLICK, new GlobalClickInterceptor());
         pipeline.intercept(CLICK, new GlobalClickOutsideInterceptor());

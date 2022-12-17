@@ -3,10 +3,10 @@ package me.saiintbrisson.minecraft.pipeline.interceptors;
 import java.util.Deque;
 import java.util.NoSuchElementException;
 import java.util.Stack;
+import me.devnatan.inventoryframework.IFContext;
+import me.devnatan.inventoryframework.VirtualView;
 import me.saiintbrisson.minecraft.AbstractView;
-import me.saiintbrisson.minecraft.ViewContext;
 import me.saiintbrisson.minecraft.ViewItem;
-import me.saiintbrisson.minecraft.VirtualView;
 import me.saiintbrisson.minecraft.exception.ContainerException;
 import me.saiintbrisson.minecraft.exception.SlotFillExceededException;
 import me.saiintbrisson.minecraft.exception.UnresolvedLayoutException;
@@ -28,9 +28,9 @@ public class AvailableSlotRenderInterceptor implements PipelineInterceptor<Virtu
     @Override
     public void intercept(@NotNull PipelineContext<VirtualView> pipeline, VirtualView view) {
         // layout cannot be rendered without a context (no container available)
-        if (!(view instanceof ViewContext)) return;
+        if (!(view instanceof IFContext)) return;
 
-        final ViewContext context = (ViewContext) view;
+        final IFContext context = (IFContext) view;
         final AbstractView root = context.getRoot();
 
         // just render reserved items since root layout is always resolved on init
@@ -51,7 +51,7 @@ public class AvailableSlotRenderInterceptor implements PipelineInterceptor<Virtu
 
     private void renderReservedItems(
             @NotNull AbstractView root,
-            @NotNull ViewContext context,
+            @NotNull IFContext context,
             Stack<Integer> layoutItemsLayer,
             boolean targetingRoot) {
         final Deque<ViewItem> reservedItems = !targetingRoot ? context.getReservedItems() : root.getReservedItems();

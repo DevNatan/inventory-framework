@@ -13,13 +13,13 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Stack;
 import java.util.function.Function;
+import me.devnatan.inventoryframework.IFContext;
+import me.devnatan.inventoryframework.pagination.IFPaginatedContext;
+import me.devnatan.inventoryframework.pagination.IFPaginatedSlotContext;
 import me.saiintbrisson.minecraft.AbstractPaginatedView;
 import me.saiintbrisson.minecraft.AsyncPaginationDataState;
-import me.saiintbrisson.minecraft.PaginatedViewContext;
-import me.saiintbrisson.minecraft.PaginatedViewSlotContext;
 import me.saiintbrisson.minecraft.Paginator;
 import me.saiintbrisson.minecraft.PlatformUtils;
-import me.saiintbrisson.minecraft.ViewContext;
 import me.saiintbrisson.minecraft.ViewItem;
 import me.saiintbrisson.minecraft.pipeline.PipelineContext;
 import me.saiintbrisson.minecraft.pipeline.PipelineInterceptor;
@@ -27,17 +27,17 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 
-public final class PaginationRenderInterceptor implements PipelineInterceptor<ViewContext> {
+public final class PaginationRenderInterceptor implements PipelineInterceptor<IFContext> {
 
     @TestOnly
     public boolean skipRender = false;
 
     @Override
-    public void intercept(@NotNull PipelineContext<ViewContext> pipeline, ViewContext context) {
+    public void intercept(@NotNull PipelineContext<IFContext> pipeline, IFContext context) {
         checkContainerType(context);
         checkPaginationSourceAvailability(context);
 
-        final PaginatedViewContext<?> paginatedContext = context.paginated();
+        final IFPaginatedContext<?> paginatedContext = context.paginated();
         final AbstractPaginatedView<?> root = paginatedContext.getRoot();
         final Paginator<?> contextPaginator = paginatedContext.getPaginator();
 
@@ -72,7 +72,7 @@ public final class PaginationRenderInterceptor implements PipelineInterceptor<Vi
      * @param <T>            The pagination data type.
      */
     private <T> void tryRenderPagination(
-            @NotNull PaginatedViewContext<T> context,
+            @NotNull IFPaginatedContext<T> context,
             String[] layout,
             @SuppressWarnings("SameParameterValue") ViewItem[] preservedItems,
             Paginator<T> paginator) {
@@ -83,7 +83,7 @@ public final class PaginationRenderInterceptor implements PipelineInterceptor<Vi
 
     @SuppressWarnings("unchecked")
     private <T> void handleAsyncSourceProvider(
-            @NotNull PaginatedViewContext<T> context,
+            @NotNull IFPaginatedContext<T> context,
             String[] layout,
             ViewItem[] preservedItems,
             @NotNull Paginator<T> paginator) {
@@ -113,11 +113,11 @@ public final class PaginationRenderInterceptor implements PipelineInterceptor<Vi
     }
 
     private <T> void handleLazySourceProvider(
-            @NotNull PaginatedViewContext<T> context,
+            @NotNull IFPaginatedContext<T> context,
             String[] layout,
             ViewItem[] preservedItems,
             @NotNull Paginator<T> paginator) {
-        Function<PaginatedViewContext<T>, List<T>> factory = paginator.getFactory();
+        Function<IFPaginatedContext<T>, List<T>> factory = paginator.getFactory();
         List<T> data = factory.apply(context);
         if (data == null) throw new IllegalStateException("Lazy pagination result cannot be null");
 
@@ -126,7 +126,7 @@ public final class PaginationRenderInterceptor implements PipelineInterceptor<Vi
     }
 
     private <T> void renderSource(
-            @NotNull PaginatedViewContext<T> context,
+            @NotNull IFPaginatedContext<T> context,
             String[] layout,
             ViewItem[] preservedItems,
             List<T> source,
@@ -137,7 +137,7 @@ public final class PaginationRenderInterceptor implements PipelineInterceptor<Vi
     }
 
     private <T> void renderPagination(
-            @NotNull PaginatedViewContext<T> context, List<T> elements, String[] layout, ViewItem[] preservedItems) {
+            @NotNull IFPaginatedContext<T> context, List<T> elements, String[] layout, ViewItem[] preservedItems) {
 
         final AbstractPaginatedView<T> root = context.getRoot();
         final int elementsCount = elements.size();
@@ -185,12 +185,12 @@ public final class PaginationRenderInterceptor implements PipelineInterceptor<Vi
         }
     }
 
-    private void removeAt(@NotNull ViewContext context, int slot) {
+    private void removeAt(@NotNull IFContext context, int slot) {
         context.clear(slot);
         context.getContainer().removeItem(slot);
     }
 
-    private void renderItemAndApplyOnContext(@NotNull ViewContext context, ViewItem item, int slot) {
+    private void renderItemAndApplyOnContext(@NotNull IFContext context, ViewItem item, int slot) {
         context.getItems()[slot] = item;
 
         if (skipRender) return;
@@ -198,7 +198,7 @@ public final class PaginationRenderInterceptor implements PipelineInterceptor<Vi
     }
 
     private <T> void renderPaginatedItemAt(
-            @NotNull PaginatedViewContext<T> context,
+            @NotNull IFPaginatedContext<T> context,
             int index,
             int slot,
             @NotNull T value,
@@ -218,7 +218,7 @@ public final class PaginationRenderInterceptor implements PipelineInterceptor<Vi
             item.setPaginationItem(true);
 
             @SuppressWarnings("unchecked")
-            final PaginatedViewSlotContext<T> slotContext = (PaginatedViewSlotContext<T>) PlatformUtils.getFactory()
+            final IFPaginatedSlotContext<T> slotContext = (IFPaginatedSlotContext<T>) PlatformUtils.getFactory()
                     .createSlotContext(slot, item, context, context.getContainer(), index, value);
 
             context.getRoot().runCatching(context, () -> context.getRoot().callItemRender(slotContext, item, value));
@@ -240,7 +240,7 @@ public final class PaginationRenderInterceptor implements PipelineInterceptor<Vi
         }
     }
 
-    private String[] useLayout(@NotNull ViewContext context) {
+    private String[] useLayout(@NotNull IFContext context) {
         if (context.isLayoutSignatureChecked()) return context.getLayout();
         if (!context.getRoot().isLayoutSignatureChecked()) return null;
 
@@ -261,7 +261,7 @@ public final class PaginationRenderInterceptor implements PipelineInterceptor<Vi
      *
      * @return The page size or {@link ViewItem#UNSET}.
      */
-    private int determineInitialPageSize(AbstractPaginatedView<?> root, PaginatedViewContext<?> context) {
+    private int determineInitialPageSize(AbstractPaginatedView<?> root, IFPaginatedContext<?> context) {
         // first context-scope layout because it's always prioritized
         int pageSize = context.isLayoutSignatureChecked()
                 ? context.getLayoutItemsLayer().size()

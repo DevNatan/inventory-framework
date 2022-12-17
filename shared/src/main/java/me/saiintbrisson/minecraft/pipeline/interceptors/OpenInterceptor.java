@@ -3,6 +3,7 @@ package me.saiintbrisson.minecraft.pipeline.interceptors;
 import static me.saiintbrisson.minecraft.IFUtils.elvis;
 
 import java.util.ArrayList;
+import me.devnatan.inventoryframework.VirtualView;
 import me.saiintbrisson.minecraft.AbstractView;
 import me.saiintbrisson.minecraft.BaseViewContext;
 import me.saiintbrisson.minecraft.OpenViewContext;
@@ -11,7 +12,6 @@ import me.saiintbrisson.minecraft.ViewContainer;
 import me.saiintbrisson.minecraft.ViewItem;
 import me.saiintbrisson.minecraft.ViewType;
 import me.saiintbrisson.minecraft.Viewer;
-import me.saiintbrisson.minecraft.VirtualView;
 import me.saiintbrisson.minecraft.pipeline.PipelineContext;
 import me.saiintbrisson.minecraft.pipeline.PipelineInterceptor;
 import org.jetbrains.annotations.NotNull;

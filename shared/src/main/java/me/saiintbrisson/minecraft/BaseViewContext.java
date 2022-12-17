@@ -12,6 +12,10 @@ import java.util.function.Supplier;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import me.devnatan.inventoryframework.IFContext;
+import me.devnatan.inventoryframework.IFSlotContext;
+import me.devnatan.inventoryframework.VirtualView;
+import me.devnatan.inventoryframework.pagination.IFPaginatedContext;
 import me.saiintbrisson.minecraft.exception.UnknownReferenceException;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.ApiStatus;
@@ -21,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
 @Getter
 @Setter
 @ToString(callSuper = true)
-public class BaseViewContext extends AbstractVirtualView implements ViewContext {
+public class BaseViewContext extends AbstractVirtualView implements IFContext {
 
     private final AbstractView root;
     private final ViewContainer container;
@@ -46,7 +50,7 @@ public class BaseViewContext extends AbstractVirtualView implements ViewContext 
     }
 
     @Override
-    public void update(@NotNull ViewContext context) {
+    public void update(@NotNull IFContext context) {
         getRoot().update(this);
     }
 
@@ -185,11 +189,11 @@ public class BaseViewContext extends AbstractVirtualView implements ViewContext 
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> PaginatedViewContext<T> paginated() {
+    public <T> IFPaginatedContext<T> paginated() {
         if (!(this.getRoot() instanceof AbstractPaginatedView))
             throw new IllegalStateException("Only paginated views can enforce paginated view context");
 
-        return (PaginatedViewContext<T>) this;
+        return (IFPaginatedContext<T>) this;
     }
 
     @Override
@@ -228,10 +232,7 @@ public class BaseViewContext extends AbstractVirtualView implements ViewContext 
 
         for (final Viewer viewer : getViewers())
             platformViewFrame.open(
-                    viewClass,
-                    viewer,
-                    data,
-                    this instanceof ViewSlotContext ? ((ViewSlotContext) this).getParent() : this);
+                    viewClass, viewer, data, this instanceof IFSlotContext ? ((IFSlotContext) this).getParent() : this);
     }
 
     @Override
@@ -283,7 +284,7 @@ public class BaseViewContext extends AbstractVirtualView implements ViewContext 
     }
 
     @Override
-    public @NotNull ViewSlotContext ref(@NotNull String key) {
+    public @NotNull IFSlotContext ref(@NotNull String key) {
         ViewItem item = tryResolveRef(this, key);
         if (item == null) item = tryResolveRef(getRoot(), key);
         if (item == null) throw new IllegalArgumentException("No reference found for key: " + key);
@@ -297,7 +298,7 @@ public class BaseViewContext extends AbstractVirtualView implements ViewContext 
     }
 
     @Override
-    public @Nullable ViewSlotContext refOrNull(@NotNull String key) {
+    public @Nullable IFSlotContext refOrNull(@NotNull String key) {
         try {
             return ref(key);
         } catch (UnknownReferenceException ignored) {
@@ -306,7 +307,7 @@ public class BaseViewContext extends AbstractVirtualView implements ViewContext 
     }
 
     private ViewItem tryResolveRef(final AbstractVirtualView view, final String key) {
-        VirtualView target = view instanceof ViewSlotContext ? ((ViewSlotContext) view).getParent() : view;
+        VirtualView target = view instanceof IFSlotContext ? ((IFSlotContext) view).getParent() : view;
         for (final ViewItem item : target.getItems()) {
             if (item == null) continue;
             if (item.getReferenceKey() == null) continue;
@@ -344,7 +345,7 @@ public class BaseViewContext extends AbstractVirtualView implements ViewContext 
     }
 
     public void setPrevious(BaseViewContext previous) {
-        if (previous instanceof ViewSlotContext)
+        if (previous instanceof IFSlotContext)
             throw new IllegalStateException("Previous context cannot be a slot context.");
 
         this.previous = previous;
@@ -352,7 +353,7 @@ public class BaseViewContext extends AbstractVirtualView implements ViewContext 
 
     @Override
     @Nullable
-    public ViewContext back() {
+    public IFContext back() {
         final BaseViewContext prev = getPrevious();
         if (prev == null) return null;
 

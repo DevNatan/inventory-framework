@@ -12,6 +12,8 @@ import java.util.function.Supplier;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
+import me.devnatan.inventoryframework.IFContext;
+import me.devnatan.inventoryframework.VirtualView;
 import me.saiintbrisson.minecraft.event.EventBus;
 import me.saiintbrisson.minecraft.event.EventListener;
 import me.saiintbrisson.minecraft.event.EventSubscription;
@@ -282,7 +284,7 @@ public abstract class AbstractVirtualView implements VirtualView {
      * {@inheritDoc}
      */
     @Override
-    public void render(@NotNull ViewContext context) {
+    public void render(@NotNull IFContext context) {
         throw new UnsupportedOperationException("This view cannot render");
     }
 
@@ -298,7 +300,7 @@ public abstract class AbstractVirtualView implements VirtualView {
      * {@inheritDoc}
      */
     @Override
-    public void update(@NotNull ViewContext context) {
+    public void update(@NotNull IFContext context) {
         throw new UnsupportedOperationException("This view cannot update");
     }
 
@@ -333,7 +335,7 @@ public abstract class AbstractVirtualView implements VirtualView {
     @Override
     public void inventoryModificationTriggered() {}
 
-    public final void runCatching(ViewContext context, @NotNull Runnable runnable) {
+    public final void runCatching(IFContext context, @NotNull Runnable runnable) {
         if (context != null && context.getErrorHandler() != null) {
             tryRunOrFail(context, runnable);
             return;
@@ -347,7 +349,7 @@ public abstract class AbstractVirtualView implements VirtualView {
         tryRunOrFail(context, runnable);
     }
 
-    boolean throwException(final ViewContext context, @NotNull final Exception exception) throws Exception {
+    boolean throwException(final IFContext context, @NotNull final Exception exception) throws Exception {
         if (context != null && context.getErrorHandler() != null) {
             context.getErrorHandler().error(context, exception);
             if (!context.isPropagateErrors()) return false;
@@ -357,14 +359,14 @@ public abstract class AbstractVirtualView implements VirtualView {
         return true;
     }
 
-    protected final void launchError(ViewErrorHandler errorHandler, ViewContext context, @NotNull Exception exception)
+    protected final void launchError(ViewErrorHandler errorHandler, IFContext context, @NotNull Exception exception)
             throws Exception {
         if (errorHandler == null) return;
 
         errorHandler.error(context, exception);
     }
 
-    private void tryRunOrFail(final ViewContext context, @NotNull final Runnable runnable) {
+    private void tryRunOrFail(final IFContext context, @NotNull final Runnable runnable) {
         try {
             runnable.run();
         } catch (final Exception e) {

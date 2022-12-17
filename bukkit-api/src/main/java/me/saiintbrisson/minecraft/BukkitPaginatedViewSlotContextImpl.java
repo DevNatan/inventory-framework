@@ -8,6 +8,10 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import lombok.Getter;
 import lombok.ToString;
+import me.devnatan.inventoryframework.IFContext;
+import me.devnatan.inventoryframework.IFSlotContext;
+import me.devnatan.inventoryframework.pagination.IFPaginatedContext;
+import me.devnatan.inventoryframework.pagination.IFPaginatedSlotContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,18 +19,18 @@ import org.jetbrains.annotations.Nullable;
  * PaginatedViewSlotContext implementation that inherits a ViewSlotContext for Bukkit platform.
  *
  * @param <T> The pagination item type.
- * @see ViewSlotContext
- * @see PaginatedViewSlotContext
+ * @see IFSlotContext
+ * @see IFPaginatedSlotContext
  */
 @Getter
 @ToString
-final class BukkitPaginatedViewSlotContextImpl<T> extends BukkitViewSlotContext implements PaginatedViewSlotContext<T> {
+final class BukkitPaginatedViewSlotContextImpl<T> extends BukkitViewSlotContext implements IFPaginatedSlotContext<T> {
 
     private final int index;
     private final T value;
 
     BukkitPaginatedViewSlotContextImpl(
-            int index, T value, int slot, ViewItem backingItem, ViewContext parent, ViewContainer container) {
+            int index, T value, int slot, ViewItem backingItem, IFContext parent, ViewContainer container) {
         super(slot, backingItem, parent, container);
         this.index = index;
         this.value = value;
@@ -43,7 +47,7 @@ final class BukkitPaginatedViewSlotContextImpl<T> extends BukkitViewSlotContext 
     }
 
     @Override
-    public @NotNull PaginatedViewSlotContext<T> withItem(@Nullable Object item) {
+    public @NotNull IFPaginatedSlotContext<T> withItem(@Nullable Object item) {
         super.withItem(item);
         return this;
     }
@@ -54,13 +58,13 @@ final class BukkitPaginatedViewSlotContextImpl<T> extends BukkitViewSlotContext 
     }
 
     @Override
-    public void setSource(@NotNull Function<PaginatedViewContext<T>, List<? extends T>> sourceProvider) {
+    public void setSource(@NotNull Function<IFPaginatedContext<T>, List<? extends T>> sourceProvider) {
         throwNotAllowedCall();
     }
 
     @Override
     public AsyncPaginationDataState<T> setSourceAsync(
-            @NotNull Function<PaginatedViewContext<T>, CompletableFuture<List<? extends T>>> sourceFuture) {
+            @NotNull Function<IFPaginatedContext<T>, CompletableFuture<List<? extends T>>> sourceFuture) {
         throwNotAllowedCall();
         return null;
     }
@@ -197,12 +201,12 @@ final class BukkitPaginatedViewSlotContextImpl<T> extends BukkitViewSlotContext 
     }
 
     @Override
-    public BiConsumer<PaginatedViewContext<T>, ViewItem> getPreviousPageItemFactory() {
+    public BiConsumer<IFPaginatedContext<T>, ViewItem> getPreviousPageItemFactory() {
         return getParent().getPreviousPageItemFactory();
     }
 
     @Override
-    public BiConsumer<PaginatedViewContext<T>, ViewItem> getNextPageItemFactory() {
+    public BiConsumer<IFPaginatedContext<T>, ViewItem> getNextPageItemFactory() {
         return getParent().getNextPageItemFactory();
     }
 
@@ -212,23 +216,23 @@ final class BukkitPaginatedViewSlotContextImpl<T> extends BukkitViewSlotContext 
     }
 
     @Override
-    public void setPreviousPageItem(@NotNull BiConsumer<PaginatedViewContext<T>, ViewItem> previousPageItemFactory) {
+    public void setPreviousPageItem(@NotNull BiConsumer<IFPaginatedContext<T>, ViewItem> previousPageItemFactory) {
         throwNotAllowedCall();
     }
 
     @Override
-    public void setNextPageItem(@NotNull BiConsumer<PaginatedViewContext<T>, ViewItem> nextPageItemFactory) {
+    public void setNextPageItem(@NotNull BiConsumer<IFPaginatedContext<T>, ViewItem> nextPageItemFactory) {
         throwNotAllowedCall();
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public PaginatedViewSlotContext<T> paginated() {
+    public IFPaginatedSlotContext<T> paginated() {
         return this;
     }
 
     @Override
-    public PaginatedViewContext<T> getParent() {
+    public IFPaginatedContext<T> getParent() {
         return super.getParent().paginated();
     }
 

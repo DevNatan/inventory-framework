@@ -1,5 +1,6 @@
-package me.saiintbrisson.minecraft;
+package me.devnatan.inventoryframework;
 
+import me.saiintbrisson.minecraft.UnmodifiableViewContext;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -8,9 +9,9 @@ import org.jetbrains.annotations.NotNull;
  * The click context represents an interaction between the actor and the container, even if an item
  * is not present, it stores information about the click, and it's origin.
  *
- * @see ViewSlotContext
+ * @see IFSlotContext
  */
-public interface ViewSlotClickContext extends ViewSlotContext, UnmodifiableViewContext {
+public interface IFSlotClickContext extends IFSlotContext, UnmodifiableViewContext {
 
     /**
      * If the click was using the left mouse button.

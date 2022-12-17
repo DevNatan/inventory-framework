@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import me.devnatan.inventoryframework.IFContext;
 import org.junit.jupiter.api.Test;
 
 public class ViewEventBusTest {
@@ -32,8 +33,8 @@ public class ViewEventBusTest {
     void emitToAllContexts() {
         class MyEvent {}
         AbstractView view = new AbstractView() {};
-        ViewContext context1 = new BaseViewContext(view, null);
-        ViewContext context2 = new BaseViewContext(view, null);
+        IFContext context1 = new BaseViewContext(view, null);
+        IFContext context2 = new BaseViewContext(view, null);
         view.registerContext(context1);
         view.registerContext(context2);
 

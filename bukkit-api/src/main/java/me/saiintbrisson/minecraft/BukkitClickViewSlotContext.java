@@ -3,6 +3,8 @@ package me.saiintbrisson.minecraft;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import me.devnatan.inventoryframework.IFContext;
+import me.devnatan.inventoryframework.IFSlotClickContext;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
@@ -14,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 @Getter
 @Setter
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
-public class BukkitClickViewSlotContext extends BukkitViewSlotContext implements ViewSlotClickContext {
+public class BukkitClickViewSlotContext extends BukkitViewSlotContext implements IFSlotClickContext {
 
     private final InventoryClickEvent clickOrigin;
 
@@ -22,7 +24,7 @@ public class BukkitClickViewSlotContext extends BukkitViewSlotContext implements
             int slot,
             @NotNull InventoryClickEvent clickOrigin,
             ViewItem backingItem,
-            ViewContext parent,
+            IFContext parent,
             ViewContainer container) {
         super(slot, backingItem, parent, container);
         this.clickOrigin = clickOrigin;

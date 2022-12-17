@@ -1,5 +1,6 @@
-package me.saiintbrisson.minecraft;
+package me.devnatan.inventoryframework.pagination;
 
+import me.devnatan.inventoryframework.IFSlotContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -8,13 +9,13 @@ import org.jetbrains.annotations.Nullable;
  * item.
  *
  * @param <T> The paginated item type.
- * @see PaginatedViewContext
- * @see ViewSlotContext
+ * @see IFPaginatedContext
+ * @see IFSlotContext
  */
-public interface PaginatedViewSlotContext<T> extends PaginatedViewContext<T>, ViewSlotContext {
+public interface IFPaginatedSlotContext<T> extends IFPaginatedContext<T>, IFSlotContext {
 
     @Override
-    PaginatedViewContext<T> getParent();
+    IFPaginatedContext<T> getParent();
 
     /**
      * Pagination index of the slot relative to the total amount of data.
@@ -44,5 +45,5 @@ public interface PaginatedViewSlotContext<T> extends PaginatedViewContext<T>, Vi
      */
     @Override
     @NotNull
-    PaginatedViewSlotContext<T> withItem(@Nullable Object item);
+    IFPaginatedSlotContext<T> withItem(@Nullable Object item);
 }

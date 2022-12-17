@@ -2,6 +2,8 @@ package me.saiintbrisson.minecraft;
 
 import java.util.logging.Level;
 import lombok.RequiredArgsConstructor;
+import me.devnatan.inventoryframework.IFContext;
+import me.devnatan.inventoryframework.IFSlotContext;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -30,13 +32,13 @@ class ViewListener implements Listener {
         return viewFrame.get(player);
     }
 
-    private ViewContext getContextOrThrow(@NotNull AbstractView view, @NotNull Player player) {
+    private IFContext getContextOrThrow(@NotNull AbstractView view, @NotNull Player player) {
         // prevent handlers being called twice by listeners that not hold this view
         if (viewFrame.isRegistered()
                 && view.getViewFrame() != null
                 && !view.getViewFrame().equals(viewFrame)) return null;
 
-        final ViewContext context = view.getContext(target -> target.getViewers().stream()
+        final IFContext context = view.getContext(target -> target.getViewers().stream()
                 .map(viewer -> (BukkitViewer) viewer)
                 .anyMatch(viewer -> viewer.getPlayer().getName().equals(player.getName())));
 
@@ -107,7 +109,7 @@ class ViewListener implements Listener {
         final ViewItem item = context.resolve(event.getSlot(), true, isEntityContainer);
 
         // TODO use platform to create this instance
-        final ViewSlotContext slotContext =
+        final IFSlotContext slotContext =
                 new BukkitClickViewSlotContext(event.getSlot(), event, item, context, container);
 
         try {
@@ -131,7 +133,7 @@ class ViewListener implements Listener {
         if (view == null) return;
 
         final Player player = (Player) e.getPlayer();
-        final ViewContext context = getContextOrThrow(view, player);
+        final IFContext context = getContextOrThrow(view, player);
         if (context == null) return;
 
         // TODO move to own pipeline phase

@@ -1,5 +1,7 @@
 package me.saiintbrisson.minecraft;
 
+import me.devnatan.inventoryframework.IFSlotContext;
+
 /**
  * @deprecated Will be removed soon, available due to backward compatibility. Use {@link
  *     java.util.function.Consumer} instead.
@@ -8,5 +10,5 @@ package me.saiintbrisson.minecraft;
 @FunctionalInterface
 public interface ViewItemHandler {
 
-    void handle(ViewSlotContext context);
+    void handle(IFSlotContext context);
 }

@@ -4,6 +4,9 @@ import java.util.Stack;
 import java.util.function.Consumer;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import me.devnatan.inventoryframework.IFContext;
+import me.devnatan.inventoryframework.VirtualView;
+import me.devnatan.inventoryframework.pagination.IFPaginatedContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,7 +30,7 @@ public final class IFUtils {
         return context.getLayoutItemsLayer() == null ? view.getLayoutItemsLayer() : context.getLayoutItemsLayer();
     }
 
-    public static void checkContainerType(@NotNull ViewContext context) {
+    public static void checkContainerType(@NotNull IFContext context) {
         if (context.getContainer().getType() == ViewType.CHEST) return;
 
         throw new IllegalStateException(String.format(
@@ -36,8 +39,8 @@ public final class IFUtils {
                 context.getRoot().getClass().getName()));
     }
 
-    public static void checkPaginationSourceAvailability(@NotNull ViewContext context) {
-        PaginatedViewContext<?> paginatedContext = context.paginated();
+    public static void checkPaginationSourceAvailability(@NotNull IFContext context) {
+        IFPaginatedContext<?> paginatedContext = context.paginated();
         if (paginatedContext.getRoot().getPaginator() != null || paginatedContext.getPaginator() != null) return;
 
         throw new IllegalStateException("At least one pagination source must be set. "
@@ -66,7 +69,7 @@ public final class IFUtils {
     public static PlatformViewFrame<?, ?, ?> findViewFrame(@Nullable VirtualView view) {
         if (view == null) return null;
         if (view instanceof AbstractView) return ((AbstractView) view).getViewFrame();
-        if (view instanceof ViewContext) return ((ViewContext) view).getRoot().getViewFrame();
+        if (view instanceof IFContext) return ((IFContext) view).getRoot().getViewFrame();
 
         throw new IllegalArgumentException(
                 "Unable to find view frame on: " + view.getClass().getName());

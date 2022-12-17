@@ -1,5 +1,6 @@
 package me.saiintbrisson.minecraft;
 
+import me.devnatan.inventoryframework.IFSlotMoveContext;
 import me.saiintbrisson.minecraft.pipeline.PipelineContext;
 import me.saiintbrisson.minecraft.pipeline.PipelineInterceptor;
 import org.bukkit.event.inventory.InventoryAction;
@@ -45,7 +46,7 @@ public final class BukkitMoveOutInterceptor implements PipelineInterceptor<Bukki
 
         if (hold == null) return;
 
-        final ViewSlotMoveContext moveContext = new BukkitViewSlotMoveClickContextImpl(
+        final IFSlotMoveContext moveContext = new BukkitViewSlotMoveClickContextImpl(
                 event,
                 hold,
                 subject,

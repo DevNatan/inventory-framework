@@ -3,6 +3,7 @@
 
 package me.saiintbrisson.minecraft
 
+import me.devnatan.inventoryframework.IFContext
 import java.util.function.Consumer
 
 @ViewDsl
@@ -22,7 +23,7 @@ public class ViewBuilder {
     internal var render: ContextBlock? = null
     internal var update: ContextBlock? = null
     internal var click: SlotClickContextBlock? = null
-    internal var close: (ViewContext.() -> Unit)? = null
+    internal var close: (IFContext.() -> Unit)? = null
     internal var hotbarInteract: HotbarInteractBlock? = null
     internal var itemHold: SlotContextBlock? = null
     internal var itemRelease: ItemReleaseBlock? = null

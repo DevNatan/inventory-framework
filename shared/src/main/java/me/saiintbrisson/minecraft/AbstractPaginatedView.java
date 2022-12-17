@@ -8,6 +8,9 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 import lombok.Getter;
 import lombok.ToString;
+import me.devnatan.inventoryframework.VirtualView;
+import me.devnatan.inventoryframework.pagination.IFPaginatedContext;
+import me.devnatan.inventoryframework.pagination.IFPaginatedSlotContext;
 import me.saiintbrisson.minecraft.exception.InitializationException;
 import me.saiintbrisson.minecraft.pipeline.Pipeline;
 import me.saiintbrisson.minecraft.pipeline.interceptors.AvailableSlotRenderInterceptor;
@@ -24,16 +27,21 @@ import org.jetbrains.annotations.NotNull;
 
 @Getter
 @ToString(callSuper = true)
+@ApiStatus.NonExtendable
 public abstract class AbstractPaginatedView<T> extends AbstractView implements PaginatedVirtualView<T> {
 
     private int offset, limit;
 
     /* inherited from PaginatedVirtualView */
-    private BiConsumer<PaginatedViewContext<T>, ViewItem> previousPageItemFactory, nextPageItemFactory;
+    private BiConsumer<IFPaginatedContext<T>, ViewItem> previousPageItemFactory, nextPageItemFactory;
     private Paginator<T> paginator;
 
     private int previousPageItemSlot = UNSET;
     private int nextPageItemSlot = UNSET;
+
+    AbstractPaginatedView() {
+        // TODO apply values :)
+    }
 
     AbstractPaginatedView(int rows, String title, @NotNull ViewType type) {
         super(rows, title, type);
@@ -73,17 +81,17 @@ public abstract class AbstractPaginatedView<T> extends AbstractView implements P
      * @param value    The paginated value.
      */
     protected abstract void onItemRender(
-            @NotNull PaginatedViewSlotContext<T> context, @NotNull ViewItem viewItem, @NotNull T value);
+            @NotNull IFPaginatedSlotContext<T> context, @NotNull ViewItem viewItem, @NotNull T value);
 
     /**
      * Called when pagination is switched.
      *
      * <p>The context in the parameter is the new paging context, so trying to {@link
-     * PaginatedViewContext#getPage() get the current page} will return the new page.
+     * IFPaginatedContext#getPage() get the current page} will return the new page.
      *
      * @param context The page switch context.
      */
-    protected void onPageSwitch(@NotNull PaginatedViewContext<T> context) {}
+    protected void onPageSwitch(@NotNull IFPaginatedContext<T> context) {}
 
     /**
      * Where pagination will start.
@@ -145,7 +153,7 @@ public abstract class AbstractPaginatedView<T> extends AbstractView implements P
      * {@inheritDoc}
      */
     @ApiStatus.Internal
-    public final BiConsumer<PaginatedViewContext<T>, ViewItem> getPreviousPageItemFactory() {
+    public final BiConsumer<IFPaginatedContext<T>, ViewItem> getPreviousPageItemFactory() {
         return previousPageItemFactory;
     }
 
@@ -153,7 +161,7 @@ public abstract class AbstractPaginatedView<T> extends AbstractView implements P
      * {@inheritDoc}
      */
     @ApiStatus.Internal
-    public final BiConsumer<PaginatedViewContext<T>, ViewItem> getNextPageItemFactory() {
+    public final BiConsumer<IFPaginatedContext<T>, ViewItem> getNextPageItemFactory() {
         return nextPageItemFactory;
     }
 
@@ -211,7 +219,7 @@ public abstract class AbstractPaginatedView<T> extends AbstractView implements P
      */
     @Deprecated
     @ApiStatus.ScheduledForRemoval(inVersion = "2.5.5")
-    public ViewItem getPreviousPageItem(@NotNull PaginatedViewContext<T> context) {
+    public ViewItem getPreviousPageItem(@NotNull IFPaginatedContext<T> context) {
         return null;
     }
 
@@ -233,7 +241,7 @@ public abstract class AbstractPaginatedView<T> extends AbstractView implements P
      */
     @Deprecated
     @ApiStatus.ScheduledForRemoval(inVersion = "2.5.5")
-    public ViewItem getNextPageItem(@NotNull PaginatedViewContext<T> context) {
+    public ViewItem getNextPageItem(@NotNull IFPaginatedContext<T> context) {
         return null;
     }
 
@@ -244,7 +252,7 @@ public abstract class AbstractPaginatedView<T> extends AbstractView implements P
      */
     @Override
     public final void setPreviousPageItem(
-            @NotNull BiConsumer<PaginatedViewContext<T>, ViewItem> previousPageItemFactory) {
+            @NotNull BiConsumer<IFPaginatedContext<T>, ViewItem> previousPageItemFactory) {
         ensureNotInitialized();
         this.previousPageItemFactory = previousPageItemFactory;
     }
@@ -255,7 +263,7 @@ public abstract class AbstractPaginatedView<T> extends AbstractView implements P
      * @throws InitializationException If this view is initialized.
      */
     @Override
-    public final void setNextPageItem(@NotNull BiConsumer<PaginatedViewContext<T>, ViewItem> nextPageItemFactory) {
+    public final void setNextPageItem(@NotNull BiConsumer<IFPaginatedContext<T>, ViewItem> nextPageItemFactory) {
         ensureNotInitialized();
         this.nextPageItemFactory = nextPageItemFactory;
     }
@@ -278,7 +286,7 @@ public abstract class AbstractPaginatedView<T> extends AbstractView implements P
      */
     @Override
     @ApiStatus.Experimental
-    public final void setSource(@NotNull Function<PaginatedViewContext<T>, List<? extends T>> sourceProvider) {
+    public final void setSource(@NotNull Function<IFPaginatedContext<T>, List<? extends T>> sourceProvider) {
         ensureNotInitialized();
         this.paginator = new Paginator<>(getExpectedPageSize(), sourceProvider);
     }
@@ -291,7 +299,7 @@ public abstract class AbstractPaginatedView<T> extends AbstractView implements P
     @Override
     @ApiStatus.Experimental
     public final AsyncPaginationDataState<T> setSourceAsync(
-            @NotNull Function<PaginatedViewContext<T>, CompletableFuture<List<? extends T>>> sourceFuture) {
+            @NotNull Function<IFPaginatedContext<T>, CompletableFuture<List<? extends T>>> sourceFuture) {
         ensureNotInitialized();
         final AsyncPaginationDataState<T> state = new AsyncPaginationDataState<>(sourceFuture);
         this.paginator = new Paginator<>(getExpectedPageSize(), state);
@@ -320,7 +328,7 @@ public abstract class AbstractPaginatedView<T> extends AbstractView implements P
 
     @ApiStatus.Internal
     public void callItemRender(
-            @NotNull PaginatedViewSlotContext<T> context, @NotNull ViewItem viewItem, @NotNull T value) {
+            @NotNull IFPaginatedSlotContext<T> context, @NotNull ViewItem viewItem, @NotNull T value) {
         onItemRender(context, viewItem, value);
     }
 
