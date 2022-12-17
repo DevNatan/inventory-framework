@@ -16,7 +16,7 @@ import org.jetbrains.annotations.Nullable;
 @Getter
 @Setter
 @ToString(callSuper = true)
-public class OpenViewContext extends BaseViewContext implements ViewConfig {
+public class OpenViewContext extends BaseViewContext {
 
     private String containerTitle;
     private int containerSize;

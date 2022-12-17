@@ -18,6 +18,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import me.devnatan.inventoryframework.config.ViewConfig;
 import me.saiintbrisson.minecraft.exception.ContainerException;
 import me.saiintbrisson.minecraft.exception.InitializationException;
 import me.saiintbrisson.minecraft.internal.Job;
@@ -31,6 +32,8 @@ import me.saiintbrisson.minecraft.pipeline.interceptors.OpenInterceptor;
 import me.saiintbrisson.minecraft.pipeline.interceptors.RenderInterceptor;
 import me.saiintbrisson.minecraft.pipeline.interceptors.ScheduledUpdateInterceptor;
 import me.saiintbrisson.minecraft.pipeline.interceptors.UpdateInterceptor;
+import me.saiintbrisson.minecraft.state.IntState;
+import me.saiintbrisson.minecraft.state.State;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -39,7 +42,7 @@ import org.jetbrains.annotations.Nullable;
 @Getter(AccessLevel.PACKAGE)
 @Setter(AccessLevel.PACKAGE)
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
-public abstract class AbstractView extends AbstractVirtualView implements ViewConfig {
+public abstract class AbstractView extends AbstractVirtualView {
 
     public static final PipelinePhase OPEN = new PipelinePhase("open");
     public static final PipelinePhase INIT = new PipelinePhase("init");
@@ -112,6 +115,12 @@ public abstract class AbstractView extends AbstractVirtualView implements ViewCo
     // TODO provide a more fluent API to set view options
     protected void onInit() {}
 
+    protected void onInit(ViewConfig config) {}
+
+    protected ViewConfig configure() {
+        return null;
+    }
+
     /**
      * Called before the inventory is opened to the player.
      *
@@ -122,9 +131,9 @@ public abstract class AbstractView extends AbstractVirtualView implements ViewCo
      * <p>It is not possible to manipulate the inventory in this handler, if it happens an exception
      * will be thrown.
      *
-     * @param context The player view context.
+     * @param open The player view context.
      */
-    protected void onOpen(@NotNull OpenViewContext context) {}
+    protected void onOpen(@NotNull OpenViewContext open) {}
 
     /**
      * Called __once__ when this view is rendered to the player for the first time.
@@ -149,6 +158,7 @@ public abstract class AbstractView extends AbstractVirtualView implements ViewCo
      *
      * @param context The player view context.
      */
+    @ApiStatus.OverrideOnly
     protected void onRender(@NotNull ViewContext context) {}
 
     /**
@@ -969,39 +979,11 @@ public abstract class AbstractView extends AbstractVirtualView implements ViewCo
         getContexts().forEach(context -> context.emit(event));
     }
 
-    /**
-     * {@inheritDoc}
-     * <p>
-     * Can be overridden for a specific context on {@link #onOpen(OpenViewContext)} with
-     * {@link OpenViewContext#setContainerType(ViewType)}.
-     */
-    @Override
-    public final void setContainerType(ViewType type) {
-        ensureNotInitialized();
-        this.initialProperties.setType(type);
+    public <T> State<T> state(T initialValue) {
+        throw new UnsupportedOperationException();
     }
 
-    /**
-     * {@inheritDoc}
-     * <p>
-     * Can be overridden for a specific context on {@link #onOpen(OpenViewContext)} with
-     * {@link OpenViewContext#setContainerTitle(String)}.
-     */
-    @Override
-    public final void setContainerTitle(String title) {
-        ensureNotInitialized();
-        this.initialProperties.setTitle(title);
-    }
-
-    /**
-     * {@inheritDoc}
-     * <p>
-     * Can be overridden for a specific context on {@link #onOpen(OpenViewContext)} with
-     * {@link OpenViewContext#setContainerSize(int)}.
-     */
-    @Override
-    public final void setContainerSize(int size) {
-        ensureNotInitialized();
-        this.initialProperties.setSize(size);
+    public IntState state(int initialValue) {
+        throw new UnsupportedOperationException();
     }
 }
