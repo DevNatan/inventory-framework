@@ -7,6 +7,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import me.devnatan.inventoryframework.pagination.IFPaginatedContext;
 import org.jetbrains.annotations.Contract;
 
 /**
@@ -21,11 +22,11 @@ import org.jetbrains.annotations.Contract;
 @RequiredArgsConstructor
 public final class AsyncPaginationDataState<T> {
 
-    private final Function<PaginatedViewContext<T>, CompletableFuture<List<? extends T>>> job;
+    private final Function<IFPaginatedContext<T>, CompletableFuture<List<? extends T>>> job;
 
-    private Consumer<PaginatedViewContext<T>> loadStarted, loadFinished, success;
-    private BiConsumer<PaginatedViewContext<T>, Throwable> error;
-    private BiConsumer<PaginatedViewContext<T>, List<? extends T>> completedSuccessfully;
+    private Consumer<IFPaginatedContext<T>> loadStarted, loadFinished, success;
+    private BiConsumer<IFPaginatedContext<T>, Throwable> error;
+    private BiConsumer<IFPaginatedContext<T>, List<? extends T>> completedSuccessfully;
 
     /**
      * Called when pagination data starts to load.
@@ -34,7 +35,7 @@ public final class AsyncPaginationDataState<T> {
      * @return This async pagination data state.
      */
     @Contract(mutates = "this")
-    public AsyncPaginationDataState<T> onStart(Consumer<PaginatedViewContext<T>> handler) {
+    public AsyncPaginationDataState<T> onStart(Consumer<IFPaginatedContext<T>> handler) {
         this.loadStarted = handler;
         return this;
     }
@@ -47,7 +48,7 @@ public final class AsyncPaginationDataState<T> {
      * @deprecated Use {@link #onSuccess(BiConsumer)} isntead.
      */
     @Contract(mutates = "this")
-    public AsyncPaginationDataState<T> onSuccess(Consumer<PaginatedViewContext<T>> handler) {
+    public AsyncPaginationDataState<T> onSuccess(Consumer<IFPaginatedContext<T>> handler) {
         this.success = handler;
         return this;
     }
@@ -59,7 +60,7 @@ public final class AsyncPaginationDataState<T> {
      * @return This async pagination data state.
      */
     @Contract(mutates = "this")
-    public AsyncPaginationDataState<T> onSuccess(BiConsumer<PaginatedViewContext<T>, List<? extends T>> handler) {
+    public AsyncPaginationDataState<T> onSuccess(BiConsumer<IFPaginatedContext<T>, List<? extends T>> handler) {
         this.completedSuccessfully = handler;
         return this;
     }
@@ -71,7 +72,7 @@ public final class AsyncPaginationDataState<T> {
      * @return This async pagination data state.
      */
     @Contract(mutates = "this")
-    public AsyncPaginationDataState<T> onError(BiConsumer<PaginatedViewContext<T>, Throwable> handler) {
+    public AsyncPaginationDataState<T> onError(BiConsumer<IFPaginatedContext<T>, Throwable> handler) {
         this.error = handler;
         return this;
     }
@@ -83,7 +84,7 @@ public final class AsyncPaginationDataState<T> {
      * @return This async pagination data state.
      */
     @Contract(mutates = "this")
-    public AsyncPaginationDataState<T> onFinish(Consumer<PaginatedViewContext<T>> handler) {
+    public AsyncPaginationDataState<T> onFinish(Consumer<IFPaginatedContext<T>> handler) {
         this.loadFinished = handler;
         return this;
     }

@@ -8,6 +8,7 @@ import java.util.function.Function;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import me.devnatan.inventoryframework.pagination.IFPaginatedContext;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -26,7 +27,7 @@ public final class Paginator<T> {
     private int pageSize;
     private int pagesCount = -1;
     private List<T> source;
-    private Function<PaginatedViewContext<T>, List<T>> factory;
+    private Function<IFPaginatedContext<T>, List<T>> factory;
     private AsyncPaginationDataState<T> asyncState;
     private final boolean provided, async;
 
@@ -38,12 +39,12 @@ public final class Paginator<T> {
     Paginator(int pageSize, @NotNull Object source) {
         this.pageSize = pageSize;
 
-        Function<PaginatedViewContext<T>, List<T>> _factory = null;
+        Function<IFPaginatedContext<T>, List<T>> _factory = null;
         List<T> _source = null;
         AsyncPaginationDataState<T> _asyncState = null;
 
         if (source instanceof List) _source = (List<T>) source;
-        else if (source instanceof Function) _factory = (Function<PaginatedViewContext<T>, List<T>>) source;
+        else if (source instanceof Function) _factory = (Function<IFPaginatedContext<T>, List<T>>) source;
         else if (source instanceof AsyncPaginationDataState) _asyncState = (AsyncPaginationDataState<T>) source;
         else
             throw new IllegalArgumentException(

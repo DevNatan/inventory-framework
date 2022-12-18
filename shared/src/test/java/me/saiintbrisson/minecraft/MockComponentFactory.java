@@ -2,6 +2,8 @@ package me.saiintbrisson.minecraft;
 
 import static org.mockito.Mockito.mock;
 
+import me.devnatan.inventoryframework.IFContext;
+import me.devnatan.inventoryframework.VirtualView;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,13 +29,13 @@ public class MockComponentFactory extends ViewComponentFactory {
 
     @Override
     public @NotNull BaseViewContext createContext(
-            @NotNull AbstractView root, ViewContainer container, Class<? extends ViewContext> backingContext) {
+            @NotNull AbstractView root, ViewContainer container, Class<? extends IFContext> backingContext) {
         return mock(BaseViewContext.class);
     }
 
     @Override
     public @NotNull AbstractViewSlotContext createSlotContext(
-            int slot, ViewItem item, ViewContext parent, ViewContainer container, int index, Object value) {
+            int slot, ViewItem item, IFContext parent, ViewContainer container, int index, Object value) {
         return mock(AbstractViewSlotContext.class);
     }
 

@@ -4,7 +4,7 @@ import java.time.Duration;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import me.saiintbrisson.minecraft.ViewContext;
+import me.devnatan.inventoryframework.IFContext;
 import me.saiintbrisson.minecraft.internal.Job;
 import me.saiintbrisson.minecraft.pipeline.PipelineContext;
 import me.saiintbrisson.minecraft.pipeline.PipelineInterceptor;
@@ -25,10 +25,10 @@ public final class ScheduledUpdateInterceptor {
      * be started/resumed.
      */
     @RequiredArgsConstructor
-    public static class Render implements PipelineInterceptor<ViewContext> {
+    public static class Render implements PipelineInterceptor<IFContext> {
 
         @Override
-        public void intercept(@NotNull PipelineContext<ViewContext> pipeline, ViewContext subject) {
+        public void intercept(@NotNull PipelineContext<IFContext> pipeline, IFContext subject) {
             Job updateJob = subject.getRoot().getUpdateJob();
 
             if (updateJob == null || updateJob.isStarted()) return;
@@ -49,10 +49,10 @@ public final class ScheduledUpdateInterceptor {
      * be interrupted.
      */
     @RequiredArgsConstructor
-    public static class Close implements PipelineInterceptor<ViewContext> {
+    public static class Close implements PipelineInterceptor<IFContext> {
 
         @Override
-        public void intercept(@NotNull PipelineContext<ViewContext> pipeline, ViewContext subject) {
+        public void intercept(@NotNull PipelineContext<IFContext> pipeline, IFContext subject) {
             Job updateJob = subject.getRoot().getUpdateJob();
             if (updateJob == null || !updateJob.isStarted()) return;
 

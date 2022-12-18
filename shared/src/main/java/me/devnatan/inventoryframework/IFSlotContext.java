@@ -1,10 +1,15 @@
-package me.saiintbrisson.minecraft;
+package me.devnatan.inventoryframework;
 
 import java.util.NoSuchElementException;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import me.devnatan.inventoryframework.pagination.IFPaginatedContext;
+import me.devnatan.inventoryframework.pagination.IFPaginatedSlotContext;
+import me.saiintbrisson.minecraft.AbstractView;
+import me.saiintbrisson.minecraft.AbstractVirtualView;
+import me.saiintbrisson.minecraft.ItemWrapper;
+import me.saiintbrisson.minecraft.ViewItem;
 import me.saiintbrisson.minecraft.exception.InventoryModificationException;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -17,12 +22,12 @@ import org.jetbrains.annotations.UnknownNullability;
  *
  * <p>Methods specific to a ViewSlotContext will only apply to that slot.
  *
- * @see ViewContext
- * @see ViewSlotClickContext
- * @see ViewSlotMoveContext
- * @see PaginatedViewSlotContext
+ * @see IFContext
+ * @see IFSlotClickContext
+ * @see IFSlotMoveContext
+ * @see IFPaginatedSlotContext
  */
-public interface ViewSlotContext extends ViewContext {
+public interface IFSlotContext extends IFContext {
 
     /**
      * The parent context of this context.
@@ -33,7 +38,7 @@ public interface ViewSlotContext extends ViewContext {
      * @return The parent context of this context.
      */
     @ApiStatus.Internal
-    ViewContext getParent();
+    IFContext getParent();
 
     /**
      * Clears this slot from the current context.
@@ -57,22 +62,9 @@ public interface ViewSlotContext extends ViewContext {
     /**
      * Updates this slot.
      *
-     * <p>This method is a shortcut to {@link AbstractView#update(ViewContext, ViewItem, int)}.
+     * <p>This method is a shortcut to {@link AbstractView#update(IFContext, ViewItem, int)}.
      */
     void updateSlot();
-
-    /**
-     * The item tied to this context.
-     *
-     * <p>For example, if it is a click context it will be the item that was clicked. If it is a
-     * rendering context it will be the item being rendered.
-     *
-     * @return The item tied to this context.
-     * @deprecated Use {@link #getItemWrapper()} instead.
-     */
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.5")
-    ItemStack getItem();
 
     /**
      * Returns the wrapper containing the item related to this context.
@@ -90,7 +82,7 @@ public interface ViewSlotContext extends ViewContext {
      * Returns the current item of this context.
      * <p>
      * The item returned is not necessarily the item positioned in the slot, there are cases, for
-     * example in {@link ViewSlotMoveContext}, in which the current item may be the item the entity
+     * example in {@link IFSlotMoveContext}, in which the current item may be the item the entity
      * is interacting with and not a positioned item.
      *
      * @return The current item.
@@ -121,7 +113,7 @@ public interface ViewSlotContext extends ViewContext {
     @Deprecated
     @NotNull
     @ApiStatus.ScheduledForRemoval(inVersion = "2.5.6")
-    ViewSlotContext withItem(@Nullable Object item) throws InventoryModificationException;
+    IFSlotContext withItem(@Nullable Object item) throws InventoryModificationException;
 
     /**
      * Applies a patch to the current item.
@@ -221,7 +213,7 @@ public interface ViewSlotContext extends ViewContext {
      * @throws IllegalStateException If the root of this context is not paginated.
      */
     @Override
-    <T> PaginatedViewContext<T> paginated();
+    <T> IFPaginatedContext<T> paginated();
 
     /**
      * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees

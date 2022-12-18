@@ -1,17 +1,23 @@
-package me.saiintbrisson.minecraft;
+package me.devnatan.inventoryframework;
 
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
+import me.devnatan.inventoryframework.pagination.IFPaginatedContext;
+import me.saiintbrisson.minecraft.AbstractView;
+import me.saiintbrisson.minecraft.AbstractVirtualView;
+import me.saiintbrisson.minecraft.OpenViewContext;
+import me.saiintbrisson.minecraft.ViewContainer;
+import me.saiintbrisson.minecraft.ViewItem;
+import me.saiintbrisson.minecraft.Viewer;
 import me.saiintbrisson.minecraft.exception.InvalidatedContextException;
 import me.saiintbrisson.minecraft.exception.UnknownReferenceException;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnknownNullability;
 
-public interface ViewContext extends VirtualView {
+public interface IFContext extends VirtualView {
 
     @ApiStatus.Internal
     Map<String, Object> getData();
@@ -54,18 +60,6 @@ public interface ViewContext extends VirtualView {
     AbstractView getRoot();
 
     /**
-     * This is just here for backwards compatibility.
-     *
-     * @return The root of this context.
-     * @see #getRoot()
-     * @deprecated Use {@link #getRoot()} instead.
-     */
-    @Deprecated
-    default View getView() {
-        return (View) getRoot();
-    }
-
-    /**
      * {@inheritDoc}
      *
      * <p>If the title has been dynamically changed, it will return {@link #getUpdatedTitle()}.
@@ -99,8 +93,7 @@ public interface ViewContext extends VirtualView {
      * Updates the container title for everyone that's viewing it.
      *
      * <p>This should not be used before the container is opened, if you need to set the __initial
-     * title__ use {@link OpenViewContext#setContainerTitle(String)} on {@link
-     * View#onOpen(OpenViewContext)} instead.
+     * title__ use {@link OpenViewContext#setContainerTitle(String)} on open handler instead.
      *
      * <p>This method is version dependant, so it may be that your server version is not yet
      * supported, if you try to use this method and fail (can fail silently), report it to the library
@@ -220,17 +213,7 @@ public interface ViewContext extends VirtualView {
      * @throws IllegalStateException If the root of this context cannot be converted to a paginated.
      */
     @Override
-    <T> PaginatedViewContext<T> paginated();
-
-    /**
-     * The player tied to this context.
-     *
-     * <p>This is just here for backwards compatibility.
-     *
-     * @return The player tied to this context.
-     */
-    @NotNull
-    Player getPlayer();
+    <T> IFPaginatedContext<T> paginated();
 
     void open(@NotNull Class<? extends AbstractView> viewClass);
 
@@ -260,7 +243,7 @@ public interface ViewContext extends VirtualView {
      */
     @NotNull
     @ApiStatus.Experimental
-    ViewSlotContext ref(@NotNull String key) throws UnknownReferenceException;
+    IFSlotContext ref(@NotNull String key) throws UnknownReferenceException;
 
     /**
      * Creates a new slot context instance containing within it data of an item whose reference key is
@@ -285,7 +268,7 @@ public interface ViewContext extends VirtualView {
      */
     @Nullable
     @ApiStatus.Experimental
-    ViewSlotContext refOrNull(@NotNull String key);
+    IFSlotContext refOrNull(@NotNull String key);
 
     /**
      * Invalidates this context.
@@ -302,13 +285,11 @@ public interface ViewContext extends VirtualView {
      * This function will use the saved the state of the entire previous context and will evaluate
      * it, this will only work with transitions from the previous context, that is, for the context
      * to be saved and registered you will have to have the current context open through the
-     * previous context using {@link ViewContext#open(Class)} or {@link ViewContext#open(Class, Map)}.
+     * previous context using {@link IFContext#open(Class)} or {@link IFContext#open(Class, Map)}.
      * <p>
-     * Using this will not call the root {@link AbstractView#onOpen(OpenViewContext) onOpen} nor
-     * {@link AbstractView#onRender(ViewContext) onRender}.
+     * Using this will not call the root open handler nor render handler.
      * <p>
-     * You can track when a context is resumed by this function with
-     * {@link AbstractView#onResume(ViewContext, ViewContext) onResume}.
+     * You can track when a context is resumed by resume handler.
      *
      * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
      * such API may be changed or may be removed completely in any further release. </i></b>
@@ -320,5 +301,5 @@ public interface ViewContext extends VirtualView {
      */
     @ApiStatus.Experimental
     @Nullable
-    ViewContext back();
+    IFContext back();
 }

@@ -11,8 +11,8 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.concurrent.atomic.AtomicBoolean;
+import me.devnatan.inventoryframework.IFContext;
 import me.saiintbrisson.minecraft.AbstractView;
-import me.saiintbrisson.minecraft.ViewContext;
 import me.saiintbrisson.minecraft.Viewer;
 import me.saiintbrisson.minecraft.internal.Job;
 import me.saiintbrisson.minecraft.pipeline.Pipeline;
@@ -22,7 +22,7 @@ class ScheduledUpdateInterceptorTest {
 
     @Test
     public void givenUpdateJobStartWhenNoViewersAvailableThenSkipUpdateJobStart() {
-        Pipeline<ViewContext> pipeline = new Pipeline<>(RENDER);
+        Pipeline<IFContext> pipeline = new Pipeline<>(RENDER);
         pipeline.intercept(RENDER, new ScheduledUpdateInterceptor.Render() {
             @Override
             void onIntercept() {
@@ -33,7 +33,7 @@ class ScheduledUpdateInterceptorTest {
         AbstractView view = new AbstractView() {};
         view.setUpdateJob(new Job.InternalJobImpl(() -> {}));
 
-        ViewContext context = mock(ViewContext.class);
+        IFContext context = mock(IFContext.class);
         when(context.getRoot()).thenReturn(view);
         when(context.getViewers()).thenReturn(Collections.emptyList());
 
@@ -42,7 +42,7 @@ class ScheduledUpdateInterceptorTest {
 
     @Test
     public void givenUpdateJobStartWhenMoreThanOneViewerAvailableThenSkipUpdateJobStart() {
-        Pipeline<ViewContext> pipeline = new Pipeline<>(RENDER);
+        Pipeline<IFContext> pipeline = new Pipeline<>(RENDER);
         pipeline.intercept(RENDER, new ScheduledUpdateInterceptor.Render() {
             @Override
             void onIntercept() {
@@ -53,7 +53,7 @@ class ScheduledUpdateInterceptorTest {
         AbstractView view = new AbstractView() {};
         view.setUpdateJob(new Job.InternalJobImpl(() -> {}));
 
-        ViewContext context = mock(ViewContext.class);
+        IFContext context = mock(IFContext.class);
         when(context.getRoot()).thenReturn(view);
 
         Viewer viewer = mock(Viewer.class);
@@ -65,7 +65,7 @@ class ScheduledUpdateInterceptorTest {
     @Test
     public void givenUpdateJobStartWhenOneViewerIsAvailableThenJobIsStarted() {
         AtomicBoolean intercepted = new AtomicBoolean();
-        Pipeline<ViewContext> pipeline = new Pipeline<>(RENDER);
+        Pipeline<IFContext> pipeline = new Pipeline<>(RENDER);
         pipeline.intercept(RENDER, new ScheduledUpdateInterceptor.Render() {
             @Override
             void onIntercept() {
@@ -76,7 +76,7 @@ class ScheduledUpdateInterceptorTest {
         AbstractView view = new AbstractView() {};
         view.setUpdateJob(new Job.InternalJobImpl(() -> {}));
 
-        ViewContext context = mock(ViewContext.class);
+        IFContext context = mock(IFContext.class);
         when(context.getRoot()).thenReturn(view);
 
         Viewer viewer = mock(Viewer.class);
@@ -89,7 +89,7 @@ class ScheduledUpdateInterceptorTest {
     @Test
     public void whenPipelineStartExpectUpdateStartedAndEndedProperly() {
         AtomicBoolean started = new AtomicBoolean(false);
-        Pipeline<ViewContext> pipeline = new Pipeline<>(RENDER, CLOSE);
+        Pipeline<IFContext> pipeline = new Pipeline<>(RENDER, CLOSE);
         pipeline.intercept(RENDER, new ScheduledUpdateInterceptor.Render() {
             @Override
             void onIntercept() {
@@ -106,7 +106,7 @@ class ScheduledUpdateInterceptorTest {
         AbstractView view = new AbstractView() {};
         view.setUpdateJob(new Job.InternalJobImpl(() -> {}));
 
-        ViewContext context = mock(ViewContext.class);
+        IFContext context = mock(IFContext.class);
         when(context.getRoot()).thenReturn(view);
 
         Viewer viewer = mock(Viewer.class);
@@ -122,7 +122,7 @@ class ScheduledUpdateInterceptorTest {
     @Test
     public void givenMoreThanOneViewerWhenPipelinesCalledExpectUpdateNotInterrupted() {
         AtomicBoolean started = new AtomicBoolean(false);
-        Pipeline<ViewContext> pipeline = new Pipeline<>(RENDER, CLOSE);
+        Pipeline<IFContext> pipeline = new Pipeline<>(RENDER, CLOSE);
         pipeline.intercept(RENDER, new ScheduledUpdateInterceptor.Render() {
             @Override
             void onIntercept() {
@@ -139,7 +139,7 @@ class ScheduledUpdateInterceptorTest {
         AbstractView view = new AbstractView() {};
         view.setUpdateJob(new Job.InternalJobImpl(() -> {}));
 
-        ViewContext context = mock(ViewContext.class);
+        IFContext context = mock(IFContext.class);
         when(context.getRoot()).thenReturn(view);
 
         Viewer viewer = mock(Viewer.class);

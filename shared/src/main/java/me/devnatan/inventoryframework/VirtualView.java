@@ -1,4 +1,4 @@
-package me.saiintbrisson.minecraft;
+package me.devnatan.inventoryframework;
 
 import java.util.Deque;
 import java.util.List;
@@ -6,11 +6,15 @@ import java.util.Stack;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import me.saiintbrisson.minecraft.AbstractView;
+import me.saiintbrisson.minecraft.LayoutPattern;
+import me.saiintbrisson.minecraft.PaginatedVirtualView;
+import me.saiintbrisson.minecraft.ViewErrorHandler;
+import me.saiintbrisson.minecraft.ViewItem;
+import me.saiintbrisson.minecraft.ViewType;
 import me.saiintbrisson.minecraft.event.EventListener;
 import me.saiintbrisson.minecraft.event.EventSubscription;
 import me.saiintbrisson.minecraft.exception.InventoryModificationException;
-import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -20,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
  * shared between regular views and contexts which are called "unified methods".
  * <p>
  * We call "view" a {@link VirtualView}, "regular view" a {@link AbstractView} and implementations,
- * and "context" a {@link ViewContext} and implementations.
+ * and "context" a {@link IFContext} and implementations.
  */
 public interface VirtualView {
 
@@ -154,8 +158,8 @@ public interface VirtualView {
     /**
      * Defines the error handler for this view.
      *
-     * <p>Setting specific error handling for a {@link ViewContext} will cause the error to be
-     * propagated to the {@link View} as well if it has been set.
+     * <p>Setting specific error handling for a {@link IFContext} will cause the error to be
+     * propagated to theroot view as well if it has been set.
      *
      * @param errorHandler The error handler for this view. Use null to remove it.
      */
@@ -425,87 +429,6 @@ public interface VirtualView {
     ViewItem availableSlot(Object fallbackItem);
 
     /**
-     * Creates a new item instance.
-     *
-     * <p>This is just here for backwards compatibility.
-     *
-     * @return The newly created item instance.
-     * @deprecated Mutable item instances will be provided and should no longer be created.
-     */
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.5")
-    ViewItem item();
-
-    /**
-     * Creates a new item instance with a fallback item.
-     *
-     * <p>This is just here for backwards compatibility.
-     *
-     * @param item The fallback item.
-     * @return The newly created item instance.
-     * @deprecated Mutable item instances will be provided and should no longer be created.
-     */
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.5")
-    ViewItem item(@NotNull ItemStack item);
-
-    /**
-     * Creates a new item instance with a fallback item.
-     *
-     * <p>This is just here for backwards compatibility.
-     *
-     * @param material The fallback item material.
-     * @return The newly created item instance.
-     * @deprecated Mutable item instances will be provided and should no longer be created.
-     */
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.5")
-    ViewItem item(@NotNull Material material);
-
-    /**
-     * Creates a new item instance with a fallback item.
-     *
-     * <p>This is just here for backwards compatibility.
-     *
-     * @param material   The fallback item material.
-     * @param durability The fallback item durability.
-     * @return The newly created item instance.
-     * @deprecated Mutable item instances will be provided and should no longer be created.
-     */
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.5")
-    ViewItem item(@NotNull Material material, short durability);
-
-    /**
-     * Creates a new item instance with a fallback item.
-     *
-     * <p>This is just here for backwards compatibility.
-     *
-     * @param material The fallback item material.
-     * @param amount   The fallback item amount.
-     * @return The newly created item instance.
-     * @deprecated Mutable item instances will be provided and should no longer be created.
-     */
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.5")
-    ViewItem item(@NotNull Material material, int amount);
-
-    /**
-     * Creates a new item instance with a fallback item.
-     *
-     * <p>This is just here for backwards compatibility.
-     *
-     * @param material   The fallback item material.
-     * @param amount     The fallback item amount.
-     * @param durability The fallback item durability.
-     * @return The newly created item instance.
-     * @deprecated Mutable item instances will be provided and should no longer be created.
-     */
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.5")
-    ViewItem item(@NotNull Material material, int amount, short durability);
-
-    /**
      * Registers the given item in the specified slot.
      *
      * @param item The item.
@@ -577,7 +500,7 @@ public interface VirtualView {
      * <b>You can define layouts in two scopes:</b>
      * <ul>
      *     <li>{@link AbstractView regular view}: The same layout will be used in that view forever.</li>
-     *     <li>{@link ViewContext context}: Only a specific context will use a layout pattern which for some reason
+     *     <li>{@link IFContext context}: Only a specific context will use a layout pattern which for some reason
      *     must be different from the layout defined in the View or other layouts.</li>
      * </ul>
      * <p>
@@ -680,7 +603,7 @@ public interface VirtualView {
      */
     @ApiStatus.Internal
     @ApiStatus.OverrideOnly
-    void render(@NotNull ViewContext context);
+    void render(@NotNull IFContext context);
 
     /**
      * Updates this view.
@@ -697,7 +620,7 @@ public interface VirtualView {
      */
     @ApiStatus.Internal
     @ApiStatus.OverrideOnly
-    void update(@NotNull ViewContext context);
+    void update(@NotNull IFContext context);
 
     /**
      * The reserved items count for this view.

@@ -1,9 +1,9 @@
 package me.saiintbrisson.minecraft.pipeline.interceptors;
 
+import me.devnatan.inventoryframework.IFContext;
+import me.devnatan.inventoryframework.VirtualView;
 import me.saiintbrisson.minecraft.AbstractView;
-import me.saiintbrisson.minecraft.ViewContext;
 import me.saiintbrisson.minecraft.ViewItem;
-import me.saiintbrisson.minecraft.VirtualView;
 import me.saiintbrisson.minecraft.pipeline.PipelineContext;
 import me.saiintbrisson.minecraft.pipeline.PipelineInterceptor;
 import org.jetbrains.annotations.NotNull;
@@ -16,10 +16,10 @@ public final class RenderInterceptor implements PipelineInterceptor<VirtualView>
 
     @Override
     public void intercept(@NotNull PipelineContext<VirtualView> pipeline, VirtualView view) {
-        if (!(view instanceof ViewContext))
+        if (!(view instanceof IFContext))
             throw new IllegalStateException("Render interceptor must be called with a context as subject.");
 
-        final ViewContext context = (ViewContext) view;
+        final IFContext context = (IFContext) view;
         context.inventoryModificationTriggered();
 
         final AbstractView root = context.getRoot();

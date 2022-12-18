@@ -1,29 +1,29 @@
 package me.saiintbrisson.minecraft.pipeline.interceptors;
 
+import static me.devnatan.inventoryframework.VirtualView.LAYOUT_NEXT_PAGE;
+import static me.devnatan.inventoryframework.VirtualView.LAYOUT_PREVIOUS_PAGE;
 import static me.saiintbrisson.minecraft.PaginatedVirtualView.NAVIGATE_LEFT;
 import static me.saiintbrisson.minecraft.PaginatedVirtualView.NAVIGATE_RIGHT;
 import static me.saiintbrisson.minecraft.ViewItem.UNSET;
-import static me.saiintbrisson.minecraft.VirtualView.LAYOUT_NEXT_PAGE;
-import static me.saiintbrisson.minecraft.VirtualView.LAYOUT_PREVIOUS_PAGE;
 
 import java.util.function.BiConsumer;
 import java.util.function.Function;
+import me.devnatan.inventoryframework.IFContext;
+import me.devnatan.inventoryframework.pagination.IFPaginatedContext;
 import me.saiintbrisson.minecraft.AbstractPaginatedView;
-import me.saiintbrisson.minecraft.PaginatedViewContext;
 import me.saiintbrisson.minecraft.PaginatedVirtualView;
 import me.saiintbrisson.minecraft.PlatformViewFrame;
-import me.saiintbrisson.minecraft.ViewContext;
 import me.saiintbrisson.minecraft.ViewItem;
 import me.saiintbrisson.minecraft.pipeline.PipelineContext;
 import me.saiintbrisson.minecraft.pipeline.PipelineInterceptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public final class NavigationControllerInterceptor implements PipelineInterceptor<ViewContext> {
+public final class NavigationControllerInterceptor implements PipelineInterceptor<IFContext> {
 
     @Override
-    public void intercept(@NotNull PipelineContext<ViewContext> pipeline, ViewContext context) {
-        final PaginatedViewContext<?> paginatedContext = context.paginated();
+    public void intercept(@NotNull PipelineContext<IFContext> pipeline, IFContext context) {
+        final IFPaginatedContext<?> paginatedContext = context.paginated();
         updateNavigationItem(paginatedContext, NAVIGATE_LEFT);
         updateNavigationItem(paginatedContext, NAVIGATE_RIGHT);
     }
@@ -37,16 +37,16 @@ public final class NavigationControllerInterceptor implements PipelineIntercepto
      * @param direction The navigation direction.
      * @return Current navigation (of the specified direction) item slot.
      */
-    private int getNavigationItemSlot(@NotNull PaginatedViewContext<?> context, int direction) {
+    private int getNavigationItemSlot(@NotNull IFPaginatedContext<?> context, int direction) {
         PaginatedVirtualView<?> target = context.isLayoutSignatureChecked() ? context : context.getRoot();
 
         return direction == NAVIGATE_LEFT ? target.getPreviousPageItemSlot() : target.getNextPageItemSlot();
     }
 
     @Nullable
-    private <T> ViewItem createNavigationItemFromRoot(@NotNull PaginatedViewContext<T> context, int direction) {
+    private <T> ViewItem createNavigationItemFromRoot(@NotNull IFPaginatedContext<T> context, int direction) {
         final AbstractPaginatedView<T> root = context.getRoot();
-        final BiConsumer<PaginatedViewContext<T>, ViewItem> factory =
+        final BiConsumer<IFPaginatedContext<T>, ViewItem> factory =
                 direction == NAVIGATE_LEFT ? root.getPreviousPageItemFactory() : root.getNextPageItemFactory();
 
         // TODO just a compatibility guarantee must be removed in v2.5.5
@@ -65,7 +65,7 @@ public final class NavigationControllerInterceptor implements PipelineIntercepto
         return item;
     }
 
-    private <T> ViewItem resolveNavigationItem(@NotNull PaginatedViewContext<T> context, int direction) {
+    private <T> ViewItem resolveNavigationItem(@NotNull IFPaginatedContext<T> context, int direction) {
         final ViewItem item = createNavigationItemFromRoot(context, direction);
 
         // TODO can be null due to compatibility guarantee
@@ -75,7 +75,7 @@ public final class NavigationControllerInterceptor implements PipelineIntercepto
         if (vf == null) return null;
 
         @SuppressWarnings("deprecation")
-        final Function<PaginatedViewContext<?>, ViewItem> fallback =
+        final Function<IFPaginatedContext<?>, ViewItem> fallback =
                 direction == NAVIGATE_LEFT ? vf.getDefaultPreviousPageItem() : vf.getDefaultNextPageItem();
 
         if (fallback == null) return null;
@@ -83,7 +83,7 @@ public final class NavigationControllerInterceptor implements PipelineIntercepto
         return fallback.apply(context);
     }
 
-    private <T> void updateNavigationItem(@NotNull PaginatedViewContext<T> context, int direction) {
+    private <T> void updateNavigationItem(@NotNull IFPaginatedContext<T> context, int direction) {
         ViewItem item = resolveNavigationItem(context, direction);
         final int layoutSlot = getNavigationItemSlot(context, direction);
         checkUndefinedLayoutNavigationItem(item, layoutSlot, direction);
@@ -122,12 +122,12 @@ public final class NavigationControllerInterceptor implements PipelineIntercepto
         renderItemAndApplyOnContext(context, item.withCancelOnClick(true), targetSlot);
     }
 
-    private void removeAt(@NotNull ViewContext context, int slot) {
+    private void removeAt(@NotNull IFContext context, int slot) {
         context.clear(slot);
         context.getContainer().removeItem(slot);
     }
 
-    private void renderItemAndApplyOnContext(@NotNull ViewContext context, ViewItem item, int slot) {
+    private void renderItemAndApplyOnContext(@NotNull IFContext context, ViewItem item, int slot) {
         context.apply(item, slot);
         context.getRoot().render(context, item, slot);
     }

@@ -1,6 +1,9 @@
-package me.saiintbrisson.minecraft;
+package me.devnatan.inventoryframework.pagination;
 
 import java.util.List;
+import me.devnatan.inventoryframework.IFContext;
+import me.saiintbrisson.minecraft.AbstractPaginatedView;
+import me.saiintbrisson.minecraft.PaginatedVirtualView;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -11,14 +14,14 @@ import org.jetbrains.annotations.NotNull;
  * is no difference between a context and a paginated context, just some new properties but nothing
  * that changes its nature, life cycle or way of working.
  *
- * <p>A context can be {@link ViewContext#paginated() converted to a paginated context} if its root
+ * <p>A context can be {@link IFContext#paginated() converted to a paginated context} if its root
  * is paginated.
  *
  * @param <T> The paginated item type.
- * @see ViewContext
+ * @see IFContext
  * @see AbstractPaginatedView
  */
-public interface PaginatedViewContext<T> extends ViewContext, PaginatedVirtualView<T> {
+public interface IFPaginatedContext<T> extends IFContext, PaginatedVirtualView<T> {
 
     /**
      * An unmodifiable list with paginated data for the current page, never returns <code>null

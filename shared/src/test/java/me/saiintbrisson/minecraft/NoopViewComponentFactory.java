@@ -1,5 +1,7 @@
 package me.saiintbrisson.minecraft;
 
+import me.devnatan.inventoryframework.IFContext;
+import me.devnatan.inventoryframework.VirtualView;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,13 +29,13 @@ public abstract class NoopViewComponentFactory extends ViewComponentFactory {
 
     @Override
     public @NotNull BaseViewContext createContext(
-            @NotNull AbstractView root, ViewContainer container, Class<? extends ViewContext> backingContext) {
+            @NotNull AbstractView root, ViewContainer container, Class<? extends IFContext> backingContext) {
         throw new UnsupportedOperationException();
     }
 
     @Override
     public @NotNull AbstractViewSlotContext createSlotContext(
-            int slot, ViewItem item, ViewContext parent, ViewContainer container, int index, Object value) {
+            int slot, ViewItem item, IFContext parent, ViewContainer container, int index, Object value) {
         throw new UnsupportedOperationException();
     }
 

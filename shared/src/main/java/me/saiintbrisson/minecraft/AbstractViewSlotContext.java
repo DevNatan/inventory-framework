@@ -12,7 +12,9 @@ import java.util.function.Supplier;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.bukkit.inventory.ItemStack;
+import me.devnatan.inventoryframework.IFContext;
+import me.devnatan.inventoryframework.IFSlotContext;
+import me.devnatan.inventoryframework.pagination.IFPaginatedContext;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -20,12 +22,12 @@ import org.jetbrains.annotations.Nullable;
 @Getter
 @Setter
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
-public abstract class AbstractViewSlotContext extends BaseViewContext implements ViewSlotContext {
+public abstract class AbstractViewSlotContext extends BaseViewContext implements IFSlotContext {
 
     @ToString.Include
     private final int slot;
 
-    private final ViewContext parent;
+    private final IFContext parent;
     private final ViewItem backingItem;
 
     @ToString.Include
@@ -37,8 +39,7 @@ public abstract class AbstractViewSlotContext extends BaseViewContext implements
     @ToString.Include
     private boolean changed;
 
-    AbstractViewSlotContext(
-            int slot, ViewItem backingItem, @NotNull final ViewContext parent, ViewContainer container) {
+    AbstractViewSlotContext(int slot, ViewItem backingItem, @NotNull final IFContext parent, ViewContainer container) {
         super(parent.getRoot(), container);
         this.slot = slot;
         this.backingItem = backingItem;
@@ -46,7 +47,7 @@ public abstract class AbstractViewSlotContext extends BaseViewContext implements
     }
 
     @Override
-    public ViewContext getParent() {
+    public IFContext getParent() {
         return parent;
     }
 
@@ -81,7 +82,7 @@ public abstract class AbstractViewSlotContext extends BaseViewContext implements
     public void allowCancellation() {}
 
     @Override
-    public void render(@NotNull ViewContext context) {
+    public void render(@NotNull IFContext context) {
         getRoot().render(getParent());
     }
 
@@ -92,7 +93,7 @@ public abstract class AbstractViewSlotContext extends BaseViewContext implements
     }
 
     @Override
-    public <T> PaginatedViewContext<T> paginated() {
+    public <T> IFPaginatedContext<T> paginated() {
         return parent.paginated();
     }
 
@@ -110,11 +111,11 @@ public abstract class AbstractViewSlotContext extends BaseViewContext implements
         this.changed = changed;
     }
 
-    @Override
-    @Deprecated
-    public final ItemStack getItem() {
-        return (ItemStack) getItemWrapper().getValue();
-    }
+    //    @Override
+    //    @Deprecated
+    //    public final ItemStack getItem() {
+    //        return (ItemStack) getItemWrapper().getValue();
+    //    }
 
     @Override
     public final @NotNull ItemWrapper getItemWrapper() {
@@ -141,7 +142,7 @@ public abstract class AbstractViewSlotContext extends BaseViewContext implements
     }
 
     @Override
-    public @NotNull ViewSlotContext withItem(@Nullable Object item) {
+    public @NotNull IFSlotContext withItem(@Nullable Object item) {
         setItem(item);
         return this;
     }
@@ -180,7 +181,7 @@ public abstract class AbstractViewSlotContext extends BaseViewContext implements
     }
 
     @Override
-    public final void update(@NotNull ViewContext context) {
+    public final void update(@NotNull IFContext context) {
         throwNotAllowedCall();
     }
 
@@ -277,7 +278,7 @@ public abstract class AbstractViewSlotContext extends BaseViewContext implements
     }
 
     @Override
-    public ViewContext back() {
+    public IFContext back() {
         return getParent().back();
     }
 

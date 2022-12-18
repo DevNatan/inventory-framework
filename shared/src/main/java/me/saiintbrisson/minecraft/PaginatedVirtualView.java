@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
+import me.devnatan.inventoryframework.VirtualView;
+import me.devnatan.inventoryframework.pagination.IFPaginatedContext;
 import me.saiintbrisson.minecraft.exception.InitializationException;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -32,8 +34,8 @@ public interface PaginatedVirtualView<T> extends VirtualView {
     /**
      * Defines the data provider that will be used to populate this paginated view.
      *
-     * <p>Provider's {@link PaginatedViewContext first parameter} can be used to determine which is
-     * {@link PaginatedViewContext#getPage() the current page} of the context, use to sub-split your
+     * <p>Provider's {@link IFPaginatedContext first parameter} can be used to determine which is
+     * {@link IFPaginatedContext#getPage() the current page} of the context, use to sub-split your
      * request data and return the correct data for each page.
      * <p>
      * You can only use this method once during the view's lifecycle as it is a provider, and the
@@ -45,7 +47,7 @@ public interface PaginatedVirtualView<T> extends VirtualView {
      * @param sourceProvider The pagination data source provider.
      */
     @ApiStatus.Experimental
-    void setSource(@NotNull Function<PaginatedViewContext<T>, List<? extends T>> sourceProvider);
+    void setSource(@NotNull Function<IFPaginatedContext<T>, List<? extends T>> sourceProvider);
 
     /**
      * Asynchronously defines the data that will be used to populate this paginated view.
@@ -64,7 +66,7 @@ public interface PaginatedVirtualView<T> extends VirtualView {
      */
     @ApiStatus.Experimental
     AsyncPaginationDataState<T> setSourceAsync(
-            @NotNull Function<PaginatedViewContext<T>, CompletableFuture<List<? extends T>>> sourceFuture);
+            @NotNull Function<IFPaginatedContext<T>, CompletableFuture<List<? extends T>>> sourceFuture);
 
     /**
      * Defines the amount of pages that will be available for pagination.
@@ -155,7 +157,7 @@ public interface PaginatedVirtualView<T> extends VirtualView {
      * @return The navigation item factory for this view.
      */
     @ApiStatus.Internal
-    BiConsumer<PaginatedViewContext<T>, ViewItem> getPreviousPageItemFactory();
+    BiConsumer<IFPaginatedContext<T>, ViewItem> getPreviousPageItemFactory();
 
     /**
      * The factory that will be used to create the "previous page" navigation item.
@@ -189,7 +191,7 @@ public interface PaginatedVirtualView<T> extends VirtualView {
      * @param previousPageItemFactory The navigation item factory.
      * @throws InitializationException If this view is initialized.
      */
-    void setPreviousPageItem(@NotNull BiConsumer<PaginatedViewContext<T>, ViewItem> previousPageItemFactory);
+    void setPreviousPageItem(@NotNull BiConsumer<IFPaginatedContext<T>, ViewItem> previousPageItemFactory);
 
     /**
      * <p><b><i> This is an internal inventory-framework API that should not be used from outside of
@@ -198,7 +200,7 @@ public interface PaginatedVirtualView<T> extends VirtualView {
      * @return The navigation item factory for this view.
      */
     @ApiStatus.Internal
-    BiConsumer<PaginatedViewContext<T>, ViewItem> getNextPageItemFactory();
+    BiConsumer<IFPaginatedContext<T>, ViewItem> getNextPageItemFactory();
 
     /**
      * The factory that will be used to create the "next page" navigation item.
@@ -232,5 +234,5 @@ public interface PaginatedVirtualView<T> extends VirtualView {
      * @param nextPageItemFactory The navigation item factory.
      * @throws InitializationException If this view is initialized.
      */
-    void setNextPageItem(@NotNull BiConsumer<PaginatedViewContext<T>, ViewItem> nextPageItemFactory);
+    void setNextPageItem(@NotNull BiConsumer<IFPaginatedContext<T>, ViewItem> nextPageItemFactory);
 }

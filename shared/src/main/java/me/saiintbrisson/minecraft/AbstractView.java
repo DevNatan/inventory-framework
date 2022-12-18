@@ -18,6 +18,11 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import me.devnatan.inventoryframework.IFContext;
+import me.devnatan.inventoryframework.IFSlotClickContext;
+import me.devnatan.inventoryframework.IFSlotContext;
+import me.devnatan.inventoryframework.IFSlotMoveContext;
+import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.config.ViewConfig;
 import me.saiintbrisson.minecraft.exception.ContainerException;
 import me.saiintbrisson.minecraft.exception.InitializationException;
@@ -42,6 +47,7 @@ import org.jetbrains.annotations.Nullable;
 @Getter(AccessLevel.PACKAGE)
 @Setter(AccessLevel.PACKAGE)
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
+@ApiStatus.NonExtendable
 public abstract class AbstractView extends AbstractVirtualView {
 
     public static final PipelinePhase OPEN = new PipelinePhase("open");
@@ -75,7 +81,7 @@ public abstract class AbstractView extends AbstractVirtualView {
     private final int columns;
     private final int rows;
     PlatformViewFrame<?, ?, ?> viewFrame;
-    private final Set<ViewContext> contexts = Collections.newSetFromMap(Collections.synchronizedMap(new HashMap<>()));
+    private final Set<IFContext> contexts = Collections.newSetFromMap(Collections.synchronizedMap(new HashMap<>()));
     private final Pipeline<VirtualView> pipeline = new Pipeline<>(INIT, OPEN, RENDER, UPDATE, CLICK, CLOSE);
     private Logger logger;
 
@@ -83,9 +89,9 @@ public abstract class AbstractView extends AbstractVirtualView {
     long[] updateSchedule;
 
     /**
-     * An initialized view is one that has already been registered if there is a ViewFrame or has been
-     * initialized manually. It is not possible to perform certain operations if the view has already
-     * been initialized.
+     * An initialized view is one that has already been registered if there is a ViewFrame or has
+     * been initialized manually. It is not possible to perform certain operations if the view has
+     * already been initialized.
      */
     private boolean initialized;
 
@@ -115,10 +121,25 @@ public abstract class AbstractView extends AbstractVirtualView {
     // TODO provide a more fluent API to set view options
     protected void onInit() {}
 
-    protected void onInit(ViewConfig config) {}
-
-    protected ViewConfig configure() {
-        return null;
+    /**
+     * Called when this view is initialized for the first time.
+     * <p>
+     * This function is used to:
+     *
+     * <li>Determine the patterns of the containers that will be inherited by the contexts generated
+     * from this view;</li>
+     * <li>Apply external features;</li>
+     * <li>Inherit configurations for the configuration of this view;</li>
+     * <li>Create static slots.</li>
+     *
+     * // TODO more docs
+     *
+     * @param config Mutable view configuration.
+     */
+    @ApiStatus.OverrideOnly
+    @Contract(value = "_ -> fail")
+    protected void onInit(ViewConfig config) {
+        throw new IllegalStateException("Init must be implemented");
     }
 
     /**
@@ -140,18 +161,18 @@ public abstract class AbstractView extends AbstractVirtualView {
      *
      * <p>This is where you will define items that will be contained non-persistently in the context.
      *
-     * <p>Using {@link View#slot(int)} here will cause a leak of items in memory or that the item that
-     * was previously defined will be overwritten as the slot item definition method is for use in the
-     * constructor only once. Instead, you should use the context item definition function {@link
-     * ViewContext#slot(int)}.
+     * <p>Using {@link #slot(int)} here will cause a leak of items in memory or that the item
+     * that was previously defined will be overwritten as the slot item definition method is for use
+     * in the constructor only once. Instead, you should use the context item definition function
+     * {@link IFContext#slot(int)}.
      *
      * <p>Handlers call order:
      *
      * <ul>
      *   <li>{@link #onOpen(OpenViewContext)}
      *   <li>this rendering function
-     *   <li>{@link #onUpdate(ViewContext)}
-     *   <li>{@link #onClose(ViewContext)}
+     *   <li>{@link #onUpdate(IFContext)}
+     *   <li>{@link #onClose(IFContext)}
      * </ul>
      *
      * <p>This is a rendering function and can modify the view's container, it's called once.
@@ -159,7 +180,10 @@ public abstract class AbstractView extends AbstractVirtualView {
      * @param context The player view context.
      */
     @ApiStatus.OverrideOnly
-    protected void onRender(@NotNull ViewContext context) {}
+    protected void onRender(@NotNull IFContext context) {}
+
+    @ApiStatus.OverrideOnly
+    protected void onInitialRender(@NotNull IFContext context) {}
 
     /**
      * Called when a slot (even if it's a pseudo slot) is rendered.
@@ -170,7 +194,7 @@ public abstract class AbstractView extends AbstractVirtualView {
      * @param context The slot render context.
      */
     @ApiStatus.Experimental
-    protected void onSlotRender(@NotNull ViewSlotContext context) {}
+    protected void onSlotRender(@NotNull IFSlotContext context) {}
 
     /**
      * Called when the view is updated for a player.
@@ -178,10 +202,9 @@ public abstract class AbstractView extends AbstractVirtualView {
      * <p>This is a rendering function and can modify the view's inventory.
      *
      * @param context The player view context.
-     * @see View#update()
-     * @see ViewContext#update()
+     * @see IFContext#update()
      */
-    protected void onUpdate(@NotNull ViewContext context) {}
+    protected void onUpdate(@NotNull IFContext context) {}
 
     /**
      * Called when the player closes the view's inventory.
@@ -190,30 +213,30 @@ public abstract class AbstractView extends AbstractVirtualView {
      *
      * @param context The player view context.
      */
-    protected void onClose(@NotNull ViewContext context) {}
+    protected void onClose(@NotNull IFContext context) {}
 
     /**
      * Called when a player clicks on the view inventory.
      *
      * <p>This function is called even if the click has been cancelled, you can check this using
-     * {@link ViewSlotContext#isCancelled()}.
+     * {@link IFSlotContext#isCancelled()}.
      *
      * <p>Canceling the context will cancel the click.
      *
      * <p>Handling the inventory in the click handler is not allowed.
      *
      * @param context The player view context.
-     * @deprecated Use {@link #onClick(ViewSlotClickContext)} instead.
+     * @deprecated Use {@link #onClick(IFSlotClickContext)} instead.
      */
     @Deprecated
     @ApiStatus.ScheduledForRemoval(inVersion = "2.5.5")
-    protected void onClick(@NotNull ViewSlotContext context) {}
+    protected void onClick(@NotNull IFSlotContext context) {}
 
     /**
      * Called when an actor clicks on a container while it has a view open.
      *
      * <p>You can know if the click was on entity inventory or view inventory by {@link
-     * ViewSlotContext#isOnEntityContainer()}
+     * IFSlotContext#isOnEntityContainer()}
      *
      * <p>Any function that triggers an {@link #inventoryModificationTriggered() inventory
      * modification} is prohibited from being used in this handler.
@@ -223,20 +246,20 @@ public abstract class AbstractView extends AbstractVirtualView {
      *
      * @param context The click context.
      */
-    protected void onClick(@NotNull ViewSlotClickContext context) {}
+    protected void onClick(@NotNull IFSlotClickContext context) {}
 
     /**
      * Called when the player who clicks outside the view of containers, neither the view's container
      * nor the player's own container.
      *
      * @param context The click context.
-     * @deprecated Use {@link #onClick(ViewSlotContext)} with {@link
-     * ViewSlotClickContext#isOutsideClick()} instead.
+     * @deprecated Use {@link #onClick(IFSlotContext)} with {@link
+     * IFSlotClickContext#isOutsideClick()} instead.
      */
     @SuppressWarnings("DeprecatedIsStillUsed")
     @Deprecated
     @ApiStatus.ScheduledForRemoval(inVersion = "2.5.5")
-    protected void onClickOutside(@NotNull ViewContext context) {}
+    protected void onClickOutside(@NotNull IFContext context) {}
 
     /**
      * Called when a player uses the hot bar key button.
@@ -245,13 +268,13 @@ public abstract class AbstractView extends AbstractVirtualView {
      *
      * @param context      The current view context.
      * @param hotbarButton The interacted hot bar button.
-     * @deprecated Use {@link #onClick(ViewSlotContext)} with {@link
-     * ViewSlotClickContext#isKeyboardClick()} instead.
+     * @deprecated Use {@link #onClick(IFSlotContext)} with {@link
+     * IFSlotClickContext#isKeyboardClick()} instead.
      */
     @SuppressWarnings("DeprecatedIsStillUsed")
     @Deprecated
     @ApiStatus.ScheduledForRemoval(inVersion = "2.5.5")
-    protected void onHotbarInteract(@NotNull ViewContext context, int hotbarButton) {}
+    protected void onHotbarInteract(@NotNull IFContext context, int hotbarButton) {}
 
     /**
      * Called when the player holds an item in the inventory.
@@ -263,7 +286,7 @@ public abstract class AbstractView extends AbstractVirtualView {
      *
      * @param context The player view context.
      */
-    protected void onItemHold(@NotNull ViewSlotContext context) {}
+    protected void onItemHold(@NotNull IFSlotContext context) {}
 
     /**
      * Called when an item is dropped by the player in an inventory (not necessarily the View's
@@ -278,12 +301,12 @@ public abstract class AbstractView extends AbstractVirtualView {
      *   <li>from outside to inside the view (from the player inventory)
      * </ul>
      *
-     * <p>This handler is the counterpart of {@link #onItemHold(ViewSlotContext)}.
+     * <p>This handler is the counterpart of {@link #onItemHold(IFSlotContext)}.
      *
      * @param fromContext The input context of the move.
      * @param toContext   The output context of the move.
      */
-    protected void onItemRelease(@NotNull ViewSlotContext fromContext, @NotNull ViewSlotContext toContext) {}
+    protected void onItemRelease(@NotNull IFSlotContext fromContext, @NotNull IFSlotContext toContext) {}
 
     /**
      * Called when a player moves a view item out of the view's inventory.
@@ -292,19 +315,19 @@ public abstract class AbstractView extends AbstractVirtualView {
      *
      * @param context The player view context.
      */
-    protected void onMoveOut(@NotNull ViewSlotMoveContext context) {}
+    protected void onMoveOut(@NotNull IFSlotMoveContext context) {}
 
     /**
      * Called when a context is resumed.
      * <p>
      * Currently, there is only one way to resume a context, which is through
-     * {@link ViewContext#back()} the "context" parameter being the context that was resumed and
+     * {@link IFContext#back()} the "context" parameter being the context that was resumed and
      * the "subject" the context in which the function was executed.
      *
      * @param context The resumed context.
      * @param subject By what context the context was resumed.
      */
-    protected void onResume(@NotNull ViewContext context, @NotNull ViewContext subject) {}
+    protected void onResume(@NotNull IFContext context, @NotNull IFContext subject) {}
 
     /**
      * {@inheritDoc}
@@ -321,7 +344,7 @@ public abstract class AbstractView extends AbstractVirtualView {
         return logger == null ? PlatformUtils.getFactory().getLogger() : logger;
     }
 
-    final void open(@NotNull Viewer viewer, @NotNull Map<String, Object> data, @Nullable ViewContext initiator) {
+    final void open(@NotNull Viewer viewer, @NotNull Map<String, Object> data, @Nullable IFContext initiator) {
         if (!isInitialized()) throw new IllegalStateException("Cannot open a uninitialized view.");
 
         final OpenViewContext context =
@@ -335,7 +358,7 @@ public abstract class AbstractView extends AbstractVirtualView {
     }
 
     @Override
-    public void render(@NotNull ViewContext context) {
+    public void render(@NotNull IFContext context) {
         if (!isInitialized()) throw new IllegalStateException("Cannot render a uninitialized view.");
 
         runCatching(context, () -> {
@@ -345,7 +368,7 @@ public abstract class AbstractView extends AbstractVirtualView {
     }
 
     @Override
-    public void update(@NotNull ViewContext context) {
+    public void update(@NotNull IFContext context) {
         runCatching(context, () -> {
             onUpdate(context);
             getPipeline().execute(UPDATE, context);
@@ -402,18 +425,18 @@ public abstract class AbstractView extends AbstractVirtualView {
      */
     @Override
     public final void closeUninterruptedly() {
-        getContexts().forEach(ViewContext::close);
+        getContexts().forEach(IFContext::close);
     }
 
-    public final Set<ViewContext> getContexts() {
+    public final Set<IFContext> getContexts() {
         return Collections.unmodifiableSet(contexts);
     }
 
-    final ViewContext getContext(@NotNull Predicate<ViewContext> predicate) {
+    final IFContext getContext(@NotNull Predicate<IFContext> predicate) {
         return contexts.stream().filter(predicate).findFirst().orElse(null);
     }
 
-    public final void registerContext(@NotNull ViewContext context) {
+    public final void registerContext(@NotNull IFContext context) {
         synchronized (contexts) {
             contexts.add(context);
         }
@@ -565,7 +588,7 @@ public abstract class AbstractView extends AbstractVirtualView {
 
     // TODO change 2nd parameter type from Exception to Throwable
     @Override
-    final boolean throwException(ViewContext context, @NotNull Exception exception) throws Exception {
+    final boolean throwException(IFContext context, @NotNull Exception exception) throws Exception {
         if (!super.throwException(context, exception)) return false;
 
         final PlatformViewFrame<?, ?, ?> vf = getViewFrame();
@@ -589,7 +612,7 @@ public abstract class AbstractView extends AbstractVirtualView {
      */
     @Override
     public final void render() {
-        for (final ViewContext context : new ArrayList<>(contexts)) context.render();
+        for (final IFContext context : new ArrayList<>(contexts)) context.render();
     }
 
     /**
@@ -597,14 +620,14 @@ public abstract class AbstractView extends AbstractVirtualView {
      */
     @Override
     public final void update() {
-        for (final ViewContext context : new ArrayList<>(contexts)) context.update();
+        for (final IFContext context : new ArrayList<>(contexts)) context.update();
     }
 
-    final void prepareClose(@NotNull ViewContext context) {
+    final void prepareClose(@NotNull IFContext context) {
         getPipeline().execute(CLOSE, context);
     }
 
-    final void remove(@NotNull ViewContext context, Viewer viewer) {
+    final void remove(@NotNull IFContext context, Viewer viewer) {
         synchronized (context.getViewers()) {
             context.removeViewer(viewer);
 
@@ -615,7 +638,7 @@ public abstract class AbstractView extends AbstractVirtualView {
         remove(context);
     }
 
-    final void remove(@NotNull ViewContext context) {
+    final void remove(@NotNull IFContext context) {
         synchronized (contexts) {
             contexts.remove(context);
         }
@@ -736,8 +759,8 @@ public abstract class AbstractView extends AbstractVirtualView {
     }
 
     @ApiStatus.Internal
-    public final boolean render(ViewContext parent, ViewSlotContext context, ViewItem item, int slot) {
-        final ViewSlotContext renderContext = context == null
+    public final boolean render(IFContext parent, IFSlotContext context, ViewItem item, int slot) {
+        final IFSlotContext renderContext = context == null
                 ? PlatformUtils.getFactory().createSlotContext(slot, item, parent, parent.getContainer(), UNSET, null)
                 : context;
 
@@ -768,7 +791,7 @@ public abstract class AbstractView extends AbstractVirtualView {
      * @param slot    The target slot.
      */
     @ApiStatus.Internal
-    public final void render(@NotNull ViewContext context, @NotNull ViewItem item, int slot) {
+    public final void render(@NotNull IFContext context, @NotNull ViewItem item, int slot) {
         inventoryModificationTriggered();
 
         // the item's slot has not yet been determined because of using the auto-set slot function
@@ -804,7 +827,7 @@ public abstract class AbstractView extends AbstractVirtualView {
      * @param slot    The target slot.
      */
     @ApiStatus.Internal
-    public final void update(@NotNull ViewContext context, ViewItem item, int slot) {
+    public final void update(@NotNull IFContext context, ViewItem item, int slot) {
         if (item.isRemoved()) {
             try {
                 context.getContainer().renderItem(slot, null);
@@ -815,7 +838,7 @@ public abstract class AbstractView extends AbstractVirtualView {
         }
 
         if (item.getUpdateHandler() != null) {
-            final ViewSlotContext updateContext = PlatformUtils.getFactory()
+            final IFSlotContext updateContext = PlatformUtils.getFactory()
                     .createSlotContext(slot, item, context, context.getContainer(), UNSET, null);
 
             runCatching(context, () -> item.getUpdateHandler().handle(updateContext));

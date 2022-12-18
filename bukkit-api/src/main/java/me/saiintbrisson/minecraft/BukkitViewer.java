@@ -3,6 +3,7 @@ package me.saiintbrisson.minecraft;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
+import me.devnatan.inventoryframework.IFContext;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,7 +28,7 @@ class BukkitViewer implements Viewer {
         player.closeInventory();
     }
 
-    public static Player toPlayerOfContext(ViewContext context) {
+    public static Player toPlayerOfContext(IFContext context) {
         final Viewer viewer = context.getViewers().get(0);
         if (viewer == null)
             throw new IllegalStateException("Tried to retrieve context player while it's not valid anymore.");

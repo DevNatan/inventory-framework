@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.function.Consumer;
 import lombok.AccessLevel;
 import lombok.Getter;
+import me.devnatan.inventoryframework.IFContext;
+import me.devnatan.inventoryframework.VirtualView;
 import me.saiintbrisson.minecraft.logging.Logger;
 import me.saiintbrisson.minecraft.logging.NoopLogger;
 import org.jetbrains.annotations.NotNull;
@@ -53,11 +55,11 @@ public abstract class ViewComponentFactory {
 
     @NotNull
     public abstract BaseViewContext createContext(
-            @NotNull AbstractView root, ViewContainer container, Class<? extends ViewContext> backingContext);
+            @NotNull AbstractView root, ViewContainer container, Class<? extends IFContext> backingContext);
 
     @NotNull
     public abstract AbstractViewSlotContext createSlotContext(
-            int slot, ViewItem item, ViewContext parent, ViewContainer container, int index, Object value);
+            int slot, ViewItem item, IFContext parent, ViewContainer container, int index, Object value);
 
     public abstract Object createItem(@Nullable Object stack);
 

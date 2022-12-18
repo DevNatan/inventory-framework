@@ -2,6 +2,8 @@ package me.saiintbrisson.minecraft;
 
 import java.util.Collections;
 import java.util.List;
+import me.devnatan.inventoryframework.pagination.IFPaginatedContext;
+import me.devnatan.inventoryframework.pagination.IFPaginatedSlotContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
@@ -96,7 +98,7 @@ public class TestUtils {
         AbstractPaginatedView<T> root = new AbstractPaginatedView<T>(rows, null, ViewType.CHEST) {
             @Override
             protected void onItemRender(
-                    @NotNull PaginatedViewSlotContext<T> context, @NotNull ViewItem viewItem, @NotNull T value) {
+                    @NotNull IFPaginatedSlotContext<T> context, @NotNull ViewItem viewItem, @NotNull T value) {
                 viewItem.withItem(null);
             }
         };
@@ -104,7 +106,7 @@ public class TestUtils {
         return root;
     }
 
-    static <T> PaginatedViewContext<T> createPaginatedContext(AbstractPaginatedView<T> root, ViewContainer container) {
+    static <T> IFPaginatedContext<T> createPaginatedContext(AbstractPaginatedView<T> root, ViewContainer container) {
         return new BasePaginatedViewContext<>(root, container);
     }
 }

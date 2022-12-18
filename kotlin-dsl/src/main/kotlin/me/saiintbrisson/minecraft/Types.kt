@@ -2,9 +2,14 @@
 
 package me.saiintbrisson.minecraft
 
-internal typealias ContextBlock = @ViewDsl ViewContext.() -> Unit
-internal typealias SlotContextBlock = @ViewDsl ViewSlotContext.() -> Unit
-internal typealias SlotClickContextBlock = @ViewDsl ViewSlotClickContext.() -> Unit
-internal typealias SlotMoveContextBlock = @ViewDsl ViewSlotMoveContext.() -> Unit
-internal typealias ItemReleaseBlock = @ViewDsl ViewSlotContext.(to: ViewSlotContext) -> Unit
-internal typealias HotbarInteractBlock = @ViewDsl ViewSlotContext.(hotbarButton: Int) -> Unit
+import me.devnatan.inventoryframework.IFContext
+import me.devnatan.inventoryframework.IFSlotClickContext
+import me.devnatan.inventoryframework.IFSlotContext
+import me.devnatan.inventoryframework.IFSlotMoveContext
+
+internal typealias ContextBlock = @ViewDsl IFContext.() -> Unit
+internal typealias SlotContextBlock = @ViewDsl IFSlotContext.() -> Unit
+internal typealias SlotClickContextBlock = @ViewDsl IFSlotClickContext.() -> Unit
+internal typealias SlotMoveContextBlock = @ViewDsl IFSlotMoveContext.() -> Unit
+internal typealias ItemReleaseBlock = @ViewDsl IFSlotContext.(to: IFSlotContext) -> Unit
+internal typealias HotbarInteractBlock = @ViewDsl IFSlotContext.(hotbarButton: Int) -> Unit

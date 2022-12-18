@@ -10,6 +10,7 @@ import java.util.function.Function;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import me.devnatan.inventoryframework.pagination.IFPaginatedContext;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -17,12 +18,12 @@ import org.jetbrains.annotations.Nullable;
 @Getter
 @Setter
 @ToString(callSuper = true)
-class BasePaginatedViewContext<T> extends BaseViewContext implements PaginatedViewContext<T> {
+class BasePaginatedViewContext<T> extends BaseViewContext implements IFPaginatedContext<T> {
 
     private int page;
 
     /* inherited from PaginatedVirtualView */
-    private BiConsumer<PaginatedViewContext<T>, ViewItem> previousPageItemFactory, nextPageItemFactory;
+    private BiConsumer<IFPaginatedContext<T>, ViewItem> previousPageItemFactory, nextPageItemFactory;
     private Paginator<T> paginator;
     private int previousPageItemSlot = UNSET;
     private int nextPageItemSlot = UNSET;
@@ -121,14 +122,14 @@ class BasePaginatedViewContext<T> extends BaseViewContext implements PaginatedVi
     }
 
     @Override
-    public void setPreviousPageItem(@NotNull BiConsumer<PaginatedViewContext<T>, ViewItem> previousPageItemFactory) {
+    public void setPreviousPageItem(@NotNull BiConsumer<IFPaginatedContext<T>, ViewItem> previousPageItemFactory) {
         throw new UnsupportedOperationException(String.format(
                 "Navigation items cannot be set in context scope. Use %s on root constructor instead.",
                 "#setPreviousPageItem(BiConsumer<PaginatedViewContext<T>, ViewItem>)"));
     }
 
     @Override
-    public void setNextPageItem(@NotNull BiConsumer<PaginatedViewContext<T>, ViewItem> nextPageItemFactory) {
+    public void setNextPageItem(@NotNull BiConsumer<IFPaginatedContext<T>, ViewItem> nextPageItemFactory) {
         throw new UnsupportedOperationException(String.format(
                 "Navigation items cannot be set in context scope. Use %s on root constructor instead.",
                 "#setNextPageItem(BiConsumer<PaginatedViewContext<T>, ViewItem>)"));
@@ -153,7 +154,7 @@ class BasePaginatedViewContext<T> extends BaseViewContext implements PaginatedVi
 
     @Override
     @ApiStatus.Experimental
-    public final void setSource(@NotNull Function<PaginatedViewContext<T>, List<? extends T>> sourceProvider) {
+    public final void setSource(@NotNull Function<IFPaginatedContext<T>, List<? extends T>> sourceProvider) {
         checkUniquePaginationSource();
         setPaginator(new Paginator<>(sourceProvider));
     }
@@ -161,7 +162,7 @@ class BasePaginatedViewContext<T> extends BaseViewContext implements PaginatedVi
     @Override
     @ApiStatus.Experimental
     public final AsyncPaginationDataState<T> setSourceAsync(
-            @NotNull Function<PaginatedViewContext<T>, CompletableFuture<List<? extends T>>> sourceFuture) {
+            @NotNull Function<IFPaginatedContext<T>, CompletableFuture<List<? extends T>>> sourceFuture) {
         checkUniquePaginationSource();
 
         final AsyncPaginationDataState<T> state = new AsyncPaginationDataState<>(sourceFuture);

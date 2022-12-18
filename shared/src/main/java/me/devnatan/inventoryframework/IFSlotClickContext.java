@@ -1,16 +1,15 @@
-package me.saiintbrisson.minecraft;
+package me.devnatan.inventoryframework;
 
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.jetbrains.annotations.ApiStatus;
+import me.saiintbrisson.minecraft.UnmodifiableViewContext;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * The click context represents an interaction between the actor and the container, even if an item
  * is not present, it stores information about the click, and it's origin.
  *
- * @see ViewSlotContext
+ * @see IFSlotContext
  */
-public interface ViewSlotClickContext extends ViewSlotContext, UnmodifiableViewContext {
+public interface IFSlotClickContext extends IFSlotContext, UnmodifiableViewContext {
 
     /**
      * If the click was using the left mouse button.
@@ -62,17 +61,4 @@ public interface ViewSlotClickContext extends ViewSlotContext, UnmodifiableViewC
      */
     @NotNull
     String getClickIdentifier();
-
-    /**
-     * Returns the event from which this context originated.
-     *
-     * @throws IllegalStateException If this context did not originate from a click.
-     * @deprecated Platform-specific APIs will be removed from framework shared module soon. Cast this
-     *     context to a BukkitClickViewSlotContext implementation instead.
-     * @return The event from which this context originated.
-     */
-    @NotNull
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.5")
-    InventoryClickEvent getClickOrigin();
 }

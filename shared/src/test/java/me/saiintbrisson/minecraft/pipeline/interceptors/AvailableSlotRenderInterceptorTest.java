@@ -11,15 +11,15 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Stack;
+import me.devnatan.inventoryframework.IFContext;
+import me.devnatan.inventoryframework.VirtualView;
 import me.saiintbrisson.minecraft.AbstractView;
 import me.saiintbrisson.minecraft.BaseViewContext;
 import me.saiintbrisson.minecraft.MockComponentFactory;
 import me.saiintbrisson.minecraft.PlatformUtils;
 import me.saiintbrisson.minecraft.ViewContainer;
-import me.saiintbrisson.minecraft.ViewContext;
 import me.saiintbrisson.minecraft.ViewItem;
 import me.saiintbrisson.minecraft.ViewType;
-import me.saiintbrisson.minecraft.VirtualView;
 import me.saiintbrisson.minecraft.exception.ContainerException;
 import me.saiintbrisson.minecraft.exception.SlotFillExceededException;
 import me.saiintbrisson.minecraft.exception.UnresolvedLayoutException;
@@ -36,7 +36,7 @@ public class AvailableSlotRenderInterceptorTest {
         Pipeline<VirtualView> pipeline = new Pipeline<>(RENDER);
         pipeline.intercept(RENDER, new AvailableSlotRenderInterceptor());
 
-        ViewContext context = mock(ViewContext.class);
+        IFContext context = mock(IFContext.class);
         when(context.getLayout()).thenReturn(LAYOUT);
         when(context.isLayoutSignatureChecked()).thenReturn(false);
 
@@ -55,7 +55,7 @@ public class AvailableSlotRenderInterceptorTest {
         Pipeline<VirtualView> pipeline = new Pipeline<>(RENDER);
         pipeline.intercept(RENDER, new AvailableSlotRenderInterceptor());
 
-        ViewContext context = mock(ViewContext.class);
+        IFContext context = mock(IFContext.class);
         when(context.getLayout()).thenReturn(null);
 
         String itemType = "my-item";
@@ -90,7 +90,7 @@ public class AvailableSlotRenderInterceptorTest {
         Pipeline<VirtualView> pipeline = new Pipeline<>(RENDER);
         pipeline.intercept(RENDER, new AvailableSlotRenderInterceptor());
 
-        ViewContext context = mock(ViewContext.class);
+        IFContext context = mock(IFContext.class);
         when(context.getLayout()).thenReturn(null);
 
         AbstractView root = createAbstractViewWithLayoutLength();

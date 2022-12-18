@@ -1,5 +1,7 @@
-package me.saiintbrisson.minecraft;
+package me.devnatan.inventoryframework;
 
+import me.saiintbrisson.minecraft.ItemWrapper;
+import me.saiintbrisson.minecraft.ViewContainer;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -10,10 +12,10 @@ import org.jetbrains.annotations.NotNull;
  * <p>The properties of the current context are the source definitions and the properties named with
  * "getTarget..." are the targets.
  *
- * @see ViewSlotContext
- * @see ViewSlotClickContext
+ * @see IFSlotContext
+ * @see IFSlotClickContext
  */
-public interface ViewSlotMoveContext extends ViewSlotClickContext {
+public interface IFSlotMoveContext extends IFSlotClickContext {
 
     /**
      * The container the target item is in.

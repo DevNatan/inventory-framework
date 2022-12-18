@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
 import java.util.Map;
+import me.devnatan.inventoryframework.IFContext;
 import org.junit.jupiter.api.Test;
 
 public class ContextDataInheritanceTest {
@@ -16,7 +17,7 @@ public class ContextDataInheritanceTest {
         Map<String, Object> data = new HashMap<>();
         data.put(key, "value");
 
-        ViewContext parentContext = mock(BaseViewContext.class);
+        IFContext parentContext = mock(BaseViewContext.class);
         when(parentContext.getData()).thenReturn(data);
 
         AbstractViewSlotContext slotContext =
@@ -30,7 +31,7 @@ public class ContextDataInheritanceTest {
     @Test
     void shouldSlotContextPropagateDataToParent() {
         String key = "inherited";
-        ViewContext parentContext = mock(BaseViewContext.class);
+        IFContext parentContext = mock(BaseViewContext.class);
         AbstractViewSlotContext slotContext =
                 new AbstractViewSlotContext(0, new ViewItem(), parentContext, parentContext.getContainer()) {};
         slotContext.set(key, "value");

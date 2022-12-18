@@ -3,6 +3,8 @@ package me.saiintbrisson.minecraft;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
+import me.devnatan.inventoryframework.IFContext;
+import me.devnatan.inventoryframework.pagination.IFPaginatedContext;
 import me.saiintbrisson.minecraft.feature.FeatureInstaller;
 import me.saiintbrisson.minecraft.internal.Job;
 import org.jetbrains.annotations.ApiStatus;
@@ -133,7 +135,7 @@ public interface PlatformViewFrame<V, P, F extends PlatformViewFrame<V, P, F>> e
             @NotNull Class<T> viewClass,
             @NotNull Viewer viewer,
             Map<String, Object> data,
-            @Nullable ViewContext initiator) {
+            @Nullable IFContext initiator) {
         throw new UnsupportedOperationException(
                 "Direct viewer opening is not supported by this ViewFrame implementation.");
     }
@@ -154,7 +156,7 @@ public interface PlatformViewFrame<V, P, F extends PlatformViewFrame<V, P, F>> e
      * @param previousPageItemFactory The navigation item factory.
      * @return This platform view frame.
      */
-    F withPreviousPageItem(@Nullable BiConsumer<PaginatedViewContext<?>, ViewItem> previousPageItemFactory);
+    F withPreviousPageItem(@Nullable BiConsumer<IFPaginatedContext<?>, ViewItem> previousPageItemFactory);
 
     /**
      * Defines what will be the default forward navigation item for all registered views.
@@ -172,7 +174,7 @@ public interface PlatformViewFrame<V, P, F extends PlatformViewFrame<V, P, F>> e
      * @param nextPageItemFactory The navigation item factory.
      * @return This platform view frame.
      */
-    F withNextPageItem(@Nullable BiConsumer<PaginatedViewContext<?>, ViewItem> nextPageItemFactory);
+    F withNextPageItem(@Nullable BiConsumer<IFPaginatedContext<?>, ViewItem> nextPageItemFactory);
 
     @ApiStatus.Internal
     ViewErrorHandler getErrorHandler();
@@ -190,7 +192,7 @@ public interface PlatformViewFrame<V, P, F extends PlatformViewFrame<V, P, F>> e
      * registered in that view frame.
      * <p>
      * Error handlers can be set per view or per context, and it is possible to optionally
-     * {@link ViewContext#setPropagateErrors(boolean) propagate errors} from the context to the view,
+     * {@link IFContext#setPropagateErrors(boolean) propagate errors} from the context to the view,
      * but even if this option is disabled errors will be propagated to the global error handler.
      *
      * <pre><code>
@@ -247,7 +249,7 @@ public interface PlatformViewFrame<V, P, F extends PlatformViewFrame<V, P, F>> e
      * @see #withPreviousPageItem(BiConsumer)
      */
     @ApiStatus.Internal
-    BiConsumer<PaginatedViewContext<?>, ViewItem> getPreviousPageItem();
+    BiConsumer<IFPaginatedContext<?>, ViewItem> getPreviousPageItem();
 
     /**
      * The factory for the navigation advance item.
@@ -259,41 +261,41 @@ public interface PlatformViewFrame<V, P, F extends PlatformViewFrame<V, P, F>> e
      * @see #withNextPageItem(BiConsumer)
      */
     @ApiStatus.Internal
-    BiConsumer<PaginatedViewContext<?>, ViewItem> getNextPageItem();
+    BiConsumer<IFPaginatedContext<?>, ViewItem> getNextPageItem();
 
     /**
      * @deprecated Use {@link #getPreviousPageItem()} instead.
      */
     @Deprecated
-    Function<PaginatedViewContext<?>, ViewItem> getDefaultPreviousPageItem();
+    Function<IFPaginatedContext<?>, ViewItem> getDefaultPreviousPageItem();
 
     /**
      * @deprecated Use {@link #getNextPageItem()} instead.
      */
     @Deprecated
-    Function<PaginatedViewContext<?>, ViewItem> getDefaultNextPageItem();
+    Function<IFPaginatedContext<?>, ViewItem> getDefaultNextPageItem();
 
     /**
      * @deprecated Use {@link #withPreviousPageItem(BiConsumer)} instead.
      */
     @Deprecated
-    void setDefaultPreviousPageItem(Function<PaginatedViewContext<?>, ViewItem> defaultPreviousPageItemFactory);
+    void setDefaultPreviousPageItem(Function<IFPaginatedContext<?>, ViewItem> defaultPreviousPageItemFactory);
 
     /**
      * @deprecated Use {@link #withNextPageItem(BiConsumer)} (BiConsumer)} instead.
      */
     @Deprecated
-    void setDefaultNextPageItem(Function<PaginatedViewContext<?>, ViewItem> defaultNextPageItemFactory);
+    void setDefaultNextPageItem(Function<IFPaginatedContext<?>, ViewItem> defaultNextPageItemFactory);
 
     /**
      * @deprecated Use {@link #withPreviousPageItem(BiConsumer)} instead.
      */
     @Deprecated
-    F setNavigateBackItemFactory(BiConsumer<PaginatedViewContext<?>, ViewItem> navigateBackItemFactory);
+    F setNavigateBackItemFactory(BiConsumer<IFPaginatedContext<?>, ViewItem> navigateBackItemFactory);
 
     /**
      * @deprecated Use {@link #withNextPageItem(BiConsumer)} instead.
      */
     @Deprecated
-    F setNavigateNextItemFactory(BiConsumer<PaginatedViewContext<?>, ViewItem> navigateNextItemFactory);
+    F setNavigateNextItemFactory(BiConsumer<IFPaginatedContext<?>, ViewItem> navigateNextItemFactory);
 }

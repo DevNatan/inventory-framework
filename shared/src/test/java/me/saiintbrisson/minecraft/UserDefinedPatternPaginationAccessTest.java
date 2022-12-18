@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
 import java.util.List;
+import me.devnatan.inventoryframework.VirtualView;
+import me.devnatan.inventoryframework.pagination.IFPaginatedContext;
 import me.saiintbrisson.minecraft.pipeline.Pipeline;
 import me.saiintbrisson.minecraft.pipeline.interceptors.LayoutPatternApplierInterceptor;
 import me.saiintbrisson.minecraft.pipeline.interceptors.LayoutResolutionInterceptor;
@@ -22,7 +24,7 @@ public class UserDefinedPatternPaginationAccessTest {
     void shouldAccessPaginationOnLayoutFactory() {
         ViewContainer container = TestUtils.createContainer(9, 5);
         AbstractPaginatedView<String> root = TestUtils.createInitializedPaginatedView(5);
-        PaginatedViewContext<String> context = TestUtils.createPaginatedContext(root, container);
+        IFPaginatedContext<String> context = TestUtils.createPaginatedContext(root, container);
         context.setItems(new ViewItem[54]); // initialize since it's set only on onOpen
 
         List<String> source = Arrays.asList("A", "B", "C", "D", "E", "F");
@@ -45,7 +47,7 @@ public class UserDefinedPatternPaginationAccessTest {
     void shouldAccessDynamicPaginationOnLayoutFactory() {
         ViewContainer container = TestUtils.createContainer(9, 5);
         AbstractPaginatedView<String> root = TestUtils.createInitializedPaginatedView(5);
-        PaginatedViewContext<String> context = TestUtils.createPaginatedContext(root, container);
+        IFPaginatedContext<String> context = TestUtils.createPaginatedContext(root, container);
         context.setItems(new ViewItem[54]); // initialize since it's set only on onOpen
 
         List<String> source = Arrays.asList("A", "B", "C", "D", "E", "F");

@@ -11,16 +11,10 @@ subprojects {
 
     repositories {
         mavenCentral()
-        mavenLocal()
-        repositories {
-            maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
-            maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' }
-        }
     }
 
     dependencies {
         annotationProcessor libs.lombok
-        compileOnly libs.spigot.api
         compileOnlyApi libs.jetbrains.annotations
         compileOnly libs.lombok
         testCompileOnly libs.jetbrains.annotations

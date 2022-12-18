@@ -2,6 +2,8 @@
 
 package me.saiintbrisson.minecraft
 
+import me.devnatan.inventoryframework.IFContext
+
 public inline fun ViewBuilder.slot(
     slot: Int,
     block: ViewSlotBuilder.() -> Unit
@@ -32,7 +34,7 @@ public fun ViewBuilder.onOpen(block: OpenViewContext.() -> Unit) {
  *
  * @param block The close context handler.
  */
-public fun ViewBuilder.onClose(block: ViewContext.() -> Unit) {
+public fun ViewBuilder.onClose(block: IFContext.() -> Unit) {
     close = block
 }
 
@@ -76,7 +78,7 @@ public fun ViewBuilder.onUpdate(block: ContextBlock) {
  * Called when an actor clicks on a container while it has a view open.
  *
  * You can know if the click was on entity inventory or view inventory by
- * [ViewSlotContext.isOnEntityContainer]
+ * [IFSlotContext.isOnEntityContainer]
  *
  * Any function that triggers an [inventory modification][AbstractVirtualView.inventoryModificationTriggered]
  * is prohibited from being used in this handler.
