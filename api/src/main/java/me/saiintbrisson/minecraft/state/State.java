@@ -6,10 +6,18 @@ import org.jetbrains.annotations.NotNull;
 @ApiStatus.Experimental
 public interface State<T> {
 
-    @ApiStatus.Internal
-    long getId();
+    /**
+     * Shared internal identifier of this state.
+     * @return This state id.
+     */
+    //    @ApiStatus.Internal
+    //    long getId();
 
-    T get(@NotNull StateOwner holder);
-
-    void set(T newValue, @NotNull StateOwner holder);
+    /**
+     * Gets the current value for this state defined in the specified holder.
+     *
+     * @param holder The state holder.
+     * @return The current state value.
+     */
+    T get(@NotNull StateHolder holder);
 }

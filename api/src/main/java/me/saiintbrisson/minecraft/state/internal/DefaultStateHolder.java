@@ -4,14 +4,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 import me.saiintbrisson.minecraft.state.State;
-import me.saiintbrisson.minecraft.state.StateOwner;
+import me.saiintbrisson.minecraft.state.StateHolder;
 import me.saiintbrisson.minecraft.state.StateValueHolder;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 // TODO allow observer registration
 @ApiStatus.Internal
-public class DefaultStateOwner implements StateOwner {
+public class DefaultStateHolder implements StateHolder {
 
     private static final AtomicLong ids = new AtomicLong(0);
     private final Map<Long, StateValueHolder> statesMap = new HashMap<>();
@@ -33,7 +33,8 @@ public class DefaultStateOwner implements StateOwner {
 
         if (!(state instanceof MutableState)) throw new IllegalStateException("Immutable state");
 
-        retrieve(state.getId()).set(newValue);
+        // TODO retrieve
+        //        retrieve(state.getId()).set(newValue);
         // TODO intercept
     }
 

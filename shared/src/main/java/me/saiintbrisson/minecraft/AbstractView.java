@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import lombok.AccessLevel;
@@ -37,8 +38,10 @@ import me.saiintbrisson.minecraft.pipeline.interceptors.OpenInterceptor;
 import me.saiintbrisson.minecraft.pipeline.interceptors.RenderInterceptor;
 import me.saiintbrisson.minecraft.pipeline.interceptors.ScheduledUpdateInterceptor;
 import me.saiintbrisson.minecraft.pipeline.interceptors.UpdateInterceptor;
-import me.saiintbrisson.minecraft.state.IntState;
+import me.saiintbrisson.minecraft.state.MutableState;
+import me.saiintbrisson.minecraft.state.PaginationState;
 import me.saiintbrisson.minecraft.state.State;
+import me.saiintbrisson.minecraft.state.StateHolder;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -131,7 +134,7 @@ public abstract class AbstractView extends AbstractVirtualView {
      * <li>Apply external features;</li>
      * <li>Inherit configurations for the configuration of this view;</li>
      * <li>Create static slots.</li>
-     *
+     * <p>
      * // TODO more docs
      *
      * @param config Mutable view configuration.
@@ -183,7 +186,7 @@ public abstract class AbstractView extends AbstractVirtualView {
     protected void onRender(@NotNull IFContext context) {}
 
     @ApiStatus.OverrideOnly
-    protected void onInitialRender(@NotNull IFContext context) {}
+    protected void onFirstRender(@NotNull IFContext context) {}
 
     /**
      * Called when a slot (even if it's a pseudo slot) is rendered.
@@ -1002,11 +1005,41 @@ public abstract class AbstractView extends AbstractVirtualView {
         getContexts().forEach(context -> context.emit(event));
     }
 
-    public <T> State<T> state(T initialValue) {
+    // TODO impls
+    public <T> MutableState<T> mutableState(T initialValue) {
         throw new UnsupportedOperationException();
     }
 
-    public IntState state(int initialValue) {
+    public <T> State<T> computedState(@NotNull Supplier<T> value) {
         throw new UnsupportedOperationException();
+    }
+
+    public <T extends StateHolder, R> MutableState<R> lazyState(@NotNull Function<T, R> factory) {
+        throw new UnsupportedOperationException();
+    }
+
+    public <T> PaginationState<T> paginationState() {
+        throw new UnsupportedOperationException();
+    }
+
+    public <T> PaginationState<T> paginationState(Supplier<List<T>> initialValue) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * A {@link #lazyState(Function) lazy state} whose value is always computed from the initial
+     * data set by its {@link StateHolder}.
+     * <p>
+     * When the holder is a {@link OpenViewContext}, the initial value will be the value defined
+     * in the initial opening data of the container. This state is specifically set for backwards
+     * compatibility with the old way of applying data to a context before or during container open.
+     *
+     * @param key The initial data identifier.
+     * @param <T> The initial data value type.
+     * @return A state computed with an initial opening data value.
+     */
+    @SuppressWarnings("unchecked")
+    public <T> State<T> initialState(@NotNull String key) {
+        return lazyState((IFContext context) -> (T) context.getData().get(key));
     }
 }

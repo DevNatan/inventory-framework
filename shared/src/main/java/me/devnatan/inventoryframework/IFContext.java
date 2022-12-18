@@ -12,12 +12,13 @@ import me.saiintbrisson.minecraft.ViewItem;
 import me.saiintbrisson.minecraft.Viewer;
 import me.saiintbrisson.minecraft.exception.InvalidatedContextException;
 import me.saiintbrisson.minecraft.exception.UnknownReferenceException;
+import me.saiintbrisson.minecraft.state.StateHolder;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnknownNullability;
 
-public interface IFContext extends VirtualView {
+public interface IFContext extends VirtualView, StateHolder {
 
     @ApiStatus.Internal
     Map<String, Object> getData();
