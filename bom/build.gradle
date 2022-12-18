@@ -5,10 +5,11 @@ plugins {
 apply from: '../publish.gradle'
 
 dependencies {
-    compileOnlyApi project(':shared')
-    compileOnlyApi project(':bukkit-api')
-    compileOnlyApi project(':feature-move-io')
-    compileOnlyApi project(':kotlin-dsl')
+    compileOnlyApi projects.api
+    compileOnlyApi projects.shared
+    compileOnlyApi projects.bukkitApi
+    compileOnlyApi projects.featureMoveIo
+    compileOnlyApi projects.kotlinDsl
 }
 
 jar {
