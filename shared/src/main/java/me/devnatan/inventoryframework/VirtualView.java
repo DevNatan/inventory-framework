@@ -15,8 +15,6 @@ import me.saiintbrisson.minecraft.ViewType;
 import me.saiintbrisson.minecraft.event.EventListener;
 import me.saiintbrisson.minecraft.event.EventSubscription;
 import me.saiintbrisson.minecraft.exception.InventoryModificationException;
-import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -429,87 +427,6 @@ public interface VirtualView {
     @ApiStatus.Experimental
     @NotNull
     ViewItem availableSlot(Object fallbackItem);
-
-    /**
-     * Creates a new item instance.
-     *
-     * <p>This is just here for backwards compatibility.
-     *
-     * @return The newly created item instance.
-     * @deprecated Mutable item instances will be provided and should no longer be created.
-     */
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.5")
-    ViewItem item();
-
-    /**
-     * Creates a new item instance with a fallback item.
-     *
-     * <p>This is just here for backwards compatibility.
-     *
-     * @param item The fallback item.
-     * @return The newly created item instance.
-     * @deprecated Mutable item instances will be provided and should no longer be created.
-     */
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.5")
-    ViewItem item(@NotNull ItemStack item);
-
-    /**
-     * Creates a new item instance with a fallback item.
-     *
-     * <p>This is just here for backwards compatibility.
-     *
-     * @param material The fallback item material.
-     * @return The newly created item instance.
-     * @deprecated Mutable item instances will be provided and should no longer be created.
-     */
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.5")
-    ViewItem item(@NotNull Material material);
-
-    /**
-     * Creates a new item instance with a fallback item.
-     *
-     * <p>This is just here for backwards compatibility.
-     *
-     * @param material   The fallback item material.
-     * @param durability The fallback item durability.
-     * @return The newly created item instance.
-     * @deprecated Mutable item instances will be provided and should no longer be created.
-     */
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.5")
-    ViewItem item(@NotNull Material material, short durability);
-
-    /**
-     * Creates a new item instance with a fallback item.
-     *
-     * <p>This is just here for backwards compatibility.
-     *
-     * @param material The fallback item material.
-     * @param amount   The fallback item amount.
-     * @return The newly created item instance.
-     * @deprecated Mutable item instances will be provided and should no longer be created.
-     */
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.5")
-    ViewItem item(@NotNull Material material, int amount);
-
-    /**
-     * Creates a new item instance with a fallback item.
-     *
-     * <p>This is just here for backwards compatibility.
-     *
-     * @param material   The fallback item material.
-     * @param amount     The fallback item amount.
-     * @param durability The fallback item durability.
-     * @return The newly created item instance.
-     * @deprecated Mutable item instances will be provided and should no longer be created.
-     */
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.5")
-    ViewItem item(@NotNull Material material, int amount, short durability);
 
     /**
      * Registers the given item in the specified slot.

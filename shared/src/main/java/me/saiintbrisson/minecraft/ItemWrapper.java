@@ -3,7 +3,6 @@ package me.saiintbrisson.minecraft;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.ToString;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -26,9 +25,9 @@ public final class ItemWrapper {
      *
      * @return A Bukkit ItemStack.
      */
-    public ItemStack asBukkitItem() {
-        return value == null ? null : (ItemStack) value;
-    }
+    //    public ItemStack asBukkitItem() {
+    //        return value == null ? null : (ItemStack) value;
+    //    }
 
     /**
      * Checks if this wrapper is empty.
@@ -47,8 +46,9 @@ public final class ItemWrapper {
     private void checkValueType() throws IllegalStateException {
         if (value == null) return;
 
-        if (!(value instanceof ItemStack))
-            throw new IllegalStateException(String.format(
-                    "Input not supported by item wrapper: %s", value.getClass().getName()));
+        // TODO move this to platform api
+        //        if (!(value instanceof ItemStack))
+        //            throw new IllegalStateException(String.format(
+        //                    "Input not supported by item wrapper: %s", value.getClass().getName()));
     }
 }

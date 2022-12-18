@@ -12,7 +12,6 @@ import me.saiintbrisson.minecraft.ViewItem;
 import me.saiintbrisson.minecraft.Viewer;
 import me.saiintbrisson.minecraft.exception.InvalidatedContextException;
 import me.saiintbrisson.minecraft.exception.UnknownReferenceException;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -215,16 +214,6 @@ public interface IFContext extends VirtualView {
      */
     @Override
     <T> IFPaginatedContext<T> paginated();
-
-    /**
-     * The player tied to this context.
-     *
-     * <p>This is just here for backwards compatibility.
-     *
-     * @return The player tied to this context.
-     */
-    @NotNull
-    Player getPlayer();
 
     void open(@NotNull Class<? extends AbstractView> viewClass);
 

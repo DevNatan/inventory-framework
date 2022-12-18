@@ -17,8 +17,6 @@ import me.devnatan.inventoryframework.VirtualView;
 import me.saiintbrisson.minecraft.event.EventBus;
 import me.saiintbrisson.minecraft.event.EventListener;
 import me.saiintbrisson.minecraft.event.EventSubscription;
-import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -89,66 +87,6 @@ public abstract class AbstractVirtualView implements VirtualView {
     @Override
     public final int getLastSlot() {
         return items.length - 1;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.5")
-    public final ViewItem item() {
-        return new ViewItem();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.5")
-    public final ViewItem item(@NotNull ItemStack item) {
-        return new ViewItem().withItem(item);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.5")
-    public final ViewItem item(@NotNull Material material) {
-        return new ViewItem().withItem(new ItemStack(material));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.5")
-    public final ViewItem item(@NotNull Material material, int amount) {
-        return new ViewItem().withItem(new ItemStack(material, amount));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.5")
-    public final ViewItem item(@NotNull Material material, short durability) {
-        return new ViewItem().withItem(new ItemStack(material, 1, durability));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.5")
-    public final ViewItem item(@NotNull Material material, int amount, short durability) {
-        return new ViewItem().withItem(new ItemStack(material, amount, durability));
     }
 
     /**

@@ -1,8 +1,6 @@
 package me.devnatan.inventoryframework;
 
 import me.saiintbrisson.minecraft.UnmodifiableViewContext;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -63,17 +61,4 @@ public interface IFSlotClickContext extends IFSlotContext, UnmodifiableViewConte
      */
     @NotNull
     String getClickIdentifier();
-
-    /**
-     * Returns the event from which this context originated.
-     *
-     * @throws IllegalStateException If this context did not originate from a click.
-     * @deprecated Platform-specific APIs will be removed from framework shared module soon. Cast this
-     *     context to a BukkitClickViewSlotContext implementation instead.
-     * @return The event from which this context originated.
-     */
-    @NotNull
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.5")
-    InventoryClickEvent getClickOrigin();
 }

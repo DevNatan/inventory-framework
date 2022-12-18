@@ -10,7 +10,6 @@ import me.saiintbrisson.minecraft.AbstractVirtualView;
 import me.saiintbrisson.minecraft.ItemWrapper;
 import me.saiintbrisson.minecraft.ViewItem;
 import me.saiintbrisson.minecraft.exception.InventoryModificationException;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -66,19 +65,6 @@ public interface IFSlotContext extends IFContext {
      * <p>This method is a shortcut to {@link AbstractView#update(IFContext, ViewItem, int)}.
      */
     void updateSlot();
-
-    /**
-     * The item tied to this context.
-     *
-     * <p>For example, if it is a click context it will be the item that was clicked. If it is a
-     * rendering context it will be the item being rendered.
-     *
-     * @return The item tied to this context.
-     * @deprecated Use {@link #getItemWrapper()} instead.
-     */
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.5")
-    ItemStack getItem();
 
     /**
      * Returns the wrapper containing the item related to this context.

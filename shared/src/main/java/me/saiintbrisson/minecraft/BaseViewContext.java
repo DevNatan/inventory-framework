@@ -17,7 +17,6 @@ import me.devnatan.inventoryframework.IFSlotContext;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.pagination.IFPaginatedContext;
 import me.saiintbrisson.minecraft.exception.UnknownReferenceException;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -233,13 +232,6 @@ public class BaseViewContext extends AbstractVirtualView implements IFContext {
         for (final Viewer viewer : getViewers())
             platformViewFrame.open(
                     viewClass, viewer, data, this instanceof IFSlotContext ? ((IFSlotContext) this).getParent() : this);
-    }
-
-    @Override
-    public @NotNull Player getPlayer() {
-        throw new UnsupportedOperationException(
-                "This function should not be used on your platform, it is only available for reasons"
-                        + " of backward compatibility with the Bukkit platform.");
     }
 
     @Override

@@ -89,9 +89,9 @@ public abstract class AbstractView extends AbstractVirtualView {
     long[] updateSchedule;
 
     /**
-     * An initialized view is one that has already been registered if there is a ViewFrame or has been
-     * initialized manually. It is not possible to perform certain operations if the view has already
-     * been initialized.
+     * An initialized view is one that has already been registered if there is a ViewFrame or has
+     * been initialized manually. It is not possible to perform certain operations if the view has
+     * already been initialized.
      */
     private boolean initialized;
 
@@ -121,11 +121,25 @@ public abstract class AbstractView extends AbstractVirtualView {
     // TODO provide a more fluent API to set view options
     protected void onInit() {}
 
+    /**
+     * Called when this view is initialized for the first time.
+     * <p>
+     * This function is used to:
+     *
+     * <li>Determine the patterns of the containers that will be inherited by the contexts generated
+     * from this view;</li>
+     * <li>Apply external features;</li>
+     * <li>Inherit configurations for the configuration of this view;</li>
+     * <li>Create static slots.</li>
+     *
+     * // TODO more docs
+     *
+     * @param config Mutable view configuration.
+     */
     @ApiStatus.OverrideOnly
-    protected void onInit(ViewConfig config) {}
-
-    protected ViewConfig configure() {
-        return null;
+    @Contract(value = "_ -> fail")
+    protected void onInit(ViewConfig config) {
+        throw new IllegalStateException("Init must be implemented");
     }
 
     /**
@@ -147,10 +161,10 @@ public abstract class AbstractView extends AbstractVirtualView {
      *
      * <p>This is where you will define items that will be contained non-persistently in the context.
      *
-     * <p>Using {@link View#slot(int)} here will cause a leak of items in memory or that the item that
-     * was previously defined will be overwritten as the slot item definition method is for use in the
-     * constructor only once. Instead, you should use the context item definition function {@link
-     * IFContext#slot(int)}.
+     * <p>Using {@link #slot(int)} here will cause a leak of items in memory or that the item
+     * that was previously defined will be overwritten as the slot item definition method is for use
+     * in the constructor only once. Instead, you should use the context item definition function
+     * {@link IFContext#slot(int)}.
      *
      * <p>Handlers call order:
      *
@@ -188,7 +202,6 @@ public abstract class AbstractView extends AbstractVirtualView {
      * <p>This is a rendering function and can modify the view's inventory.
      *
      * @param context The player view context.
-     * @see View#update()
      * @see IFContext#update()
      */
     protected void onUpdate(@NotNull IFContext context) {}

@@ -4,9 +4,14 @@ plugins {
     alias(libs.plugins.shadowjar)
 }
 
+repositories {
+    maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
+}
+
 dependencies {
-    implementation(project(':shared'))
-    implementation(project(':bukkit-api'))
+    compileOnly libs.spigot.api
+    implementation projects.shared
+    implementation projects.bukkitApi
 }
 
 shadowJar {

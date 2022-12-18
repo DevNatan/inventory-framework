@@ -15,7 +15,6 @@ import lombok.ToString;
 import me.devnatan.inventoryframework.IFContext;
 import me.devnatan.inventoryframework.IFSlotContext;
 import me.devnatan.inventoryframework.pagination.IFPaginatedContext;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -112,11 +111,11 @@ public abstract class AbstractViewSlotContext extends BaseViewContext implements
         this.changed = changed;
     }
 
-    @Override
-    @Deprecated
-    public final ItemStack getItem() {
-        return (ItemStack) getItemWrapper().getValue();
-    }
+    //    @Override
+    //    @Deprecated
+    //    public final ItemStack getItem() {
+    //        return (ItemStack) getItemWrapper().getValue();
+    //    }
 
     @Override
     public final @NotNull ItemWrapper getItemWrapper() {
