@@ -1,11 +1,11 @@
-package me.saiintbrisson.minecraft.state.internal;
+package me.devnatan.inventoryframework.state.internal;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
-import me.saiintbrisson.minecraft.state.State;
-import me.saiintbrisson.minecraft.state.StateHolder;
-import me.saiintbrisson.minecraft.state.StateValueHolder;
+import me.devnatan.inventoryframework.state.State;
+import me.devnatan.inventoryframework.state.StateHolder;
+import me.devnatan.inventoryframework.state.StateValueHolder;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 

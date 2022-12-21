@@ -1,4 +1,4 @@
-package me.saiintbrisson.minecraft.internal.platform;
+package me.devnatan.inventoryframework.internal.platform;
 
 import java.util.List;
 import me.saiintbrisson.minecraft.ViewType;

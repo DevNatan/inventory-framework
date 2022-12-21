@@ -1,4 +1,4 @@
-package me.saiintbrisson.minecraft.internal;
+package me.devnatan.inventoryframework.internal;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

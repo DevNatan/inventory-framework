@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import me.devnatan.inventoryframework.IFContext;
-import me.saiintbrisson.minecraft.internal.platform.ViewContainer;
+import me.devnatan.inventoryframework.internal.platform.ViewContainer;
 import org.jetbrains.annotations.NotNull;
 
 /**

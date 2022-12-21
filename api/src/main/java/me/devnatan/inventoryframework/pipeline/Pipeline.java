@@ -1,4 +1,4 @@
-package me.saiintbrisson.minecraft.pipeline;
+package me.devnatan.inventoryframework.pipeline;
 
 import java.util.ArrayList;
 import java.util.Arrays;

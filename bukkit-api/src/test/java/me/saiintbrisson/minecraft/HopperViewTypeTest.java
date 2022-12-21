@@ -3,9 +3,9 @@ package me.saiintbrisson.minecraft;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import me.devnatan.inventoryframework.internal.platform.ViewContainer;
 import me.saiintbrisson.minecraft.bukkit.FakeInventory;
 import me.saiintbrisson.minecraft.bukkit.FakeItemStack;
-import me.saiintbrisson.minecraft.internal.platform.ViewContainer;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemStack;

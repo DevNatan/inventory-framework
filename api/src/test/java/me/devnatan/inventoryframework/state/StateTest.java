@@ -1,8 +1,8 @@
-package me.saiintbrisson.minecraft.state;
+package me.devnatan.inventoryframework.state;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import me.saiintbrisson.minecraft.state.internal.DefaultStateHolder;
+import me.devnatan.inventoryframework.state.internal.DefaultStateHolder;
 import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("unchecked")

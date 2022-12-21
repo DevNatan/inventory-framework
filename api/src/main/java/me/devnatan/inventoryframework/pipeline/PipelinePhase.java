@@ -1,4 +1,4 @@
-package me.saiintbrisson.minecraft.pipeline;
+package me.devnatan.inventoryframework.pipeline;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

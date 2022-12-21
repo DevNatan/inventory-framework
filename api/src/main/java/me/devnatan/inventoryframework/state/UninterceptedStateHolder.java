@@ -1,6 +1,6 @@
-package me.saiintbrisson.minecraft.state;
+package me.devnatan.inventoryframework.state;
 
-import me.saiintbrisson.minecraft.state.internal.DefaultStateHolder;
+import me.devnatan.inventoryframework.state.internal.DefaultStateHolder;
 import org.jetbrains.annotations.NotNull;
 
 abstract class UninterceptedStateHolder extends DefaultStateHolder {

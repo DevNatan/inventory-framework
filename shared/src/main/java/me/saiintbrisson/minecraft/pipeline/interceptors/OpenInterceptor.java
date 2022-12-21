@@ -4,16 +4,16 @@ import static me.saiintbrisson.minecraft.IFUtils.elvis;
 
 import java.util.ArrayList;
 import me.devnatan.inventoryframework.VirtualView;
+import me.devnatan.inventoryframework.internal.platform.ViewContainer;
+import me.devnatan.inventoryframework.internal.platform.Viewer;
+import me.devnatan.inventoryframework.pipeline.PipelineContext;
+import me.devnatan.inventoryframework.pipeline.PipelineInterceptor;
 import me.saiintbrisson.minecraft.AbstractView;
 import me.saiintbrisson.minecraft.BaseViewContext;
 import me.saiintbrisson.minecraft.OpenViewContext;
 import me.saiintbrisson.minecraft.PlatformUtils;
 import me.saiintbrisson.minecraft.ViewItem;
 import me.saiintbrisson.minecraft.ViewType;
-import me.saiintbrisson.minecraft.internal.platform.ViewContainer;
-import me.saiintbrisson.minecraft.internal.platform.Viewer;
-import me.saiintbrisson.minecraft.pipeline.PipelineContext;
-import me.saiintbrisson.minecraft.pipeline.PipelineInterceptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 

@@ -1,4 +1,4 @@
-package me.saiintbrisson.minecraft.state;
+package me.devnatan.inventoryframework.state;
 
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;

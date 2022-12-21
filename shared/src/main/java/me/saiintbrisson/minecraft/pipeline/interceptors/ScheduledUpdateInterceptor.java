@@ -5,9 +5,9 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import me.devnatan.inventoryframework.IFContext;
-import me.saiintbrisson.minecraft.internal.Job;
-import me.saiintbrisson.minecraft.pipeline.PipelineContext;
-import me.saiintbrisson.minecraft.pipeline.PipelineInterceptor;
+import me.devnatan.inventoryframework.internal.Job;
+import me.devnatan.inventoryframework.pipeline.PipelineContext;
+import me.devnatan.inventoryframework.pipeline.PipelineInterceptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 

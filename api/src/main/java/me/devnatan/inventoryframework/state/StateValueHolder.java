@@ -1,4 +1,4 @@
-package me.saiintbrisson.minecraft.state;
+package me.devnatan.inventoryframework.state;
 
 public interface StateValueHolder {
 

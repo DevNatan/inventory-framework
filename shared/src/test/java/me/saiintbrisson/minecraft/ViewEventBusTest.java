@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import me.devnatan.inventoryframework.IFContext;
+import me.saiintbrisson.minecraft.event.Event;
 import org.junit.jupiter.api.Test;
 
 public class ViewEventBusTest {
@@ -21,7 +22,7 @@ public class ViewEventBusTest {
 
     @Test
     void emitTyped() {
-        class MyEvent {}
+        class MyEvent implements Event {}
         AbstractView view = new AbstractView() {};
         AtomicBoolean called = new AtomicBoolean();
         view.on(MyEvent.class, $ -> called.set(true));
@@ -31,7 +32,7 @@ public class ViewEventBusTest {
 
     @Test
     void emitToAllContexts() {
-        class MyEvent {}
+        class MyEvent implements Event {}
         AbstractView view = new AbstractView() {};
         IFContext context1 = new BaseViewContext(view, null);
         IFContext context2 = new BaseViewContext(view, null);

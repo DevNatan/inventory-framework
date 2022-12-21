@@ -10,8 +10,8 @@ import java.util.concurrent.CompletionException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import me.devnatan.inventoryframework.VirtualView;
+import me.devnatan.inventoryframework.pipeline.Pipeline;
 import me.saiintbrisson.minecraft.OpenViewContext;
-import me.saiintbrisson.minecraft.pipeline.Pipeline;
 import org.junit.jupiter.api.Test;
 
 // TODO container properties inheritance

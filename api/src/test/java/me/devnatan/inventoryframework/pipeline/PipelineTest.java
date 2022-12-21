@@ -1,4 +1,4 @@
-package me.saiintbrisson.minecraft.pipeline;
+package me.devnatan.inventoryframework.pipeline;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;

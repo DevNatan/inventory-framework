@@ -1,12 +1,12 @@
-package me.saiintbrisson.minecraft.state.internal;
+package me.devnatan.inventoryframework.state.internal;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import me.saiintbrisson.minecraft.state.StateHolder;
+import me.devnatan.inventoryframework.state.StateHolder;
 import org.jetbrains.annotations.NotNull;
 
 @RequiredArgsConstructor
-final class MutableState<T> implements me.saiintbrisson.minecraft.state.MutableState<T> {
+final class MutableState<T> implements me.devnatan.inventoryframework.state.MutableState<T> {
 
     @Getter
     private final long id;

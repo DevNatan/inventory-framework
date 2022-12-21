@@ -1,9 +1,9 @@
-package me.saiintbrisson.minecraft.state.internal;
+package me.devnatan.inventoryframework.state.internal;
 
 import lombok.Getter;
-import me.saiintbrisson.minecraft.state.State;
-import me.saiintbrisson.minecraft.state.StateHolder;
-import me.saiintbrisson.minecraft.state.StateValueHolder;
+import me.devnatan.inventoryframework.state.State;
+import me.devnatan.inventoryframework.state.StateHolder;
+import me.devnatan.inventoryframework.state.StateValueHolder;
 import org.jetbrains.annotations.NotNull;
 
 final class InternalMutableStateValueHolder implements StateValueHolder {
