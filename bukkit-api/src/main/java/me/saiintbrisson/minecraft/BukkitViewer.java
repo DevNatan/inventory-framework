@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import me.devnatan.inventoryframework.IFContext;
+import me.saiintbrisson.minecraft.internal.platform.ViewContainer;
+import me.saiintbrisson.minecraft.internal.platform.Viewer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 

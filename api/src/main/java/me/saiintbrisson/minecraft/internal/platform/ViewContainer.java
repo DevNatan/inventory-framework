@@ -1,6 +1,7 @@
-package me.saiintbrisson.minecraft;
+package me.saiintbrisson.minecraft.internal.platform;
 
 import java.util.List;
+import me.saiintbrisson.minecraft.ViewType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;

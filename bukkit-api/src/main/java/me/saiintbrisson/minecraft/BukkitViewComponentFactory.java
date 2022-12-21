@@ -9,6 +9,8 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import me.devnatan.inventoryframework.IFContext;
 import me.devnatan.inventoryframework.VirtualView;
+import me.saiintbrisson.minecraft.internal.platform.ViewContainer;
+import me.saiintbrisson.minecraft.internal.platform.Viewer;
 import me.saiintbrisson.minecraft.pipeline.Pipeline;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;

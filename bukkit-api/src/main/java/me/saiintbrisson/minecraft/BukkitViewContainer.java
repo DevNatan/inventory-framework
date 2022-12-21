@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import me.saiintbrisson.minecraft.internal.platform.ViewContainer;
+import me.saiintbrisson.minecraft.internal.platform.Viewer;
 import me.saiintbrisson.minecraft.thirdparty.InventoryUpdate;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;

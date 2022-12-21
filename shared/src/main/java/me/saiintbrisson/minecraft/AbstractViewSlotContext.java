@@ -15,6 +15,8 @@ import lombok.ToString;
 import me.devnatan.inventoryframework.IFContext;
 import me.devnatan.inventoryframework.IFSlotContext;
 import me.devnatan.inventoryframework.pagination.IFPaginatedContext;
+import me.saiintbrisson.minecraft.internal.platform.ViewContainer;
+import me.saiintbrisson.minecraft.internal.platform.Viewer;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

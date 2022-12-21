@@ -7,6 +7,7 @@ import me.devnatan.inventoryframework.IFContext;
 import me.devnatan.inventoryframework.pagination.IFPaginatedContext;
 import me.saiintbrisson.minecraft.feature.FeatureInstaller;
 import me.saiintbrisson.minecraft.internal.Job;
+import me.saiintbrisson.minecraft.internal.platform.Viewer;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

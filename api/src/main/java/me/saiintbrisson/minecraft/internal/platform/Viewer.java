@@ -1,4 +1,4 @@
-package me.saiintbrisson.minecraft;
+package me.saiintbrisson.minecraft.internal.platform;
 
 import org.jetbrains.annotations.NotNull;
 

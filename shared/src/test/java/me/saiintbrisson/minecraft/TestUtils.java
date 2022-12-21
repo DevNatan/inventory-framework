@@ -4,6 +4,8 @@ import java.util.Collections;
 import java.util.List;
 import me.devnatan.inventoryframework.pagination.IFPaginatedContext;
 import me.devnatan.inventoryframework.pagination.IFPaginatedSlotContext;
+import me.saiintbrisson.minecraft.internal.platform.ViewContainer;
+import me.saiintbrisson.minecraft.internal.platform.Viewer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;

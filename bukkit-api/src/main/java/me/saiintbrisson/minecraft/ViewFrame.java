@@ -19,6 +19,7 @@ import me.devnatan.inventoryframework.pagination.IFPaginatedContext;
 import me.saiintbrisson.minecraft.feature.Feature;
 import me.saiintbrisson.minecraft.feature.FeatureInstaller;
 import me.saiintbrisson.minecraft.internal.Job;
+import me.saiintbrisson.minecraft.internal.platform.Viewer;
 import me.saiintbrisson.minecraft.logging.BukkitLogger;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.entity.Player;

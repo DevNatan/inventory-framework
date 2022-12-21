@@ -4,6 +4,8 @@ import static org.mockito.Mockito.mock;
 
 import me.devnatan.inventoryframework.IFContext;
 import me.devnatan.inventoryframework.VirtualView;
+import me.saiintbrisson.minecraft.internal.platform.ViewContainer;
+import me.saiintbrisson.minecraft.internal.platform.Viewer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

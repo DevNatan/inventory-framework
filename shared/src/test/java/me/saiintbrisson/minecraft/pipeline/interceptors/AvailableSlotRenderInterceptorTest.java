@@ -17,12 +17,12 @@ import me.saiintbrisson.minecraft.AbstractView;
 import me.saiintbrisson.minecraft.BaseViewContext;
 import me.saiintbrisson.minecraft.MockComponentFactory;
 import me.saiintbrisson.minecraft.PlatformUtils;
-import me.saiintbrisson.minecraft.ViewContainer;
 import me.saiintbrisson.minecraft.ViewItem;
 import me.saiintbrisson.minecraft.ViewType;
 import me.saiintbrisson.minecraft.exception.ContainerException;
 import me.saiintbrisson.minecraft.exception.SlotFillExceededException;
 import me.saiintbrisson.minecraft.exception.UnresolvedLayoutException;
+import me.saiintbrisson.minecraft.internal.platform.ViewContainer;
 import me.saiintbrisson.minecraft.pipeline.Pipeline;
 import org.junit.jupiter.api.Test;
 

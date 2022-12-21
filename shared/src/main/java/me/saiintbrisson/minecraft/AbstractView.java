@@ -28,6 +28,7 @@ import me.devnatan.inventoryframework.config.ViewConfig;
 import me.saiintbrisson.minecraft.exception.ContainerException;
 import me.saiintbrisson.minecraft.exception.InitializationException;
 import me.saiintbrisson.minecraft.internal.Job;
+import me.saiintbrisson.minecraft.internal.platform.Viewer;
 import me.saiintbrisson.minecraft.logging.Logger;
 import me.saiintbrisson.minecraft.pipeline.Pipeline;
 import me.saiintbrisson.minecraft.pipeline.PipelinePhase;

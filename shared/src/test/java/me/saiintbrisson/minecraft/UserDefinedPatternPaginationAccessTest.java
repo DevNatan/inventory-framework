@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.pagination.IFPaginatedContext;
+import me.saiintbrisson.minecraft.internal.platform.ViewContainer;
 import me.saiintbrisson.minecraft.pipeline.Pipeline;
 import me.saiintbrisson.minecraft.pipeline.interceptors.LayoutPatternApplierInterceptor;
 import me.saiintbrisson.minecraft.pipeline.interceptors.LayoutResolutionInterceptor;

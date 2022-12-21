@@ -13,9 +13,9 @@ import me.saiintbrisson.minecraft.PlatformViewFrame;
 import me.saiintbrisson.minecraft.ViewComponentFactory;
 import me.saiintbrisson.minecraft.ViewErrorHandler;
 import me.saiintbrisson.minecraft.ViewItem;
-import me.saiintbrisson.minecraft.Viewer;
 import me.saiintbrisson.minecraft.feature.Feature;
 import me.saiintbrisson.minecraft.internal.Job;
+import me.saiintbrisson.minecraft.internal.platform.Viewer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

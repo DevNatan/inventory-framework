@@ -5,6 +5,7 @@ import lombok.Setter;
 import lombok.ToString;
 import me.devnatan.inventoryframework.IFContext;
 import me.devnatan.inventoryframework.IFSlotClickContext;
+import me.saiintbrisson.minecraft.internal.platform.ViewContainer;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;

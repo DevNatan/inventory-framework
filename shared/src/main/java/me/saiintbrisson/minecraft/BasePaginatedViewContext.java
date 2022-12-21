@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import me.devnatan.inventoryframework.pagination.IFPaginatedContext;
+import me.saiintbrisson.minecraft.internal.platform.ViewContainer;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

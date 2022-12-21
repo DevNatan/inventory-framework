@@ -17,6 +17,8 @@ import me.devnatan.inventoryframework.IFSlotContext;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.pagination.IFPaginatedContext;
 import me.saiintbrisson.minecraft.exception.UnknownReferenceException;
+import me.saiintbrisson.minecraft.internal.platform.ViewContainer;
+import me.saiintbrisson.minecraft.internal.platform.Viewer;
 import me.saiintbrisson.minecraft.state.State;
 import me.saiintbrisson.minecraft.state.StateValueHolder;
 import org.jetbrains.annotations.ApiStatus;

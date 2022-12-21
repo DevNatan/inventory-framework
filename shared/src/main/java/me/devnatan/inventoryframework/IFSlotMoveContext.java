@@ -1,7 +1,7 @@
 package me.devnatan.inventoryframework;
 
 import me.saiintbrisson.minecraft.ItemWrapper;
-import me.saiintbrisson.minecraft.ViewContainer;
+import me.saiintbrisson.minecraft.internal.platform.ViewContainer;
 import org.jetbrains.annotations.NotNull;
 
 /**
