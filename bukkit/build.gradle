@@ -1,0 +1,27 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
+plugins {
+    alias(libs.plugins.shadowjar)
+}
+
+repositories {
+    maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
+}
+
+dependencies {
+    compileOnly libs.spigot.api
+    implementation projects.api
+    implementation projects.shared
+    implementation projects.bukkitApi
+}
+
+shadowJar {
+    archiveBaseName.set('inventory-framework')
+}
+
+processResources {
+    from(sourceSets.main.resources.srcDirs) {
+        duplicatesStrategy DuplicatesStrategy.INCLUDE
+        filter ReplaceTokens, tokens: [version: version]
+    }
+}

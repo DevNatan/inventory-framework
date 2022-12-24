@@ -6,6 +6,7 @@ import java.util.Stack;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import me.devnatan.inventoryframework.exception.InventoryModificationException;
 import me.saiintbrisson.minecraft.AbstractView;
 import me.saiintbrisson.minecraft.LayoutPattern;
 import me.saiintbrisson.minecraft.PaginatedVirtualView;
@@ -14,7 +15,6 @@ import me.saiintbrisson.minecraft.ViewItem;
 import me.saiintbrisson.minecraft.ViewType;
 import me.saiintbrisson.minecraft.event.EventListener;
 import me.saiintbrisson.minecraft.event.EventSubscription;
-import me.saiintbrisson.minecraft.exception.InventoryModificationException;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -52,9 +52,17 @@ public interface VirtualView {
     @ApiStatus.Internal
     char LAYOUT_FILLED_SLOT = 'O';
 
+    /**
+     * <p><b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
     @ApiStatus.Internal
     ViewItem[] getItems();
 
+    /**
+     * <p><b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
     @ApiStatus.Internal
     void setItems(ViewItem[] items);
 

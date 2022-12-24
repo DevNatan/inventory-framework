@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -20,11 +21,14 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import me.devnatan.inventoryframework.IFContext;
+import me.devnatan.inventoryframework.IFRenderContext;
 import me.devnatan.inventoryframework.IFSlotClickContext;
 import me.devnatan.inventoryframework.IFSlotContext;
 import me.devnatan.inventoryframework.IFSlotMoveContext;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.config.ViewConfig;
+import me.devnatan.inventoryframework.exception.ContainerException;
+import me.devnatan.inventoryframework.exception.InitializationException;
 import me.devnatan.inventoryframework.internal.Job;
 import me.devnatan.inventoryframework.internal.platform.Viewer;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
@@ -33,8 +37,6 @@ import me.devnatan.inventoryframework.state.MutableState;
 import me.devnatan.inventoryframework.state.PaginationState;
 import me.devnatan.inventoryframework.state.State;
 import me.devnatan.inventoryframework.state.StateHolder;
-import me.saiintbrisson.minecraft.exception.ContainerException;
-import me.saiintbrisson.minecraft.exception.InitializationException;
 import me.saiintbrisson.minecraft.logging.Logger;
 import me.saiintbrisson.minecraft.pipeline.interceptors.AvailableSlotRenderInterceptor;
 import me.saiintbrisson.minecraft.pipeline.interceptors.LayoutPatternApplierInterceptor;
@@ -53,6 +55,9 @@ import org.jetbrains.annotations.Nullable;
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
 @ApiStatus.NonExtendable
 public abstract class AbstractView extends AbstractVirtualView {
+
+    // Flags
+    public static final byte CANCEL_CLICK = 0, CANCEL_DRAG = 1, CANCEL_PICKUP = 2, CANCEL_DROP = 4, CANCEL_CLONE = 8;
 
     public static final PipelinePhase OPEN = new PipelinePhase("open");
     public static final PipelinePhase INIT = new PipelinePhase("init");
@@ -117,33 +122,16 @@ public abstract class AbstractView extends AbstractVirtualView {
     }
 
     /**
-     * Called before view registration.
+     * Called when the view is about to be configured, the returned object will be the view's
+     * configuration.
      * <p>
-     * Use this function to set default values for contexts for this view.
-     * As a reference, the data defined here was previously defined in the constructor.
-     */
-    // TODO provide a more fluent API to set view options
-    protected void onInit() {}
-
-    /**
-     * Called when this view is initialized for the first time.
-     * <p>
-     * This function is used to:
+     * As a reference, the data defined here was defined in the constructor in previous versions.
      *
-     * <li>Determine the patterns of the containers that will be inherited by the contexts generated
-     * from this view;</li>
-     * <li>Apply external features;</li>
-     * <li>Inherit configurations for the configuration of this view;</li>
-     * <li>Create static slots.</li>
-     * <p>
-     * // TODO more docs
-     *
-     * @param config Mutable view configuration.
+     * @return The view configuration.
      */
     @ApiStatus.OverrideOnly
-    @Contract(value = "_ -> fail")
-    protected void onInit(ViewConfig config) {
-        throw new IllegalStateException("Init must be implemented");
+    protected ViewConfig onInit() {
+        return ViewConfig.create();
     }
 
     /**
@@ -182,12 +170,24 @@ public abstract class AbstractView extends AbstractVirtualView {
      * <p>This is a rendering function and can modify the view's container, it's called once.
      *
      * @param context The player view context.
+     * @deprecated Use {@link #onRender(IFRenderContext)} instead.
      */
+    @Deprecated
     @ApiStatus.OverrideOnly
     protected void onRender(@NotNull IFContext context) {}
 
+    /**
+     * Called only once before the container is displayed to a player.
+     * <p>
+     * The {@code context} is not cancelable, for cancellation use open handler instead.
+     * <p>
+     * This function should only be used to render items, any external call is completely forbidden
+     * as the function runs on the main thread.
+     *
+     * @param context The renderization context.
+     */
     @ApiStatus.OverrideOnly
-    protected void onFirstRender(@NotNull IFContext context) {}
+    protected void onRender(IFRenderContext context) {}
 
     /**
      * Called when a slot (even if it's a pseudo slot) is rendered.
@@ -1019,7 +1019,11 @@ public abstract class AbstractView extends AbstractVirtualView {
         throw new UnsupportedOperationException();
     }
 
-    public <T> PaginationState<T> paginationState() {
+    public <T> PaginationState<T> paginationState(BiConsumer<ViewItem, T> handler) {
+        throw new UnsupportedOperationException();
+    }
+
+    public <T> PaginationState<T> paginationState(Supplier<List<T>> source, BiConsumer<ViewItem, T> handler) {
         throw new UnsupportedOperationException();
     }
 
@@ -1041,6 +1045,11 @@ public abstract class AbstractView extends AbstractVirtualView {
      */
     @SuppressWarnings("unchecked")
     public <T> State<T> initialState(@NotNull String key) {
+        return lazyState((IFContext context) -> (T) context.getData().get(key));
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> State<T> initialState(@NotNull Class<? extends T> key) {
         return lazyState((IFContext context) -> (T) context.getData().get(key));
     }
 }

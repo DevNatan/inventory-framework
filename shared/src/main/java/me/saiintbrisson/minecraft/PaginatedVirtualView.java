@@ -5,8 +5,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import me.devnatan.inventoryframework.VirtualView;
+import me.devnatan.inventoryframework.exception.InitializationException;
 import me.devnatan.inventoryframework.pagination.IFPaginatedContext;
-import me.saiintbrisson.minecraft.exception.InitializationException;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 

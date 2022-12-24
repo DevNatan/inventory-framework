@@ -3,10 +3,11 @@ package me.devnatan.inventoryframework.config;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import me.devnatan.inventoryframework.internal.InitOnly;
 import me.saiintbrisson.minecraft.ViewType;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
@@ -27,6 +28,36 @@ public interface ViewConfig {
     }
 
     /**
+     * Creates a new {@link ViewConfig}.
+     *
+     * @return A new ViewConfig instance.
+     */
+    @NotNull
+    static ViewConfig create() {
+        return new Impl();
+    }
+
+    /**
+     * Creates a new {@link ViewConfig}.
+     *
+     * @return A new ViewConfig instance.
+     */
+    @NotNull
+    static ViewConfig create(String title) {
+        return new Impl().title(title);
+    }
+
+    /**
+     * Creates a new {@link ViewConfig}.
+     *
+     * @return A new ViewConfig instance.
+     */
+    @NotNull
+    static ViewConfig create(int size, String title) {
+        return new Impl().size(size).title(title);
+    }
+
+    /**
      * All modifiers applied to this configuration.
      *
      * @return An unmodifiable list of all applied modifiers.
@@ -42,8 +73,8 @@ public interface ViewConfig {
      * be inherited take precedence over those of that setting.
      *
      * @param other The configuration that will be inherited.
+     * @return This config.
      */
-    @Contract(value = "_ -> this", mutates = "this")
     ViewConfig inheritFrom(@NotNull ViewConfig other);
 
     /**
@@ -52,8 +83,8 @@ public interface ViewConfig {
      * If applied in view scope, it will be the default value for all contexts originated from it.
      *
      * @param type The container type.
+     * @return This config.
      */
-    @Contract(value = "_ -> this", mutates = "this")
     ViewConfig type(ViewType type);
 
     /**
@@ -62,8 +93,8 @@ public interface ViewConfig {
      * If applied in view scope, it will be the default value for all contexts originated from it.
      *
      * @param title The container title.
+     * @return This config.
      */
-    @Contract(value = "_ -> this", mutates = "this")
     ViewConfig title(String title);
 
     /**
@@ -72,39 +103,39 @@ public interface ViewConfig {
      * If applied in view scope, it will be the default value for all contexts originated from it.
      *
      * @param size The container size.
+     * @return This config.
      */
-    @Contract(value = "_ -> this", mutates = "this")
     ViewConfig size(int size);
 
     /**
      * Add a modifier to this setting.
      *
      * @param modifier The modifier.
+     * @return This config.
      */
-    @Contract(value = "_ -> this", mutates = "this")
     ViewConfig with(@NotNull Modifier modifier);
 
-    /**
-     * Creates a new {@link ViewConfig} implementation.
-     *
-     * @return A new ViewConfig implementation.
-     */
-    @NotNull
-    static ViewConfig create() {
-        return new Impl();
-    }
+    ViewConfig layout(String... layout);
+
+    ViewConfig flags(int flags);
+
+    ViewConfig flags(int flag, int... others);
 }
 
 /**
  * Default implementation for ViewConfig.
  */
-class Impl implements ViewConfig {
+@Setter
+@Accessors(chain = true, fluent = true)
+final class Impl implements ViewConfig {
 
     final List<Modifier> modifierList = new LinkedList<>();
 
-    private String containerTitle;
-    private ViewType containerType;
-    private int containerSize;
+    private String title;
+    private ViewType type;
+    private int size;
+    private String[] layout;
+    private int flags;
 
     @Override
     public @NotNull @Unmodifiable List<Modifier> getAppliedModifiers() {
@@ -113,30 +144,32 @@ class Impl implements ViewConfig {
 
     @Override
     public ViewConfig inheritFrom(@NotNull ViewConfig other) {
-        return this;
-    }
-
-    @Override
-    public ViewConfig type(ViewType type) {
-        containerType = type;
-        return this;
-    }
-
-    @Override
-    public ViewConfig title(String title) {
-        containerTitle = title;
-        return this;
-    }
-
-    @Override
-    public ViewConfig size(int size) {
-        containerSize = size;
-        return this;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public ViewConfig with(@NotNull Modifier modifier) {
         modifierList.add(modifier);
+        return this;
+    }
+
+    @Override
+    public ViewConfig layout(String... layout) {
+        this.layout = layout;
+        return this;
+    }
+
+    @Override
+    public ViewConfig flags(int flags) {
+        this.flags = flags;
+        return this;
+    }
+
+    @Override
+    public ViewConfig flags(int flag, int... others) {
+        int value = flag;
+        for (final int other : others) value = value | other;
+        this.flags = value;
         return this;
     }
 }

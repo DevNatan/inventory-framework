@@ -1,4 +1,4 @@
-package me.saiintbrisson.minecraft.exception;
+package me.devnatan.inventoryframework.exception;
 
 public class SlotFillExceededException extends RuntimeException {
 

@@ -1,4 +1,4 @@
-package me.saiintbrisson.minecraft.exception;
+package me.devnatan.inventoryframework.exception;
 
 /**
  * Thrown when a method explicitly needs to specify that it will directly modify the view's container

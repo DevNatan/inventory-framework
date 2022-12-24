@@ -1,4 +1,4 @@
-package me.saiintbrisson.minecraft.exception;
+package me.devnatan.inventoryframework.exception;
 
 /**
  * Called when a function that changes the nature of the view is called after its initialization.

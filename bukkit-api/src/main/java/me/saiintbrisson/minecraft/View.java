@@ -9,13 +9,14 @@ import org.jetbrains.annotations.NotNull;
 @ApiStatus.OverrideOnly
 public class View extends AbstractView {
 
-    public View() {
+    protected View() {
         this(0);
     }
 
     /**
      * @deprecated Use {@link #onInit()} instead.
      */
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.5")
     @Deprecated
     public View(int size) {
         this(size, null);
@@ -24,6 +25,7 @@ public class View extends AbstractView {
     /**
      * @deprecated Use {@link #onInit()} instead.
      */
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.5")
     @Deprecated
     public View(String title) {
         this(0, title);
@@ -32,6 +34,7 @@ public class View extends AbstractView {
     /**
      * @deprecated Use {@link #onInit()} instead.
      */
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.5")
     @Deprecated
     public View(String title, @NotNull ViewType type) {
         this(0, title, type);
@@ -40,6 +43,7 @@ public class View extends AbstractView {
     /**
      * @deprecated Use {@link #onInit()} instead.
      */
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.5")
     @Deprecated
     public View(@NotNull ViewType type) {
         this(0, null, type);
@@ -48,6 +52,7 @@ public class View extends AbstractView {
     /**
      * @deprecated Use {@link #onInit()} instead.
      */
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.5")
     @Deprecated
     public View(int size, String title) {
         this(size, title, ViewType.CHEST);
@@ -56,13 +61,9 @@ public class View extends AbstractView {
     /**
      * @deprecated Use {@link #onInit()} instead.
      */
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.5")
     @Deprecated
     public View(int size, String title, @NotNull ViewType type) {
         super(size, title, type);
-    }
-
-    @Override
-    public final String toString() {
-        return super.toString();
     }
 }
