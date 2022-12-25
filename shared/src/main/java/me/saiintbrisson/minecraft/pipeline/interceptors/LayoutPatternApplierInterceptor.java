@@ -3,10 +3,10 @@ package me.saiintbrisson.minecraft.pipeline.interceptors;
 import java.util.List;
 import java.util.function.BiConsumer;
 import me.devnatan.inventoryframework.VirtualView;
+import me.devnatan.inventoryframework.pipeline.PipelineContext;
+import me.devnatan.inventoryframework.pipeline.PipelineInterceptor;
 import me.saiintbrisson.minecraft.LayoutPattern;
 import me.saiintbrisson.minecraft.ViewItem;
-import me.saiintbrisson.minecraft.pipeline.PipelineContext;
-import me.saiintbrisson.minecraft.pipeline.PipelineInterceptor;
 import org.jetbrains.annotations.NotNull;
 
 /**

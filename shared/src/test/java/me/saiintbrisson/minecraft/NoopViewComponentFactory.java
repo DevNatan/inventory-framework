@@ -2,6 +2,8 @@ package me.saiintbrisson.minecraft;
 
 import me.devnatan.inventoryframework.IFContext;
 import me.devnatan.inventoryframework.VirtualView;
+import me.devnatan.inventoryframework.internal.platform.ViewContainer;
+import me.devnatan.inventoryframework.internal.platform.Viewer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

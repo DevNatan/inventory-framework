@@ -1,8 +1,8 @@
 package me.saiintbrisson.minecraft;
 
 import me.devnatan.inventoryframework.IFContext;
-import me.saiintbrisson.minecraft.pipeline.PipelineContext;
-import me.saiintbrisson.minecraft.pipeline.PipelineInterceptor;
+import me.devnatan.inventoryframework.pipeline.PipelineContext;
+import me.devnatan.inventoryframework.pipeline.PipelineInterceptor;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.jetbrains.annotations.NotNull;

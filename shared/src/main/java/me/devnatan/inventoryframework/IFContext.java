@@ -3,21 +3,22 @@ package me.devnatan.inventoryframework;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
+import me.devnatan.inventoryframework.exception.InvalidatedContextException;
+import me.devnatan.inventoryframework.exception.UnknownReferenceException;
+import me.devnatan.inventoryframework.internal.platform.ViewContainer;
+import me.devnatan.inventoryframework.internal.platform.Viewer;
 import me.devnatan.inventoryframework.pagination.IFPaginatedContext;
+import me.devnatan.inventoryframework.state.StateHolder;
 import me.saiintbrisson.minecraft.AbstractView;
 import me.saiintbrisson.minecraft.AbstractVirtualView;
 import me.saiintbrisson.minecraft.OpenViewContext;
-import me.saiintbrisson.minecraft.ViewContainer;
 import me.saiintbrisson.minecraft.ViewItem;
-import me.saiintbrisson.minecraft.Viewer;
-import me.saiintbrisson.minecraft.exception.InvalidatedContextException;
-import me.saiintbrisson.minecraft.exception.UnknownReferenceException;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnknownNullability;
 
-public interface IFContext extends VirtualView {
+public interface IFContext extends VirtualView, StateHolder {
 
     @ApiStatus.Internal
     Map<String, Object> getData();

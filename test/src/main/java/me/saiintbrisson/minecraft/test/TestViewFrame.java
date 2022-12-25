@@ -7,15 +7,15 @@ import java.util.function.Function;
 import java.util.function.UnaryOperator;
 import lombok.Getter;
 import lombok.Setter;
+import me.devnatan.inventoryframework.internal.Job;
+import me.devnatan.inventoryframework.internal.platform.Viewer;
 import me.devnatan.inventoryframework.pagination.IFPaginatedContext;
 import me.saiintbrisson.minecraft.AbstractView;
 import me.saiintbrisson.minecraft.PlatformViewFrame;
 import me.saiintbrisson.minecraft.ViewComponentFactory;
 import me.saiintbrisson.minecraft.ViewErrorHandler;
 import me.saiintbrisson.minecraft.ViewItem;
-import me.saiintbrisson.minecraft.Viewer;
 import me.saiintbrisson.minecraft.feature.Feature;
-import me.saiintbrisson.minecraft.internal.Job;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

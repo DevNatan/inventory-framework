@@ -14,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import me.devnatan.inventoryframework.IFContext;
 import me.devnatan.inventoryframework.VirtualView;
+import me.devnatan.inventoryframework.internal.event.EventBusImpl;
+import me.saiintbrisson.minecraft.event.Event;
 import me.saiintbrisson.minecraft.event.EventBus;
 import me.saiintbrisson.minecraft.event.EventListener;
 import me.saiintbrisson.minecraft.event.EventSubscription;
@@ -35,7 +37,7 @@ public abstract class AbstractVirtualView implements VirtualView {
     private Deque<ViewItem> reservedItems;
     int reservedItemsCount;
 
-    final EventBus eventBus = new EventBus();
+    final EventBus eventBus = new EventBusImpl();
 
     public EventBus getEventBus() {
         return eventBus;
@@ -478,7 +480,8 @@ public abstract class AbstractVirtualView implements VirtualView {
 
     @Override
     public void emit(@NotNull Object event) {
-        getEventBus().emit(event, null);
+        // TODO remove this cast or check it better
+        getEventBus().emit((Event) event, null);
     }
 
     @Override

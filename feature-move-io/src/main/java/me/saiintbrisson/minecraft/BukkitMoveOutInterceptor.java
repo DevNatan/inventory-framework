@@ -1,7 +1,7 @@
 package me.saiintbrisson.minecraft;
 
-import me.saiintbrisson.minecraft.pipeline.PipelineContext;
-import me.saiintbrisson.minecraft.pipeline.PipelineInterceptor;
+import me.devnatan.inventoryframework.pipeline.PipelineContext;
+import me.devnatan.inventoryframework.pipeline.PipelineInterceptor;
 import org.jetbrains.annotations.NotNull;
 
 public final class BukkitMoveOutInterceptor implements PipelineInterceptor<BukkitClickViewSlotContext> {

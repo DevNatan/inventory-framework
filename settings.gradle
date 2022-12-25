@@ -9,4 +9,5 @@ include 'bom',
         'kotlin-dsl',
         'shared',
         'test',
-        'api'
+        'api',
+        'bukkit'

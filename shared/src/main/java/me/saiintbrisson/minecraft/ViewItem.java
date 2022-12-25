@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -397,6 +398,12 @@ public final class ViewItem {
     @Contract(value = "_ -> this", mutates = "this")
     public ViewItem rendered(@Nullable Supplier<@Nullable Object> itemFactory) {
         setRenderHandler(itemFactory == null ? null : render -> render.setItem(itemFactory.get()));
+        return this;
+    }
+
+    @Contract(value = "_ -> this", mutates = "this")
+    public ViewItem rendered(@Nullable Function<IFSlotContext, @Nullable Object> itemFactory) {
+        setRenderHandler(itemFactory == null ? null : render -> render.setItem(itemFactory.apply(render)));
         return this;
     }
 

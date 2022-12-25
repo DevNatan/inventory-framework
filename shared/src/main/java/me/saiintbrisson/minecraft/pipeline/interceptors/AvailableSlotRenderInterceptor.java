@@ -5,13 +5,13 @@ import java.util.NoSuchElementException;
 import java.util.Stack;
 import me.devnatan.inventoryframework.IFContext;
 import me.devnatan.inventoryframework.VirtualView;
+import me.devnatan.inventoryframework.exception.ContainerException;
+import me.devnatan.inventoryframework.exception.SlotFillExceededException;
+import me.devnatan.inventoryframework.exception.UnresolvedLayoutException;
+import me.devnatan.inventoryframework.pipeline.PipelineContext;
+import me.devnatan.inventoryframework.pipeline.PipelineInterceptor;
 import me.saiintbrisson.minecraft.AbstractView;
 import me.saiintbrisson.minecraft.ViewItem;
-import me.saiintbrisson.minecraft.exception.ContainerException;
-import me.saiintbrisson.minecraft.exception.SlotFillExceededException;
-import me.saiintbrisson.minecraft.exception.UnresolvedLayoutException;
-import me.saiintbrisson.minecraft.pipeline.PipelineContext;
-import me.saiintbrisson.minecraft.pipeline.PipelineInterceptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 

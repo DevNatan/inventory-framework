@@ -4,6 +4,8 @@ import java.util.logging.Level;
 import lombok.RequiredArgsConstructor;
 import me.devnatan.inventoryframework.IFContext;
 import me.devnatan.inventoryframework.IFSlotContext;
+import me.devnatan.inventoryframework.internal.platform.ViewContainer;
+import me.devnatan.inventoryframework.internal.platform.Viewer;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

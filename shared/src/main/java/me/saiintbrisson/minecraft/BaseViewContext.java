@@ -15,8 +15,12 @@ import lombok.ToString;
 import me.devnatan.inventoryframework.IFContext;
 import me.devnatan.inventoryframework.IFSlotContext;
 import me.devnatan.inventoryframework.VirtualView;
+import me.devnatan.inventoryframework.exception.UnknownReferenceException;
+import me.devnatan.inventoryframework.internal.platform.ViewContainer;
+import me.devnatan.inventoryframework.internal.platform.Viewer;
 import me.devnatan.inventoryframework.pagination.IFPaginatedContext;
-import me.saiintbrisson.minecraft.exception.UnknownReferenceException;
+import me.devnatan.inventoryframework.state.State;
+import me.devnatan.inventoryframework.state.StateValueHolder;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -351,5 +355,24 @@ public class BaseViewContext extends AbstractVirtualView implements IFContext {
 
         getRoot().resume(prev, this);
         return prev;
+    }
+
+    // TODO handle it \/\/\/\/
+    @Override
+    public long generateId() {
+        return 0;
+    }
+
+    @Override
+    public StateValueHolder retrieve(long id) {
+        return null;
+    }
+
+    @Override
+    public void updateCaught(@NotNull State<?> state, Object oldValue, Object newValue) {}
+
+    @Override
+    public StateValueHolder createUnchecked(Object initialValue) {
+        return null;
     }
 }

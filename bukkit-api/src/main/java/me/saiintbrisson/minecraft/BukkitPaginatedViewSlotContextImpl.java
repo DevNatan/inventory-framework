@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.ToString;
 import me.devnatan.inventoryframework.IFContext;
 import me.devnatan.inventoryframework.IFSlotContext;
+import me.devnatan.inventoryframework.internal.platform.ViewContainer;
 import me.devnatan.inventoryframework.pagination.IFPaginatedContext;
 import me.devnatan.inventoryframework.pagination.IFPaginatedSlotContext;
 import org.jetbrains.annotations.NotNull;

@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import me.devnatan.inventoryframework.internal.event.EventBusImpl;
+import me.saiintbrisson.minecraft.event.Event;
 import me.saiintbrisson.minecraft.event.EventBus;
 import me.saiintbrisson.minecraft.event.EventSubscription;
 import org.junit.jupiter.api.Test;
@@ -14,7 +16,7 @@ public class EventBusTest {
 
     @Test
     void keyedEmit() {
-        EventBus eventBus = new EventBus();
+        EventBus eventBus = new EventBusImpl();
         AtomicInteger value = new AtomicInteger();
         int expectedValue = 9;
         eventBus.listen("test", eventValue -> {
@@ -27,7 +29,7 @@ public class EventBusTest {
 
     @Test
     void keyedEmitNullValue() {
-        EventBus eventBus = new EventBus();
+        EventBus eventBus = new EventBusImpl();
         AtomicBoolean called = new AtomicBoolean(false);
         eventBus.listen("test", $ -> {
             called.set(true);
@@ -39,9 +41,9 @@ public class EventBusTest {
 
     @Test
     void typedEmit() {
-        class MyEvent {}
+        class MyEvent implements Event {}
 
-        EventBus eventBus = new EventBus();
+        EventBus eventBus = new EventBusImpl();
         AtomicBoolean called = new AtomicBoolean();
         eventBus.listen(MyEvent.class, event -> {
             called.set(true);
@@ -53,10 +55,10 @@ public class EventBusTest {
 
     @Test
     void typedEmitInvalidType() {
-        class MyEvent1 {}
-        class MyEvent2 {}
+        class MyEvent1 implements Event {}
+        class MyEvent2 implements Event {}
 
-        EventBus eventBus = new EventBus();
+        EventBus eventBus = new EventBusImpl();
         AtomicBoolean called = new AtomicBoolean();
         eventBus.listen(MyEvent1.class, event -> {
             called.set(true);
@@ -68,10 +70,10 @@ public class EventBusTest {
 
     @Test
     void typedEmitPolymorphism() {
-        class MyEvent1 {}
+        class MyEvent1 implements Event {}
         class MyEvent2 extends MyEvent1 {}
 
-        EventBus eventBus = new EventBus();
+        EventBus eventBus = new EventBusImpl();
         AtomicBoolean called = new AtomicBoolean();
         eventBus.listen(MyEvent1.class, event -> {
             called.set(true);
@@ -83,10 +85,10 @@ public class EventBusTest {
 
     @Test
     void typedEmitInversedPolymorphism() {
-        class MyEvent1 {}
+        class MyEvent1 implements Event {}
         class MyEvent2 extends MyEvent1 {}
 
-        EventBus eventBus = new EventBus();
+        EventBus eventBus = new EventBusImpl();
         AtomicBoolean called = new AtomicBoolean();
         eventBus.listen(MyEvent2.class, event -> {
             called.set(true);
@@ -98,9 +100,9 @@ public class EventBusTest {
 
     @Test
     void subscriptionUnregistration() {
-        class MyEvent {}
+        class MyEvent implements Event {}
 
-        EventBus eventBus = new EventBus();
+        EventBus eventBus = new EventBusImpl();
         AtomicInteger calls = new AtomicInteger();
         EventSubscription sub = eventBus.listen(MyEvent.class, event -> calls.incrementAndGet());
 
@@ -115,9 +117,9 @@ public class EventBusTest {
 
     @Test
     void multipleSubscriptionsUnregistration() {
-        class MyEvent {}
+        class MyEvent implements Event {}
 
-        EventBus eventBus = new EventBus();
+        EventBus eventBus = new EventBusImpl();
         AtomicBoolean sub1Call = new AtomicBoolean();
         AtomicBoolean sub2Call = new AtomicBoolean();
         eventBus.listen(MyEvent.class, event -> sub1Call.set(!sub1Call.get()));

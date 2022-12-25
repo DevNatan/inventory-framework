@@ -1,6 +1,7 @@
 package me.saiintbrisson.minecraft;
 
 import lombok.ToString;
+import me.devnatan.inventoryframework.internal.platform.ViewContainer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

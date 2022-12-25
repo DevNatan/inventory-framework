@@ -14,6 +14,8 @@ import lombok.Setter;
 import lombok.ToString;
 import me.devnatan.inventoryframework.IFContext;
 import me.devnatan.inventoryframework.IFSlotContext;
+import me.devnatan.inventoryframework.internal.platform.ViewContainer;
+import me.devnatan.inventoryframework.internal.platform.Viewer;
 import me.devnatan.inventoryframework.pagination.IFPaginatedContext;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;

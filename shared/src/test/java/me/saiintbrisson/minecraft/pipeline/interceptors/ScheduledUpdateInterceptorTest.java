@@ -12,10 +12,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.concurrent.atomic.AtomicBoolean;
 import me.devnatan.inventoryframework.IFContext;
+import me.devnatan.inventoryframework.internal.Job;
+import me.devnatan.inventoryframework.internal.platform.Viewer;
+import me.devnatan.inventoryframework.pipeline.Pipeline;
 import me.saiintbrisson.minecraft.AbstractView;
-import me.saiintbrisson.minecraft.Viewer;
-import me.saiintbrisson.minecraft.internal.Job;
-import me.saiintbrisson.minecraft.pipeline.Pipeline;
 import org.junit.jupiter.api.Test;
 
 class ScheduledUpdateInterceptorTest {
