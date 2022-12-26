@@ -174,6 +174,7 @@ public abstract class AbstractView extends AbstractVirtualView {
      */
     @Deprecated
     @ApiStatus.OverrideOnly
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.5")
     protected void onRender(@NotNull IFContext context) {}
 
     /**
