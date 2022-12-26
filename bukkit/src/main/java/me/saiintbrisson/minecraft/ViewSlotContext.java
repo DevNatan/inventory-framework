@@ -1,16 +1,14 @@
 package me.saiintbrisson.minecraft;
 
 import me.devnatan.inventoryframework.IFContext;
+import me.devnatan.inventoryframework.bukkit.BukkitIFContext;
 import me.devnatan.inventoryframework.internal.platform.ViewContainer;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class ViewSlotContext extends AbstractViewSlotContext {
+public abstract class ViewSlotContext extends AbstractViewSlotContext implements BukkitIFContext {
 
-    ViewSlotContext(int slot, ViewItem backingItem, @NotNull IFContext parent, ViewContainer container) {
-        super(slot, backingItem, parent, container);
+    ViewSlotContext(int slot, @NotNull IFContext parent, @Nullable ViewContainer container) {
+        super(slot, parent, container);
     }
-
-    //	public final ItemStack getItem() {
-    //		throw new UnsupportedOperationException();
-    //	}
 }

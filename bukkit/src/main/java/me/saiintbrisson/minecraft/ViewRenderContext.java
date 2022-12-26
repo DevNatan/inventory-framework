@@ -1,15 +1,19 @@
 package me.saiintbrisson.minecraft;
 
-import me.devnatan.inventoryframework.internal.platform.ViewContainer;
+import lombok.Getter;
+import me.devnatan.inventoryframework.IFRenderContext;
+import me.devnatan.inventoryframework.bukkit.BukkitIFContext;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-public abstract class ViewRenderContext extends BaseViewContext {
-    protected ViewRenderContext(@NotNull AbstractView root, @Nullable ViewContainer container) {
-        super(root, container);
-    }
+@Getter
+public final class ViewRenderContext extends BaseViewContext implements IFRenderContext, BukkitIFContext {
 
     @NotNull
-    public abstract Player getPlayer();
+    private final Player player;
+
+    ViewRenderContext(@NotNull ViewContext backingContext, @NotNull Player player) {
+        super(backingContext.getRoot(), backingContext.getContainer());
+        this.player = player;
+    }
 }

@@ -66,6 +66,8 @@ public interface IFSlotContext extends IFContext {
      */
     void updateSlot();
 
+    Object getItem();
+
     /**
      * Returns the wrapper containing the item related to this context.
      *
