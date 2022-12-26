@@ -13,6 +13,7 @@ import me.devnatan.inventoryframework.IFSlotContext;
 import me.devnatan.inventoryframework.internal.platform.ViewContainer;
 import me.devnatan.inventoryframework.pagination.IFPaginatedContext;
 import me.devnatan.inventoryframework.pagination.IFPaginatedSlotContext;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,14 +26,20 @@ import org.jetbrains.annotations.Nullable;
  */
 @Getter
 @ToString
-final class BukkitPaginatedViewSlotContextImpl<T> extends BukkitViewSlotContext implements IFPaginatedSlotContext<T> {
+final class BukkitPaginatedViewSlotContextImpl<T> extends ViewSlotContext implements IFPaginatedSlotContext<T> {
 
     private final int index;
     private final T value;
 
     BukkitPaginatedViewSlotContextImpl(
-            int index, T value, int slot, ViewItem backingItem, IFContext parent, ViewContainer container) {
-        super(slot, backingItem, parent, container);
+            int index,
+            T value,
+            int slot,
+            ViewItem backingItem,
+            IFContext parent,
+            ViewContainer container,
+            Player player) {
+        super(slot, backingItem, parent, container, player);
         this.index = index;
         this.value = value;
     }

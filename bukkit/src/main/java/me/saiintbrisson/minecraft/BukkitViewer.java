@@ -1,4 +1,4 @@
-package me.devnatan.inventoryframework.bukkit.internal.platform;
+package me.saiintbrisson.minecraft;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -27,13 +27,5 @@ class BukkitViewer implements Viewer {
     @Override
     public void close() {
         player.closeInventory();
-    }
-
-    public static Player toPlayerOfContext(IFContext context) {
-        final Viewer viewer = context.getViewers().get(0);
-        if (viewer == null)
-            throw new IllegalStateException("Tried to retrieve context player while it's not valid anymore.");
-
-        return ((BukkitViewer) viewer).getPlayer();
     }
 }

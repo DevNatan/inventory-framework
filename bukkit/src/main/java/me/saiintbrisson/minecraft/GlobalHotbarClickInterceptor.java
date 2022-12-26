@@ -1,6 +1,5 @@
 package me.saiintbrisson.minecraft;
 
-import me.devnatan.inventoryframework.IFContext;
 import me.devnatan.inventoryframework.pipeline.PipelineContext;
 import me.devnatan.inventoryframework.pipeline.PipelineInterceptor;
 import org.bukkit.event.inventory.ClickType;
@@ -8,16 +7,13 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Intercepts the player's hotbar click by launching {@link View#onHotbarInteract(IFContext, int)}
- * when it happens.
- *
- * @see PipelineInterceptor
+ * Intercepts the player's hotbar click.
  */
-final class GlobalHotbarClickInterceptor implements PipelineInterceptor<BukkitClickViewSlotContext> {
+final class GlobalHotbarClickInterceptor implements PipelineInterceptor<ViewSlotClickContext> {
 
     @Override
     public void intercept(
-            @NotNull PipelineContext<BukkitClickViewSlotContext> pipeline, BukkitClickViewSlotContext subject) {
+            @NotNull PipelineContext<ViewSlotClickContext> pipeline, @NotNull ViewSlotClickContext subject) {
         if (subject.isCancelled()) return;
 
         final InventoryClickEvent clickEvent = subject.getClickOrigin();

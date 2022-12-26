@@ -12,21 +12,21 @@ import org.jetbrains.annotations.NotNull;
  *
  * @see PipelineInterceptor
  */
-final class CloseMarkInterceptor implements PipelineInterceptor<BukkitClickViewSlotContext> {
+final class CloseMarkInterceptor implements PipelineInterceptor<ViewSlotClickContext> {
 
     @Override
     public void intercept(
-            @NotNull PipelineContext<BukkitClickViewSlotContext> pipeline, BukkitClickViewSlotContext subject) {
-        final InventoryClickEvent event = subject.getClickOrigin();
+            @NotNull PipelineContext<ViewSlotClickContext> pipeline, @NotNull ViewSlotClickContext context) {
+        final InventoryClickEvent event = context.getClickOrigin();
         if (event.getSlotType() == InventoryType.SlotType.OUTSIDE) return;
 
-        final ViewItem item = subject.getBackingItem();
+        final ViewItem item = context.getBackingItem();
         if (item == null) return;
 
-        final boolean closeOnClick = item.isCloseOnClick() || subject.isMarkedToClose();
+        final boolean closeOnClick = item.isCloseOnClick() || context.isMarkedToClose();
         if (!closeOnClick) return;
 
-        subject.closeUninterruptedly();
+        context.closeUninterruptedly();
         pipeline.finish();
     }
 }

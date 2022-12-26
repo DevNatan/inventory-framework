@@ -8,26 +8,24 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Intercepted when a player clicks on an item the view container.
- *
- * @see PipelineInterceptor
  */
-final class ItemClickInterceptor implements PipelineInterceptor<BukkitClickViewSlotContext> {
+final class ItemClickInterceptor implements PipelineInterceptor<ViewSlotClickContext> {
 
     @Override
     public void intercept(
-            @NotNull PipelineContext<BukkitClickViewSlotContext> pipeline, BukkitClickViewSlotContext subject) {
-        final InventoryClickEvent event = subject.getClickOrigin();
+            @NotNull PipelineContext<ViewSlotClickContext> pipeline, @NotNull ViewSlotClickContext context) {
+        final InventoryClickEvent event = context.getClickOrigin();
         if (event.getSlotType() == InventoryType.SlotType.OUTSIDE) return;
 
-        final ViewItem item = subject.getBackingItem();
+        final ViewItem item = context.getBackingItem();
         if (item == null) return;
 
         // inherit cancellation so we can un-cancel it
-        subject.setCancelled(item.isCancelOnClick());
+        context.setCancelled(item.isCancelOnClick());
 
         if (item.getClickHandler() != null)
-            subject.getRoot().runCatching(subject, () -> item.getClickHandler().accept(subject));
+            context.getRoot().runCatching(context, () -> item.getClickHandler().accept(context));
 
-        event.setCancelled(subject.isCancelled());
+        event.setCancelled(context.isCancelled());
     }
 }

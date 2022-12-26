@@ -65,7 +65,7 @@ public abstract class AbstractView extends AbstractVirtualView {
     public static final PipelinePhase UPDATE = new PipelinePhase("update");
     public static final PipelinePhase CLICK = new PipelinePhase("click");
     public static final PipelinePhase CLOSE = new PipelinePhase("close");
-    static final ViewType DEFAULT_TYPE = ViewType.CHEST;
+    public static final ViewType DEFAULT_TYPE = ViewType.CHEST;
 
     @ToString.Include
     private final int size;

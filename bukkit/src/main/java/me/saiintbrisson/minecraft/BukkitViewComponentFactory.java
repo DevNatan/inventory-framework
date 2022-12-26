@@ -9,6 +9,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import me.devnatan.inventoryframework.IFContext;
 import me.devnatan.inventoryframework.VirtualView;
+import me.devnatan.inventoryframework.bukkit.BukkitIFContext;
 import me.devnatan.inventoryframework.internal.platform.ViewContainer;
 import me.devnatan.inventoryframework.internal.platform.Viewer;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
@@ -64,7 +65,7 @@ final class BukkitViewComponentFactory extends ViewComponentFactory {
             inventory = createInventory((InventoryHolder) view, requireNonNull(toInventoryType(finalType)), title);
         else inventory = createInventory((InventoryHolder) view, size, title);
 
-        return new BukkitChestViewContainer(inventory);
+        return new BukkitViewContainer(inventory);
     }
 
     @Override
@@ -78,24 +79,26 @@ final class BukkitViewComponentFactory extends ViewComponentFactory {
 
     @Override
     public @NotNull BaseViewContext createContext(
-            final @NotNull AbstractView view,
-            final ViewContainer container,
-            final Class<? extends IFContext> backingContext) {
-        if (backingContext != null && OpenViewContext.class.isAssignableFrom(backingContext))
-            return new BukkitOpenViewContext(view);
+            @NotNull AbstractView root,
+            @NotNull ViewContainer container,
+            @Nullable Class<? extends IFContext> backingContext,
+            @Nullable Viewer viewer) {
+        if (backingContext != null && OpenViewContext.class.isAssignableFrom(backingContext) && viewer != null)
+            return new OpenViewContext(root, container, ((BukkitViewer) viewer).getPlayer());
 
-        return view instanceof PaginatedView
-                ? new PaginatedViewContextImpl<>(view, container)
-                : new ViewContextImpl(view, container);
+        return root instanceof PaginatedView
+                ? new PaginatedViewContextImpl<>(root, container)
+                : new ViewContextImpl(root, container);
     }
 
     @Override
     @NotNull
     public AbstractViewSlotContext createSlotContext(
             int slot, ViewItem item, IFContext parent, ViewContainer container, int index, Object value) {
+        final Player player = ((BukkitIFContext) parent).getPlayer();
         return index == UNSET
-                ? new BukkitViewSlotContext(slot, item, parent, container)
-                : new BukkitPaginatedViewSlotContextImpl<>(index, value, slot, item, parent, container);
+                ? new ViewSlotContext(slot, item, parent, container, player)
+                : new BukkitPaginatedViewSlotContextImpl<>(index, value, slot, item, parent, container, player);
     }
 
     @Override

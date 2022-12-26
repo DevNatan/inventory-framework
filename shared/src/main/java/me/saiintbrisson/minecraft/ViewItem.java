@@ -36,7 +36,7 @@ public final class ViewItem {
     public static final int AVAILABLE = -2;
     public static final long NO_INTERVAL = -3;
 
-    enum State {
+    public enum State {
         UNDEFINED,
         HOLDING
     }

@@ -43,11 +43,10 @@ public abstract class AbstractViewSlotContext extends BaseViewContext implements
     @ToString.Include
     private boolean changed;
 
-    AbstractViewSlotContext(int slot, @NotNull final IFContext parent, ViewContainer container) {
+    AbstractViewSlotContext(int slot, ViewItem backingItem, @NotNull IFContext parent, ViewContainer container) {
         super(parent.getRoot(), container);
         this.slot = slot;
-        // TODO backing item omitted, retrieve it somehow
-        this.backingItem = null;
+        this.backingItem = backingItem;
         this.parent = parent;
     }
 

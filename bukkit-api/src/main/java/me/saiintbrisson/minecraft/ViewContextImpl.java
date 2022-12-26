@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 @Getter
 @Setter
 @ToString(callSuper = true)
-class ViewContextImpl extends BaseViewContext {
+public class ViewContextImpl extends BaseViewContext {
 
     @Setter
     private boolean cancelled;
