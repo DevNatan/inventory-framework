@@ -12,7 +12,7 @@
  *
  * Violations will result in a ban of your plugin and account from bStats.
  */
-package me.saiintbrisson.minecraft;
+package me.devnatan.inventoryframework.bukkit.internal;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;

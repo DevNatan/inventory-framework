@@ -1,9 +1,8 @@
-package me.saiintbrisson.minecraft;
+package me.devnatan.inventoryframework.bukkit.internal.platform;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
-import me.devnatan.inventoryframework.IFContext;
 import me.devnatan.inventoryframework.internal.platform.ViewContainer;
 import me.devnatan.inventoryframework.internal.platform.Viewer;
 import org.bukkit.entity.Player;
