@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -21,6 +22,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import me.devnatan.inventoryframework.IFContext;
+import me.devnatan.inventoryframework.IFOpenContext;
 import me.devnatan.inventoryframework.IFRenderContext;
 import me.devnatan.inventoryframework.IFSlotClickContext;
 import me.devnatan.inventoryframework.IFSlotContext;
@@ -146,7 +148,7 @@ public abstract class AbstractView extends AbstractVirtualView {
      *
      * @param open The player view context.
      */
-    protected void onOpen(@NotNull OpenViewContext open) {}
+    protected void onOpen(IFOpenContext open) {}
 
     /**
      * Called __once__ when this view is rendered to the player for the first time.
@@ -161,7 +163,7 @@ public abstract class AbstractView extends AbstractVirtualView {
      * <p>Handlers call order:
      *
      * <ul>
-     *   <li>{@link #onOpen(OpenViewContext)}
+     *   <li>{@link #onOpen(Object)} (IFOpenContext)}
      *   <li>this rendering function
      *   <li>{@link #onUpdate(IFContext)}
      *   <li>{@link #onClose(IFContext)}
@@ -352,8 +354,8 @@ public abstract class AbstractView extends AbstractVirtualView {
     final void open(@NotNull Viewer viewer, @NotNull Map<String, Object> data, @Nullable IFContext initiator) {
         if (!isInitialized()) throw new IllegalStateException("Cannot open a uninitialized view.");
 
-        final OpenViewContext context =
-                (OpenViewContext) PlatformUtils.getFactory().createContext(this, null, OpenViewContext.class);
+        final IFOpenContext context = (IFOpenContext) PlatformUtils.getFactory()
+			.createContext(this, null, IFOpenContext.class, viewer);
 
         context.addViewer(viewer);
         context.setPrevious((BaseViewContext) initiator);
@@ -1007,50 +1009,4 @@ public abstract class AbstractView extends AbstractVirtualView {
         getContexts().forEach(context -> context.emit(event));
     }
 
-    // TODO impls
-    public <T> MutableState<T> mutableState(T initialValue) {
-        throw new UnsupportedOperationException();
-    }
-
-    public <T> State<T> computedState(@NotNull Supplier<T> value) {
-        throw new UnsupportedOperationException();
-    }
-
-    public <T extends StateHolder, R> MutableState<R> lazyState(@NotNull Function<T, R> factory) {
-        throw new UnsupportedOperationException();
-    }
-
-    public <T> PaginationState<T> paginationState(BiConsumer<ViewItem, T> handler) {
-        throw new UnsupportedOperationException();
-    }
-
-    public <T> PaginationState<T> paginationState(Supplier<List<T>> source, BiConsumer<ViewItem, T> handler) {
-        throw new UnsupportedOperationException();
-    }
-
-    public <T> PaginationState<T> paginationState(Supplier<List<T>> initialValue) {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * A {@link #lazyState(Function) lazy state} whose value is always computed from the initial
-     * data set by its {@link StateHolder}.
-     * <p>
-     * When the holder is a {@link OpenViewContext}, the initial value will be the value defined
-     * in the initial opening data of the container. This state is specifically set for backwards
-     * compatibility with the old way of applying data to a context before or during container open.
-     *
-     * @param key The initial data identifier.
-     * @param <T> The initial data value type.
-     * @return A state computed with an initial opening data value.
-     */
-    @SuppressWarnings("unchecked")
-    public <T> State<T> initialState(@NotNull String key) {
-        return lazyState((IFContext context) -> (T) context.getData().get(key));
-    }
-
-    @SuppressWarnings("unchecked")
-    public <T> State<T> initialState(@NotNull Class<? extends T> key) {
-        return lazyState((IFContext context) -> (T) context.getData().get(key));
-    }
 }

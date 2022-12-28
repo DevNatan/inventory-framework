@@ -58,7 +58,7 @@ public abstract class ViewComponentFactory {
     @NotNull
     public abstract BaseViewContext createContext(
             @NotNull AbstractView root,
-            @NotNull ViewContainer container,
+            @Nullable ViewContainer container,
             @Nullable Class<? extends IFContext> backingContext,
             @Nullable Viewer viewer);
 

@@ -5,11 +5,15 @@ import me.saiintbrisson.minecraft.ViewType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * This context is created before the container is opened, it is used for cancellation by previously
+ * defined data also can be used to change the title and size of the container before the rendering intent.
+ */
 public interface IFOpenContext extends IFContext {
 
     /**
      * Sets the title of the container.
-     * <p>
+     * 
      * @param title The title of the container that will be created.
      */
     void setTitle(@Nullable String title);
