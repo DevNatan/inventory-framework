@@ -9,8 +9,6 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Intercepted when a player clicks on an item the view container. Checks if the container should be
  * closed when the item is clicked.
- *
- * @see PipelineInterceptor
  */
 final class CloseMarkInterceptor implements PipelineInterceptor<ViewSlotClickContext> {
 

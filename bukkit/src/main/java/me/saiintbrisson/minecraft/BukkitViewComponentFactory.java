@@ -2,6 +2,7 @@ package me.saiintbrisson.minecraft;
 
 import static java.util.Objects.requireNonNull;
 import static me.saiintbrisson.minecraft.AbstractView.CLICK;
+import static me.saiintbrisson.minecraft.AbstractView.CLOSE;
 import static me.saiintbrisson.minecraft.ViewItem.UNSET;
 import static org.bukkit.Bukkit.createInventory;
 
@@ -149,5 +150,6 @@ final class BukkitViewComponentFactory extends ViewComponentFactory {
         pipeline.intercept(CLICK, new GlobalHotbarClickInterceptor());
         pipeline.intercept(CLICK, new GlobalItemHoldInterceptor());
         pipeline.intercept(CLICK, new CloseMarkInterceptor());
+		pipeline.intercept(CLOSE, new CloseHandlerInterceptor());
     }
 }

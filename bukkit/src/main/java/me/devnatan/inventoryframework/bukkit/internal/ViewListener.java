@@ -140,7 +140,6 @@ class ViewListener implements Listener {
 
         // TODO move to own pipeline phase
         context.allowCancellation();
-        view.runCatching(context, () -> view.onClose(context));
         view.prepareClose(context);
 
         final Viewer viewer = context.getViewers().stream()
