@@ -1,6 +1,13 @@
 # Changelog
 
-# 2.5.4-rc.1 (10-09-2022) (unreleased)
+# 3.0.0 (unreleased)
+* Entire codebase moved from "me.saiintbrisson.minecraft" to "me.devnatan.inventoryframework"
+* Context `get`/`set` replaced by the new State Management System
+* Now all implementations are platform specific
+* Correction in the features independence system so that it is possible to integrate them correctly
+* "easy" examples have been replaced with complex real-world examples
+
+# 2.5.4-rc.1 (10-09-2022)
 * New context history feature (#120)
 * Fixed context data inheritance (#219)
 * Fixed NullPointerException in context paginator (#224)
