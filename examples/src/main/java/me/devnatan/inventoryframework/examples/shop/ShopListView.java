@@ -6,6 +6,7 @@ import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.state.PaginationState;
 import me.devnatan.inventoryframework.ViewItem;
+import me.saiintbrisson.minecraft.ViewContext;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -16,7 +17,10 @@ public final class ShopListView extends View {
 
 	private final ShopManager shopManager;
 
-	private final PaginationState<Shop> pagination = paginationState(ArrayList::new, this::onItemRender);
+	private final PaginationState<Shop> pagination = paginationState(
+		$ -> new ArrayList<Shop>(),
+		this::onItemRender
+	);
 
 	@Override
 	protected ViewConfig onInit() {
@@ -33,9 +37,6 @@ public final class ShopListView extends View {
 	}
 
 	private void onItemRender(ViewItem item, String value, IFContext context) {
-		context.get context.set
-
-
 		item.withItem(new ItemStack(Material.SKELETON_SKULL, 1, (short) 3));
 	}
 
