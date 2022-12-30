@@ -1,9 +1,11 @@
 package me.saiintbrisson.minecraft;
 
+import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.CLICK;
+
 import java.util.function.UnaryOperator;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import me.saiintbrisson.minecraft.feature.Feature;
+import me.devnatan.inventoryframework.feature.Feature;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unused")
@@ -17,7 +19,7 @@ public final class MoveInOutFeature implements Feature<Void, Void> {
     @Override
     public @NotNull Void install(@NotNull PlatformViewFrame<?, ?, ?> platform, @NotNull UnaryOperator<Void> configure) {
         platform.getFactory().registerModifier(MODIFIER, view -> {
-            view.getPipeline().intercept(AbstractView.CLICK, new BukkitMoveOutInterceptor());
+            view.getPipeline().intercept(CLICK, new BukkitMoveOutInterceptor());
         });
         return null;
     }

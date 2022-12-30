@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
 import java.util.List;
+
+import me.devnatan.inventoryframework.ViewItem;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.internal.platform.ViewContainer;
 import me.devnatan.inventoryframework.pagination.IFPaginatedContext;

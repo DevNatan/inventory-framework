@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Stack;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
-import me.devnatan.inventoryframework.IFContext;
+import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.pagination.IFPaginatedContext;
 import me.devnatan.inventoryframework.pipeline.PipelineContext;
@@ -23,7 +23,7 @@ import me.saiintbrisson.minecraft.LayoutPattern;
 import me.saiintbrisson.minecraft.PaginatedVirtualView;
 import me.saiintbrisson.minecraft.Paginator;
 import me.saiintbrisson.minecraft.PlatformViewFrame;
-import me.saiintbrisson.minecraft.ViewItem;
+import me.devnatan.inventoryframework.ViewItem;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

@@ -4,7 +4,7 @@ import java.time.Duration;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import me.devnatan.inventoryframework.IFContext;
+import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.internal.Job;
 import me.devnatan.inventoryframework.pipeline.PipelineContext;
 import me.devnatan.inventoryframework.pipeline.PipelineInterceptor;

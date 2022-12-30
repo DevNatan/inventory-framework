@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
+
+import me.devnatan.inventoryframework.ViewItem;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.exception.InitializationException;
 import me.devnatan.inventoryframework.pagination.IFPaginatedContext;

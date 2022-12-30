@@ -1,6 +1,7 @@
 package me.saiintbrisson.minecraft.logging;
 
 import lombok.RequiredArgsConstructor;
+import me.devnatan.inventoryframework.logging.Logger;
 import org.jetbrains.annotations.Nullable;
 
 @RequiredArgsConstructor

@@ -11,7 +11,7 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.concurrent.atomic.AtomicBoolean;
-import me.devnatan.inventoryframework.IFContext;
+import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.internal.Job;
 import me.devnatan.inventoryframework.internal.platform.Viewer;
 import me.devnatan.inventoryframework.pipeline.Pipeline;

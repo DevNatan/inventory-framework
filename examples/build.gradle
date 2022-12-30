@@ -1,0 +1,10 @@
+repositories {
+    maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
+}
+
+dependencies {
+    compileOnly libs.spigot.api
+    compileOnly projects.api
+    compileOnly projects.bukkit
+    compileOnly projects.shared
+}

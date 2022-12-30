@@ -4,10 +4,11 @@ enableFeaturePreview('TYPESAFE_PROJECT_ACCESSORS')
 
 include 'bom',
         'bukkit-api',
-        'bukkit-plugin',
         'feature-move-io',
         'kotlin-dsl',
         'shared',
         'test',
         'api',
-        'bukkit'
+        'bukkit',
+        'examples',
+        'framework'

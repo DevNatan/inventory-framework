@@ -1,15 +1,14 @@
 package me.saiintbrisson.minecraft;
 
+import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.pipeline.PipelineContext;
 import me.devnatan.inventoryframework.pipeline.PipelineInterceptor;
 import org.jetbrains.annotations.NotNull;
 
-public final class BukkitMoveOutInterceptor implements PipelineInterceptor<BukkitClickViewSlotContext> {
+public final class BukkitMoveOutInterceptor implements PipelineInterceptor<IFContext> {
 
     @Override
-    public void intercept(
-            @NotNull final PipelineContext<BukkitClickViewSlotContext> pipeline,
-            final BukkitClickViewSlotContext subject) {
+    public void intercept(@NotNull final PipelineContext<IFContext> pipeline, final IFContext subject) {
         if (subject.isCancelled()) return;
 
         // TODO platform agnostic & testable impl

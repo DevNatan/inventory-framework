@@ -1,6 +1,6 @@
 package me.saiintbrisson.minecraft;
 
-import static me.saiintbrisson.minecraft.ViewItem.UNSET;
+import static me.devnatan.inventoryframework.ViewItem.UNSET;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,8 +12,9 @@ import java.util.function.Supplier;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import me.devnatan.inventoryframework.IFContext;
-import me.devnatan.inventoryframework.IFSlotContext;
+import me.devnatan.inventoryframework.ViewItem;
+import me.devnatan.inventoryframework.context.IFContext;
+import me.devnatan.inventoryframework.context.IFSlotContext;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.exception.UnknownReferenceException;
 import me.devnatan.inventoryframework.internal.platform.ViewContainer;

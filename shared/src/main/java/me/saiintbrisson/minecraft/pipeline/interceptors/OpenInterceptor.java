@@ -3,6 +3,7 @@ package me.saiintbrisson.minecraft.pipeline.interceptors;
 import static me.saiintbrisson.minecraft.IFUtils.elvis;
 
 import java.util.ArrayList;
+import me.devnatan.inventoryframework.context.IFOpenContext;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.internal.platform.ViewContainer;
 import me.devnatan.inventoryframework.internal.platform.Viewer;
@@ -10,9 +11,8 @@ import me.devnatan.inventoryframework.pipeline.PipelineContext;
 import me.devnatan.inventoryframework.pipeline.PipelineInterceptor;
 import me.saiintbrisson.minecraft.AbstractView;
 import me.saiintbrisson.minecraft.BaseViewContext;
-import me.saiintbrisson.minecraft.OpenViewContext;
 import me.saiintbrisson.minecraft.PlatformUtils;
-import me.saiintbrisson.minecraft.ViewItem;
+import me.devnatan.inventoryframework.ViewItem;
 import me.saiintbrisson.minecraft.ViewType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
@@ -24,9 +24,9 @@ public class OpenInterceptor implements PipelineInterceptor<VirtualView> {
 
     @Override
     public void intercept(@NotNull PipelineContext<VirtualView> pipeline, VirtualView context) {
-        if (!(context instanceof OpenViewContext)) return;
+        if (!(context instanceof IFOpenContext)) return;
 
-        final OpenViewContext openContext = (OpenViewContext) context;
+        final IFOpenContext openContext = (IFOpenContext) context;
         if (openContext.getAsyncOpenJob() == null) {
             finishOpen(pipeline, openContext);
             return;
@@ -42,7 +42,7 @@ public class OpenInterceptor implements PipelineInterceptor<VirtualView> {
                 });
     }
 
-    private void finishOpen(@NotNull PipelineContext<VirtualView> pipeline, @NotNull OpenViewContext openContext) {
+    private void finishOpen(@NotNull PipelineContext<VirtualView> pipeline, @NotNull IFOpenContext openContext) {
         if (openContext.isCancelled()) {
             pipeline.finish();
             return;
@@ -51,21 +51,20 @@ public class OpenInterceptor implements PipelineInterceptor<VirtualView> {
         if (skipOpen) return;
 
         final AbstractView root = openContext.getRoot();
-        final String containerTitle = elvis(openContext.getContainerTitle(), root.getTitle());
-        final ViewType containerType = elvis(openContext.getContainerType(), root.getType());
+        final String containerTitle = elvis(openContext.getTitle(), root.getTitle());
+        final ViewType containerType = elvis(openContext.getType(), root.getType());
 
         // rows will be normalized to fixed container size on `createContainer`
-        final int containerSize = openContext.getContainerSize() == 0
-                ? root.getSize()
-                : containerType.normalize(openContext.getContainerSize());
+        final int containerSize =
+                openContext.getSize() == 0 ? root.getSize() : containerType.normalize(openContext.getSize());
 
         final ViewContainer container =
                 PlatformUtils.getFactory().createContainer(root, containerSize, containerTitle, containerType);
 
-        final BaseViewContext generatedContext = PlatformUtils.getFactory().createContext(root, container, null);
+        final BaseViewContext generatedContext = PlatformUtils.getFactory().createContext(root, container, null, null);
 
         generatedContext.setItems(new ViewItem[containerSize]);
-        generatedContext.setPrevious(openContext.getPrevious());
+        generatedContext.setPrevious(((BaseViewContext) openContext).getPrevious());
 
         for (final Viewer viewer : openContext.getViewers()) generatedContext.addViewer(viewer);
 

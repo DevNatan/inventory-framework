@@ -1,7 +1,15 @@
 package me.saiintbrisson.minecraft;
 
+import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.CLICK;
+import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.CLOSE;
+import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.INIT;
+import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.OPEN;
+import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.RENDER;
+import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.RESUME;
+import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.SLOT_RENDER;
+import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.UPDATE;
 import static me.saiintbrisson.minecraft.IFUtils.unwrap;
-import static me.saiintbrisson.minecraft.ViewItem.UNSET;
+import static me.devnatan.inventoryframework.ViewItem.UNSET;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -11,33 +19,25 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import me.devnatan.inventoryframework.IFContext;
-import me.devnatan.inventoryframework.IFRenderContext;
-import me.devnatan.inventoryframework.IFSlotClickContext;
-import me.devnatan.inventoryframework.IFSlotContext;
-import me.devnatan.inventoryframework.IFSlotMoveContext;
+import me.devnatan.inventoryframework.RootView;
+import me.devnatan.inventoryframework.ViewItem;
+import me.devnatan.inventoryframework.context.IFContext;
+import me.devnatan.inventoryframework.context.IFOpenContext;
+import me.devnatan.inventoryframework.context.IFSlotContext;
 import me.devnatan.inventoryframework.VirtualView;
-import me.devnatan.inventoryframework.config.ViewConfig;
 import me.devnatan.inventoryframework.exception.ContainerException;
 import me.devnatan.inventoryframework.exception.InitializationException;
 import me.devnatan.inventoryframework.internal.Job;
 import me.devnatan.inventoryframework.internal.platform.Viewer;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
-import me.devnatan.inventoryframework.pipeline.PipelinePhase;
-import me.devnatan.inventoryframework.state.MutableState;
-import me.devnatan.inventoryframework.state.PaginationState;
-import me.devnatan.inventoryframework.state.State;
-import me.devnatan.inventoryframework.state.StateHolder;
-import me.saiintbrisson.minecraft.logging.Logger;
+import me.devnatan.inventoryframework.logging.Logger;
 import me.saiintbrisson.minecraft.pipeline.interceptors.AvailableSlotRenderInterceptor;
 import me.saiintbrisson.minecraft.pipeline.interceptors.LayoutPatternApplierInterceptor;
 import me.saiintbrisson.minecraft.pipeline.interceptors.LayoutResolutionInterceptor;
@@ -54,18 +54,12 @@ import org.jetbrains.annotations.Nullable;
 @Setter(AccessLevel.PACKAGE)
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
 @ApiStatus.NonExtendable
-public abstract class AbstractView extends AbstractVirtualView {
+public abstract class AbstractView extends AbstractVirtualView implements RootView {
 
     // Flags
     public static final byte CANCEL_CLICK = 0, CANCEL_DRAG = 1, CANCEL_PICKUP = 2, CANCEL_DROP = 4, CANCEL_CLONE = 8;
 
-    public static final PipelinePhase OPEN = new PipelinePhase("open");
-    public static final PipelinePhase INIT = new PipelinePhase("init");
-    public static final PipelinePhase RENDER = new PipelinePhase("render");
-    public static final PipelinePhase UPDATE = new PipelinePhase("update");
-    public static final PipelinePhase CLICK = new PipelinePhase("click");
-    public static final PipelinePhase CLOSE = new PipelinePhase("close");
-    static final ViewType DEFAULT_TYPE = ViewType.CHEST;
+    public static final ViewType DEFAULT_TYPE = ViewType.CHEST;
 
     @ToString.Include
     private final int size;
@@ -91,7 +85,8 @@ public abstract class AbstractView extends AbstractVirtualView {
     private final int rows;
     PlatformViewFrame<?, ?, ?> viewFrame;
     private final Set<IFContext> contexts = Collections.newSetFromMap(Collections.synchronizedMap(new HashMap<>()));
-    private final Pipeline<VirtualView> pipeline = new Pipeline<>(INIT, OPEN, RENDER, UPDATE, CLICK, CLOSE);
+    private final Pipeline<VirtualView> pipeline =
+            new Pipeline<>(INIT, OPEN, RENDER, SLOT_RENDER, UPDATE, CLICK, CLOSE);
     private Logger logger;
 
     private Job updateJob;
@@ -122,218 +117,6 @@ public abstract class AbstractView extends AbstractVirtualView {
     }
 
     /**
-     * Called when the view is about to be configured, the returned object will be the view's
-     * configuration.
-     * <p>
-     * As a reference, the data defined here was defined in the constructor in previous versions.
-     *
-     * @return The view configuration.
-     */
-    @ApiStatus.OverrideOnly
-    protected ViewConfig onInit() {
-        return ViewConfig.create();
-    }
-
-    /**
-     * Called before the inventory is opened to the player.
-     *
-     * <p>This handler is often called "pre-rendering" because it is possible to set the title and
-     * size of the inventory and also cancel the opening of the View without even doing any handling
-     * related to the inventory.
-     *
-     * <p>It is not possible to manipulate the inventory in this handler, if it happens an exception
-     * will be thrown.
-     *
-     * @param open The player view context.
-     */
-    protected void onOpen(@NotNull OpenViewContext open) {}
-
-    /**
-     * Called __once__ when this view is rendered to the player for the first time.
-     *
-     * <p>This is where you will define items that will be contained non-persistently in the context.
-     *
-     * <p>Using {@link #slot(int)} here will cause a leak of items in memory or that the item
-     * that was previously defined will be overwritten as the slot item definition method is for use
-     * in the constructor only once. Instead, you should use the context item definition function
-     * {@link IFContext#slot(int)}.
-     *
-     * <p>Handlers call order:
-     *
-     * <ul>
-     *   <li>{@link #onOpen(OpenViewContext)}
-     *   <li>this rendering function
-     *   <li>{@link #onUpdate(IFContext)}
-     *   <li>{@link #onClose(IFContext)}
-     * </ul>
-     *
-     * <p>This is a rendering function and can modify the view's container, it's called once.
-     *
-     * @param context The player view context.
-     * @deprecated Use {@link #onRender(IFRenderContext)} instead.
-     */
-    @Deprecated
-    @ApiStatus.OverrideOnly
-    protected void onRender(@NotNull IFContext context) {}
-
-    /**
-     * Called only once before the container is displayed to a player.
-     * <p>
-     * The {@code context} is not cancelable, for cancellation use open handler instead.
-     * <p>
-     * This function should only be used to render items, any external call is completely forbidden
-     * as the function runs on the main thread.
-     *
-     * @param context The renderization context.
-     */
-    @ApiStatus.OverrideOnly
-    protected void onRender(IFRenderContext context) {}
-
-    /**
-     * Called when a slot (even if it's a pseudo slot) is rendered.
-     *
-     * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
-     * such API may be changed or may be removed completely in any further release. </i></b>
-     *
-     * @param context The slot render context.
-     */
-    @ApiStatus.Experimental
-    protected void onSlotRender(@NotNull IFSlotContext context) {}
-
-    /**
-     * Called when the view is updated for a player.
-     *
-     * <p>This is a rendering function and can modify the view's inventory.
-     *
-     * @param context The player view context.
-     * @see IFContext#update()
-     */
-    protected void onUpdate(@NotNull IFContext context) {}
-
-    /**
-     * Called when the player closes the view's inventory.
-     *
-     * <p>It is possible to cancel this event and have the view's inventory open again for the player.
-     *
-     * @param context The player view context.
-     */
-    protected void onClose(@NotNull IFContext context) {}
-
-    /**
-     * Called when a player clicks on the view inventory.
-     *
-     * <p>This function is called even if the click has been cancelled, you can check this using
-     * {@link IFSlotContext#isCancelled()}.
-     *
-     * <p>Canceling the context will cancel the click.
-     *
-     * <p>Handling the inventory in the click handler is not allowed.
-     *
-     * @param context The player view context.
-     * @deprecated Use {@link #onClick(IFSlotClickContext)} instead.
-     */
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.5")
-    protected void onClick(@NotNull IFSlotContext context) {}
-
-    /**
-     * Called when an actor clicks on a container while it has a view open.
-     *
-     * <p>You can know if the click was on entity inventory or view inventory by {@link
-     * IFSlotContext#isOnEntityContainer()}
-     *
-     * <p>Any function that triggers an {@link #inventoryModificationTriggered() inventory
-     * modification} is prohibited from being used in this handler.
-     *
-     * <p>This context is cancelable and canceling this context will cancel the click, thus canceling
-     * all subsequent interceptors causing the pipeline to terminate immediately.
-     *
-     * @param context The click context.
-     */
-    protected void onClick(@NotNull IFSlotClickContext context) {}
-
-    /**
-     * Called when the player who clicks outside the view of containers, neither the view's container
-     * nor the player's own container.
-     *
-     * @param context The click context.
-     * @deprecated Use {@link #onClick(IFSlotContext)} with {@link
-     * IFSlotClickContext#isOutsideClick()} instead.
-     */
-    @SuppressWarnings("DeprecatedIsStillUsed")
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.5")
-    protected void onClickOutside(@NotNull IFContext context) {}
-
-    /**
-     * Called when a player uses the hot bar key button.
-     *
-     * <p>This context is non-cancelable.
-     *
-     * @param context      The current view context.
-     * @param hotbarButton The interacted hot bar button.
-     * @deprecated Use {@link #onClick(IFSlotContext)} with {@link
-     * IFSlotClickContext#isKeyboardClick()} instead.
-     */
-    @SuppressWarnings("DeprecatedIsStillUsed")
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.5")
-    protected void onHotbarInteract(@NotNull IFContext context, int hotbarButton) {}
-
-    /**
-     * Called when the player holds an item in the inventory.
-     *
-     * <p>This handler will only work if the player manages to successfully hold the item, for example
-     * it will not be called if the click has been canceled for whatever reasons.
-     *
-     * <p>This context is non-cancelable.
-     *
-     * @param context The player view context.
-     */
-    protected void onItemHold(@NotNull IFSlotContext context) {}
-
-    /**
-     * Called when an item is dropped by the player in an inventory (not necessarily the View's
-     * inventory).
-     *
-     * <p>With this it is possible to detect if the player held and released an item:
-     *
-     * <ul>
-     *   <li>inside the view
-     *   <li>outside the view (in the player inventory)
-     *   <li>from inside to outside the view (to the player inventory)
-     *   <li>from outside to inside the view (from the player inventory)
-     * </ul>
-     *
-     * <p>This handler is the counterpart of {@link #onItemHold(IFSlotContext)}.
-     *
-     * @param fromContext The input context of the move.
-     * @param toContext   The output context of the move.
-     */
-    protected void onItemRelease(@NotNull IFSlotContext fromContext, @NotNull IFSlotContext toContext) {}
-
-    /**
-     * Called when a player moves a view item out of the view's inventory.
-     *
-     * <p>Canceling the context will cancel the move. Don't confuse moving with dropping.
-     *
-     * @param context The player view context.
-     */
-    protected void onMoveOut(@NotNull IFSlotMoveContext context) {}
-
-    /**
-     * Called when a context is resumed.
-     * <p>
-     * Currently, there is only one way to resume a context, which is through
-     * {@link IFContext#back()} the "context" parameter being the context that was resumed and
-     * the "subject" the context in which the function was executed.
-     *
-     * @param context The resumed context.
-     * @param subject By what context the context was resumed.
-     */
-    protected void onResume(@NotNull IFContext context, @NotNull IFContext subject) {}
-
-    /**
      * {@inheritDoc}
      *
      * @throws InitializationException If this view is initialized.
@@ -351,13 +134,12 @@ public abstract class AbstractView extends AbstractVirtualView {
     final void open(@NotNull Viewer viewer, @NotNull Map<String, Object> data, @Nullable IFContext initiator) {
         if (!isInitialized()) throw new IllegalStateException("Cannot open a uninitialized view.");
 
-        final OpenViewContext context =
-                (OpenViewContext) PlatformUtils.getFactory().createContext(this, null, OpenViewContext.class);
+        final IFOpenContext context =
+                (IFOpenContext) PlatformUtils.getFactory().createContext(this, null, IFOpenContext.class, viewer);
 
         context.addViewer(viewer);
-        context.setPrevious((BaseViewContext) initiator);
+        ((BaseViewContext) context).setPrevious((BaseViewContext) initiator);
         data.forEach(context::set);
-        onOpen(context);
         getPipeline().execute(OPEN, context);
     }
 
@@ -365,18 +147,12 @@ public abstract class AbstractView extends AbstractVirtualView {
     public void render(@NotNull IFContext context) {
         if (!isInitialized()) throw new IllegalStateException("Cannot render a uninitialized view.");
 
-        runCatching(context, () -> {
-            onRender(context);
-            getPipeline().execute(RENDER, context);
-        });
+        runCatching(context, () -> getPipeline().execute(RENDER, context));
     }
 
     @Override
     public void update(@NotNull IFContext context) {
-        runCatching(context, () -> {
-            onUpdate(context);
-            getPipeline().execute(UPDATE, context);
-        });
+        runCatching(context, () -> getPipeline().execute(UPDATE, context));
     }
 
     /**
@@ -391,7 +167,7 @@ public abstract class AbstractView extends AbstractVirtualView {
     void resume(@NotNull BaseViewContext target, @NotNull BaseViewContext subject) {
         target.setPrevious(subject);
 
-        // we need to copy since this will be and close -> open -> close operation
+        // we need to copy since this will be and `close -> open -> close` operation
         // and open the target for each viewer from the subject context
         final List<Viewer> viewers = new ArrayList<>(subject.internalGetViewers());
 
@@ -402,7 +178,7 @@ public abstract class AbstractView extends AbstractVirtualView {
 
         final AbstractView root = target.getRoot();
         root.registerContext(target);
-        root.onResume(target, subject);
+        root.getPipeline().execute(RESUME, target);
     }
 
     /**
@@ -768,7 +544,7 @@ public abstract class AbstractView extends AbstractVirtualView {
                 ? PlatformUtils.getFactory().createSlotContext(slot, item, parent, parent.getContainer(), UNSET, null)
                 : context;
 
-        runCatching(context, () -> onSlotRender(renderContext));
+        runCatching(context, () -> getPipeline().execute(SLOT_RENDER, renderContext));
 
         if (item != null) {
             ViewItemHandler renderHandler = item.getRenderHandler();
@@ -987,7 +763,7 @@ public abstract class AbstractView extends AbstractVirtualView {
         ensureNotInitialized();
         if (!forTests) {
             beforeInit();
-            onInit();
+            // TODO call onInit(...) on 2.5.5
             getPipeline().execute(INIT, this);
             initUpdateScheduler();
         }
@@ -1006,50 +782,8 @@ public abstract class AbstractView extends AbstractVirtualView {
         getContexts().forEach(context -> context.emit(event));
     }
 
-    // TODO impls
-    public <T> MutableState<T> mutableState(T initialValue) {
-        throw new UnsupportedOperationException();
-    }
-
-    public <T> State<T> computedState(@NotNull Supplier<T> value) {
-        throw new UnsupportedOperationException();
-    }
-
-    public <T extends StateHolder, R> MutableState<R> lazyState(@NotNull Function<T, R> factory) {
-        throw new UnsupportedOperationException();
-    }
-
-    public <T> PaginationState<T> paginationState(BiConsumer<ViewItem, T> handler) {
-        throw new UnsupportedOperationException();
-    }
-
-    public <T> PaginationState<T> paginationState(Supplier<List<T>> source, BiConsumer<ViewItem, T> handler) {
-        throw new UnsupportedOperationException();
-    }
-
-    public <T> PaginationState<T> paginationState(Supplier<List<T>> initialValue) {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * A {@link #lazyState(Function) lazy state} whose value is always computed from the initial
-     * data set by its {@link StateHolder}.
-     * <p>
-     * When the holder is a {@link OpenViewContext}, the initial value will be the value defined
-     * in the initial opening data of the container. This state is specifically set for backwards
-     * compatibility with the old way of applying data to a context before or during container open.
-     *
-     * @param key The initial data identifier.
-     * @param <T> The initial data value type.
-     * @return A state computed with an initial opening data value.
-     */
-    @SuppressWarnings("unchecked")
-    public <T> State<T> initialState(@NotNull String key) {
-        return lazyState((IFContext context) -> (T) context.getData().get(key));
-    }
-
-    @SuppressWarnings("unchecked")
-    public <T> State<T> initialState(@NotNull Class<? extends T> key) {
-        return lazyState((IFContext context) -> (T) context.getData().get(key));
+    @Override
+    public final boolean isPaginated() {
+        return false;
     }
 }

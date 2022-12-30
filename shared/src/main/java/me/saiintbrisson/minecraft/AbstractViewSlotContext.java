@@ -9,11 +9,13 @@ import java.util.NoSuchElementException;
 import java.util.Stack;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import me.devnatan.inventoryframework.IFContext;
-import me.devnatan.inventoryframework.IFSlotContext;
+import me.devnatan.inventoryframework.ViewItem;
+import me.devnatan.inventoryframework.context.IFContext;
+import me.devnatan.inventoryframework.context.IFSlotContext;
 import me.devnatan.inventoryframework.internal.platform.ViewContainer;
 import me.devnatan.inventoryframework.internal.platform.Viewer;
 import me.devnatan.inventoryframework.pagination.IFPaginatedContext;
@@ -36,12 +38,13 @@ public abstract class AbstractViewSlotContext extends BaseViewContext implements
     private boolean cancelled;
 
     @ToString.Include
+    @Getter(AccessLevel.NONE)
     protected ItemWrapper item;
 
     @ToString.Include
     private boolean changed;
 
-    AbstractViewSlotContext(int slot, ViewItem backingItem, @NotNull final IFContext parent, ViewContainer container) {
+    AbstractViewSlotContext(int slot, ViewItem backingItem, @NotNull IFContext parent, ViewContainer container) {
         super(parent.getRoot(), container);
         this.slot = slot;
         this.backingItem = backingItem;
