@@ -1,4 +1,4 @@
-package me.saiintbrisson.minecraft.pipeline.interceptors;
+package me.devnatan.inventoryframework.pipeline;
 
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.VirtualView;

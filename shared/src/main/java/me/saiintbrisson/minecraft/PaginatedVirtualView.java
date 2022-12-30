@@ -8,7 +8,6 @@ import java.util.function.Function;
 import me.devnatan.inventoryframework.ViewItem;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.exception.InitializationException;
-import me.devnatan.inventoryframework.pagination.IFPaginatedContext;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 

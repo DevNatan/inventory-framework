@@ -1,4 +1,4 @@
-package me.saiintbrisson.minecraft.pipeline.interceptors;
+package me.devnatan.inventoryframework.pipeline;
 
 import static me.devnatan.inventoryframework.VirtualView.LAYOUT_EMPTY_SLOT;
 import static me.devnatan.inventoryframework.VirtualView.LAYOUT_FILLED_SLOT;
@@ -14,7 +14,6 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.VirtualView;
-import me.devnatan.inventoryframework.pagination.IFPaginatedContext;
 import me.devnatan.inventoryframework.pipeline.PipelineContext;
 import me.devnatan.inventoryframework.pipeline.PipelineInterceptor;
 import me.saiintbrisson.minecraft.AbstractPaginatedView;
@@ -163,11 +162,11 @@ public final class LayoutResolutionInterceptor implements PipelineInterceptor<Vi
                         break;
                     }
                     case LAYOUT_PREVIOUS_PAGE: {
-                        resolveAndApplyNavigationItem(view, context, NAVIGATE_LEFT, targetSlot);
+                        resolveAndApplyNavigationItem(view, context, PaginatedVirtualView.NAVIGATE_LEFT, targetSlot);
                         break;
                     }
                     case LAYOUT_NEXT_PAGE: {
-                        resolveAndApplyNavigationItem(view, context, NAVIGATE_RIGHT, targetSlot);
+                        resolveAndApplyNavigationItem(view, context, PaginatedVirtualView.NAVIGATE_RIGHT, targetSlot);
                         break;
                     }
                     default: {
@@ -235,7 +234,7 @@ public final class LayoutResolutionInterceptor implements PipelineInterceptor<Vi
         }
 
         final PaginatedVirtualView paginatedView = view.paginated();
-        if (direction == NAVIGATE_LEFT) paginatedView.setPreviousPageItemSlot(slot);
+        if (direction == PaginatedVirtualView.NAVIGATE_LEFT) paginatedView.setPreviousPageItemSlot(slot);
         else paginatedView.setNextPageItemSlot(slot);
     }
 
@@ -259,7 +258,7 @@ public final class LayoutResolutionInterceptor implements PipelineInterceptor<Vi
         if (vf == null) return null;
 
         final Function<IFPaginatedContext<?>, ViewItem> fallback =
-                direction == NAVIGATE_LEFT ? vf.getDefaultPreviousPageItem() : vf.getDefaultNextPageItem();
+                direction == PaginatedVirtualView.NAVIGATE_LEFT ? vf.getDefaultPreviousPageItem() : vf.getDefaultNextPageItem();
 
         if (fallback == null) return null;
 
@@ -279,7 +278,7 @@ public final class LayoutResolutionInterceptor implements PipelineInterceptor<Vi
     @SuppressWarnings({"unchecked", "rawtypes"})
     private <T> ViewItem getInternalNavigationItem(
             @NotNull PaginatedVirtualView<T> view, @NotNull IFPaginatedContext<T> context, int direction) {
-        final boolean isBackwards = direction == NAVIGATE_LEFT;
+        final boolean isBackwards = direction == PaginatedVirtualView.NAVIGATE_LEFT;
         final BiConsumer<IFPaginatedContext<T>, ViewItem> factory =
                 isBackwards ? view.getPreviousPageItemFactory() : view.getNextPageItemFactory();
 

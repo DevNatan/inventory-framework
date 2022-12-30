@@ -19,7 +19,6 @@ import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.exception.UnknownReferenceException;
 import me.devnatan.inventoryframework.internal.platform.ViewContainer;
 import me.devnatan.inventoryframework.internal.platform.Viewer;
-import me.devnatan.inventoryframework.pagination.IFPaginatedContext;
 import me.devnatan.inventoryframework.state.State;
 import me.devnatan.inventoryframework.state.StateValueHolder;
 import org.jetbrains.annotations.ApiStatus;

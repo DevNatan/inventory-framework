@@ -1,4 +1,4 @@
-package me.saiintbrisson.minecraft.pipeline.interceptors;
+package me.devnatan.inventoryframework.pipeline;
 
 import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.RENDER;
 import static me.saiintbrisson.minecraft.IFUtils.callIfNotNull;
@@ -14,7 +14,6 @@ import java.util.Objects;
 import java.util.Stack;
 import java.util.function.Function;
 import me.devnatan.inventoryframework.context.IFContext;
-import me.devnatan.inventoryframework.pagination.IFPaginatedContext;
 import me.devnatan.inventoryframework.context.IFPaginatedSlotContext;
 import me.devnatan.inventoryframework.pipeline.PipelineContext;
 import me.devnatan.inventoryframework.pipeline.PipelineInterceptor;
@@ -35,8 +34,8 @@ public final class PaginationRenderInterceptor implements PipelineInterceptor<IF
 
     @Override
     public void intercept(@NotNull PipelineContext<IFContext> pipeline, IFContext context) {
-        checkContainerType(context);
-        checkPaginationSourceAvailability(context);
+        IFUtils.checkContainerType(context);
+        IFUtils.checkPaginationSourceAvailability(context);
 
         final IFPaginatedContext<?> paginatedContext = context.paginated();
         final AbstractPaginatedView<?> root = paginatedContext.getRoot();
@@ -89,7 +88,7 @@ public final class PaginationRenderInterceptor implements PipelineInterceptor<IF
             ViewItem[] preservedItems,
             @NotNull Paginator<T> paginator) {
         AsyncPaginationDataState<T> asyncState = paginator.getAsyncState();
-        callIfNotNull(asyncState.getLoadStarted(), handler -> handler.accept(context));
+        IFUtils.callIfNotNull(asyncState.getLoadStarted(), handler -> handler.accept(context));
 
         asyncState
                 .getJob()
@@ -100,17 +99,17 @@ public final class PaginationRenderInterceptor implements PipelineInterceptor<IF
                     // set before async success handler call to allow user now how much data was loaded
                     paginator.setSource((List<T>) data);
 
-                    callIfNotNull(asyncState.getSuccess(), handler -> handler.accept(context));
-                    callIfNotNull(
+                    IFUtils.callIfNotNull(asyncState.getSuccess(), handler -> handler.accept(context));
+                    IFUtils.callIfNotNull(
                             asyncState.getCompletedSuccessfully(),
                             handler -> handler.accept(context, paginator.getSource()));
                     renderSource(context, layout, preservedItems, null, paginator);
                 })
                 .exceptionally(error -> {
-                    callIfNotNull(asyncState.getError(), handler -> handler.accept(context, error));
+                    IFUtils.callIfNotNull(asyncState.getError(), handler -> handler.accept(context, error));
                     throw new RuntimeException("Failed to retrieve pagination data", error);
                 })
-                .thenRun(() -> callIfNotNull(asyncState.getLoadFinished(), handler -> handler.accept(context)));
+                .thenRun(() -> IFUtils.callIfNotNull(asyncState.getLoadFinished(), handler -> handler.accept(context)));
     }
 
     private <T> void handleLazySourceProvider(
@@ -142,9 +141,9 @@ public final class PaginationRenderInterceptor implements PipelineInterceptor<IF
 
         final AbstractPaginatedView<T> root = context.getRoot();
         final int elementsCount = elements.size();
-        final Stack<Integer> layoutItemsLayer = useLayoutItemsLayer(root, context);
+        final Stack<Integer> layoutItemsLayer = IFUtils.useLayoutItemsLayer(root, context);
         final int lastSlot = layout == null ? root.getLimit() : layoutItemsLayer.peek();
-        final int layerSize = useLayoutItemsLayerSize(layoutItemsLayer, layout);
+        final int layerSize = IFUtils.useLayoutItemsLayerSize(layoutItemsLayer, layout);
         final int reservedOffset = root.getReservedItemsCount() + context.getReservedItemsCount();
 
         for (int i = 0; i <= lastSlot; i++) {

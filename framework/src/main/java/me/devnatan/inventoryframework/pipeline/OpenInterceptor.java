@@ -1,4 +1,4 @@
-package me.saiintbrisson.minecraft.pipeline.interceptors;
+package me.devnatan.inventoryframework.pipeline;
 
 import static me.saiintbrisson.minecraft.IFUtils.elvis;
 
@@ -51,8 +51,8 @@ public class OpenInterceptor implements PipelineInterceptor<VirtualView> {
         if (skipOpen) return;
 
         final AbstractView root = openContext.getRoot();
-        final String containerTitle = elvis(openContext.getTitle(), root.getTitle());
-        final ViewType containerType = elvis(openContext.getType(), root.getType());
+        final String containerTitle = IFUtils.elvis(openContext.getTitle(), root.getTitle());
+        final ViewType containerType = IFUtils.elvis(openContext.getType(), root.getType());
 
         // rows will be normalized to fixed container size on `createContainer`
         final int containerSize =

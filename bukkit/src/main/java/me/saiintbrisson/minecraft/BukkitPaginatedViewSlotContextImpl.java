@@ -12,7 +12,6 @@ import me.devnatan.inventoryframework.ViewItem;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFSlotContext;
 import me.devnatan.inventoryframework.internal.platform.ViewContainer;
-import me.devnatan.inventoryframework.pagination.IFPaginatedContext;
 import me.devnatan.inventoryframework.context.IFPaginatedSlotContext;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;

@@ -6,7 +6,6 @@ import java.util.List;
 import me.devnatan.inventoryframework.ViewItem;
 import me.devnatan.inventoryframework.internal.platform.ViewContainer;
 import me.devnatan.inventoryframework.internal.platform.Viewer;
-import me.devnatan.inventoryframework.pagination.IFPaginatedContext;
 import me.devnatan.inventoryframework.context.IFPaginatedSlotContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

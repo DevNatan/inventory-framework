@@ -7,7 +7,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import me.devnatan.inventoryframework.pagination.IFPaginatedContext;
 import org.jetbrains.annotations.Contract;
 
 /**

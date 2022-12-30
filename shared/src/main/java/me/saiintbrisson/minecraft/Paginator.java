@@ -8,7 +8,6 @@ import java.util.function.Function;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import me.devnatan.inventoryframework.pagination.IFPaginatedContext;
 import org.jetbrains.annotations.NotNull;
 
 /**

@@ -1,10 +1,8 @@
-package me.saiintbrisson.minecraft.pipeline.interceptors;
+package me.devnatan.inventoryframework.pipeline;
 
 import java.util.List;
 import java.util.function.BiConsumer;
 import me.devnatan.inventoryframework.VirtualView;
-import me.devnatan.inventoryframework.pipeline.PipelineContext;
-import me.devnatan.inventoryframework.pipeline.PipelineInterceptor;
 import me.saiintbrisson.minecraft.LayoutPattern;
 import me.devnatan.inventoryframework.ViewItem;
 import org.jetbrains.annotations.NotNull;
