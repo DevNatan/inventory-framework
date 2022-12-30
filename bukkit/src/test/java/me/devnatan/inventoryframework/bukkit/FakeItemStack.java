@@ -1,4 +1,4 @@
-package me.saiintbrisson.minecraft.bukkit;
+package me.devnatan.inventoryframework.bukkit;
 
 import lombok.ToString;
 import org.bukkit.Material;

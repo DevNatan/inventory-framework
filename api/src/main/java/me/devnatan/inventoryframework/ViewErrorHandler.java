@@ -1,4 +1,4 @@
-package me.saiintbrisson.minecraft;
+package me.devnatan.inventoryframework;
 
 import me.devnatan.inventoryframework.context.IFContext;
 import org.jetbrains.annotations.NotNull;

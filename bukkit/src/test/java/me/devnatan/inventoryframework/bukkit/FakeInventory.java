@@ -1,4 +1,4 @@
-package me.saiintbrisson.minecraft.bukkit;
+package me.devnatan.inventoryframework.bukkit;
 
 import java.util.HashMap;
 import java.util.List;

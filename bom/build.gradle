@@ -7,7 +7,6 @@ apply from: '../publish.gradle'
 dependencies {
     compileOnlyApi projects.api
     compileOnlyApi projects.shared
-    compileOnlyApi projects.bukkitApi
     compileOnlyApi projects.featureMoveIo
     compileOnlyApi projects.kotlinDsl
 }

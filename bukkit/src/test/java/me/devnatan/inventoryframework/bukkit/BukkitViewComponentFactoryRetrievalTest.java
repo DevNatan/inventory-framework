@@ -1,5 +1,7 @@
-package me.saiintbrisson.minecraft;
+package me.devnatan.inventoryframework.bukkit;
 
+import me.saiintbrisson.minecraft.PlatformUtils;
+import me.saiintbrisson.minecraft.ViewComponentFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

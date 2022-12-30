@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
+import me.devnatan.inventoryframework.ViewErrorHandler;
 import me.devnatan.inventoryframework.ViewItem;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.internal.Job;
@@ -179,7 +180,7 @@ public interface PlatformViewFrame<V, P, F extends PlatformViewFrame<V, P, F>> e
     F withNextPageItem(@Nullable BiConsumer<IFPaginatedContext<?>, ViewItem> nextPageItemFactory);
 
     @ApiStatus.Internal
-    ViewErrorHandler getErrorHandler();
+	ViewErrorHandler getErrorHandler();
 
     /**
      * @deprecated Use {@link #withErrorHandler(ViewErrorHandler)} instead.

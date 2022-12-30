@@ -4,18 +4,28 @@ import me.devnatan.inventoryframework.internal.InitOnly;
 import me.saiintbrisson.minecraft.ViewType;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import java.util.function.IntConsumer;
 import java.util.function.Supplier;
 
 @InitOnly
 @ApiStatus.Experimental
 public interface ViewConfig {
+
+	@ApiStatus.Experimental
+	interface Option<T> {
+
+		@NotNull
+		String name();
+
+		@Nullable
+		T defaultValue();
+
+	}
 
 	@FunctionalInterface
 	@ApiStatus.Experimental
@@ -27,36 +37,6 @@ public interface ViewConfig {
 		 * @param config The target configuration.
 		 */
 		void apply(@NotNull ViewConfig config);
-	}
-
-	/**
-	 * Creates a new {@link ViewConfig}.
-	 *
-	 * @return A new ViewConfig instance.
-	 */
-	@NotNull
-	static ViewConfig create() {
-		return new Impl();
-	}
-
-	/**
-	 * Creates a new {@link ViewConfig}.
-	 *
-	 * @return A new ViewConfig instance.
-	 */
-	@NotNull
-	static ViewConfig create(String title) {
-		return new Impl().title(title);
-	}
-
-	/**
-	 * Creates a new {@link ViewConfig}.
-	 *
-	 * @return A new ViewConfig instance.
-	 */
-	@NotNull
-	static ViewConfig create(int size, String title) {
-		return new Impl().size(size).title(title);
 	}
 
 	/**
@@ -125,10 +105,14 @@ public interface ViewConfig {
 
 	ViewConfig layout(char character, @NotNull Supplier<Object> factory);
 
-	ViewConfig flags(int flags);
-
-	ViewConfig flags(int flag, int... others);
+	ViewConfig options(ViewConfig.Option<?>... options);
 
 	ViewConfig cancelOnClick();
+
+	ViewConfig cancelOnPickup();
+
+	ViewConfig cancelOnDrop();
+
+	ViewConfig cancelOnDrag();
 }
 

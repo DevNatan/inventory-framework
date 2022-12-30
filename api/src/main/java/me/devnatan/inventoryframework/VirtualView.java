@@ -9,10 +9,6 @@ import java.util.function.Supplier;
 
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.exception.InventoryModificationException;
-import me.saiintbrisson.minecraft.AbstractView;
-import me.saiintbrisson.minecraft.LayoutPattern;
-import me.saiintbrisson.minecraft.PaginatedVirtualView;
-import me.saiintbrisson.minecraft.ViewErrorHandler;
 import me.saiintbrisson.minecraft.ViewType;
 import me.saiintbrisson.minecraft.event.EventListener;
 import me.saiintbrisson.minecraft.event.EventSubscription;
@@ -24,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
  * VirtualView is the basis for creating a view it contains the implementation with methods that are
  * shared between regular views and contexts which are called "unified methods".
  * <p>
- * We call "view" a {@link VirtualView}, "regular view" a {@link AbstractView} and implementations,
+ * We call "view" a {@link VirtualView}, "root view" a {@link RootView} and implementations,
  * and "context" a {@link IFContext} and implementations.
  */
 public interface VirtualView {

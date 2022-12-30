@@ -1,11 +1,12 @@
 package me.devnatan.inventoryframework.pipeline;
 
+import me.devnatan.inventoryframework.LayoutPattern;
+import me.devnatan.inventoryframework.ViewItem;
+import me.devnatan.inventoryframework.VirtualView;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 import java.util.function.BiConsumer;
-import me.devnatan.inventoryframework.VirtualView;
-import me.saiintbrisson.minecraft.LayoutPattern;
-import me.devnatan.inventoryframework.ViewItem;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Applies items from {@link VirtualView#setLayout(char, BiConsumer) user-defined layout patterns}
@@ -13,18 +14,18 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class LayoutPatternApplierInterceptor implements PipelineInterceptor<VirtualView> {
 
-    @Override
-    public void intercept(@NotNull PipelineContext<VirtualView> pipeline, VirtualView view) {
-        final List<LayoutPattern> patterns = view.getLayoutPatterns();
-        if (patterns == null) return;
+	@Override
+	public void intercept(PipelineContext<VirtualView> pipeline, VirtualView view) {
+		final List<LayoutPattern> patterns = view.getLayoutPatterns();
+		if (patterns == null) return;
 
-        for (final LayoutPattern pattern : patterns) {
-            int iterationIndex = 0;
+		for (final LayoutPattern pattern : patterns) {
+			int iterationIndex = 0;
 
-            for (final int slot : pattern.getSlots()) {
-                final ViewItem item = pattern.getFactory().apply(iterationIndex++);
-                view.apply(item, slot);
-            }
-        }
-    }
+			for (final int slot : pattern.getSlots()) {
+				final ViewItem item = pattern.getFactory().apply(iterationIndex++);
+				view.apply(item, slot);
+			}
+		}
+	}
 }

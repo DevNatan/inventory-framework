@@ -1,4 +1,4 @@
-package me.saiintbrisson.minecraft.logging;
+package me.devnatan.inventoryframework.bukkit.logging;
 
 import lombok.RequiredArgsConstructor;
 import me.devnatan.inventoryframework.logging.Logger;

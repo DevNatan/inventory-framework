@@ -12,7 +12,7 @@ import me.devnatan.inventoryframework.internal.platform.Viewer;
 import me.saiintbrisson.minecraft.AbstractView;
 import me.saiintbrisson.minecraft.PlatformViewFrame;
 import me.saiintbrisson.minecraft.ViewComponentFactory;
-import me.saiintbrisson.minecraft.ViewErrorHandler;
+import me.devnatan.inventoryframework.ViewErrorHandler;
 import me.devnatan.inventoryframework.ViewItem;
 import me.devnatan.inventoryframework.feature.Feature;
 import org.jetbrains.annotations.NotNull;

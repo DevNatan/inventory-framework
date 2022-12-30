@@ -12,6 +12,8 @@ import java.util.function.Supplier;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
+import me.devnatan.inventoryframework.LayoutPattern;
+import me.devnatan.inventoryframework.ViewErrorHandler;
 import me.devnatan.inventoryframework.ViewItem;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.VirtualView;

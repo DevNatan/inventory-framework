@@ -1,8 +1,9 @@
-package me.saiintbrisson.minecraft;
+package me.devnatan.inventoryframework.bukkit;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
+import me.saiintbrisson.minecraft.ViewType;
 import me.saiintbrisson.minecraft.bukkit.FakeInventory;
 import me.saiintbrisson.minecraft.bukkit.FakeItemStack;
 import org.bukkit.Material;
