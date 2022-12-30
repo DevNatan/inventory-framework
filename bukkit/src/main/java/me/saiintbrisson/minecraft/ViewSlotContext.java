@@ -1,9 +1,11 @@
 package me.saiintbrisson.minecraft;
 
-import me.devnatan.inventoryframework.IFContext;
+import me.devnatan.inventoryframework.ViewItem;
+import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.bukkit.BukkitIFContext;
 import me.devnatan.inventoryframework.internal.platform.ViewContainer;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,12 +15,17 @@ public class ViewSlotContext extends AbstractViewSlotContext implements BukkitIF
 
     ViewSlotContext(
             int slot,
-            @NotNull ViewItem backingItem,
+            ViewItem backingItem,
             @NotNull IFContext parent,
             @Nullable ViewContainer container,
             @NotNull Player player) {
         super(slot, backingItem, parent, container);
         this.player = player;
+    }
+
+    public ItemStack getItem() {
+        // TODO remove this :)
+        return ((BukkitViewContainer) getContainer()).getInventory().getItem(getSlot());
     }
 
     @Override

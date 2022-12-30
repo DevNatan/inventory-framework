@@ -2,7 +2,7 @@
 
 package me.saiintbrisson.minecraft
 
-import me.devnatan.inventoryframework.IFContext
+import me.devnatan.inventoryframework.context.IFContext
 
 public inline fun ViewBuilder.slot(
     slot: Int,

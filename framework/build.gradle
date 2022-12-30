@@ -1,0 +1,5 @@
+apply from: '../publish.gradle'
+
+dependencies {
+    api projects.api
+}

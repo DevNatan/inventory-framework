@@ -9,4 +9,6 @@ include 'bom',
         'shared',
         'test',
         'api',
-        'bukkit'
+        'bukkit',
+        'examples',
+        'framework'

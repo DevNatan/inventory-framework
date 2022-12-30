@@ -3,7 +3,9 @@
 
 package me.saiintbrisson.minecraft
 
-import me.devnatan.inventoryframework.IFContext
+import me.devnatan.inventoryframework.ViewItem
+import me.devnatan.inventoryframework.context.IFContext
+import me.devnatan.inventoryframework.context.IFOpenContext
 import java.util.function.Consumer
 
 @ViewDsl
@@ -19,7 +21,7 @@ public class ViewBuilder {
     public var clearCursorOnClose: Boolean = false
     public var closeOnOutsideClick: Boolean = false
 
-    internal var open: (OpenViewContext.() -> Unit)? = null
+    internal var open: (IFOpenContext.() -> Unit)? = null
     internal var render: ContextBlock? = null
     internal var update: ContextBlock? = null
     internal var click: SlotClickContextBlock? = null

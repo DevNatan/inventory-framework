@@ -1,6 +1,7 @@
 package me.saiintbrisson.minecraft;
 
-import me.devnatan.inventoryframework.IFContext;
+import me.devnatan.inventoryframework.ViewItem;
+import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.internal.platform.ViewContainer;
 import me.devnatan.inventoryframework.internal.platform.Viewer;

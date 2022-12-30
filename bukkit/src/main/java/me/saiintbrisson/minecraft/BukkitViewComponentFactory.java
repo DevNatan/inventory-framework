@@ -1,14 +1,21 @@
 package me.saiintbrisson.minecraft;
 
 import static java.util.Objects.requireNonNull;
-import static me.saiintbrisson.minecraft.AbstractView.CLICK;
-import static me.saiintbrisson.minecraft.AbstractView.CLOSE;
-import static me.saiintbrisson.minecraft.ViewItem.UNSET;
+import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.CLICK;
+import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.CLOSE;
+import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.OPEN;
+import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.PAGINATED_ITEM_RENDER;
+import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.RENDER;
+import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.RESUME;
+import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.UPDATE;
+import static me.devnatan.inventoryframework.ViewItem.UNSET;
 import static org.bukkit.Bukkit.createInventory;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import me.devnatan.inventoryframework.IFContext;
+import me.devnatan.inventoryframework.ViewItem;
+import me.devnatan.inventoryframework.bukkit.View;
+import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.bukkit.BukkitIFContext;
 import me.devnatan.inventoryframework.internal.platform.ViewContainer;
@@ -81,11 +88,13 @@ final class BukkitViewComponentFactory extends ViewComponentFactory {
     @Override
     public @NotNull BaseViewContext createContext(
             @NotNull AbstractView root,
-            @NotNull ViewContainer container,
+            @Nullable ViewContainer container,
             @Nullable Class<? extends IFContext> backingContext,
             @Nullable Viewer viewer) {
         if (backingContext != null && OpenViewContext.class.isAssignableFrom(backingContext) && viewer != null)
             return new OpenViewContext(root, container, ((BukkitViewer) viewer).getPlayer());
+
+        if (container == null) throw new IllegalArgumentException("Cannot create confined context without a container");
 
         return root instanceof PaginatedView
                 ? new PaginatedViewContextImpl<>(root, container)
@@ -95,7 +104,7 @@ final class BukkitViewComponentFactory extends ViewComponentFactory {
     @Override
     @NotNull
     public AbstractViewSlotContext createSlotContext(
-            int slot, ViewItem item, IFContext parent, ViewContainer container, int index, Object value) {
+		int slot, ViewItem item, IFContext parent, ViewContainer container, int index, Object value) {
         final Player player = ((BukkitIFContext) parent).getPlayer();
         return index == UNSET
                 ? new ViewSlotContext(slot, item, parent, container, player)
@@ -144,12 +153,17 @@ final class BukkitViewComponentFactory extends ViewComponentFactory {
 
     private void registerInterceptors(AbstractView view) {
         final Pipeline<? super IFContext> pipeline = view.getPipeline();
+        pipeline.intercept(OPEN, PlatformInterceptors.open);
+        pipeline.intercept(RENDER, PlatformInterceptors.render);
+        pipeline.intercept(UPDATE, PlatformInterceptors.update);
         pipeline.intercept(CLICK, new ItemClickInterceptor());
         pipeline.intercept(CLICK, new GlobalClickInterceptor());
         pipeline.intercept(CLICK, new GlobalClickOutsideInterceptor());
         pipeline.intercept(CLICK, new GlobalHotbarClickInterceptor());
         pipeline.intercept(CLICK, new GlobalItemHoldInterceptor());
         pipeline.intercept(CLICK, new CloseMarkInterceptor());
-		pipeline.intercept(CLOSE, new CloseHandlerInterceptor());
+        pipeline.intercept(CLOSE, PlatformInterceptors.close);
+        pipeline.intercept(RESUME, PlatformInterceptors.resume);
+        pipeline.intercept(PAGINATED_ITEM_RENDER, PlatformInterceptors.paginatedItemRender);
     }
 }

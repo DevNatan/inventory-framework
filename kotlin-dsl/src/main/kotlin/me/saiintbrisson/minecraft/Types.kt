@@ -2,10 +2,10 @@
 
 package me.saiintbrisson.minecraft
 
-import me.devnatan.inventoryframework.IFContext
-import me.devnatan.inventoryframework.IFSlotClickContext
-import me.devnatan.inventoryframework.IFSlotContext
-import me.devnatan.inventoryframework.IFSlotMoveContext
+import me.devnatan.inventoryframework.context.IFContext
+import me.devnatan.inventoryframework.context.IFSlotClickContext
+import me.devnatan.inventoryframework.context.IFSlotContext
+import me.devnatan.inventoryframework.context.IFSlotMoveContext
 
 internal typealias ContextBlock = @ViewDsl IFContext.() -> Unit
 internal typealias SlotContextBlock = @ViewDsl IFSlotContext.() -> Unit

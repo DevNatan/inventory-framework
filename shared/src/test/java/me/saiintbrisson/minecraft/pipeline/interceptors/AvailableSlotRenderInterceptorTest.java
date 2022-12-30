@@ -11,7 +11,7 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Stack;
-import me.devnatan.inventoryframework.IFContext;
+import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.exception.ContainerException;
 import me.devnatan.inventoryframework.exception.SlotFillExceededException;
@@ -22,7 +22,7 @@ import me.saiintbrisson.minecraft.AbstractView;
 import me.saiintbrisson.minecraft.BaseViewContext;
 import me.saiintbrisson.minecraft.MockComponentFactory;
 import me.saiintbrisson.minecraft.PlatformUtils;
-import me.saiintbrisson.minecraft.ViewItem;
+import me.devnatan.inventoryframework.ViewItem;
 import me.saiintbrisson.minecraft.ViewType;
 import org.junit.jupiter.api.Test;
 

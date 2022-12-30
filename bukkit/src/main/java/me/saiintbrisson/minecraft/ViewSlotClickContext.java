@@ -1,7 +1,8 @@
 package me.saiintbrisson.minecraft;
 
-import me.devnatan.inventoryframework.IFContext;
-import me.devnatan.inventoryframework.IFSlotClickContext;
+import me.devnatan.inventoryframework.ViewItem;
+import me.devnatan.inventoryframework.context.IFContext;
+import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.internal.platform.ViewContainer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -19,10 +20,12 @@ public class ViewSlotClickContext extends ViewSlotContext implements IFSlotClick
 
     ViewSlotClickContext(
             int slot,
+            ViewItem backingItem,
             @NotNull IFContext parent,
             @Nullable ViewContainer container,
+            @NotNull Player player,
             @NotNull InventoryClickEvent clickOrigin) {
-        super(slot, parent, container);
+        super(slot, backingItem, parent, container, player);
         this.clickOrigin = clickOrigin;
     }
 

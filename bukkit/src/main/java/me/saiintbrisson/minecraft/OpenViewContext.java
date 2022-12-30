@@ -4,7 +4,7 @@ import java.util.concurrent.CompletableFuture;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
-import me.devnatan.inventoryframework.IFOpenContext;
+import me.devnatan.inventoryframework.context.IFOpenContext;
 import me.devnatan.inventoryframework.bukkit.BukkitIFContext;
 import me.devnatan.inventoryframework.internal.platform.ViewContainer;
 import org.bukkit.entity.Player;
@@ -30,6 +30,11 @@ public final class OpenViewContext extends BaseViewContext implements IFOpenCont
     protected OpenViewContext(@NotNull AbstractView root, @Nullable ViewContainer container, @NotNull Player player) {
         super(root, container);
         this.player = player;
+    }
+
+    @Override
+    public CompletableFuture<Void> getAsyncOpenJob() {
+        return waitTask;
     }
 
     @Override

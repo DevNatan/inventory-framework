@@ -1,7 +1,15 @@
 package me.saiintbrisson.minecraft;
 
+import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.CLICK;
+import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.CLOSE;
+import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.INIT;
+import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.OPEN;
+import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.RENDER;
+import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.RESUME;
+import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.SLOT_RENDER;
+import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.UPDATE;
 import static me.saiintbrisson.minecraft.IFUtils.unwrap;
-import static me.saiintbrisson.minecraft.ViewItem.UNSET;
+import static me.devnatan.inventoryframework.ViewItem.UNSET;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -11,35 +19,25 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import me.devnatan.inventoryframework.IFContext;
-import me.devnatan.inventoryframework.IFOpenContext;
-import me.devnatan.inventoryframework.IFRenderContext;
-import me.devnatan.inventoryframework.IFSlotClickContext;
-import me.devnatan.inventoryframework.IFSlotContext;
-import me.devnatan.inventoryframework.IFSlotMoveContext;
+import me.devnatan.inventoryframework.RootView;
+import me.devnatan.inventoryframework.ViewItem;
+import me.devnatan.inventoryframework.context.IFContext;
+import me.devnatan.inventoryframework.context.IFOpenContext;
+import me.devnatan.inventoryframework.context.IFSlotContext;
 import me.devnatan.inventoryframework.VirtualView;
-import me.devnatan.inventoryframework.config.ViewConfig;
 import me.devnatan.inventoryframework.exception.ContainerException;
 import me.devnatan.inventoryframework.exception.InitializationException;
 import me.devnatan.inventoryframework.internal.Job;
 import me.devnatan.inventoryframework.internal.platform.Viewer;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
-import me.devnatan.inventoryframework.pipeline.PipelinePhase;
-import me.devnatan.inventoryframework.state.MutableState;
-import me.devnatan.inventoryframework.state.PaginationState;
-import me.devnatan.inventoryframework.state.State;
-import me.devnatan.inventoryframework.state.StateHolder;
-import me.saiintbrisson.minecraft.logging.Logger;
+import me.devnatan.inventoryframework.logging.Logger;
 import me.saiintbrisson.minecraft.pipeline.interceptors.AvailableSlotRenderInterceptor;
 import me.saiintbrisson.minecraft.pipeline.interceptors.LayoutPatternApplierInterceptor;
 import me.saiintbrisson.minecraft.pipeline.interceptors.LayoutResolutionInterceptor;
@@ -56,17 +54,11 @@ import org.jetbrains.annotations.Nullable;
 @Setter(AccessLevel.PACKAGE)
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
 @ApiStatus.NonExtendable
-public abstract class AbstractView extends AbstractVirtualView {
+public abstract class AbstractView extends AbstractVirtualView implements RootView {
 
     // Flags
     public static final byte CANCEL_CLICK = 0, CANCEL_DRAG = 1, CANCEL_PICKUP = 2, CANCEL_DROP = 4, CANCEL_CLONE = 8;
 
-    public static final PipelinePhase OPEN = new PipelinePhase("open");
-    public static final PipelinePhase INIT = new PipelinePhase("init");
-    public static final PipelinePhase RENDER = new PipelinePhase("render");
-    public static final PipelinePhase UPDATE = new PipelinePhase("update");
-    public static final PipelinePhase CLICK = new PipelinePhase("click");
-    public static final PipelinePhase CLOSE = new PipelinePhase("close");
     public static final ViewType DEFAULT_TYPE = ViewType.CHEST;
 
     @ToString.Include
@@ -93,7 +85,8 @@ public abstract class AbstractView extends AbstractVirtualView {
     private final int rows;
     PlatformViewFrame<?, ?, ?> viewFrame;
     private final Set<IFContext> contexts = Collections.newSetFromMap(Collections.synchronizedMap(new HashMap<>()));
-    private final Pipeline<VirtualView> pipeline = new Pipeline<>(INIT, OPEN, RENDER, UPDATE, CLICK, CLOSE);
+    private final Pipeline<VirtualView> pipeline =
+            new Pipeline<>(INIT, OPEN, RENDER, SLOT_RENDER, UPDATE, CLICK, CLOSE);
     private Logger logger;
 
     private Job updateJob;
@@ -141,13 +134,12 @@ public abstract class AbstractView extends AbstractVirtualView {
     final void open(@NotNull Viewer viewer, @NotNull Map<String, Object> data, @Nullable IFContext initiator) {
         if (!isInitialized()) throw new IllegalStateException("Cannot open a uninitialized view.");
 
-        final IFOpenContext context = (IFOpenContext) PlatformUtils.getFactory()
-			.createContext(this, null, IFOpenContext.class, viewer);
+        final IFOpenContext context =
+                (IFOpenContext) PlatformUtils.getFactory().createContext(this, null, IFOpenContext.class, viewer);
 
         context.addViewer(viewer);
-        context.setPrevious((BaseViewContext) initiator);
+        ((BaseViewContext) context).setPrevious((BaseViewContext) initiator);
         data.forEach(context::set);
-        onOpen(context);
         getPipeline().execute(OPEN, context);
     }
 
@@ -155,18 +147,12 @@ public abstract class AbstractView extends AbstractVirtualView {
     public void render(@NotNull IFContext context) {
         if (!isInitialized()) throw new IllegalStateException("Cannot render a uninitialized view.");
 
-        runCatching(context, () -> {
-            onRender(context);
-            getPipeline().execute(RENDER, context);
-        });
+        runCatching(context, () -> getPipeline().execute(RENDER, context));
     }
 
     @Override
     public void update(@NotNull IFContext context) {
-        runCatching(context, () -> {
-            onUpdate(context);
-            getPipeline().execute(UPDATE, context);
-        });
+        runCatching(context, () -> getPipeline().execute(UPDATE, context));
     }
 
     /**
@@ -181,7 +167,7 @@ public abstract class AbstractView extends AbstractVirtualView {
     void resume(@NotNull BaseViewContext target, @NotNull BaseViewContext subject) {
         target.setPrevious(subject);
 
-        // we need to copy since this will be and close -> open -> close operation
+        // we need to copy since this will be and `close -> open -> close` operation
         // and open the target for each viewer from the subject context
         final List<Viewer> viewers = new ArrayList<>(subject.internalGetViewers());
 
@@ -192,7 +178,7 @@ public abstract class AbstractView extends AbstractVirtualView {
 
         final AbstractView root = target.getRoot();
         root.registerContext(target);
-        root.onResume(target, subject);
+        root.getPipeline().execute(RESUME, target);
     }
 
     /**
@@ -558,7 +544,7 @@ public abstract class AbstractView extends AbstractVirtualView {
                 ? PlatformUtils.getFactory().createSlotContext(slot, item, parent, parent.getContainer(), UNSET, null)
                 : context;
 
-        runCatching(context, () -> onSlotRender(renderContext));
+        runCatching(context, () -> getPipeline().execute(SLOT_RENDER, renderContext));
 
         if (item != null) {
             ViewItemHandler renderHandler = item.getRenderHandler();
@@ -777,7 +763,7 @@ public abstract class AbstractView extends AbstractVirtualView {
         ensureNotInitialized();
         if (!forTests) {
             beforeInit();
-            onInit();
+            // TODO call onInit(...) on 2.5.5
             getPipeline().execute(INIT, this);
             initUpdateScheduler();
         }
@@ -796,4 +782,8 @@ public abstract class AbstractView extends AbstractVirtualView {
         getContexts().forEach(context -> context.emit(event));
     }
 
+    @Override
+    public final boolean isPaginated() {
+        return false;
+    }
 }

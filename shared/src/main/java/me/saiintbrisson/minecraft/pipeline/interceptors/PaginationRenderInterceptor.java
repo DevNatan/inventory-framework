@@ -1,28 +1,29 @@
 package me.saiintbrisson.minecraft.pipeline.interceptors;
 
-import static me.saiintbrisson.minecraft.AbstractView.RENDER;
+import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.RENDER;
 import static me.saiintbrisson.minecraft.IFUtils.callIfNotNull;
 import static me.saiintbrisson.minecraft.IFUtils.checkContainerType;
 import static me.saiintbrisson.minecraft.IFUtils.checkPaginationSourceAvailability;
 import static me.saiintbrisson.minecraft.IFUtils.useLayoutItemsLayer;
 import static me.saiintbrisson.minecraft.IFUtils.useLayoutItemsLayerSize;
-import static me.saiintbrisson.minecraft.ViewItem.UNSET;
+import static me.devnatan.inventoryframework.ViewItem.UNSET;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Stack;
 import java.util.function.Function;
-import me.devnatan.inventoryframework.IFContext;
+import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.pagination.IFPaginatedContext;
-import me.devnatan.inventoryframework.pagination.IFPaginatedSlotContext;
+import me.devnatan.inventoryframework.context.IFPaginatedSlotContext;
 import me.devnatan.inventoryframework.pipeline.PipelineContext;
 import me.devnatan.inventoryframework.pipeline.PipelineInterceptor;
+import me.devnatan.inventoryframework.pipeline.StandardPipelinePhases;
 import me.saiintbrisson.minecraft.AbstractPaginatedView;
 import me.saiintbrisson.minecraft.AsyncPaginationDataState;
 import me.saiintbrisson.minecraft.Paginator;
 import me.saiintbrisson.minecraft.PlatformUtils;
-import me.saiintbrisson.minecraft.ViewItem;
+import me.devnatan.inventoryframework.ViewItem;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
@@ -221,7 +222,9 @@ public final class PaginationRenderInterceptor implements PipelineInterceptor<IF
             final IFPaginatedSlotContext<T> slotContext = (IFPaginatedSlotContext<T>) PlatformUtils.getFactory()
                     .createSlotContext(slot, item, context, context.getContainer(), index, value);
 
-            context.getRoot().runCatching(context, () -> context.getRoot().callItemRender(slotContext, item, value));
+            context.getRoot().runCatching(context, () -> context.getRoot()
+                    .getPipeline()
+                    .execute(StandardPipelinePhases.PAGINATED_ITEM_RENDER, slotContext));
             renderItemAndApplyOnContext(context, item, slot);
             item.setOverlay(overlay);
         } else {

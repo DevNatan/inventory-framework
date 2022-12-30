@@ -1,6 +1,6 @@
 package me.devnatan.inventoryframework.pagination;
 
-import me.saiintbrisson.minecraft.ViewItem;
+import me.devnatan.inventoryframework.ViewItem;
 
 @FunctionalInterface
 public interface PaginationHandler<C, T> {

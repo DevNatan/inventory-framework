@@ -6,7 +6,9 @@ import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
 import java.util.Map;
-import me.devnatan.inventoryframework.IFContext;
+
+import me.devnatan.inventoryframework.ViewItem;
+import me.devnatan.inventoryframework.context.IFContext;
 import org.junit.jupiter.api.Test;
 
 public class ContextDataInheritanceTest {

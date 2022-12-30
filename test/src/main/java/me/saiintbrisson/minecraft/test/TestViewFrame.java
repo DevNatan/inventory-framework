@@ -14,8 +14,8 @@ import me.saiintbrisson.minecraft.AbstractView;
 import me.saiintbrisson.minecraft.PlatformViewFrame;
 import me.saiintbrisson.minecraft.ViewComponentFactory;
 import me.saiintbrisson.minecraft.ViewErrorHandler;
-import me.saiintbrisson.minecraft.ViewItem;
-import me.saiintbrisson.minecraft.feature.Feature;
+import me.devnatan.inventoryframework.ViewItem;
+import me.devnatan.inventoryframework.feature.Feature;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

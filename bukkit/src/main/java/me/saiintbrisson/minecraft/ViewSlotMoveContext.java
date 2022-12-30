@@ -1,8 +1,8 @@
 package me.saiintbrisson.minecraft;
 
 import lombok.Getter;
-import me.devnatan.inventoryframework.IFContext;
-import me.devnatan.inventoryframework.IFSlotMoveContext;
+import me.devnatan.inventoryframework.context.IFContext;
+import me.devnatan.inventoryframework.context.IFSlotMoveContext;
 import me.devnatan.inventoryframework.internal.platform.ViewContainer;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;

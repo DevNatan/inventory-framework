@@ -4,7 +4,7 @@ import java.util.Stack;
 import java.util.function.Consumer;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import me.devnatan.inventoryframework.IFContext;
+import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.pagination.IFPaginatedContext;
 import org.jetbrains.annotations.NotNull;

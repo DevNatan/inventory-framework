@@ -3,7 +3,7 @@ package me.saiintbrisson.minecraft.pipeline.interceptors;
 import java.util.Deque;
 import java.util.NoSuchElementException;
 import java.util.Stack;
-import me.devnatan.inventoryframework.IFContext;
+import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.exception.ContainerException;
 import me.devnatan.inventoryframework.exception.SlotFillExceededException;
@@ -11,7 +11,7 @@ import me.devnatan.inventoryframework.exception.UnresolvedLayoutException;
 import me.devnatan.inventoryframework.pipeline.PipelineContext;
 import me.devnatan.inventoryframework.pipeline.PipelineInterceptor;
 import me.saiintbrisson.minecraft.AbstractView;
-import me.saiintbrisson.minecraft.ViewItem;
+import me.devnatan.inventoryframework.ViewItem;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 

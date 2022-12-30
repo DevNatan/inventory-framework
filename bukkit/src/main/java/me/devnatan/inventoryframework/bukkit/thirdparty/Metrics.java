@@ -12,7 +12,7 @@
  *
  * Violations will result in a ban of your plugin and account from bStats.
  */
-package me.devnatan.inventoryframework.bukkit.internal;
+package me.devnatan.inventoryframework.bukkit.thirdparty;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -41,15 +41,14 @@ import java.util.logging.Level;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPOutputStream;
 import javax.net.ssl.HttpsURLConnection;
-
-import me.saiintbrisson.minecraft.IF;
+import me.devnatan.inventoryframework.IF;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
-class Metrics {
+public final class Metrics {
 
     private final Plugin plugin;
 

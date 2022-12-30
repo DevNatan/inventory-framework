@@ -1,5 +1,6 @@
 package me.saiintbrisson.minecraft;
 
+import me.devnatan.inventoryframework.ViewItem;
 import me.devnatan.inventoryframework.pipeline.PipelineContext;
 import me.devnatan.inventoryframework.pipeline.PipelineInterceptor;
 import org.bukkit.event.inventory.InventoryAction;

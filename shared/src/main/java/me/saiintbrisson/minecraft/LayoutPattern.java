@@ -5,6 +5,7 @@ import java.util.function.Function;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
+import me.devnatan.inventoryframework.ViewItem;
 
 @Getter
 @ToString

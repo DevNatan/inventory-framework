@@ -1,6 +1,6 @@
 package me.devnatan.inventoryframework.bukkit;
 
-import me.devnatan.inventoryframework.IFContext;
+import me.devnatan.inventoryframework.context.IFContext;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 

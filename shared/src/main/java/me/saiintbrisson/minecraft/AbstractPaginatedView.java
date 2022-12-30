@@ -1,6 +1,11 @@
 package me.saiintbrisson.minecraft;
 
-import static me.saiintbrisson.minecraft.ViewItem.UNSET;
+import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.CLOSE;
+import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.INIT;
+import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.OPEN;
+import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.RENDER;
+import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.UPDATE;
+import static me.devnatan.inventoryframework.ViewItem.UNSET;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -8,10 +13,10 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 import lombok.Getter;
 import lombok.ToString;
+import me.devnatan.inventoryframework.ViewItem;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.exception.InitializationException;
 import me.devnatan.inventoryframework.pagination.IFPaginatedContext;
-import me.devnatan.inventoryframework.pagination.IFPaginatedSlotContext;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
 import me.saiintbrisson.minecraft.pipeline.interceptors.AvailableSlotRenderInterceptor;
 import me.saiintbrisson.minecraft.pipeline.interceptors.LayoutPatternApplierInterceptor;
@@ -39,59 +44,11 @@ public abstract class AbstractPaginatedView<T> extends AbstractView implements P
     private int previousPageItemSlot = UNSET;
     private int nextPageItemSlot = UNSET;
 
-    AbstractPaginatedView() {
-        // TODO apply values :)
-    }
-
     AbstractPaginatedView(int rows, String title, @NotNull ViewType type) {
         super(rows, title, type);
         this.offset = 0;
         this.limit = getItems().length - 1;
     }
-
-    /**
-     * Called when a single pagination data is about to be rendered in the container.
-     *
-     * <p>The {@link ViewItem item parameter} is mutable and must be used to determine what will be
-     * rendered in that context for that specific item.
-     *
-     * <pre><code>
-     * &#64;Override
-     * protected void onItemRender(
-     *     PaginatedViewSlotContext&#60;T&#62; context,
-     *     ViewItem viewItem,
-     *     T value
-     * ) {
-     *     viewItem.withItem(platformStack).onClick(click -&#62; {
-     *         // clicked on value
-     *     });
-     * }
-     * </code></pre>
-     *
-     * <p>This function is called extensively, every time a paginated item is rendered or updated.
-     *
-     * <p>It is not allowed to call methods that {@link #inventoryModificationTriggered() trigger
-     * modifications in the container} of the context or in the view within this rendering function,
-     * and it is also not possible to use the item {@link ViewItem#onRender(ViewItemHandler) render}
-     * and {@link ViewItem#onUpdate(ViewItemHandler) update} functions within this function since it
-     * is already a rendering function of item itself.
-     *
-     * @param context  The pagination item rendering context.
-     * @param viewItem A mutable instance of item that will be rendered.
-     * @param value    The paginated value.
-     */
-    protected abstract void onItemRender(
-            @NotNull IFPaginatedSlotContext<T> context, @NotNull ViewItem viewItem, @NotNull T value);
-
-    /**
-     * Called when pagination is switched.
-     *
-     * <p>The context in the parameter is the new paging context, so trying to {@link
-     * IFPaginatedContext#getPage() get the current page} will return the new page.
-     *
-     * @param context The page switch context.
-     */
-    protected void onPageSwitch(@NotNull IFPaginatedContext<T> context) {}
 
     /**
      * Where pagination will start.
@@ -324,12 +281,6 @@ public abstract class AbstractPaginatedView<T> extends AbstractView implements P
 
     private int getExpectedPageSize() {
         return limit - offset;
-    }
-
-    @ApiStatus.Internal
-    public void callItemRender(
-            @NotNull IFPaginatedSlotContext<T> context, @NotNull ViewItem viewItem, @NotNull T value) {
-        onItemRender(context, viewItem, value);
     }
 
     @Override

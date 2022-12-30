@@ -1,7 +1,7 @@
 package me.devnatan.inventoryframework.pagination;
 
 import java.util.List;
-import me.devnatan.inventoryframework.IFContext;
+import me.devnatan.inventoryframework.context.IFContext;
 import me.saiintbrisson.minecraft.AbstractPaginatedView;
 import me.saiintbrisson.minecraft.PaginatedVirtualView;
 import org.jetbrains.annotations.ApiStatus;

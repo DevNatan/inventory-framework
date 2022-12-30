@@ -1,9 +1,12 @@
 package me.saiintbrisson.minecraft;
 
+import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.CLICK;
+
 import java.util.logging.Level;
 import lombok.RequiredArgsConstructor;
-import me.devnatan.inventoryframework.IFContext;
-import me.devnatan.inventoryframework.IFSlotContext;
+import me.devnatan.inventoryframework.ViewItem;
+import me.devnatan.inventoryframework.context.IFContext;
+import me.devnatan.inventoryframework.context.IFSlotContext;
 import me.devnatan.inventoryframework.internal.platform.ViewContainer;
 import me.devnatan.inventoryframework.internal.platform.Viewer;
 import org.bukkit.Material;
@@ -106,16 +109,16 @@ class ViewListener implements Listener {
 
         final boolean isEntityContainer = event.getClickedInventory() instanceof PlayerInventory;
         final ViewContainer container =
-                !isEntityContainer ? context.getContainer() : new BukkitEntityViewContainer(player.getInventory());
+                !isEntityContainer ? context.getContainer() : new BukkitViewContainer(player.getInventory());
 
         final ViewItem item = context.resolve(event.getSlot(), true, isEntityContainer);
 
         // TODO use platform to create this instance
         final IFSlotContext slotContext =
-                new BukkitClickViewSlotContext(event.getSlot(), event, item, context, container);
+                new ViewSlotClickContext(event.getSlot(), item, context, container, player, event);
 
         try {
-            view.runCatching(context, () -> view.getPipeline().execute(AbstractView.CLICK, slotContext));
+            view.runCatching(context, () -> view.getPipeline().execute(CLICK, slotContext));
         } catch (final Throwable e) {
             plugin.getLogger().log(Level.SEVERE, "Failed to execute click pipeline", e);
             event.setCancelled(true);
