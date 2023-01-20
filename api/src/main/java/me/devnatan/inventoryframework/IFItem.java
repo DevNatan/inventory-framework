@@ -59,7 +59,6 @@ public class IFItem {
 	private boolean closeOnClick, cancelOnClick, cancelOnShiftClick;
 	private ViewItemHandler renderHandler, updateHandler;
 	private Consumer<IFSlotClickContext> clickHandler;
-	private Consumer<IFSlotMoveContext> moveInHandler, moveOutHandler;
 	private Consumer<IFSlotContext> itemHoldHandler;
 	private BiConsumer<IFSlotContext, IFSlotContext> itemReleaseHandler;
 	private Map<String, Object> data;
