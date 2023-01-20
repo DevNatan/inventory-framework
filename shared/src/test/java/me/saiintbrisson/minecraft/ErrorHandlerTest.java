@@ -3,6 +3,7 @@ package me.saiintbrisson.minecraft;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import me.devnatan.inventoryframework.ViewType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

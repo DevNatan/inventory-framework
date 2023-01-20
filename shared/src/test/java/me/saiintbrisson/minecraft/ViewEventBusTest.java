@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import me.devnatan.inventoryframework.context.IFContext;
-import me.saiintbrisson.minecraft.event.Event;
+import me.devnatan.inventoryframework.event.Event;
 import org.junit.jupiter.api.Test;
 
 public class ViewEventBusTest {

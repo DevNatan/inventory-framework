@@ -9,8 +9,6 @@ import lombok.Getter;
 import lombok.Setter;
 import me.devnatan.inventoryframework.internal.Job;
 import me.devnatan.inventoryframework.internal.platform.Viewer;
-import me.saiintbrisson.minecraft.AbstractView;
-import me.saiintbrisson.minecraft.PlatformViewFrame;
 import me.saiintbrisson.minecraft.ViewComponentFactory;
 import me.devnatan.inventoryframework.ViewErrorHandler;
 import me.devnatan.inventoryframework.ViewItem;

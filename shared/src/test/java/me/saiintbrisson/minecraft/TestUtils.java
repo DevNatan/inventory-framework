@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 
 import me.devnatan.inventoryframework.ViewItem;
+import me.devnatan.inventoryframework.ViewType;
 import me.devnatan.inventoryframework.internal.platform.ViewContainer;
 import me.devnatan.inventoryframework.internal.platform.Viewer;
 import me.devnatan.inventoryframework.context.IFPaginatedSlotContext;

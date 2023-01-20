@@ -7,9 +7,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import me.devnatan.inventoryframework.internal.event.EventBusImpl;
-import me.saiintbrisson.minecraft.event.Event;
-import me.saiintbrisson.minecraft.event.EventBus;
-import me.saiintbrisson.minecraft.event.EventSubscription;
+import me.devnatan.inventoryframework.event.Event;
+import me.devnatan.inventoryframework.event.EventBus;
+import me.devnatan.inventoryframework.event.EventSubscription;
 import org.junit.jupiter.api.Test;
 
 public class EventBusTest {

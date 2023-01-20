@@ -8,6 +8,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import me.devnatan.inventoryframework.ViewType;
 import me.devnatan.inventoryframework.internal.Job;
 import me.saiintbrisson.minecraft.test.TestViewFrame;
 import org.junit.jupiter.api.Test;

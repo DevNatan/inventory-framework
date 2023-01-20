@@ -10,4 +10,4 @@ include 'bom',
         'api',
         'bukkit',
         'examples',
-        'framework'
+        'platform'

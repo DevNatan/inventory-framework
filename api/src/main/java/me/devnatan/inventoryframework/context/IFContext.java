@@ -3,15 +3,13 @@ package me.devnatan.inventoryframework.context;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
+
+import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.exception.InvalidatedContextException;
 import me.devnatan.inventoryframework.exception.UnknownReferenceException;
 import me.devnatan.inventoryframework.internal.platform.ViewContainer;
 import me.devnatan.inventoryframework.internal.platform.Viewer;
-import me.devnatan.inventoryframework.pagination.IFPaginatedContext;
 import me.devnatan.inventoryframework.state.StateHolder;
-import me.saiintbrisson.minecraft.AbstractView;
-import me.saiintbrisson.minecraft.AbstractVirtualView;
-import me.saiintbrisson.minecraft.ViewItem;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -29,12 +27,6 @@ public interface IFContext extends VirtualView, StateHolder {
      */
     @NotNull
     List<Viewer> getViewers();
-
-    @ApiStatus.Internal
-    void addViewer(@NotNull Viewer viewer);
-
-    @ApiStatus.Internal
-    void removeViewer(@NotNull Viewer viewer);
 
     /**
      * The container of this context.
@@ -124,11 +116,7 @@ public interface IFContext extends VirtualView, StateHolder {
      */
     void setPropagateErrors(boolean propagateErrors);
 
-    @ApiStatus.Internal
-    boolean isMarkedToClose();
-
-    @ApiStatus.Internal
-    void setMarkedToClose(boolean markedToClose);
+	void close();
 
     /**
      * Checks if this context is cancelled.

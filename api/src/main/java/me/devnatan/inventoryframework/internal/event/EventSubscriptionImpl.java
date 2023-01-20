@@ -1,7 +1,7 @@
 package me.devnatan.inventoryframework.internal.event;
 
-import me.saiintbrisson.minecraft.event.EventListener;
-import me.saiintbrisson.minecraft.event.EventSubscription;
+import me.devnatan.inventoryframework.event.EventListener;
+import me.devnatan.inventoryframework.event.EventSubscription;
 
 final class EventSubscriptionImpl implements EventSubscription {
 

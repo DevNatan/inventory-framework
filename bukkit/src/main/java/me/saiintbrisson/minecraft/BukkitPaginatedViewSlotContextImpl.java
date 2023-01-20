@@ -9,6 +9,7 @@ import java.util.function.Supplier;
 import lombok.Getter;
 import lombok.ToString;
 import me.devnatan.inventoryframework.ViewItem;
+import me.devnatan.inventoryframework.bukkit.ViewSlotContext;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFSlotContext;
 import me.devnatan.inventoryframework.internal.platform.ViewContainer;

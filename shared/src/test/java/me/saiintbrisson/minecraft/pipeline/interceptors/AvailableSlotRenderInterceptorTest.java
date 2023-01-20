@@ -18,12 +18,10 @@ import me.devnatan.inventoryframework.exception.SlotFillExceededException;
 import me.devnatan.inventoryframework.exception.UnresolvedLayoutException;
 import me.devnatan.inventoryframework.internal.platform.ViewContainer;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
-import me.saiintbrisson.minecraft.AbstractView;
-import me.saiintbrisson.minecraft.BaseViewContext;
 import me.saiintbrisson.minecraft.MockComponentFactory;
 import me.saiintbrisson.minecraft.PlatformUtils;
 import me.devnatan.inventoryframework.ViewItem;
-import me.saiintbrisson.minecraft.ViewType;
+import me.devnatan.inventoryframework.ViewType;
 import org.junit.jupiter.api.Test;
 
 public class AvailableSlotRenderInterceptorTest {

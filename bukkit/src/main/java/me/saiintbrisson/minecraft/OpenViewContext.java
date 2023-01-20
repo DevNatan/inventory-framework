@@ -4,8 +4,9 @@ import java.util.concurrent.CompletableFuture;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import me.devnatan.inventoryframework.ViewType;
+import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFOpenContext;
-import me.devnatan.inventoryframework.bukkit.BukkitIFContext;
 import me.devnatan.inventoryframework.internal.platform.ViewContainer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.ApiStatus;
@@ -14,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 
 @Getter
 @Setter
-public final class OpenViewContext extends BaseViewContext implements IFOpenContext, BukkitIFContext {
+public final class OpenViewContext extends BaseViewContext implements IFOpenContext, IFContext {
 
     private final Player player;
 

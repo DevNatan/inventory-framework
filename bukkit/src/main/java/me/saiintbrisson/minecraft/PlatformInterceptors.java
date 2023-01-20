@@ -4,6 +4,8 @@ import java.util.function.BiConsumer;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import me.devnatan.inventoryframework.bukkit.View;
+import me.devnatan.inventoryframework.bukkit.PaginatedViewSlotContext;
+import me.devnatan.inventoryframework.bukkit.ViewContext;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.pipeline.PipelineInterceptor;
 

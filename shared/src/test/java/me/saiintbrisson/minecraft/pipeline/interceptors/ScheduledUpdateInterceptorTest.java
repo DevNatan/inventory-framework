@@ -15,7 +15,6 @@ import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.internal.Job;
 import me.devnatan.inventoryframework.internal.platform.Viewer;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
-import me.saiintbrisson.minecraft.AbstractView;
 import org.junit.jupiter.api.Test;
 
 class ScheduledUpdateInterceptorTest {

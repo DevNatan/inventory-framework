@@ -5,6 +5,7 @@ import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.CLI
 import java.util.logging.Level;
 import lombok.RequiredArgsConstructor;
 import me.devnatan.inventoryframework.ViewItem;
+import me.devnatan.inventoryframework.bukkit.ViewSlotClickContext;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFSlotContext;
 import me.devnatan.inventoryframework.internal.platform.ViewContainer;

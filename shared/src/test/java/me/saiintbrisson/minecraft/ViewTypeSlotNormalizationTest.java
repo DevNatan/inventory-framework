@@ -1,5 +1,6 @@
 package me.saiintbrisson.minecraft;
 
+import me.devnatan.inventoryframework.ViewType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
