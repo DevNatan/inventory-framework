@@ -2,6 +2,7 @@
 
 # 3.0.0 (unreleased)
 * Entire codebase moved from "me.saiintbrisson.minecraft" to "me.devnatan.inventoryframework"
+* Lombok-compatible API design.
 * Context `get`/`set` replaced by the new State Management System
 * Now all implementations are platform specific
 * Correction in the features independence system so that it is possible to integrate them correctly
