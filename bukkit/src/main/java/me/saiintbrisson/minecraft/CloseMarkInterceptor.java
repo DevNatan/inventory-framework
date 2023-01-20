@@ -1,6 +1,6 @@
 package me.saiintbrisson.minecraft;
 
-import me.devnatan.inventoryframework.ViewItem;
+import me.devnatan.inventoryframework.IFItem;
 import me.devnatan.inventoryframework.bukkit.ViewSlotClickContext;
 import me.devnatan.inventoryframework.pipeline.PipelineContext;
 import me.devnatan.inventoryframework.pipeline.PipelineInterceptor;
@@ -20,7 +20,7 @@ final class CloseMarkInterceptor implements PipelineInterceptor<ViewSlotClickCon
         final InventoryClickEvent event = context.getClickOrigin();
         if (event.getSlotType() == InventoryType.SlotType.OUTSIDE) return;
 
-        final ViewItem item = context.getBackingItem();
+        final IFItem item = context.getBackingItem();
         if (item == null) return;
 
         final boolean closeOnClick = item.isCloseOnClick() || context.isMarkedToClose();

@@ -92,11 +92,11 @@ public final class ViewConfigBuilder {
 		return this;
 	}
 
-	public ViewConfigBuilder layout(char character, @NotNull Consumer<ViewItem> handler) {
+	public ViewConfigBuilder layout(char character, @NotNull Consumer<IFItem> handler) {
 		throw new UnsupportedOperationException();
 	}
 
-	public ViewConfigBuilder layout(char character, @NotNull BiConsumer<Integer, ViewItem> handler) {
+	public ViewConfigBuilder layout(char character, @NotNull BiConsumer<Integer, IFItem> handler) {
 		throw new UnsupportedOperationException();
 	}
 

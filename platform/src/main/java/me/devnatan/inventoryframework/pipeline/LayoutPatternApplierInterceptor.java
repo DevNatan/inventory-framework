@@ -1,7 +1,7 @@
 package me.devnatan.inventoryframework.pipeline;
 
 import me.devnatan.inventoryframework.internal.LayoutPattern;
-import me.devnatan.inventoryframework.ViewItem;
+import me.devnatan.inventoryframework.IFItem;
 import me.devnatan.inventoryframework.VirtualView;
 
 import java.util.List;
@@ -22,7 +22,7 @@ public final class LayoutPatternApplierInterceptor implements PipelineIntercepto
 			int iterationIndex = 0;
 
 			for (final int slot : pattern.getSlots()) {
-				final ViewItem item = pattern.getFactory().apply(iterationIndex++);
+				final IFItem item = pattern.getFactory().apply(iterationIndex++);
 				view.apply(item, slot);
 			}
 		}

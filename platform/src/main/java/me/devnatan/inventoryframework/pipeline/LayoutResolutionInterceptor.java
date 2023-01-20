@@ -7,11 +7,10 @@ import static me.devnatan.inventoryframework.VirtualView.LAYOUT_PREVIOUS_PAGE;
 
 import java.util.Arrays;
 import java.util.Stack;
-import java.util.concurrent.CompletableFuture;
 
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.VirtualView;
-import me.devnatan.inventoryframework.ViewItem;
+import me.devnatan.inventoryframework.IFItem;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -240,15 +239,15 @@ public final class LayoutResolutionInterceptor implements PipelineInterceptor<Vi
      * @param <T>       The pagination data type.
      * @return The item that will be used for navigation.
      */
-    private <T> ViewItem getInternalNavigationItemWithFallback(
+    private <T> IFItem getInternalNavigationItemWithFallback(
             @NotNull AbstractPaginatedView<T> view, @NotNull IFPaginatedContext<T> context, int direction) {
-        final ViewItem item = getInternalNavigationItem(view, context, direction);
+        final IFItem item = getInternalNavigationItem(view, context, direction);
         if (item != null) return item;
 
         final PlatformViewFrame<?, ?, ?> vf = view.getViewFrame();
         if (vf == null) return null;
 
-        final Function<IFPaginatedContext<?>, ViewItem> fallback =
+        final Function<IFPaginatedContext<?>, IFItem> fallback =
                 direction == PaginatedVirtualView.NAVIGATE_LEFT ? vf.getDefaultPreviousPageItem() : vf.getDefaultNextPageItem();
 
         if (fallback == null) return null;
@@ -267,10 +266,10 @@ public final class LayoutResolutionInterceptor implements PipelineInterceptor<Vi
      * @return The item that will be used for navigation.
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
-    private <T> ViewItem getInternalNavigationItem(
+    private <T> IFItem getInternalNavigationItem(
             @NotNull PaginatedVirtualView<T> view, @NotNull IFPaginatedContext<T> context, int direction) {
         final boolean isBackwards = direction == PaginatedVirtualView.NAVIGATE_LEFT;
-        final BiConsumer<IFPaginatedContext<T>, ViewItem> factory =
+        final BiConsumer<IFPaginatedContext<T>, IFItem> factory =
                 isBackwards ? view.getPreviousPageItemFactory() : view.getNextPageItemFactory();
 
         if (factory == null) {
@@ -284,7 +283,7 @@ public final class LayoutResolutionInterceptor implements PipelineInterceptor<Vi
                     : ((IFPaginatedContext) view).getRoot().getNextPageItem(context);
         }
 
-        final ViewItem item = new ViewItem();
+        final IFItem item = new IFItem();
         factory.accept(context, item);
         return item;
     }

@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.Arrays;
 import java.util.List;
 
-import me.devnatan.inventoryframework.ViewItem;
+import me.devnatan.inventoryframework.IFItem;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.internal.platform.ViewContainer;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
@@ -27,7 +27,7 @@ public class UserDefinedPatternPaginationAccessTest {
         ViewContainer container = TestUtils.createContainer(9, 5);
         AbstractPaginatedView<String> root = TestUtils.createInitializedPaginatedView(5);
         IFPaginatedContext<String> context = TestUtils.createPaginatedContext(root, container);
-        context.setItems(new ViewItem[54]); // initialize since it's set only on onOpen
+        context.setItems(new IFItem[54]); // initialize since it's set only on onOpen
 
         List<String> source = Arrays.asList("A", "B", "C", "D", "E", "F");
         context.setSource(source); // needed to initialize paginator
@@ -50,7 +50,7 @@ public class UserDefinedPatternPaginationAccessTest {
         ViewContainer container = TestUtils.createContainer(9, 5);
         AbstractPaginatedView<String> root = TestUtils.createInitializedPaginatedView(5);
         IFPaginatedContext<String> context = TestUtils.createPaginatedContext(root, container);
-        context.setItems(new ViewItem[54]); // initialize since it's set only on onOpen
+        context.setItems(new IFItem[54]); // initialize since it's set only on onOpen
 
         List<String> source = Arrays.asList("A", "B", "C", "D", "E", "F");
         context.setSource($ -> source); // needed to initialize paginator

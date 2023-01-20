@@ -6,7 +6,7 @@ import static me.saiintbrisson.minecraft.IFUtils.checkContainerType;
 import static me.saiintbrisson.minecraft.IFUtils.checkPaginationSourceAvailability;
 import static me.saiintbrisson.minecraft.IFUtils.useLayoutItemsLayer;
 import static me.saiintbrisson.minecraft.IFUtils.useLayoutItemsLayerSize;
-import static me.devnatan.inventoryframework.ViewItem.UNSET;
+import static me.devnatan.inventoryframework.IFItem.UNSET;
 
 import java.util.Collections;
 import java.util.List;
@@ -15,14 +15,11 @@ import java.util.Stack;
 import java.util.function.Function;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFPaginatedSlotContext;
-import me.devnatan.inventoryframework.pipeline.PipelineContext;
-import me.devnatan.inventoryframework.pipeline.PipelineInterceptor;
-import me.devnatan.inventoryframework.pipeline.StandardPipelinePhases;
 import me.saiintbrisson.minecraft.AbstractPaginatedView;
 import me.saiintbrisson.minecraft.AsyncPaginationDataState;
 import me.saiintbrisson.minecraft.Paginator;
 import me.saiintbrisson.minecraft.PlatformUtils;
-import me.devnatan.inventoryframework.ViewItem;
+import me.devnatan.inventoryframework.IFItem;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
@@ -74,7 +71,7 @@ public final class PaginationRenderInterceptor implements PipelineInterceptor<IF
     private <T> void tryRenderPagination(
             @NotNull IFPaginatedContext<T> context,
             String[] layout,
-            @SuppressWarnings("SameParameterValue") ViewItem[] preservedItems,
+            @SuppressWarnings("SameParameterValue") IFItem[] preservedItems,
             Paginator<T> paginator) {
         if (paginator.isAsync()) handleAsyncSourceProvider(context, layout, preservedItems, paginator);
         else if (paginator.isProvided()) handleLazySourceProvider(context, layout, preservedItems, paginator);
@@ -85,7 +82,7 @@ public final class PaginationRenderInterceptor implements PipelineInterceptor<IF
     private <T> void handleAsyncSourceProvider(
             @NotNull IFPaginatedContext<T> context,
             String[] layout,
-            ViewItem[] preservedItems,
+            IFItem[] preservedItems,
             @NotNull Paginator<T> paginator) {
         AsyncPaginationDataState<T> asyncState = paginator.getAsyncState();
         IFUtils.callIfNotNull(asyncState.getLoadStarted(), handler -> handler.accept(context));
@@ -115,7 +112,7 @@ public final class PaginationRenderInterceptor implements PipelineInterceptor<IF
     private <T> void handleLazySourceProvider(
             @NotNull IFPaginatedContext<T> context,
             String[] layout,
-            ViewItem[] preservedItems,
+            IFItem[] preservedItems,
             @NotNull Paginator<T> paginator) {
         Function<IFPaginatedContext<T>, List<T>> factory = paginator.getFactory();
         List<T> data = factory.apply(context);
@@ -128,7 +125,7 @@ public final class PaginationRenderInterceptor implements PipelineInterceptor<IF
     private <T> void renderSource(
             @NotNull IFPaginatedContext<T> context,
             String[] layout,
-            ViewItem[] preservedItems,
+            IFItem[] preservedItems,
             List<T> source,
             Paginator<T> paginator) {
         final List<T> data = source == null ? paginator.getPage(context.getPage()) : source;
@@ -137,7 +134,7 @@ public final class PaginationRenderInterceptor implements PipelineInterceptor<IF
     }
 
     private <T> void renderPagination(
-            @NotNull IFPaginatedContext<T> context, List<T> elements, String[] layout, ViewItem[] preservedItems) {
+            @NotNull IFPaginatedContext<T> context, List<T> elements, String[] layout, IFItem[] preservedItems) {
 
         final AbstractPaginatedView<T> root = context.getRoot();
         final int elementsCount = elements.size();
@@ -162,10 +159,10 @@ public final class PaginationRenderInterceptor implements PipelineInterceptor<IF
                 }
             }
 
-            final ViewItem preserved = preservedItems == null || preservedItems.length <= i ? null : preservedItems[i];
+            final IFItem preserved = preservedItems == null || preservedItems.length <= i ? null : preservedItems[i];
             if (i < elementsCount) renderPaginatedItemAt(context, i, targetSlot, elements.get(i), preserved);
             else {
-                final ViewItem item = context.resolve(targetSlot, true);
+                final IFItem item = context.resolve(targetSlot, true);
                 // check if a non-virtual item has been defined in that slot
                 if (item != null) {
                     if (!item.isPaginationItem()) {
@@ -173,7 +170,7 @@ public final class PaginationRenderInterceptor implements PipelineInterceptor<IF
                         continue;
                     }
 
-                    final ViewItem overlay = item.getOverlay();
+                    final IFItem overlay = item.getOverlay();
                     if (overlay != null) {
                         renderItemAndApplyOnContext(context, overlay, targetSlot);
                         continue;
@@ -190,7 +187,7 @@ public final class PaginationRenderInterceptor implements PipelineInterceptor<IF
         context.getContainer().removeItem(slot);
     }
 
-    private void renderItemAndApplyOnContext(@NotNull IFContext context, ViewItem item, int slot) {
+    private void renderItemAndApplyOnContext(@NotNull IFContext context, IFItem item, int slot) {
         context.getItems()[slot] = item;
 
         if (skipRender) return;
@@ -202,11 +199,11 @@ public final class PaginationRenderInterceptor implements PipelineInterceptor<IF
             int index,
             int slot,
             @NotNull T value,
-            @Nullable ViewItem override) {
+            @Nullable IFItem override) {
         if (skipRender) return;
 
         // TODO replace this with a more sophisticated overlay detection
-        ViewItem overlay = context.resolve(slot, true);
+        IFItem overlay = context.resolve(slot, true);
         if (overlay != null && overlay.isPaginationItem()) overlay = null;
 
         // overlapping items are those that are already in the inventory but the IF is trying to
@@ -214,7 +211,7 @@ public final class PaginationRenderInterceptor implements PipelineInterceptor<IF
         // detected that they should ot have been removed, so they are not removed and during layout
         // rendering they are not re-rendered.
         if (override == null) {
-            final ViewItem item = new ViewItem(slot);
+            final IFItem item = new IFItem(slot);
             item.setPaginationItem(true);
 
             @SuppressWarnings("unchecked")
@@ -261,7 +258,7 @@ public final class PaginationRenderInterceptor implements PipelineInterceptor<IF
      *     <li>Set page size as the total size of the root (limit - offset);</li>
      * </ul>
      *
-     * @return The page size or {@link ViewItem#UNSET}.
+     * @return The page size or {@link IFItem#UNSET}.
      */
     private int determineInitialPageSize(AbstractPaginatedView<?> root, IFPaginatedContext<?> context) {
         // first context-scope layout because it's always prioritized

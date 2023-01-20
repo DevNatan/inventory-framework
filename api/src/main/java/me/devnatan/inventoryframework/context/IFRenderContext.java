@@ -1,8 +1,7 @@
 package me.devnatan.inventoryframework.context;
 
-import me.devnatan.inventoryframework.ViewItem;
+import me.devnatan.inventoryframework.IFItem;
 import me.devnatan.inventoryframework.ViewType;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,7 +16,7 @@ public interface IFRenderContext extends IFContext {
 	 * @return The newly created item instance.
 	 */
 	@NotNull
-	ViewItem slot(int slot);
+    IFItem slot(int slot);
 
 	/**
 	 * Registers a new item with a fallback item in the specified slot.
@@ -27,7 +26,7 @@ public interface IFRenderContext extends IFContext {
 	 * @return The newly created item instance.
 	 */
 	@NotNull
-	ViewItem slot(int slot, @Nullable Object item);
+    IFItem slot(int slot, @Nullable Object item);
 
 	/**
 	 * Registers a new item in the specified row and column.
@@ -37,7 +36,7 @@ public interface IFRenderContext extends IFContext {
 	 * @return The newly created item instance.
 	 */
 	@NotNull
-	ViewItem slot(int row, int column);
+    IFItem slot(int row, int column);
 
 	/**
 	 * Registers a new item with a fallback item in the specified row and column.
@@ -48,7 +47,7 @@ public interface IFRenderContext extends IFContext {
 	 * @return The newly created item instance.
 	 */
 	@NotNull
-	ViewItem slot(int row, int column, @Nullable Object item);
+    IFItem slot(int row, int column, @Nullable Object item);
 
 	/**
 	 * Registers a new item in the first slot of this view.
@@ -57,7 +56,7 @@ public interface IFRenderContext extends IFContext {
 	 * @see #getFirstSlot()
 	 */
 	@NotNull
-	ViewItem firstSlot();
+    IFItem firstSlot();
 
 	/**
 	 * Registers a new item with a fallback item in the first slot of this view.
@@ -66,7 +65,7 @@ public interface IFRenderContext extends IFContext {
 	 * @return The newly created item instance.
 	 */
 	@NotNull
-	ViewItem firstSlot(@Nullable Object item);
+    IFItem firstSlot(@Nullable Object item);
 
 	/**
 	 * Registers a new item in the last slot of this view.
@@ -74,7 +73,7 @@ public interface IFRenderContext extends IFContext {
 	 * @return The newly created item instance.
 	 */
 	@NotNull
-	ViewItem lastSlot();
+    IFItem lastSlot();
 
 	/**
 	 * Registers a new item with a fallback item in the last slot of this view.
@@ -83,7 +82,7 @@ public interface IFRenderContext extends IFContext {
 	 * @return The newly created item instance.
 	 */
 	@NotNull
-	ViewItem lastSlot(@Nullable Object item);
+    IFItem lastSlot(@Nullable Object item);
 
 	/**
 	 * Registers a new slot in the next available slot of this view.
@@ -139,7 +138,7 @@ public interface IFRenderContext extends IFContext {
 	 * <p>
 	 * In regular views whose item is not dynamically defined, the slot the item will belong to can
 	 * be obtained from the returned item instance. Dynamic items will have their starting slot set
-	 * to {@link ViewItem#AVAILABLE}. Use item render function to get around this and get
+	 * to {@link IFItem#AVAILABLE}. Use item render function to get around this and get
 	 * always the correct slot that item is placed on.
 	 * <pre><code>
 	 * availableSlot(...).onRender(render -&#60; {
@@ -164,7 +163,7 @@ public interface IFRenderContext extends IFContext {
 	 * @return The newly created item instance.
 	 */
 	@NotNull
-	ViewItem availableSlot();
+    IFItem availableSlot();
 
 	/**
 	 * Registers a new slot with a fallback item in the next available slot of this view.
@@ -220,7 +219,7 @@ public interface IFRenderContext extends IFContext {
 	 * <p>
 	 * In regular views whose item is not dynamically defined, the slot the item will belong to can
 	 * be obtained from the returned item instance. Dynamic items will have their starting slot set
-	 * to {@link ViewItem#AVAILABLE}. Use item render function to get around this and get
+	 * to {@link IFItem#AVAILABLE}. Use item render function to get around this and get
 	 * always the correct slot that item is placed on.
 	 * <pre><code>
 	 * availableSlot(...).onRender(render -&#60; {
@@ -246,6 +245,6 @@ public interface IFRenderContext extends IFContext {
 	 * @return The newly created item instance.
 	 */
 	@NotNull
-	ViewItem availableSlot(@Nullable Object fallbackItem);
+    IFItem availableSlot(@Nullable Object fallbackItem);
 
 }

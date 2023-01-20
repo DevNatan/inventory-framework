@@ -4,7 +4,7 @@ import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.CLI
 
 import java.util.logging.Level;
 import lombok.RequiredArgsConstructor;
-import me.devnatan.inventoryframework.ViewItem;
+import me.devnatan.inventoryframework.IFItem;
 import me.devnatan.inventoryframework.bukkit.ViewSlotClickContext;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFSlotContext;
@@ -112,7 +112,7 @@ class ViewListener implements Listener {
         final ViewContainer container =
                 !isEntityContainer ? context.getContainer() : new BukkitViewContainer(player.getInventory());
 
-        final ViewItem item = context.resolve(event.getSlot(), true, isEntityContainer);
+        final IFItem item = context.resolve(event.getSlot(), true, isEntityContainer);
 
         // TODO use platform to create this instance
         final IFSlotContext slotContext =

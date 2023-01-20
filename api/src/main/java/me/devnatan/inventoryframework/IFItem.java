@@ -9,7 +9,6 @@ import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.context.IFSlotContext;
 import me.devnatan.inventoryframework.context.IFSlotMoveContext;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
@@ -31,7 +30,7 @@ import java.util.function.Supplier;
 @ToString
 @Setter // TODO mark setters as @ApiStatus.Internal
 @Getter()
-public final class ViewItem {
+public class IFItem {
 
 	public static final int UNSET = -1;
 	public static final int AVAILABLE = -2;
@@ -65,7 +64,7 @@ public final class ViewItem {
 	private BiConsumer<IFSlotContext, IFSlotContext> itemReleaseHandler;
 	private Map<String, Object> data;
 	private long updateIntervalInTicks = NO_INTERVAL;
-	private ViewItem overlay;
+	private IFItem overlay;
 	private boolean removed;
 
 	/**
@@ -75,7 +74,7 @@ public final class ViewItem {
 	 * this library. No compatibility guarantees are provided.</i></b>
 	 */
 	@ApiStatus.Internal
-	public ViewItem() {
+	public IFItem() {
 		this(-1);
 	}
 
@@ -88,7 +87,7 @@ public final class ViewItem {
 	 * @param slot The slot that this item will be placed initially.
 	 */
 	@ApiStatus.Internal
-	public ViewItem(int slot) {
+	public IFItem(int slot) {
 		this.slot = slot;
 	}
 
@@ -99,7 +98,7 @@ public final class ViewItem {
 	 * @return This item.
 	 * @throws IllegalStateException If this item is not a navigation item.
 	 */
-	public ViewItem withSlot(int slot) {
+	public IFItem withSlot(int slot) {
 		if (!isNavigationItem())
 			throw new IllegalStateException("Only navigation item slot can be changed.");
 
@@ -113,7 +112,7 @@ public final class ViewItem {
 	 * @param intervalInTicks The item update interval in ticks.
 	 * @return This item.
 	 */
-	public ViewItem scheduleUpdate(@Range(from = NO_INTERVAL, to = Long.MAX_VALUE) long intervalInTicks) {
+	public IFItem scheduleUpdate(@Range(from = NO_INTERVAL, to = Long.MAX_VALUE) long intervalInTicks) {
 		this.updateIntervalInTicks = Math.max(NO_INTERVAL, intervalInTicks);
 		return this;
 	}
@@ -124,7 +123,7 @@ public final class ViewItem {
 	 * @param duration The item update interval.
 	 * @return This item.
 	 */
-	public ViewItem scheduleUpdate(@Nullable Duration duration) {
+	public IFItem scheduleUpdate(@Nullable Duration duration) {
 		if (duration == null) this.updateIntervalInTicks = NO_INTERVAL;
 		else this.updateIntervalInTicks = duration.getSeconds() * 20L;
 		return this;
@@ -154,7 +153,7 @@ public final class ViewItem {
 	 * @param fallbackItem The new fallback item stack.
 	 * @return This item.
 	 */
-	public ViewItem withItem(Object fallbackItem) {
+	public IFItem withItem(Object fallbackItem) {
 		setItem(fallbackItem);
 		return this;
 	}
@@ -183,7 +182,7 @@ public final class ViewItem {
 	 * @param fallbackItem The new fallback item stack.
 	 */
 	public void setItem(Object fallbackItem) {
-		if (fallbackItem instanceof ViewItem || fallbackItem instanceof ItemWrapper)
+		if (fallbackItem instanceof IFItem || fallbackItem instanceof ItemWrapper)
 			throw new IllegalStateException("Fallback item cannot be a ViewItem or ItemWrapper");
 
 		this.item = fallbackItem;
@@ -195,7 +194,7 @@ public final class ViewItem {
 	 *
 	 * @return This item.
 	 */
-	public ViewItem cancelOnClick() {
+	public IFItem cancelOnClick() {
 		return withCancelOnClick(!isCancelOnClick());
 	}
 
@@ -206,7 +205,7 @@ public final class ViewItem {
 	 *                      item.
 	 * @return This item.
 	 */
-	public ViewItem withCancelOnClick(boolean cancelOnClick) {
+	public IFItem withCancelOnClick(boolean cancelOnClick) {
 		setCancelOnClick(cancelOnClick);
 		return this;
 	}
@@ -217,7 +216,7 @@ public final class ViewItem {
 	 *
 	 * @return This item.
 	 */
-	public ViewItem cancelOnShiftClick() {
+	public IFItem cancelOnShiftClick() {
 		return withCancelOnShiftClick(!isCancelOnShiftClick());
 	}
 
@@ -228,7 +227,7 @@ public final class ViewItem {
 	 *                           on this item.
 	 * @return This item.
 	 */
-	public ViewItem withCancelOnShiftClick(boolean cancelOnShiftClick) {
+	public IFItem withCancelOnShiftClick(boolean cancelOnShiftClick) {
 		setCancelOnShiftClick(cancelOnShiftClick);
 		return this;
 	}
@@ -239,7 +238,7 @@ public final class ViewItem {
 	 *
 	 * @return This item.
 	 */
-	public ViewItem closeOnClick() {
+	public IFItem closeOnClick() {
 		return withCloseOnClick(!isCloseOnClick());
 	}
 
@@ -249,7 +248,7 @@ public final class ViewItem {
 	 * @param closeOnClick Whether the container should be closed when this item is clicked.
 	 * @return This item.
 	 */
-	public ViewItem withCloseOnClick(boolean closeOnClick) {
+	public IFItem withCloseOnClick(boolean closeOnClick) {
 		setCloseOnClick(closeOnClick);
 		return this;
 	}
@@ -310,7 +309,7 @@ public final class ViewItem {
 	 * @param value The property value.
 	 * @return This item.
 	 */
-	public ViewItem withData(@NotNull String key, @NotNull Object value) {
+	public IFItem withData(@NotNull String key, @NotNull Object value) {
 		if (data == null) data = new HashMap<>();
 
 		data.put(key, value);
@@ -335,7 +334,7 @@ public final class ViewItem {
 	 * @return This item.
 	 * @see IFContext#ref(String)
 	 */
-	public ViewItem referencedBy(@Nullable String key) {
+	public IFItem referencedBy(@Nullable String key) {
 		if (isPaginationItem())
 			throw new IllegalStateException("References are not yet supported in paginated items.");
 
@@ -356,7 +355,7 @@ public final class ViewItem {
 	 * @param handler The render handler.
 	 * @return This item.
 	 */
-	public ViewItem onRender(@Nullable ViewItemHandler handler) {
+	public IFItem onRender(@Nullable ViewItemHandler handler) {
 		setRenderHandler(handler);
 		return this;
 	}
@@ -376,12 +375,12 @@ public final class ViewItem {
 	 * @param itemFactory The render handler item factory, the item that'll be rendered on update.
 	 * @return This item.
 	 */
-	public ViewItem rendered(@Nullable Supplier<@Nullable Object> itemFactory) {
+	public IFItem rendered(@Nullable Supplier<@Nullable Object> itemFactory) {
 		setRenderHandler(itemFactory == null ? null : render -> render.setItem(itemFactory.get()));
 		return this;
 	}
 
-	public ViewItem rendered(@Nullable Function<IFSlotContext, @Nullable Object> itemFactory) {
+	public IFItem rendered(@Nullable Function<IFSlotContext, @Nullable Object> itemFactory) {
 		setRenderHandler(itemFactory == null ? null : render -> render.setItem(itemFactory.apply(render)));
 		return this;
 	}
@@ -397,7 +396,7 @@ public final class ViewItem {
 	 * @param handler The update handler.
 	 * @return This item.
 	 */
-	public ViewItem onUpdate(@Nullable ViewItemHandler handler) {
+	public IFItem onUpdate(@Nullable ViewItemHandler handler) {
 		setUpdateHandler(handler);
 		return this;
 	}
@@ -415,7 +414,7 @@ public final class ViewItem {
 	 * @param itemFactory The update handler item factory, the item that'll be rendered on update.
 	 * @return This item.
 	 */
-	public ViewItem updated(@Nullable Supplier<@Nullable Object> itemFactory) {
+	public IFItem updated(@Nullable Supplier<@Nullable Object> itemFactory) {
 		setUpdateHandler(itemFactory == null ? null : update -> update.setItem(itemFactory.get()));
 		return this;
 	}
@@ -431,7 +430,7 @@ public final class ViewItem {
 	 * @param handler The click handler.
 	 * @return This item.
 	 */
-	public ViewItem onClick(@Nullable Consumer<IFSlotClickContext> handler) {
+	public IFItem onClick(@Nullable Consumer<IFSlotClickContext> handler) {
 		setClickHandler(handler);
 		return this;
 	}
@@ -449,7 +448,7 @@ public final class ViewItem {
 	 * @param handler The item hold handler.
 	 * @return This item.
 	 */
-	public ViewItem onItemHold(@Nullable Consumer<IFSlotContext> handler) {
+	public IFItem onItemHold(@Nullable Consumer<IFSlotContext> handler) {
 		setItemHoldHandler(handler);
 		return this;
 	}
@@ -467,7 +466,7 @@ public final class ViewItem {
 	 * @param handler The item release handler.
 	 * @return This item.
 	 */
-	public ViewItem onItemRelease(@Nullable BiConsumer<IFSlotContext, IFSlotContext> handler) {
+	public IFItem onItemRelease(@Nullable BiConsumer<IFSlotContext, IFSlotContext> handler) {
 		setItemReleaseHandler(handler);
 		return this;
 	}

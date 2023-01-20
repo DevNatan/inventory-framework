@@ -1,6 +1,6 @@
 package me.saiintbrisson.minecraft;
 
-import me.devnatan.inventoryframework.ViewItem;
+import me.devnatan.inventoryframework.IFItem;
 import me.devnatan.inventoryframework.ViewType;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.VirtualView;
@@ -39,7 +39,7 @@ public abstract class NoopViewComponentFactory extends ViewComponentFactory {
 
     @Override
     public @NotNull AbstractViewSlotContext createSlotContext(
-            int slot, ViewItem item, IFContext parent, ViewContainer container, int index, Object value) {
+            int slot, IFItem item, IFContext parent, ViewContainer container, int index, Object value) {
         throw new UnsupportedOperationException();
     }
 

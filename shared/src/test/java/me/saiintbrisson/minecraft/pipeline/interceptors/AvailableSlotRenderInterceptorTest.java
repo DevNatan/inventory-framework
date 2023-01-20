@@ -20,7 +20,7 @@ import me.devnatan.inventoryframework.internal.platform.ViewContainer;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
 import me.saiintbrisson.minecraft.MockComponentFactory;
 import me.saiintbrisson.minecraft.PlatformUtils;
-import me.devnatan.inventoryframework.ViewItem;
+import me.devnatan.inventoryframework.IFItem;
 import me.devnatan.inventoryframework.ViewType;
 import org.junit.jupiter.api.Test;
 
@@ -78,7 +78,7 @@ public class AvailableSlotRenderInterceptorTest {
             PlatformUtils.removeFactory();
         }
 
-        ViewItem item = root.getItem(expectedSlot);
+        IFItem item = root.getItem(expectedSlot);
         assertNotNull(item, "An item must be set at the target slot respecting layout items layer");
         assertEquals(itemType, item.getItem(), "Targeted item type must have the same type as defined before");
     }
@@ -130,7 +130,7 @@ public class AvailableSlotRenderInterceptorTest {
         assertEquals(itemsLayerLength, root.getLayoutItemsLayer().size());
 
         for (int renderedSlot : slots) {
-            ViewItem item = root.getItem(renderedSlot);
+            IFItem item = root.getItem(renderedSlot);
             assertNotNull(item, "Non-exceeding items must be rendered");
             assertEquals(item.getItem(), baseItemName + renderedSlot);
         }
@@ -158,11 +158,11 @@ public class AvailableSlotRenderInterceptorTest {
         applyLayoutItemsLayerWithReservedItemsOn(root, 10);
         root.availableSlot("root-item");
 
-        when(context.getItems()).thenReturn(new ViewItem[root.getItems().length]);
+        when(context.getItems()).thenReturn(new IFItem[root.getItems().length]);
 
-        Deque<ViewItem> reservedItems = new ArrayDeque<>(2);
-        reservedItems.add(new ViewItem(ViewItem.AVAILABLE).withItem("context-item-1"));
-        reservedItems.add(new ViewItem(ViewItem.AVAILABLE).withItem("context-item-2"));
+        Deque<IFItem> reservedItems = new ArrayDeque<>(2);
+        reservedItems.add(new IFItem(IFItem.AVAILABLE).withItem("context-item-1"));
+        reservedItems.add(new IFItem(IFItem.AVAILABLE).withItem("context-item-2"));
         when(context.getReservedItems()).thenReturn(reservedItems);
         when(context.getRoot()).thenReturn(root);
 
@@ -178,16 +178,16 @@ public class AvailableSlotRenderInterceptorTest {
         assertEquals(ITEMS_LAYER_SLOTS.length, root.getLayoutItemsLayer().size());
         assertNull(context.getLayoutItemsLayer());
 
-        ViewItem rootItem = root.getItem(ITEMS_LAYER_SLOTS[0]);
+        IFItem rootItem = root.getItem(ITEMS_LAYER_SLOTS[0]);
         assertNotNull(rootItem, String.format("Root defined item must be present at %d", ITEMS_LAYER_SLOTS[0]));
         assertEquals("root-item", rootItem.getItem(), "Root defined item doesn't match");
 
-        ViewItem contextItem1 = context.getItem(ITEMS_LAYER_SLOTS[1]);
+        IFItem contextItem1 = context.getItem(ITEMS_LAYER_SLOTS[1]);
         assertNotNull(
                 contextItem1, String.format("Context defined item 1 must be present at %d", ITEMS_LAYER_SLOTS[1]));
         assertEquals("context-item-1", contextItem1.getItem(), "Context defined item 1 doesn't match");
 
-        ViewItem contextItem2 = context.getItem(ITEMS_LAYER_SLOTS[2]);
+        IFItem contextItem2 = context.getItem(ITEMS_LAYER_SLOTS[2]);
         assertNotNull(
                 contextItem2, String.format("Context defined item 2 must be present at %d", ITEMS_LAYER_SLOTS[1]));
         assertEquals("context-item-2", contextItem2.getItem(), "Context defined item 2 doesn't match");
@@ -216,11 +216,11 @@ public class AvailableSlotRenderInterceptorTest {
         root.availableSlot("root-item-1");
         root.availableSlot("root-item-2");
 
-        when(context.getItems()).thenReturn(new ViewItem[root.getItems().length]);
+        when(context.getItems()).thenReturn(new IFItem[root.getItems().length]);
 
-        Deque<ViewItem> reservedItems = new ArrayDeque<>(2);
-        reservedItems.add(new ViewItem(ViewItem.AVAILABLE).withItem("context-item-1"));
-        reservedItems.add(new ViewItem(ViewItem.AVAILABLE).withItem("context-item-2"));
+        Deque<IFItem> reservedItems = new ArrayDeque<>(2);
+        reservedItems.add(new IFItem(IFItem.AVAILABLE).withItem("context-item-1"));
+        reservedItems.add(new IFItem(IFItem.AVAILABLE).withItem("context-item-2"));
         when(context.getReservedItems()).thenReturn(reservedItems);
         when(context.getRoot()).thenReturn(root);
 
@@ -236,20 +236,20 @@ public class AvailableSlotRenderInterceptorTest {
         assertEquals(ITEMS_LAYER_SLOTS.length, root.getLayoutItemsLayer().size());
         assertNull(context.getLayoutItemsLayer());
 
-        ViewItem rootItem1 = root.getItem(ITEMS_LAYER_SLOTS[0]);
+        IFItem rootItem1 = root.getItem(ITEMS_LAYER_SLOTS[0]);
         assertNotNull(rootItem1, String.format("Root defined item 1 must be present at %d", ITEMS_LAYER_SLOTS[0]));
         assertEquals("root-item-1", rootItem1.getItem(), "Root defined 1 item doesn't match");
 
-        ViewItem rootItem2 = root.getItem(ITEMS_LAYER_SLOTS[1]);
+        IFItem rootItem2 = root.getItem(ITEMS_LAYER_SLOTS[1]);
         assertNotNull(rootItem2, String.format("Root defined item 2 must be present at %d", ITEMS_LAYER_SLOTS[0]));
         assertEquals("root-item-2", rootItem2.getItem(), "Root defined item 2 doesn't match");
 
-        ViewItem contextItem1 = context.getItem(ITEMS_LAYER_SLOTS[2]);
+        IFItem contextItem1 = context.getItem(ITEMS_LAYER_SLOTS[2]);
         assertNotNull(
                 contextItem1, String.format("Context defined item 1 must be present at %d", ITEMS_LAYER_SLOTS[1]));
         assertEquals("context-item-1", contextItem1.getItem(), "Context defined item 1 doesn't match");
 
-        ViewItem contextItem2 = context.getItem(ITEMS_LAYER_SLOTS[3]);
+        IFItem contextItem2 = context.getItem(ITEMS_LAYER_SLOTS[3]);
         assertNotNull(
                 contextItem2, String.format("Context defined item 2 must be present at %d", ITEMS_LAYER_SLOTS[1]));
         assertEquals("context-item-2", contextItem2.getItem(), "Context defined item 2 doesn't match");

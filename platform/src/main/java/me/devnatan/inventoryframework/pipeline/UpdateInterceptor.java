@@ -2,10 +2,8 @@ package me.devnatan.inventoryframework.pipeline;
 
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.VirtualView;
-import me.devnatan.inventoryframework.pipeline.PipelineContext;
-import me.devnatan.inventoryframework.pipeline.PipelineInterceptor;
 import me.saiintbrisson.minecraft.AbstractView;
-import me.devnatan.inventoryframework.ViewItem;
+import me.devnatan.inventoryframework.IFItem;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -28,7 +26,7 @@ public final class UpdateInterceptor implements PipelineInterceptor<VirtualView>
 
         for (int i = 0; i < len; i++) {
             // this resolve will get the items from both root and context, so we render both
-            final ViewItem item = context.resolve(i, true);
+            final IFItem item = context.resolve(i, true);
 
             if (item == null) {
                 final boolean modified = root.render(context, null, null, i);

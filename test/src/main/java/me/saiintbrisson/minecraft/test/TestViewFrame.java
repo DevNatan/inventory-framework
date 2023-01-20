@@ -11,7 +11,7 @@ import me.devnatan.inventoryframework.internal.Job;
 import me.devnatan.inventoryframework.internal.platform.Viewer;
 import me.saiintbrisson.minecraft.ViewComponentFactory;
 import me.devnatan.inventoryframework.ViewErrorHandler;
-import me.devnatan.inventoryframework.ViewItem;
+import me.devnatan.inventoryframework.IFItem;
 import me.devnatan.inventoryframework.feature.Feature;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -83,34 +83,34 @@ public class TestViewFrame implements PlatformViewFrame<Void, Void, TestViewFram
     }
 
     @Override
-    public Function<IFPaginatedContext<?>, ViewItem> getDefaultPreviousPageItem() {
+    public Function<IFPaginatedContext<?>, IFItem> getDefaultPreviousPageItem() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setDefaultPreviousPageItem(Function<IFPaginatedContext<?>, ViewItem> defaultPreviousPageItemFactory) {
+    public void setDefaultPreviousPageItem(Function<IFPaginatedContext<?>, IFItem> defaultPreviousPageItemFactory) {
         throw new UnsupportedOperationException();
     }
 
     @Override
     public TestViewFrame setNavigateBackItemFactory(
-            BiConsumer<IFPaginatedContext<?>, ViewItem> navigateBackItemFactory) {
+            BiConsumer<IFPaginatedContext<?>, IFItem> navigateBackItemFactory) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public Function<IFPaginatedContext<?>, ViewItem> getDefaultNextPageItem() {
+    public Function<IFPaginatedContext<?>, IFItem> getDefaultNextPageItem() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setDefaultNextPageItem(Function<IFPaginatedContext<?>, ViewItem> defaultNextPageItemFactory) {
+    public void setDefaultNextPageItem(Function<IFPaginatedContext<?>, IFItem> defaultNextPageItemFactory) {
         throw new UnsupportedOperationException();
     }
 
     @Override
     public TestViewFrame setNavigateNextItemFactory(
-            BiConsumer<IFPaginatedContext<?>, ViewItem> navigateNextItemFactory) {
+            BiConsumer<IFPaginatedContext<?>, IFItem> navigateNextItemFactory) {
         throw new UnsupportedOperationException();
     }
 
@@ -143,12 +143,12 @@ public class TestViewFrame implements PlatformViewFrame<Void, Void, TestViewFram
 
     @Override
     public TestViewFrame withPreviousPageItem(
-            @Nullable BiConsumer<IFPaginatedContext<?>, ViewItem> previousPageItemFactory) {
+            @Nullable BiConsumer<IFPaginatedContext<?>, IFItem> previousPageItemFactory) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public TestViewFrame withNextPageItem(@Nullable BiConsumer<IFPaginatedContext<?>, ViewItem> nextPageItemFactory) {
+    public TestViewFrame withNextPageItem(@Nullable BiConsumer<IFPaginatedContext<?>, IFItem> nextPageItemFactory) {
         throw new UnsupportedOperationException();
     }
 
@@ -158,12 +158,12 @@ public class TestViewFrame implements PlatformViewFrame<Void, Void, TestViewFram
     }
 
     @Override
-    public BiConsumer<IFPaginatedContext<?>, ViewItem> getPreviousPageItem() {
+    public BiConsumer<IFPaginatedContext<?>, IFItem> getPreviousPageItem() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public BiConsumer<IFPaginatedContext<?>, ViewItem> getNextPageItem() {
+    public BiConsumer<IFPaginatedContext<?>, IFItem> getNextPageItem() {
         throw new UnsupportedOperationException();
     }
 }

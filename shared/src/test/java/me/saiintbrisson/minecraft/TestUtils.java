@@ -3,7 +3,7 @@ package me.saiintbrisson.minecraft;
 import java.util.Collections;
 import java.util.List;
 
-import me.devnatan.inventoryframework.ViewItem;
+import me.devnatan.inventoryframework.IFItem;
 import me.devnatan.inventoryframework.ViewType;
 import me.devnatan.inventoryframework.internal.platform.ViewContainer;
 import me.devnatan.inventoryframework.internal.platform.Viewer;
@@ -102,7 +102,7 @@ public class TestUtils {
         AbstractPaginatedView<T> root = new AbstractPaginatedView<T>(rows, null, ViewType.CHEST) {
             @Override
             protected void onItemRender(
-                    @NotNull IFPaginatedSlotContext<T> context, @NotNull ViewItem viewItem, @NotNull T value) {
+                    @NotNull IFPaginatedSlotContext<T> context, @NotNull IFItem viewItem, @NotNull T value) {
                 viewItem.withItem(null);
             }
         };

@@ -10,7 +10,7 @@ import me.devnatan.inventoryframework.internal.platform.Viewer;
 import me.saiintbrisson.minecraft.AbstractView;
 import me.saiintbrisson.minecraft.BaseViewContext;
 import me.saiintbrisson.minecraft.PlatformUtils;
-import me.devnatan.inventoryframework.ViewItem;
+import me.devnatan.inventoryframework.IFItem;
 import me.devnatan.inventoryframework.ViewType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
@@ -61,7 +61,7 @@ public class OpenInterceptor implements PipelineInterceptor<VirtualView> {
 
         final BaseViewContext generatedContext = PlatformUtils.getFactory().createContext(root, container, null, null);
 
-        generatedContext.setItems(new ViewItem[containerSize]);
+        generatedContext.setItems(new IFItem[containerSize]);
         generatedContext.setPrevious(((BaseViewContext) openContext).getPrevious());
 
         for (final Viewer viewer : openContext.getViewers()) generatedContext.addViewer(viewer);

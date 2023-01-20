@@ -3,7 +3,7 @@
 
 package me.saiintbrisson.minecraft
 
-import me.devnatan.inventoryframework.ViewItem
+import me.devnatan.inventoryframework.IFItem
 import me.devnatan.inventoryframework.context.IFContext
 import me.devnatan.inventoryframework.context.IFOpenContext
 import java.util.function.Consumer
@@ -47,8 +47,8 @@ public class ViewSlotBuilder(@PublishedApi internal val slot: Int) {
     internal var moveOut: SlotMoveContextBlock? = null
     internal var moveIn: SlotMoveContextBlock? = null
 
-    public fun toItem(): ViewItem {
-        return ViewItem(slot).apply {
+    public fun toItem(): IFItem {
+        return IFItem(slot).apply {
             click?.let {
                 clickHandler = Consumer { context -> it.invoke(context) }
             }
@@ -58,8 +58,8 @@ public class ViewSlotBuilder(@PublishedApi internal val slot: Int) {
         }
     }
 
-    private fun ViewItem.setHandler(
+    private fun IFItem.setHandler(
         currentHandler: SlotContextBlock?,
-        @Suppress("DEPRECATION") assign: ViewItem.(ViewItemHandler) -> Unit
+        @Suppress("DEPRECATION") assign: IFItem.(ViewItemHandler) -> Unit
     ) = currentHandler?.let { it -> assign(it) }
 }

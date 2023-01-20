@@ -6,7 +6,7 @@ import java.util.function.Consumer;
 import lombok.AccessLevel;
 import lombok.Getter;
 import me.devnatan.inventoryframework.RootView;
-import me.devnatan.inventoryframework.ViewItem;
+import me.devnatan.inventoryframework.IFItem;
 import me.devnatan.inventoryframework.ViewType;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.VirtualView;
@@ -68,7 +68,7 @@ public abstract class ViewComponentFactory {
 
     @NotNull
     public abstract IFSlotContext createSlotContext(
-		int slot, ViewItem item, IFContext parent, ViewContainer container, int index, Object value);
+            int slot, IFItem item, IFContext parent, ViewContainer container, int index, Object value);
 
     public abstract Object createItem(@Nullable Object stack);
 

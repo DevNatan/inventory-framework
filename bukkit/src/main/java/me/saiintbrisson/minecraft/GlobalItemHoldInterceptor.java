@@ -1,6 +1,6 @@
 package me.saiintbrisson.minecraft;
 
-import me.devnatan.inventoryframework.ViewItem;
+import me.devnatan.inventoryframework.IFItem;
 import me.devnatan.inventoryframework.bukkit.ViewSlotClickContext;
 import me.devnatan.inventoryframework.pipeline.PipelineContext;
 import me.devnatan.inventoryframework.pipeline.PipelineInterceptor;
@@ -26,8 +26,8 @@ final class GlobalItemHoldInterceptor implements PipelineInterceptor<ViewSlotCli
         // check for hold only on pickup or clone stack
         if (!(action.name().startsWith("PICKUP") || action == InventoryAction.CLONE_STACK)) return;
 
-        final ViewItem item = context.getBackingItem();
-        item.setState(ViewItem.State.HOLDING);
+        final IFItem item = context.getBackingItem();
+        item.setState(IFItem.State.HOLDING);
 
         if (item.getItemHoldHandler() != null) item.getItemHoldHandler().accept(context);
 

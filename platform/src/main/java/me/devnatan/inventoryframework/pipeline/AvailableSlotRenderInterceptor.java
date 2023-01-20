@@ -1,6 +1,6 @@
 package me.devnatan.inventoryframework.pipeline;
 
-import me.devnatan.inventoryframework.ViewItem;
+import me.devnatan.inventoryframework.IFItem;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.exception.ContainerException;
@@ -54,7 +54,7 @@ public class AvailableSlotRenderInterceptor implements PipelineInterceptor<Virtu
 		@NotNull IFContext context,
 		Stack<Integer> layoutItemsLayer,
 		boolean targetingRoot) {
-		final Deque<ViewItem> reservedItems = !targetingRoot ? context.getReservedItems() : root.getReservedItems();
+		final Deque<IFItem> reservedItems = !targetingRoot ? context.getReservedItems() : root.getReservedItems();
 
 		// skip if reserved items defined by auto-slot-filling was already consumed
 		if (reservedItems == null || reservedItems.isEmpty()) return;
@@ -107,13 +107,13 @@ public class AvailableSlotRenderInterceptor implements PipelineInterceptor<Virtu
 			try {
 				targetSlot = layoutItemsLayer.elementAt(i);
 			} catch (final ArrayIndexOutOfBoundsException e) {
-				final ViewItem target = reservedItems.peekFirst();
+				final IFItem target = reservedItems.peekFirst();
 				final String item = target == null ? "null" : String.valueOf(target.getItem());
 
 				throw new SlotFillExceededException("No more slots available on layout to accommodate " + item, e);
 			}
 
-			final ViewItem next;
+			final IFItem next;
 
 			try {
 				// remove first to preserve insertion order

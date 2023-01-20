@@ -2,7 +2,7 @@ package me.devnatan.inventoryframework.internal;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import me.devnatan.inventoryframework.ViewItem;
+import me.devnatan.inventoryframework.IFItem;
 
 import java.util.Stack;
 import java.util.function.Function;
@@ -22,6 +22,6 @@ public final class LayoutPattern {
 	 * The first parameter is the current iteration index.
 	 */
 	@EqualsAndHashCode.Exclude
-	private final Function<Integer, ViewItem> factory;
+	private final Function<Integer, IFItem> factory;
 
 }

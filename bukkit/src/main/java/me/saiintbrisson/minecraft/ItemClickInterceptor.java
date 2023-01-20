@@ -1,6 +1,6 @@
 package me.saiintbrisson.minecraft;
 
-import me.devnatan.inventoryframework.ViewItem;
+import me.devnatan.inventoryframework.IFItem;
 import me.devnatan.inventoryframework.bukkit.ViewSlotClickContext;
 import me.devnatan.inventoryframework.pipeline.PipelineContext;
 import me.devnatan.inventoryframework.pipeline.PipelineInterceptor;
@@ -19,7 +19,7 @@ final class ItemClickInterceptor implements PipelineInterceptor<ViewSlotClickCon
         final InventoryClickEvent event = context.getClickOrigin();
         if (event.getSlotType() == InventoryType.SlotType.OUTSIDE) return;
 
-        final ViewItem item = context.getBackingItem();
+        final IFItem item = context.getBackingItem();
         if (item == null) return;
 
         // inherit cancellation so we can un-cancel it

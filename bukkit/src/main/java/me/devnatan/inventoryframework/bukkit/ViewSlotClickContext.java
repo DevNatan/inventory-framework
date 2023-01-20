@@ -1,6 +1,6 @@
 package me.devnatan.inventoryframework.bukkit;
 
-import me.devnatan.inventoryframework.ViewItem;
+import me.devnatan.inventoryframework.IFItem;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.internal.platform.ViewContainer;
@@ -20,7 +20,7 @@ public class ViewSlotClickContext extends ViewSlotContext implements IFSlotClick
 
     ViewSlotClickContext(
             int slot,
-            ViewItem backingItem,
+            IFItem backingItem,
             @NotNull IFContext parent,
             @Nullable ViewContainer container,
             @NotNull Player player,

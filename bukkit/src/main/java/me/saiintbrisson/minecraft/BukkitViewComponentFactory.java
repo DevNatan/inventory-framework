@@ -8,12 +8,12 @@ import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.PAG
 import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.RENDER;
 import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.RESUME;
 import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.UPDATE;
-import static me.devnatan.inventoryframework.ViewItem.UNSET;
+import static me.devnatan.inventoryframework.IFItem.UNSET;
 import static org.bukkit.Bukkit.createInventory;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import me.devnatan.inventoryframework.ViewItem;
+import me.devnatan.inventoryframework.IFItem;
 import me.devnatan.inventoryframework.ViewType;
 import me.devnatan.inventoryframework.bukkit.View;
 import me.devnatan.inventoryframework.bukkit.ViewSlotContext;
@@ -105,7 +105,7 @@ final class BukkitViewComponentFactory extends ViewComponentFactory {
     @Override
     @NotNull
     public AbstractViewSlotContext createSlotContext(
-		int slot, ViewItem item, IFContext parent, ViewContainer container, int index, Object value) {
+            int slot, IFItem item, IFContext parent, ViewContainer container, int index, Object value) {
         final Player player = ((BukkitIFContext) parent).getPlayer();
         return index == UNSET
                 ? new ViewSlotContext(slot, item, parent, container, player)

@@ -2,7 +2,6 @@ package me.devnatan.inventoryframework;
 
 import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.experimental.FieldDefaults;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFOpenContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
@@ -248,7 +247,7 @@ public abstract class PlatformView<
 	 */
 	protected final <V> Pagination<V> pagination(
 		@NotNull Function<TSlotContext, List<V>> sourceProvider,
-		@NotNull BiConsumer<ViewItem, V> itemFactory
+		@NotNull BiConsumer<IFItem, V> itemFactory
 	) {
 		throw new UnsupportedOperationException();
 	}
@@ -285,7 +284,7 @@ public abstract class PlatformView<
 	 * @param <V>            The pagination data type.
 	 * @return A immutable pagination state.
 	 */
-	protected final <V> Pagination<V> pagination(@NotNull BiConsumer<ViewItem, V> itemFactory) {
+	protected final <V> Pagination<V> pagination(@NotNull BiConsumer<IFItem, V> itemFactory) {
 		throw new UnsupportedOperationException();
 	}
 

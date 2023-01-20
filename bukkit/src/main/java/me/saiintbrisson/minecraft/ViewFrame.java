@@ -15,7 +15,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import me.devnatan.inventoryframework.ViewErrorHandler;
-import me.devnatan.inventoryframework.ViewItem;
+import me.devnatan.inventoryframework.IFItem;
 import me.devnatan.inventoryframework.bukkit.View;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.internal.Job;
@@ -67,7 +67,7 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
     @Setter(AccessLevel.NONE)
     private Listener listener;
 
-    private BiConsumer<IFPaginatedContext<?>, ViewItem> previousPageItem, nextPageItem;
+    private BiConsumer<IFPaginatedContext<?>, IFItem> previousPageItem, nextPageItem;
 
     @Getter(AccessLevel.NONE)
     private final FeatureInstaller<ViewFrame> featureInstaller = new DefaultFeatureInstaller<>(this);
@@ -358,16 +358,16 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
     }
 
     @Override
-    public BiConsumer<IFPaginatedContext<?>, ViewItem> getPreviousPageItem() {
+    public BiConsumer<IFPaginatedContext<?>, IFItem> getPreviousPageItem() {
         return previousPageItem;
     }
 
     @Override
-    public Function<IFPaginatedContext<?>, ViewItem> getDefaultPreviousPageItem() {
+    public Function<IFPaginatedContext<?>, IFItem> getDefaultPreviousPageItem() {
         return previousPageItem == null
                 ? null
                 : (context) -> {
-                    ViewItem item = new ViewItem();
+                    IFItem item = new IFItem();
                     item.setNavigationItem(true);
                     previousPageItem.accept(context, item);
                     return item;
@@ -375,34 +375,34 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
     }
 
     @Override
-    public void setDefaultPreviousPageItem(Function<IFPaginatedContext<?>, ViewItem> defaultPreviousPageItemFactory) {
+    public void setDefaultPreviousPageItem(Function<IFPaginatedContext<?>, IFItem> defaultPreviousPageItemFactory) {
         this.previousPageItem = (context, item) -> defaultPreviousPageItemFactory.apply(context);
     }
 
     @Override
     public ViewFrame withPreviousPageItem(
-            @Nullable BiConsumer<IFPaginatedContext<?>, ViewItem> previousPageItemFactory) {
+            @Nullable BiConsumer<IFPaginatedContext<?>, IFItem> previousPageItemFactory) {
         this.previousPageItem = previousPageItemFactory;
         return this;
     }
 
     @Override
-    public ViewFrame setNavigateBackItemFactory(BiConsumer<IFPaginatedContext<?>, ViewItem> navigateBackItemFactory) {
+    public ViewFrame setNavigateBackItemFactory(BiConsumer<IFPaginatedContext<?>, IFItem> navigateBackItemFactory) {
         this.previousPageItem = navigateBackItemFactory;
         return this;
     }
 
     @Override
-    public BiConsumer<IFPaginatedContext<?>, ViewItem> getNextPageItem() {
+    public BiConsumer<IFPaginatedContext<?>, IFItem> getNextPageItem() {
         return nextPageItem;
     }
 
     @Override
-    public Function<IFPaginatedContext<?>, ViewItem> getDefaultNextPageItem() {
+    public Function<IFPaginatedContext<?>, IFItem> getDefaultNextPageItem() {
         return nextPageItem == null
                 ? null
                 : (context) -> {
-                    ViewItem item = new ViewItem();
+                    IFItem item = new IFItem();
                     item.setNavigationItem(true);
                     nextPageItem.accept(context, item);
                     return item;
@@ -410,18 +410,18 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
     }
 
     @Override
-    public void setDefaultNextPageItem(Function<IFPaginatedContext<?>, ViewItem> defaultNextPageItemFactory) {
+    public void setDefaultNextPageItem(Function<IFPaginatedContext<?>, IFItem> defaultNextPageItemFactory) {
         this.nextPageItem = (context, item) -> defaultNextPageItemFactory.apply(context);
     }
 
     @Override
-    public ViewFrame withNextPageItem(@Nullable BiConsumer<IFPaginatedContext<?>, ViewItem> nextPageItemFactory) {
+    public ViewFrame withNextPageItem(@Nullable BiConsumer<IFPaginatedContext<?>, IFItem> nextPageItemFactory) {
         this.nextPageItem = nextPageItemFactory;
         return this;
     }
 
     @Override
-    public ViewFrame setNavigateNextItemFactory(BiConsumer<IFPaginatedContext<?>, ViewItem> navigateNextItemFactory) {
+    public ViewFrame setNavigateNextItemFactory(BiConsumer<IFPaginatedContext<?>, IFItem> navigateNextItemFactory) {
         this.nextPageItem = navigateNextItemFactory;
         return this;
     }
