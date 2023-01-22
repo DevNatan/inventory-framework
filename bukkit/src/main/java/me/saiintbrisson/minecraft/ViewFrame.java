@@ -16,13 +16,15 @@ import lombok.Setter;
 import lombok.ToString;
 import me.devnatan.inventoryframework.ViewErrorHandler;
 import me.devnatan.inventoryframework.IFItem;
-import me.devnatan.inventoryframework.bukkit.View;
+import me.devnatan.inventoryframework.View;
+import me.devnatan.inventoryframework.bukkit.ViewListener;
+import me.devnatan.inventoryframework.bukkit.internal.BukkitViewComponentFactory;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.internal.Job;
 import me.devnatan.inventoryframework.internal.platform.Viewer;
 import me.devnatan.inventoryframework.feature.Feature;
 import me.devnatan.inventoryframework.feature.FeatureInstaller;
-import me.devnatan.inventoryframework.bukkit.logging.BukkitLogger;
+import me.devnatan.inventoryframework.logging.BukkitLogger;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
@@ -185,7 +187,7 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
         final Plugin plugin = getOwner();
         plugin.getServer()
                 .getPluginManager()
-                .registerEvents(listener = new me.saiintbrisson.minecraft.ViewListener(plugin, this), plugin);
+                .registerEvents(listener = new ViewListener(plugin, this), plugin);
         servicesManager.register(ViewFrame.class, this, plugin, ServicePriority.Normal);
         return this;
     }
@@ -197,7 +199,7 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
         if (!metricsEnabled) return;
 
         try {
-            new me.devnatan.inventoryframework.bukkit.thirdparty.Metrics((JavaPlugin) getOwner(), 15518);
+            new me.devnatan.inventoryframework.thirdparty.Metrics((JavaPlugin) getOwner(), 15518);
         } catch (final Exception ignored) {
         }
     }

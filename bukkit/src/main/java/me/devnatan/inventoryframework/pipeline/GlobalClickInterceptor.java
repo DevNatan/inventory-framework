@@ -1,8 +1,6 @@
-package me.saiintbrisson.minecraft;
+package me.devnatan.inventoryframework.pipeline;
 
-import me.devnatan.inventoryframework.bukkit.ViewSlotClickContext;
-import me.devnatan.inventoryframework.pipeline.PipelineContext;
-import me.devnatan.inventoryframework.pipeline.PipelineInterceptor;
+import me.devnatan.inventoryframework.ViewSlotClickContext;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.jetbrains.annotations.NotNull;
 

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.exception.InvalidatedContextException;
 import me.devnatan.inventoryframework.exception.UnknownReferenceException;
@@ -49,7 +50,7 @@ public interface IFContext extends VirtualView, StateHolder {
      * @return The root of this context.
      */
     @NotNull
-    AbstractView getRoot();
+	RootView getRoot();
 
     /**
      * {@inheritDoc}
@@ -189,23 +190,6 @@ public interface IFContext extends VirtualView, StateHolder {
      * @return The current property value before removal or <code>null</code>.
      */
     <T> T remove(@NotNull String key);
-
-    /**
-     * Converts this context to a paginated context.
-     *
-     * <p>Only works if the view that originated this context is a paginated view, throwing an
-     * IllegalStateException if the {@link #getRoot() root} of this context is not paginated.
-     *
-     * @param <T> The pagination item type.
-     * @return This context as a PaginatedViewContext.
-     * @throws IllegalStateException If the root of this context cannot be converted to a paginated.
-     */
-    @Override
-    <T> IFPaginatedContext<T> paginated();
-
-    void open(@NotNull Class<? extends AbstractView> viewClass);
-
-    void open(@NotNull Class<? extends AbstractView> viewClass, @NotNull Map<String, @Nullable Object> data);
 
     /**
      * Creates a new slot context instance containing within it data of an item whose reference key is

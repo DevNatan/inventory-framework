@@ -1,6 +1,5 @@
-package me.devnatan.inventoryframework.bukkit;
+package me.devnatan.inventoryframework;
 
-import me.devnatan.inventoryframework.IFItem;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.internal.platform.ViewContainer;

@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import me.devnatan.inventoryframework.ViewType;
-import me.devnatan.inventoryframework.bukkit.thirdparty.InventoryUpdate;
+import me.devnatan.inventoryframework.thirdparty.InventoryUpdate;
 import me.devnatan.inventoryframework.internal.platform.ViewContainer;
 import me.devnatan.inventoryframework.internal.platform.Viewer;
 import org.bukkit.Material;

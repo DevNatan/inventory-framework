@@ -1,7 +1,6 @@
-package me.devnatan.inventoryframework.bukkit.logging;
+package me.devnatan.inventoryframework.logging;
 
 import lombok.RequiredArgsConstructor;
-import me.devnatan.inventoryframework.logging.Logger;
 import org.jetbrains.annotations.Nullable;
 
 @RequiredArgsConstructor

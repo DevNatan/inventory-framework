@@ -8,6 +8,8 @@ import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.context.IFSlotContext;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
+import me.devnatan.inventoryframework.pipeline.PipelineInterceptor;
+import me.devnatan.inventoryframework.pipeline.PipelinePhase;
 import me.devnatan.inventoryframework.state.MutableState;
 import me.devnatan.inventoryframework.state.Pagination;
 import me.devnatan.inventoryframework.state.State;
@@ -18,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
@@ -34,28 +37,44 @@ public abstract class PlatformView<
 
 	private ViewConfig config;
 
-	private final Pipeline<IFContext> pipeline = new Pipeline<>();
+	private final Pipeline<? super VirtualView> pipeline = new Pipeline<>();
 	private final Set<IFContext> contexts =
 		Collections.newSetFromMap(Collections.synchronizedMap(new HashMap<>()));
 
-	/** {@inheritDoc} */
+	{
+		for (final Map.Entry<PipelinePhase, PipelineInterceptor<? extends VirtualView>> entry : getInterceptors().entrySet())
+			pipeline.intercept(entry.getKey(), entry.getValue());
+	}
+
+	abstract Map<PipelinePhase, PipelineInterceptor<? extends VirtualView>> getInterceptors();
+
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void onInit(ViewConfigBuilder config) {
 	}
 
-	/** {@inheritDoc} */
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public final String getTitle() {
 		return config.getTitle();
 	}
 
-	/** {@inheritDoc} */
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public final ViewType getType() {
 		return config.getType();
 	}
 
-	/** {@inheritDoc} */
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public final ViewType getTypeForCurrentPlatform() {
 		return ViewType.CHEST;
@@ -279,9 +298,9 @@ public abstract class PlatformView<
 	 *
 	 * }</pre>
 	 *
-	 * @param itemFactory    The function for creating pagination items, this function is called for
-	 *                       each paged element (item) on a page.
-	 * @param <V>            The pagination data type.
+	 * @param itemFactory The function for creating pagination items, this function is called for
+	 *                    each paged element (item) on a page.
+	 * @param <V>         The pagination data type.
 	 * @return A immutable pagination state.
 	 */
 	protected final <V> Pagination<V> pagination(@NotNull BiConsumer<IFItem, V> itemFactory) {

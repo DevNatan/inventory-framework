@@ -1,7 +1,7 @@
 package me.saiintbrisson.minecraft;
 
 import lombok.RequiredArgsConstructor;
-import me.devnatan.inventoryframework.bukkit.View;
+import me.devnatan.inventoryframework.View;
 import org.bukkit.plugin.java.JavaPlugin;
 
 @RequiredArgsConstructor

@@ -3,11 +3,9 @@ package me.devnatan.inventoryframework;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.context.IFSlotContext;
-import me.devnatan.inventoryframework.context.IFSlotMoveContext;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -21,50 +19,27 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-/**
- * Mutable class that represents an item in a slot of a container.
- * <p>
- * <b><i> Setters of this class are internal inventory-framework API that should not be used from
- * outside of this library. No compatibility guarantees are provided. </i></b>
- */
-@ToString
-@Setter // TODO mark setters as @ApiStatus.Internal
-@Getter()
-public class IFItem {
+@Getter
+@Setter(AccessLevel.PACKAGE)
+public abstract class IFItem<S extends IFItem<?>> {
 
 	public static final int UNSET = -1;
 	public static final int AVAILABLE = -2;
-	public static final long NO_INTERVAL = -3;
+	public static final long NO_INTERVAL = -1;
 
 	public enum State {
 		UNDEFINED,
 		HOLDING
 	}
 
-	/**
-	 * The fallback item stack that will be rendered if a function that can render is not defined or
-	 * if a function that can render does not render an item.
-	 */
 	private Object item;
-
-	@Getter(AccessLevel.PUBLIC)
 	private int slot;
-
 	private State state = State.UNDEFINED;
-	private boolean paginationItem;
-	private boolean navigationItem;
 	private String referenceKey;
-
-	@Setter(AccessLevel.PUBLIC)
-	private boolean closeOnClick, cancelOnClick, cancelOnShiftClick;
-	private ViewItemHandler renderHandler, updateHandler;
-	private Consumer<IFSlotClickContext> clickHandler;
-	private Consumer<IFSlotContext> itemHoldHandler;
-	private BiConsumer<IFSlotContext, IFSlotContext> itemReleaseHandler;
 	private Map<String, Object> data;
+	private IFItem<?> overlay;
+	private boolean removed, navigationItem, closeOnClick, cancelOnClick, cancelOnShiftClick;
 	private long updateIntervalInTicks = NO_INTERVAL;
-	private IFItem overlay;
-	private boolean removed;
 
 	/**
 	 * Creates a new ViewItem instance.
@@ -97,12 +72,12 @@ public class IFItem {
 	 * @return This item.
 	 * @throws IllegalStateException If this item is not a navigation item.
 	 */
-	public IFItem withSlot(int slot) {
+	public S withSlot(int slot) {
 		if (!isNavigationItem())
 			throw new IllegalStateException("Only navigation item slot can be changed.");
 
 		this.slot = slot;
-		return this;
+		return (S) this;
 	}
 
 	/**
@@ -111,9 +86,9 @@ public class IFItem {
 	 * @param intervalInTicks The item update interval in ticks.
 	 * @return This item.
 	 */
-	public IFItem scheduleUpdate(@Range(from = NO_INTERVAL, to = Long.MAX_VALUE) long intervalInTicks) {
+	public S scheduleUpdate(@Range(from = NO_INTERVAL, to = Long.MAX_VALUE) long intervalInTicks) {
 		this.updateIntervalInTicks = Math.max(NO_INTERVAL, intervalInTicks);
-		return this;
+		return (S) this;
 	}
 
 	/**
@@ -122,10 +97,10 @@ public class IFItem {
 	 * @param duration The item update interval.
 	 * @return This item.
 	 */
-	public IFItem scheduleUpdate(@Nullable Duration duration) {
+	public S scheduleUpdate(@Nullable Duration duration) {
 		if (duration == null) this.updateIntervalInTicks = NO_INTERVAL;
 		else this.updateIntervalInTicks = duration.getSeconds() * 20L;
-		return this;
+		return (S) this;
 	}
 
 	/**
@@ -152,39 +127,12 @@ public class IFItem {
 	 * @param fallbackItem The new fallback item stack.
 	 * @return This item.
 	 */
-	public IFItem withItem(Object fallbackItem) {
-		setItem(fallbackItem);
-		return this;
-	}
-
-	/**
-	 * Defines the item that will be used as fallback for rendering in the slot where this item is
-	 * positioned. The fallback item is always static.
-	 *
-	 * <p>The function of the fallback item is to provide an alternative if the item's rendering
-	 * functions are not quenched, thus returning the rendering to the fallback item.
-	 *
-	 * <pre>{@code
-	 * slot(30)
-	 * 	   .withItem(...)
-	 *     .onRender(render -> {
-	 *         render.setItem(someCondition ? null : item);
-	 *     })
-	 *     .onUpdate(update -> {
-	 *         update.setItem(someCondition ? null : item);
-	 *     });
-	 * }</pre>
-	 *
-	 * <p>If neither of the above two conditions are satisfied, the fallback item will be rendered,
-	 * otherwise the item defined in the handlers will be rendered.
-	 *
-	 * @param fallbackItem The new fallback item stack.
-	 */
-	public void setItem(Object fallbackItem) {
-		if (fallbackItem instanceof IFItem || fallbackItem instanceof ItemWrapper)
+	public S withItem(Object fallbackItem) {
+		if (fallbackItem instanceof IFItem)
 			throw new IllegalStateException("Fallback item cannot be a ViewItem or ItemWrapper");
 
 		this.item = fallbackItem;
+		return (S) this;
 	}
 
 	/**
@@ -193,7 +141,7 @@ public class IFItem {
 	 *
 	 * @return This item.
 	 */
-	public IFItem cancelOnClick() {
+	public S cancelOnClick() {
 		return withCancelOnClick(!isCancelOnClick());
 	}
 
@@ -204,9 +152,9 @@ public class IFItem {
 	 *                      item.
 	 * @return This item.
 	 */
-	public IFItem withCancelOnClick(boolean cancelOnClick) {
+	public S withCancelOnClick(boolean cancelOnClick) {
 		setCancelOnClick(cancelOnClick);
-		return this;
+		return (S) this;
 	}
 
 	/**
@@ -215,7 +163,7 @@ public class IFItem {
 	 *
 	 * @return This item.
 	 */
-	public IFItem cancelOnShiftClick() {
+	public S cancelOnShiftClick() {
 		return withCancelOnShiftClick(!isCancelOnShiftClick());
 	}
 
@@ -226,9 +174,9 @@ public class IFItem {
 	 *                           on this item.
 	 * @return This item.
 	 */
-	public IFItem withCancelOnShiftClick(boolean cancelOnShiftClick) {
+	public S withCancelOnShiftClick(boolean cancelOnShiftClick) {
 		setCancelOnShiftClick(cancelOnShiftClick);
-		return this;
+		return (S) this;
 	}
 
 	/**
@@ -237,7 +185,7 @@ public class IFItem {
 	 *
 	 * @return This item.
 	 */
-	public IFItem closeOnClick() {
+	public S closeOnClick() {
 		return withCloseOnClick(!isCloseOnClick());
 	}
 
@@ -247,39 +195,9 @@ public class IFItem {
 	 * @param closeOnClick Whether the container should be closed when this item is clicked.
 	 * @return This item.
 	 */
-	public IFItem withCloseOnClick(boolean closeOnClick) {
+	public S withCloseOnClick(boolean closeOnClick) {
 		setCloseOnClick(closeOnClick);
-		return this;
-	}
-
-	/**
-	 * Adds a new user-defined property to this item.
-	 *
-	 * <p>User-defined properties can be used to persist data that can be retrieved later even after
-	 * several actions applied to that item.
-	 *
-	 * <p>An example of user-defined data persistence is for post-moving identification of an item
-	 * inside the container, you can define a data in this item and as soon as the actor moves it the
-	 * data will remain there, and you can use it any way you want.
-	 *
-	 * <pre>
-	 *  slot(...).withCancelOnClick(false).withData("name", "Anna");
-	 *  slot(...).withCncelOnClick(false).withData("name", "James");
-	 *
-	 *  &#64;Override
-	 *  protected void onItemHold(ViewSlotContext context) {
-	 *      String name = context.data("name");
-	 *      ...
-	 *  }
-	 * </pre>
-	 *
-	 * @param key   The property key.
-	 * @param value The property value.
-	 * @deprecated Use {@link #withData(String, Object)} instead.
-	 */
-	@Deprecated
-	public void setData(@NotNull String key, @NotNull Object value) {
-		withData(key, value);
+		return (S) this;
 	}
 
 	/**
@@ -308,11 +226,11 @@ public class IFItem {
 	 * @param value The property value.
 	 * @return This item.
 	 */
-	public IFItem withData(@NotNull String key, @NotNull Object value) {
+	public S withData(@NotNull String key, @NotNull Object value) {
 		if (data == null) data = new HashMap<>();
 
 		data.put(key, value);
-		return this;
+		return (S) this;
 	}
 
 	/**
@@ -333,141 +251,19 @@ public class IFItem {
 	 * @return This item.
 	 * @see IFContext#ref(String)
 	 */
-	public IFItem referencedBy(@Nullable String key) {
-		if (isPaginationItem())
-			throw new IllegalStateException("References are not yet supported in paginated items.");
-
+	public S referencedBy(@Nullable String key) {
 		setReferenceKey(key);
-		return this;
+		return (S) this;
 	}
 
-	/**
-	 * Called when the item is rendered.
-	 *
-	 * <p>This handler is called every time the item or the view that owns it is updated.
-	 *
-	 * <p>It is allowed to change the item that will be displayed in this handler using the context
-	 * mutation functions, e.g.: {@link IFSlotContext#setItem(Object)}.
-	 *
-	 * <p>An item can be re-rendered individually using {@link IFSlotContext#updateSlot()}.
-	 *
-	 * @param handler The render handler.
-	 * @return This item.
-	 */
-	public IFItem onRender(@Nullable ViewItemHandler handler) {
-		setRenderHandler(handler);
-		return this;
-	}
+	abstract Consumer<? extends IFSlotContext> getRenderHandler();
 
-	/**
-	 * Called when the item is rendered.
-	 * <p>
-	 * Shortcut to {@code onRender(render -> render.setItem(itemFactory.get());}
-	 *
-	 * <p>This handler is called every time the item or the view that owns it is updated.
-	 *
-	 * <p>It is allowed to change the item that will be displayed in this handler using the context
-	 * mutation functions, e.g.: {@link IFSlotContext#setItem(Object)}.
-	 *
-	 * <p>An item can be re-rendered individually using {@link IFSlotContext#updateSlot()}.
-	 *
-	 * @param itemFactory The render handler item factory, the item that'll be rendered on update.
-	 * @return This item.
-	 */
-	public IFItem rendered(@Nullable Supplier<@Nullable Object> itemFactory) {
-		setRenderHandler(itemFactory == null ? null : render -> render.setItem(itemFactory.get()));
-		return this;
-	}
+	abstract Consumer<? extends IFSlotContext> getUpdateHandler();
 
-	public IFItem rendered(@Nullable Function<IFSlotContext, @Nullable Object> itemFactory) {
-		setRenderHandler(itemFactory == null ? null : render -> render.setItem(itemFactory.apply(render)));
-		return this;
-	}
+	abstract Consumer<? extends IFSlotClickContext> getClickHandler();
 
-	/**
-	 * Called when the item is updated.
-	 *
-	 * <p>It is allowed to change the item that will be displayed in this handler using the context
-	 * mutation functions, e.g.: {@link IFSlotContext#setItem(Object)}.
-	 *
-	 * <p>An item can be updated individually using {@link IFSlotContext#updateSlot()}.
-	 *
-	 * @param handler The update handler.
-	 * @return This item.
-	 */
-	public IFItem onUpdate(@Nullable ViewItemHandler handler) {
-		setUpdateHandler(handler);
-		return this;
-	}
+	abstract Consumer<? extends IFSlotClickContext> getHoldHandler();
 
-	/**
-	 * Called when the item is updated.
-	 * <p>
-	 * Shortcut to {@code onUpdate(update -> update.setItem(itemFactory.get());}
-	 *
-	 * <p>It is allowed to change the item that will be displayed in this handler using the context
-	 * mutation functions, e.g.: {@link IFSlotContext#setItem(Object)}.
-	 *
-	 * <p>An item can be updated individually using {@link IFSlotContext#updateSlot()}.
-	 *
-	 * @param itemFactory The update handler item factory, the item that'll be rendered on update.
-	 * @return This item.
-	 */
-	public IFItem updated(@Nullable Supplier<@Nullable Object> itemFactory) {
-		setUpdateHandler(itemFactory == null ? null : update -> update.setItem(itemFactory.get()));
-		return this;
-	}
-
-	/**
-	 * Called when a player clicks on the item.
-	 *
-	 * <p>This handler works on any container that the actor has access to and only works if the
-	 * interaction has not been cancelled.
-	 *
-	 * <p>**Using item mutation functions in this handler is not allowed.**
-	 *
-	 * @param handler The click handler.
-	 * @return This item.
-	 */
-	public IFItem onClick(@Nullable Consumer<IFSlotClickContext> handler) {
-		setClickHandler(handler);
-		return this;
-	}
-
-	/**
-	 * Called when a player holds an item.
-	 *
-	 * <p>This handler works on any container that the actor has access to and only works if the
-	 * interaction has not been cancelled.
-	 *
-	 * <p>You can check if the item has been released using {@link #onItemRelease(BiConsumer)}.
-	 *
-	 * <p>**Using item mutation functions in this handler is not allowed.**
-	 *
-	 * @param handler The item hold handler.
-	 * @return This item.
-	 */
-	public IFItem onItemHold(@Nullable Consumer<IFSlotContext> handler) {
-		setItemHoldHandler(handler);
-		return this;
-	}
-
-	/**
-	 * Called when a player releases an item.
-	 *
-	 * <p>This handler works on any container that the actor has access to and only works if the
-	 * interaction has not been cancelled.
-	 *
-	 * <p>You can know when the item was hold using {@link #onItemHold(Consumer)}.
-	 *
-	 * <p>**Using item mutation functions in this handler is not allowed.**
-	 *
-	 * @param handler The item release handler.
-	 * @return This item.
-	 */
-	public IFItem onItemRelease(@Nullable BiConsumer<IFSlotContext, IFSlotContext> handler) {
-		setItemReleaseHandler(handler);
-		return this;
-	}
+	abstract BiConsumer<? extends IFSlotClickContext, ? extends IFSlotClickContext> getReleaseHandler();
 
 }

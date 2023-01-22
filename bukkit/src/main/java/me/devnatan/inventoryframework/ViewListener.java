@@ -1,15 +1,16 @@
-package me.saiintbrisson.minecraft;
+package me.devnatan.inventoryframework;
 
 import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.CLICK;
 
 import java.util.logging.Level;
 import lombok.RequiredArgsConstructor;
-import me.devnatan.inventoryframework.IFItem;
-import me.devnatan.inventoryframework.bukkit.ViewSlotClickContext;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFSlotContext;
 import me.devnatan.inventoryframework.internal.platform.ViewContainer;
 import me.devnatan.inventoryframework.internal.platform.Viewer;
+import me.saiintbrisson.minecraft.BukkitViewContainer;
+import me.saiintbrisson.minecraft.BukkitViewer;
+import me.saiintbrisson.minecraft.ViewFrame;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

@@ -5,12 +5,6 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import me.devnatan.inventoryframework.exception.InventoryModificationException;
-import me.devnatan.inventoryframework.pagination.IFPaginatedContext;
-import me.devnatan.inventoryframework.pagination.IFPaginatedSlotContext;
-import me.saiintbrisson.minecraft.AbstractView;
-import me.saiintbrisson.minecraft.AbstractVirtualView;
-import me.saiintbrisson.minecraft.ItemWrapper;
-import me.saiintbrisson.minecraft.ViewItem;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -62,8 +56,6 @@ public interface IFSlotContext extends IFContext {
 
     /**
      * Updates this slot.
-     *
-     * <p>This method is a shortcut to {@link AbstractView#update(IFContext, ViewItem, int)}.
      */
     void updateSlot();
 
@@ -75,9 +67,9 @@ public interface IFSlotContext extends IFContext {
      *
      * @return The current item wrapper.
      */
-    @ApiStatus.Internal
-    @NotNull
-    ItemWrapper getItemWrapper();
+//    @ApiStatus.Internal
+//    @NotNull
+//    ItemWrapper getItemWrapper();
 
     /**
      * Returns the current item of this context.
@@ -88,8 +80,8 @@ public interface IFSlotContext extends IFContext {
      *
      * @return The current item.
      */
-    @NotNull
-    ItemWrapper getCurrentItem();
+//    @NotNull
+//    ItemWrapper getCurrentItem();
 
     /**
      * Sets the new item for this slot for this context.
@@ -127,7 +119,7 @@ public interface IFSlotContext extends IFContext {
      *
      * @param updater The update function.
      */
-    void updateItem(Consumer<ItemWrapper> updater);
+//    void updateItem(Consumer<ItemWrapper> updater);
 
     /**
      * Whether this context originated from an interaction coming from the actor's container and not
@@ -202,19 +194,6 @@ public interface IFSlotContext extends IFContext {
      */
     @Nullable
     <T> T getItemDataOrNull(@NotNull String key);
-
-    /**
-     * Converts this context to a pagination context.
-     * <p>
-     * Works only if the root of this context is a paginated view, throwing an exception if the root
-     * of this context is not paginated.
-     *
-     * @param <T> The pagination item type.
-     * @return This context as a PaginatedViewContext.
-     * @throws IllegalStateException If the root of this context is not paginated.
-     */
-    @Override
-    <T> IFPaginatedContext<T> paginated();
 
     /**
      * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees

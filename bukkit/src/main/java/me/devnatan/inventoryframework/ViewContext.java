@@ -1,4 +1,4 @@
-package me.devnatan.inventoryframework.bukkit;
+package me.devnatan.inventoryframework;
 
 import me.devnatan.inventoryframework.context.IFContext;
 import org.bukkit.entity.Player;
