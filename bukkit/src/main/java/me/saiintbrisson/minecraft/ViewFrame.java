@@ -14,16 +14,16 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import me.devnatan.inventoryframework.ViewErrorHandler;
 import me.devnatan.inventoryframework.IFItem;
 import me.devnatan.inventoryframework.View;
+import me.devnatan.inventoryframework.ViewErrorHandler;
 import me.devnatan.inventoryframework.bukkit.ViewListener;
 import me.devnatan.inventoryframework.bukkit.internal.BukkitViewComponentFactory;
 import me.devnatan.inventoryframework.context.IFContext;
-import me.devnatan.inventoryframework.internal.Job;
-import me.devnatan.inventoryframework.internal.platform.Viewer;
 import me.devnatan.inventoryframework.feature.Feature;
 import me.devnatan.inventoryframework.feature.FeatureInstaller;
+import me.devnatan.inventoryframework.internal.Job;
+import me.devnatan.inventoryframework.internal.platform.Viewer;
 import me.devnatan.inventoryframework.logging.BukkitLogger;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.entity.Player;
@@ -185,9 +185,7 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
         }
 
         final Plugin plugin = getOwner();
-        plugin.getServer()
-                .getPluginManager()
-                .registerEvents(listener = new ViewListener(plugin, this), plugin);
+        plugin.getServer().getPluginManager().registerEvents(listener = new ViewListener(plugin, this), plugin);
         servicesManager.register(ViewFrame.class, this, plugin, ServicePriority.Normal);
         return this;
     }
@@ -382,8 +380,7 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
     }
 
     @Override
-    public ViewFrame withPreviousPageItem(
-            @Nullable BiConsumer<IFPaginatedContext<?>, IFItem> previousPageItemFactory) {
+    public ViewFrame withPreviousPageItem(@Nullable BiConsumer<IFPaginatedContext<?>, IFItem> previousPageItemFactory) {
         this.previousPageItem = previousPageItemFactory;
         return this;
     }

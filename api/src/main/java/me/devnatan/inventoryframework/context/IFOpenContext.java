@@ -1,7 +1,6 @@
 package me.devnatan.inventoryframework.context;
 
 import java.util.concurrent.CompletableFuture;
-
 import me.devnatan.inventoryframework.ViewType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

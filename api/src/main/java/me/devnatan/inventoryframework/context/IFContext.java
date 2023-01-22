@@ -3,7 +3,6 @@ package me.devnatan.inventoryframework.context;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
-
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.exception.InvalidatedContextException;
@@ -50,7 +49,7 @@ public interface IFContext extends VirtualView, StateHolder {
      * @return The root of this context.
      */
     @NotNull
-	RootView getRoot();
+    RootView getRoot();
 
     /**
      * {@inheritDoc}
@@ -117,7 +116,7 @@ public interface IFContext extends VirtualView, StateHolder {
      */
     void setPropagateErrors(boolean propagateErrors);
 
-	void close();
+    void close();
 
     /**
      * Checks if this context is cancelled.

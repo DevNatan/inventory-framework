@@ -11,8 +11,10 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Stack;
-import me.devnatan.inventoryframework.context.IFContext;
+import me.devnatan.inventoryframework.IFItem;
+import me.devnatan.inventoryframework.ViewType;
 import me.devnatan.inventoryframework.VirtualView;
+import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.exception.ContainerException;
 import me.devnatan.inventoryframework.exception.SlotFillExceededException;
 import me.devnatan.inventoryframework.exception.UnresolvedLayoutException;
@@ -20,8 +22,6 @@ import me.devnatan.inventoryframework.internal.platform.ViewContainer;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
 import me.saiintbrisson.minecraft.MockComponentFactory;
 import me.saiintbrisson.minecraft.PlatformUtils;
-import me.devnatan.inventoryframework.IFItem;
-import me.devnatan.inventoryframework.ViewType;
 import org.junit.jupiter.api.Test;
 
 public class AvailableSlotRenderInterceptorTest {

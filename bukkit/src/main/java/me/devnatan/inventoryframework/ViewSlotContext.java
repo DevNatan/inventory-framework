@@ -1,6 +1,5 @@
 package me.devnatan.inventoryframework;
 
-import me.devnatan.inventoryframework.IFItem;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFSlotContext;
 import me.devnatan.inventoryframework.internal.platform.ViewContainer;

@@ -7,12 +7,12 @@ import java.util.function.Function;
 import java.util.function.UnaryOperator;
 import lombok.Getter;
 import lombok.Setter;
+import me.devnatan.inventoryframework.IFItem;
+import me.devnatan.inventoryframework.ViewErrorHandler;
+import me.devnatan.inventoryframework.feature.Feature;
 import me.devnatan.inventoryframework.internal.Job;
 import me.devnatan.inventoryframework.internal.platform.Viewer;
 import me.saiintbrisson.minecraft.ViewComponentFactory;
-import me.devnatan.inventoryframework.ViewErrorHandler;
-import me.devnatan.inventoryframework.IFItem;
-import me.devnatan.inventoryframework.feature.Feature;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -93,8 +93,7 @@ public class TestViewFrame implements PlatformViewFrame<Void, Void, TestViewFram
     }
 
     @Override
-    public TestViewFrame setNavigateBackItemFactory(
-            BiConsumer<IFPaginatedContext<?>, IFItem> navigateBackItemFactory) {
+    public TestViewFrame setNavigateBackItemFactory(BiConsumer<IFPaginatedContext<?>, IFItem> navigateBackItemFactory) {
         throw new UnsupportedOperationException();
     }
 
@@ -109,8 +108,7 @@ public class TestViewFrame implements PlatformViewFrame<Void, Void, TestViewFram
     }
 
     @Override
-    public TestViewFrame setNavigateNextItemFactory(
-            BiConsumer<IFPaginatedContext<?>, IFItem> navigateNextItemFactory) {
+    public TestViewFrame setNavigateNextItemFactory(BiConsumer<IFPaginatedContext<?>, IFItem> navigateNextItemFactory) {
         throw new UnsupportedOperationException();
     }
 

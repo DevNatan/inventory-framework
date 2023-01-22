@@ -1,25 +1,20 @@
 package me.devnatan.inventoryframework.pipeline;
 
-import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.RENDER;
-import static me.saiintbrisson.minecraft.IFUtils.callIfNotNull;
-import static me.saiintbrisson.minecraft.IFUtils.checkContainerType;
-import static me.saiintbrisson.minecraft.IFUtils.checkPaginationSourceAvailability;
-import static me.saiintbrisson.minecraft.IFUtils.useLayoutItemsLayer;
-import static me.saiintbrisson.minecraft.IFUtils.useLayoutItemsLayerSize;
 import static me.devnatan.inventoryframework.IFItem.UNSET;
+import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.RENDER;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Stack;
 import java.util.function.Function;
+import me.devnatan.inventoryframework.IFItem;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFPaginatedSlotContext;
 import me.saiintbrisson.minecraft.AbstractPaginatedView;
 import me.saiintbrisson.minecraft.AsyncPaginationDataState;
 import me.saiintbrisson.minecraft.Paginator;
 import me.saiintbrisson.minecraft.PlatformUtils;
-import me.devnatan.inventoryframework.IFItem;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
@@ -195,11 +190,7 @@ public final class PaginationRenderInterceptor implements PipelineInterceptor<IF
     }
 
     private <T> void renderPaginatedItemAt(
-            @NotNull IFPaginatedContext<T> context,
-            int index,
-            int slot,
-            @NotNull T value,
-            @Nullable IFItem override) {
+            @NotNull IFPaginatedContext<T> context, int index, int slot, @NotNull T value, @Nullable IFItem override) {
         if (skipRender) return;
 
         // TODO replace this with a more sophisticated overlay detection

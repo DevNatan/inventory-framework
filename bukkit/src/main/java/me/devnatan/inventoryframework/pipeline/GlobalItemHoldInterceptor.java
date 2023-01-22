@@ -16,7 +16,7 @@ final class GlobalItemHoldInterceptor implements PipelineInterceptor<ViewSlotCli
     @Override
     public void intercept(
             @NotNull PipelineContext<ViewSlotClickContext> pipeline, @NotNull ViewSlotClickContext context) {
-        if (context.isCancelled() || context.getBackingItem() == null) return;
+        if (context.isCancelled() || context.getInternalItem() == null) return;
 
         final InventoryClickEvent clickEvent = context.getClickOrigin();
         final InventoryAction action = clickEvent.getAction();
@@ -24,13 +24,15 @@ final class GlobalItemHoldInterceptor implements PipelineInterceptor<ViewSlotCli
         // check for hold only on pickup or clone stack
         if (!(action.name().startsWith("PICKUP") || action == InventoryAction.CLONE_STACK)) return;
 
-        final IFItem item = context.getBackingItem();
+        final IFItem<?> item = context.getInternalItem();
         item.setState(IFItem.State.HOLDING);
 
-        if (item.getItemHoldHandler() != null) item.getItemHoldHandler().accept(context);
+        if (item.getHoldHandler() != null) item.getHoldHandler().accept(context);
 
-        final AbstractView root = context.getRoot();
-        root.onItemHold(context);
+        // TODO move global item hold interceptor to feature-hold-and-release
+        //        final AbstractView root = context.getRoot();
+        //		((View) context.getRoot()).onClose();
+        //        root.onItemHold(context);
         clickEvent.setCancelled(context.isCancelled());
     }
 }

@@ -7,10 +7,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 @RequiredArgsConstructor
 class ShopListView extends View {
 
-	@Override
-	protected void onInit() {
-
-	}
+    @Override
+    protected void onInit() {}
 }
 
 @SuppressWarnings("unused")

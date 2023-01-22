@@ -1,9 +1,9 @@
 package me.devnatan.inventoryframework.pipeline;
 
-import me.devnatan.inventoryframework.context.IFContext;
-import me.devnatan.inventoryframework.VirtualView;
-import me.saiintbrisson.minecraft.AbstractView;
 import me.devnatan.inventoryframework.IFItem;
+import me.devnatan.inventoryframework.VirtualView;
+import me.devnatan.inventoryframework.context.IFContext;
+import me.saiintbrisson.minecraft.AbstractView;
 import org.jetbrains.annotations.NotNull;
 
 /**

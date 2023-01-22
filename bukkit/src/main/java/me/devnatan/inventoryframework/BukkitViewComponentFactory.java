@@ -1,6 +1,7 @@
 package me.devnatan.inventoryframework;
 
 import static java.util.Objects.requireNonNull;
+import static me.devnatan.inventoryframework.IFItem.UNSET;
 import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.CLICK;
 import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.CLOSE;
 import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.OPEN;
@@ -8,21 +9,20 @@ import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.PAG
 import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.RENDER;
 import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.RESUME;
 import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.UPDATE;
-import static me.devnatan.inventoryframework.IFItem.UNSET;
 import static org.bukkit.Bukkit.createInventory;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.internal.ViewComponentFactory;
+import me.devnatan.inventoryframework.internal.platform.ViewContainer;
+import me.devnatan.inventoryframework.internal.platform.Viewer;
 import me.devnatan.inventoryframework.pipeline.CloseMarkInterceptor;
 import me.devnatan.inventoryframework.pipeline.GlobalClickInterceptor;
 import me.devnatan.inventoryframework.pipeline.GlobalClickOutsideInterceptor;
 import me.devnatan.inventoryframework.pipeline.GlobalHotbarClickInterceptor;
 import me.devnatan.inventoryframework.pipeline.GlobalItemHoldInterceptor;
 import me.devnatan.inventoryframework.pipeline.ItemClickInterceptor;
-import me.devnatan.inventoryframework.context.IFContext;
-import me.devnatan.inventoryframework.internal.platform.ViewContainer;
-import me.devnatan.inventoryframework.internal.platform.Viewer;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
 import me.saiintbrisson.minecraft.BukkitViewContainer;
 import me.saiintbrisson.minecraft.BukkitViewer;

@@ -1,17 +1,15 @@
 package me.devnatan.inventoryframework.pipeline;
 
-import static me.saiintbrisson.minecraft.IFUtils.elvis;
-
 import java.util.ArrayList;
-import me.devnatan.inventoryframework.context.IFOpenContext;
+import me.devnatan.inventoryframework.IFItem;
+import me.devnatan.inventoryframework.ViewType;
 import me.devnatan.inventoryframework.VirtualView;
+import me.devnatan.inventoryframework.context.IFOpenContext;
 import me.devnatan.inventoryframework.internal.platform.ViewContainer;
 import me.devnatan.inventoryframework.internal.platform.Viewer;
 import me.saiintbrisson.minecraft.AbstractView;
 import me.saiintbrisson.minecraft.BaseViewContext;
 import me.saiintbrisson.minecraft.PlatformUtils;
-import me.devnatan.inventoryframework.IFItem;
-import me.devnatan.inventoryframework.ViewType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 

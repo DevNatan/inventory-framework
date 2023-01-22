@@ -11,16 +11,15 @@ import me.devnatan.inventoryframework.context.IFContext;
  */
 public interface VirtualView {
 
-	/**
-	 * The current title of this view.
-	 *
-	 * @return The current title of this view, if <code>null</code> will return the default title
-	 * for this view type.
-	 */
-	String getTitle();
+    /**
+     * The current title of this view.
+     *
+     * @return The current title of this view, if <code>null</code> will return the default title
+     * for this view type.
+     */
+    String getTitle();
 
-	ViewType getType();
+    ViewType getType();
 
-	ViewType getTypeForCurrentPlatform();
-
+    ViewType getTypeForCurrentPlatform();
 }

@@ -1,7 +1,5 @@
 package me.devnatan.inventoryframework.context;
 
-import me.devnatan.inventoryframework.context.IFSlotClickContext;
-import me.devnatan.inventoryframework.context.IFSlotContext;
 import me.devnatan.inventoryframework.internal.platform.ViewContainer;
 import me.saiintbrisson.minecraft.ItemWrapper;
 import org.jetbrains.annotations.NotNull;
@@ -14,8 +12,8 @@ import org.jetbrains.annotations.NotNull;
  * <p>The properties of the current context are the source definitions and the properties named with
  * "getTarget..." are the targets.
  *
- * @see IFSlotContext
- * @see IFSlotClickContext
+ * @see me.devnatan.inventoryframework.context.IFSlotContext
+ * @see me.devnatan.inventoryframework.context.IFSlotClickContext
  */
 public interface IFSlotMoveContext extends IFSlotClickContext {
 

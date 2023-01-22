@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
  * Intercepted when a player clicks on an item the view container. Checks if the container should be
  * closed when the item is clicked.
  */
-final class CloseMarkInterceptor implements PipelineInterceptor<ViewSlotClickContext> {
+public final class ItemCloseOnClickInterceptor implements PipelineInterceptor<ViewSlotClickContext> {
 
     @Override
     public void intercept(
@@ -18,13 +18,11 @@ final class CloseMarkInterceptor implements PipelineInterceptor<ViewSlotClickCon
         final InventoryClickEvent event = context.getClickOrigin();
         if (event.getSlotType() == InventoryType.SlotType.OUTSIDE) return;
 
-        final IFItem item = context.getBackingItem();
+        final IFItem<?> item = context.getInternalItem();
         if (item == null) return;
+        if (!item.isCloseOnClick()) return;
 
-        final boolean closeOnClick = item.isCloseOnClick() || context.isMarkedToClose();
-        if (!closeOnClick) return;
-
-        context.closeUninterruptedly();
+        context.close();
         pipeline.finish();
     }
 }

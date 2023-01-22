@@ -1,7 +1,6 @@
 package me.devnatan.inventoryframework.logging;
 
 import lombok.NoArgsConstructor;
-import me.devnatan.inventoryframework.logging.Logger;
 import org.jetbrains.annotations.Nullable;
 
 @NoArgsConstructor

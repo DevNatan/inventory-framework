@@ -3,7 +3,7 @@ package me.devnatan.inventoryframework.context;
 import java.util.NoSuchElementException;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-
+import me.devnatan.inventoryframework.IFItem;
 import me.devnatan.inventoryframework.exception.InventoryModificationException;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -67,9 +67,9 @@ public interface IFSlotContext extends IFContext {
      *
      * @return The current item wrapper.
      */
-//    @ApiStatus.Internal
-//    @NotNull
-//    ItemWrapper getItemWrapper();
+    //    @ApiStatus.Internal
+    //    @NotNull
+    //    ItemWrapper getItemWrapper();
 
     /**
      * Returns the current item of this context.
@@ -80,8 +80,8 @@ public interface IFSlotContext extends IFContext {
      *
      * @return The current item.
      */
-//    @NotNull
-//    ItemWrapper getCurrentItem();
+    //    @NotNull
+    //    ItemWrapper getCurrentItem();
 
     /**
      * Sets the new item for this slot for this context.
@@ -119,7 +119,7 @@ public interface IFSlotContext extends IFContext {
      *
      * @param updater The update function.
      */
-//    void updateItem(Consumer<ItemWrapper> updater);
+    //    void updateItem(Consumer<ItemWrapper> updater);
 
     /**
      * Whether this context originated from an interaction coming from the actor's container and not
@@ -201,4 +201,10 @@ public interface IFSlotContext extends IFContext {
      */
     @ApiStatus.Experimental
     boolean isRegistered();
+
+    // TODO documentation
+    // can be null if context origin is outside root view container
+    @ApiStatus.Internal
+    @Nullable
+    IFItem<?> getInternalItem();
 }

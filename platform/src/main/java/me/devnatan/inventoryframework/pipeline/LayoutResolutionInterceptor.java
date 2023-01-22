@@ -7,10 +7,9 @@ import static me.devnatan.inventoryframework.VirtualView.LAYOUT_PREVIOUS_PAGE;
 
 import java.util.Arrays;
 import java.util.Stack;
-
-import me.devnatan.inventoryframework.context.IFContext;
-import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.IFItem;
+import me.devnatan.inventoryframework.VirtualView;
+import me.devnatan.inventoryframework.context.IFContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,7 +24,6 @@ public final class LayoutResolutionInterceptor implements PipelineInterceptor<Vi
 
     @Override
     public void intercept(@NotNull PipelineContext<VirtualView> pipeline, VirtualView subject) {
-
 
         if (subject.isLayoutSignatureChecked()) return;
 
@@ -247,8 +245,9 @@ public final class LayoutResolutionInterceptor implements PipelineInterceptor<Vi
         final PlatformViewFrame<?, ?, ?> vf = view.getViewFrame();
         if (vf == null) return null;
 
-        final Function<IFPaginatedContext<?>, IFItem> fallback =
-                direction == PaginatedVirtualView.NAVIGATE_LEFT ? vf.getDefaultPreviousPageItem() : vf.getDefaultNextPageItem();
+        final Function<IFPaginatedContext<?>, IFItem> fallback = direction == PaginatedVirtualView.NAVIGATE_LEFT
+                ? vf.getDefaultPreviousPageItem()
+                : vf.getDefaultNextPageItem();
 
         if (fallback == null) return null;
 

@@ -3,8 +3,8 @@ package me.devnatan.inventoryframework.bukkit;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import me.devnatan.inventoryframework.internal.platform.ViewContainer;
 import me.devnatan.inventoryframework.ViewType;
+import me.devnatan.inventoryframework.internal.platform.ViewContainer;
 import me.saiintbrisson.minecraft.bukkit.FakeInventory;
 import me.saiintbrisson.minecraft.bukkit.FakeItemStack;
 import org.bukkit.Material;

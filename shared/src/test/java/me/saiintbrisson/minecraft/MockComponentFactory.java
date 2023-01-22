@@ -4,8 +4,8 @@ import static org.mockito.Mockito.mock;
 
 import me.devnatan.inventoryframework.IFItem;
 import me.devnatan.inventoryframework.ViewType;
-import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.VirtualView;
+import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.internal.platform.ViewContainer;
 import me.devnatan.inventoryframework.internal.platform.Viewer;
 import org.jetbrains.annotations.NotNull;
