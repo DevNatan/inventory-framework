@@ -8,11 +8,11 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class ViewSlotContext extends AbstractViewSlotContext implements IFContext, IFSlotContext {
+public class SlotContext extends AbstractViewSlotContext implements IFContext, IFSlotContext {
 
     private final Player player;
 
-    ViewSlotContext(
+    SlotContext(
             int slot,
             IFItem backingItem,
             @NotNull IFContext parent,

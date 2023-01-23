@@ -117,7 +117,7 @@ class ViewListener implements Listener {
 
         // TODO use platform to create this instance
         final IFSlotContext slotContext =
-                new ViewSlotClickContext(event.getSlot(), item, context, container, player, event);
+                new SlotClickContext(event.getSlot(), item, context, container, player, event);
 
         try {
             view.runCatching(context, () -> view.getPipeline().execute(CLICK, slotContext));

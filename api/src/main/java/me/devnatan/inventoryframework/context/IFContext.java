@@ -9,6 +9,7 @@ import me.devnatan.inventoryframework.exception.InvalidatedContextException;
 import me.devnatan.inventoryframework.exception.UnknownReferenceException;
 import me.devnatan.inventoryframework.internal.platform.ViewContainer;
 import me.devnatan.inventoryframework.internal.platform.Viewer;
+import me.devnatan.inventoryframework.state.State;
 import me.devnatan.inventoryframework.state.StateHolder;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -145,6 +146,27 @@ public interface IFContext extends VirtualView, StateHolder {
     /**
      * Gets a value of a property defined for this context for a specific key.
      *
+     * @param <T> The property value type.
+     * @return The property value for the given key.
+     * @see #get(String, Supplier)
+     */
+    @UnknownNullability("Value can be null if the user provides a null property value")
+    <T> T get(@NotNull Class<? extends T> valueType);
+
+    /**
+     * Gets a value of a property defined for this context for a specific key.
+     *
+     * @param key The property key.
+     * @param <T> The property value type.
+     * @return The property value for the given key.
+     * @see #get(String, Supplier)
+     */
+    @UnknownNullability("Value can be null if the user provides a null property value")
+    <T> T get(@NotNull State<T> state);
+
+    /**
+     * Gets a value of a property defined for this context for a specific key.
+     *
      * @param key The property key.
      * @param <T> The property value type.
      * @return The property value for the given key.
@@ -273,4 +295,8 @@ public interface IFContext extends VirtualView, StateHolder {
     @ApiStatus.Experimental
     @Nullable
     IFContext back();
+
+    void open(Class<? extends RootView> other);
+
+    void open(Class<? extends RootView> other, Object... initialData);
 }

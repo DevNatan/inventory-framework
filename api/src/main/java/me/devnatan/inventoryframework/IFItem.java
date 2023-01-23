@@ -99,38 +99,6 @@ public abstract class IFItem<S extends IFItem<?>> {
     }
 
     /**
-     * Defines the item that will be used as fallback for rendering in the slot where this item is
-     * positioned. The fallback item is always static.
-     *
-     * <p>The function of the fallback item is to provide an alternative if the item's rendering
-     * functions are not quenched, thus returning the rendering to the fallback item.
-     *
-     * <pre>{@code
-     * slot(30)
-     * 	   .withItem(...)
-     *     .onRender(render -> {
-     *         render.setItem(someCondition ? null : item);
-     *     })
-     *     .onUpdate(update -> {
-     *         update.setItem(someCondition ? null : item);
-     *     });
-     * }</pre>
-     *
-     * <p>If neither of the above two conditions are satisfied, the fallback item will be rendered,
-     * otherwise the item defined in the handlers will be rendered.
-     *
-     * @param fallbackItem The new fallback item stack.
-     * @return This item.
-     */
-    public S withItem(Object fallbackItem) {
-        if (fallbackItem instanceof IFItem)
-            throw new IllegalStateException("Fallback item cannot be a ViewItem or ItemWrapper");
-
-        this.item = fallbackItem;
-        return (S) this;
-    }
-
-    /**
      * Determines whether the interaction should be canceled based on the current value of the {@link
      * #cancelOnClick} property, as an actor clicks on this item.
      *

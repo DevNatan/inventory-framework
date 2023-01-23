@@ -4,8 +4,6 @@ import me.devnatan.inventoryframework.pipeline.GlobalClickInterceptor;
 import me.devnatan.inventoryframework.pipeline.ItemClickInterceptor;
 import me.devnatan.inventoryframework.pipeline.ItemCloseOnClickInterceptor;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
-import me.saiintbrisson.minecraft.OpenViewContext;
-import me.saiintbrisson.minecraft.ViewRenderContext;
 import org.jetbrains.annotations.ApiStatus;
 
 /**
@@ -13,7 +11,7 @@ import org.jetbrains.annotations.ApiStatus;
  */
 @ApiStatus.OverrideOnly
 public class View
-        extends PlatformView<ViewContext, OpenViewContext, ViewRenderContext, ViewSlotContext, ViewSlotClickContext> {
+        extends PlatformView<BukkitItem, ViewContext, ViewOpenContext, ViewRenderContext, SlotContext, SlotClickContext> {
 
     /** {@inheritDoc} */
     @Override

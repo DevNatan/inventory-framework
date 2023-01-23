@@ -26,7 +26,6 @@ import me.devnatan.inventoryframework.pipeline.ItemClickInterceptor;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
 import me.saiintbrisson.minecraft.BukkitViewContainer;
 import me.saiintbrisson.minecraft.BukkitViewer;
-import me.saiintbrisson.minecraft.OpenViewContext;
 import me.saiintbrisson.minecraft.PlatformInterceptors;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -98,8 +97,8 @@ final class BukkitViewComponentFactory extends ViewComponentFactory {
             @Nullable ViewContainer container,
             @Nullable Class<? extends IFContext> backingContext,
             @Nullable Viewer viewer) {
-        if (backingContext != null && OpenViewContext.class.isAssignableFrom(backingContext) && viewer != null)
-            return new OpenViewContext(root, container, ((BukkitViewer) viewer).getPlayer());
+        if (backingContext != null && ViewOpenContext.class.isAssignableFrom(backingContext) && viewer != null)
+            return new ViewOpenContext(root, container, ((BukkitViewer) viewer).getPlayer());
 
         if (container == null) throw new IllegalArgumentException("Cannot create confined context without a container");
 
@@ -114,7 +113,7 @@ final class BukkitViewComponentFactory extends ViewComponentFactory {
             int slot, IFItem item, IFContext parent, ViewContainer container, int index, Object value) {
         final Player player = ((BukkitIFContext) parent).getPlayer();
         return index == UNSET
-                ? new ViewSlotContext(slot, item, parent, container, player)
+                ? new SlotContext(slot, item, parent, container, player)
                 : new BukkitPaginatedViewSlotContextImpl<>(index, value, slot, item, parent, container, player);
     }
 

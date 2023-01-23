@@ -1,4 +1,4 @@
-package me.saiintbrisson.minecraft;
+package me.devnatan.inventoryframework.internal;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

@@ -1,4 +1,4 @@
-package me.saiintbrisson.minecraft;
+package me.devnatan.inventoryframework.internal;
 
 import java.util.ArrayList;
 import java.util.Collections;

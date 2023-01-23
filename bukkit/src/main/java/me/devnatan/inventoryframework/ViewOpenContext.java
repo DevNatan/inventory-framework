@@ -1,10 +1,9 @@
-package me.saiintbrisson.minecraft;
+package me.devnatan.inventoryframework;
 
 import java.util.concurrent.CompletableFuture;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
-import me.devnatan.inventoryframework.ViewType;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFOpenContext;
 import me.devnatan.inventoryframework.internal.platform.ViewContainer;
@@ -15,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 
 @Getter
 @Setter
-public final class OpenViewContext extends BaseViewContext implements IFOpenContext, IFContext {
+public final class ViewOpenContext extends BaseViewContext implements IFOpenContext, ViewContext {
 
     private final Player player;
 
@@ -28,7 +27,7 @@ public final class OpenViewContext extends BaseViewContext implements IFOpenCont
     @Setter(AccessLevel.NONE)
     private CompletableFuture<Void> waitTask;
 
-    protected OpenViewContext(@NotNull AbstractView root, @Nullable ViewContainer container, @NotNull Player player) {
+    protected ViewOpenContext(@NotNull AbstractView root, @Nullable ViewContainer container, @NotNull Player player) {
         super(root, container);
         this.player = player;
     }

@@ -1,4 +1,4 @@
-package me.saiintbrisson.minecraft;
+package me.devnatan.inventoryframework;
 
 import lombok.Getter;
 import me.devnatan.inventoryframework.ViewContext;
@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 @Getter
-public final class ViewRenderContext extends BaseViewContext implements IFRenderContext, IFContext {
+public final class ViewRenderContext extends BaseViewContext implements IFRenderContext<BukkitItem>, IFContext {
 
     @NotNull
     private final Player player;

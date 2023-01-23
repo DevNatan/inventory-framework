@@ -12,6 +12,9 @@ import org.jetbrains.annotations.UnmodifiableView;
 
 public interface RootView extends VirtualView {
 
+    char NAVIGATE_BACKWARDS = '<';
+    char NAVIGATE_FORWARD = '>';
+
     Option<Boolean> CancelOnClick = createOption("cancel-on-click", true);
 
     @NotNull

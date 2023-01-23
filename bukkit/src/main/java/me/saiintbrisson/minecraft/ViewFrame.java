@@ -168,7 +168,7 @@ public final class ViewFrame implements CompatViewFrame<ViewFrame> {
         }
 
         boolean isShaded =
-                !getOwner().getDescription().getMain().equals("me.saiintbrisson.minecraft.InventoryFramework");
+                !getOwner().getDescription().getMain().equals("me.devnatan.inventoryframework.bukkit.InventoryFramework");
 
         for (final AbstractView view : views.values()) {
             try {

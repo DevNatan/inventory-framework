@@ -12,12 +12,12 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class ViewSlotClickContext extends ViewSlotContext implements IFSlotClickContext {
+public class SlotClickContext extends SlotContext implements IFSlotClickContext {
 
     @NotNull
     private final InventoryClickEvent clickOrigin;
 
-    ViewSlotClickContext(
+    SlotClickContext(
             int slot,
             IFItem backingItem,
             @NotNull IFContext parent,

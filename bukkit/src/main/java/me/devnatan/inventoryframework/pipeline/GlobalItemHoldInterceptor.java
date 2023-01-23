@@ -1,7 +1,7 @@
 package me.devnatan.inventoryframework.pipeline;
 
 import me.devnatan.inventoryframework.IFItem;
-import me.devnatan.inventoryframework.ViewSlotClickContext;
+import me.devnatan.inventoryframework.SlotClickContext;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.jetbrains.annotations.NotNull;
@@ -11,11 +11,11 @@ import org.jetbrains.annotations.NotNull;
  *
  * @see PipelineInterceptor
  */
-final class GlobalItemHoldInterceptor implements PipelineInterceptor<ViewSlotClickContext> {
+final class GlobalItemHoldInterceptor implements PipelineInterceptor<SlotClickContext> {
 
     @Override
     public void intercept(
-            @NotNull PipelineContext<ViewSlotClickContext> pipeline, @NotNull ViewSlotClickContext context) {
+		@NotNull PipelineContext<SlotClickContext> pipeline, @NotNull SlotClickContext context) {
         if (context.isCancelled() || context.getInternalItem() == null) return;
 
         final InventoryClickEvent clickEvent = context.getClickOrigin();

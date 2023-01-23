@@ -1,7 +1,7 @@
 package me.devnatan.inventoryframework.pipeline;
 
 import me.devnatan.inventoryframework.IFItem;
-import me.devnatan.inventoryframework.ViewSlotClickContext;
+import me.devnatan.inventoryframework.SlotClickContext;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.jetbrains.annotations.NotNull;
@@ -9,11 +9,11 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Intercepted when a player clicks on an item the view container.
  */
-public final class ItemClickInterceptor implements PipelineInterceptor<ViewSlotClickContext> {
+public final class ItemClickInterceptor implements PipelineInterceptor<SlotClickContext> {
 
     @Override
     public void intercept(
-            @NotNull PipelineContext<ViewSlotClickContext> pipeline, @NotNull ViewSlotClickContext context) {
+		@NotNull PipelineContext<SlotClickContext> pipeline, @NotNull SlotClickContext context) {
         final InventoryClickEvent event = context.getClickOrigin();
         if (event.getSlotType() == InventoryType.SlotType.OUTSIDE) return;
 
