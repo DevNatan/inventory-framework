@@ -30,12 +30,12 @@ public final class ClanMemberListView extends View {
 	@Override
 	public void onInit(ViewConfigBuilder config) {
 		config.size(6).layout(
-			"(        ",
-			" OOOOOOO ",
-			" OOOOOOO ",
-			" OOOOOOO ",
-			" OOOOOOO ",
-			"  <   >  "
+			"(XXXXXXXX",
+			"XOOOOOOOX",
+			"XOOOOOOOX",
+			"XOOOOOOOX",
+			"XOOOOOOOX",
+			"XX<XXX>XX"
 		);
 	}
 
