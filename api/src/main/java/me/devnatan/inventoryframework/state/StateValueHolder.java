@@ -2,7 +2,7 @@ package me.devnatan.inventoryframework.state;
 
 public interface StateValueHolder {
 
-    StateMarker getState();
+    State<?> getState();
 
     Object get();
 

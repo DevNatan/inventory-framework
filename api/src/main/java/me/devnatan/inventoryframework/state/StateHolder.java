@@ -11,9 +11,9 @@ public interface StateHolder {
 
     StateValueHolder retrieve(long id);
 
-    void updateCaught(@NotNull StateMarker state, Object oldValue, Object newValue);
+    void updateCaught(@NotNull State<?> state, Object oldValue, Object newValue);
 
     StateValueHolder createUnchecked(Object initialValue);
 
-    <T> void watch(@NotNull StateMarker state, @NotNull BiConsumer<T, T> callback);
+    <T> void watch(@NotNull State<?> state, @NotNull BiConsumer<T, T> callback);
 }

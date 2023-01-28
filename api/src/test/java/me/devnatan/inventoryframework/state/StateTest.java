@@ -12,7 +12,7 @@ public class StateTest {
     void initialValueDefinition() {
         StateHolder owner = new DefaultStateHolder();
         StateValueHolder scopedValue = owner.createUnchecked(0);
-        StateMarker<Integer> state = (StateMarker<Integer>) scopedValue.getState();
+        State<Integer> state = (State<Integer>) scopedValue.getState();
 
         assertEquals(0, state.get(owner));
     }

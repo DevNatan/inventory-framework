@@ -2,7 +2,9 @@ package me.devnatan.inventoryframework.state;
 
 import org.jetbrains.annotations.NotNull;
 
-public interface Pagination extends StateMarker {
+import java.util.List;
+
+public interface Pagination extends State<List<Object>> {
 
     /**
      * The index-based current page number.

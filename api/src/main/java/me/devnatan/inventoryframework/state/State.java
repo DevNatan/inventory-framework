@@ -2,7 +2,7 @@ package me.devnatan.inventoryframework.state;
 
 import org.jetbrains.annotations.NotNull;
 
-public interface State<T> extends StateMarker {
+public interface State<T> {
 
     /**
      * Gets the current value for this state defined in the specified holder.
