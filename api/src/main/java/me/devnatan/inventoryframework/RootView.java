@@ -21,6 +21,12 @@ public interface RootView extends VirtualView {
     @UnmodifiableView
     Set<IFContext> getContexts();
 
+    void addContext(@NotNull IFContext context);
+
+    void removeContext(@NotNull IFContext context);
+
+    void renderContext(@NotNull IFContext context);
+
     /**
      * The configuration for this view.
      *

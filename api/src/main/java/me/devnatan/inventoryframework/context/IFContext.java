@@ -22,14 +22,28 @@ public interface IFContext extends VirtualView, StateHolder {
     Set<Viewer> getViewers();
 
     /**
+     * Adds a new viewer to this context.
+     *
+     * @param viewer The viewer that'll be added.
+     */
+    void addViewer(@NotNull Viewer viewer);
+
+    /**
+     * Removes a new viewer to this context.
+     *
+     * @param viewer The viewer that'll be removed.
+     */
+    void removeViewer(@NotNull Viewer viewer);
+
+    /**
      * The container of this context.
-     *
-     * <p>The container is where all the changes that are displayed to the user are applied.
-     *
-     * <p>Direct modifications to the container must launch an {@link
-     * AbstractVirtualView#inventoryModificationTriggered()}, which signals that that function will
-     * change the container for whoever is seeing what, which, if it is not possible at that moment or
-     * if the container is not sufficiently prepared for this, it must fail. .
+     * <p>
+     * The container is where all the changes that are displayed to the user are applied.
+     * <p>
+     * Direct modifications to the container must launch an inventory modification error, which
+     * signals that that function will change the container for whoever is seeing what, which, if it
+     * is not possible at that moment or if the container is not sufficiently prepared for this,
+     * it must fail.
      *
      * @return The container of this context.
      */

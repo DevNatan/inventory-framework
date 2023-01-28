@@ -1,8 +1,7 @@
 package me.devnatan.inventoryframework.state;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
+import org.jetbrains.annotations.NotNull;
 
 public interface Pagination extends State<List<Object>> {
 

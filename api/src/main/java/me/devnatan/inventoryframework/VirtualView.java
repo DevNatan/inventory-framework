@@ -10,7 +10,7 @@ import org.jetbrains.annotations.UnmodifiableView;
  * shared between regular views and contexts which are called "unified methods".
  * <p>
  * We call "view" a {@link VirtualView}, "root view" a {@link RootView} and implementations,
- * and "context" a {@link IFContext} and implementations.
+ * and "context" a {@link IFContext} and derivations.
  */
 public interface VirtualView {
 
