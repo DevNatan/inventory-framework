@@ -8,18 +8,17 @@ import me.devnatan.inventoryframework.RootView;
  */
 public interface IFConfinedContext extends IFContext {
 
-	/**
-	 * Closes this context's container for the player in the current scope of execution.
-	 */
-	void closeForPlayer();
+    /**
+     * Closes this context's container for the player in the current scope of execution.
+     */
+    void closeForPlayer();
 
-	/**
-	 * Opens a new view only for the player that is in the execution context of that context.
-	 * <p>
-	 * This context will be immediately invalidated if there are no viewers left after opening.
-	 *
-	 * @param other The view to be opened.
-	 */
-	void openForPlayer(Class<? extends RootView> other);
-
+    /**
+     * Opens a new view only for the player that is in the execution context of that context.
+     * <p>
+     * This context will be immediately invalidated if there are no viewers left after opening.
+     *
+     * @param other The view to be opened.
+     */
+    void openForPlayer(Class<? extends RootView> other);
 }

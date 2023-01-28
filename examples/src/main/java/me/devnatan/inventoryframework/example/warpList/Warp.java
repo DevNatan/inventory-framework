@@ -1,14 +1,12 @@
 package me.devnatan.inventoryframework.example.warpList;
 
-import org.bukkit.Material;
+import java.util.UUID;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.UUID;
-
 public interface Warp {
-	UUID getId();
+    UUID getId();
 
-	String getName();
+    String getName();
 
-	ItemStack getIcon();
+    ItemStack getIcon();
 }

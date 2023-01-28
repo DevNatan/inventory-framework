@@ -8,19 +8,18 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface Component {
 
-	/**
-	 * The root of this component.
-	 *
-	 * @return The root of this component.
-	 */
-	@NotNull
-	VirtualView getRoot();
+    /**
+     * The root of this component.
+     *
+     * @return The root of this component.
+     */
+    @NotNull
+    VirtualView getRoot();
 
-	/**
-	 * The current position of this component relative to its root view.
-	 *
-	 * @return The current position of this component.
-	 */
-	int getPosition();
-
+    /**
+     * The current position of this component relative to its root view.
+     *
+     * @return The current position of this component.
+     */
+    int getPosition();
 }

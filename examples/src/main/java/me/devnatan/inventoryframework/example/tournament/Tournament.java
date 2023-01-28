@@ -4,9 +4,9 @@ import java.util.List;
 import java.util.UUID;
 
 public interface Tournament {
-	UUID getId();
+    UUID getId();
 
-	TournamentParticipant getParticipant(UUID id);
+    TournamentParticipant getParticipant(UUID id);
 
-	List<TournamentParticipant> getParticipants();
+    List<TournamentParticipant> getParticipants();
 }

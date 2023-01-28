@@ -4,9 +4,9 @@ import java.util.UUID;
 
 public interface Clan {
 
-	UUID getId();
+    UUID getId();
 
-	String getTag();
+    String getTag();
 
-	String getName();
+    String getName();
 }

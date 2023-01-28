@@ -16,5 +16,4 @@ public final class ViewRenderContext extends BaseViewContext implements IFRender
         super(backingContext.getRoot(), backingContext.getContainer());
         this.player = player;
     }
-
 }

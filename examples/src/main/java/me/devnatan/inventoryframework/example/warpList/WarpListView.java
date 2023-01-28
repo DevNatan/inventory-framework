@@ -11,41 +11,23 @@ import org.bukkit.Material;
 @RequiredArgsConstructor
 public final class WarpListView extends View {
 
-	private final WarpsManager warpsManager;
+    private final WarpsManager warpsManager;
+    private final Pagination pagination = pagination(
+            warpsManager::getWarps, (item, warp) -> item.withItem(warp.getIcon().clone()));
 
-	private final Pagination<Warp> pagination = pagination(
-		warpsManager::getWarps,
-		(item, warp) -> item.withItem(warp.getIcon().clone())
-	);
+    @Override
+    public void onInit(ViewConfigBuilder config) {
+        config.layout("         ", " OOOOOOO ", " OOOOOOO ", " OOOOOOO ", "         ", "   < >   ");
+    }
 
-	@Override
-	public void onInit(ViewConfigBuilder config) {
-		config.layout(
-			"XXXXXXXXX",
-			"XOOOOOOOX",
-			"XOOOOOOOX",
-			"XOOOOOOOX",
-			"XXXXXXXXX",
-			"XXX<X>XXX"
-		);
-	}
+    @Override
+    public void onOpen(ViewOpenContext ctx) {
+        ctx.setTitle(String.format("Warps (%d)", pagination.count(ctx)));
+    }
 
-	@Override
-	public void onOpen(ViewOpenContext ctx) {
-		ctx.setTitle(String.format("Warps (%d)", pagination.count(ctx)));
-	}
-
-	@Override
-	public void onInitialRender(ViewRenderContext ctx) {
-		ctx.layoutSlot(NAVIGATE_BACKWARDS)
-			.withItem(Material.ARROW)
-			.renderIf(pagination::canBack)
-			.onClick(pagination::back);
-
-		ctx.layoutSlot(NAVIGATE_FORWARD)
-			.withItem(Material.ARROW)
-			.renderIf(pagination::canAdvance)
-			.onClick(pagination::advance);
-	}
-
+    @Override
+    public void onInitialRender(ViewRenderContext ctx) {
+        ctx.layoutSlot("<").withItem(Material.ARROW).clicked(pagination::back);
+        ctx.layoutSlot(">").withItem(Material.ARROW).clicked(pagination::advance);
+    }
 }

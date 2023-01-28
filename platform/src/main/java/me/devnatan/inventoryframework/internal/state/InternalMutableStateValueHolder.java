@@ -1,8 +1,8 @@
 package me.devnatan.inventoryframework.internal.state;
 
 import lombok.Getter;
-import me.devnatan.inventoryframework.state.StateMarker;
 import me.devnatan.inventoryframework.state.StateHolder;
+import me.devnatan.inventoryframework.state.StateMarker;
 import me.devnatan.inventoryframework.state.StateValueHolder;
 import org.jetbrains.annotations.NotNull;
 

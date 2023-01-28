@@ -4,7 +4,6 @@ import java.util.concurrent.CompletableFuture;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
-import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFOpenContext;
 import me.devnatan.inventoryframework.internal.platform.ViewContainer;
 import org.bukkit.entity.Player;

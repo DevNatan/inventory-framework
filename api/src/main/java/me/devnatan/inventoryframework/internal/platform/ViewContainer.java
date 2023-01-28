@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Unmodifiable;
 
 public interface ViewContainer {
 
-	String getTitle();
+    String getTitle();
 
     /**
      * The type of this container.

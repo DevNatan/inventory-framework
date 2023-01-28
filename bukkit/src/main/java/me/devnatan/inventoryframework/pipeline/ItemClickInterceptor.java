@@ -12,8 +12,7 @@ import org.jetbrains.annotations.NotNull;
 public final class ItemClickInterceptor implements PipelineInterceptor<SlotClickContext> {
 
     @Override
-    public void intercept(
-		@NotNull PipelineContext<SlotClickContext> pipeline, @NotNull SlotClickContext context) {
+    public void intercept(@NotNull PipelineContext<SlotClickContext> pipeline, @NotNull SlotClickContext context) {
         final InventoryClickEvent event = context.getClickOrigin();
         if (event.getSlotType() == InventoryType.SlotType.OUTSIDE) return;
 

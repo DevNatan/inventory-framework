@@ -4,12 +4,11 @@ import org.jetbrains.annotations.NotNull;
 
 public interface State<T> extends StateMarker {
 
-	/**
-	 * Gets the current value for this state defined in the specified holder.
-	 *
-	 * @param holder The state holder.
-	 * @return The current state value.
-	 */
-	T get(@NotNull StateHolder holder);
-
+    /**
+     * Gets the current value for this state defined in the specified holder.
+     *
+     * @param holder The state holder.
+     * @return The current state value.
+     */
+    T get(@NotNull StateHolder holder);
 }

@@ -15,8 +15,7 @@ public final class GlobalClickInterceptor implements PipelineInterceptor<SlotCli
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
-    public void intercept(
-		@NotNull PipelineContext<SlotClickContext> pipeline, @NotNull SlotClickContext context) {
+    public void intercept(@NotNull PipelineContext<SlotClickContext> pipeline, @NotNull SlotClickContext context) {
         final InventoryClickEvent event = context.getClickOrigin();
 
         // inherit cancellation so we can un-cancel it

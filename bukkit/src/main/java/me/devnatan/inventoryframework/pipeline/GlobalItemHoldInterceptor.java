@@ -14,8 +14,7 @@ import org.jetbrains.annotations.NotNull;
 final class GlobalItemHoldInterceptor implements PipelineInterceptor<SlotClickContext> {
 
     @Override
-    public void intercept(
-		@NotNull PipelineContext<SlotClickContext> pipeline, @NotNull SlotClickContext context) {
+    public void intercept(@NotNull PipelineContext<SlotClickContext> pipeline, @NotNull SlotClickContext context) {
         if (context.isCancelled() || context.getInternalItem() == null) return;
 
         final InventoryClickEvent clickEvent = context.getClickOrigin();

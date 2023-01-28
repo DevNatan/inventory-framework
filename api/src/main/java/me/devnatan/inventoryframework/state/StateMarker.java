@@ -1,4 +1,3 @@
 package me.devnatan.inventoryframework.state;
 
-public interface StateMarker {
-}
+public interface StateMarker {}
