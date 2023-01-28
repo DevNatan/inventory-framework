@@ -6,7 +6,7 @@ import me.devnatan.inventoryframework.ViewConfigBuilder;
 import me.devnatan.inventoryframework.ViewContext;
 import me.devnatan.inventoryframework.ViewOpenContext;
 import me.devnatan.inventoryframework.context.IFContext;
-import me.devnatan.inventoryframework.state.State;
+import me.devnatan.inventoryframework.state.StateMarker;
 
 import java.util.UUID;
 
@@ -15,8 +15,8 @@ public final class TournamentView extends View {
 
 	private final TournamentsManager tournamentsManager;
 
-	private final State<UUID> tournamentIdState = initial(UUID.class);
-	private final State<Tournament> tournamentState = state(this::getTournament);
+	private final StateMarker<UUID> tournamentIdState = initial(UUID.class);
+	private final StateMarker<Tournament> tournamentState = state(this::getTournament);
 
 	@Override
 	public void onInit(ViewConfigBuilder config) {

@@ -10,6 +10,9 @@ public interface ClansManager {
 	@Nullable
 	Clan getClan(String tag);
 
+	@Nullable
+	Clan getClan(UUID id);
+
 	List<ClanMember> getMembers(UUID clanId);
 
 }

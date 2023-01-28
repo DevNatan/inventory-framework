@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public interface IFOpenContext extends IFContext {
 
-    String getTitle();
+    @NotNull String getTitle();
 
     int getSize();
 

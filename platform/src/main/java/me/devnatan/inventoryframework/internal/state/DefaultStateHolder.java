@@ -1,9 +1,9 @@
-package me.devnatan.inventoryframework.state.internal;
+package me.devnatan.inventoryframework.internal.state;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
-import me.devnatan.inventoryframework.state.State;
+import me.devnatan.inventoryframework.state.StateMarker;
 import me.devnatan.inventoryframework.state.StateHolder;
 import me.devnatan.inventoryframework.state.StateValueHolder;
 import org.jetbrains.annotations.ApiStatus;
@@ -27,7 +27,7 @@ public class DefaultStateHolder implements StateHolder {
     }
 
     @Override
-    public void updateCaught(@NotNull State<?> state, Object oldValue, Object newValue) {
+    public void updateCaught(@NotNull StateMarker<?> state, Object oldValue, Object newValue) {
         // initial value is always the first
         //		newState(state, newValue);
 

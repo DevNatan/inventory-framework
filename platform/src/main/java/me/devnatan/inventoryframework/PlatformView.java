@@ -7,11 +7,12 @@ import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.context.IFSlotContext;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
 import me.devnatan.inventoryframework.pipeline.PipelinePhase;
-import me.devnatan.inventoryframework.state.MutableInt;
+import me.devnatan.inventoryframework.state.MutableIntState;
 import me.devnatan.inventoryframework.state.MutableState;
 import me.devnatan.inventoryframework.state.Pagination;
-import me.devnatan.inventoryframework.state.State;
+import me.devnatan.inventoryframework.state.StateMarker;
 import me.devnatan.inventoryframework.state.StateHolder;
+import me.devnatan.inventoryframework.state.State;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.jetbrains.annotations.NotNull;
@@ -23,6 +24,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -128,10 +130,10 @@ public abstract class PlatformView<
 	 * }</pre>
 	 *
 	 * @param computation The value factory.
-	 * @param <V>         The state holder type.
+	 * @param <V>         The state type.
 	 * @return A lazy state.
 	 */
-	protected final <V> State<V> state(@NotNull Function<TContext, V> computation) {
+	protected final <R> State<R> state(@NotNull Function<TContext, R> computation) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -151,7 +153,7 @@ public abstract class PlatformView<
 	 * @param <V>         The state value type.
 	 * @return An immutable computed state.
 	 */
-	protected final <V> State<V> computed(@NotNull Function<TContext, V> computation) {
+	protected final <V> StateMarker<V> computed(@NotNull Function<TContext, V> computation) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -171,7 +173,7 @@ public abstract class PlatformView<
 	 * @param <V>         The state holder type.
 	 * @return An immutable computed state.
 	 */
-	protected final <V> State<V> computed(@NotNull Supplier<V> computation) {
+	protected final <V> StateMarker<V> computed(@NotNull Supplier<V> computation) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -192,7 +194,7 @@ public abstract class PlatformView<
 	 * @param <V>         The state value type.
 	 * @return A lazy state.
 	 */
-	protected final <V> State<V> lazy(@NotNull Function<TContext, V> computation) {
+	protected final <V> StateMarker<V> lazy(@NotNull Function<TContext, V> computation) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -213,7 +215,7 @@ public abstract class PlatformView<
 	 * @param <V>         The state holder type.
 	 * @return A lazy state.
 	 */
-	protected final <V> State<V> lazy(@NotNull Supplier<V> computation) {
+	protected final <V> StateMarker<V> lazy(@NotNull Supplier<V> computation) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -232,7 +234,7 @@ public abstract class PlatformView<
 	 * @param <V> The initial data value type.
 	 * @return A state computed with an initial opening data value.
 	 */
-	protected final <V> State<V> initial(@NotNull String key) {
+	protected final <V> StateMarker<V> initial(@NotNull String key) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -252,7 +254,7 @@ public abstract class PlatformView<
 	 * @param <V>            The initial data type.
 	 * @return A state computed with an initial opening data value.
 	 */
-	protected final <V> State<V> initial(@NotNull Class<? extends V> stateClassType) {
+	protected final <T> State<T> initial(@NotNull Class<? extends T> stateClassType) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -276,21 +278,21 @@ public abstract class PlatformView<
 	}
 
 	/**
-	 * Creates a {@link MutableState mutable state} with an initial value.
-	 *
-	 * <pre>{@code
-	 * MutableState<Integer> intState = mutableState(0);
-	 *
-	 * intState.get(...); // 0
-	 * intState.set(4, ...);
-	 * intState.get(...); // 4
-	 * }</pre>
+	 * Creates a {@link MutableState mutable state} with an initial {@code int} value.
 	 *
 	 * @param initialValue The initial value of the state.
-	 * @param <V>          The state value type.
-	 * @return A mutable state with an initial value.
+	 * @return A mutable state with an initial {@code int} value.
 	 */
-	protected final MutableInt mutableInt(int initialValue) {
+	protected final MutableIntState mutableInt(int initialValue) {
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * Creates a {@link MutableState mutable state} with an initial {@code int} value of {@code 0}.
+	 *
+	 * @return A mutable state with an initial {@code int} value of {@code 0}.
+	 */
+	protected final MutableIntState mutableInt() {
 		throw new UnsupportedOperationException();
 	}
 
@@ -407,12 +409,12 @@ public abstract class PlatformView<
 	 * @param sourceProvider The data provider for pagination.
 	 * @param itemFactory    The function for creating pagination items, this function is called for
 	 *                       each paged element (item) on a page.
-	 * @param <V>            The pagination data type.
+	 * @param <T>            The pagination data type.
 	 * @return A immutable pagination state.
 	 */
-	protected final <V> Pagination<V> pagination(
-		@NotNull State<List<V>> sourceProvider,
-		@NotNull BiConsumer<TItem, V> itemFactory
+	protected final <T> Pagination pagination(
+		@NotNull State<List<T>> sourceProvider,
+		@NotNull BiConsumer<TItem, T> itemFactory
 	) {
 		throw new UnsupportedOperationException();
 	}
@@ -472,7 +474,7 @@ public abstract class PlatformView<
 	/**
 	 * Called only once before the container is displayed to a player.
 	 * <p>
-	 * The {@code context} is not cancelable, for cancellation use open handler instead.
+	 * The {@code context} is not cancelable, for cancellation use {@link #onOpen(IFOpenContext)} instead.
 	 * <p>
 	 * This function should only be used to render items, any external call is completely forbidden
 	 * as the function runs on the main thread.
@@ -480,7 +482,7 @@ public abstract class PlatformView<
 	 * @param ctx The renderization context.
 	 */
 	@ApiStatus.OverrideOnly
-	public void onRender(TRenderContext ctx) {
+	public void onInitialRender(TRenderContext ctx) {
 	}
 
 	/**
@@ -535,9 +537,14 @@ public abstract class PlatformView<
 	 * @throws IllegalStateException If this platform view is already initialized.
 	 */
 	@MustBeInvokedByOverriders
-	protected void internalInitialization() {
+	void internalInitialization() {
 		if (!isInitialized()) return;
 
 		throw new IllegalStateException("Tried to call internal initialization but view is already initialized");
 	}
+
+	<T> void watch(StateMarker<T> state, Consumer<T> updateHandler) {
+
+	}
+
 }

@@ -1,7 +1,6 @@
 package me.devnatan.inventoryframework;
 
 import lombok.Getter;
-import me.devnatan.inventoryframework.ViewContext;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
 import org.bukkit.entity.Player;
@@ -17,4 +16,5 @@ public final class ViewRenderContext extends BaseViewContext implements IFRender
         super(backingContext.getRoot(), backingContext.getContainer());
         this.player = player;
     }
+
 }

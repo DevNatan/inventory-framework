@@ -1,4 +1,4 @@
-package me.devnatan.inventoryframework.state.internal;
+package me.devnatan.inventoryframework.internal.state;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

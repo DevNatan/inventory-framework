@@ -36,7 +36,7 @@ public final class WarpListView extends View {
 	}
 
 	@Override
-	public void onRender(ViewRenderContext ctx) {
+	public void onInitialRender(ViewRenderContext ctx) {
 		ctx.layoutSlot(NAVIGATE_BACKWARDS)
 			.withItem(Material.ARROW)
 			.renderIf(pagination::canBack)

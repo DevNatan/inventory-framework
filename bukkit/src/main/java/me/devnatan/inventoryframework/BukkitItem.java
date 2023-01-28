@@ -5,6 +5,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import me.devnatan.inventoryframework.context.IFSlotContext;
 import org.bukkit.Material;
@@ -43,7 +44,7 @@ public final class BukkitItem extends IFItem<BukkitItem> {
 	 * @param fallbackItem The new fallback item stack.
 	 * @return This item.
 	 */
-	public BukkitItem withItem(ItemStack fallbackItem) {
+	public BukkitItem item(ItemStack fallbackItem) {
 		super.setItem(fallbackItem);
 		return this;
 	}
@@ -72,7 +73,7 @@ public final class BukkitItem extends IFItem<BukkitItem> {
 	 * @param fallbackItem The new fallback item stack.
 	 * @return This item.
 	 */
-	public BukkitItem withItem(Material fallbackItem) {
+	public BukkitItem item(Material fallbackItem) {
 		super.setItem(new ItemStack(fallbackItem));
 		return this;
 	}
@@ -90,7 +91,7 @@ public final class BukkitItem extends IFItem<BukkitItem> {
      * @param renderHandler The render handler.
      * @return This item.
      */
-    public BukkitItem onRender(@Nullable Consumer<SlotContext> renderHandler) {
+    public BukkitItem rendered(@Nullable Consumer<SlotContext> renderHandler) {
         this.renderHandler = renderHandler;
         return this;
     }
@@ -109,7 +110,7 @@ public final class BukkitItem extends IFItem<BukkitItem> {
 	 * @return This item.
 	 */
 	public BukkitItem rendered(@Nullable Function<SlotContext, ItemStack> renderHandler) {
-		return renderHandler == null ? this : onRender(renderContext -> renderContext.setItem(renderHandler.apply(renderContext)));
+		return renderHandler == null ? this : rendered((Consumer<SlotContext>) renderContext -> renderContext.setItem(renderHandler.apply(renderContext)));
 	}
 
 	/**
@@ -126,24 +127,7 @@ public final class BukkitItem extends IFItem<BukkitItem> {
 	 * @return This item.
 	 */
 	public BukkitItem rendered(@Nullable Supplier<ItemStack> renderHandler) {
-		return renderHandler == null ? this : onRender(renderContext -> renderContext.setItem(renderHandler.get()));
-	}
-
-	/**
-	 * Called when the item is rendered.
-	 *
-	 * <p>This handler is called every time the item or the view that owns it is updated.
-	 *
-	 * <p>It is allowed to change the item that will be displayed in this handler using the context
-	 * mutation functions, e.g.: {@link IFSlotContext#setItem(Object)}.
-	 *
-	 * <p>An item can be re-rendered individually using {@link IFSlotContext#updateSlot()}.
-	 *
-	 * @param renderHandler The render handler.
-	 * @return This item.
-	 */
-	public BukkitItem renderIf(@Nullable Function<SlotContext, Boolean> renderHandler) {
-		return renderHandler == null ? this : onRender(renderContext -> renderContext.setItem(renderHandler.apply(renderContext) ? ));
+		return renderHandler == null ? this : rendered((Consumer<SlotContext>) renderContext -> renderContext.setItem(renderHandler.get()));
 	}
 
     /**
@@ -157,7 +141,7 @@ public final class BukkitItem extends IFItem<BukkitItem> {
      * @param updateHandler The update handler.
      * @return This item.
      */
-    public BukkitItem onUpdate(@Nullable Consumer<SlotContext> updateHandler) {
+    public BukkitItem updated(@Nullable Consumer<SlotContext> updateHandler) {
         this.updateHandler = updateHandler;
         return this;
     }
@@ -173,7 +157,7 @@ public final class BukkitItem extends IFItem<BukkitItem> {
      * @param clickHandler The click handler.
      * @return This item.
      */
-    public BukkitItem onClick(@Nullable Consumer<SlotClickContext> clickHandler) {
+    public BukkitItem clicked(@Nullable Consumer<SlotClickContext> clickHandler) {
         this.clickHandler = clickHandler;
         return this;
     }

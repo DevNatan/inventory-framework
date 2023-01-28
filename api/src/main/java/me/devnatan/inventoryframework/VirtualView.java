@@ -1,6 +1,10 @@
 package me.devnatan.inventoryframework;
 
+import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.context.IFContext;
+import org.jetbrains.annotations.UnmodifiableView;
+
+import java.util.List;
 
 /**
  * VirtualView is the basis for creating a view it contains the implementation with methods that are
@@ -11,15 +15,12 @@ import me.devnatan.inventoryframework.context.IFContext;
  */
 public interface VirtualView {
 
-    /**
-     * The current title of this view.
-     *
-     * @return The current title of this view, if <code>null</code> will return the default title
-     * for this view type.
-     */
-    String getTitle();
+	/**
+	 * All components in this view.
+	 *
+	 * @return An unmodifiable list view of all components in this view.
+	 */
+	@UnmodifiableView
+	List<Component> getComponents();
 
-    ViewType getType();
-
-    ViewType getTypeForCurrentPlatform();
 }
