@@ -18,7 +18,7 @@ public final class CounterWithWatcherView extends View {
     }
 
     @Override
-    public void onInitialRender(ViewRenderContext ctx) {
+    public void onFirstRender(ViewRenderContext ctx) {
         ctx.slot(2, 3).item(Material.ACACIA_BUTTON).clicked(counter::increment);
         ctx.slot(2, 5).item(Material.ACACIA_BUTTON).clicked(counter::decrement);
         ctx.slot(2, 7)

@@ -10,7 +10,6 @@ import me.devnatan.inventoryframework.View;
 import me.devnatan.inventoryframework.ViewConfigBuilder;
 import me.devnatan.inventoryframework.ViewOpenContext;
 import me.devnatan.inventoryframework.ViewRenderContext;
-import me.devnatan.inventoryframework.state.Pagination;
 import me.devnatan.inventoryframework.state.State;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -21,9 +20,10 @@ import org.bukkit.inventory.meta.SkullMeta;
 public final class ClanMemberListView extends View {
 
     private final ClansManager clansManager;
-    private final State<List<ClanMember>> membersListState = state(ctx -> clansManager.getMembers(ctx.get(UUID.class)));
 
-    private final State<Clan> clanState = state(ctx -> clansManager.getClan(ctx.get(UUID.class)));
+	private final State<UUID> clanIdState = initialState(UUID.class);
+    private final State<List<ClanMember>> membersListState = state(ctx -> clansManager.getMembers(clanIdState.get(ctx)));
+    private final State<Clan> clanState = state(ctx -> clansManager.getClan(clanIdState.get(ctx)));
     private final Pagination pagination = pagination(membersListState, this::createPaginationItem);
 
     @Override
@@ -39,7 +39,7 @@ public final class ClanMemberListView extends View {
     }
 
     @Override
-    public void onInitialRender(ViewRenderContext ctx) {
+    public void onFirstRender(ViewRenderContext ctx) {
         ctx.layoutSlot("<").clicked(pagination::back);
         ctx.layoutSlot(">").clicked(pagination::advance);
     }

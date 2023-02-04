@@ -74,6 +74,11 @@ public abstract class IFItem<S extends IFItem<?>> implements Component {
         return slot;
     }
 
+    @Override
+    public final @NotNull VirtualView getRoot() {
+        return root;
+    }
+
     public S withItem(Object item) {
         this.item = item;
         return (S) this;

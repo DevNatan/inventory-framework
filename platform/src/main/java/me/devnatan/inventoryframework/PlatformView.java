@@ -17,7 +17,6 @@ import me.devnatan.inventoryframework.pipeline.Pipeline;
 import me.devnatan.inventoryframework.pipeline.PipelinePhase;
 import me.devnatan.inventoryframework.state.MutableIntState;
 import me.devnatan.inventoryframework.state.MutableState;
-import me.devnatan.inventoryframework.state.Pagination;
 import me.devnatan.inventoryframework.state.State;
 import me.devnatan.inventoryframework.state.StateHolder;
 import org.jetbrains.annotations.ApiStatus;
@@ -29,7 +28,7 @@ public abstract class PlatformView<
                 TItem extends IFItem<TItem>,
                 TContext extends IFContext,
                 TOpenContext extends IFOpenContext,
-                TRenderContext extends IFRenderContext,
+                TRenderContext extends IFRenderContext<TItem>,
                 TSlotContext extends IFSlotContext,
                 TSlotClickContext extends IFSlotClickContext>
         implements RootView {
@@ -448,7 +447,7 @@ public abstract class PlatformView<
      * @param ctx The renderization context.
      */
     @ApiStatus.OverrideOnly
-    public void onInitialRender(TRenderContext ctx) {}
+    public void onFirstRender(TRenderContext ctx) {}
 
     /**
      * Called when the view is updated for a player.

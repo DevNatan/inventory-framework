@@ -4,6 +4,7 @@ import java.util.Deque;
 import java.util.NoSuchElementException;
 import java.util.Stack;
 import me.devnatan.inventoryframework.IFItem;
+import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.exception.ContainerException;
@@ -16,7 +17,7 @@ import org.jetbrains.annotations.TestOnly;
 /**
  * Renders items defined by {@link VirtualView#availableSlot()}.
  */
-public class AvailableSlotRenderInterceptor implements PipelineInterceptor<VirtualView> {
+public class AvailableSlotRenderInterceptor implements PipelineInterceptor<IFContext> {
 
     @TestOnly
     boolean isSuppressContainerException() {
@@ -24,15 +25,12 @@ public class AvailableSlotRenderInterceptor implements PipelineInterceptor<Virtu
     }
 
     @Override
-    public void intercept(PipelineContext<VirtualView> pipeline, VirtualView view) {
-        // layout cannot be rendered without a context (no container available)
-        if (!(view instanceof IFContext)) return;
-
-        final IFContext context = (IFContext) view;
-        final AbstractView root = context.getRoot();
+    public void intercept(PipelineContext<IFContext> pipeline, IFContext context) {
+        final RootView root = context.getRoot();
 
         // just render reserved items since root layout is always resolved on init
-        if (root.isLayoutSignatureChecked()) renderReservedItems(root, context, root.getLayoutItemsLayer(), true);
+        if (root.isLayoutSignatureChecked())
+			renderReservedItems(root, context, root.getLayoutItemsLayer(), true);
 
         final String[] contextLayout = context.getLayout();
 

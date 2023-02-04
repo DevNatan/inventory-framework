@@ -18,10 +18,10 @@ public final class ViewConfigBuilder {
     private String title = "";
     private int size = 0;
     private ViewType type = null;
-    private List<ViewConfig.Option<?>> options = new ArrayList<>();
+    private final List<ViewConfig.Option<?>> options = new ArrayList<>();
     private String[] layout = null;
-    private List<LayoutPattern> patterns = new ArrayList<>();
-    private List<ViewConfig.Modifier> modifiers = new ArrayList<>();
+    private final List<LayoutPattern> patterns = new ArrayList<>();
+    private final List<ViewConfig.Modifier> modifiers = new ArrayList<>();
 
     /**
      * Inherits all configuration from another {@link ViewConfigBuilder} value.
@@ -97,11 +97,6 @@ public final class ViewConfigBuilder {
 
     public ViewConfigBuilder layout(char character, @NotNull BiConsumer<Integer, IFItem> handler) {
         throw new UnsupportedOperationException();
-    }
-
-    public ViewConfigBuilder option(ViewConfig.Option<?> option) {
-        this.options.add(option);
-        return this;
     }
 
     public ViewConfigBuilder options(ViewConfig.Option<?>... options) {

@@ -5,7 +5,6 @@ import me.devnatan.inventoryframework.View;
 import me.devnatan.inventoryframework.ViewConfigBuilder;
 import me.devnatan.inventoryframework.ViewOpenContext;
 import me.devnatan.inventoryframework.ViewRenderContext;
-import me.devnatan.inventoryframework.state.Pagination;
 import org.bukkit.Material;
 
 @RequiredArgsConstructor
@@ -26,7 +25,7 @@ public final class WarpListView extends View {
     }
 
     @Override
-    public void onInitialRender(ViewRenderContext ctx) {
+    public void onFirstRender(ViewRenderContext ctx) {
         ctx.layoutSlot("<").withItem(Material.ARROW).clicked(pagination::back);
         ctx.layoutSlot(">").withItem(Material.ARROW).clicked(pagination::advance);
     }

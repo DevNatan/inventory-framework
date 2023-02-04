@@ -30,7 +30,7 @@ public final class ClanDetailsView extends View {
     }
 
     @Override
-    public void onInitialRender(ViewRenderContext ctx) {
+    public void onFirstRender(ViewRenderContext ctx) {
         final Clan clan = clanState.get(ctx);
         ctx.slot(2, 5).withItem(Material.PLAYER_HEAD).clicked(click -> click.open(ClanMemberListView.class));
     }

@@ -8,6 +8,7 @@ import java.util.function.BiConsumer;
 import lombok.RequiredArgsConstructor;
 import me.devnatan.inventoryframework.DefaultVirtualViewImpl;
 import me.devnatan.inventoryframework.RootView;
+import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.context.IFContext;
@@ -28,15 +29,19 @@ public class BaseViewContext implements IFContext {
 
     private final @NotNull RootView root;
     private final @NotNull ViewContainer container;
-
     private final StateHolder stateHolder = new DefaultStateHolder();
     private final VirtualView virtualView = new DefaultVirtualViewImpl();
-
     protected final Set<Viewer> viewers = new HashSet<>();
 
     private String updatedTitle;
+	protected final ViewConfig config = root.getConfig();
 
-    @Override
+	@Override
+	public final @NotNull ViewConfig getConfig() {
+		return config;
+	}
+
+	@Override
     public final @NotNull RootView getRoot() {
         return root;
     }

@@ -57,7 +57,7 @@ public interface Feature<C, R> {
     /**
      * Uninstalls this feature, used to invalidate resources applied on installation.
      *
-     * @param platform The feature uninstaller platform.
+     * @param framework The feature uninstaller framework.
      * @see #install(ViewFrame, UnaryOperator)
      */
     void uninstall(ViewFrame framework);

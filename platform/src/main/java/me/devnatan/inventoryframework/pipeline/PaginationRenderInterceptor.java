@@ -9,8 +9,8 @@ import java.util.Objects;
 import java.util.Stack;
 import java.util.function.Function;
 import me.devnatan.inventoryframework.IFItem;
+import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.context.IFContext;
-import me.devnatan.inventoryframework.context.IFPaginatedSlotContext;
 import me.saiintbrisson.minecraft.AbstractPaginatedView;
 import me.saiintbrisson.minecraft.AsyncPaginationDataState;
 import me.saiintbrisson.minecraft.Paginator;
@@ -105,7 +105,7 @@ public final class PaginationRenderInterceptor implements PipelineInterceptor<IF
     }
 
     private <T> void handleLazySourceProvider(
-            @NotNull IFPaginatedContext<T> context,
+            @NotNull IFContext context,
             String[] layout,
             IFItem[] preservedItems,
             @NotNull Paginator<T> paginator) {
@@ -129,9 +129,9 @@ public final class PaginationRenderInterceptor implements PipelineInterceptor<IF
     }
 
     private <T> void renderPagination(
-            @NotNull IFPaginatedContext<T> context, List<T> elements, String[] layout, IFItem[] preservedItems) {
+            @NotNull IFContext context, List<T> elements, String[] layout, IFItem<?>[] preservedItems) {
 
-        final AbstractPaginatedView<T> root = context.getRoot();
+        final RootView root = context.getRoot();
         final int elementsCount = elements.size();
         final Stack<Integer> layoutItemsLayer = IFUtils.useLayoutItemsLayer(root, context);
         final int lastSlot = layout == null ? root.getLimit() : layoutItemsLayer.peek();
@@ -182,7 +182,7 @@ public final class PaginationRenderInterceptor implements PipelineInterceptor<IF
         context.getContainer().removeItem(slot);
     }
 
-    private void renderItemAndApplyOnContext(@NotNull IFContext context, IFItem item, int slot) {
+    private void renderItemAndApplyOnContext(@NotNull IFContext context, IFItem<?> item, int slot) {
         context.getItems()[slot] = item;
 
         if (skipRender) return;
@@ -190,7 +190,7 @@ public final class PaginationRenderInterceptor implements PipelineInterceptor<IF
     }
 
     private <T> void renderPaginatedItemAt(
-            @NotNull IFPaginatedContext<T> context, int index, int slot, @NotNull T value, @Nullable IFItem override) {
+            @NotNull IFContext context, int index, int slot, @NotNull T value, @Nullable IFItem<?> override) {
         if (skipRender) return;
 
         // TODO replace this with a more sophisticated overlay detection
@@ -251,7 +251,7 @@ public final class PaginationRenderInterceptor implements PipelineInterceptor<IF
      *
      * @return The page size or {@link IFItem#UNSET}.
      */
-    private int determineInitialPageSize(AbstractPaginatedView<?> root, IFPaginatedContext<?> context) {
+    private int determineInitialPageSize(RootView root, IFContext context) {
         // first context-scope layout because it's always prioritized
         int pageSize = context.isLayoutSignatureChecked()
                 ? context.getLayoutItemsLayer().size()

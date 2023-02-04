@@ -71,7 +71,7 @@ public final class ViewConfig {
 
         OptionImpl(@NotNull String name, T defaultValue) {
             if (registeredNames.contains(name))
-                throw new IllegalStateException(String.format("Option %s already exists", name));
+                throw new IllegalStateException(String.format("Option %s already registered", name));
 
             this.name = name;
             this.defaultValue = defaultValue;

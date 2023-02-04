@@ -1,45 +1,70 @@
 package me.devnatan.inventoryframework.state;
 
-import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
-public interface Pagination extends State<List<Object>> {
+public final class Pagination implements State<Pagination> {
 
-    /**
-     * The index-based current page number.
-     *
-     * @param holder The holder whose value will be obtained from.
-     * @return The current page number. {@code 0} will be the first page.
-     */
-    int getCurrentPage(@NotNull StateHolder holder);
+	/**
+	 * The index-based current page number.
+	 *
+	 * @param holder The holder whose value will be obtained from.
+	 * @return The current page number. {@code 0} will be the first page.
+	 */
+	public int getCurrentPage(@NotNull StateHolder holder) {
+		throw new UnsupportedOperationException();
+	}
 
-    /**
-     * Checks for pages before the {@link #getCurrentPage(StateHolder) current} one.
-     *
-     * @param holder The holder whose value will be obtained from.
-     * @return {@code true} if there are previous pages or {@code false} otherwise
-     */
-    boolean hasPreviousPage(@NotNull StateHolder holder);
+	/**
+	 * Checks for pages before the {@link #getCurrentPage(StateHolder) current} one.
+	 *
+	 * @param holder The holder whose value will be obtained from.
+	 * @return {@code true} if there are previous pages or {@code false} otherwise
+	 */
+	public boolean hasPreviousPage(@NotNull StateHolder holder) {
+		throw new UnsupportedOperationException();
+	}
 
-    /**
-     * Checks for pages after the {@link #getCurrentPage(StateHolder) current} one.
-     *
-     * @param holder The holder whose value will be obtained from.
-     * @return {@code true} if there are next pages or {@code false} otherwise
-     */
-    boolean hasNextPage(@NotNull StateHolder holder);
+	/**
+	 * Checks for pages after the {@link #getCurrentPage(StateHolder) current} one.
+	 *
+	 * @param holder The holder whose value will be obtained from.
+	 * @return {@code true} if there are next pages or {@code false} otherwise
+	 */
+	public boolean hasNextPage(@NotNull StateHolder holder) {
+		throw new UnsupportedOperationException();
+	}
 
-    boolean isFirstPage(@NotNull StateHolder holder);
+	public boolean isFirstPage(@NotNull StateHolder holder) {
+		throw new UnsupportedOperationException();
+	}
 
-    boolean isLastPage(@NotNull StateHolder holder);
+	public boolean isLastPage(@NotNull StateHolder holder) {
+		throw new UnsupportedOperationException();
+	}
 
-    int count(@NotNull StateHolder holder);
+	public int count(@NotNull StateHolder holder) {
+		throw new UnsupportedOperationException();
+	}
 
-    void back(@NotNull StateHolder holder);
+	public void back(@NotNull StateHolder holder) {
+		throw new UnsupportedOperationException();
+	}
 
-    void advance(@NotNull StateHolder holder);
+	public void advance(@NotNull StateHolder holder) {
+		throw new UnsupportedOperationException();
+	}
 
-    boolean canBack(@NotNull StateHolder holder);
+	public boolean canBack(@NotNull StateHolder holder) {
+		throw new UnsupportedOperationException();
+	}
 
-    boolean canAdvance(@NotNull StateHolder holder);
+	public boolean canAdvance(@NotNull StateHolder holder) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Pagination get(@NotNull StateHolder holder) {
+		throw new UnsupportedOperationException();
+	}
+
 }

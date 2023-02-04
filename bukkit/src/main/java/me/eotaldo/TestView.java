@@ -3,7 +3,6 @@ package me.eotaldo;
 import me.devnatan.inventoryframework.IFItem;
 import me.devnatan.inventoryframework.View;
 import me.devnatan.inventoryframework.ViewConfigBuilder;
-import me.devnatan.inventoryframework.state.Pagination;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
