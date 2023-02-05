@@ -1,4 +1,4 @@
-package me.devnatan.inventoryframework.bukkit;
+package me.devnatan.inventoryframework.plugin;
 
 import org.bukkit.plugin.java.JavaPlugin;
 

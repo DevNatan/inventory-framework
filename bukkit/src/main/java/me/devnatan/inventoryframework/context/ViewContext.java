@@ -1,12 +1,8 @@
-package me.devnatan.inventoryframework;
+package me.devnatan.inventoryframework.context;
 
-import me.devnatan.inventoryframework.context.IFContext;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * Marker interface used for backwards compatibility.
- */
 public interface ViewContext extends IFContext {
 
     /**

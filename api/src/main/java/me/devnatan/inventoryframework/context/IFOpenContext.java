@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
  * This context is created before the container is opened, it is used for cancellation by previously
  * defined data also can be used to change the title and size of the container before the rendering intent.
  */
-public interface IFOpenContext extends IFContext {
+public interface IFOpenContext extends IFConfinedContext {
 
     @NotNull
     String getTitle();

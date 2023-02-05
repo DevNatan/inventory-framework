@@ -1,4 +1,4 @@
-package me.devnatan.inventoryframework.internal.context;
+package me.devnatan.inventoryframework.context;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.function.BiConsumer;
 import lombok.RequiredArgsConstructor;
 import me.devnatan.inventoryframework.DefaultVirtualViewImpl;
+import me.devnatan.inventoryframework.IFItem;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.VirtualView;
@@ -25,15 +26,16 @@ import org.jetbrains.annotations.UnmodifiableView;
 
 @RequiredArgsConstructor
 @ApiStatus.Internal
-public class BaseViewContext implements IFContext {
+class BaseViewContext implements IFContext {
 
     private final @NotNull RootView root;
-    private final @NotNull ViewContainer container;
+
+	/* container can be null on pre-render/intermediate contexts */
+	private final @Nullable ViewContainer container;
+
     private final StateHolder stateHolder = new DefaultStateHolder();
     private final VirtualView virtualView = new DefaultVirtualViewImpl();
     protected final Set<Viewer> viewers = new HashSet<>();
-
-    private String updatedTitle;
 	protected final ViewConfig config = root.getConfig();
 
 	@Override
@@ -48,7 +50,9 @@ public class BaseViewContext implements IFContext {
 
     @Override
     public final @NotNull ViewContainer getContainer() {
-        return container;
+        if (container == null)
+			throw new IllegalStateException("Unable to get null container");
+		return container;
     }
 
     @Override
@@ -82,33 +86,26 @@ public class BaseViewContext implements IFContext {
 
     @Override
     public final @Nullable String getUpdatedTitle() {
-        return updatedTitle;
+        return getContainer().getTitle();
     }
 
     @Override
     public final void updateTitle(@NotNull String title) {
-        this.updatedTitle = title;
         getContainer().changeTitle(title);
     }
 
     @Override
     public final void resetTitle() {
-        this.updatedTitle = null;
         getContainer().changeTitle(null);
     }
 
     @Override
-    public final void close() {
+    public void close() {
         getContainer().close();
     }
 
-    @Override
+	@Override
     public final void open(Class<? extends RootView> other) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final <T> T get(Class<? extends T> state) {
         throw new UnsupportedOperationException();
     }
 
@@ -141,4 +138,9 @@ public class BaseViewContext implements IFContext {
     public final <T> void watch(@NotNull State<?> state, @NotNull BiConsumer<T, T> callback) {
         stateHolder.watch(state, callback);
     }
+
+	@Override
+	public @Nullable IFItem<?> getItem(int index) {
+		throw new UnsupportedOperationException();
+	}
 }

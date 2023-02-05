@@ -13,6 +13,8 @@ import me.devnatan.inventoryframework.context.IFOpenContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.context.IFSlotContext;
+import me.devnatan.inventoryframework.internal.ElementFactory;
+import me.devnatan.inventoryframework.internal.PlatformUtils;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
 import me.devnatan.inventoryframework.pipeline.PipelinePhase;
 import me.devnatan.inventoryframework.state.MutableIntState;
@@ -501,6 +503,14 @@ public abstract class PlatformView<
     void internalInitialization() {
         if (!isInitialized()) return;
 
-        throw new IllegalStateException("Tried to call internal initialization but view is already initialized");
+        throw new IllegalStateException(
+			"Tried to call internal initialization but view is already initialized."
+		);
     }
+
+	@ApiStatus.Internal
+	public ElementFactory getElementFactory() {
+		return PlatformUtils.getFactory();
+	}
+
 }

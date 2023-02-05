@@ -3,7 +3,7 @@ package me.devnatan.inventoryframework.context;
 import me.devnatan.inventoryframework.ViewConfigBuilder;
 import org.jetbrains.annotations.NotNull;
 
-public interface IFRenderContext<TItem> extends IFContext {
+public interface IFRenderContext<TItem> extends IFConfinedContext {
 
 	@NotNull
 	TItem layoutSlot(String character);

@@ -1,5 +1,10 @@
 package me.devnatan.inventoryframework;
 
+import me.devnatan.inventoryframework.context.OpenContext;
+import me.devnatan.inventoryframework.context.RenderContext;
+import me.devnatan.inventoryframework.context.SlotClickContext;
+import me.devnatan.inventoryframework.context.SlotContext;
+import me.devnatan.inventoryframework.context.ViewContext;
 import me.devnatan.inventoryframework.pipeline.GlobalClickInterceptor;
 import me.devnatan.inventoryframework.pipeline.ItemClickInterceptor;
 import me.devnatan.inventoryframework.pipeline.ItemCloseOnClickInterceptor;
@@ -12,7 +17,7 @@ import org.jetbrains.annotations.ApiStatus;
 @ApiStatus.OverrideOnly
 public class View
         extends PlatformView<
-                BukkitItem, ViewContext, ViewOpenContext, ViewRenderContext, SlotContext, SlotClickContext> {
+                BukkitItem, ViewContext, OpenContext, RenderContext, SlotContext, SlotClickContext> {
 
     /** {@inheritDoc} */
     @Override

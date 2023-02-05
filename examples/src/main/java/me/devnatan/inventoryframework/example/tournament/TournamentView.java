@@ -4,8 +4,8 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import me.devnatan.inventoryframework.View;
 import me.devnatan.inventoryframework.ViewConfigBuilder;
-import me.devnatan.inventoryframework.ViewContext;
-import me.devnatan.inventoryframework.ViewOpenContext;
+import me.devnatan.inventoryframework.context.ViewContext;
+import me.devnatan.inventoryframework.context.OpenContext;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.state.State;
 
@@ -23,7 +23,7 @@ public final class TournamentView extends View {
     }
 
     @Override
-    public void onOpen(ViewOpenContext ctx) {
+    public void onOpen(OpenContext ctx) {
         ctx.setTitle(createTitle(ctx));
     }
 

@@ -12,9 +12,6 @@ import org.jetbrains.annotations.UnmodifiableView;
 
 public interface RootView extends VirtualView {
 
-    char NAVIGATE_BACKWARDS = '<';
-    char NAVIGATE_FORWARD = '>';
-
     Option<Boolean> CancelOnClick = createOption("cancel-on-click", true);
 
     @NotNull
@@ -26,6 +23,19 @@ public interface RootView extends VirtualView {
     void removeContext(@NotNull IFContext context);
 
     void renderContext(@NotNull IFContext context);
+
+	void renderItem(@NotNull IFContext context, @NotNull IFItem<?> item);
+
+	void removeItem(@NotNull IFContext context, int index);
+
+	/**
+	 * Called when the view is about to be configured, the returned object will be the view's
+	 * configuration.
+	 * <p>
+	 * As a reference, the data defined here was defined in the constructor in previous versions.
+	 */
+	@ApiStatus.OverrideOnly
+	void onInit(ViewConfigBuilder config);
 
     /**
      * The configuration for this view.
@@ -43,13 +53,4 @@ public interface RootView extends VirtualView {
      */
     @NotNull
     Pipeline<? super VirtualView> getPipeline();
-
-    /**
-     * Called when the view is about to be configured, the returned object will be the view's
-     * configuration.
-     * <p>
-     * As a reference, the data defined here was defined in the constructor in previous versions.
-     */
-    @ApiStatus.OverrideOnly
-    void onInit(ViewConfigBuilder config);
 }

@@ -1,23 +1,27 @@
 package me.devnatan.inventoryframework.pipeline;
 
 import java.util.ArrayList;
+
+import me.devnatan.inventoryframework.PlatformView;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFOpenContext;
+import me.devnatan.inventoryframework.context.IFRenderContext;
+import me.devnatan.inventoryframework.internal.ElementFactory;
 import me.devnatan.inventoryframework.internal.PlatformUtils;
 import me.devnatan.inventoryframework.internal.platform.ViewContainer;
 import me.devnatan.inventoryframework.internal.platform.Viewer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 
-public class OpenInterceptor implements PipelineInterceptor<VirtualView> {
+public class OpenInterceptor implements PipelineInterceptor<IFContext> {
 
     @TestOnly
     boolean skipOpen = false;
 
     @Override
-    public void intercept(@NotNull PipelineContext<VirtualView> pipeline, VirtualView context) {
+    public void intercept(@NotNull PipelineContext<IFContext> pipeline, IFContext context) {
         if (!(context instanceof IFOpenContext)) return;
 
         final IFOpenContext openContext = (IFOpenContext) context;
@@ -36,7 +40,7 @@ public class OpenInterceptor implements PipelineInterceptor<VirtualView> {
                 });
     }
 
-    private void finishOpen(@NotNull PipelineContext<VirtualView> pipeline, @NotNull IFOpenContext openContext) {
+    private void finishOpen(@NotNull PipelineContext<IFContext> pipeline, @NotNull IFOpenContext openContext) {
         if (openContext.isCancelled()) {
             pipeline.finish();
             return;
@@ -44,23 +48,19 @@ public class OpenInterceptor implements PipelineInterceptor<VirtualView> {
 
         if (skipOpen) return;
 
-        final RootView root = openContext.getRoot();
-        final int containerSize = openContext.getType().normalize(openContext.getSize());
-        final ViewContainer container = PlatformUtils.getFactory()
-                .createContainer(root, containerSize, openContext.getTitle(), openContext.getType());
+		final RootView root = openContext.getRoot();
+		final ElementFactory elementFactory = ((PlatformView<?, ?, ?, ?, ?, ?>) root).getElementFactory();
+        final ViewContainer container = elementFactory.createContainer(openContext,
+			openContext.getType().normalize(openContext.getSize()),
+			openContext.getTitle(),
+			openContext.getType());
 
-        final IFContext generatedContext = PlatformUtils.getFactory().createContext(root, container, null, null);
+		final Viewer viewer = openContext.getViewer();
+		final IFContext generatedContext = elementFactory.createContext(root, container, viewer, IFRenderContext.class, false);
 
-        //        generatedContext.setItems(new IFItem[containerSize]);
-        //        generatedContext.setPrevious(((BaseViewContext) openContext).getPrevious());
-
-        for (final Viewer viewer : openContext.getViewers()) generatedContext.addViewer(viewer);
-
+        generatedContext.addViewer(viewer);
         root.addContext(generatedContext);
         root.renderContext(generatedContext);
-
-        for (final Viewer viewer : new ArrayList<>(generatedContext.getViewers())) {
-            container.open(viewer);
-        }
+		container.open(viewer);
     }
 }

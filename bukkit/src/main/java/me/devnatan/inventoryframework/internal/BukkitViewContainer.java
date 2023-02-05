@@ -3,6 +3,7 @@ package me.devnatan.inventoryframework.internal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.NotNull;
@@ -21,13 +23,32 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
 @RequiredArgsConstructor
-final class BukkitViewContainer implements ViewContainer {
+public final class BukkitViewContainer implements ViewContainer {
 
-    @Getter
-    @NotNull
-    private final Inventory inventory;
+	@Getter
+    private final @NotNull Inventory inventory;
 
-    @Override
+	private final boolean shared;
+
+	@Override
+	public String getTitle() {
+		final boolean diffTitle = inventory.getViewers().stream()
+			.map(HumanEntity::getOpenInventory)
+			.map(InventoryView::getTitle)
+			.distinct().findAny().isPresent();
+
+		if (diffTitle && shared)
+			throw new IllegalStateException("Cannot get unique title of shared inventory");
+
+		return inventory.getViewers().get(0).getOpenInventory().getTitle();
+	}
+
+	@Override
+	public String getTitle(@NotNull Viewer viewer) {
+		return ((BukkitViewer) viewer).getPlayer().getOpenInventory().getTitle();
+	}
+
+	@Override
     public @NotNull ViewType getType() {
         //		if (type == null)
         //			throw new IllegalStateException("View type cannot be null for " + inventory.getType() + " inventory type");
@@ -128,10 +149,15 @@ final class BukkitViewContainer implements ViewContainer {
     @Override
     public void changeTitle(@Nullable final String title) {
         for (final Viewer viewer : getViewers())
-            InventoryUpdate.updateInventory(((BukkitViewer) viewer).getPlayer(), title);
+            changeTitle(title, viewer);
     }
 
-    @Override
+	@Override
+	public void changeTitle(@Nullable String title, @NotNull Viewer target) {
+		InventoryUpdate.updateInventory(((BukkitViewer) target).getPlayer(), title);
+	}
+
+	@Override
     public boolean isEntityContainer() {
         return inventory instanceof PlayerInventory;
     }
@@ -145,4 +171,9 @@ final class BukkitViewContainer implements ViewContainer {
     public void close() {
         new ArrayList<>(inventory.getViewers()).forEach(HumanEntity::closeInventory);
     }
+
+	@Override
+	public void close(@NotNull Viewer viewer) {
+		viewer.close();
+	}
 }

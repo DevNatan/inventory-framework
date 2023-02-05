@@ -3,6 +3,7 @@ package me.devnatan.inventoryframework;
 import java.util.List;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.context.IFContext;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnmodifiableView;
 
 /**
@@ -21,4 +22,7 @@ public interface VirtualView {
      */
     @UnmodifiableView
     List<Component> getComponents();
+
+	@Nullable
+	IFItem<?> getItem(int index);
 }

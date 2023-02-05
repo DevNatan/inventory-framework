@@ -8,8 +8,8 @@ import lombok.RequiredArgsConstructor;
 import me.devnatan.inventoryframework.BukkitItem;
 import me.devnatan.inventoryframework.View;
 import me.devnatan.inventoryframework.ViewConfigBuilder;
-import me.devnatan.inventoryframework.ViewOpenContext;
-import me.devnatan.inventoryframework.ViewRenderContext;
+import me.devnatan.inventoryframework.context.OpenContext;
+import me.devnatan.inventoryframework.context.RenderContext;
 import me.devnatan.inventoryframework.state.State;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -32,14 +32,14 @@ public final class ClanMemberListView extends View {
     }
 
     @Override
-    public void onOpen(ViewOpenContext ctx) {
+    public void onOpen(OpenContext ctx) {
         final Clan clan = clanState.get(ctx);
         final List<ClanMember> memberList = membersListState.get(ctx);
         ctx.setTitle(String.format("[%s] Members (%d)", clan.getTag(), memberList.size()));
     }
 
     @Override
-    public void onFirstRender(ViewRenderContext ctx) {
+    public void onFirstRender(RenderContext ctx) {
         ctx.layoutSlot("<").clicked(pagination::back);
         ctx.layoutSlot(">").clicked(pagination::advance);
     }

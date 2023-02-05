@@ -1,8 +1,9 @@
-package me.devnatan.inventoryframework;
+package me.devnatan.inventoryframework.context;
 
-import me.devnatan.inventoryframework.context.IFContext;
-import me.devnatan.inventoryframework.context.IFSlotClickContext;
+import me.devnatan.inventoryframework.IFItem;
+import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.internal.platform.ViewContainer;
+import me.devnatan.inventoryframework.internal.platform.Viewer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -17,16 +18,17 @@ public class SlotClickContext extends SlotContext implements IFSlotClickContext 
     @NotNull
     private final InventoryClickEvent clickOrigin;
 
-    SlotClickContext(
-            int slot,
-            IFItem backingItem,
-            @NotNull IFContext parent,
-            @Nullable ViewContainer container,
-            @NotNull Player player,
-            @NotNull InventoryClickEvent clickOrigin) {
-        super(slot, backingItem, parent, container, player);
-        this.clickOrigin = clickOrigin;
-    }
+	public SlotClickContext(
+		@NotNull RootView root,
+		@NotNull ViewContainer container,
+		@NotNull Viewer viewer,
+		int slot,
+		@NotNull IFContext parent,
+		@NotNull InventoryClickEvent clickOrigin
+	) {
+		super(root, container, viewer, slot, parent);
+		this.clickOrigin = clickOrigin;
+	}
 
     /**
      * The event that triggered this context.

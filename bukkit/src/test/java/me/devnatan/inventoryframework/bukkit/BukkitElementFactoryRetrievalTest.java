@@ -5,7 +5,7 @@ import me.saiintbrisson.minecraft.ViewComponentFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class BukkitViewComponentFactoryRetrievalTest {
+public class BukkitElementFactoryRetrievalTest {
 
     @Test
     void shouldRetrieveBukkitFactoryByDefault() {

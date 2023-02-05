@@ -3,8 +3,8 @@ package me.devnatan.inventoryframework.example.warpList;
 import lombok.RequiredArgsConstructor;
 import me.devnatan.inventoryframework.View;
 import me.devnatan.inventoryframework.ViewConfigBuilder;
-import me.devnatan.inventoryframework.ViewOpenContext;
-import me.devnatan.inventoryframework.ViewRenderContext;
+import me.devnatan.inventoryframework.context.OpenContext;
+import me.devnatan.inventoryframework.context.RenderContext;
 import org.bukkit.Material;
 
 @RequiredArgsConstructor
@@ -20,12 +20,12 @@ public final class WarpListView extends View {
     }
 
     @Override
-    public void onOpen(ViewOpenContext ctx) {
+    public void onOpen(OpenContext ctx) {
         ctx.setTitle(String.format("Warps (%d)", pagination.count(ctx)));
     }
 
     @Override
-    public void onFirstRender(ViewRenderContext ctx) {
+    public void onFirstRender(RenderContext ctx) {
         ctx.layoutSlot("<").withItem(Material.ARROW).clicked(pagination::back);
         ctx.layoutSlot(">").withItem(Material.ARROW).clicked(pagination::advance);
     }

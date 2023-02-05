@@ -7,10 +7,10 @@ import org.jetbrains.annotations.TestOnly;
 /** Utility class to define which ViewComponentFactory will be used for the current platform. */
 public class PlatformUtils {
 
-    private static ViewComponentFactory factory;
+    private static ElementFactory factory;
 
     @NotNull
-    public static ViewComponentFactory getFactory() {
+    public static ElementFactory getFactory() {
         if (factory != null) {
             checkIfPlatformWorksInCurrentPlatform();
             return factory;
@@ -35,8 +35,8 @@ public class PlatformUtils {
     }
 
     @ApiStatus.Internal
-    public static void setFactory(@NotNull ViewComponentFactory factory) {
-        final ViewComponentFactory curr = PlatformUtils.factory;
+    public static void setFactory(@NotNull ElementFactory factory) {
+        final ElementFactory curr = PlatformUtils.factory;
         if (curr != null) return;
 
         PlatformUtils.factory = factory;
@@ -47,9 +47,9 @@ public class PlatformUtils {
         PlatformUtils.factory = null;
     }
 
-    private static ViewComponentFactory fallbackFactory()
+    private static ElementFactory fallbackFactory()
             throws ClassNotFoundException, InstantiationException, IllegalAccessException {
         final Class<?> clazz = Class.forName("me.saiintbrisson.minecraft.BukkitViewComponentFactory");
-        return (ViewComponentFactory) clazz.newInstance();
+        return (ElementFactory) clazz.newInstance();
     }
 }

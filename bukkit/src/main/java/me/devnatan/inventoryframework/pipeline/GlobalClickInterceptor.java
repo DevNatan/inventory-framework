@@ -3,7 +3,7 @@ package me.devnatan.inventoryframework.pipeline;
 import static me.devnatan.inventoryframework.RootView.CancelOnClick;
 
 import me.devnatan.inventoryframework.PlatformView;
-import me.devnatan.inventoryframework.SlotClickContext;
+import me.devnatan.inventoryframework.context.SlotClickContext;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.jetbrains.annotations.NotNull;
 

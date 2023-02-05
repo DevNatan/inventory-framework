@@ -6,6 +6,8 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import lombok.Getter;
 import me.devnatan.inventoryframework.context.IFSlotContext;
+import me.devnatan.inventoryframework.context.SlotClickContext;
+import me.devnatan.inventoryframework.context.SlotContext;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;

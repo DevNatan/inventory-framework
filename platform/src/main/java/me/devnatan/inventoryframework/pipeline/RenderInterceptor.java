@@ -1,40 +1,28 @@
 package me.devnatan.inventoryframework.pipeline;
 
 import me.devnatan.inventoryframework.IFItem;
-import me.devnatan.inventoryframework.VirtualView;
+import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.context.IFContext;
-import me.saiintbrisson.minecraft.AbstractView;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Intercepts the rendering phase of a context and renders {@link VirtualView#slot(int) statically defined items}
- * in it and its root.
+ * Intercepts the rendering phase of a context and renders items on it.
  */
-public final class RenderInterceptor implements PipelineInterceptor<VirtualView> {
+public final class RenderInterceptor implements PipelineInterceptor<IFContext> {
 
-    @Override
-    public void intercept(@NotNull PipelineContext<VirtualView> pipeline, VirtualView view) {
-        if (!(view instanceof IFContext))
-            throw new IllegalStateException("Render interceptor must be called with a context as subject.");
+	@Override
+	public void intercept(@NotNull PipelineContext<IFContext> pipeline, IFContext context) {
+		final RootView root = context.getRoot();
+		final int len = context.getContainer().getSize();
 
-        final IFContext context = (IFContext) view;
-        context.inventoryModificationTriggered();
+		for (int i = 0; i < len; i++) {
+			final IFItem<?> item = context.getItem(i);
+			if (item == null) {
+				root.removeItem(context, i);
+				continue;
+			}
 
-        final AbstractView root = context.getRoot();
-
-        // we prioritize the amount of items in the context because the priority is in the context
-        // and the size of items in the context is proportional to the size of its container
-        final int len = context.getContainer().getSize();
-
-        for (int i = 0; i < len; i++) {
-            // this resolve will get the items from both root and context, so we render both
-            final IFItem item = context.resolve(i, true);
-            if (item == null) {
-                root.render(context, null, null, i);
-                continue;
-            }
-
-            root.render(context, item, i);
-        }
-    }
+			root.renderItem(context, item);
+		}
+	}
 }
