@@ -9,6 +9,7 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -24,9 +25,10 @@ public class SlotClickContext extends SlotContext implements IFSlotClickContext 
 		@NotNull Viewer viewer,
 		int slot,
 		@NotNull IFContext parent,
+		@Nullable IFItem<?> internalItem,
 		@NotNull InventoryClickEvent clickOrigin
 	) {
-		super(root, container, viewer, slot, parent);
+		super(root, container, viewer, slot, parent, internalItem);
 		this.clickOrigin = clickOrigin;
 	}
 
@@ -92,4 +94,9 @@ public class SlotClickContext extends SlotContext implements IFSlotClickContext 
     public final String getClickIdentifier() {
         return getClickOrigin().getClick().name();
     }
+
+	@Override
+	public final boolean isOnEntityContainer() {
+		return getClickOrigin().getClickedInventory() instanceof PlayerInventory;
+	}
 }

@@ -65,7 +65,7 @@ public abstract class ElementFactory {
 	@NotNull
 	public abstract IFSlotContext createSlotContext(
 		int slot,
-		IFItem<?> item,
+		IFItem<?> internalItem,
 		@NotNull IFConfinedContext parent
 	);
 

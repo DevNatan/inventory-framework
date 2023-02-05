@@ -99,8 +99,8 @@ final class BukkitElementFactory extends ElementFactory {
 	}
 
 	@Override
-	public @NotNull IFSlotContext createSlotContext(int slot, IFItem<?> item, @NotNull IFConfinedContext parent) {
-		return new SlotContext(parent.getRoot(), parent.getContainer(), parent.getViewer(), slot, parent);
+	public @NotNull IFSlotContext createSlotContext(int slot, IFItem<?> internalItem, @NotNull IFConfinedContext parent) {
+		return new SlotContext(parent.getRoot(), parent.getContainer(), parent.getViewer(), slot, parent, internalItem);
 	}
 
 	@Override
