@@ -1,12 +1,7 @@
 # Changelog
 
-# 3.0.0 (unreleased)
-* Entire codebase moved from "me.saiintbrisson.minecraft" to "me.devnatan.inventoryframework"
-* Lombok-compatible API design.
-* Context `get`/`set` replaced by the new State Management System
-* Now all implementations are platform specific
-* Correction in the features independence system so that it is possible to integrate them correctly
-* "easy" examples have been replaced with complex real-world examples
+# 3.0.0-Beta (unreleased)
+Please refer to [Migrating to version 3 on Wiki](https://github.com/DevNatan/inventory-framework/wiki/Migrating-to-version-3) to details.
 
 # 2.5.4-rc.1 (10-09-2022)
 * New context history feature (#120)
