@@ -13,9 +13,10 @@ public interface IFCloseContext extends IFContext {
      * Cancels or not this context.
      * <p>
      * The side effect of canceling a close context is determined by the current platform.
+     * <p>
+     * NOOP (does nothing) if close context cancellation is not supported.
      *
      * @param cancelled If this context should be cancelled.
-     * @implNote NOOP (do nothing) if close context cancellation is not supported.
      */
     void setCancelled(boolean cancelled);
 }

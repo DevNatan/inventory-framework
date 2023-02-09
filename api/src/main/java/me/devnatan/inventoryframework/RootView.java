@@ -33,6 +33,8 @@ public interface RootView extends VirtualView {
      * configuration.
      * <p>
      * As a reference, the data defined here was defined in the constructor in previous versions.
+     *
+     * @param config A mutable ViewConfigBuilder to configure this view.
      */
     @ApiStatus.OverrideOnly
     void onInit(ViewConfigBuilder config);

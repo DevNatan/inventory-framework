@@ -31,6 +31,10 @@ subprojects {
         targetCompatibility = JavaVersion.VERSION_1_8
     }
 
+    javadoc {
+        options.memberLevel = JavadocMemberLevel.PACKAGE
+    }
+
     test {
         useJUnitPlatform()
     }

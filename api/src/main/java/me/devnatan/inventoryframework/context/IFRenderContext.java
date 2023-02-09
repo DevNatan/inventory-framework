@@ -52,27 +52,27 @@ public interface IFRenderContext<TItem> extends IFConfinedContext {
      * configuration with the possibility to change it only for that context.
      * <p>
      * Context configuration always takes precedence over root.
-     * <pre>{@code
-     * @Override
+     * <pre><code>
+     * {@literal @}Override
      * public void onInit(ViewConfigBuilder config) {
      *     config.cancelOnClick(); // cancels any click
      * }
      *
-     * @Override
+     * {@literal @}Override
      * public void onFirstRender(ViewRenderContext ctx) {
      *     ctx.config().isCancelOnClick(); // "true" inherited from root
      *     ctx.config().cancelOnClick(); // allows click only for this context
      * }
-     * }</pre>
+     * </code></pre>
      * <p>
      * Options that change the nature of the container are not allowed as the container has already
      * been created at that point.
-     * <pre>{@code
-     * @Override
+     * <pre><code>
+     * {@literal @}Override
      * public void onFirstRender(ViewRenderContext ctx) {
      *     ctx.config().title("Woo"); // throws IllegalContainerModificationException
      * }
-     * }</pre>
+     * </code></pre>
      *
      * @return The current context configuration.
      */
