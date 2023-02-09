@@ -4,7 +4,6 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.List;
 import java.util.UUID;
-import lombok.RequiredArgsConstructor;
 import me.devnatan.inventoryframework.BukkitItem;
 import me.devnatan.inventoryframework.View;
 import me.devnatan.inventoryframework.ViewConfigBuilder;
@@ -25,18 +24,18 @@ public final class ClanMemberListView extends View {
     private final State<Clan> clanState;
     private final Pagination pagination;
 
-	public ClanMemberListView(@NotNull ClansManager clansManager) {
-		this.clansManager = clansManager;
-		this.clanState = state(ctx -> {
-			// TODO fix this example using ctx.get(...)
-			return clansManager.getClan("");
-		});
-		this.membersListState = state(ctx -> {
-			// TODO fix this example using ctx.get(...)
-			return clansManager.getMembers(UUID.randomUUID());
-		});
-		this.pagination = pagination(membersListState, this::createPaginationItem);
-	}
+    public ClanMemberListView(@NotNull ClansManager clansManager) {
+        this.clansManager = clansManager;
+        this.clanState = state(ctx -> {
+            // TODO fix this example using ctx.get(...)
+            return clansManager.getClan("");
+        });
+        this.membersListState = state(ctx -> {
+            // TODO fix this example using ctx.get(...)
+            return clansManager.getMembers(UUID.randomUUID());
+        });
+        this.pagination = pagination(membersListState, this::createPaginationItem);
+    }
 
     @Override
     public void onInit(ViewConfigBuilder config) {

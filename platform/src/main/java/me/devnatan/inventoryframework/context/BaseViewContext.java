@@ -5,14 +5,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.BiConsumer;
-import lombok.RequiredArgsConstructor;
 import me.devnatan.inventoryframework.DefaultVirtualViewImpl;
 import me.devnatan.inventoryframework.IFItem;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.component.Component;
-import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.internal.platform.ViewContainer;
 import me.devnatan.inventoryframework.internal.platform.Viewer;
 import me.devnatan.inventoryframework.internal.state.DefaultStateHolder;
@@ -29,35 +27,34 @@ class BaseViewContext implements IFContext {
 
     private final @NotNull RootView root;
 
-	/* container can be null on pre-render/intermediate contexts */
-	private final @Nullable ViewContainer container;
+    /* container can be null on pre-render/intermediate contexts */
+    private final @Nullable ViewContainer container;
 
     private final StateHolder stateHolder = new DefaultStateHolder();
     private final VirtualView virtualView = new DefaultVirtualViewImpl();
     protected final Set<Viewer> viewers = new HashSet<>();
-	protected final ViewConfig config;
+    protected final ViewConfig config;
 
-	public BaseViewContext(@NotNull RootView root, @Nullable ViewContainer container) {
-		this.root = root;
-		this.container = container;
-		this.config = root.getConfig();
-	}
+    public BaseViewContext(@NotNull RootView root, @Nullable ViewContainer container) {
+        this.root = root;
+        this.container = container;
+        this.config = root.getConfig();
+    }
 
-	@Override
-	public final @NotNull ViewConfig getConfig() {
-		return config;
-	}
+    @Override
+    public final @NotNull ViewConfig getConfig() {
+        return config;
+    }
 
-	@Override
+    @Override
     public final @NotNull RootView getRoot() {
         return root;
     }
 
     @Override
     public final @NotNull ViewContainer getContainer() {
-        if (container == null)
-			throw new IllegalStateException("Unable to get null container");
-		return container;
+        if (container == null) throw new IllegalStateException("Unable to get null container");
+        return container;
     }
 
     @Override
@@ -109,7 +106,7 @@ class BaseViewContext implements IFContext {
         getContainer().close();
     }
 
-	@Override
+    @Override
     public final void open(Class<? extends RootView> other) {
         throw new UnsupportedOperationException();
     }
@@ -144,8 +141,8 @@ class BaseViewContext implements IFContext {
         stateHolder.watch(state, callback);
     }
 
-	@Override
-	public @Nullable IFItem<?> getItem(int index) {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public @Nullable IFItem<?> getItem(int index) {
+        throw new UnsupportedOperationException();
+    }
 }

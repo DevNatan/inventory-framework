@@ -10,19 +10,19 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class RenderInterceptor implements PipelineInterceptor<IFContext> {
 
-	@Override
-	public void intercept(@NotNull PipelineContext<IFContext> pipeline, IFContext context) {
-		final RootView root = context.getRoot();
-		final int len = context.getContainer().getSize();
+    @Override
+    public void intercept(@NotNull PipelineContext<IFContext> pipeline, IFContext context) {
+        final RootView root = context.getRoot();
+        final int len = context.getContainer().getSize();
 
-		for (int i = 0; i < len; i++) {
-			final IFItem<?> item = context.getItem(i);
-			if (item == null) {
-				root.removeItem(context, i);
-				continue;
-			}
+        for (int i = 0; i < len; i++) {
+            final IFItem<?> item = context.getItem(i);
+            if (item == null) {
+                root.removeItem(context, i);
+                continue;
+            }
 
-			root.renderItem(context, item);
-		}
-	}
+            root.renderItem(context, item);
+        }
+    }
 }

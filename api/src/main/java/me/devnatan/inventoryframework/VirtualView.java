@@ -23,6 +23,6 @@ public interface VirtualView {
     @UnmodifiableView
     List<Component> getComponents();
 
-	@Nullable
-	IFItem<?> getItem(int index);
+    @Nullable
+    IFItem<?> getItem(int index);
 }

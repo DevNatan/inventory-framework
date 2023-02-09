@@ -130,9 +130,7 @@ public final class BukkitItem extends IFItem<BukkitItem> {
      * @return This item.
      */
     public BukkitItem renderedWith(@Nullable Supplier<ItemStack> renderHandler) {
-        return renderHandler == null
-                ? this
-                : rendered(renderContext -> renderContext.setItem(renderHandler.get()));
+        return renderHandler == null ? this : rendered(renderContext -> renderContext.setItem(renderHandler.get()));
     }
 
     /**
@@ -214,9 +212,9 @@ public final class BukkitItem extends IFItem<BukkitItem> {
      * @param releaseHandler The item release handler.
      * @return This item.
      */
-    public BukkitItem released(@Nullable BiConsumer<? super SlotClickContext, ? super SlotClickContext> releaseHandler) {
+    public BukkitItem released(
+            @Nullable BiConsumer<? super SlotClickContext, ? super SlotClickContext> releaseHandler) {
         this.releaseHandler = (BiConsumer<? super IFSlotClickContext, ? super IFSlotClickContext>) releaseHandler;
         return this;
     }
-
 }

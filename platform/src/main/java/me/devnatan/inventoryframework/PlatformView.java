@@ -462,14 +462,11 @@ public abstract class PlatformView<
     void internalInitialization() {
         if (!isInitialized()) return;
 
-        throw new IllegalStateException(
-			"Tried to call internal initialization but view is already initialized."
-		);
+        throw new IllegalStateException("Tried to call internal initialization but view is already initialized.");
     }
 
-	@ApiStatus.Internal
-	public ElementFactory getElementFactory() {
-		return PlatformUtils.getFactory();
-	}
-
+    @ApiStatus.Internal
+    public ElementFactory getElementFactory() {
+        return PlatformUtils.getFactory();
+    }
 }

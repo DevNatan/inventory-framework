@@ -1,7 +1,6 @@
 package me.devnatan.inventoryframework.context;
 
 import me.devnatan.inventoryframework.IFItem;
-import me.devnatan.inventoryframework.exception.InventoryModificationException;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
@@ -82,7 +81,7 @@ public interface IFSlotContext extends IFContext {
      * @param item The new item that'll be set.
      * @throws InventoryModificationException When the container is changed.
      */
-//    void setItem(@Nullable Object item) throws InventoryModificationException;
+    //    void setItem(@Nullable Object item) throws InventoryModificationException;
 
     /**
      * Whether this context originated from an interaction coming from the actor's container and not

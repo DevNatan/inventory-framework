@@ -12,18 +12,18 @@ import org.jetbrains.annotations.UnmodifiableView;
 public final class DefaultVirtualViewImpl implements VirtualView {
 
     private final List<Component> components = new ArrayList<>();
-	private final List<IFItem<?>> items = new ArrayList<>();
+    private final List<IFItem<?>> items = new ArrayList<>();
 
     @Override
     public @UnmodifiableView List<Component> getComponents() {
         return Collections.unmodifiableList(components);
     }
 
-	@Override
-	public @Nullable IFItem<?> getItem(int index) {
-		if (items.isEmpty()) return null;
-		if (items.size() < index) return null;
+    @Override
+    public @Nullable IFItem<?> getItem(int index) {
+        if (items.isEmpty()) return null;
+        if (items.size() < index) return null;
 
-		return items.get(index);
-	}
+        return items.get(index);
+    }
 }

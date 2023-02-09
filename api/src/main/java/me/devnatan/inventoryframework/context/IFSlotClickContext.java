@@ -61,17 +61,17 @@ public interface IFSlotClickContext extends IFSlotContext {
     @NotNull
     String getClickIdentifier();
 
-	/**
-	 * If the click was cancelled.
-	 *
-	 * @return If the click was cancelled.
-	 */
-	boolean isCancelled();
+    /**
+     * If the click was cancelled.
+     *
+     * @return If the click was cancelled.
+     */
+    boolean isCancelled();
 
-	/**
-	 * Cancels the click.
-	 *
-	 * @param cancelled If the click should be cancelled.
-	 */
-	void setCancelled(boolean cancelled);
+    /**
+     * Cancels the click.
+     *
+     * @param cancelled If the click should be cancelled.
+     */
+    void setCancelled(boolean cancelled);
 }

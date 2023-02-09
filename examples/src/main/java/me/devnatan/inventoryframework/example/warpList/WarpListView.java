@@ -12,9 +12,11 @@ public final class WarpListView extends View {
 
     private final Pagination pagination;
 
-	public WarpListView(@NotNull WarpsManager warpsManager) {
-		pagination = pagination(warpsManager::getWarps, (item, warp) -> item.withItem(warp.getIcon().clone()));
-	}
+    public WarpListView(@NotNull WarpsManager warpsManager) {
+        pagination = pagination(
+                warpsManager::getWarps,
+                (item, warp) -> item.withItem(warp.getIcon().clone()));
+    }
 
     @Override
     public void onInit(ViewConfigBuilder config) {

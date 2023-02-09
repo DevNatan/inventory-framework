@@ -16,46 +16,47 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
 
     @NotNull
     private final Player player;
-	private final ViewConfigBuilder inheritedConfigBuilder = new ViewConfigBuilder();
 
-	@ApiStatus.Internal
+    private final ViewConfigBuilder inheritedConfigBuilder = new ViewConfigBuilder();
+
+    @ApiStatus.Internal
     public RenderContext(@NotNull RootView root, @NotNull ViewContainer container, @NotNull Viewer viewer) {
         super(root, container, viewer);
         this.player = ((BukkitViewer) viewer).getPlayer();
     }
 
-	@Override
-	public @NotNull BukkitItem layoutSlot(String character) {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public @NotNull BukkitItem layoutSlot(String character) {
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public @NotNull BukkitItem slot(int slot) {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public @NotNull BukkitItem slot(int slot) {
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public @NotNull BukkitItem slot(int row, int column) {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public @NotNull BukkitItem slot(int row, int column) {
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public @NotNull BukkitItem firstSlot() {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public @NotNull BukkitItem firstSlot() {
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public @NotNull BukkitItem lastSlot() {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public @NotNull BukkitItem lastSlot() {
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public @NotNull BukkitItem availableSlot() {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public @NotNull BukkitItem availableSlot() {
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public @NotNull ViewConfigBuilder config() {
-		return inheritedConfigBuilder;
-	}
+    @Override
+    public @NotNull ViewConfigBuilder config() {
+        return inheritedConfigBuilder;
+    }
 }

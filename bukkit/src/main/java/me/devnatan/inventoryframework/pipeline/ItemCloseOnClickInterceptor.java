@@ -19,7 +19,7 @@ public final class ItemCloseOnClickInterceptor implements PipelineInterceptor<Sl
 
         final IFItem<?> item = context.getInternalItem();
         if (item == null) return;
-		if (!item.isCloseOnClick()) return;
+        if (!item.isCloseOnClick()) return;
 
         context.close();
         pipeline.finish();

@@ -34,10 +34,14 @@ public abstract class IFItem<S extends IFItem<?>> implements Component {
     private String referenceKey;
     private Map<String, Object> data;
     private IFItem<?> overlay;
-	private boolean removed, navigationItem;
+    private boolean removed, navigationItem;
     private long updateIntervalInTicks = NO_INTERVAL;
-	@Setter(AccessLevel.PUBLIC) private State state = State.UNDEFINED;
-	@Getter(AccessLevel.PUBLIC) private boolean closeOnClick, cancelOnClick, cancelOnShiftClick;
+
+    @Setter(AccessLevel.PUBLIC)
+    private State state = State.UNDEFINED;
+
+    @Getter(AccessLevel.PUBLIC)
+    private boolean closeOnClick, cancelOnClick, cancelOnShiftClick;
 
     /**
      * Creates a new ViewItem instance.
@@ -73,8 +77,8 @@ public abstract class IFItem<S extends IFItem<?>> implements Component {
 
     @Override
     public final @NotNull VirtualView getRoot() {
-		// TODO fix this
-		throw new UnsupportedOperationException("IFItem do not have a defined root");
+        // TODO fix this
+        throw new UnsupportedOperationException("IFItem do not have a defined root");
     }
 
     public S withItem(Object item) {

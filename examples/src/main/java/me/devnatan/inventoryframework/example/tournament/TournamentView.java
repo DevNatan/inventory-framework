@@ -4,9 +4,9 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import me.devnatan.inventoryframework.View;
 import me.devnatan.inventoryframework.ViewConfigBuilder;
-import me.devnatan.inventoryframework.context.ViewContext;
-import me.devnatan.inventoryframework.context.OpenContext;
 import me.devnatan.inventoryframework.context.IFContext;
+import me.devnatan.inventoryframework.context.OpenContext;
+import me.devnatan.inventoryframework.context.ViewContext;
 import me.devnatan.inventoryframework.state.State;
 
 @RequiredArgsConstructor

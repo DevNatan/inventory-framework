@@ -1,15 +1,11 @@
 package me.devnatan.inventoryframework.pipeline;
 
-import java.util.ArrayList;
-
 import me.devnatan.inventoryframework.PlatformView;
 import me.devnatan.inventoryframework.RootView;
-import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFOpenContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.internal.ElementFactory;
-import me.devnatan.inventoryframework.internal.PlatformUtils;
 import me.devnatan.inventoryframework.internal.platform.ViewContainer;
 import me.devnatan.inventoryframework.internal.platform.Viewer;
 import org.jetbrains.annotations.NotNull;
@@ -48,19 +44,21 @@ public class OpenInterceptor implements PipelineInterceptor<IFContext> {
 
         if (skipOpen) return;
 
-		final RootView root = openContext.getRoot();
-		final ElementFactory elementFactory = ((PlatformView<?, ?, ?, ?, ?, ?>) root).getElementFactory();
-        final ViewContainer container = elementFactory.createContainer(openContext,
-			openContext.getType().normalize(openContext.getSize()),
-			openContext.getTitle(),
-			openContext.getType());
+        final RootView root = openContext.getRoot();
+        final ElementFactory elementFactory = ((PlatformView<?, ?, ?, ?, ?, ?>) root).getElementFactory();
+        final ViewContainer container = elementFactory.createContainer(
+                openContext,
+                openContext.getType().normalize(openContext.getSize()),
+                openContext.getTitle(),
+                openContext.getType());
 
-		final Viewer viewer = openContext.getViewer();
-		final IFContext generatedContext = elementFactory.createContext(root, container, viewer, IFRenderContext.class, false);
+        final Viewer viewer = openContext.getViewer();
+        final IFContext generatedContext =
+                elementFactory.createContext(root, container, viewer, IFRenderContext.class, false);
 
         generatedContext.addViewer(viewer);
         root.addContext(generatedContext);
         root.renderContext(generatedContext);
-		container.open(viewer);
+        container.open(viewer);
     }
 }

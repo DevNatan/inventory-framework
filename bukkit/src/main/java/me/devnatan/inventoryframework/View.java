@@ -17,15 +17,14 @@ import org.jetbrains.annotations.ApiStatus;
  */
 @ApiStatus.OverrideOnly
 public class View
-        extends PlatformView<
-                BukkitItem, ViewContext, OpenContext, RenderContext, SlotContext, SlotClickContext> {
+        extends PlatformView<BukkitItem, ViewContext, OpenContext, RenderContext, SlotContext, SlotClickContext> {
 
     /** {@inheritDoc} */
     @Override
     final void internalInitialization() {
-		super.internalInitialization();
+        super.internalInitialization();
 
-		final Pipeline<? super VirtualView> pipeline = getPipeline();
+        final Pipeline<? super VirtualView> pipeline = getPipeline();
         pipeline.intercept(StandardPipelinePhases.CLICK, new GlobalClickInterceptor());
         pipeline.intercept(StandardPipelinePhases.CLICK, new ItemClickInterceptor());
         pipeline.intercept(StandardPipelinePhases.CLICK, new ItemCloseOnClickInterceptor());

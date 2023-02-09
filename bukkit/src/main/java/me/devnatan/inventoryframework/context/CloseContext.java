@@ -9,37 +9,36 @@ import org.jetbrains.annotations.NotNull;
 
 public final class CloseContext extends ConfinedContext implements IFCloseContext, ViewContext {
 
-	private final Player player;
-	private boolean cancelled;
+    private final Player player;
+    private boolean cancelled;
 
-	public CloseContext(@NotNull RootView root, @NotNull ViewContainer container, @NotNull Viewer viewer) {
-		super(root, container, viewer);
-		this.player = ((BukkitViewer) viewer).getPlayer();
-	}
+    public CloseContext(@NotNull RootView root, @NotNull ViewContainer container, @NotNull Viewer viewer) {
+        super(root, container, viewer);
+        this.player = ((BukkitViewer) viewer).getPlayer();
+    }
 
-	@Override
-	public void close() {
-		throw new IllegalStateException("#close() cannot be called on close context.");
-	}
+    @Override
+    public void close() {
+        throw new IllegalStateException("#close() cannot be called on close context.");
+    }
 
-	@Override
-	public void closeForPlayer() {
-		throw new IllegalStateException("#closeForPlayer() cannot be called on close context.");
-	}
+    @Override
+    public void closeForPlayer() {
+        throw new IllegalStateException("#closeForPlayer() cannot be called on close context.");
+    }
 
-	@Override
-	public @NotNull Player getPlayer() {
-		return player;
-	}
+    @Override
+    public @NotNull Player getPlayer() {
+        return player;
+    }
 
-	@Override
-	public boolean isCancelled() {
-		return cancelled;
-	}
+    @Override
+    public boolean isCancelled() {
+        return cancelled;
+    }
 
-	@Override
-	public void setCancelled(boolean cancelled) {
-		this.cancelled = cancelled;
-	}
-
+    @Override
+    public void setCancelled(boolean cancelled) {
+        this.cancelled = cancelled;
+    }
 }

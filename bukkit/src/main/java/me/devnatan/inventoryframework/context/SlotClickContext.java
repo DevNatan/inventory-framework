@@ -21,21 +21,21 @@ public class SlotClickContext extends SlotContext implements IFSlotClickContext 
     @NotNull
     private final InventoryClickEvent clickOrigin;
 
-	@Getter @Setter
-	private boolean cancelled;
+    @Getter
+    @Setter
+    private boolean cancelled;
 
-	public SlotClickContext(
-		@NotNull RootView root,
-		@NotNull ViewContainer container,
-		@NotNull Viewer viewer,
-		int slot,
-		@NotNull IFContext parent,
-		@Nullable IFItem<?> internalItem,
-		@NotNull InventoryClickEvent clickOrigin
-	) {
-		super(root, container, viewer, slot, parent, internalItem);
-		this.clickOrigin = clickOrigin;
-	}
+    public SlotClickContext(
+            @NotNull RootView root,
+            @NotNull ViewContainer container,
+            @NotNull Viewer viewer,
+            int slot,
+            @NotNull IFContext parent,
+            @Nullable IFItem<?> internalItem,
+            @NotNull InventoryClickEvent clickOrigin) {
+        super(root, container, viewer, slot, parent, internalItem);
+        this.clickOrigin = clickOrigin;
+    }
 
     /**
      * The event that triggered this context.
@@ -100,8 +100,8 @@ public class SlotClickContext extends SlotContext implements IFSlotClickContext 
         return getClickOrigin().getClick().name();
     }
 
-	@Override
-	public final boolean isOnEntityContainer() {
-		return getClickOrigin().getClickedInventory() instanceof PlayerInventory;
-	}
+    @Override
+    public final boolean isOnEntityContainer() {
+        return getClickOrigin().getClickedInventory() instanceof PlayerInventory;
+    }
 }
