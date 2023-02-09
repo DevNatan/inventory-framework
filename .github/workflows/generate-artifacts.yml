@@ -28,7 +28,7 @@ jobs:
       - name: Generate artifacts
         uses: burrunan/gradle-cache-action@v1
         with:
-          arguments: ${{ steps.vars.outputs.lowercase }}-plugin:shadowJar
+          arguments: ${{ steps.vars.outputs.lowercase }}:shadowJar
           gradle-version: wrapper
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
