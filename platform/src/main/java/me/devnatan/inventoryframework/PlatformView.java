@@ -19,6 +19,7 @@ import me.devnatan.inventoryframework.pipeline.Pipeline;
 import me.devnatan.inventoryframework.pipeline.PipelinePhase;
 import me.devnatan.inventoryframework.state.MutableIntState;
 import me.devnatan.inventoryframework.state.MutableState;
+import me.devnatan.inventoryframework.state.Pagination;
 import me.devnatan.inventoryframework.state.State;
 import me.devnatan.inventoryframework.state.StateHolder;
 import org.jetbrains.annotations.ApiStatus;
@@ -35,43 +36,26 @@ public abstract class PlatformView<
                 TSlotClickContext extends IFSlotClickContext>
         implements RootView {
 
-    protected static final PipelinePhase OPEN = new PipelinePhase("open");
-    protected static final PipelinePhase CLICK = new PipelinePhase("click");
-    protected static final PipelinePhase CLOSE = new PipelinePhase("close");
-
     private ViewConfig config;
     private final Pipeline<? super VirtualView> pipeline = new Pipeline<>();
     private final Set<IFContext> contexts = Collections.newSetFromMap(Collections.synchronizedMap(new HashMap<>()));
 
     private boolean initialized;
 
-    /**
-     * {@inheritDoc}
-     */
-    @NotNull
     @Override
-    public final ViewConfig getConfig() {
+    public final @NotNull ViewConfig getConfig() {
         return config;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @NotNull
     @Override
-    public final Pipeline<? super VirtualView> getPipeline() {
+    public final @NotNull Pipeline<? super VirtualView> getPipeline() {
         return pipeline;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @NotNull
-    @UnmodifiableView
-    @Override
-    public final Set<IFContext> getContexts() {
-        return Collections.unmodifiableSet(contexts);
-    }
+	@Override
+	public final @NotNull Set<IFContext> getContexts() {
+		return Collections.unmodifiableSet(contexts);
+	}
 
     /**
      * {@inheritDoc}

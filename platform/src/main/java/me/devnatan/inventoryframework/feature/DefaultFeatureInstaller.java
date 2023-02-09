@@ -7,18 +7,17 @@ import java.util.Map;
 import java.util.function.UnaryOperator;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import me.devnatan.inventoryframework.ViewFrame;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Simple HashMap-backed feature installer implementation.
  *
  * @param <P> The platform view framework.
- * @see DefaultFeatureInstaller
  */
 @RequiredArgsConstructor
-public class DefaultFeatureInstaller<P extends PlatformViewFrame<?, ?, ?>> implements FeatureInstaller<P> {
+public class DefaultFeatureInstaller<P extends ViewFrame> implements FeatureInstaller<P> {
 
-    // don't change this to Maps.newHashMap, we don't want Guava here
     private final Map<Class<?>, Feature<?, ?>> featureList = new HashMap<>();
 
     @Getter
@@ -30,14 +29,12 @@ public class DefaultFeatureInstaller<P extends PlatformViewFrame<?, ?, ?>> imple
     }
 
     @SuppressWarnings("unchecked")
-    @NotNull
     @Override
-    public <C, R> R install(@NotNull Feature<C, R> feature, @NotNull UnaryOperator<C> configure) {
+    public <C, R> @NotNull R install(@NotNull Feature<C, R> feature, @NotNull UnaryOperator<C> configure) {
         final Class<?> type = feature.getClass();
         if (featureList.containsKey(type))
             throw new IllegalStateException("Feature already installed, cannot install feature multiple times");
 
-        // TODO handle installation error
         final Feature<C, R> value = (Feature<C, R>) feature.install(platform, configure);
         synchronized (featureList) {
             featureList.put(type, value);

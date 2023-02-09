@@ -6,17 +6,17 @@ subprojects {
     apply plugin: 'java-library'
     apply plugin: "com.diffplug.spotless"
 
-    group 'me.saiintbrisson.minecraft'
-    version '3.0.0'
+    group 'me.devnatan.inventoryframework'
+    version '3.0.0-beta'
 
     repositories {
         mavenCentral()
     }
 
     dependencies {
-        annotationProcessor libs.lombok
-        compileOnlyApi libs.jetbrains.annotations
         compileOnly libs.lombok
+        compileOnlyApi libs.jetbrains.annotations
+        annotationProcessor libs.lombok
         testCompileOnly libs.jetbrains.annotations
         testCompileOnly libs.lombok
         testRuntimeOnly libs.junit.engine
@@ -27,7 +27,6 @@ subprojects {
     java {
         withSourcesJar()
         withJavadocJar()
-
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }

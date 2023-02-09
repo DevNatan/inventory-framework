@@ -24,7 +24,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnmodifiableView;
 
-@RequiredArgsConstructor
 @ApiStatus.Internal
 class BaseViewContext implements IFContext {
 
@@ -36,7 +35,13 @@ class BaseViewContext implements IFContext {
     private final StateHolder stateHolder = new DefaultStateHolder();
     private final VirtualView virtualView = new DefaultVirtualViewImpl();
     protected final Set<Viewer> viewers = new HashSet<>();
-	protected final ViewConfig config = root.getConfig();
+	protected final ViewConfig config;
+
+	public BaseViewContext(@NotNull RootView root, @Nullable ViewContainer container) {
+		this.root = root;
+		this.container = container;
+		this.config = root.getConfig();
+	}
 
 	@Override
 	public final @NotNull ViewConfig getConfig() {
