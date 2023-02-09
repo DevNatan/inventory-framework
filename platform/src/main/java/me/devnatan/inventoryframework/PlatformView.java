@@ -1,9 +1,6 @@
 package me.devnatan.inventoryframework;
 
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -15,8 +12,6 @@ import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.context.IFSlotContext;
 import me.devnatan.inventoryframework.internal.ElementFactory;
 import me.devnatan.inventoryframework.internal.PlatformUtils;
-import me.devnatan.inventoryframework.pipeline.Pipeline;
-import me.devnatan.inventoryframework.pipeline.PipelinePhase;
 import me.devnatan.inventoryframework.state.MutableIntState;
 import me.devnatan.inventoryframework.state.MutableState;
 import me.devnatan.inventoryframework.state.Pagination;
@@ -25,7 +20,6 @@ import me.devnatan.inventoryframework.state.StateHolder;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.UnmodifiableView;
 
 public abstract class PlatformView<
                 TItem extends IFItem<TItem>,
@@ -34,28 +28,9 @@ public abstract class PlatformView<
                 TRenderContext extends IFRenderContext<TItem>,
                 TSlotContext extends IFSlotContext,
                 TSlotClickContext extends IFSlotClickContext>
-        implements RootView {
-
-    private ViewConfig config;
-    private final Pipeline<? super VirtualView> pipeline = new Pipeline<>();
-    private final Set<IFContext> contexts = Collections.newSetFromMap(Collections.synchronizedMap(new HashMap<>()));
+        extends DefaultRootView {
 
     private boolean initialized;
-
-    @Override
-    public final @NotNull ViewConfig getConfig() {
-        return config;
-    }
-
-    @Override
-    public final @NotNull Pipeline<? super VirtualView> getPipeline() {
-        return pipeline;
-    }
-
-	@Override
-	public final @NotNull Set<IFContext> getContexts() {
-		return Collections.unmodifiableSet(contexts);
-	}
 
     /**
      * {@inheritDoc}

@@ -1,5 +1,7 @@
 package me.devnatan.inventoryframework.context;
 
+import lombok.Getter;
+import lombok.Setter;
 import me.devnatan.inventoryframework.IFItem;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.internal.platform.ViewContainer;
@@ -18,6 +20,9 @@ public class SlotClickContext extends SlotContext implements IFSlotClickContext 
 
     @NotNull
     private final InventoryClickEvent clickOrigin;
+
+	@Getter @Setter
+	private boolean cancelled;
 
 	public SlotClickContext(
 		@NotNull RootView root,

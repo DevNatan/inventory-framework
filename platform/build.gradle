@@ -1,5 +1,6 @@
 apply from: '../publish.gradle'
 
 dependencies {
-    api projects.api
+    compileOnlyApi projects.api
+    compileOnlyApi projects.framework
 }

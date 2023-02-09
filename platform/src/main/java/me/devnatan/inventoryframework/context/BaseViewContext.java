@@ -80,7 +80,7 @@ class BaseViewContext implements IFContext {
     }
 
     @Override
-    public final @NotNull String getTitle() {
+    public @NotNull String getTitle() {
         return getUpdatedTitle() == null ? getInitialTitle() : getUpdatedTitle();
     }
 

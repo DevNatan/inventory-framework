@@ -10,21 +10,33 @@ import me.devnatan.inventoryframework.View;
 import me.devnatan.inventoryframework.ViewConfigBuilder;
 import me.devnatan.inventoryframework.context.OpenContext;
 import me.devnatan.inventoryframework.context.RenderContext;
+import me.devnatan.inventoryframework.state.Pagination;
 import me.devnatan.inventoryframework.state.State;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.jetbrains.annotations.NotNull;
 
-@RequiredArgsConstructor
 public final class ClanMemberListView extends View {
 
     private final ClansManager clansManager;
+    private final State<List<ClanMember>> membersListState;
+    private final State<Clan> clanState;
+    private final Pagination pagination;
 
-	private final State<UUID> clanIdState = initialState(UUID.class);
-    private final State<List<ClanMember>> membersListState = state(ctx -> clansManager.getMembers(clanIdState.get(ctx)));
-    private final State<Clan> clanState = state(ctx -> clansManager.getClan(clanIdState.get(ctx)));
-    private final Pagination pagination = pagination(membersListState, this::createPaginationItem);
+	public ClanMemberListView(@NotNull ClansManager clansManager) {
+		this.clansManager = clansManager;
+		this.clanState = state(ctx -> {
+			// TODO fix this example using ctx.get(...)
+			return clansManager.getClan("");
+		});
+		this.membersListState = state(ctx -> {
+			// TODO fix this example using ctx.get(...)
+			return clansManager.getMembers(UUID.randomUUID());
+		});
+		this.pagination = pagination(membersListState, this::createPaginationItem);
+	}
 
     @Override
     public void onInit(ViewConfigBuilder config) {

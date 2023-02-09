@@ -5,6 +5,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import lombok.Getter;
+import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.context.IFSlotContext;
 import me.devnatan.inventoryframework.context.SlotClickContext;
 import me.devnatan.inventoryframework.context.SlotContext;
@@ -15,10 +16,10 @@ import org.jetbrains.annotations.Nullable;
 @Getter
 public final class BukkitItem extends IFItem<BukkitItem> {
 
-    private Consumer<SlotContext> renderHandler, updateHandler;
-    private Consumer<SlotClickContext> clickHandler;
-    private Consumer<SlotClickContext> holdHandler;
-    private BiConsumer<SlotClickContext, SlotClickContext> releaseHandler;
+    private Consumer<? super IFSlotContext> renderHandler, updateHandler;
+    private Consumer<? super IFSlotClickContext> clickHandler;
+    private Consumer<? super IFSlotClickContext> holdHandler;
+    private BiConsumer<? super IFSlotClickContext, ? super IFSlotClickContext> releaseHandler;
 
     /**
      * Defines the item that will be used as fallback for rendering in the slot where this item is
@@ -84,15 +85,15 @@ public final class BukkitItem extends IFItem<BukkitItem> {
      * <p>This handler is called every time the item or the view that owns it is updated.
      *
      * <p>It is allowed to change the item that will be displayed in this handler using the context
-     * mutation functions, e.g.: {@link IFSlotContext#setItem(Object)}.
+     * mutation functions.
      *
      * <p>An item can be re-rendered individually using {@link IFSlotContext#updateSlot()}.
      *
      * @param renderHandler The render handler.
      * @return This item.
      */
-    public BukkitItem rendered(@Nullable Consumer<SlotContext> renderHandler) {
-        this.renderHandler = renderHandler;
+    public BukkitItem rendered(@Nullable Consumer<? super SlotContext> renderHandler) {
+        this.renderHandler = (Consumer<? super IFSlotContext>) renderHandler;
         return this;
     }
 
@@ -102,18 +103,17 @@ public final class BukkitItem extends IFItem<BukkitItem> {
      * <p>This handler is called every time the item or the view that owns it is updated.
      *
      * <p>It is allowed to change the item that will be displayed in this handler using the context
-     * mutation functions, e.g.: {@link IFSlotContext#setItem(Object)}.
+     * mutation functions.
      *
      * <p>An item can be re-rendered individually using {@link IFSlotContext#updateSlot()}.
      *
      * @param renderHandler The render handler.
      * @return This item.
      */
-    public BukkitItem rendered(@Nullable Function<SlotContext, ItemStack> renderHandler) {
+    public BukkitItem renderedWith(@Nullable Function<SlotContext, ItemStack> renderHandler) {
         return renderHandler == null
                 ? this
-                : rendered((Consumer<SlotContext>)
-                        renderContext -> renderContext.setItem(renderHandler.apply(renderContext)));
+                : rendered(renderContext -> renderContext.setItem(renderHandler.apply(renderContext)));
     }
 
     /**
@@ -122,32 +122,32 @@ public final class BukkitItem extends IFItem<BukkitItem> {
      * <p>This handler is called every time the item or the view that owns it is updated.
      *
      * <p>It is allowed to change the item that will be displayed in this handler using the context
-     * mutation functions, e.g.: {@link IFSlotContext#setItem(Object)}.
+     * mutation functions.
      *
      * <p>An item can be re-rendered individually using {@link IFSlotContext#updateSlot()}.
      *
      * @param renderHandler The render handler.
      * @return This item.
      */
-    public BukkitItem rendered(@Nullable Supplier<ItemStack> renderHandler) {
+    public BukkitItem renderedWith(@Nullable Supplier<ItemStack> renderHandler) {
         return renderHandler == null
                 ? this
-                : rendered((Consumer<SlotContext>) renderContext -> renderContext.setItem(renderHandler.get()));
+                : rendered(renderContext -> renderContext.setItem(renderHandler.get()));
     }
 
     /**
      * Called when the item is updated.
      *
      * <p>It is allowed to change the item that will be displayed in this handler using the context
-     * mutation functions, e.g.: {@link IFSlotContext#setItem(Object)}.
+     * mutation functions.
      *
      * <p>An item can be updated individually using {@link IFSlotContext#updateSlot()}.
      *
      * @param updateHandler The update handler.
      * @return This item.
      */
-    public BukkitItem updated(@Nullable Consumer<SlotContext> updateHandler) {
-        this.updateHandler = updateHandler;
+    public BukkitItem updated(@Nullable Consumer<? super SlotContext> updateHandler) {
+        this.updateHandler = (Consumer<? super IFSlotContext>) updateHandler;
         return this;
     }
 
@@ -162,8 +162,8 @@ public final class BukkitItem extends IFItem<BukkitItem> {
      * @param clickHandler The click handler.
      * @return This item.
      */
-    public BukkitItem clicked(@Nullable Consumer<SlotClickContext> clickHandler) {
-        this.clickHandler = clickHandler;
+    public BukkitItem clicked(@Nullable Consumer<? super SlotClickContext> clickHandler) {
+        this.clickHandler = (Consumer<? super IFSlotClickContext>) clickHandler;
         return this;
     }
 
@@ -189,15 +189,15 @@ public final class BukkitItem extends IFItem<BukkitItem> {
      * <p>This handler works on any container that the actor has access to and only works if the
      * interaction has not been cancelled.
      *
-     * <p>You can check if the item has been released using {@link #onRelease(BiConsumer)}.
+     * <p>You can check if the item has been released using {@link #released(BiConsumer)}.
      *
      * <p>**Using item mutation functions in this handler is not allowed.**
      *
      * @param holdHandler The item hold handler.
      * @return This item.
      */
-    public BukkitItem onHold(@Nullable Consumer<SlotClickContext> holdHandler) {
-        this.holdHandler = holdHandler;
+    public BukkitItem held(@Nullable Consumer<? super SlotClickContext> holdHandler) {
+        this.holdHandler = (Consumer<? super IFSlotClickContext>) holdHandler;
         return this;
     }
 
@@ -207,15 +207,16 @@ public final class BukkitItem extends IFItem<BukkitItem> {
      * <p>This handler works on any container that the actor has access to and only works if the
      * interaction has not been cancelled.
      *
-     * <p>You can know when the item was hold using {@link #onHold(Consumer)}.
+     * <p>You can know when the item was hold using {@link #held(Consumer)}.
      *
      * <p>**Using item mutation functions in this handler is not allowed.**
      *
      * @param releaseHandler The item release handler.
      * @return This item.
      */
-    public BukkitItem onRelease(@Nullable BiConsumer<SlotClickContext, SlotClickContext> releaseHandler) {
-        this.releaseHandler = releaseHandler;
+    public BukkitItem released(@Nullable BiConsumer<? super SlotClickContext, ? super SlotClickContext> releaseHandler) {
+        this.releaseHandler = (BiConsumer<? super IFSlotClickContext, ? super IFSlotClickContext>) releaseHandler;
         return this;
     }
+
 }

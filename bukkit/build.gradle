@@ -10,6 +10,7 @@ repositories {
 
 dependencies {
     compileOnly libs.spigot.api
+    implementation projects.api
     implementation projects.platform
 }
 

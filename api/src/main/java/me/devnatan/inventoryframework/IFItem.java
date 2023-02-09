@@ -29,16 +29,15 @@ public abstract class IFItem<S extends IFItem<?>> implements Component {
         HOLDING
     }
 
-    private final VirtualView root;
-
     private Object item;
     private int slot;
-    private State state = State.UNDEFINED;
     private String referenceKey;
     private Map<String, Object> data;
     private IFItem<?> overlay;
-    private boolean removed, navigationItem, closeOnClick, cancelOnClick, cancelOnShiftClick;
+	private boolean removed, navigationItem;
     private long updateIntervalInTicks = NO_INTERVAL;
+	@Setter(AccessLevel.PUBLIC) private State state = State.UNDEFINED;
+	@Getter(AccessLevel.PUBLIC) private boolean closeOnClick, cancelOnClick, cancelOnShiftClick;
 
     /**
      * Creates a new ViewItem instance.
@@ -47,8 +46,8 @@ public abstract class IFItem<S extends IFItem<?>> implements Component {
      * this library. No compatibility guarantees are provided.</i></b>
      */
     @ApiStatus.Internal
-    public IFItem(@NotNull VirtualView root) {
-        this(root, -1);
+    public IFItem() {
+        this(-1);
     }
 
     /**
@@ -57,12 +56,10 @@ public abstract class IFItem<S extends IFItem<?>> implements Component {
      * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
      * this library. No compatibility guarantees are provided.</i></b>
      *
-     * @param root The root of this view.
      * @param slot The slot that this item will be placed initially.
      */
     @ApiStatus.Internal
-    public IFItem(@NotNull VirtualView root, int slot) {
-        this.root = root;
+    public IFItem(int slot) {
         this.slot = slot;
     }
 
@@ -76,7 +73,8 @@ public abstract class IFItem<S extends IFItem<?>> implements Component {
 
     @Override
     public final @NotNull VirtualView getRoot() {
-        return root;
+		// TODO fix this
+		throw new UnsupportedOperationException("IFItem do not have a defined root");
     }
 
     public S withItem(Object item) {
@@ -241,7 +239,7 @@ public abstract class IFItem<S extends IFItem<?>> implements Component {
         return (S) this;
     }
 
-    public S watchUpdate(me.devnatan.inventoryframework.state.State<?>... state) {
+    public S watch(me.devnatan.inventoryframework.state.State<?>... state) {
         throw new UnsupportedOperationException();
     }
 
@@ -258,5 +256,5 @@ public abstract class IFItem<S extends IFItem<?>> implements Component {
     public abstract Consumer<? super IFSlotClickContext> getHoldHandler();
 
     @ApiStatus.Internal
-    public abstract BiConsumer<? super IFSlotClickContext, ? extends IFSlotClickContext> getReleaseHandler();
+    public abstract BiConsumer<? super IFSlotClickContext, ? super IFSlotClickContext> getReleaseHandler();
 }

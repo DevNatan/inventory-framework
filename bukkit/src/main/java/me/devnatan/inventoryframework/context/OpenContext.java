@@ -40,6 +40,11 @@ public final class OpenContext extends ConfinedContext implements IFOpenContext,
 	}
 
 	@Override
+	public @NotNull String getTitle() {
+		return title == null ? super.getTitle() : title;
+	}
+
+	@Override
 	public CompletableFuture<Void> getAsyncOpenJob() {
 		return waitTask;
 	}
