@@ -39,6 +39,14 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
         throw new UnsupportedOperationException();
     }
 
+    public @NotNull BukkitItem layoutSlot(String character, ItemStack item) {
+        return layoutSlot(character).item(item);
+    }
+
+    public @NotNull BukkitItem layoutSlot(String character, Supplier<ItemStack> itemRenderHandler) {
+        return layoutSlot(character).rendered(itemRenderHandler);
+    }
+
     @Override
     public @NotNull BukkitItem slot(int slot) {
         throw new UnsupportedOperationException();
