@@ -5,77 +5,61 @@ import org.jetbrains.annotations.NotNull;
 
 public interface IFRenderContext<TItem> extends IFConfinedContext {
 
-    @NotNull
-    TItem layoutSlot(String character);
+	/**
+	 * This allows access the current configuration with the possibility to change it only for that
+	 * context.
+	 * <p>
+	 * By default, all contexts inherit their root configuration, context configuration always takes
+	 * precedence over root.
+	 * <p>
+	 * Options that change the nature of the container are not allowed to be modifier as the
+	 * container has already been created at that point.
+	 *
+	 * @return The current context configuration.
+	 */
+	@NotNull
+	ViewConfigBuilder modifyConfig();
 
-    /**
-     * Adds an item to a specific slot in the context container.
-     *
-     * @param slot The slot in which the item will be positioned.
-     * @return A {@link TItem item builder} to configure the item.
-     */
-    @NotNull
-    TItem slot(int slot);
+	/**
+	 * Adds an item to a specific slot in the context container.
+	 *
+	 * @param slot The slot in which the item will be positioned.
+	 * @return A item builder to configure the item.
+	 */
+	@NotNull
+	TItem slot(int slot);
 
-    /**
-     * Adds an item at the specific row and column in that context's container.
-     *
-     * @param row    The row in which the item will be positioned.
-     * @param column The column in which the item will be positioned.
-     * @return A {@link TItem item builder} to configure the item.
-     */
-    @NotNull
-    TItem slot(int row, int column);
+	/**
+	 * Adds an item at the specific column and ROW (X, Y) in that context's container.
+	 *
+	 * @param row    The row (Y) in which the item will be positioned.
+	 * @param column The column (X) in which the item will be positioned.
+	 * @return A item builder to configure the item.
+	 */
+	@NotNull
+	TItem slot(int row, int column);
 
-    /**
-     * Adds an item to the first slot of this context's container.
-     *
-     * @return A {@link TItem item builder} to configure the item.
-     */
-    @NotNull
-    TItem firstSlot();
+	/**
+	 * Adds an item to the first slot of this context's container.
+	 *
+	 * @return A {@link TItem item builder} to configure the item.
+	 */
+	@NotNull
+	TItem firstSlot();
 
-    /**
-     * Adds an item to the first slot of this context's container.
-     *
-     * @return A {@link TItem item builder} to configure the item.
-     */
-    @NotNull
-    TItem lastSlot();
+	/**
+	 * Adds an item to the first slot of this context's container.
+	 *
+	 * @return A {@link TItem item builder} to configure the item.
+	 */
+	@NotNull
+	TItem lastSlot();
 
-    // TODO doc
-    @NotNull
-    TItem availableSlot();
+	// TODO doc
+	@NotNull
+	TItem availableSlot();
 
-    /**
-     * By default, all contexts inherit their root configuration. This allows access the current
-     * configuration with the possibility to change it only for that context.
-     * <p>
-     * Context configuration always takes precedence over root.
-     * <pre><code>
-     * {@literal @}Override
-     * public void onInit(ViewConfigBuilder config) {
-     *     config.cancelOnClick(); // cancels any click
-     * }
-     *
-     * {@literal @}Override
-     * public void onFirstRender(ViewRenderContext ctx) {
-     *     ctx.config().isCancelOnClick(); // "true" inherited from root
-     *     ctx.config().cancelOnClick(); // allows click only for this context
-     * }
-     * </code></pre>
-     * <p>
-     * Options that change the nature of the container are not allowed as the container has already
-     * been created at that point.
-     * <pre><code>
-     * {@literal @}Override
-     * public void onFirstRender(ViewRenderContext ctx) {
-     *     ctx.config().title("Woo"); // throws IllegalContainerModificationException
-     * }
-     * </code></pre>
-     *
-     * @return The current context configuration.
-     */
-    @NotNull
-    ViewConfigBuilder config();
+	@NotNull
+	TItem layoutSlot(String character);
+
 }
