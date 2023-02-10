@@ -36,6 +36,7 @@ public class OpenInterceptor implements PipelineInterceptor<IFContext> {
                 });
     }
 
+    @SuppressWarnings("rawtypes")
     private void finishOpen(@NotNull PipelineContext<IFContext> pipeline, @NotNull IFOpenContext openContext) {
         if (openContext.isCancelled()) {
             pipeline.finish();
@@ -45,7 +46,7 @@ public class OpenInterceptor implements PipelineInterceptor<IFContext> {
         if (skipOpen) return;
 
         final RootView root = openContext.getRoot();
-        final ElementFactory elementFactory = ((PlatformView<?, ?, ?, ?, ?, ?>) root).getElementFactory();
+        final ElementFactory elementFactory = ((PlatformView) root).getElementFactory();
         final ViewContainer container = elementFactory.createContainer(
                 openContext,
                 openContext.getType().normalize(openContext.getSize()),
