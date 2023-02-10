@@ -1,0 +1,26 @@
+plugins {
+    alias(libs.plugins.shadowjar)
+}
+
+apply from: '../publish.gradle'
+
+dependencies {
+    compileOnlyApi projects.api
+    compileOnlyApi projects.framework
+    compileOnlyApi projects.platform
+    compileOnlyApi projects.bukkit
+}
+
+jar {
+    manifest {
+        attributes(
+                'Implementation-Title': 'inventory-framework',
+                'Implementation-Version': project.version
+        )
+    }
+
+    from {
+        configurations.runtimeClasspath.filter { it.exists() }
+                .collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
