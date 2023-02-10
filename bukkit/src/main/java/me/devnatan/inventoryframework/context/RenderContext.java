@@ -15,7 +15,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 @Getter
-public final class RenderContext extends ConfinedContext implements IFRenderContext<BukkitItem> {
+public final class RenderContext extends ConfinedContext implements IFRenderContext<BukkitItem>, Context {
 
     @NotNull
     private final Player player;

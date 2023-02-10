@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @ApiStatus.Internal
-public class SlotContext extends ConfinedContext implements Context, IFSlotContext {
+public class SlotContext extends ConfinedContext implements IFSlotContext, Context {
 
     private final int slot;
     private final Player player;
