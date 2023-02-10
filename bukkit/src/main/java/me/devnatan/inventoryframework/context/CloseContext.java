@@ -18,12 +18,10 @@ public final class CloseContext extends ConfinedContext implements IFCloseContex
     }
 
     @Override
-    public void close() {
-    }
+    public void close() {}
 
     @Override
-    public void closeForPlayer() {
-    }
+    public void closeForPlayer() {}
 
     @Override
     public @NotNull Player getPlayer() {

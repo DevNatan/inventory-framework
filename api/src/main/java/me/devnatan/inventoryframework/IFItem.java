@@ -254,7 +254,7 @@ public abstract class IFItem<S extends IFItem<?>> implements Component {
     public abstract Consumer<? super IFSlotContext> getUpdateHandler();
 
     @ApiStatus.Internal
-	public abstract Consumer<? super IFSlotClickContext> getClickHandler();
+    public abstract Consumer<? super IFSlotClickContext> getClickHandler();
 
     @ApiStatus.Internal
     public abstract Consumer<? super IFSlotClickContext> getHoldHandler();

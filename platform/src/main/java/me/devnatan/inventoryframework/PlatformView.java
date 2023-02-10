@@ -5,7 +5,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
-
 import me.devnatan.inventoryframework.context.IFCloseContext;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFOpenContext;
@@ -27,7 +26,7 @@ public abstract class PlatformView<
                 TItem extends IFItem<TItem>,
                 TContext extends IFContext,
                 TOpenContext extends IFOpenContext,
-				TCloseContext extends IFCloseContext,
+                TCloseContext extends IFCloseContext,
                 TRenderContext extends IFRenderContext<TItem>,
                 TSlotContext extends IFSlotContext,
                 TSlotClickContext extends IFSlotClickContext>
