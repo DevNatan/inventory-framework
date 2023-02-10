@@ -1,5 +1,6 @@
 package me.devnatan.inventoryframework.context;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import me.devnatan.inventoryframework.BukkitItem;
 import me.devnatan.inventoryframework.RootView;
@@ -8,8 +9,11 @@ import me.devnatan.inventoryframework.internal.BukkitViewer;
 import me.devnatan.inventoryframework.internal.platform.ViewContainer;
 import me.devnatan.inventoryframework.internal.platform.Viewer;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.function.Supplier;
 
 @Getter
 public final class RenderContext extends ConfinedContext implements IFRenderContext<BukkitItem> {
@@ -17,6 +21,7 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
     @NotNull
     private final Player player;
 
+	@Getter(AccessLevel.PRIVATE)
     private final ViewConfigBuilder inheritedConfigBuilder = new ViewConfigBuilder();
 
     @ApiStatus.Internal
@@ -24,6 +29,11 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
         super(root, container, viewer);
         this.player = ((BukkitViewer) viewer).getPlayer();
     }
+
+	@Override
+	public @NotNull ViewConfigBuilder modifyConfig() {
+		return inheritedConfigBuilder;
+	}
 
     @Override
     public @NotNull BukkitItem layoutSlot(String character) {
@@ -35,28 +45,48 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
         throw new UnsupportedOperationException();
     }
 
+	public @NotNull BukkitItem slot(int slot, ItemStack item) {
+		return slot(slot).item(item);
+	}
+
     @Override
     public @NotNull BukkitItem slot(int row, int column) {
         throw new UnsupportedOperationException();
     }
+
+	public @NotNull BukkitItem slot(int row, int column, ItemStack item) {
+		return slot(row, column).item(item);
+	}
 
     @Override
     public @NotNull BukkitItem firstSlot() {
         throw new UnsupportedOperationException();
     }
 
+	public @NotNull BukkitItem firstSlot(ItemStack item) {
+		return firstSlot().item(item);
+	}
+
     @Override
     public @NotNull BukkitItem lastSlot() {
         throw new UnsupportedOperationException();
     }
+
+	public @NotNull BukkitItem lastSlot(ItemStack item) {
+		return lastSlot().item(item);
+	}
 
     @Override
     public @NotNull BukkitItem availableSlot() {
         throw new UnsupportedOperationException();
     }
 
-    @Override
-    public @NotNull ViewConfigBuilder config() {
-        return inheritedConfigBuilder;
-    }
+	public @NotNull BukkitItem availableSlot(ItemStack item) {
+		return availableSlot().item(item);
+	}
+
+	public @NotNull BukkitItem availableSlot(Supplier<ItemStack> itemRenderHandler) {
+		return availableSlot().rendered(itemRenderHandler);
+	}
+
 }

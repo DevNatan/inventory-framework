@@ -16,7 +16,7 @@ import org.jetbrains.annotations.Nullable;
 
 @Getter
 @Setter
-public final class OpenContext extends ConfinedContext implements IFOpenContext, ViewContext {
+public final class OpenContext extends ConfinedContext implements IFOpenContext, Context {
 
     private final Player player;
 

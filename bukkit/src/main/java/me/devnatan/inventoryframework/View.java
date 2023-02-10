@@ -1,10 +1,12 @@
 package me.devnatan.inventoryframework;
 
+import me.devnatan.inventoryframework.context.CloseContext;
 import me.devnatan.inventoryframework.context.OpenContext;
 import me.devnatan.inventoryframework.context.RenderContext;
 import me.devnatan.inventoryframework.context.SlotClickContext;
 import me.devnatan.inventoryframework.context.SlotContext;
-import me.devnatan.inventoryframework.context.ViewContext;
+import me.devnatan.inventoryframework.context.Context;
+import me.devnatan.inventoryframework.internal.ElementFactory;
 import me.devnatan.inventoryframework.pipeline.GlobalClickInterceptor;
 import me.devnatan.inventoryframework.pipeline.ItemClickInterceptor;
 import me.devnatan.inventoryframework.pipeline.ItemCloseOnClickInterceptor;
@@ -17,7 +19,7 @@ import org.jetbrains.annotations.ApiStatus;
  */
 @ApiStatus.OverrideOnly
 public class View
-        extends PlatformView<BukkitItem, ViewContext, OpenContext, RenderContext, SlotContext, SlotClickContext> {
+        extends PlatformView<BukkitItem, Context, OpenContext, CloseContext, RenderContext, SlotContext, SlotClickContext> {
 
     /** {@inheritDoc} */
     @Override
@@ -29,4 +31,9 @@ public class View
         pipeline.intercept(StandardPipelinePhases.CLICK, new ItemClickInterceptor());
         pipeline.intercept(StandardPipelinePhases.CLICK, new ItemCloseOnClickInterceptor());
     }
+
+	@Override
+	public final ElementFactory getElementFactory() {
+		return super.getElementFactory();
+	}
 }

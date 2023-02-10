@@ -7,7 +7,7 @@ import me.devnatan.inventoryframework.internal.platform.Viewer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public final class CloseContext extends ConfinedContext implements IFCloseContext, ViewContext {
+public final class CloseContext extends ConfinedContext implements IFCloseContext, Context {
 
     private final Player player;
     private boolean cancelled;
@@ -19,12 +19,10 @@ public final class CloseContext extends ConfinedContext implements IFCloseContex
 
     @Override
     public void close() {
-        throw new IllegalStateException("#close() cannot be called on close context.");
     }
 
     @Override
     public void closeForPlayer() {
-        throw new IllegalStateException("#closeForPlayer() cannot be called on close context.");
     }
 
     @Override

@@ -30,7 +30,7 @@ public final class WarpListView extends View {
 
     @Override
     public void onFirstRender(RenderContext ctx) {
-        ctx.layoutSlot("<").withItem(Material.ARROW).clicked(pagination::back);
-        ctx.layoutSlot(">").withItem(Material.ARROW).clicked(pagination::advance);
+        ctx.layoutSlot("<").withItem(Material.ARROW).onClick(pagination::back);
+        ctx.layoutSlot(">").withItem(Material.ARROW).onClick(pagination::advance);
     }
 }
