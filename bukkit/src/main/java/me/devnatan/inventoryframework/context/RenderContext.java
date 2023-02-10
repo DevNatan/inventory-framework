@@ -49,6 +49,10 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
 		return slot(slot).item(item);
 	}
 
+	public @NotNull BukkitItem slot(int slot, Supplier<ItemStack> itemRenderHandler) {
+		return slot(slot).rendered(itemRenderHandler);
+	}
+
     @Override
     public @NotNull BukkitItem slot(int row, int column) {
         throw new UnsupportedOperationException();
@@ -56,6 +60,10 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
 
 	public @NotNull BukkitItem slot(int row, int column, ItemStack item) {
 		return slot(row, column).item(item);
+	}
+
+	public @NotNull BukkitItem slot(int row, int column, Supplier<ItemStack> itemRenderHandler) {
+		return slot(row, column).rendered(itemRenderHandler);
 	}
 
     @Override
@@ -67,6 +75,10 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
 		return firstSlot().item(item);
 	}
 
+	public @NotNull BukkitItem firstSlot(Supplier<ItemStack> itemRenderHandler) {
+		return lastSlot().rendered(itemRenderHandler);
+	}
+
     @Override
     public @NotNull BukkitItem lastSlot() {
         throw new UnsupportedOperationException();
@@ -74,6 +86,10 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
 
 	public @NotNull BukkitItem lastSlot(ItemStack item) {
 		return lastSlot().item(item);
+	}
+
+	public @NotNull BukkitItem lastSlot(Supplier<ItemStack> itemRenderHandler) {
+		return lastSlot().rendered(itemRenderHandler);
 	}
 
     @Override
