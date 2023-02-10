@@ -1,20 +1,8 @@
 package me.devnatan.inventoryframework.context;
 
-import java.util.NoSuchElementException;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
-
-import me.devnatan.inventoryframework.exception.InventoryModificationException;
-import me.devnatan.inventoryframework.pagination.IFPaginatedContext;
-import me.devnatan.inventoryframework.pagination.IFPaginatedSlotContext;
-import me.saiintbrisson.minecraft.AbstractView;
-import me.saiintbrisson.minecraft.AbstractVirtualView;
-import me.saiintbrisson.minecraft.ItemWrapper;
-import me.saiintbrisson.minecraft.ViewItem;
+import me.devnatan.inventoryframework.IFItem;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.UnknownNullability;
 
 /**
  * Represents a context in which there is a specific slot related to it, the main context
@@ -25,8 +13,6 @@ import org.jetbrains.annotations.UnknownNullability;
  *
  * @see IFContext
  * @see IFSlotClickContext
- * @see IFSlotMoveContext
- * @see IFPaginatedSlotContext
  */
 public interface IFSlotContext extends IFContext {
 
@@ -62,8 +48,6 @@ public interface IFSlotContext extends IFContext {
 
     /**
      * Updates this slot.
-     *
-     * <p>This method is a shortcut to {@link AbstractView#update(IFContext, ViewItem, int)}.
      */
     void updateSlot();
 
@@ -75,9 +59,9 @@ public interface IFSlotContext extends IFContext {
      *
      * @return The current item wrapper.
      */
-    @ApiStatus.Internal
-    @NotNull
-    ItemWrapper getItemWrapper();
+    //    @ApiStatus.Internal
+    //    @NotNull
+    //    ItemWrapper getItemWrapper();
 
     /**
      * Returns the current item of this context.
@@ -88,46 +72,16 @@ public interface IFSlotContext extends IFContext {
      *
      * @return The current item.
      */
-    @NotNull
-    ItemWrapper getCurrentItem();
+    //    @NotNull
+    //    ItemWrapper getCurrentItem();
 
     /**
      * Sets the new item for this slot for this context.
-     * <p>
-     * If you need to change the item partially use {@link #updateItem(Consumer)} instead.
      *
      * @param item The new item that'll be set.
      * @throws InventoryModificationException When the container is changed.
      */
-    void setItem(@Nullable Object item) throws InventoryModificationException;
-
-    /**
-     * Sets the new item for this slot for this context.
-     * <p>
-     * If you need to change the item partially use {@link #updateItem(Consumer)} instead.
-     *
-     * @param item The new item that'll be set.
-     * @return This context.
-     * @throws InventoryModificationException When the container is changed.
-     * @deprecated Use {@link #setItem(Object)} instead.
-     */
-    @Deprecated
-    @NotNull
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.5.6")
-    IFSlotContext withItem(@Nullable Object item) throws InventoryModificationException;
-
-    /**
-     * Applies a patch to the current item.
-     * <p>
-     * This method should be used when only a partial modification is required to be applied to the
-     * item, triggering an {@link AbstractVirtualView#inventoryModificationTriggered() inventory
-     * modification}.
-     *
-     * <p>If you need to update the item completely use {@link #setItem(Object)}.
-     *
-     * @param updater The update function.
-     */
-    void updateItem(Consumer<ItemWrapper> updater);
+    //    void setItem(@Nullable Object item) throws InventoryModificationException;
 
     /**
      * Whether this context originated from an interaction coming from the actor's container and not
@@ -162,64 +116,15 @@ public interface IFSlotContext extends IFContext {
     void setChanged(boolean changed);
 
     /**
-     * Returns the value of a user-defined property for the item of this slot context or throws an
-     * exception if the property has not been set.
-     * <p>
-     * The properties are previously defined by {@link ViewItem#withData(String, Object)}.
-     *
-     * @param key The property key.
-     * @param <T> The property value type.
-     * @return The property value.
-     * @throws NoSuchElementException If the property has not been set.
-     */
-    @NotNull
-    <T> T getItemData(@NotNull String key) throws NoSuchElementException;
-
-    /**
-     * Returns the value of a user-defined property for the item of this slot context or throws an
-     * exception if the property has not been set.
-     * <p>
-     * The properties are previously defined by {@link ViewItem#withData(String, Object)}.
-     *
-     * @param key          The property key.
-     * @param defaultValue The default value factory if property is not found.
-     * @param <T>          The property value type.
-     * @return The property value or the default value.
-     */
-    @UnknownNullability("Return value is defined by the availability of the property or by the"
-            + " [defaultValue] parameter in case of fallback which can be null or not.")
-    <T> T getItemData(@NotNull String key, @NotNull Supplier<T> defaultValue);
-
-    /**
-     * Returns the value of a user-defined property for the item of this slot context or throws an
-     * exception if the property has not been set.
-     * <p>
-     * The properties are previously defined by {@link ViewItem#withData(String, Object)}.
-     *
-     * @param key The property key.
-     * @param <T> The property value type.
-     * @return The property value or null.
-     */
-    @Nullable
-    <T> T getItemDataOrNull(@NotNull String key);
-
-    /**
-     * Converts this context to a pagination context.
-     * <p>
-     * Works only if the root of this context is a paginated view, throwing an exception if the root
-     * of this context is not paginated.
-     *
-     * @param <T> The pagination item type.
-     * @return This context as a PaginatedViewContext.
-     * @throws IllegalStateException If the root of this context is not paginated.
-     */
-    @Override
-    <T> IFPaginatedContext<T> paginated();
-
-    /**
      * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
      * such API may be changed or may be removed completely in any further release. </i></b>
      */
     @ApiStatus.Experimental
     boolean isRegistered();
+
+    // TODO documentation
+    // can be null if context origin is outside root view container
+    @ApiStatus.Internal
+    @Nullable
+    IFItem<?> getInternalItem();
 }

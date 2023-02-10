@@ -4,7 +4,6 @@ repositories {
 
 dependencies {
     compileOnly libs.spigot.api
-    compileOnly projects.api
-    compileOnly projects.bukkit
-    compileOnly projects.shared
+    implementation projects.bukkit
+    implementation projects.platform
 }

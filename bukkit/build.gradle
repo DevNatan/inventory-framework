@@ -11,8 +11,7 @@ repositories {
 dependencies {
     compileOnly libs.spigot.api
     implementation projects.api
-    implementation projects.shared
-    implementation projects.bukkitApi
+    implementation projects.platform
 }
 
 shadowJar {

@@ -1,12 +1,16 @@
 package me.devnatan.inventoryframework.internal.platform;
 
 import java.util.List;
-import me.saiintbrisson.minecraft.ViewType;
+import me.devnatan.inventoryframework.ViewType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
 public interface ViewContainer {
+
+    String getTitle();
+
+    String getTitle(@NotNull Viewer viewer);
 
     /**
      * The type of this container.
@@ -84,7 +88,11 @@ public interface ViewContainer {
 
     void close();
 
+    void close(@NotNull Viewer viewer);
+
     void changeTitle(@Nullable String title);
+
+    void changeTitle(@Nullable String title, @NotNull Viewer target);
 
     boolean isEntityContainer();
 }

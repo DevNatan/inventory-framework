@@ -1,50 +1,60 @@
 package me.devnatan.inventoryframework.context;
 
-import java.util.List;
-import java.util.Map;
-import java.util.function.Supplier;
-import me.devnatan.inventoryframework.exception.InvalidatedContextException;
-import me.devnatan.inventoryframework.exception.UnknownReferenceException;
+import java.util.Set;
+import me.devnatan.inventoryframework.RootView;
+import me.devnatan.inventoryframework.ViewConfig;
+import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.internal.platform.ViewContainer;
 import me.devnatan.inventoryframework.internal.platform.Viewer;
-import me.devnatan.inventoryframework.pagination.IFPaginatedContext;
 import me.devnatan.inventoryframework.state.StateHolder;
-import me.saiintbrisson.minecraft.AbstractView;
-import me.saiintbrisson.minecraft.AbstractVirtualView;
-import me.saiintbrisson.minecraft.ViewItem;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.UnknownNullability;
+import org.jetbrains.annotations.UnmodifiableView;
 
 public interface IFContext extends VirtualView, StateHolder {
 
-    @ApiStatus.Internal
-    Map<String, Object> getData();
-
     /**
-     * An unmodifiable collection of all viewers that are tied to this context.
+     * The configuration for this context.
+     * <p>
+     * By default, contexts inherit their root configuration.
      *
-     * @return All unmodifiable collection of all viewers.
+     * @return The configuration for this context.
      */
     @NotNull
-    List<Viewer> getViewers();
+    ViewConfig getConfig();
 
-    @ApiStatus.Internal
+    /**
+     * An unmodifiable view of all viewers that are tied to this context.
+     *
+     * @return All unmodifiable view of all viewers.
+     */
+    @NotNull
+    @UnmodifiableView
+    Set<Viewer> getViewers();
+
+    /**
+     * Adds a new viewer to this context.
+     *
+     * @param viewer The viewer that'll be added.
+     */
     void addViewer(@NotNull Viewer viewer);
 
-    @ApiStatus.Internal
+    /**
+     * Removes a new viewer to this context.
+     *
+     * @param viewer The viewer that'll be removed.
+     */
     void removeViewer(@NotNull Viewer viewer);
 
     /**
      * The container of this context.
-     *
-     * <p>The container is where all the changes that are displayed to the user are applied.
-     *
-     * <p>Direct modifications to the container must launch an {@link
-     * AbstractVirtualView#inventoryModificationTriggered()}, which signals that that function will
-     * change the container for whoever is seeing what, which, if it is not possible at that moment or
-     * if the container is not sufficiently prepared for this, it must fail. .
+     * <p>
+     * The container is where all the changes that are displayed to the user are applied.
+     * <p>
+     * Direct modifications to the container must launch an inventory modification error, which
+     * signals that that function will change the container for whoever is seeing what, which, if it
+     * is not possible at that moment or if the container is not sufficiently prepared for this,
+     * it must fail.
      *
      * @return The container of this context.
      */
@@ -57,33 +67,32 @@ public interface IFContext extends VirtualView, StateHolder {
      * @return The root of this context.
      */
     @NotNull
-    AbstractView getRoot();
+    RootView getRoot();
 
     /**
-     * {@inheritDoc}
-     *
-     * <p>If the title has been dynamically changed, it will return {@link #getUpdatedTitle()}.
+     * The actual title of this context.
+     * <p>
+     * If the title has been dynamically changed, it will return the {@link #getUpdatedTitle() updated title}.
      *
      * @return The updated title, the current title of this view, if <code>null</code> will return
      * the default title for this view type.
      */
-    @Override
+    @NotNull
     String getTitle();
 
     /**
-     * Returns the initial title of this context, that is, even if it has been changed,
-     * it will return the initial title.
+     * The initial title of this context, that is, even if it has been changed, it will return the
+     * title that has been initially defined.
      *
-     * @return The initial title of this context, the current title of this view, if <code>null</code>
-     * will return the default title for this view type.
+     * @return The initial title of this context, the current title of this view.
      */
-    @Nullable
+    @NotNull
     String getInitialTitle();
 
     /**
-     * The title dynamically updated in this context.
+     * Title that has been {@link #updateTitle(String) dynamically changed} in this context.
      *
-     * @return The title dynamically updated in this context or null if it wasn't updated.
+     * @return The updated title or null if it wasn't updated.
      * @see #updateTitle(String)
      */
     @Nullable
@@ -110,196 +119,16 @@ public interface IFContext extends VirtualView, StateHolder {
     void resetTitle();
 
     /**
-     * If errors should be propagated to the view's error handler for this context. Always <code>
-     * true</code> by default.
-     *
-     * @return If errors will be propagated to the View.
+     * Closes this context's container to all viewers who are viewing it.
      */
-    boolean isPropagateErrors();
+    void close();
 
     /**
-     * Defines whether errors should be propagated to the root view's error handler.
-     *
-     * @param propagateErrors If errors should be propagated to the root view.
-     */
-    void setPropagateErrors(boolean propagateErrors);
-
-    @ApiStatus.Internal
-    boolean isMarkedToClose();
-
-    @ApiStatus.Internal
-    void setMarkedToClose(boolean markedToClose);
-
-    /**
-     * Checks if this context is cancelled.
-     *
-     * @return If this context is cancelled.
-     */
-    boolean isCancelled();
-
-    /**
-     * Cancels this context.
-     *
-     * @param cancelled The new cancellation state.
-     * @throws IllegalStateException If this context is not cancellable.
-     */
-    void setCancelled(boolean cancelled);
-
-    /**
-     * Allows this context be cancelled.
-     *
-     * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
-     * this library. No compatibility guarantees are provided.</i></b>
-     */
-    @ApiStatus.Internal
-    void allowCancellation();
-
-    /**
-     * Gets a value of a property defined for this context for a specific key.
-     *
-     * @param key The property key.
-     * @param <T> The property value type.
-     * @return The property value for the given key.
-     * @see #get(String, Supplier)
-     */
-    @UnknownNullability("Value can be null if the user provides a null property value")
-    <T> T get(@NotNull String key);
-
-    /**
-     * Gets a value of a property defined for this context for a specific key falling back to a
-     * default value if the key is not returned.
-     *
-     * @param key          The property key.
-     * @param defaultValue The value that will be returned if the property is not found.
-     * @param <T>          The property value type.
-     * @return The property value for the given key.
-     * @see #get(String)
-     */
-    @UnknownNullability("Value can be null if the user provides a null property value")
-    <T> T get(@NotNull String key, @NotNull Supplier<T> defaultValue);
-
-    /**
-     * Defines a property in this context.
-     *
-     * @param key   The property key.
-     * @param value The property value.
-     */
-    void set(@NotNull String key, @NotNull Object value);
-
-    /**
-     * If a property with a specified key has been defined for this context.
-     *
-     * @param key The property key.
-     * @return If property was defined.
-     */
-    boolean has(@NotNull String key);
-
-    /**
-     * Removes a property.
-     *
-     * @param key The property key.
-     * @return The current property value before removal or <code>null</code>.
-     */
-    <T> T remove(@NotNull String key);
-
-    /**
-     * Converts this context to a paginated context.
-     *
-     * <p>Only works if the view that originated this context is a paginated view, throwing an
-     * IllegalStateException if the {@link #getRoot() root} of this context is not paginated.
-     *
-     * @param <T> The pagination item type.
-     * @return This context as a PaginatedViewContext.
-     * @throws IllegalStateException If the root of this context cannot be converted to a paginated.
-     */
-    @Override
-    <T> IFPaginatedContext<T> paginated();
-
-    void open(@NotNull Class<? extends AbstractView> viewClass);
-
-    void open(@NotNull Class<? extends AbstractView> viewClass, @NotNull Map<String, @Nullable Object> data);
-
-    /**
-     * Creates a new slot context instance containing within it data of an item whose reference key is
-     * the same as specified.
-     *
-     * <p>Item reference keys are used as a bridge between one item and another, ideal when there are
-     * items that interact with each other, for example: you click on an item and another item in the
-     * container is updated.
-     *
-     * <p>In previous versions this was not possible as only updating the entire container was it
-     * possible to update an item to which the modification was applied causing side effects on other
-     * items that had rendering functions that act during the update, or, paginated views which items
-     * and layout were resolved again, so the performance using references is much better than a full
-     * container update.
-     *
-     * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
-     * such API may be changed or may be removed completely in any further release. </i></b>
-     *
-     * @param key The item reference key.
-     * @return A new context with referenced item.
-     * @throws UnknownReferenceException If no item are found for the reference key.
-     * @see ViewItem#referencedBy(String)
-     */
-    @NotNull
-    @ApiStatus.Experimental
-    IFSlotContext ref(@NotNull String key) throws UnknownReferenceException;
-
-    /**
-     * Creates a new slot context instance containing within it data of an item whose reference key is
-     * the same as specified.
-     *
-     * <p>Item reference keys are used as a bridge between one item and another, ideal when there are
-     * items that interact with each other, for example: you click on an item and another item in the
-     * container is updated.
-     *
-     * <p>In previous versions this was not possible as only updating the entire container was it
-     * possible to update an item to which the modification was applied causing side effects on other
-     * items that had rendering functions that act during the update, or, paginated views which items
-     * and layout were resolved again, so the performance using references is much better than a full
-     * container update.
-     *
-     * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
-     * such API may be changed or may be removed completely in any further release. </i></b>
-     *
-     * @param key The item reference key.
-     * @return A new context with referenced item or null.
-     * @see ViewItem#referencedBy(String)
-     */
-    @Nullable
-    @ApiStatus.Experimental
-    IFSlotContext refOrNull(@NotNull String key);
-
-    /**
-     * Invalidates this context.
-     *
-     * <p><b><i> This is an internal inventory-framework API that should not be used from outside of
-     * this library. No compatibility guarantees are provided. </i></b>
-     */
-    @ApiStatus.Internal
-    default void invalidate() {}
-
-    /**
-     * Backs to the view that was previously open by resuming it.
+     * Opens a new view for all viewers in that context.
      * <p>
-     * This function will use the saved the state of the entire previous context and will evaluate
-     * it, this will only work with transitions from the previous context, that is, for the context
-     * to be saved and registered you will have to have the current context open through the
-     * previous context using {@link IFContext#open(Class)} or {@link IFContext#open(Class, Map)}.
-     * <p>
-     * Using this will not call the root open handler nor render handler.
-     * <p>
-     * You can track when a context is resumed by resume handler.
+     * This context will be immediately invalidated if there are no viewers left after opening.
      *
-     * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
-     * such API may be changed or may be removed completely in any further release. </i></b>
-     *
-     * @return The context associated to the previously open view, or <code>null</code> if there is
-     * nothing to back.
-     * @throws InvalidatedContextException If the context to be returned has been invalidated for
-     *                                     some reason and can no longer be returned.
+     * @param other The view to be opened.
      */
-    @ApiStatus.Experimental
-    @Nullable
-    IFContext back();
+    void open(Class<? extends RootView> other);
 }

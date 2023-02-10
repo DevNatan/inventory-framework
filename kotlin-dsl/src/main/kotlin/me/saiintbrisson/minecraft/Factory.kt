@@ -4,13 +4,15 @@
 
 package me.saiintbrisson.minecraft
 
+import me.devnatan.inventoryframework.ViewType
+
 @DslMarker
 @Target(AnnotationTarget.CLASS, AnnotationTarget.TYPE, AnnotationTarget.FUNCTION)
 internal annotation class ViewDsl
 
 @PublishedApi
-internal val factory: ViewComponentFactory
-    inline get() = PlatformUtils.getFactory()
+internal val factory: me.devnatan.inventoryframework.internal.ViewComponentFactory
+    inline get() = me.devnatan.inventoryframework.internal.PlatformUtils.getFactory()
 
 public inline fun createView(
     size: Int = 0,

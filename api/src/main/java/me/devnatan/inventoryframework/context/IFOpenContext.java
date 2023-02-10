@@ -1,9 +1,7 @@
 package me.devnatan.inventoryframework.context;
 
 import java.util.concurrent.CompletableFuture;
-
-import me.devnatan.inventoryframework.context.IFContext;
-import me.saiintbrisson.minecraft.ViewType;
+import me.devnatan.inventoryframework.ViewType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -11,8 +9,9 @@ import org.jetbrains.annotations.Nullable;
  * This context is created before the container is opened, it is used for cancellation by previously
  * defined data also can be used to change the title and size of the container before the rendering intent.
  */
-public interface IFOpenContext extends IFContext {
+public interface IFOpenContext extends IFConfinedContext {
 
+    @NotNull
     String getTitle();
 
     int getSize();

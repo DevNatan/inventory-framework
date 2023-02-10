@@ -1,4 +1,4 @@
-main: me.saiintbrisson.minecraft.InventoryFramework
+main: me.devnatan.inventoryframework.plugin.InventoryFramework
 name: InventoryFramework
 version: @version@
 api-version: 1.16

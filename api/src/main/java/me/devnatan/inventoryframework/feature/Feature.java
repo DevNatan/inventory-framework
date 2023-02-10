@@ -1,9 +1,8 @@
 package me.devnatan.inventoryframework.feature;
 
+import java.util.function.UnaryOperator;
 import me.devnatan.inventoryframework.ViewFrame;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.function.UnaryOperator;
 
 /**
  * A feature is a module that is installed in the runtime and acts independently of the rest of the
@@ -44,22 +43,22 @@ import java.util.function.UnaryOperator;
  */
 public interface Feature<C, R> {
 
-	/**
-	 * Initializes and installs everything that must be installed within this feature using the
-	 * platform and configuration factory as providers.
-	 *
-	 * @param framework The feature installer platform framework.
-	 * @param configure The feature configuration factory.
-	 * @return The initialized feature instance.
-	 */
-	@NotNull
-	R install(ViewFrame framework, UnaryOperator<C> configure);
+    /**
+     * Initializes and installs everything that must be installed within this feature using the
+     * platform and configuration factory as providers.
+     *
+     * @param framework The feature installer platform framework.
+     * @param configure The feature configuration factory.
+     * @return The initialized feature instance.
+     */
+    @NotNull
+    R install(ViewFrame framework, UnaryOperator<C> configure);
 
-	/**
-	 * Uninstalls this feature, used to invalidate resources applied on installation.
-	 *
-	 * @param platform The feature uninstaller platform.
-	 * @see #install(ViewFrame, UnaryOperator)
-	 */
-	void uninstall(ViewFrame framework);
+    /**
+     * Uninstalls this feature, used to invalidate resources applied on installation.
+     *
+     * @param framework The feature uninstaller framework.
+     * @see #install(ViewFrame, UnaryOperator)
+     */
+    void uninstall(ViewFrame framework);
 }

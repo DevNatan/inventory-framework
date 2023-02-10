@@ -2,13 +2,9 @@ rootProject.name = 'inventory-framework'
 enableFeaturePreview('VERSION_CATALOGS')
 enableFeaturePreview('TYPESAFE_PROJECT_ACCESSORS')
 
-include 'bom',
-        'bukkit-api',
-        'feature-move-io',
-        'kotlin-dsl',
-        'shared',
-        'test',
+include 'test',
         'api',
         'bukkit',
         'examples',
+        'platform',
         'framework'

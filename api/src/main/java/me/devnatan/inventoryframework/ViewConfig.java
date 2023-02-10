@@ -1,134 +1,80 @@
 package me.devnatan.inventoryframework;
 
-import me.devnatan.inventoryframework.internal.InitOnly;
-import me.saiintbrisson.minecraft.ViewType;
-import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Unmodifiable;
-
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.function.IntConsumer;
-import java.util.function.Supplier;
+import lombok.Data;
+import lombok.experimental.Accessors;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-@InitOnly
-@ApiStatus.Experimental
-public interface ViewConfig {
+@Data
+public final class ViewConfig {
 
-	@FunctionalInterface
-	@ApiStatus.Experimental
-	interface Modifier {
+    private final String title;
+    private final int size;
+    private final ViewType type;
+    private final Map<Option<?>, Object> options;
+    private final String[] layout;
+    private final List<Modifier> modifiers;
 
-		/**
-		 * Applies this modifier to a given configuration.
-		 *
-		 * @param config The target configuration.
-		 */
-		void apply(@NotNull ViewConfig config);
-	}
+    public static <T> Option<T> createOption(@NotNull String name, @NotNull T defaultValue) {
+        return new OptionImpl<>(name, defaultValue);
+    }
 
-	/**
-	 * Creates a new {@link ViewConfig}.
-	 *
-	 * @return A new ViewConfig instance.
-	 */
-	@NotNull
-	static ViewConfig create() {
-		return new Impl();
-	}
+    public <T> boolean isOptionSet(@NotNull Option<T> option) {
+        for (final Map.Entry<Option<?>, Object> entry : options.entrySet()) {
+            final Option<?> other = entry.getKey();
+            final Object definedValue = entry.getValue();
+            if (other.name().equals(option.name()) && Objects.equals(definedValue, other.defaultValue())) return true;
+        }
+        return false;
+    }
 
-	/**
-	 * Creates a new {@link ViewConfig}.
-	 *
-	 * @return A new ViewConfig instance.
-	 */
-	@NotNull
-	static ViewConfig create(String title) {
-		return new Impl().title(title);
-	}
+    public <T> boolean isOptionSet(@NotNull Option<T> option, T value) {
+        for (final Map.Entry<Option<?>, Object> entry : options.entrySet()) {
+            final Option<?> other = entry.getKey();
+            final Object definedValue = entry.getValue();
+            if (other.name().equals(option.name()) && Objects.equals(definedValue, value)) return true;
+        }
+        return false;
+    }
 
-	/**
-	 * Creates a new {@link ViewConfig}.
-	 *
-	 * @return A new ViewConfig instance.
-	 */
-	@NotNull
-	static ViewConfig create(int size, String title) {
-		return new Impl().size(size).title(title);
-	}
+    @FunctionalInterface
+    interface Modifier {
 
-	/**
-	 * All modifiers applied to this configuration.
-	 *
-	 * @return An unmodifiable list of all applied modifiers.
-	 */
-	@NotNull
-	@Unmodifiable
-	List<Modifier> getAppliedModifiers();
+        /**
+         * Applies this modifier to a given configuration.
+         *
+         * @param config The target configuration.
+         */
+        void apply(@NotNull ViewConfigBuilder config);
+    }
 
-	/**
-	 * Inherits all configuration from another {@link ViewConfig} value.
-	 * <p>
-	 * Note that the values will be merged and not replaced, however, the values of the setting to
-	 * be inherited take precedence over those of that setting.
-	 *
-	 * @param other The configuration that will be inherited.
-	 * @return This config.
-	 */
-	ViewConfig inheritFrom(@NotNull ViewConfig other);
+    interface Option<T> {
 
-	/**
-	 * Defines the type of the container.
-	 * <p>
-	 * If applied in view scope, it will be the default value for all contexts originated from it.
-	 *
-	 * @param type The container type.
-	 * @return This config.
-	 */
-	ViewConfig type(ViewType type);
+        @NotNull
+        String name();
 
-	/**
-	 * Defines the title of the container.
-	 * <p>
-	 * If applied in view scope, it will be the default value for all contexts originated from it.
-	 *
-	 * @param title The container title.
-	 * @return This config.
-	 */
-	ViewConfig title(String title);
+        @Nullable
+        T defaultValue();
+    }
 
-	/**
-	 * Defines the size of the container.
-	 * <p>
-	 * If applied in view scope, it will be the default value for all contexts originated from it.
-	 *
-	 * @param size The container size.
-	 * @return This config.
-	 */
-	ViewConfig size(int size);
+    @Data
+    @Accessors(fluent = true)
+    private static final class OptionImpl<T> implements Option<T> {
+        private static final List<String> registeredNames = new ArrayList<>();
 
-	/**
-	 * Add a modifier to this setting.
-	 *
-	 * @param modifier The modifier.
-	 * @return This config.
-	 */
-	ViewConfig with(@NotNull Modifier modifier);
+        private final String name;
+        private final T defaultValue;
 
-	ViewConfig layout(String... layout);
+        OptionImpl(@NotNull String name, T defaultValue) {
+            if (registeredNames.contains(name))
+                throw new IllegalStateException(String.format("Option %s already registered", name));
 
-	ViewConfig layout(char character, @NotNull Consumer<ViewItem> handler);
-
-	ViewConfig layout(char character, @NotNull BiConsumer<Integer, ViewItem> handler);
-
-	ViewConfig layout(char character, @NotNull Supplier<Object> factory);
-
-	ViewConfig flags(int flags);
-
-	ViewConfig flags(int flag, int... others);
-
-	ViewConfig cancelOnClick();
+            this.name = name;
+            this.defaultValue = defaultValue;
+        }
+    }
 }
-

@@ -5,10 +5,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import me.saiintbrisson.minecraft.event.Event;
-import me.saiintbrisson.minecraft.event.EventBus;
-import me.saiintbrisson.minecraft.event.EventListener;
-import me.saiintbrisson.minecraft.event.EventSubscription;
+import me.devnatan.inventoryframework.event.Event;
+import me.devnatan.inventoryframework.event.EventBus;
+import me.devnatan.inventoryframework.event.EventListener;
+import me.devnatan.inventoryframework.event.EventSubscription;
 import org.jetbrains.annotations.NotNull;
 
 // TODO internalize this when class usage call-site become internal in the same module
