@@ -3,6 +3,13 @@ package me.devnatan.inventoryframework;
 import static java.lang.String.format;
 import static java.util.Collections.newSetFromMap;
 import static java.util.Collections.synchronizedMap;
+import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.CLICK;
+import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.CLOSE;
+import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.INIT;
+import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.INVALIDATION;
+import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.OPEN;
+import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.RENDER;
+import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.UPDATE;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -20,7 +27,8 @@ class DefaultRootView implements RootView {
 
     private final UUID id = UUID.randomUUID();
     private ViewConfig config;
-    private final Pipeline<? super VirtualView> pipeline = new Pipeline<>();
+    private final Pipeline<? super VirtualView> pipeline =
+            new Pipeline<>(INIT, OPEN, RENDER, UPDATE, CLICK, CLOSE, INVALIDATION);
     private final Set<IFContext> contexts = newSetFromMap(synchronizedMap(new HashMap<>()));
 
     @Override

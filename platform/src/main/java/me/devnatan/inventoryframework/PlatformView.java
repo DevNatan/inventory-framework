@@ -489,7 +489,7 @@ public abstract class PlatformView<
     @SuppressWarnings("unchecked")
     @Override
     public final void open(@NotNull Viewer viewer) {
-        if (isInitialized()) throw new IllegalStateException("Cannot open a uninitialized view");
+        if (!isInitialized()) throw new IllegalStateException("Cannot open a uninitialized view");
 
         final IFOpenContext context = getElementFactory().createContext(this, null, viewer, IFOpenContext.class, false);
 

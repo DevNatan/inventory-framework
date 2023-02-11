@@ -13,11 +13,14 @@ repositories {
 dependencies {
     compileOnly libs.spigot.api
     implementation projects.api
+    implementation projects.framework
     implementation projects.platform
 }
 
 shadowJar {
     archiveBaseName.set('inventory-framework')
+    archiveAppendix.set('bukkit')
+    archiveClassifier.set('')
 }
 
 processResources {

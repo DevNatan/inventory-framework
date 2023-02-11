@@ -33,11 +33,10 @@ public final class ViewFrame extends IFViewFrame<ViewFrame> implements FeatureIn
     private static final String ROOT_PKG = "me.devnatan.inventoryframework";
     private static final String MAIN_PLUGIN_QNAME = "me.devnatan.inventoryframework.bukkit.InventoryFramework";
 
-    private static final String RELOCATION_MESSAGE = "Inventory Framework is running as a shaded library"
-            + " (in the same package as original package), there are chances of conflict if other "
-            + "plugins are also using the library in different versions. It is recommended that "
-            + "you relocate the library package to the same plugin package. Learn more about on docs: "
-            + "https://github.com/DevNatan/inventory-framework/wiki/Installation#preventing-library-conflicts";
+    private static final String RELOCATION_MESSAGE =
+            "Inventory Framework is running as a shaded non-relocated library. It's extremely recommended that "
+                    + "you relocate the library package. Learn more about on docs: "
+                    + "https://github.com/DevNatan/inventory-framework/wiki/Installation#preventing-library-conflicts";
 
     @Getter(AccessLevel.PUBLIC)
     private final @NotNull Plugin owner;
@@ -100,12 +99,12 @@ public final class ViewFrame extends IFViewFrame<ViewFrame> implements FeatureIn
     }
 
     @ApiStatus.Internal
-    public boolean isShaded() {
-        return !getOwner().getDescription().getMain().equals(MAIN_PLUGIN_QNAME);
+    public boolean isLibraryAsPlugin() {
+        return getOwner().getDescription().getMain().equals(MAIN_PLUGIN_QNAME);
     }
 
     @ApiStatus.Internal
-    public boolean isLibrary() {
+    public boolean isShaded() {
         return getClass().getPackage().getName().equals(ROOT_PKG);
     }
 
@@ -156,7 +155,7 @@ public final class ViewFrame extends IFViewFrame<ViewFrame> implements FeatureIn
 
     private void registerListeners() {
         final Plugin plugin = getOwner();
-        if (isShaded() && isLibrary()) {
+        if (isLibraryAsPlugin() && isShaded()) {
             plugin.getLogger().warning(RELOCATION_MESSAGE);
             plugin.getServer()
                     .getPluginManager()

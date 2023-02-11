@@ -54,7 +54,7 @@ public class OpenInterceptor implements PipelineInterceptor<IFContext> {
                 openContext.getType());
 
         final Viewer viewer = openContext.getViewer();
-        final IFContext generatedContext =
+        final IFRenderContext generatedContext =
                 elementFactory.createContext(root, container, viewer, IFRenderContext.class, false);
 
         generatedContext.addViewer(viewer);
