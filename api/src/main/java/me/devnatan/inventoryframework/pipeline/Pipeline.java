@@ -110,10 +110,10 @@ public final class Pipeline<S> {
         context.execute(subject);
     }
 
-    public PipelineContext<S> execute(@NotNull final PipelinePhase phase, @Nullable final S subject) {
+    public void execute(@NotNull final PipelinePhase phase, @Nullable final S subject) {
         final PipelineContext<S> context =
                 new PipelineContext<>(phase, interceptors.getOrDefault(phase, Collections.emptyList()));
+		System.out.println("pipeline ctx " + context);
         context.execute(subject);
-        return context;
     }
 }

@@ -27,19 +27,6 @@ public class View
                 BukkitItem, Context, OpenContext, CloseContext, RenderContext, SlotContext, SlotClickContext>
         implements InventoryHolder {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    final void internalInitialization() {
-        super.internalInitialization();
-
-        final Pipeline<? super VirtualView> pipeline = getPipeline();
-        pipeline.intercept(StandardPipelinePhases.CLICK, new GlobalClickInterceptor());
-        pipeline.intercept(StandardPipelinePhases.CLICK, new ItemClickInterceptor());
-        pipeline.intercept(StandardPipelinePhases.CLICK, new ItemCloseOnClickInterceptor());
-    }
-
     @Override
     public final ElementFactory getElementFactory() {
         return super.getElementFactory();

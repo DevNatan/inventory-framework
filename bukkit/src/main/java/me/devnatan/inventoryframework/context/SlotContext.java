@@ -6,6 +6,7 @@ import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.bukkit.BukkitViewContainer;
 import me.devnatan.inventoryframework.bukkit.BukkitViewer;
+import me.devnatan.inventoryframework.component.Component;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
@@ -18,20 +19,21 @@ public class SlotContext extends ConfinedContext implements IFSlotContext, Conte
     private final int slot;
     private final Player player;
     private final IFContext parent;
-    private final IFItem<?> internalItem;
+    private final Component component;
 
     public SlotContext(
-            @NotNull RootView root,
-            @NotNull ViewContainer container,
-            @NotNull Viewer viewer,
-            int slot,
-            @NotNull IFContext parent,
-            @Nullable IFItem<?> internalItem) {
+		@NotNull RootView root,
+		@NotNull ViewContainer container,
+		@NotNull Viewer viewer,
+		int slot,
+		@NotNull IFContext parent,
+		@Nullable Component component
+	) {
         super(root, container, viewer);
         this.slot = slot;
         this.player = ((BukkitViewer) viewer).getPlayer();
         this.parent = parent;
-        this.internalItem = internalItem;
+        this.component = component;
     }
 
     @Override
@@ -74,13 +76,13 @@ public class SlotContext extends ConfinedContext implements IFSlotContext, Conte
         throw new UnsupportedOperationException();
     }
 
-    @Nullable
-    @Override
-    public final IFItem<?> getInternalItem() {
-        return internalItem;
-    }
+	@Nullable
+	@Override
+	public Component getComponent() {
+		return component;
+	}
 
-    @Override
+	@Override
     public @NotNull Player getPlayer() {
         return player;
     }

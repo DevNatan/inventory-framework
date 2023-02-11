@@ -1,11 +1,14 @@
 package me.devnatan.inventoryframework.internal;
 
 import me.devnatan.inventoryframework.IFItem;
+import me.devnatan.inventoryframework.PlatformView;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.ViewType;
 import me.devnatan.inventoryframework.Viewer;
+import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.context.IFContext;
+import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.context.IFSlotContext;
 import me.devnatan.inventoryframework.logging.Logger;
 import me.devnatan.inventoryframework.pipeline.OpenInterceptor;
@@ -59,20 +62,16 @@ public abstract class ElementFactory {
     @NotNull
     public abstract IFSlotContext createSlotContext(
             int slot,
-            IFItem<?> internalItem,
+            Component component,
             @NotNull ViewContainer container,
             @NotNull Viewer viewer,
-            @NotNull IFContext parent);
+            @NotNull IFContext parent
+	);
 
     public abstract Object createItem(@Nullable Object stack);
 
     public abstract boolean worksInCurrentPlatform();
 
-    @ApiStatus.OverrideOnly
-    @MustBeInvokedByOverriders
-    void registerPlatformInterceptors(@NotNull RootView view) {
-        final Pipeline<? super IFContext> pipeline = view.getPipeline();
-        pipeline.intercept(StandardPipelinePhases.OPEN, new OpenInterceptor());
-        pipeline.intercept(StandardPipelinePhases.RENDER, new RenderInterceptor());
-    }
+	@SuppressWarnings("rawtypes")
+    public abstract void registerPlatformInterceptors(@NotNull PlatformView view);
 }

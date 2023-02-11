@@ -7,6 +7,7 @@ import static me.devnatan.inventoryframework.util.IsTypeOf.isTypeOf;
 import static org.bukkit.Bukkit.createInventory;
 
 import me.devnatan.inventoryframework.IFItem;
+import me.devnatan.inventoryframework.PlatformView;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.View;
 import me.devnatan.inventoryframework.ViewContainer;
@@ -14,25 +15,30 @@ import me.devnatan.inventoryframework.ViewType;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.bukkit.BukkitViewContainer;
 import me.devnatan.inventoryframework.bukkit.BukkitViewer;
+import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.context.CloseContext;
 import me.devnatan.inventoryframework.context.IFCloseContext;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFOpenContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
+import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.context.IFSlotContext;
 import me.devnatan.inventoryframework.context.OpenContext;
 import me.devnatan.inventoryframework.context.RenderContext;
+import me.devnatan.inventoryframework.context.SlotClickContext;
 import me.devnatan.inventoryframework.context.SlotContext;
 import me.devnatan.inventoryframework.logging.Logger;
 import me.devnatan.inventoryframework.logging.NoopLogger;
 import me.devnatan.inventoryframework.pipeline.GlobalClickInterceptor;
 import me.devnatan.inventoryframework.pipeline.ItemClickInterceptor;
+import me.devnatan.inventoryframework.pipeline.ItemCloseOnClickInterceptor;
 import me.devnatan.inventoryframework.pipeline.OpenInterceptor;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
 import me.devnatan.inventoryframework.pipeline.StandardPipelinePhases;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -47,6 +53,7 @@ public final class BukkitElementFactory extends ElementFactory {
         return new View();
     }
 
+	// TODO Test it
     @Override
     public @NotNull ViewContainer createContainer(
             @NotNull IFContext context, int size, @Nullable String title, @Nullable ViewType type) {
@@ -63,18 +70,24 @@ public final class BukkitElementFactory extends ElementFactory {
                     finalType.getMaxSize(),
                     context.getRoot().getClass().getName()));
 
-        // TODO check current server version to determine if will use InventoryHolder or not
+		final InventoryHolder holder = context.getRoot() instanceof InventoryHolder
+			? (InventoryHolder) context.getRoot()
+			: null;
+
         final Inventory inventory;
-        if (title == null) {
-            inventory = !finalType.isExtendable()
-                    ? createInventory(null, requireNonNull(toInventoryType(finalType)))
-                    : createInventory(null, size);
+		final String finalTitle = context.getTitle().isEmpty() ? null : context.getTitle();
+        if (finalTitle == null) {
+            inventory = !finalType.isExtendable() || size == 0
+                    ? createInventory(holder, requireNonNull(toInventoryType(finalType)))
+                    : createInventory(holder, size);
         } else if (!finalType.isExtendable()) {
-            inventory = createInventory(null, requireNonNull(toInventoryType(finalType)), title);
+            inventory = createInventory(holder, requireNonNull(toInventoryType(finalType)), finalTitle);
         } else {
-            inventory = createInventory(null, size, title);
+            inventory = createInventory(holder, size, finalTitle);
         }
 
+		System.out.println("title, size, type: " + finalTitle + ", " + size + ", " + type);
+		System.out.println("created inventory: " + inventory);
         return new BukkitViewContainer(inventory, false);
     }
 
@@ -106,14 +119,14 @@ public final class BukkitElementFactory extends ElementFactory {
     @Override
     public @NotNull IFSlotContext createSlotContext(
             int slot,
-            IFItem<?> internalItem,
+            Component component,
             @NotNull ViewContainer container,
             @NotNull Viewer viewer,
             @NotNull IFContext parent) {
-        return new SlotContext(parent.getRoot(), container, viewer, slot, parent, internalItem);
+        return new SlotContext(parent.getRoot(), container, viewer, slot, parent, component);
     }
 
-    @Override
+	@Override
     public Object createItem(@Nullable Object stack) {
         if (stack instanceof ItemStack) return ((ItemStack) stack).clone();
         if (stack instanceof Material) return new ItemStack((Material) stack);
@@ -143,12 +156,12 @@ public final class BukkitElementFactory extends ElementFactory {
         return new NoopLogger();
     }
 
-    @Override
-    public void registerPlatformInterceptors(@NotNull RootView view) {
-        super.registerPlatformInterceptors(view);
+    @SuppressWarnings("rawtypes")
+	@Override
+    public void registerPlatformInterceptors(@NotNull PlatformView view) {
         final Pipeline<? super IFContext> pipeline = view.getPipeline();
-        pipeline.intercept(StandardPipelinePhases.OPEN, new OpenInterceptor());
         pipeline.intercept(StandardPipelinePhases.CLICK, new ItemClickInterceptor());
         pipeline.intercept(StandardPipelinePhases.CLICK, new GlobalClickInterceptor());
+		pipeline.intercept(StandardPipelinePhases.CLICK, new ItemCloseOnClickInterceptor());
     }
 }

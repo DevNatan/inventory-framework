@@ -22,4 +22,12 @@ public interface Component {
      * @return The current position of this component.
      */
     int getPosition();
+
+	/**
+	 * The interaction handler for this component.
+	 *
+	 * @returnThe interaction handler for this component.
+	 */
+	@NotNull
+	InteractionHandler getInteractionHandler();
 }

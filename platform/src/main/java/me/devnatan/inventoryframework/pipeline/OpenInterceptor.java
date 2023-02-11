@@ -11,13 +11,14 @@ import me.devnatan.inventoryframework.internal.ElementFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 
-public class OpenInterceptor implements PipelineInterceptor<IFContext> {
+public final class OpenInterceptor implements PipelineInterceptor<IFContext> {
 
     @TestOnly
     boolean skipOpen = false;
 
     @Override
     public void intercept(@NotNull PipelineContext<IFContext> pipeline, IFContext context) {
+		System.out.println("open interceptor " + context);
         if (!(context instanceof IFOpenContext)) return;
 
         final IFOpenContext openContext = (IFOpenContext) context;
@@ -51,15 +52,18 @@ public class OpenInterceptor implements PipelineInterceptor<IFContext> {
                 openContext,
                 openContext.getType().normalize(openContext.getSize()),
                 openContext.getTitle(),
-                openContext.getType());
+                openContext.getType()
+		);
 
         final Viewer viewer = openContext.getViewer();
-        final IFRenderContext generatedContext =
+        final IFRenderContext renderCtx =
                 elementFactory.createContext(root, container, viewer, IFRenderContext.class, false);
 
-        generatedContext.addViewer(viewer);
-        root.addContext(generatedContext);
-        root.renderContext(generatedContext);
+		renderCtx.addViewer(viewer);
+        root.addContext(renderCtx);
+		if (root instanceof PlatformView)
+			((PlatformView) root).onFirstRender(renderCtx);
+        root.renderContext(renderCtx);
         container.open(viewer);
     }
 }

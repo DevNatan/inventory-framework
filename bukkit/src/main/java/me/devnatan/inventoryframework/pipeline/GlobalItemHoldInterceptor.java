@@ -1,6 +1,7 @@
 package me.devnatan.inventoryframework.pipeline;
 
 import me.devnatan.inventoryframework.IFItem;
+import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.context.SlotClickContext;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -15,7 +16,7 @@ final class GlobalItemHoldInterceptor implements PipelineInterceptor<SlotClickCo
 
     @Override
     public void intercept(@NotNull PipelineContext<SlotClickContext> pipeline, @NotNull SlotClickContext context) {
-        if (context.isCancelled() || context.getInternalItem() == null) return;
+        if (context.isCancelled() || context.getComponent() == null) return;
 
         final InventoryClickEvent clickEvent = context.getClickOrigin();
         final InventoryAction action = clickEvent.getAction();
@@ -23,10 +24,14 @@ final class GlobalItemHoldInterceptor implements PipelineInterceptor<SlotClickCo
         // check for hold only on pickup or clone stack
         if (!(action.name().startsWith("PICKUP") || action == InventoryAction.CLONE_STACK)) return;
 
-        final IFItem<?> item = context.getInternalItem();
-        item.setState(IFItem.State.HOLDING);
+        final Component component = context.getComponent();
+        if (component instanceof IFItem) {
+			final IFItem<?> item = (IFItem<?>) component;
+			item.setState(IFItem.State.HOLDING);
 
-        if (item.getHoldHandler() != null) item.getHoldHandler().accept(context);
+			if (item.getHoldHandler() != null)
+				item.getHoldHandler().accept(context);
+		}
 
         // TODO move global item hold interceptor to feature-hold-and-release
         //        final AbstractView root = context.getRoot();

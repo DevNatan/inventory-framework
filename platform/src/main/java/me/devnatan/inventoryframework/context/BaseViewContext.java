@@ -1,5 +1,6 @@
 package me.devnatan.inventoryframework.context;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -7,14 +8,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
-import me.devnatan.inventoryframework.DefaultVirtualViewImpl;
-import me.devnatan.inventoryframework.IFItem;
+
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
-import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.component.Component;
+import me.devnatan.inventoryframework.component.ComponentComposition;
 import me.devnatan.inventoryframework.internal.state.DefaultStateHolder;
 import me.devnatan.inventoryframework.state.State;
 import me.devnatan.inventoryframework.state.StateHolder;
@@ -34,9 +34,9 @@ class BaseViewContext implements IFContext {
     private final @Nullable ViewContainer container;
 
     private final StateHolder stateHolder = new DefaultStateHolder();
-    private final VirtualView virtualView = new DefaultVirtualViewImpl();
     protected final Map<String, Viewer> viewers = new HashMap<>();
     protected final ViewConfig config;
+	private final List<Component> components = new ArrayList<>();
 
     public BaseViewContext(@NotNull RootView root, @Nullable ViewContainer container) {
         this.root = root;
@@ -120,11 +120,6 @@ class BaseViewContext implements IFContext {
     }
 
     @Override
-    public final @UnmodifiableView List<Component> getComponents() {
-        return virtualView.getComponents();
-    }
-
-    @Override
     public final long generateId() {
         return stateHolder.generateId();
     }
@@ -149,8 +144,36 @@ class BaseViewContext implements IFContext {
         stateHolder.watch(state, callback);
     }
 
-    @Override
-    public @Nullable IFItem<?> getItem(int index) {
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	public final @UnmodifiableView @NotNull List<Component> getComponents() {
+		return Collections.unmodifiableList(components);
+	}
+
+	@Override
+	public final Component getComponent(int position) {
+		for (final Component component : getComponents()) {
+			if (component instanceof ComponentComposition &&
+				((ComponentComposition) component).isContainedWithin(position)) {
+				return component;
+			}
+
+			if (component.getPosition() == position)
+				return component;
+		}
+		return null;
+	}
+
+	@Override
+	public final void addComponent(@NotNull Component component) {
+		synchronized (components) {
+			components.add(component);
+		}
+	}
+
+	@Override
+	public final void removeComponent(@NotNull Component component) {
+		synchronized (components) {
+			components.remove(component);
+		}
+	}
 }

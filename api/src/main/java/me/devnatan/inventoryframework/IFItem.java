@@ -6,9 +6,12 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import lombok.AccessLevel;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import me.devnatan.inventoryframework.component.Component;
+import me.devnatan.inventoryframework.component.InteractionHandler;
 import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.context.IFSlotContext;
 import org.jetbrains.annotations.ApiStatus;
@@ -16,6 +19,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
 
+@Data
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Getter(AccessLevel.PACKAGE)
 @Setter(AccessLevel.PROTECTED)
 public abstract class IFItem<S extends IFItem<?>> implements Component {
@@ -30,8 +35,8 @@ public abstract class IFItem<S extends IFItem<?>> implements Component {
     }
 
     private Object item;
-    private int slot;
-    private String referenceKey;
+    @EqualsAndHashCode.Include private int slot;
+	@EqualsAndHashCode.Include private String referenceKey;
     private Map<String, Object> data;
     private IFItem<?> overlay;
     private boolean removed, navigationItem;
@@ -42,6 +47,17 @@ public abstract class IFItem<S extends IFItem<?>> implements Component {
 
     @Getter(AccessLevel.PUBLIC)
     private boolean closeOnClick, cancelOnClick, cancelOnShiftClick;
+
+	@SuppressWarnings("Convert2Lambda")
+	private final InteractionHandler interactionHandler = new InteractionHandler() {
+		@Override
+		public void clicked(@NotNull Component component, @NotNull IFSlotClickContext context) {
+			if (getClickHandler() == null)
+				return;
+
+			getClickHandler().accept(context);
+		}
+	};
 
     /**
      * Creates a new ViewItem instance.
@@ -75,7 +91,7 @@ public abstract class IFItem<S extends IFItem<?>> implements Component {
         return slot;
     }
 
-    @Override
+	@Override
     public final @NotNull VirtualView getRoot() {
         // TODO fix this
         throw new UnsupportedOperationException("IFItem do not have a defined root");
@@ -94,8 +110,6 @@ public abstract class IFItem<S extends IFItem<?>> implements Component {
      * @throws IllegalStateException If this item is not a navigation item.
      */
     public S withSlot(int slot) {
-        if (!isNavigationItem()) throw new IllegalStateException("Only navigation item slot can be changed.");
-
         this.slot = slot;
         return (S) this;
     }
@@ -261,4 +275,10 @@ public abstract class IFItem<S extends IFItem<?>> implements Component {
 
     @ApiStatus.Internal
     public abstract BiConsumer<? super IFSlotClickContext, ? super IFSlotClickContext> getReleaseHandler();
+
+	@SuppressWarnings("Convert2Lambda")
+	@Override
+	public final @NotNull InteractionHandler getInteractionHandler() {
+		return interactionHandler;
+	}
 }
