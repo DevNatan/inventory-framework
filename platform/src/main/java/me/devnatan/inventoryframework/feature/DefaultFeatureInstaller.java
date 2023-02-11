@@ -7,35 +7,35 @@ import java.util.Map;
 import java.util.function.UnaryOperator;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import me.devnatan.inventoryframework.IFViewFrame;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Simple HashMap-backed feature installer implementation.
  *
- * @param <P> The platform view framework.
+ * @param <P> The feature installer platform.
  */
 @RequiredArgsConstructor
-public class DefaultFeatureInstaller<P extends IFViewFrame> implements FeatureInstaller<P> {
+public class DefaultFeatureInstaller<P> implements FeatureInstaller<P> {
 
-    private final Map<Class<?>, Feature<?, ?>> featureList = new HashMap<>();
+    private final Map<Class<?>, Feature<?, ?, P>> featureList = new HashMap<>();
 
     @Getter
     private final @NotNull P platform;
 
     @Override
-    public Collection<Feature<?, ?>> getInstalledFeatures() {
+    public Collection<Feature<?, ?, P>> getInstalledFeatures() {
         return Collections.unmodifiableCollection(featureList.values());
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public <C, R> @NotNull R install(@NotNull Feature<C, R> feature, @NotNull UnaryOperator<C> configure) {
+    public <C, R> @NotNull R install(@NotNull Feature<C, R, P> feature, @NotNull UnaryOperator<C> configure) {
         final Class<?> type = feature.getClass();
         if (featureList.containsKey(type))
             throw new IllegalStateException("Feature already installed, cannot install feature multiple times");
 
-        final Feature<C, R> value = (Feature<C, R>) feature.install(platform, configure);
+        @SuppressWarnings("unchecked")
+        final Feature<C, R, P> value = (Feature<C, R, P>) feature.install(platform, configure);
         synchronized (featureList) {
             featureList.put(type, value);
         }
@@ -44,7 +44,7 @@ public class DefaultFeatureInstaller<P extends IFViewFrame> implements FeatureIn
     }
 
     @Override
-    public void uninstall(@NotNull Feature<?, ?> feature) {
+    public void uninstall(@NotNull Feature<?, ?, P> feature) {
         final Class<?> type = feature.getClass();
         if (!featureList.containsKey(type))
             throw new IllegalStateException(String.format("Feature %s not installed", type.getSimpleName()));

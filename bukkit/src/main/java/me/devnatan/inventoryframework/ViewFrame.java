@@ -200,17 +200,17 @@ public final class ViewFrame extends IFViewFrame<ViewFrame> implements FeatureIn
     }
 
     @Override
-    public Collection<Feature<?, ?>> getInstalledFeatures() {
+    public Collection<Feature<?, ?, ViewFrame>> getInstalledFeatures() {
         return featureInstaller.getInstalledFeatures();
     }
 
     @Override
-    public <C, R> @NotNull R install(@NotNull Feature<C, R> feature, @NotNull UnaryOperator<C> configure) {
+    public <C, R> @NotNull R install(@NotNull Feature<C, R, ViewFrame> feature, @NotNull UnaryOperator<C> configure) {
         return featureInstaller.install(feature, configure);
     }
 
     @Override
-    public void uninstall(@NotNull Feature<?, ?> feature) {
+    public void uninstall(@NotNull Feature<?, ?, ViewFrame> feature) {
         featureInstaller.uninstall(feature);
     }
 }
