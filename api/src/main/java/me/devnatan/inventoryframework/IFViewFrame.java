@@ -16,9 +16,8 @@ public interface IFViewFrame {
      * Removes a view from this view frame.
      *
      * @param views The views that'll be removed.
-     * @return This platform view frame.
      */
-    IFViewFrame remove(@NotNull RootView... views);
+    void remove(@NotNull RootView... views);
 
     /**
      * Registers this view frame.
