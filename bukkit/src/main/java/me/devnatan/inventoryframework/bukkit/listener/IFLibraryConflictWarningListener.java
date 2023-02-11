@@ -9,7 +9,7 @@ import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
 @RequiredArgsConstructor
-public final class LibraryConflictWarningListener implements Listener {
+public final class IFLibraryConflictWarningListener implements Listener {
 
     private final String message;
 

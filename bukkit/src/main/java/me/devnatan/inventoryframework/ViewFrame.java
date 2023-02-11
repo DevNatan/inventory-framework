@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.function.UnaryOperator;
 import lombok.AccessLevel;
 import lombok.Getter;
-import me.devnatan.inventoryframework.bukkit.listener.LibraryConflictWarningListener;
+import me.devnatan.inventoryframework.bukkit.listener.IFLibraryConflictWarningListener;
 import me.devnatan.inventoryframework.bukkit.thirdparty.Metrics;
 import me.devnatan.inventoryframework.feature.DefaultFeatureInstaller;
 import me.devnatan.inventoryframework.feature.Feature;
@@ -131,7 +131,7 @@ public final class ViewFrame implements IFViewFrame<ViewFrame> {
             plugin.getLogger().warning(RELOCATION_MESSAGE);
             plugin.getServer()
                     .getPluginManager()
-                    .registerEvents(new LibraryConflictWarningListener(RELOCATION_MESSAGE), plugin);
+                    .registerEvents(new IFLibraryConflictWarningListener(RELOCATION_MESSAGE), plugin);
         }
     }
 
