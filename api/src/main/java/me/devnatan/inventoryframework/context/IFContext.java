@@ -1,5 +1,6 @@
 package me.devnatan.inventoryframework.context;
 
+import java.util.Map;
 import java.util.Set;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewConfig;
@@ -9,6 +10,7 @@ import me.devnatan.inventoryframework.internal.platform.Viewer;
 import me.devnatan.inventoryframework.state.StateHolder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Unmodifiable;
 import org.jetbrains.annotations.UnmodifiableView;
 
 public interface IFContext extends VirtualView, StateHolder {
@@ -24,13 +26,22 @@ public interface IFContext extends VirtualView, StateHolder {
     ViewConfig getConfig();
 
     /**
+     * An unmodifiable copy of all viewers that are tied to this context.
+     *
+     * @return All view of all viewers.
+     */
+    @NotNull
+    @Unmodifiable
+    Set<Viewer> getViewers();
+
+    /**
      * An unmodifiable view of all viewers that are tied to this context.
      *
      * @return All unmodifiable view of all viewers.
      */
     @NotNull
     @UnmodifiableView
-    Set<Viewer> getViewers();
+    Map<String, Viewer> getIndexedViewers();
 
     /**
      * Adds a new viewer to this context.

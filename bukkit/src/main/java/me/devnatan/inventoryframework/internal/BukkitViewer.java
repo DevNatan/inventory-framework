@@ -11,8 +11,18 @@ import org.jetbrains.annotations.NotNull;
 @ApiStatus.Internal
 public final class BukkitViewer implements Viewer {
 
-    @NotNull
     private final Player player;
+    private final ViewContainer container;
+
+    BukkitViewer(@NotNull Player player) {
+        this.player = player;
+        container = new BukkitViewContainer(player.getInventory(), false);
+    }
+
+    @Override
+    public @NotNull String getId() {
+        return player.getUniqueId().toString();
+    }
 
     @Override
     public void open(@NotNull final ViewContainer container) {
@@ -22,5 +32,10 @@ public final class BukkitViewer implements Viewer {
     @Override
     public void close() {
         player.closeInventory();
+    }
+
+    @Override
+    public @NotNull ViewContainer getSelfContainer() {
+        return container;
     }
 }

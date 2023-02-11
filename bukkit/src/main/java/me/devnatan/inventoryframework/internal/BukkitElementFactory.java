@@ -14,7 +14,6 @@ import me.devnatan.inventoryframework.View;
 import me.devnatan.inventoryframework.ViewType;
 import me.devnatan.inventoryframework.context.CloseContext;
 import me.devnatan.inventoryframework.context.IFCloseContext;
-import me.devnatan.inventoryframework.context.IFConfinedContext;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFOpenContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
@@ -106,8 +105,12 @@ final class BukkitElementFactory extends ElementFactory {
 
     @Override
     public @NotNull IFSlotContext createSlotContext(
-            int slot, IFItem<?> internalItem, @NotNull IFConfinedContext parent) {
-        return new SlotContext(parent.getRoot(), parent.getContainer(), parent.getViewer(), slot, parent, internalItem);
+            int slot,
+            IFItem<?> internalItem,
+            @NotNull ViewContainer container,
+            @NotNull Viewer viewer,
+            @NotNull IFContext parent) {
+        return new SlotContext(parent.getRoot(), container, viewer, slot, parent, internalItem);
     }
 
     @Override

@@ -3,7 +3,6 @@ package me.devnatan.inventoryframework.internal;
 import me.devnatan.inventoryframework.IFItem;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewType;
-import me.devnatan.inventoryframework.context.IFConfinedContext;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFSlotContext;
 import me.devnatan.inventoryframework.internal.platform.ViewContainer;
@@ -59,7 +58,11 @@ public abstract class ElementFactory {
 
     @NotNull
     public abstract IFSlotContext createSlotContext(
-            int slot, IFItem<?> internalItem, @NotNull IFConfinedContext parent);
+            int slot,
+            IFItem<?> internalItem,
+            @NotNull ViewContainer container,
+            @NotNull Viewer viewer,
+            @NotNull IFContext parent);
 
     public abstract Object createItem(@Nullable Object stack);
 

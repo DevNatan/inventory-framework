@@ -12,7 +12,10 @@ import me.devnatan.inventoryframework.pipeline.ItemClickInterceptor;
 import me.devnatan.inventoryframework.pipeline.ItemCloseOnClickInterceptor;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
 import me.devnatan.inventoryframework.pipeline.StandardPipelinePhases;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Bukkit platform View backward compatible implementation.
@@ -20,7 +23,8 @@ import org.jetbrains.annotations.ApiStatus;
 @ApiStatus.OverrideOnly
 public class View
         extends PlatformView<
-                BukkitItem, Context, OpenContext, CloseContext, RenderContext, SlotContext, SlotClickContext> {
+                BukkitItem, Context, OpenContext, CloseContext, RenderContext, SlotContext, SlotClickContext>
+        implements InventoryHolder {
 
     /** {@inheritDoc} */
     @Override
@@ -36,5 +40,11 @@ public class View
     @Override
     public final ElementFactory getElementFactory() {
         return super.getElementFactory();
+    }
+
+    @NotNull
+    @Override
+    public Inventory getInventory() {
+        throw new UnsupportedOperationException("Cannot get inventory from RootView");
     }
 }

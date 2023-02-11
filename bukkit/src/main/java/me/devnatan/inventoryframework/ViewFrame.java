@@ -4,14 +4,18 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.UnaryOperator;
 import lombok.AccessLevel;
 import lombok.Getter;
+import me.devnatan.inventoryframework.bukkit.listener.IFInventoryInteractionListener;
 import me.devnatan.inventoryframework.bukkit.listener.IFLibraryConflictWarningListener;
 import me.devnatan.inventoryframework.bukkit.thirdparty.Metrics;
 import me.devnatan.inventoryframework.feature.DefaultFeatureInstaller;
 import me.devnatan.inventoryframework.feature.Feature;
 import me.devnatan.inventoryframework.feature.FeatureInstaller;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.ServicesManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -34,7 +38,7 @@ public final class ViewFrame implements IFViewFrame<ViewFrame> {
     @Getter(AccessLevel.PUBLIC)
     private final Plugin owner;
 
-    private final Map<Class<? extends RootView>, RootView> registeredViews;
+    private final Map<UUID, RootView> registeredViews;
     private final FeatureInstaller<ViewFrame> featureInstaller;
 
     private boolean registered;
@@ -49,12 +53,12 @@ public final class ViewFrame implements IFViewFrame<ViewFrame> {
     public ViewFrame with(RootView... views) {
         synchronized (registeredViews) {
             for (final RootView view : views) {
-                if (registeredViews.containsKey(view.getClass()))
+                if (registeredViews.containsKey(view.getUniqueId()))
                     throw new IllegalStateException(String.format(
                             "View %s already registered. Maybe your are using #register() before #with(...).",
                             view.getClass().getName()));
 
-                registeredViews.put(view.getClass(), view);
+                registeredViews.put(view.getUniqueId(), view);
             }
         }
         return this;
@@ -65,7 +69,7 @@ public final class ViewFrame implements IFViewFrame<ViewFrame> {
         synchronized (registeredViews) {
             for (final RootView view : views) {
                 view.closeForEveryone();
-                registeredViews.remove(view.getClass());
+                registeredViews.remove(view.getUniqueId());
             }
         }
     }
@@ -78,61 +82,6 @@ public final class ViewFrame implements IFViewFrame<ViewFrame> {
         initializeViews();
         registerListeners();
         return this;
-    }
-
-    private void tryEnableMetrics() {
-        final ServicesManager servicesManager = getOwner().getServer().getServicesManager();
-        if (servicesManager.isProvidedFor(IFViewFrame.class)) return;
-
-        final boolean metricsEnabled =
-                Boolean.parseBoolean(System.getProperty(BSTATS_SYSTEM_PROP, Boolean.TRUE.toString()));
-
-        if (!metricsEnabled) return;
-
-        if (!(getOwner() instanceof JavaPlugin)) {
-            getOwner()
-                    .getLogger()
-                    .warning("InventoryFramework BStats metrics cannot be"
-                            + " enabled since ViewFrame's owner is not a JavaPlugin.");
-            return;
-        }
-
-        try {
-            new Metrics((JavaPlugin) getOwner(), BSTATS_PROJECT_ID);
-        } catch (final Exception ignored) {
-        }
-    }
-
-    @SuppressWarnings("rawtypes")
-    private void initializeViews() {
-        for (final Map.Entry<Class<? extends RootView>, RootView> entry : registeredViews.entrySet()) {
-            final Class<? extends RootView> clazz = entry.getKey();
-            final RootView rootView = entry.getValue();
-            if (!(rootView instanceof PlatformView))
-                throw new IllegalStateException("Only PlatformView can be registered on this view frame");
-
-            final PlatformView platformView = (PlatformView) rootView;
-            try {
-                platformView.internalInitialization();
-                platformView.setInitialized(true);
-            } catch (final RuntimeException exception) {
-                platformView.setInitialized(false);
-                getOwner()
-                        .getLogger()
-                        .severe(String.format(
-                                "An error ocurred while enabling view %s: %s", clazz.getName(), exception));
-            }
-        }
-    }
-
-    private void registerListeners() {
-        final Plugin plugin = getOwner();
-        if (isShaded() && isLibrary()) {
-            plugin.getLogger().warning(RELOCATION_MESSAGE);
-            plugin.getServer()
-                    .getPluginManager()
-                    .registerEvents(new IFLibraryConflictWarningListener(RELOCATION_MESSAGE), plugin);
-        }
     }
 
     @ApiStatus.Internal
@@ -186,6 +135,82 @@ public final class ViewFrame implements IFViewFrame<ViewFrame> {
     @Override
     public void uninstall(@NotNull Feature<?, ?> feature) {
         featureInstaller.uninstall(feature);
+    }
+
+    private void tryEnableMetrics() {
+        final ServicesManager servicesManager = getOwner().getServer().getServicesManager();
+        if (servicesManager.isProvidedFor(IFViewFrame.class)) return;
+
+        final boolean metricsEnabled =
+                Boolean.parseBoolean(System.getProperty(BSTATS_SYSTEM_PROP, Boolean.TRUE.toString()));
+
+        if (!metricsEnabled) return;
+
+        if (!(getOwner() instanceof JavaPlugin)) {
+            getOwner()
+                    .getLogger()
+                    .warning("InventoryFramework BStats metrics cannot be"
+                            + " enabled since ViewFrame's owner is not a JavaPlugin.");
+            return;
+        }
+
+        try {
+            new Metrics((JavaPlugin) getOwner(), BSTATS_PROJECT_ID);
+        } catch (final Exception ignored) {
+        }
+    }
+
+    @SuppressWarnings("rawtypes")
+    private void initializeViews() {
+        for (final Map.Entry<UUID, RootView> entry : registeredViews.entrySet()) {
+            final RootView rootView = entry.getValue();
+            if (!(rootView instanceof PlatformView))
+                throw new IllegalStateException("Only PlatformView can be registered on this view frame");
+
+            final PlatformView platformView = (PlatformView) rootView;
+            try {
+                platformView.internalInitialization();
+                platformView.setInitialized(true);
+            } catch (final RuntimeException exception) {
+                platformView.setInitialized(false);
+                getOwner()
+                        .getLogger()
+                        .severe(String.format(
+                                "An error occurred while enabling view %s: %s",
+                                rootView.getClass().getName(), exception));
+            }
+        }
+    }
+
+    private void registerListeners() {
+        final Plugin plugin = getOwner();
+        if (isShaded() && isLibrary()) {
+            plugin.getLogger().warning(RELOCATION_MESSAGE);
+            plugin.getServer()
+                    .getPluginManager()
+                    .registerEvents(new IFLibraryConflictWarningListener(RELOCATION_MESSAGE), plugin);
+        }
+
+        plugin.getServer().getPluginManager().registerEvents(new IFInventoryInteractionListener(this), plugin);
+    }
+
+    /**
+     * Returns the current {@link RootView} the player is viewing based on open inventory.
+     * <p>
+     * Only views registered in that view frame are returned.
+     *
+     * @param player The player.
+     * @return The current view the player is viewing or {@code null} if it was not found, or it was
+     * not possible to determine it.
+     */
+    public View getCurrentView(@NotNull Player player) {
+        final Inventory topInventory = player.getOpenInventory().getTopInventory();
+        if (!(topInventory.getHolder() instanceof View)) return null;
+
+        final View view = (View) topInventory.getHolder();
+        if (!registeredViews.containsKey(view.getUniqueId())) return null;
+
+        return view;
     }
 
     /**
