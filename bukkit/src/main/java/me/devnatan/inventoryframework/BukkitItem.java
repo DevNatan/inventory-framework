@@ -92,7 +92,7 @@ public final class BukkitItem extends IFItem<BukkitItem> {
      * @param renderHandler The render handler.
      * @return This item.
      */
-    public BukkitItem rendered(@Nullable Consumer<? super SlotContext> renderHandler) {
+    public BukkitItem onRender(@Nullable Consumer<? super SlotContext> renderHandler) {
         this.renderHandler = (Consumer<? super IFSlotContext>) renderHandler;
         return this;
     }
@@ -110,10 +110,10 @@ public final class BukkitItem extends IFItem<BukkitItem> {
      * @param renderHandler The render handler.
      * @return This item.
      */
-    public BukkitItem renderedWith(@Nullable Function<SlotContext, ItemStack> renderHandler) {
+    public BukkitItem rendered(@Nullable Function<SlotContext, ItemStack> renderHandler) {
         return renderHandler == null
                 ? this
-                : rendered(renderContext -> renderContext.setItem(renderHandler.apply(renderContext)));
+                : onRender(renderContext -> renderContext.setItem(renderHandler.apply(renderContext)));
     }
 
     /**
@@ -129,8 +129,8 @@ public final class BukkitItem extends IFItem<BukkitItem> {
      * @param renderHandler The render handler.
      * @return This item.
      */
-    public BukkitItem renderedWith(@Nullable Supplier<ItemStack> renderHandler) {
-        return renderHandler == null ? this : rendered(renderContext -> renderContext.setItem(renderHandler.get()));
+    public BukkitItem rendered(@Nullable Supplier<ItemStack> renderHandler) {
+        return renderHandler == null ? this : onRender(renderContext -> renderContext.setItem(renderHandler.get()));
     }
 
     /**
@@ -144,7 +144,7 @@ public final class BukkitItem extends IFItem<BukkitItem> {
      * @param updateHandler The update handler.
      * @return This item.
      */
-    public BukkitItem updated(@Nullable Consumer<? super SlotContext> updateHandler) {
+    public BukkitItem onUpdate(@Nullable Consumer<? super SlotContext> updateHandler) {
         this.updateHandler = (Consumer<? super IFSlotContext>) updateHandler;
         return this;
     }
@@ -160,7 +160,7 @@ public final class BukkitItem extends IFItem<BukkitItem> {
      * @param clickHandler The click handler.
      * @return This item.
      */
-    public BukkitItem clicked(@Nullable Consumer<? super SlotClickContext> clickHandler) {
+    public BukkitItem onClick(@Nullable Consumer<? super SlotClickContext> clickHandler) {
         this.clickHandler = (Consumer<? super IFSlotClickContext>) clickHandler;
         return this;
     }
@@ -176,7 +176,7 @@ public final class BukkitItem extends IFItem<BukkitItem> {
      * @param clickHandler The click handler.
      * @return This item.
      */
-    public BukkitItem clicked(@Nullable Runnable clickHandler) {
+    public BukkitItem onClick(@Nullable Runnable clickHandler) {
         this.clickHandler = clickHandler == null ? null : $ -> clickHandler.run();
         return this;
     }
@@ -187,14 +187,14 @@ public final class BukkitItem extends IFItem<BukkitItem> {
      * <p>This handler works on any container that the actor has access to and only works if the
      * interaction has not been cancelled.
      *
-     * <p>You can check if the item has been released using {@link #released(BiConsumer)}.
+     * <p>You can check if the item has been released using {@link #onRelease(BiConsumer)}.
      *
      * <p>**Using item mutation functions in this handler is not allowed.**
      *
      * @param holdHandler The item hold handler.
      * @return This item.
      */
-    public BukkitItem held(@Nullable Consumer<? super SlotClickContext> holdHandler) {
+    public BukkitItem onHold(@Nullable Consumer<? super SlotClickContext> holdHandler) {
         this.holdHandler = (Consumer<? super IFSlotClickContext>) holdHandler;
         return this;
     }
@@ -205,14 +205,14 @@ public final class BukkitItem extends IFItem<BukkitItem> {
      * <p>This handler works on any container that the actor has access to and only works if the
      * interaction has not been cancelled.
      *
-     * <p>You can know when the item was hold using {@link #held(Consumer)}.
+     * <p>You can know when the item was hold using {@link #onHold(Consumer)}.
      *
      * <p>**Using item mutation functions in this handler is not allowed.**
      *
      * @param releaseHandler The item release handler.
      * @return This item.
      */
-    public BukkitItem released(
+    public BukkitItem onRelease(
             @Nullable BiConsumer<? super SlotClickContext, ? super SlotClickContext> releaseHandler) {
         this.releaseHandler = (BiConsumer<? super IFSlotClickContext, ? super IFSlotClickContext>) releaseHandler;
         return this;

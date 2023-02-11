@@ -51,8 +51,8 @@ public final class ClanMemberListView extends View {
 
     @Override
     public void onFirstRender(RenderContext ctx) {
-        ctx.layoutSlot("<").clicked(pagination::back);
-        ctx.layoutSlot(">").clicked(pagination::advance);
+        ctx.layoutSlot("<").onClick(pagination::back);
+        ctx.layoutSlot(">").onClick(pagination::advance);
     }
 
     private void createPaginationItem(BukkitItem item, ClanMember member) {

@@ -3,7 +3,7 @@ package me.devnatan.inventoryframework.context;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public interface ViewContext extends IFContext {
+public interface Context extends IFContext {
 
     /**
      * The player for the current interaction context.

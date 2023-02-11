@@ -5,6 +5,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import me.devnatan.inventoryframework.context.IFCloseContext;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFOpenContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
@@ -25,6 +26,7 @@ public abstract class PlatformView<
                 TItem extends IFItem<TItem>,
                 TContext extends IFContext,
                 TOpenContext extends IFOpenContext,
+                TCloseContext extends IFCloseContext,
                 TRenderContext extends IFRenderContext<TItem>,
                 TSlotContext extends IFSlotContext,
                 TSlotClickContext extends IFSlotClickContext>
@@ -428,7 +430,7 @@ public abstract class PlatformView<
      * @param ctx The player view context.
      */
     @ApiStatus.OverrideOnly
-    public void onClose(TContext ctx) {}
+    public void onClose(TCloseContext ctx) {}
 
     /**
      * Called when an actor clicks on a container while it has a view open.

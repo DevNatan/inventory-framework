@@ -4,9 +4,10 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import me.devnatan.inventoryframework.View;
 import me.devnatan.inventoryframework.ViewConfigBuilder;
+import me.devnatan.inventoryframework.context.CloseContext;
+import me.devnatan.inventoryframework.context.Context;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.OpenContext;
-import me.devnatan.inventoryframework.context.ViewContext;
 import me.devnatan.inventoryframework.state.State;
 
 @RequiredArgsConstructor
@@ -28,7 +29,7 @@ public final class TournamentView extends View {
     }
 
     @Override
-    public void onClose(ViewContext ctx) {
+    public void onClose(CloseContext ctx) {
         final Tournament tournament = getTournament(ctx);
         final TournamentParticipant participant =
                 tournament.getParticipant(ctx.getPlayer().getUniqueId());
@@ -37,7 +38,7 @@ public final class TournamentView extends View {
         for (final IFContext other : getContexts()) other.updateTitle(createTitle(other));
     }
 
-    private Tournament getTournament(ViewContext context) {
+    private Tournament getTournament(Context context) {
         return tournamentsManager.getTournament(tournamentIdState.get(context));
     }
 
