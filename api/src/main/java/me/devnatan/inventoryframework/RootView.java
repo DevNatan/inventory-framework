@@ -3,6 +3,7 @@ package me.devnatan.inventoryframework;
 import static me.devnatan.inventoryframework.ViewConfig.createOption;
 
 import java.util.Set;
+import java.util.UUID;
 import me.devnatan.inventoryframework.ViewConfig.Option;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
@@ -15,8 +16,14 @@ public interface RootView extends VirtualView {
     Option<Boolean> CancelOnClick = createOption("cancel-on-click", true);
 
     @NotNull
+    UUID getUniqueId();
+
+    @NotNull
     @UnmodifiableView
     Set<IFContext> getContexts();
+
+    @NotNull
+    IFContext getContext(@NotNull Viewer viewer);
 
     void addContext(@NotNull IFContext context);
 
@@ -55,4 +62,8 @@ public interface RootView extends VirtualView {
      */
     @NotNull
     Pipeline<? super VirtualView> getPipeline();
+
+    void open(@NotNull Viewer viewer);
+
+    void closeForEveryone();
 }

@@ -13,6 +13,7 @@ import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.context.IFSlotContext;
 import me.devnatan.inventoryframework.internal.ElementFactory;
 import me.devnatan.inventoryframework.internal.PlatformUtils;
+import me.devnatan.inventoryframework.pipeline.StandardPipelinePhases;
 import me.devnatan.inventoryframework.state.MutableIntState;
 import me.devnatan.inventoryframework.state.MutableState;
 import me.devnatan.inventoryframework.state.Pagination;
@@ -448,9 +449,22 @@ public abstract class PlatformView<
     @ApiStatus.OverrideOnly
     public void onClick(TSlotClickContext ctx) {}
 
-    @ApiStatus.Internal
-    protected final boolean isInitialized() {
+    /**
+     * Initialization state of this view.
+     *
+     * @return If this view was initialized.
+     */
+    final boolean isInitialized() {
         return initialized;
+    }
+
+    /**
+     * Sets the initialization state of this view.
+     *
+     * @param initialized The new initialization state.
+     */
+    final void setInitialized(boolean initialized) {
+        this.initialized = initialized;
     }
 
     /**
@@ -470,5 +484,17 @@ public abstract class PlatformView<
     @ApiStatus.Internal
     public ElementFactory getElementFactory() {
         return PlatformUtils.getFactory();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public final void open(@NotNull Viewer viewer) {
+        if (!isInitialized()) throw new IllegalStateException("Cannot open a uninitialized view");
+
+        final IFOpenContext context = getElementFactory().createContext(this, null, viewer, IFOpenContext.class, false);
+
+        context.addViewer(viewer);
+        onOpen((TOpenContext) context);
+        getPipeline().execute(StandardPipelinePhases.OPEN, context);
     }
 }

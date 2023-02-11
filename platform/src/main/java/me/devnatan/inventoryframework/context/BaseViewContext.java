@@ -1,18 +1,20 @@
 package me.devnatan.inventoryframework.context;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import me.devnatan.inventoryframework.DefaultVirtualViewImpl;
 import me.devnatan.inventoryframework.IFItem;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewConfig;
+import me.devnatan.inventoryframework.ViewContainer;
+import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.component.Component;
-import me.devnatan.inventoryframework.internal.platform.ViewContainer;
-import me.devnatan.inventoryframework.internal.platform.Viewer;
 import me.devnatan.inventoryframework.internal.state.DefaultStateHolder;
 import me.devnatan.inventoryframework.state.State;
 import me.devnatan.inventoryframework.state.StateHolder;
@@ -20,6 +22,7 @@ import me.devnatan.inventoryframework.state.StateValueHolder;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Unmodifiable;
 import org.jetbrains.annotations.UnmodifiableView;
 
 @ApiStatus.Internal
@@ -32,7 +35,7 @@ class BaseViewContext implements IFContext {
 
     private final StateHolder stateHolder = new DefaultStateHolder();
     private final VirtualView virtualView = new DefaultVirtualViewImpl();
-    protected final Set<Viewer> viewers = new HashSet<>();
+    protected final Map<String, Viewer> viewers = new HashMap<>();
     protected final ViewConfig config;
 
     public BaseViewContext(@NotNull RootView root, @Nullable ViewContainer container) {
@@ -58,21 +61,26 @@ class BaseViewContext implements IFContext {
     }
 
     @Override
-    public final @NotNull Set<Viewer> getViewers() {
-        return Collections.unmodifiableSet(viewers);
+    public final @NotNull @Unmodifiable Set<Viewer> getViewers() {
+        return Collections.unmodifiableSet(new HashSet<>(getIndexedViewers().values()));
+    }
+
+    @Override
+    public @NotNull @UnmodifiableView Map<String, Viewer> getIndexedViewers() {
+        return Collections.unmodifiableMap(viewers);
     }
 
     @Override
     public final void addViewer(@NotNull Viewer viewer) {
         synchronized (viewers) {
-            viewers.add(viewer);
+            viewers.put(viewer.getId(), viewer);
         }
     }
 
     @Override
     public final void removeViewer(@NotNull Viewer viewer) {
         synchronized (viewers) {
-            viewers.remove(viewer);
+            viewers.remove(viewer.getId());
         }
     }
 

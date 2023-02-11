@@ -1,7 +1,7 @@
 package me.devnatan.inventoryframework.context;
 
 import me.devnatan.inventoryframework.RootView;
-import me.devnatan.inventoryframework.internal.platform.Viewer;
+import me.devnatan.inventoryframework.Viewer;
 import org.jetbrains.annotations.NotNull;
 
 public interface IFConfinedContext extends IFContext {

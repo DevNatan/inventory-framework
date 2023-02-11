@@ -27,37 +27,37 @@ public interface FeatureInstaller<P> {
      *
      * @return All installed features.
      */
-    Collection<Feature<?, ?>> getInstalledFeatures();
+    Collection<Feature<?, ?, P>> getInstalledFeatures();
 
     /**
      * Installs a feature with no specific configuration.
      *
      * @param feature The feature to be installed.
-     * @param <C> The feature configuration type.
-     * @param <R> The feature value instance type.
-     * @return An initialized feature.
+     * @param <C>     The feature configuration type.
+     * @param <R>     The feature value instance type.
+     * @return An instance of the installed feature.
      */
     @NotNull
-    default <C, R> R install(@NotNull Feature<C, R> feature) {
+    default <C, R> R install(@NotNull Feature<C, R, P> feature) {
         return install(feature, $ -> $);
     }
 
     /**
      * Installs a feature.
      *
-     * @param feature The feature to be installed.
+     * @param feature   The feature to be installed.
      * @param configure The feature configuration.
-     * @param <C> The feature configuration type.
-     * @param <R> The feature value instance type.
-     * @return An initialized feature.
+     * @param <C>       The feature configuration type.
+     * @param <R>       The feature value instance type.
+     * @return An instance of the installed feature.
      */
     @NotNull
-    <C, R> R install(@NotNull Feature<C, R> feature, @NotNull UnaryOperator<C> configure);
+    <C, R> R install(@NotNull Feature<C, R, P> feature, @NotNull UnaryOperator<C> configure);
 
     /**
      * Uninstalls a feature.
      *
      * @param feature The feature to be uninstalled.
      */
-    void uninstall(@NotNull Feature<?, ?> feature);
+    void uninstall(@NotNull Feature<?, ?, P> feature);
 }
