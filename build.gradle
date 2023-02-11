@@ -6,7 +6,7 @@ subprojects {
     apply plugin: 'java-library'
     apply plugin: "com.diffplug.spotless"
 
-    group 'me.devnatan.inventoryframework'
+    group 'me.devnatan'
     version '3.0.0-beta'
 
     repositories {

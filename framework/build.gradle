@@ -1,3 +1,5 @@
+apply from: '../publish.gradle'
+
 dependencies {
     compileOnly projects.api
 }

@@ -7,4 +7,5 @@ include 'test',
         'bukkit',
         'examples',
         'platform',
-        'framework'
+        'framework',
+        'bom'
