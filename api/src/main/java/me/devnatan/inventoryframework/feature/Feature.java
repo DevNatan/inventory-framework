@@ -1,7 +1,7 @@
 package me.devnatan.inventoryframework.feature;
 
 import java.util.function.UnaryOperator;
-import me.devnatan.inventoryframework.ViewFrame;
+import me.devnatan.inventoryframework.IFViewFrame;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -52,13 +52,13 @@ public interface Feature<C, R> {
      * @return The initialized feature instance.
      */
     @NotNull
-    R install(ViewFrame framework, UnaryOperator<C> configure);
+    R install(IFViewFrame framework, UnaryOperator<C> configure);
 
     /**
      * Uninstalls this feature, used to invalidate resources applied on installation.
      *
      * @param framework The feature uninstaller framework.
-     * @see #install(ViewFrame, UnaryOperator)
+     * @see #install(IFViewFrame, UnaryOperator)
      */
-    void uninstall(ViewFrame framework);
+    void uninstall(IFViewFrame framework);
 }

@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.function.UnaryOperator;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import me.devnatan.inventoryframework.ViewFrame;
+import me.devnatan.inventoryframework.IFViewFrame;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
  * @param <P> The platform view framework.
  */
 @RequiredArgsConstructor
-public class DefaultFeatureInstaller<P extends ViewFrame> implements FeatureInstaller<P> {
+public class DefaultFeatureInstaller<P extends IFViewFrame> implements FeatureInstaller<P> {
 
     private final Map<Class<?>, Feature<?, ?>> featureList = new HashMap<>();
 
