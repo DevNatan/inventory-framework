@@ -26,9 +26,10 @@ public final class ViewFrame implements IFViewFrame<ViewFrame> {
     private static final String MAIN_PLUGIN_QNAME = "me.devnatan.inventoryframework.bukkit.InventoryFramework";
 
     private static final String RELOCATION_MESSAGE = "Inventory Framework is running as a shaded library"
-            + " (in the same original package), there are chances of conflict if other "
-            + "plugins are also using the library in different versions. It is "
-            + "recommended that you relocate the library package to the same plugin package.";
+            + " (in the same package as original package), there are chances of conflict if other "
+            + "plugins are also using the library in different versions. It is recommended that "
+            + "you relocate the library package to the same plugin package. Learn more about on docs: "
+            + "https://github.com/DevNatan/inventory-framework/wiki/Installation#preventing-library-conflicts";
 
     @Getter(AccessLevel.PUBLIC)
     private final Plugin owner;
