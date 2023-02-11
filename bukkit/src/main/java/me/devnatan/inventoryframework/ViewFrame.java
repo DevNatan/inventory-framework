@@ -155,7 +155,7 @@ public final class ViewFrame extends IFViewFrame<ViewFrame> implements FeatureIn
 
     private void registerListeners() {
         final Plugin plugin = getOwner();
-        if (isLibraryAsPlugin() && isShaded()) {
+        if (!isLibraryAsPlugin() && isShaded()) {
             plugin.getLogger().warning(RELOCATION_MESSAGE);
             plugin.getServer()
                     .getPluginManager()
