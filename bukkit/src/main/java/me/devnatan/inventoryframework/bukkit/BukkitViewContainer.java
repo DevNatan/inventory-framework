@@ -1,4 +1,4 @@
-package me.devnatan.inventoryframework.internal;
+package me.devnatan.inventoryframework.bukkit;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -6,10 +6,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.ViewType;
+import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.bukkit.thirdparty.InventoryUpdate;
-import me.devnatan.inventoryframework.internal.platform.ViewContainer;
-import me.devnatan.inventoryframework.internal.platform.Viewer;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;

@@ -11,7 +11,6 @@ import java.util.Set;
 import java.util.UUID;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.context.IFContext;
-import me.devnatan.inventoryframework.internal.platform.Viewer;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -80,6 +79,11 @@ class DefaultRootView implements RootView {
     @Override
     public final @NotNull Pipeline<? super VirtualView> getPipeline() {
         return pipeline;
+    }
+
+    @Override
+    public void open(@NotNull Viewer viewer) {
+        throw new UnsupportedOperationException("Missing #open(...) implementation");
     }
 
     @Override

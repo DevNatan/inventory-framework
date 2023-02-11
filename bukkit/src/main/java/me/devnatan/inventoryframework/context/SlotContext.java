@@ -2,10 +2,10 @@ package me.devnatan.inventoryframework.context;
 
 import me.devnatan.inventoryframework.IFItem;
 import me.devnatan.inventoryframework.RootView;
-import me.devnatan.inventoryframework.internal.BukkitViewContainer;
-import me.devnatan.inventoryframework.internal.BukkitViewer;
-import me.devnatan.inventoryframework.internal.platform.ViewContainer;
-import me.devnatan.inventoryframework.internal.platform.Viewer;
+import me.devnatan.inventoryframework.ViewContainer;
+import me.devnatan.inventoryframework.Viewer;
+import me.devnatan.inventoryframework.bukkit.BukkitViewContainer;
+import me.devnatan.inventoryframework.bukkit.BukkitViewer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;

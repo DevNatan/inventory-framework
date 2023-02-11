@@ -1,5 +1,6 @@
 package me.devnatan.inventoryframework;
 
+import me.devnatan.inventoryframework.bukkit.BukkitItem;
 import me.devnatan.inventoryframework.context.CloseContext;
 import me.devnatan.inventoryframework.context.Context;
 import me.devnatan.inventoryframework.context.OpenContext;
@@ -18,7 +19,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Bukkit platform View backward compatible implementation.
+ * Bukkit platform {@link PlatformView} implementation.
  */
 @ApiStatus.OverrideOnly
 public class View
@@ -26,7 +27,9 @@ public class View
                 BukkitItem, Context, OpenContext, CloseContext, RenderContext, SlotContext, SlotClickContext>
         implements InventoryHolder {
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     final void internalInitialization() {
         super.internalInitialization();
@@ -44,7 +47,7 @@ public class View
 
     @NotNull
     @Override
-    public Inventory getInventory() {
+    public final Inventory getInventory() {
         throw new UnsupportedOperationException("Cannot get inventory from RootView");
     }
 }

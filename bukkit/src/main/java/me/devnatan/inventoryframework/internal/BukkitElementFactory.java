@@ -6,12 +6,14 @@ import static me.devnatan.inventoryframework.bukkit.util.InventoryUtils.toInvent
 import static me.devnatan.inventoryframework.util.IsTypeOf.isTypeOf;
 import static org.bukkit.Bukkit.createInventory;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import me.devnatan.inventoryframework.IFItem;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.View;
+import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.ViewType;
+import me.devnatan.inventoryframework.Viewer;
+import me.devnatan.inventoryframework.bukkit.BukkitViewContainer;
+import me.devnatan.inventoryframework.bukkit.BukkitViewer;
 import me.devnatan.inventoryframework.context.CloseContext;
 import me.devnatan.inventoryframework.context.IFCloseContext;
 import me.devnatan.inventoryframework.context.IFContext;
@@ -21,8 +23,6 @@ import me.devnatan.inventoryframework.context.IFSlotContext;
 import me.devnatan.inventoryframework.context.OpenContext;
 import me.devnatan.inventoryframework.context.RenderContext;
 import me.devnatan.inventoryframework.context.SlotContext;
-import me.devnatan.inventoryframework.internal.platform.ViewContainer;
-import me.devnatan.inventoryframework.internal.platform.Viewer;
 import me.devnatan.inventoryframework.logging.Logger;
 import me.devnatan.inventoryframework.logging.NoopLogger;
 import me.devnatan.inventoryframework.pipeline.GlobalClickInterceptor;
@@ -37,8 +37,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-@NoArgsConstructor(access = AccessLevel.PACKAGE)
-final class BukkitElementFactory extends ElementFactory {
+public final class BukkitElementFactory extends ElementFactory {
 
     private static final ViewType defaultType = ViewType.CHEST;
     private Boolean worksInCurrentPlatform = null;
@@ -88,17 +87,18 @@ final class BukkitElementFactory extends ElementFactory {
         return new BukkitViewer((Player) playerObject);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public @NotNull IFContext createContext(
+    public <T extends IFContext> @NotNull T createContext(
             @NotNull RootView root,
             ViewContainer container,
             @NotNull Viewer viewer,
-            @NotNull Class<? extends IFContext> kind,
+            @NotNull Class<T> kind,
             boolean shared) {
         if (shared) throw new IllegalStateException("Shared contexts are not yet supported");
-        if (isTypeOf(IFOpenContext.class, kind)) return new OpenContext(root, viewer);
-        if (isTypeOf(IFRenderContext.class, kind)) return new RenderContext(root, container, viewer);
-        if (isTypeOf(IFCloseContext.class, kind)) return new CloseContext(root, container, viewer);
+        if (isTypeOf(IFOpenContext.class, kind)) return (T) new OpenContext(root, viewer);
+        if (isTypeOf(IFRenderContext.class, kind)) return (T) new RenderContext(root, container, viewer);
+        if (isTypeOf(IFCloseContext.class, kind)) return (T) new CloseContext(root, container, viewer);
 
         throw new UnsupportedOperationException("Unsupported context kind: " + kind);
     }

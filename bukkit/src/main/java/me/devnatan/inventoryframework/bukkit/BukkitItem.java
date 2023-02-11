@@ -1,10 +1,11 @@
-package me.devnatan.inventoryframework;
+package me.devnatan.inventoryframework.bukkit;
 
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import lombok.Getter;
+import me.devnatan.inventoryframework.IFItem;
 import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.context.IFSlotContext;
 import me.devnatan.inventoryframework.context.SlotClickContext;

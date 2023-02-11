@@ -1,19 +1,22 @@
 package me.devnatan.inventoryframework;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.UnaryOperator;
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import me.devnatan.inventoryframework.bukkit.BukkitViewer;
 import me.devnatan.inventoryframework.bukkit.listener.IFInventoryInteractionListener;
 import me.devnatan.inventoryframework.bukkit.listener.IFLibraryConflictWarningListener;
 import me.devnatan.inventoryframework.bukkit.thirdparty.Metrics;
 import me.devnatan.inventoryframework.feature.DefaultFeatureInstaller;
 import me.devnatan.inventoryframework.feature.Feature;
 import me.devnatan.inventoryframework.feature.FeatureInstaller;
+import me.devnatan.inventoryframework.internal.BukkitElementFactory;
+import me.devnatan.inventoryframework.internal.PlatformUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.Plugin;
@@ -22,7 +25,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
-public final class ViewFrame implements IFViewFrame<ViewFrame> {
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+public final class ViewFrame extends IFViewFrame<ViewFrame> implements FeatureInstaller<ViewFrame> {
 
     private static final String BSTATS_SYSTEM_PROP = "inventory-framework.enable-bstats";
     private static final int BSTATS_PROJECT_ID = 15518;
@@ -36,62 +40,45 @@ public final class ViewFrame implements IFViewFrame<ViewFrame> {
             + "https://github.com/DevNatan/inventory-framework/wiki/Installation#preventing-library-conflicts";
 
     @Getter(AccessLevel.PUBLIC)
-    private final Plugin owner;
+    private final @NotNull Plugin owner;
 
-    private final Map<UUID, RootView> registeredViews;
-    private final FeatureInstaller<ViewFrame> featureInstaller;
+    private final FeatureInstaller<ViewFrame> featureInstaller = new DefaultFeatureInstaller<>(this);
 
-    private boolean registered;
-
-    private ViewFrame(@NotNull Plugin owner) {
-        this.owner = owner;
-        this.registeredViews = new HashMap<>();
-        this.featureInstaller = new DefaultFeatureInstaller<>(this);
+    static {
+        PlatformUtils.setFactory(new BukkitElementFactory());
     }
 
     @Override
-    public ViewFrame with(RootView... views) {
-        synchronized (registeredViews) {
-            for (final RootView view : views) {
-                if (registeredViews.containsKey(view.getUniqueId()))
-                    throw new IllegalStateException(String.format(
-                            "View %s already registered. Maybe your are using #register() before #with(...).",
-                            view.getClass().getName()));
+    public void open(@NotNull Class<? extends RootView> viewClass, @NotNull Viewer viewer) {
+        if (!(viewer instanceof BukkitViewer))
+            throw new IllegalArgumentException("Only BukkitViewer viewer impl is supported");
 
-                registeredViews.put(view.getUniqueId(), view);
-            }
-        }
-        return this;
+        final RootView view = getRegisteredViewByType(viewClass);
+        if (!(view instanceof PlatformView))
+            throw new IllegalStateException("Only PlatformView can be opened through #open(...)");
+
+        view.open(viewer);
     }
 
-    @Override
-    public void remove(RootView... views) {
-        synchronized (registeredViews) {
-            for (final RootView view : views) {
-                view.closeForEveryone();
-                registeredViews.remove(view.getUniqueId());
-            }
-        }
+    /**
+     * Opens a view to a player.
+     *
+     * @param viewClass The target view to be opened.
+     * @param player    The player that the view will be open to.
+     */
+    public void open(@NotNull Class<? extends RootView> viewClass, @NotNull Player player) {
+        open(viewClass, PlatformUtils.getFactory().createViewer(player));
     }
 
     @Override
     public ViewFrame register() {
-        if (isRegistered()) throw new IllegalStateException("This view frame is already registered.");
+        if (isRegistered()) throw new IllegalStateException("This view frame is already registered");
 
         tryEnableMetrics();
         initializeViews();
         registerListeners();
+        setRegistered(true);
         return this;
-    }
-
-    @ApiStatus.Internal
-    public boolean isShaded() {
-        return !getOwner().getDescription().getMain().equals(MAIN_PLUGIN_QNAME);
-    }
-
-    @ApiStatus.Internal
-    public boolean isLibrary() {
-        return getClass().getPackage().getName().equals(ROOT_PKG);
     }
 
     @Override
@@ -99,9 +86,9 @@ public final class ViewFrame implements IFViewFrame<ViewFrame> {
         if (!isRegistered()) return;
 
         // Locks new operations while unregistering
-        registered = false;
+        setRegistered(false);
 
-        final Iterator<RootView> iterator = registeredViews.values().iterator();
+        final Iterator<RootView> iterator = getRegisteredViews().values().iterator();
         while (iterator.hasNext()) {
             final RootView view = iterator.next();
             try {
@@ -112,29 +99,14 @@ public final class ViewFrame implements IFViewFrame<ViewFrame> {
         }
     }
 
-    @Override
-    public boolean isRegistered() {
-        return registered;
+    @ApiStatus.Internal
+    public boolean isShaded() {
+        return !getOwner().getDescription().getMain().equals(MAIN_PLUGIN_QNAME);
     }
 
-    @Override
-    public @NotNull ViewFrame getPlatform() {
-        return this;
-    }
-
-    @Override
-    public Collection<Feature<?, ?>> getInstalledFeatures() {
-        return featureInstaller.getInstalledFeatures();
-    }
-
-    @Override
-    public <C, R> @NotNull R install(@NotNull Feature<C, R> feature, @NotNull UnaryOperator<C> configure) {
-        return featureInstaller.install(feature, configure);
-    }
-
-    @Override
-    public void uninstall(@NotNull Feature<?, ?> feature) {
-        featureInstaller.uninstall(feature);
+    @ApiStatus.Internal
+    public boolean isLibrary() {
+        return getClass().getPackage().getName().equals(ROOT_PKG);
     }
 
     private void tryEnableMetrics() {
@@ -162,7 +134,7 @@ public final class ViewFrame implements IFViewFrame<ViewFrame> {
 
     @SuppressWarnings("rawtypes")
     private void initializeViews() {
-        for (final Map.Entry<UUID, RootView> entry : registeredViews.entrySet()) {
+        for (final Map.Entry<UUID, RootView> entry : getRegisteredViews().entrySet()) {
             final RootView rootView = entry.getValue();
             if (!(rootView instanceof PlatformView))
                 throw new IllegalStateException("Only PlatformView can be registered on this view frame");
@@ -208,7 +180,7 @@ public final class ViewFrame implements IFViewFrame<ViewFrame> {
         if (!(topInventory.getHolder() instanceof View)) return null;
 
         final View view = (View) topInventory.getHolder();
-        if (!registeredViews.containsKey(view.getUniqueId())) return null;
+        if (!getRegisteredViews().containsKey(view.getUniqueId())) return null;
 
         return view;
     }
@@ -217,21 +189,29 @@ public final class ViewFrame implements IFViewFrame<ViewFrame> {
      * Creates a new ViewFrame.
      *
      * @param owner The plugin that owns this view frame.
-     * @param views The views to be registered during creation.
      * @return A new ViewFrame instance.
      */
-    public static @NotNull ViewFrame create(@NotNull Plugin owner, RootView... views) {
-        return new ViewFrame(owner).with(views);
+    public static @NotNull ViewFrame create(@NotNull Plugin owner) {
+        return new ViewFrame(owner);
     }
 
-    /**
-     * Creates a new ViewFrame which is immediately registered.
-     *
-     * @param owner The plugin that owns this view frame.
-     * @param views The views to be registered during creation.
-     * @return A new registered ViewFrame instance.
-     */
-    public static @NotNull ViewFrame createRegistered(@NotNull Plugin owner, RootView... views) {
-        return create(owner, views).register();
+    @Override
+    public @NotNull ViewFrame getPlatform() {
+        return this;
+    }
+
+    @Override
+    public Collection<Feature<?, ?>> getInstalledFeatures() {
+        return featureInstaller.getInstalledFeatures();
+    }
+
+    @Override
+    public <C, R> @NotNull R install(@NotNull Feature<C, R> feature, @NotNull UnaryOperator<C> configure) {
+        return featureInstaller.install(feature, configure);
+    }
+
+    @Override
+    public void uninstall(@NotNull Feature<?, ?> feature) {
+        featureInstaller.uninstall(feature);
     }
 }

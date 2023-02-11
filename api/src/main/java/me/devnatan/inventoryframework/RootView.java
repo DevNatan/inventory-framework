@@ -6,7 +6,6 @@ import java.util.Set;
 import java.util.UUID;
 import me.devnatan.inventoryframework.ViewConfig.Option;
 import me.devnatan.inventoryframework.context.IFContext;
-import me.devnatan.inventoryframework.internal.platform.Viewer;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -63,6 +62,8 @@ public interface RootView extends VirtualView {
      */
     @NotNull
     Pipeline<? super VirtualView> getPipeline();
+
+    void open(@NotNull Viewer viewer);
 
     void closeForEveryone();
 }

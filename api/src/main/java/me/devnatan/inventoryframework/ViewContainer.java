@@ -1,7 +1,6 @@
-package me.devnatan.inventoryframework.internal.platform;
+package me.devnatan.inventoryframework;
 
 import java.util.List;
-import me.devnatan.inventoryframework.ViewType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;

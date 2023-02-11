@@ -1,8 +1,8 @@
-package me.devnatan.inventoryframework.internal;
+package me.devnatan.inventoryframework.bukkit;
 
 import lombok.Data;
-import me.devnatan.inventoryframework.internal.platform.ViewContainer;
-import me.devnatan.inventoryframework.internal.platform.Viewer;
+import me.devnatan.inventoryframework.ViewContainer;
+import me.devnatan.inventoryframework.Viewer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -14,7 +14,7 @@ public final class BukkitViewer implements Viewer {
     private final Player player;
     private final ViewContainer container;
 
-    BukkitViewer(@NotNull Player player) {
+    public BukkitViewer(@NotNull Player player) {
         this.player = player;
         container = new BukkitViewContainer(player.getInventory(), false);
     }

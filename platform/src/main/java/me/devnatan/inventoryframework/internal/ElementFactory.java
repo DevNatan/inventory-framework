@@ -2,11 +2,11 @@ package me.devnatan.inventoryframework.internal;
 
 import me.devnatan.inventoryframework.IFItem;
 import me.devnatan.inventoryframework.RootView;
+import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.ViewType;
+import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFSlotContext;
-import me.devnatan.inventoryframework.internal.platform.ViewContainer;
-import me.devnatan.inventoryframework.internal.platform.Viewer;
 import me.devnatan.inventoryframework.logging.Logger;
 import me.devnatan.inventoryframework.pipeline.OpenInterceptor;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
@@ -49,11 +49,11 @@ public abstract class ElementFactory {
     public abstract Viewer createViewer(Object... parameters);
 
     @NotNull
-    public abstract IFContext createContext(
+    public abstract <T extends IFContext> T createContext(
             @NotNull RootView root,
             ViewContainer container,
             @NotNull Viewer viewer,
-            @NotNull Class<? extends IFContext> kind,
+            @NotNull Class<T> kind,
             boolean shared);
 
     @NotNull

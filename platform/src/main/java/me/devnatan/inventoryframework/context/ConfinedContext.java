@@ -2,8 +2,8 @@ package me.devnatan.inventoryframework.context;
 
 import lombok.Getter;
 import me.devnatan.inventoryframework.RootView;
-import me.devnatan.inventoryframework.internal.platform.ViewContainer;
-import me.devnatan.inventoryframework.internal.platform.Viewer;
+import me.devnatan.inventoryframework.ViewContainer;
+import me.devnatan.inventoryframework.Viewer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

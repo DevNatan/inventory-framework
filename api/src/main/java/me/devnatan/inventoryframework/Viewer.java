@@ -1,4 +1,4 @@
-package me.devnatan.inventoryframework.internal.platform;
+package me.devnatan.inventoryframework;
 
 import org.jetbrains.annotations.NotNull;
 
