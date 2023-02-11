@@ -449,8 +449,12 @@ public abstract class PlatformView<
     public void onClick(TSlotClickContext ctx) {}
 
     @ApiStatus.Internal
-    protected final boolean isInitialized() {
+    final boolean isInitialized() {
         return initialized;
+    }
+
+    final void setInitialized(boolean initialized) {
+        this.initialized = initialized;
     }
 
     /**

@@ -1,9 +1,9 @@
 package me.devnatan.inventoryframework.internal;
 
 import static java.util.Objects.requireNonNull;
-import static me.devnatan.inventoryframework.utils.InventoryUtils.checkInventoryTypeSupport;
-import static me.devnatan.inventoryframework.utils.InventoryUtils.toInventoryType;
-import static me.devnatan.inventoryframework.utils.IsTypeOf.isTypeOf;
+import static me.devnatan.inventoryframework.bukkit.util.InventoryUtils.checkInventoryTypeSupport;
+import static me.devnatan.inventoryframework.bukkit.util.InventoryUtils.toInventoryType;
+import static me.devnatan.inventoryframework.util.IsTypeOf.isTypeOf;
 import static org.bukkit.Bukkit.createInventory;
 
 import lombok.AccessLevel;

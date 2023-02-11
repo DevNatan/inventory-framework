@@ -55,4 +55,6 @@ public interface RootView extends VirtualView {
      */
     @NotNull
     Pipeline<? super VirtualView> getPipeline();
+
+    void closeForEveryone();
 }

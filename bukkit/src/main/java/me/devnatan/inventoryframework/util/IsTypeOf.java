@@ -1,4 +1,4 @@
-package me.devnatan.inventoryframework.utils;
+package me.devnatan.inventoryframework.util;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

@@ -1,8 +1,9 @@
 package me.devnatan.inventoryframework;
 
-import org.jetbrains.annotations.NotNull;
+import me.devnatan.inventoryframework.feature.FeatureInstaller;
+import org.jetbrains.annotations.Contract;
 
-public interface IFViewFrame {
+public interface IFViewFrame<S extends IFViewFrame<S>> extends FeatureInstaller<S> {
 
     /**
      * Registers a new view to this view frame.
@@ -10,14 +11,15 @@ public interface IFViewFrame {
      * @param views The views that'll be registered.
      * @return This platform view frame.
      */
-    IFViewFrame with(@NotNull RootView... views);
+    @Contract("_ -> this")
+    S with(RootView... views);
 
     /**
      * Removes a view from this view frame.
      *
      * @param views The views that'll be removed.
      */
-    void remove(@NotNull RootView... views);
+    void remove(RootView... views);
 
     /**
      * Registers this view frame.
@@ -25,12 +27,17 @@ public interface IFViewFrame {
      * @return This platform view frame.
      * @throws IllegalStateException If this view frame is already registered.
      */
-    IFViewFrame register();
+    S register();
 
     /**
      * Unregisters this view frame and closes all registered views.
-     *
-     * @throws IllegalStateException If this view frame is not registered.
      */
     void unregister();
+
+    /**
+     * If this view frame is registered.
+     *
+     * @return {@code true} if it's registered or {@code false} otherwise.
+     */
+    boolean isRegistered();
 }
