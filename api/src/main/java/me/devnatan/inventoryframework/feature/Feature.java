@@ -1,7 +1,6 @@
 package me.devnatan.inventoryframework.feature;
 
 import java.util.function.UnaryOperator;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * A feature is a module that is installed in the runtime and acts independently of the rest of the
@@ -50,7 +49,6 @@ public interface Feature<C, R, F> {
      * @param configure The feature configuration factory.
      * @return The initialized feature instance.
      */
-    @NotNull
     R install(F framework, UnaryOperator<C> configure);
 
     /**

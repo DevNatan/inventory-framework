@@ -6,7 +6,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.function.BiConsumer;
+import lombok.Getter;
 import me.devnatan.inventoryframework.DefaultVirtualViewImpl;
 import me.devnatan.inventoryframework.IFItem;
 import me.devnatan.inventoryframework.RootView;
@@ -27,6 +29,9 @@ import org.jetbrains.annotations.UnmodifiableView;
 
 @ApiStatus.Internal
 class BaseViewContext implements IFContext {
+
+    @Getter
+    private final UUID id = UUID.randomUUID();
 
     private final @NotNull RootView root;
 

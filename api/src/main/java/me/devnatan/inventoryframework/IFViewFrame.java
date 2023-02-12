@@ -1,5 +1,6 @@
 package me.devnatan.inventoryframework;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -12,15 +13,15 @@ import org.jetbrains.annotations.NotNull;
 public abstract class IFViewFrame<S extends IFViewFrame<S>> {
 
     private boolean registered;
-    private final Map<UUID, RootView> registeredViews = new HashMap<>();
+    protected final Map<UUID, RootView> registeredViews = new HashMap<>();
 
     /**
      * All registered views.
      *
      * @return A Map containing all registered views in this view frame.
      */
-    protected final @NotNull Map<UUID, RootView> getRegisteredViews() {
-        return registeredViews;
+    public final @NotNull Map<UUID, RootView> getRegisteredViews() {
+        return Collections.unmodifiableMap(registeredViews);
     }
 
     /**
@@ -31,7 +32,7 @@ public abstract class IFViewFrame<S extends IFViewFrame<S>> {
      * @throws IllegalArgumentException If the given cannot be found.
      */
     protected final @NotNull RootView getRegisteredViewByType(@NotNull Class<?> type) {
-        return getRegisteredViews().values().stream()
+        return registeredViews.values().stream()
                 .filter(view -> view.getClass().equals(type))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException(String.format("Unknown view: %s", type)));

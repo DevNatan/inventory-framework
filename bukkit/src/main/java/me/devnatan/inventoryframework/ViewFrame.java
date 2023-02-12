@@ -87,7 +87,7 @@ public final class ViewFrame extends IFViewFrame<ViewFrame> implements FeatureIn
         // Locks new operations while unregistering
         setRegistered(false);
 
-        final Iterator<RootView> iterator = getRegisteredViews().values().iterator();
+        final Iterator<RootView> iterator = registeredViews.values().iterator();
         while (iterator.hasNext()) {
             final RootView view = iterator.next();
             try {

@@ -2,6 +2,7 @@ package me.devnatan.inventoryframework.context;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewContainer;
@@ -14,6 +15,17 @@ import org.jetbrains.annotations.Unmodifiable;
 import org.jetbrains.annotations.UnmodifiableView;
 
 public interface IFContext extends VirtualView, StateHolder {
+
+    /**
+     * The unique identifier for this context.
+     * <p>
+     * Contexts with parent whose parent is the data source or bound contexts inherit the id of the
+     * context they were originated from.
+     *
+     * @return ID of this context.
+     */
+    @NotNull
+    UUID getId();
 
     /**
      * The configuration for this context.

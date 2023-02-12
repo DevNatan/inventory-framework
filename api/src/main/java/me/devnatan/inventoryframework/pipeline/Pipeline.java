@@ -72,6 +72,13 @@ public final class Pipeline<S> {
         _phases.add(phase);
     }
 
+    public void removePhase(final @NotNull PipelinePhase phase) {
+        if (!hasPhase(phase)) return;
+
+        _phases.remove(phase);
+        interceptors.remove(phase);
+    }
+
     public void insertPhaseBefore(final @NotNull PipelinePhase reference, final @NotNull PipelinePhase phase) {
         if (hasPhase(phase)) return;
 
