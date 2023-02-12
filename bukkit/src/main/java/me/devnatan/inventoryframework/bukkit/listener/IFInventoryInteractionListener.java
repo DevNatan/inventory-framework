@@ -1,13 +1,14 @@
 package me.devnatan.inventoryframework.bukkit.listener;
 
 import lombok.RequiredArgsConstructor;
-import me.devnatan.inventoryframework.IFItem;
 import me.devnatan.inventoryframework.View;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.ViewFrame;
 import me.devnatan.inventoryframework.Viewer;
+import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.context.IFContext;
-import me.devnatan.inventoryframework.context.IFSlotContext;
+import me.devnatan.inventoryframework.context.IFSlotClickContext;
+import me.devnatan.inventoryframework.context.SlotClickContext;
 import me.devnatan.inventoryframework.internal.ElementFactory;
 import me.devnatan.inventoryframework.pipeline.StandardPipelinePhases;
 import org.bukkit.entity.Player;
@@ -44,9 +45,9 @@ public final class IFInventoryInteractionListener implements Listener {
         final ViewContainer container = event.getClickedInventory() instanceof PlayerInventory
                 ? viewer.getSelfContainer()
                 : context.getContainer();
-        final IFItem<?> item = context.getItem(event.getRawSlot());
-        final IFSlotContext slotContext =
-                elementFactory.createSlotContext(event.getRawSlot(), item, container, viewer, context);
+        final Component component = context.getComponent(event.getRawSlot());
+        final IFSlotClickContext slotContext =
+                new SlotClickContext(view, container, viewer, event.getRawSlot(), context, component, event);
 
         view.getPipeline().execute(StandardPipelinePhases.CLICK, slotContext);
     }

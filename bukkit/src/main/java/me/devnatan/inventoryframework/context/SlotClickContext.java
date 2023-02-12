@@ -2,10 +2,10 @@ package me.devnatan.inventoryframework.context;
 
 import lombok.Getter;
 import lombok.Setter;
-import me.devnatan.inventoryframework.IFItem;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
+import me.devnatan.inventoryframework.component.Component;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -31,9 +31,9 @@ public class SlotClickContext extends SlotContext implements IFSlotClickContext 
             @NotNull Viewer viewer,
             int slot,
             @NotNull IFContext parent,
-            @Nullable IFItem<?> internalItem,
+            @Nullable Component component,
             @NotNull InventoryClickEvent clickOrigin) {
-        super(root, container, viewer, slot, parent, internalItem);
+        super(root, container, viewer, slot, parent, component);
         this.clickOrigin = clickOrigin;
     }
 

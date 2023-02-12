@@ -2,6 +2,7 @@ package me.devnatan.inventoryframework;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -120,5 +121,10 @@ public final class ViewConfigBuilder {
 
     public ViewConfigBuilder cancelOnDrag() {
         throw new UnsupportedOperationException();
+    }
+
+    public ViewConfig build() {
+        // TODO convert options
+        return new ViewConfig(title, size, type, new HashMap<>(), layout, modifiers);
     }
 }

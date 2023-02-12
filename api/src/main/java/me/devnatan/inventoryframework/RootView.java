@@ -5,6 +5,7 @@ import static me.devnatan.inventoryframework.ViewConfig.createOption;
 import java.util.Set;
 import java.util.UUID;
 import me.devnatan.inventoryframework.ViewConfig.Option;
+import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
 import org.jetbrains.annotations.ApiStatus;
@@ -31,9 +32,9 @@ public interface RootView extends VirtualView {
 
     void renderContext(@NotNull IFContext context);
 
-    void renderItem(@NotNull IFContext context, @NotNull IFItem<?> item);
+    void removeComponent(@NotNull IFContext context, int index);
 
-    void removeItem(@NotNull IFContext context, int index);
+    void renderComponent(@NotNull IFContext context, @NotNull Component component);
 
     /**
      * Called when the view is about to be configured, the returned object will be the view's
@@ -54,6 +55,14 @@ public interface RootView extends VirtualView {
      */
     @NotNull
     ViewConfig getConfig();
+
+    /**
+     * Sets the configuration for this view.
+     *
+     * @param config The new configuration of this view.
+     * @throws IllegalStateException If the configuration was already set before.
+     */
+    void setConfig(@NotNull ViewConfig config);
 
     /**
      * The execution pipeline for this view.

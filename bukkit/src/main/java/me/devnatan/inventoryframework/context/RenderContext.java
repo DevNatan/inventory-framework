@@ -49,7 +49,9 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
 
     @Override
     public @NotNull BukkitItem slot(int slot) {
-        throw new UnsupportedOperationException();
+        BukkitItem item = new BukkitItem(slot);
+        addComponent(item);
+        return item;
     }
 
     public @NotNull BukkitItem slot(int slot, ItemStack item) {

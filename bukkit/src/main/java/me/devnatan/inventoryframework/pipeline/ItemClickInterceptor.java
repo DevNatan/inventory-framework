@@ -1,6 +1,8 @@
 package me.devnatan.inventoryframework.pipeline;
 
 import me.devnatan.inventoryframework.IFItem;
+import me.devnatan.inventoryframework.component.Component;
+import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.SlotClickContext;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
@@ -9,21 +11,29 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Intercepted when a player clicks on an item the view container.
  */
-public final class ItemClickInterceptor implements PipelineInterceptor<SlotClickContext> {
+public final class ItemClickInterceptor implements PipelineInterceptor<IFContext> {
 
     @Override
-    public void intercept(@NotNull PipelineContext<SlotClickContext> pipeline, @NotNull SlotClickContext context) {
-        final InventoryClickEvent event = context.getClickOrigin();
+    public void intercept(@NotNull PipelineContext<IFContext> pipeline, @NotNull IFContext ctx) {
+        if (!(ctx instanceof SlotClickContext))
+            throw new IllegalArgumentException("Subject must be IFSlotClickContext");
+
+        final SlotClickContext clickCtx = (SlotClickContext) ctx;
+        final InventoryClickEvent event = clickCtx.getClickOrigin();
         if (event.getSlotType() == InventoryType.SlotType.OUTSIDE) return;
 
-        final IFItem<?> item = context.getInternalItem();
-        if (item == null) return;
+        final Component component = clickCtx.getComponent();
+        if (component == null) return;
 
-        // inherit cancellation so we can un-cancel it
-        context.setCancelled(item.isCancelOnClick());
+        if (component instanceof IFItem<?>) {
+            final IFItem<?> item = (IFItem<?>) component;
+            // inherit cancellation so we can un-cancel it
+            clickCtx.setCancelled(item.isCancelOnClick());
 
-        if (item.getClickHandler() != null) item.getClickHandler().accept(context);
+            if (item.getClickHandler() != null) item.getClickHandler().accept(clickCtx);
+        }
 
-        event.setCancelled(context.isCancelled());
+        component.getInteractionHandler().clicked(component, clickCtx);
+        event.setCancelled(clickCtx.isCancelled());
     }
 }

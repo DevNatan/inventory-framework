@@ -13,6 +13,9 @@ import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.context.IFSlotContext;
 import me.devnatan.inventoryframework.internal.ElementFactory;
 import me.devnatan.inventoryframework.internal.PlatformUtils;
+import me.devnatan.inventoryframework.pipeline.InitInterceptor;
+import me.devnatan.inventoryframework.pipeline.OpenInterceptor;
+import me.devnatan.inventoryframework.pipeline.RenderInterceptor;
 import me.devnatan.inventoryframework.pipeline.StandardPipelinePhases;
 import me.devnatan.inventoryframework.state.MutableIntState;
 import me.devnatan.inventoryframework.state.MutableState;
@@ -20,7 +23,6 @@ import me.devnatan.inventoryframework.state.Pagination;
 import me.devnatan.inventoryframework.state.State;
 import me.devnatan.inventoryframework.state.StateHolder;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class PlatformView<
@@ -43,14 +45,14 @@ public abstract class PlatformView<
     public void onInit(ViewConfigBuilder config) {}
 
     /**
-     * Creates a new configuration.
+     * Creates a new configuration builder.
      *
-     * @return A new view configuration.
+     * @return A new {@link ViewConfigBuilder} instance.
      */
-    //	@NotNull
-    //	public final ViewConfigBuilder createConfig() {
-    //		return new ViewConfigBuilder();
-    //	}
+    @NotNull
+    public final ViewConfigBuilder createConfig() {
+        return new ViewConfigBuilder();
+    }
 
     /**
      * Creates an immutable lazy state.
@@ -468,17 +470,21 @@ public abstract class PlatformView<
     }
 
     /**
-     * Called internally before first initialization.
+     * Called internally before the first initialization.
      * <p>
      * Use it to register pipeline interceptors.
      *
      * @throws IllegalStateException If this platform view is already initialized.
      */
-    @MustBeInvokedByOverriders
     void internalInitialization() {
-        if (!isInitialized()) return;
+        if (isInitialized())
+            throw new IllegalStateException("Tried to call internal initialization but view is already initialized");
 
-        throw new IllegalStateException("Tried to call internal initialization but view is already initialized.");
+        getPipeline().intercept(StandardPipelinePhases.INIT, new InitInterceptor());
+        getPipeline().intercept(StandardPipelinePhases.OPEN, new OpenInterceptor());
+        getPipeline().intercept(StandardPipelinePhases.RENDER, new RenderInterceptor());
+        getElementFactory().registerPlatformInterceptors(this);
+        getPipeline().execute(StandardPipelinePhases.INIT, this);
     }
 
     @ApiStatus.Internal
@@ -492,7 +498,6 @@ public abstract class PlatformView<
         if (!isInitialized()) throw new IllegalStateException("Cannot open a uninitialized view");
 
         final IFOpenContext context = getElementFactory().createContext(this, null, viewer, IFOpenContext.class, false);
-
         context.addViewer(viewer);
         onOpen((TOpenContext) context);
         getPipeline().execute(StandardPipelinePhases.OPEN, context);

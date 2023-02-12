@@ -36,13 +36,16 @@ public final class PipelineContext<S> {
             final PipelineInterceptor<S> nextInterceptor = safeInterceptors.get(pointer);
             index = pointer + 1;
 
+            System.out.printf("[%s] intercepted: %s%n", phase, subject);
             nextInterceptor.intercept(this, subject);
         } while (true);
     }
 
     public void proceed() {
+        System.out.println("proceed");
         if (index >= interceptors.size()) {
             finish();
+            System.out.println("finished " + interceptors);
             return;
         }
 
@@ -52,10 +55,7 @@ public final class PipelineContext<S> {
     public void execute(S initial) {
         index = 0;
         subject = initial;
+        System.out.println("execute " + initial);
         proceed();
-    }
-
-    public boolean isFinished() {
-        return index == -1;
     }
 }

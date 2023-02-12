@@ -1,6 +1,6 @@
 package me.devnatan.inventoryframework.context;
 
-import me.devnatan.inventoryframework.IFItem;
+import me.devnatan.inventoryframework.component.Component;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
@@ -124,7 +124,6 @@ public interface IFSlotContext extends IFContext {
 
     // TODO documentation
     // can be null if context origin is outside root view container
-    @ApiStatus.Internal
     @Nullable
-    IFItem<?> getInternalItem();
+    Component getComponent();
 }

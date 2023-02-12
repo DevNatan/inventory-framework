@@ -13,14 +13,13 @@ import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.UPD
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import me.devnatan.inventoryframework.component.Component;
+import me.devnatan.inventoryframework.component.ComponentComposition;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnmodifiableView;
 
 class DefaultRootView implements RootView {
@@ -66,22 +65,42 @@ class DefaultRootView implements RootView {
 
     @Override
     public final void renderContext(@NotNull IFContext context) {
-        throw new UnsupportedOperationException();
+        getPipeline().execute(RENDER, context);
     }
 
     @Override
-    public final void renderItem(@NotNull IFContext context, @NotNull IFItem<?> item) {
-        throw new UnsupportedOperationException();
-    }
+    public final void removeComponent(@NotNull IFContext context, int index) {}
 
     @Override
-    public final void removeItem(@NotNull IFContext context, int index) {
-        throw new UnsupportedOperationException();
+    public final void renderComponent(@NotNull IFContext context, @NotNull Component component) {
+        if (component instanceof ComponentComposition) {
+            for (final Component child : (ComponentComposition) component) {
+                renderSingleComponent(context, child);
+            }
+            return;
+        }
+
+        renderSingleComponent(context, component);
+    }
+
+    private void renderSingleComponent(@NotNull IFContext context, @NotNull Component component) {
+        if (!(component instanceof IFItem))
+            throw new UnsupportedOperationException("Only IFItem can be rendered for now");
+
+        final IFItem<?> item = (IFItem<?>) component;
+        context.getContainer().renderItem(component.getPosition(), item.getItem());
     }
 
     @Override
     public final @NotNull ViewConfig getConfig() {
         return config;
+    }
+
+    @Override
+    public void setConfig(@NotNull ViewConfig config) {
+        if (this.config != null) throw new IllegalStateException("Configuration was already set on initialization");
+
+        this.config = config;
     }
 
     @Override
@@ -97,16 +116,6 @@ class DefaultRootView implements RootView {
     @Override
     public final void closeForEveryone() {
         getContexts().forEach(IFContext::close);
-    }
-
-    @Override
-    public final @UnmodifiableView List<Component> getComponents() {
-        return null;
-    }
-
-    @Override
-    public final @Nullable IFItem<?> getItem(int index) {
-        return null;
     }
 
     @Override

@@ -1,12 +1,12 @@
 package me.devnatan.inventoryframework.pipeline;
 
-import me.devnatan.inventoryframework.IFItem;
 import me.devnatan.inventoryframework.RootView;
+import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.context.IFContext;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Intercepts the rendering phase of a context and renders items on it.
+ * Intercepts the rendering phase of a context and renders all components on it.
  */
 public final class RenderInterceptor implements PipelineInterceptor<IFContext> {
 
@@ -15,14 +15,17 @@ public final class RenderInterceptor implements PipelineInterceptor<IFContext> {
         final RootView root = context.getRoot();
         final int len = context.getContainer().getSize();
 
+        System.out.println("render interceptor " + context.getComponents());
+
         for (int i = 0; i < len; i++) {
-            final IFItem<?> item = context.getItem(i);
-            if (item == null) {
-                root.removeItem(context, i);
+            final Component component = context.getComponent(i);
+            if (component == null) {
+                context.getContainer().removeItem(i);
                 continue;
             }
 
-            root.renderItem(context, item);
+            System.out.println("lets render " + component);
+            root.renderComponent(context, component);
         }
     }
 }

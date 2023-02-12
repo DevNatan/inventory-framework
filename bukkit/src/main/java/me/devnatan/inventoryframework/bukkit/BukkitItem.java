@@ -12,6 +12,7 @@ import me.devnatan.inventoryframework.context.SlotClickContext;
 import me.devnatan.inventoryframework.context.SlotContext;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 @Getter
@@ -21,6 +22,11 @@ public final class BukkitItem extends IFItem<BukkitItem> {
     private Consumer<? super IFSlotClickContext> clickHandler;
     private Consumer<? super IFSlotClickContext> holdHandler;
     private BiConsumer<? super IFSlotClickContext, ? super IFSlotClickContext> releaseHandler;
+
+    @ApiStatus.Internal
+    public BukkitItem(int slot) {
+        super(slot);
+    }
 
     /**
      * Defines the item that will be used as fallback for rendering in the slot where this item is

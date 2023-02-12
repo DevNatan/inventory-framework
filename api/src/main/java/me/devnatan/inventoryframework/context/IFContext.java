@@ -1,5 +1,6 @@
 package me.devnatan.inventoryframework.context;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import me.devnatan.inventoryframework.RootView;
@@ -7,6 +8,7 @@ import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.VirtualView;
+import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.state.StateHolder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -142,4 +144,35 @@ public interface IFContext extends VirtualView, StateHolder {
      * @param other The view to be opened.
      */
     void open(Class<? extends RootView> other);
+
+    /**
+     * All components in this context.
+     *
+     * @return An unmodifiable List view of all components in this context.
+     */
+    @NotNull
+    @UnmodifiableView
+    List<Component> getComponents();
+
+    /**
+     * Gets the component that is at a certain position.
+     *
+     * @param position The position.
+     * @return The component in the given position or {@code null}.
+     */
+    Component getComponent(int position);
+
+    /**
+     * Adds a new component to this context.
+     *
+     * @param component The component to be added.
+     */
+    void addComponent(@NotNull Component component);
+
+    /**
+     * Removes a component from this context.
+     *
+     * @param component The component to be removed.
+     */
+    void removeComponent(@NotNull Component component);
 }
