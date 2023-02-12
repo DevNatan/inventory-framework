@@ -18,7 +18,7 @@ public final class OpenInterceptor implements PipelineInterceptor<IFContext> {
 
     @Override
     public void intercept(@NotNull PipelineContext<IFContext> pipeline, IFContext context) {
-		System.out.println("open interceptor " + context);
+        System.out.println("open interceptor " + context);
         if (!(context instanceof IFOpenContext)) return;
 
         final IFOpenContext openContext = (IFOpenContext) context;
@@ -52,17 +52,15 @@ public final class OpenInterceptor implements PipelineInterceptor<IFContext> {
                 openContext,
                 openContext.getType().normalize(openContext.getSize()),
                 openContext.getTitle(),
-                openContext.getType()
-		);
+                openContext.getType());
 
         final Viewer viewer = openContext.getViewer();
         final IFRenderContext renderCtx =
                 elementFactory.createContext(root, container, viewer, IFRenderContext.class, false);
 
-		renderCtx.addViewer(viewer);
+        renderCtx.addViewer(viewer);
         root.addContext(renderCtx);
-		if (root instanceof PlatformView)
-			((PlatformView) root).onFirstRender(renderCtx);
+        if (root instanceof PlatformView) ((PlatformView) root).onFirstRender(renderCtx);
         root.renderContext(renderCtx);
         container.open(viewer);
     }

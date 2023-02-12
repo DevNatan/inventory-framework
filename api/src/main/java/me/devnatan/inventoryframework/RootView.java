@@ -34,7 +34,7 @@ public interface RootView extends VirtualView {
 
     void removeComponent(@NotNull IFContext context, int index);
 
-	void renderComponent(@NotNull IFContext context, @NotNull Component component);
+    void renderComponent(@NotNull IFContext context, @NotNull Component component);
 
     /**
      * Called when the view is about to be configured, the returned object will be the view's

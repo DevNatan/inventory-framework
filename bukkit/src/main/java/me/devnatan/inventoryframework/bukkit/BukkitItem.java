@@ -23,10 +23,10 @@ public final class BukkitItem extends IFItem<BukkitItem> {
     private Consumer<? super IFSlotClickContext> holdHandler;
     private BiConsumer<? super IFSlotClickContext, ? super IFSlotClickContext> releaseHandler;
 
-	@ApiStatus.Internal
-	public BukkitItem(int slot) {
-		super(slot);
-	}
+    @ApiStatus.Internal
+    public BukkitItem(int slot) {
+        super(slot);
+    }
 
     /**
      * Defines the item that will be used as fallback for rendering in the slot where this item is

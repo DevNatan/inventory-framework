@@ -35,8 +35,13 @@ public abstract class IFItem<S extends IFItem<?>> implements Component {
     }
 
     private Object item;
-    @EqualsAndHashCode.Include private int slot;
-	@EqualsAndHashCode.Include private String referenceKey;
+
+    @EqualsAndHashCode.Include
+    private int slot;
+
+    @EqualsAndHashCode.Include
+    private String referenceKey;
+
     private Map<String, Object> data;
     private IFItem<?> overlay;
     private boolean removed, navigationItem;
@@ -48,16 +53,15 @@ public abstract class IFItem<S extends IFItem<?>> implements Component {
     @Getter(AccessLevel.PUBLIC)
     private boolean closeOnClick, cancelOnClick, cancelOnShiftClick;
 
-	@SuppressWarnings("Convert2Lambda")
-	private final InteractionHandler interactionHandler = new InteractionHandler() {
-		@Override
-		public void clicked(@NotNull Component component, @NotNull IFSlotClickContext context) {
-			if (getClickHandler() == null)
-				return;
+    @SuppressWarnings("Convert2Lambda")
+    private final InteractionHandler interactionHandler = new InteractionHandler() {
+        @Override
+        public void clicked(@NotNull Component component, @NotNull IFSlotClickContext context) {
+            if (getClickHandler() == null) return;
 
-			getClickHandler().accept(context);
-		}
-	};
+            getClickHandler().accept(context);
+        }
+    };
 
     /**
      * Creates a new ViewItem instance.
@@ -91,7 +95,7 @@ public abstract class IFItem<S extends IFItem<?>> implements Component {
         return slot;
     }
 
-	@Override
+    @Override
     public final @NotNull VirtualView getRoot() {
         // TODO fix this
         throw new UnsupportedOperationException("IFItem do not have a defined root");
@@ -276,9 +280,9 @@ public abstract class IFItem<S extends IFItem<?>> implements Component {
     @ApiStatus.Internal
     public abstract BiConsumer<? super IFSlotClickContext, ? super IFSlotClickContext> getReleaseHandler();
 
-	@SuppressWarnings("Convert2Lambda")
-	@Override
-	public final @NotNull InteractionHandler getInteractionHandler() {
-		return interactionHandler;
-	}
+    @SuppressWarnings("Convert2Lambda")
+    @Override
+    public final @NotNull InteractionHandler getInteractionHandler() {
+        return interactionHandler;
+    }
 }

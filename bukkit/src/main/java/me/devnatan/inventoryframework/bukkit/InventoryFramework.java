@@ -33,14 +33,13 @@ public final class InventoryFramework extends JavaPlugin {
 
 class AwesomeView extends View {
 
-	@Override
-	public void onFirstRender(RenderContext ctx) {
-		ctx.slot(2, new ItemStack(Material.EGG))
-			.cancelOnClick();
-	}
+    @Override
+    public void onFirstRender(RenderContext ctx) {
+        ctx.slot(2, new ItemStack(Material.EGG)).cancelOnClick();
+    }
 
-	@Override
-	public void onOpen(OpenContext ctx) {
-		ctx.getPlayer().sendMessage("dentro do open :)");
-	}
+    @Override
+    public void onOpen(OpenContext ctx) {
+        ctx.getPlayer().sendMessage("dentro do open :)");
+    }
 }

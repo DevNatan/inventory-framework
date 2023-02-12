@@ -1,6 +1,5 @@
 package me.devnatan.inventoryframework.context;
 
-import me.devnatan.inventoryframework.IFItem;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
@@ -22,13 +21,12 @@ public class SlotContext extends ConfinedContext implements IFSlotContext, Conte
     private final Component component;
 
     public SlotContext(
-		@NotNull RootView root,
-		@NotNull ViewContainer container,
-		@NotNull Viewer viewer,
-		int slot,
-		@NotNull IFContext parent,
-		@Nullable Component component
-	) {
+            @NotNull RootView root,
+            @NotNull ViewContainer container,
+            @NotNull Viewer viewer,
+            int slot,
+            @NotNull IFContext parent,
+            @Nullable Component component) {
         super(root, container, viewer);
         this.slot = slot;
         this.player = ((BukkitViewer) viewer).getPlayer();
@@ -76,13 +74,13 @@ public class SlotContext extends ConfinedContext implements IFSlotContext, Conte
         throw new UnsupportedOperationException();
     }
 
-	@Nullable
-	@Override
-	public Component getComponent() {
-		return component;
-	}
+    @Nullable
+    @Override
+    public Component getComponent() {
+        return component;
+    }
 
-	@Override
+    @Override
     public @NotNull Player getPlayer() {
         return player;
     }

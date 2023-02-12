@@ -5,12 +5,11 @@ import org.jetbrains.annotations.NotNull;
 
 public interface InteractionHandler {
 
-	/**
-	 * Called when a component is clicked.
-	 *
-	 * @param component The clicked component.
-	 * @param context   The click context.
-	 */
-	void clicked(@NotNull Component component, @NotNull IFSlotClickContext context);
-
+    /**
+     * Called when a component is clicked.
+     *
+     * @param component The clicked component.
+     * @param context   The click context.
+     */
+    void clicked(@NotNull Component component, @NotNull IFSlotClickContext context);
 }

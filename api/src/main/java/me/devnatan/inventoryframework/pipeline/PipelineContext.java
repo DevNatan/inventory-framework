@@ -42,10 +42,10 @@ public final class PipelineContext<S> {
     }
 
     public void proceed() {
-		System.out.println("proceed");
+        System.out.println("proceed");
         if (index >= interceptors.size()) {
             finish();
-			System.out.println("finished " + interceptors);
+            System.out.println("finished " + interceptors);
             return;
         }
 
@@ -55,7 +55,7 @@ public final class PipelineContext<S> {
     public void execute(S initial) {
         index = 0;
         subject = initial;
-		System.out.println("execute " + initial);
+        System.out.println("execute " + initial);
         proceed();
     }
 }

@@ -26,12 +26,11 @@ final class GlobalItemHoldInterceptor implements PipelineInterceptor<SlotClickCo
 
         final Component component = context.getComponent();
         if (component instanceof IFItem) {
-			final IFItem<?> item = (IFItem<?>) component;
-			item.setState(IFItem.State.HOLDING);
+            final IFItem<?> item = (IFItem<?>) component;
+            item.setState(IFItem.State.HOLDING);
 
-			if (item.getHoldHandler() != null)
-				item.getHoldHandler().accept(context);
-		}
+            if (item.getHoldHandler() != null) item.getHoldHandler().accept(context);
+        }
 
         // TODO move global item hold interceptor to feature-hold-and-release
         //        final AbstractView root = context.getRoot();

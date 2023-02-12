@@ -23,7 +23,6 @@ import me.devnatan.inventoryframework.state.Pagination;
 import me.devnatan.inventoryframework.state.State;
 import me.devnatan.inventoryframework.state.StateHolder;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class PlatformView<
@@ -478,14 +477,14 @@ public abstract class PlatformView<
      * @throws IllegalStateException If this platform view is already initialized.
      */
     void internalInitialization() {
-		if (isInitialized())
-			throw new IllegalStateException("Tried to call internal initialization but view is already initialized");
+        if (isInitialized())
+            throw new IllegalStateException("Tried to call internal initialization but view is already initialized");
 
-		getPipeline().intercept(StandardPipelinePhases.INIT, new InitInterceptor());
-		getPipeline().intercept(StandardPipelinePhases.OPEN, new OpenInterceptor());
-		getPipeline().intercept(StandardPipelinePhases.RENDER, new RenderInterceptor());
-		getElementFactory().registerPlatformInterceptors(this);
-		getPipeline().execute(StandardPipelinePhases.INIT, this);
+        getPipeline().intercept(StandardPipelinePhases.INIT, new InitInterceptor());
+        getPipeline().intercept(StandardPipelinePhases.OPEN, new OpenInterceptor());
+        getPipeline().intercept(StandardPipelinePhases.RENDER, new RenderInterceptor());
+        getElementFactory().registerPlatformInterceptors(this);
+        getPipeline().execute(StandardPipelinePhases.INIT, this);
     }
 
     @ApiStatus.Internal
@@ -496,11 +495,9 @@ public abstract class PlatformView<
     @SuppressWarnings("unchecked")
     @Override
     public final void open(@NotNull Viewer viewer) {
-        if (!isInitialized())
-			throw new IllegalStateException("Cannot open a uninitialized view");
+        if (!isInitialized()) throw new IllegalStateException("Cannot open a uninitialized view");
 
-        final IFOpenContext context = getElementFactory()
-			.createContext(this, null, viewer, IFOpenContext.class, false);
+        final IFOpenContext context = getElementFactory().createContext(this, null, viewer, IFOpenContext.class, false);
         context.addViewer(viewer);
         onOpen((TOpenContext) context);
         getPipeline().execute(StandardPipelinePhases.OPEN, context);

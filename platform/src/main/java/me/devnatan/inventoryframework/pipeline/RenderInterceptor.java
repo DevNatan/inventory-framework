@@ -10,22 +10,22 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class RenderInterceptor implements PipelineInterceptor<IFContext> {
 
-	@Override
-	public void intercept(@NotNull PipelineContext<IFContext> pipeline, IFContext context) {
-		final RootView root = context.getRoot();
-		final int len = context.getContainer().getSize();
+    @Override
+    public void intercept(@NotNull PipelineContext<IFContext> pipeline, IFContext context) {
+        final RootView root = context.getRoot();
+        final int len = context.getContainer().getSize();
 
-		System.out.println("render interceptor " + context.getComponents());
+        System.out.println("render interceptor " + context.getComponents());
 
-		for (int i = 0; i < len; i++) {
-			final Component component = context.getComponent(i);
-			if (component == null) {
-				context.getContainer().removeItem(i);
-				continue;
-			}
+        for (int i = 0; i < len; i++) {
+            final Component component = context.getComponent(i);
+            if (component == null) {
+                context.getContainer().removeItem(i);
+                continue;
+            }
 
-			System.out.println("lets render " + component);
-			root.renderComponent(context, component);
-		}
-	}
+            System.out.println("lets render " + component);
+            root.renderComponent(context, component);
+        }
+    }
 }

@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
-
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewContainer;
@@ -36,7 +35,7 @@ class BaseViewContext implements IFContext {
     private final StateHolder stateHolder = new DefaultStateHolder();
     protected final Map<String, Viewer> viewers = new HashMap<>();
     protected final ViewConfig config;
-	private final List<Component> components = new ArrayList<>();
+    private final List<Component> components = new ArrayList<>();
 
     public BaseViewContext(@NotNull RootView root, @Nullable ViewContainer container) {
         this.root = root;
@@ -144,36 +143,35 @@ class BaseViewContext implements IFContext {
         stateHolder.watch(state, callback);
     }
 
-	@Override
-	public final @UnmodifiableView @NotNull List<Component> getComponents() {
-		return Collections.unmodifiableList(components);
-	}
+    @Override
+    public final @UnmodifiableView @NotNull List<Component> getComponents() {
+        return Collections.unmodifiableList(components);
+    }
 
-	@Override
-	public final Component getComponent(int position) {
-		for (final Component component : getComponents()) {
-			if (component instanceof ComponentComposition &&
-				((ComponentComposition) component).isContainedWithin(position)) {
-				return component;
-			}
+    @Override
+    public final Component getComponent(int position) {
+        for (final Component component : getComponents()) {
+            if (component instanceof ComponentComposition
+                    && ((ComponentComposition) component).isContainedWithin(position)) {
+                return component;
+            }
 
-			if (component.getPosition() == position)
-				return component;
-		}
-		return null;
-	}
+            if (component.getPosition() == position) return component;
+        }
+        return null;
+    }
 
-	@Override
-	public final void addComponent(@NotNull Component component) {
-		synchronized (components) {
-			components.add(component);
-		}
-	}
+    @Override
+    public final void addComponent(@NotNull Component component) {
+        synchronized (components) {
+            components.add(component);
+        }
+    }
 
-	@Override
-	public final void removeComponent(@NotNull Component component) {
-		synchronized (components) {
-			components.remove(component);
-		}
-	}
+    @Override
+    public final void removeComponent(@NotNull Component component) {
+        synchronized (components) {
+            components.remove(component);
+        }
+    }
 }

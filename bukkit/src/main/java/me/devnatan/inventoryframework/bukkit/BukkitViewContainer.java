@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +28,7 @@ public final class BukkitViewContainer implements ViewContainer {
 
     @Getter
     private final @NotNull Inventory inventory;
+
     private final boolean shared;
 
     @Override

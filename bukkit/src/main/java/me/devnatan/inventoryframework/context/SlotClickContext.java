@@ -2,7 +2,6 @@ package me.devnatan.inventoryframework.context;
 
 import lombok.Getter;
 import lombok.Setter;
-import me.devnatan.inventoryframework.IFItem;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
@@ -27,13 +26,13 @@ public class SlotClickContext extends SlotContext implements IFSlotClickContext 
     private boolean cancelled;
 
     public SlotClickContext(
-		@NotNull RootView root,
-		@NotNull ViewContainer container,
-		@NotNull Viewer viewer,
-		int slot,
-		@NotNull IFContext parent,
-		@Nullable Component component,
-		@NotNull InventoryClickEvent clickOrigin) {
+            @NotNull RootView root,
+            @NotNull ViewContainer container,
+            @NotNull Viewer viewer,
+            int slot,
+            @NotNull IFContext parent,
+            @Nullable Component component,
+            @NotNull InventoryClickEvent clickOrigin) {
         super(root, container, viewer, slot, parent, component);
         this.clickOrigin = clickOrigin;
     }

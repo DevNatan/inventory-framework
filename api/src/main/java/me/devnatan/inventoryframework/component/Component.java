@@ -23,11 +23,11 @@ public interface Component {
      */
     int getPosition();
 
-	/**
-	 * The interaction handler for this component.
-	 *
-	 * @returnThe interaction handler for this component.
-	 */
-	@NotNull
-	InteractionHandler getInteractionHandler();
+    /**
+     * The interaction handler for this component.
+     *
+     * @return The interaction handler for this component.
+     */
+    @NotNull
+    InteractionHandler getInteractionHandler();
 }
