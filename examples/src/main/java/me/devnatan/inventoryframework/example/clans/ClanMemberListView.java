@@ -9,7 +9,7 @@ import me.devnatan.inventoryframework.ViewConfigBuilder;
 import me.devnatan.inventoryframework.bukkit.BukkitItem;
 import me.devnatan.inventoryframework.context.OpenContext;
 import me.devnatan.inventoryframework.context.RenderContext;
-import me.devnatan.inventoryframework.state.Pagination;
+import me.devnatan.inventoryframework.pagination.Pagination;
 import me.devnatan.inventoryframework.state.State;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;

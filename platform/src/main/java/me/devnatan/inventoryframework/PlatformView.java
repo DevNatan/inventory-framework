@@ -19,7 +19,7 @@ import me.devnatan.inventoryframework.pipeline.RenderInterceptor;
 import me.devnatan.inventoryframework.pipeline.StandardPipelinePhases;
 import me.devnatan.inventoryframework.state.MutableIntState;
 import me.devnatan.inventoryframework.state.MutableState;
-import me.devnatan.inventoryframework.state.Pagination;
+import me.devnatan.inventoryframework.pagination.Pagination;
 import me.devnatan.inventoryframework.state.State;
 import me.devnatan.inventoryframework.state.StateHolder;
 import org.jetbrains.annotations.ApiStatus;

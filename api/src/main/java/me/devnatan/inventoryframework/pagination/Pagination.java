@@ -1,5 +1,7 @@
-package me.devnatan.inventoryframework.state;
+package me.devnatan.inventoryframework.pagination;
 
+import me.devnatan.inventoryframework.state.State;
+import me.devnatan.inventoryframework.state.StateHolder;
 import org.jetbrains.annotations.NotNull;
 
 public final class Pagination implements State<Pagination> {
