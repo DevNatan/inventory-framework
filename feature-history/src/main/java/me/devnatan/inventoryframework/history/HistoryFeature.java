@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import me.devnatan.inventoryframework.IFViewFrame;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.VirtualView;
+import me.devnatan.inventoryframework.context.IFCloseContext;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.feature.Feature;
 import me.devnatan.inventoryframework.feature.FeatureInstaller;
@@ -21,7 +22,7 @@ import me.devnatan.inventoryframework.pipeline.StandardPipelinePhases;
  * History feature allows the developer to save the last context the player was in so that it can
  * be resumed later.
  * <p>
- * A context summarized from the history must be in the exact same state as when it was dispatched,
+ * A context resumed from the history must be in the exact same state as when it was dispatched,
  * basically a snapshot of it is saved and reused.
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -45,14 +46,7 @@ public final class HistoryFeature implements Feature<Void, HistoryFeature, Featu
         if (!(framework instanceof IFViewFrame))
             throw new IllegalStateException("History feature only supports ViewFrame as installer.");
 
-        for (final RootView view :
-                ((IFViewFrame<?>) framework).getRegisteredViews().values()) {
-            final Pipeline<? super VirtualView> pipeline = view.getPipeline();
-
-            pipeline.intercept(StandardPipelinePhases.INIT, (PipelineInterceptor<RootView>) (context, subject) -> {
-                pipeline.addPhase(HistoryResume);
-            });
-        }
+        ((IFViewFrame<?>) framework).getRegisteredViews().values().forEach(this::setup);
         return this;
     }
 
@@ -64,5 +58,25 @@ public final class HistoryFeature implements Feature<Void, HistoryFeature, Featu
                 ((IFViewFrame<?>) framework).getRegisteredViews().values()) {
             view.getPipeline().removePhase(HistoryResume);
         }
+    }
+
+    private void setup(RootView view) {
+        final Pipeline<? super VirtualView> pipeline = view.getPipeline();
+
+        pipeline.intercept(StandardPipelinePhases.INIT, (PipelineInterceptor<RootView>) (context, subject) -> {
+            pipeline.addPhase(HistoryResume);
+        });
+
+        pipeline.intercept(StandardPipelinePhases.OPEN, (PipelineInterceptor<IFContext>) (context, subject) -> {
+            // TODO
+        });
+
+        pipeline.intercept(StandardPipelinePhases.CLOSE, (PipelineInterceptor<IFCloseContext>) (context, subject) -> {
+            // TODO do it, and, close reason must be a context switch (view-to-view)
+        });
+    }
+
+    private void resume(IFContext initiator, IFContext target) {
+        throw new UnsupportedOperationException("TODO");
     }
 }
