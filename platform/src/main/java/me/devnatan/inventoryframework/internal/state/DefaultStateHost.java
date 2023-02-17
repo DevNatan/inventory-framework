@@ -2,25 +2,18 @@ package me.devnatan.inventoryframework.internal.state;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.BiConsumer;
 import me.devnatan.inventoryframework.state.State;
-import me.devnatan.inventoryframework.state.StateHolder;
-import me.devnatan.inventoryframework.state.StateValueHolder;
+import me.devnatan.inventoryframework.state.StateHandler;
+import me.devnatan.inventoryframework.state.StateHost;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 // TODO allow observer registration
 @ApiStatus.Internal
-public class DefaultStateHolder implements StateHolder {
+public class DefaultStateHost implements StateHost {
 
-    private static final AtomicLong ids = new AtomicLong(0);
     private final Map<Long, StateValueHolder> statesMap = new HashMap<>();
-
-    @Override
-    public long generateId() {
-        return nextId();
-    }
 
     @Override
     public StateValueHolder retrieve(long id) {
@@ -40,23 +33,29 @@ public class DefaultStateHolder implements StateHolder {
     }
 
     @Override
-    public StateValueHolder createUnchecked(Object initialValue) {
-        final long id = generateId();
-        final StateValueHolder impl = new InternalMutableStateValueHolder(new MutableState<>(id), this, initialValue);
-        synchronized (statesMap) {
-            if (statesMap.containsKey(id)) throw new IllegalStateException("State conflict: " + id);
+    public StateValueHolder createMutable(Object initialValue) {
+        final long id = State.generateId();
+        return register(id, new InternalMutableStateValueHolder(new MutableState<>(id), this, initialValue));
+    }
 
-            statesMap.put(id, impl);
+    @Override
+    public StateValueHolder createUnchecked(long id, State<?> state, Object initialValue) {
+        return register(id, new InternalMutableStateValueHolder(state, this, initialValue));
+    }
+
+    private StateValueHolder register(long id, StateValueHolder value) {
+        synchronized (statesMap) {
+            if (statesMap.containsKey(id)) throw new IllegalStateException(String.format("State conflict %s", id));
+
+            statesMap.put(id, value);
         }
-        return impl;
+
+        if (value.getState() instanceof StateHandler) ((StateHandler) value.getState()).attached(id, this);
+        return value;
     }
 
     @Override
     public <T> void watch(@NotNull State<?> state, @NotNull BiConsumer<T, T> callback) {
         throw new UnsupportedOperationException("Watching states is not yet supported");
-    }
-
-    static synchronized long nextId() {
-        return ids.getAndIncrement();
     }
 }

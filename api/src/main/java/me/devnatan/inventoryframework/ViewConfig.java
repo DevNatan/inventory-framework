@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.jetbrains.annotations.NotNull;
@@ -12,12 +13,14 @@ import org.jetbrains.annotations.Nullable;
 @Data
 public final class ViewConfig {
 
+    public static final ViewConfig.Option<Boolean> CancelOnClick = createOption("cancel-on-click", true);
+
     private final String title;
     private final int size;
     private final ViewType type;
     private final Map<Option<?>, Object> options;
     private final String[] layout;
-    private final List<Modifier> modifiers;
+    private final Set<Modifier> modifiers;
 
     public static <T> Option<T> createOption(@NotNull String name, @NotNull T defaultValue) {
         return new OptionImpl<>(name, defaultValue);

@@ -13,12 +13,15 @@ import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.UPD
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.UUID;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.ComponentComposition;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
+import me.devnatan.inventoryframework.state.State;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
 
@@ -29,6 +32,7 @@ class DefaultRootView implements RootView {
     private final Pipeline<? super VirtualView> pipeline =
             new Pipeline<>(INIT, OPEN, RENDER, UPDATE, CLICK, CLOSE, INVALIDATION);
     private final Set<IFContext> contexts = newSetFromMap(synchronizedMap(new HashMap<>()));
+    protected final Set<State<?>> inheritableStates = new HashSet<>();
 
     @Override
     public final @NotNull UUID getUniqueId() {
@@ -120,4 +124,10 @@ class DefaultRootView implements RootView {
 
     @Override
     public void onInit(ViewConfigBuilder config) {}
+
+    @NotNull
+    @Override
+    public final Iterator<IFContext> iterator() {
+        return getContexts().iterator();
+    }
 }

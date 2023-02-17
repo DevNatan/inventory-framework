@@ -10,19 +10,19 @@ public interface MutableIntState extends IntState, MutableState<Integer> {
      * @param value  The new state value.
      * @param holder The state holder that'll get this update.
      */
-    void setInt(int value, @NotNull StateHolder holder);
+    void setInt(int value, @NotNull StateHost holder);
 
     /**
      * Increments the current value of this state by {@code 1}.
      *
      * @param holder The state holder that'll get this update.
      */
-    void increment(@NotNull StateHolder holder);
+    void increment(@NotNull StateHost holder);
 
     /**
      * Increments the current value of this state by {@code 1}.
      *
      * @param holder The state holder that'll get this update.
      */
-    void decrement(@NotNull StateHolder holder);
+    void decrement(@NotNull StateHost holder);
 }

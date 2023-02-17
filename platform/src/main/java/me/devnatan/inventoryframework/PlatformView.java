@@ -13,15 +13,15 @@ import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.context.IFSlotContext;
 import me.devnatan.inventoryframework.internal.ElementFactory;
 import me.devnatan.inventoryframework.internal.PlatformUtils;
+import me.devnatan.inventoryframework.pagination.Pagination;
 import me.devnatan.inventoryframework.pipeline.InitInterceptor;
 import me.devnatan.inventoryframework.pipeline.OpenInterceptor;
 import me.devnatan.inventoryframework.pipeline.RenderInterceptor;
 import me.devnatan.inventoryframework.pipeline.StandardPipelinePhases;
 import me.devnatan.inventoryframework.state.MutableIntState;
 import me.devnatan.inventoryframework.state.MutableState;
-import me.devnatan.inventoryframework.pagination.Pagination;
 import me.devnatan.inventoryframework.state.State;
-import me.devnatan.inventoryframework.state.StateHolder;
+import me.devnatan.inventoryframework.state.StateHost;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -159,7 +159,7 @@ public abstract class PlatformView<
 
     /**
      * Creates an immutable {@link #lazyState(Function) lazy state} whose value is always computed
-     * from the initial data set by its {@link StateHolder}.
+     * from the initial data set by its {@link StateHost}.
      * <p>
      * When the holder is a {@link IFOpenContext}, the initial value will be the value defined
      * in the initial opening data of the container. This state is specifically set for backwards
@@ -178,7 +178,7 @@ public abstract class PlatformView<
 
     /**
      * Creates an immutable {@link #lazyState(Function) lazy state} whose value is always computed
-     * from the initial data set by its {@link StateHolder}.
+     * from the initial data set by its {@link StateHost}.
      * <p>
      * When the holder is a {@code OpenViewContext}, the initial value will be the value defined
      * in the initial opening data of the container. This state is specifically set for backwards
@@ -240,7 +240,7 @@ public abstract class PlatformView<
      * How each paginated element will be rendered is determined in the {@code itemFactory}, that
      * is called every time a paginated element is rendered in the context container.
      * <pre>{@code
-     * PaginationState<String> pagination = paginationState(
+     * State<Pagination> pagination = pagination(
      *     (item, value) -> item.withItem(...)
      * )
      *
@@ -248,14 +248,16 @@ public abstract class PlatformView<
      * <p>
      * Control and get pagination info by accessing the state.
      * <pre>{@code
-     * int currentPage = pagination.getCurrentPage(context);
-     * ...
-     * pagination.switchToNextPage(context);
+     * Pagination ctxPagination = pagination.get(ctx);
+     * int currentPage = ctxPagination.currentPage();
+     *
+     * // Advances the pagination for the selected context
+     * ctxPagination.advance();
      * }</pre>
      * <p>
      * Asynchronous pagination can be done using a {@link CompletableFuture} as {@code sourceProvider}.
      * <pre>{@code
-     * PaginationState<String> pagination = paginationState(
+     * Pagination pagination = pagination(
      *     () -> getCompletedFutureSomehow(),
      *     (item, value) -> item.withItem(...)
      * )
@@ -268,7 +270,7 @@ public abstract class PlatformView<
      * @param <V>            The pagination data type.
      * @return A immutable pagination state.
      */
-    protected final <V> Pagination pagination(
+    protected final <V> State<Pagination> pagination(
             @NotNull Function<TSlotContext, List<V>> sourceProvider, @NotNull BiConsumer<TItem, V> itemFactory) {
         throw new UnsupportedOperationException();
     }
@@ -276,25 +278,25 @@ public abstract class PlatformView<
     /**
      * Creates an immutable state used to control the pagination.
      * <p>
-     * How each paginated element will be rendered is determined in the {@code itemFactory} parameter,
+     * How each paginated element will be rendered is determined by the {@code itemFactory} parameter,
      * that is called every time a paginated element is rendered in the context container.
      * <pre>{@code
-     * PaginationState<String> pagination = paginationState(
+     * State<Pagination> pagination = pagination(
      *     (item, value) -> item.withItem(...)
-     * )
-     *
-     * }</pre>
+     * )}</pre>
      * <p>
      * Control and get pagination info by accessing the state.
      * <pre>{@code
-     * int currentPage = pagination.getCurrentPage(context);
-     * ...
-     * pagination.switchToNextPage(context);
+     * Pagination ctxPagination = pagination.get(ctx);
+     * int currentPage = ctxPagination.currentPage();
+     *
+     * // Advances the pagination for the selected context
+     * ctxPagination.advance();
      * }</pre>
      * <p>
      * Asynchronous pagination can be done using a {@link CompletableFuture} as {@code sourceProvider}.
      * <pre>{@code
-     * PaginationState<String> pagination = paginationState(
+     * State<Pagination> pagination = pagination(
      *     () -> getCompletedFutureSomehow(),
      *     (item, value) -> item.withItem(...)
      * )
@@ -307,7 +309,8 @@ public abstract class PlatformView<
      * @param <V>            The pagination data type.
      * @return A immutable pagination state.
      */
-    protected final <V> Pagination pagination(
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    protected final <V> State<Pagination> pagination(
             @NotNull Supplier<List<V>> sourceProvider, @NotNull BiConsumer<TItem, V> itemFactory) {
         throw new UnsupportedOperationException();
     }
@@ -318,7 +321,7 @@ public abstract class PlatformView<
      * How each paginated element will be rendered is determined in the {@code itemFactory}, that
      * is called every time a paginated element is rendered in the context container.
      * <pre>{@code
-     * PaginationState<String> pagination = paginationState(
+     * State<Pagination> pagination = pagination(
      *     (item, value) -> item.withItem(...)
      * )
      *
@@ -326,14 +329,16 @@ public abstract class PlatformView<
      * <p>
      * Control and get pagination info by accessing the state.
      * <pre>{@code
-     * int currentPage = pagination.getCurrentPage(context);
-     * ...
-     * pagination.switchToNextPage(context);
+     * Pagination ctxPagination = ctxPagination.get(ctx);
+     * int currentPage = ctxPagination.currentPage();
+     *
+     * // Advances the pagination for the selected context
+     * ctxPagination.advance();
      * }</pre>
      * <p>
      * Asynchronous pagination can be done using a {@link CompletableFuture} as {@code sourceProvider}.
      * <pre>{@code
-     * PaginationState<String> pagination = paginationState(
+     * State<Pagination> pagination = pagination(
      *     () -> getCompletedFutureSomehow(),
      *     (item, value) -> item.withItem(...)
      * )
@@ -346,7 +351,7 @@ public abstract class PlatformView<
      * @param <T>            The pagination data type.
      * @return A immutable pagination state.
      */
-    protected final <T> Pagination pagination(
+    protected final <T> State<Pagination> pagination(
             @NotNull State<List<T>> sourceProvider, @NotNull BiConsumer<TItem, T> itemFactory) {
         throw new UnsupportedOperationException();
     }
@@ -357,7 +362,7 @@ public abstract class PlatformView<
      * How each paginated element will be rendered is determined in the {@code itemFactory}, that
      * is called every time a paginated element is rendered in the context container.
      * <pre>{@code
-     * PaginationState<String> pagination = paginationState(
+     * Pagination pagination = pagination(
      *     (item, value) -> item.withItem(...)
      * )
      *
@@ -365,17 +370,18 @@ public abstract class PlatformView<
      * <p>
      * Control and get pagination info by accessing the state.
      * <pre>{@code
-     * int currentPage = pagination.getCurrentPage(context);
-     * ...
-     * pagination.switchToNextPage(context);
+     * Pagination ctxPagination = ctxPagination.get(ctx);
+     * int currentPage = ctxPagination.currentPage();
+     *
+     * // Advances the pagination for the selected context
+     * ctxPagination.advance();
      * }</pre>
      * <p>
      * Asynchronous pagination can be done using a {@link CompletableFuture} as {@code sourceProvider}.
      * <pre>{@code
-     * PaginationState<String> pagination = paginationState(
+     * Pagination pagination = pagination(
      *     (item, value) -> item.withItem(...)
      * )
-     *
      * }</pre>
      *
      * @param itemFactory The function for creating pagination items, this function is called for
@@ -383,7 +389,7 @@ public abstract class PlatformView<
      * @param <V>         The pagination data type.
      * @return A immutable pagination state.
      */
-    protected final <V> Pagination pagination(@NotNull BiConsumer<TItem, V> itemFactory) {
+    protected final <V> State<Pagination> pagination(@NotNull BiConsumer<TItem, V> itemFactory) {
         throw new UnsupportedOperationException();
     }
 
@@ -497,9 +503,15 @@ public abstract class PlatformView<
     public final void open(@NotNull Viewer viewer) {
         if (!isInitialized()) throw new IllegalStateException("Cannot open a uninitialized view");
 
-        final IFOpenContext context = getElementFactory().createContext(this, null, viewer, IFOpenContext.class, false);
+        final IFOpenContext context =
+                getElementFactory().createContext(this, null, viewer, IFOpenContext.class, false, null);
         context.addViewer(viewer);
-        onOpen((TOpenContext) context);
+
+        // TODO assign inherited state
+        //        for (final State<?> inheritedState : inheritableStates)
+        //			context.getStateHost().
+        //            context.getStateHost().onOpen((TOpenContext) context);
+
         getPipeline().execute(StandardPipelinePhases.OPEN, context);
     }
 }

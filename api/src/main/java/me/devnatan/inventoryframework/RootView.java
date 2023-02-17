@@ -1,10 +1,7 @@
 package me.devnatan.inventoryframework;
 
-import static me.devnatan.inventoryframework.ViewConfig.createOption;
-
 import java.util.Set;
 import java.util.UUID;
-import me.devnatan.inventoryframework.ViewConfig.Option;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
@@ -12,9 +9,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
 
-public interface RootView extends VirtualView {
-
-    Option<Boolean> CancelOnClick = createOption("cancel-on-click", true);
+public interface RootView extends VirtualView, Iterable<IFContext> {
 
     @NotNull
     UUID getUniqueId();

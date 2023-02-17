@@ -49,7 +49,8 @@ public abstract class ElementFactory {
             ViewContainer container,
             @NotNull Viewer viewer,
             @NotNull Class<T> kind,
-            boolean shared);
+            boolean shared,
+            @Nullable IFContext parent);
 
     @NotNull
     public abstract IFSlotContext createSlotContext(

@@ -102,11 +102,12 @@ public final class BukkitElementFactory extends ElementFactory {
             ViewContainer container,
             @NotNull Viewer viewer,
             @NotNull Class<T> kind,
-            boolean shared) {
+            boolean shared,
+            @Nullable IFContext parent) {
         if (shared) throw new IllegalStateException("Shared contexts are not yet supported");
         if (isTypeOf(IFOpenContext.class, kind)) return (T) new OpenContext(root, viewer);
-        if (isTypeOf(IFRenderContext.class, kind)) return (T) new RenderContext(root, container, viewer);
-        if (isTypeOf(IFCloseContext.class, kind)) return (T) new CloseContext(root, container, viewer);
+        if (isTypeOf(IFRenderContext.class, kind)) return (T) new RenderContext(root, container, viewer, parent);
+        if (isTypeOf(IFCloseContext.class, kind)) return (T) new CloseContext(root, container, viewer, parent);
 
         throw new UnsupportedOperationException("Unsupported context kind: " + kind);
     }

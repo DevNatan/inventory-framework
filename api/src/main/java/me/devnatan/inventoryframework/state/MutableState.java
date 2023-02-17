@@ -10,5 +10,5 @@ public interface MutableState<T> extends State<T> {
      * @param value  The new state value.
      * @param holder The state holder that'll get this update.
      */
-    void set(T value, @NotNull StateHolder holder);
+    void set(T value, @NotNull StateHost holder);
 }

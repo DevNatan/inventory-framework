@@ -149,6 +149,7 @@ public final class ViewFrame extends IFViewFrame<ViewFrame> implements FeatureIn
                         .severe(String.format(
                                 "An error occurred while enabling view %s: %s",
                                 rootView.getClass().getName(), exception));
+                exception.printStackTrace();
             }
         }
     }

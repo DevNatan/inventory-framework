@@ -14,24 +14,11 @@ public interface ComponentComposition extends Component, Iterable<Component> {
     List<Component> getComponents();
 
     /**
-     * Checks if any component of that composition is in a specific position.
+     * Checks if <b>any component of that composition</b> is in a specific position.
      *
      * @param position The position.
      * @return If any component in this composition is contained in the given position.
      */
+    @Override
     boolean isContainedWithin(int position);
-
-    /**
-     * The minimum position of this composition of components.
-     *
-     * @return The position of the component where it is closest to the start of the container.
-     */
-    int getMinimumPosition();
-
-    /**
-     * The maximum position of this composition of components.
-     *
-     * @return The position of the component where it is closest to the end of the container.
-     */
-    int getMaximumPosition();
 }

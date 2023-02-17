@@ -14,10 +14,9 @@ import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.ComponentComposition;
-import me.devnatan.inventoryframework.internal.state.DefaultStateHolder;
+import me.devnatan.inventoryframework.internal.state.DefaultStateHost;
 import me.devnatan.inventoryframework.state.State;
-import me.devnatan.inventoryframework.state.StateHolder;
-import me.devnatan.inventoryframework.state.StateValueHolder;
+import me.devnatan.inventoryframework.state.StateHost;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -32,7 +31,7 @@ class BaseViewContext implements IFContext {
     /* container can be null on pre-render/intermediate contexts */
     private final @Nullable ViewContainer container;
 
-    private final StateHolder stateHolder = new DefaultStateHolder();
+    private final StateHost stateHost = new DefaultStateHost();
     protected final Map<String, Viewer> viewers = new HashMap<>();
     protected final ViewConfig config;
     private final List<Component> components = new ArrayList<>();
@@ -119,28 +118,28 @@ class BaseViewContext implements IFContext {
     }
 
     @Override
-    public final long generateId() {
-        return stateHolder.generateId();
-    }
-
-    @Override
     public final StateValueHolder retrieve(long id) {
-        return stateHolder.retrieve(id);
+        return getStateHost().retrieve(id);
     }
 
     @Override
     public final void updateCaught(@NotNull State<?> state, Object oldValue, Object newValue) {
-        stateHolder.updateCaught(state, oldValue, newValue);
+        getStateHost().updateCaught(state, oldValue, newValue);
     }
 
     @Override
-    public final StateValueHolder createUnchecked(Object initialValue) {
-        return stateHolder.createUnchecked(initialValue);
+    public final StateValueHolder createMutable(Object initialValue) {
+        return getStateHost().createMutable(initialValue);
+    }
+
+    @Override
+    public StateValueHolder createUnchecked(long id, State<?> state, Object initialValue) {
+        return getStateHost().createUnchecked(id, state, initialValue);
     }
 
     @Override
     public final <T> void watch(@NotNull State<?> state, @NotNull BiConsumer<T, T> callback) {
-        stateHolder.watch(state, callback);
+        getStateHost().watch(state, callback);
     }
 
     @Override
@@ -173,5 +172,10 @@ class BaseViewContext implements IFContext {
         synchronized (components) {
             components.remove(component);
         }
+    }
+
+    @Override
+    public @NotNull StateHost getStateHost() {
+        return stateHost;
     }
 }

@@ -13,5 +13,5 @@ public interface IntState extends State<Integer> {
      * @param holder The state holder.
      * @return The current state value.
      */
-    int getInt(@NotNull StateHolder holder);
+    int getInt(@NotNull StateHost holder);
 }

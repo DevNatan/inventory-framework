@@ -2,7 +2,7 @@ package me.devnatan.inventoryframework.internal.state;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import me.devnatan.inventoryframework.state.StateHolder;
+import me.devnatan.inventoryframework.state.StateHost;
 import org.jetbrains.annotations.NotNull;
 
 @RequiredArgsConstructor
@@ -13,12 +13,12 @@ final class MutableState<T> implements me.devnatan.inventoryframework.state.Muta
 
     @SuppressWarnings("unchecked")
     @Override
-    public T get(@NotNull StateHolder holder) {
+    public T get(@NotNull StateHost holder) {
         return (T) holder.retrieve(id).get();
     }
 
     @Override
-    public void set(T newValue, @NotNull StateHolder holder) {
+    public void set(T newValue, @NotNull StateHost holder) {
         holder.retrieve(id).set(newValue);
     }
 }

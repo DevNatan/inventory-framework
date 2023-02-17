@@ -56,7 +56,7 @@ public final class OpenInterceptor implements PipelineInterceptor<IFContext> {
 
         final Viewer viewer = openContext.getViewer();
         final IFRenderContext renderCtx =
-                elementFactory.createContext(root, container, viewer, IFRenderContext.class, false);
+                elementFactory.createContext(root, container, viewer, IFRenderContext.class, false, openContext);
 
         renderCtx.addViewer(viewer);
         root.addContext(renderCtx);

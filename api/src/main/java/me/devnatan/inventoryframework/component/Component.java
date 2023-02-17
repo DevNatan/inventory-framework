@@ -24,6 +24,14 @@ public interface Component {
     int getPosition();
 
     /**
+     * Checks if this component is in a specific position.
+     *
+     * @param position The position.
+     * @return If this component is contained in the given position.
+     */
+    boolean isContainedWithin(int position);
+
+    /**
      * The interaction handler for this component.
      *
      * @return The interaction handler for this component.

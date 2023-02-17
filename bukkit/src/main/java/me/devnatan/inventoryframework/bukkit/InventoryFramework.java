@@ -1,6 +1,9 @@
 package me.devnatan.inventoryframework.bukkit;
 
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import me.devnatan.inventoryframework.View;
+import me.devnatan.inventoryframework.ViewConfigBuilder;
 import me.devnatan.inventoryframework.ViewFrame;
 import me.devnatan.inventoryframework.context.OpenContext;
 import me.devnatan.inventoryframework.context.RenderContext;
@@ -33,9 +36,21 @@ public final class InventoryFramework extends JavaPlugin {
 
 class AwesomeView extends View {
 
+    private final PaginationData pagination = pagination(
+            () -> IntStream.range(1, 100).boxed().collect(Collectors.toList()),
+            (item, value) -> item.item(new ItemStack(Material.EGG)));
+
+    @Override
+    public void onInit(ViewConfigBuilder config) {
+        config.title("Awesome view")
+                .size(6)
+                .cancelOnClick()
+                .layout("XXXXXXXXX", "XOOOOOOOX", "XOOOOOOOX", "XOOOOOOOX", "XOOOOOOOX", "XXXXXXXXX");
+    }
+
     @Override
     public void onFirstRender(RenderContext ctx) {
-        ctx.slot(2, new ItemStack(Material.EGG)).cancelOnClick();
+        ctx.slot(2, new ItemStack(Material.EGG));
     }
 
     @Override
