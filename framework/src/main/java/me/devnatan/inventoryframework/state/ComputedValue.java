@@ -1,7 +1,5 @@
 package me.devnatan.inventoryframework.state;
 
-import static me.devnatan.inventoryframework.state.ImmutableValue.cannotBeMutated;
-
 import java.util.function.Supplier;
 import lombok.Data;
 
@@ -17,6 +15,6 @@ public final class ComputedValue implements InternalStateValue {
 
     @Override
     public void set(Object value) {
-        cannotBeMutated();
+        throw new IllegalStateModificationException();
     }
 }

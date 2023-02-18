@@ -12,7 +12,6 @@ import me.devnatan.inventoryframework.IFItem;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.InteractionHandler;
-import me.devnatan.inventoryframework.context.IFSlotContext;
 import me.devnatan.inventoryframework.state.StateHost;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,7 +26,7 @@ public final class PaginationImpl implements Pagination {
     private final List<Component> components = new LinkedList<>();
 
     // --- User provided ---
-    private final @NotNull Function<IFSlotContext, List<?>> sourceProvider;
+    private final @NotNull Function<?, ?> sourceProvider;
     private final @NotNull BiConsumer<IFItem<?>, Object> itemFactory;
 
     // --- Data ---

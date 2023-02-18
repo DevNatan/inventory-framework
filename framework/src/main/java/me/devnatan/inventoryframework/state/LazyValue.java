@@ -1,7 +1,5 @@
 package me.devnatan.inventoryframework.state;
 
-import static me.devnatan.inventoryframework.state.ImmutableValue.cannotBeMutated;
-
 import java.util.function.Supplier;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -27,6 +25,6 @@ public final class LazyValue implements InternalStateValue {
 
     @Override
     public void set(Object value) {
-        cannotBeMutated();
+        throw new IllegalStateModificationException();
     }
 }

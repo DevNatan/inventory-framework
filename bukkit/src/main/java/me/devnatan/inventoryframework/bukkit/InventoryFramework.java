@@ -7,6 +7,8 @@ import me.devnatan.inventoryframework.ViewConfigBuilder;
 import me.devnatan.inventoryframework.ViewFrame;
 import me.devnatan.inventoryframework.context.OpenContext;
 import me.devnatan.inventoryframework.context.RenderContext;
+import me.devnatan.inventoryframework.pagination.Pagination;
+import me.devnatan.inventoryframework.state.State;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -36,7 +38,7 @@ public final class InventoryFramework extends JavaPlugin {
 
 class AwesomeView extends View {
 
-    private final PaginationData pagination = pagination(
+    private final State<Pagination> pagination = pagination(
             () -> IntStream.range(1, 100).boxed().collect(Collectors.toList()),
             (item, value) -> item.item(new ItemStack(Material.EGG)));
 

@@ -14,10 +14,6 @@ public final class ImmutableValue implements InternalStateValue {
 
     @Override
     public void set(Object value) {
-        cannotBeMutated();
-    }
-
-    static void cannotBeMutated() {
         throw new IllegalStateModificationException();
     }
 }
