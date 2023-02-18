@@ -3,7 +3,6 @@ package me.devnatan.inventoryframework.example.counter;
 import me.devnatan.inventoryframework.View;
 import me.devnatan.inventoryframework.ViewConfigBuilder;
 import me.devnatan.inventoryframework.context.RenderContext;
-import me.devnatan.inventoryframework.state.MutableIntState;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 

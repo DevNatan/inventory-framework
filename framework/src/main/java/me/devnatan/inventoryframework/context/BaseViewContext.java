@@ -7,15 +7,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.BiConsumer;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.ComponentComposition;
-import me.devnatan.inventoryframework.internal.state.DefaultStateHost;
-import me.devnatan.inventoryframework.state.State;
+import me.devnatan.inventoryframework.pagination.Pagination;
+import me.devnatan.inventoryframework.state.DefaultStateHost;
 import me.devnatan.inventoryframework.state.StateHost;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -118,31 +117,6 @@ class BaseViewContext implements IFContext {
     }
 
     @Override
-    public final StateValueHolder retrieve(long id) {
-        return getStateHost().retrieve(id);
-    }
-
-    @Override
-    public final void updateCaught(@NotNull State<?> state, Object oldValue, Object newValue) {
-        getStateHost().updateCaught(state, oldValue, newValue);
-    }
-
-    @Override
-    public final StateValueHolder createMutable(Object initialValue) {
-        return getStateHost().createMutable(initialValue);
-    }
-
-    @Override
-    public StateValueHolder createUnchecked(long id, State<?> state, Object initialValue) {
-        return getStateHost().createUnchecked(id, state, initialValue);
-    }
-
-    @Override
-    public final <T> void watch(@NotNull State<?> state, @NotNull BiConsumer<T, T> callback) {
-        getStateHost().watch(state, callback);
-    }
-
-    @Override
     public final @UnmodifiableView @NotNull List<Component> getComponents() {
         return Collections.unmodifiableList(components);
     }
@@ -172,6 +146,11 @@ class BaseViewContext implements IFContext {
         synchronized (components) {
             components.remove(component);
         }
+    }
+
+    @Override
+    public Pagination pagination() {
+        throw new UnsupportedOperationException();
     }
 
     @Override

@@ -11,10 +11,11 @@ import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.OPE
 import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.RENDER;
 import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.UPDATE;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import me.devnatan.inventoryframework.component.Component;
@@ -22,6 +23,7 @@ import me.devnatan.inventoryframework.component.ComponentComposition;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
 import me.devnatan.inventoryframework.state.State;
+import me.devnatan.inventoryframework.state.StateFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
 
@@ -32,7 +34,10 @@ class DefaultRootView implements RootView {
     private final Pipeline<? super VirtualView> pipeline =
             new Pipeline<>(INIT, OPEN, RENDER, UPDATE, CLICK, CLOSE, INVALIDATION);
     private final Set<IFContext> contexts = newSetFromMap(synchronizedMap(new HashMap<>()));
-    protected final Set<State<?>> inheritableStates = new HashSet<>();
+
+    // --- State Management --
+    protected final StateFactory stateFactory = new StateFactory();
+    private final List<State<?>> states = new ArrayList<>();
 
     @Override
     public final @NotNull UUID getUniqueId() {

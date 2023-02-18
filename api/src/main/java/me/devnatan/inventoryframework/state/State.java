@@ -1,21 +1,14 @@
 package me.devnatan.inventoryframework.state;
 
-import java.util.concurrent.atomic.AtomicLong;
 import org.jetbrains.annotations.NotNull;
 
 public interface State<T> {
 
-    AtomicLong ids = new AtomicLong(0);
-
     /**
-     * Gets the current value for this state defined in the specified holder.
+     * Gets the current value for this state defined in the specified host.
      *
-     * @param holder The state holder.
+     * @param host The state host.
      * @return The current state value.
      */
-    T get(@NotNull StateHost holder);
-
-    static long generateId() {
-        return ids.getAndIncrement();
-    }
+    T get(@NotNull StateHost host);
 }
