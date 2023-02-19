@@ -29,8 +29,6 @@ public final class ItemClickInterceptor implements PipelineInterceptor<IFContext
             final IFItem<?> item = (IFItem<?>) component;
             // inherit cancellation so we can un-cancel it
             clickCtx.setCancelled(item.isCancelOnClick());
-
-            if (item.getClickHandler() != null) item.getClickHandler().accept(clickCtx);
         }
 
         component.getInteractionHandler().clicked(component, clickCtx);
