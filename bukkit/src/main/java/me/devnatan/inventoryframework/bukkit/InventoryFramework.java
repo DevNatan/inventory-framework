@@ -1,9 +1,14 @@
 package me.devnatan.inventoryframework.bukkit;
 
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import me.devnatan.inventoryframework.View;
+import me.devnatan.inventoryframework.ViewConfigBuilder;
 import me.devnatan.inventoryframework.ViewFrame;
 import me.devnatan.inventoryframework.context.OpenContext;
 import me.devnatan.inventoryframework.context.RenderContext;
+import me.devnatan.inventoryframework.pagination.Pagination;
+import me.devnatan.inventoryframework.state.State;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -33,13 +38,30 @@ public final class InventoryFramework extends JavaPlugin {
 
 class AwesomeView extends View {
 
+    private final State<Pagination> pagination = pagination(
+            () -> IntStream.range(1, 100).boxed().collect(Collectors.toList()),
+            (item, value) -> item.item(new ItemStack(Material.EGG)));
+
+    @Override
+    public void onInit(ViewConfigBuilder config) {
+        config.title("Awesome view")
+                .size(6)
+                .cancelOnClick()
+                .layout("XXXXXXXXX", "XOOOOOOOX", "XOOOOOOOX", "XOOOOOOOX", "XOOOOOOOX", "XXXXXXXXX");
+    }
+
     @Override
     public void onFirstRender(RenderContext ctx) {
-        ctx.slot(2, new ItemStack(Material.EGG)).cancelOnClick();
+        System.out.println(pagination);
+        ctx.slot(2, new ItemStack(Material.EGG)).cancelOnClick().onClick(click -> {
+            click.getPlayer()
+                    .sendMessage("Clicou nozovo: " + pagination.get(click).currentPageIndex());
+        });
     }
 
     @Override
     public void onOpen(OpenContext ctx) {
         ctx.getPlayer().sendMessage("dentro do open :)");
+        ctx.setTitle("Teste titulo dinamico");
     }
 }

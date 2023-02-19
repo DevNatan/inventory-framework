@@ -5,6 +5,8 @@ import org.jetbrains.annotations.NotNull;
 
 public interface IFRenderContext<TItem> extends IFConfinedContext {
 
+    IFContext getParent();
+
     /**
      * This allows access the current configuration with the possibility to change it only for that
      * context.

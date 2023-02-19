@@ -9,7 +9,7 @@ import me.devnatan.inventoryframework.ViewConfigBuilder;
 import me.devnatan.inventoryframework.bukkit.BukkitItem;
 import me.devnatan.inventoryframework.context.OpenContext;
 import me.devnatan.inventoryframework.context.RenderContext;
-import me.devnatan.inventoryframework.state.Pagination;
+import me.devnatan.inventoryframework.pagination.Pagination;
 import me.devnatan.inventoryframework.state.State;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -19,13 +19,11 @@ import org.jetbrains.annotations.NotNull;
 
 public final class ClanMemberListView extends View {
 
-    private final ClansManager clansManager;
     private final State<List<ClanMember>> membersListState;
     private final State<Clan> clanState;
-    private final Pagination pagination;
+    private final State<Pagination> pagination;
 
     public ClanMemberListView(@NotNull ClansManager clansManager) {
-        this.clansManager = clansManager;
         this.clanState = state(ctx -> {
             // TODO fix this example using ctx.get(...)
             return clansManager.getClan("");
@@ -51,8 +49,9 @@ public final class ClanMemberListView extends View {
 
     @Override
     public void onFirstRender(RenderContext ctx) {
-        ctx.layoutSlot("<").onClick(pagination::back);
-        ctx.layoutSlot(">").onClick(pagination::advance);
+        final Pagination localPagination = pagination.get(ctx);
+        ctx.layoutSlot("<").onClick(localPagination::back);
+        ctx.layoutSlot(">").onClick(localPagination::advance);
     }
 
     private void createPaginationItem(BukkitItem item, ClanMember member) {

@@ -9,6 +9,7 @@ import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.bukkit.BukkitItem;
 import me.devnatan.inventoryframework.bukkit.BukkitViewer;
+import me.devnatan.inventoryframework.state.StateHost;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
@@ -17,16 +18,26 @@ import org.jetbrains.annotations.NotNull;
 @Getter
 public final class RenderContext extends ConfinedContext implements IFRenderContext<BukkitItem>, Context {
 
-    @NotNull
-    private final Player player;
+    private final @NotNull IFContext parent;
+    private final @NotNull Player player;
 
     @Getter(AccessLevel.PRIVATE)
     private final ViewConfigBuilder inheritedConfigBuilder = new ViewConfigBuilder();
 
     @ApiStatus.Internal
-    public RenderContext(@NotNull RootView root, @NotNull ViewContainer container, @NotNull Viewer viewer) {
+    public RenderContext(
+            @NotNull RootView root,
+            @NotNull ViewContainer container,
+            @NotNull Viewer viewer,
+            @NotNull IFContext parent) {
         super(root, container, viewer);
         this.player = ((BukkitViewer) viewer).getPlayer();
+        this.parent = parent;
+    }
+
+    @Override
+    public @NotNull StateHost getStateHost() {
+        return getParent().getStateHost();
     }
 
     @Override

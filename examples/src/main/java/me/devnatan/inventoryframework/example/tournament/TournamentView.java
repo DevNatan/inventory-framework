@@ -1,22 +1,24 @@
 package me.devnatan.inventoryframework.example.tournament;
 
 import java.util.UUID;
-import lombok.RequiredArgsConstructor;
 import me.devnatan.inventoryframework.View;
 import me.devnatan.inventoryframework.ViewConfigBuilder;
 import me.devnatan.inventoryframework.context.CloseContext;
-import me.devnatan.inventoryframework.context.Context;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.OpenContext;
 import me.devnatan.inventoryframework.state.State;
 
-@RequiredArgsConstructor
 public final class TournamentView extends View {
 
     private final TournamentsManager tournamentsManager;
 
-    private final State<UUID> tournamentIdState = initialState(UUID.class);
-    private final State<Tournament> tournamentState = state(this::getTournament);
+    private final State<UUID> idState = initialState(UUID.class);
+    private final State<Tournament> tournamentState;
+
+    public TournamentView(TournamentsManager tournamentsManager) {
+        this.tournamentsManager = tournamentsManager;
+        this.tournamentState = state(ctx -> tournamentsManager.getTournament(idState.get(ctx)));
+    }
 
     @Override
     public void onInit(ViewConfigBuilder config) {
@@ -30,7 +32,7 @@ public final class TournamentView extends View {
 
     @Override
     public void onClose(CloseContext ctx) {
-        final Tournament tournament = getTournament(ctx);
+        final Tournament tournament = tournamentState.get(ctx);
         final TournamentParticipant participant =
                 tournament.getParticipant(ctx.getPlayer().getUniqueId());
         tournamentsManager.leaveTournament(tournament.getId(), participant.getId());
@@ -38,13 +40,9 @@ public final class TournamentView extends View {
         for (final IFContext other : getContexts()) other.updateTitle(createTitle(other));
     }
 
-    private Tournament getTournament(Context context) {
-        return tournamentsManager.getTournament(tournamentIdState.get(context));
-    }
-
     private String createTitle(IFContext context) {
+        final Tournament tournament = tournamentState.get(context);
         return String.format(
-                "Tournament - %d participants",
-                tournamentState.get(context).getParticipants().size());
+                "Tournament - %d participants", tournament.getParticipants().size());
     }
 }

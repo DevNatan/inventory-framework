@@ -4,13 +4,14 @@ import me.devnatan.inventoryframework.View;
 import me.devnatan.inventoryframework.ViewConfigBuilder;
 import me.devnatan.inventoryframework.context.OpenContext;
 import me.devnatan.inventoryframework.context.RenderContext;
-import me.devnatan.inventoryframework.state.Pagination;
+import me.devnatan.inventoryframework.pagination.Pagination;
+import me.devnatan.inventoryframework.state.State;
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 
 public final class WarpListView extends View {
 
-    private final Pagination pagination;
+    private final State<Pagination> pagination;
 
     public WarpListView(@NotNull WarpsManager warpsManager) {
         pagination = pagination(
@@ -25,12 +26,13 @@ public final class WarpListView extends View {
 
     @Override
     public void onOpen(OpenContext ctx) {
-        ctx.setTitle(String.format("Warps (%d)", pagination.count(ctx)));
+        ctx.setTitle("Warps");
     }
 
     @Override
     public void onFirstRender(RenderContext ctx) {
-        ctx.layoutSlot("<").withItem(Material.ARROW).onClick(pagination::back);
-        ctx.layoutSlot(">").withItem(Material.ARROW).onClick(pagination::advance);
+        final Pagination localPagination = pagination.get(ctx);
+        ctx.layoutSlot("<").withItem(Material.ARROW).onClick(localPagination::back);
+        ctx.layoutSlot(">").withItem(Material.ARROW).onClick(localPagination::advance);
     }
 }

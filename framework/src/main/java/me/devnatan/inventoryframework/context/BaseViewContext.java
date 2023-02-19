@@ -7,32 +7,32 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.BiConsumer;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.ComponentComposition;
-import me.devnatan.inventoryframework.internal.state.DefaultStateHolder;
-import me.devnatan.inventoryframework.state.State;
-import me.devnatan.inventoryframework.state.StateHolder;
-import me.devnatan.inventoryframework.state.StateValueHolder;
+import me.devnatan.inventoryframework.pagination.Pagination;
+import me.devnatan.inventoryframework.state.DefaultStateHost;
+import me.devnatan.inventoryframework.state.StateHost;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 import org.jetbrains.annotations.UnmodifiableView;
+import org.jetbrains.annotations.VisibleForTesting;
 
 @ApiStatus.Internal
-class BaseViewContext implements IFContext {
+@VisibleForTesting
+public class BaseViewContext implements IFContext {
 
     private final @NotNull RootView root;
 
     /* container can be null on pre-render/intermediate contexts */
     private final @Nullable ViewContainer container;
 
-    private final StateHolder stateHolder = new DefaultStateHolder();
+    private final StateHost stateHost = new DefaultStateHost();
     protected final Map<String, Viewer> viewers = new HashMap<>();
     protected final ViewConfig config;
     private final List<Component> components = new ArrayList<>();
@@ -119,31 +119,6 @@ class BaseViewContext implements IFContext {
     }
 
     @Override
-    public final long generateId() {
-        return stateHolder.generateId();
-    }
-
-    @Override
-    public final StateValueHolder retrieve(long id) {
-        return stateHolder.retrieve(id);
-    }
-
-    @Override
-    public final void updateCaught(@NotNull State<?> state, Object oldValue, Object newValue) {
-        stateHolder.updateCaught(state, oldValue, newValue);
-    }
-
-    @Override
-    public final StateValueHolder createUnchecked(Object initialValue) {
-        return stateHolder.createUnchecked(initialValue);
-    }
-
-    @Override
-    public final <T> void watch(@NotNull State<?> state, @NotNull BiConsumer<T, T> callback) {
-        stateHolder.watch(state, callback);
-    }
-
-    @Override
     public final @UnmodifiableView @NotNull List<Component> getComponents() {
         return Collections.unmodifiableList(components);
     }
@@ -173,5 +148,15 @@ class BaseViewContext implements IFContext {
         synchronized (components) {
             components.remove(component);
         }
+    }
+
+    @Override
+    public Pagination pagination() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public @NotNull StateHost getStateHost() {
+        return stateHost;
     }
 }

@@ -1,9 +1,9 @@
 package me.devnatan.inventoryframework;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import lombok.AccessLevel;
@@ -21,10 +21,10 @@ public final class ViewConfigBuilder {
     private String title = "";
     private int size = 0;
     private ViewType type = null;
-    private final List<ViewConfig.Option<?>> options = new ArrayList<>();
+    private final Set<ViewConfig.Option<?>> options = new HashSet<>();
     private String[] layout = null;
-    private final List<LayoutPattern> patterns = new ArrayList<>();
-    private final List<ViewConfig.Modifier> modifiers = new ArrayList<>();
+    private final Set<LayoutPattern> patterns = new HashSet<>();
+    private final Set<ViewConfig.Modifier> modifiers = new HashSet<>();
 
     /**
      * Inherits all configuration from another {@link ViewConfigBuilder} value.
@@ -108,7 +108,8 @@ public final class ViewConfigBuilder {
     }
 
     public ViewConfigBuilder cancelOnClick() {
-        throw new UnsupportedOperationException();
+        options.add(ViewConfig.CancelOnClick);
+        return this;
     }
 
     public ViewConfigBuilder cancelOnPickup() {

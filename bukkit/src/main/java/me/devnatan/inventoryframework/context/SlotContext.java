@@ -6,6 +6,7 @@ import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.bukkit.BukkitViewContainer;
 import me.devnatan.inventoryframework.bukkit.BukkitViewer;
 import me.devnatan.inventoryframework.component.Component;
+import me.devnatan.inventoryframework.state.StateHost;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
@@ -32,6 +33,11 @@ public class SlotContext extends ConfinedContext implements IFSlotContext, Conte
         this.player = ((BukkitViewer) viewer).getPlayer();
         this.parent = parent;
         this.component = component;
+    }
+
+    @Override
+    public final @NotNull StateHost getStateHost() {
+        return getParent().getStateHost();
     }
 
     @Override

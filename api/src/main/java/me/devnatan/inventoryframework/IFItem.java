@@ -96,6 +96,11 @@ public abstract class IFItem<S extends IFItem<?>> implements Component {
     }
 
     @Override
+    public boolean isContainedWithin(int position) {
+        return getPosition() == position;
+    }
+
+    @Override
     public final @NotNull VirtualView getRoot() {
         // TODO fix this
         throw new UnsupportedOperationException("IFItem do not have a defined root");

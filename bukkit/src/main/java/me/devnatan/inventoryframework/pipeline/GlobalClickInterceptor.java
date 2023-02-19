@@ -1,6 +1,6 @@
 package me.devnatan.inventoryframework.pipeline;
 
-import static me.devnatan.inventoryframework.RootView.CancelOnClick;
+import static me.devnatan.inventoryframework.ViewConfig.CancelOnClick;
 
 import me.devnatan.inventoryframework.PlatformView;
 import me.devnatan.inventoryframework.context.SlotClickContext;

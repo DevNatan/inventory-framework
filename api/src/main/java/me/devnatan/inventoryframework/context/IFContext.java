@@ -9,13 +9,14 @@ import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.component.Component;
-import me.devnatan.inventoryframework.state.StateHolder;
+import me.devnatan.inventoryframework.pagination.Pagination;
+import me.devnatan.inventoryframework.state.StateHostAware;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 import org.jetbrains.annotations.UnmodifiableView;
 
-public interface IFContext extends VirtualView, StateHolder {
+public interface IFContext extends VirtualView, StateHostAware {
 
     /**
      * The configuration for this context.
@@ -175,4 +176,6 @@ public interface IFContext extends VirtualView, StateHolder {
      * @param component The component to be removed.
      */
     void removeComponent(@NotNull Component component);
+
+    Pagination pagination();
 }

@@ -5,10 +5,10 @@ import org.jetbrains.annotations.NotNull;
 public interface State<T> {
 
     /**
-     * Gets the current value for this state defined in the specified holder.
+     * Gets the current value for this state defined in the specified host.
      *
-     * @param holder The state holder.
+     * @param host The state host.
      * @return The current state value.
      */
-    T get(@NotNull StateHolder holder);
+    T get(@NotNull StateHost host);
 }
