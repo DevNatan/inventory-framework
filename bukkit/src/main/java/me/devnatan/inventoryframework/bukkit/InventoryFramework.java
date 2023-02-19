@@ -52,7 +52,6 @@ class AwesomeView extends View {
 
     @Override
     public void onFirstRender(RenderContext ctx) {
-        System.out.println(pagination);
         ctx.slot(2, new ItemStack(Material.EGG)).cancelOnClick().onClick(click -> {
             click.getPlayer()
                     .sendMessage("Clicou nozovo: " + pagination.get(click).currentPageIndex());

@@ -18,7 +18,6 @@ public final class OpenInterceptor implements PipelineInterceptor<IFContext> {
 
     @Override
     public void intercept(@NotNull PipelineContext<IFContext> pipeline, IFContext context) {
-        System.out.println("open interceptor " + context);
         if (!(context instanceof IFOpenContext)) return;
 
         final IFOpenContext openContext = (IFOpenContext) context;

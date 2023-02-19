@@ -81,8 +81,6 @@ public final class BukkitElementFactory extends ElementFactory {
             inventory = createInventory(holder, size, finalTitle);
         }
 
-        System.out.println("title, size, type: " + finalTitle + ", " + size + ", " + type);
-        System.out.println("created inventory: " + inventory);
         return new BukkitViewContainer(inventory, false);
     }
 
