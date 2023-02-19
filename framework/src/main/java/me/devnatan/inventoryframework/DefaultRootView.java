@@ -5,10 +5,10 @@ import static java.util.Collections.newSetFromMap;
 import static java.util.Collections.synchronizedMap;
 import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.CLICK;
 import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.CLOSE;
+import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.FIRST_RENDER;
 import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.INIT;
 import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.INVALIDATION;
 import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.OPEN;
-import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.FIRST_RENDER;
 import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.UPDATE;
 
 import java.util.ArrayList;
@@ -18,12 +18,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import me.devnatan.inventoryframework.component.Component;
-import me.devnatan.inventoryframework.component.ComponentComposition;
 import me.devnatan.inventoryframework.context.IFContext;
+import me.devnatan.inventoryframework.internal.ElementFactory;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
 import me.devnatan.inventoryframework.state.State;
 import me.devnatan.inventoryframework.state.StateFactory;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
 
@@ -78,29 +78,6 @@ class DefaultRootView implements RootView {
     }
 
     @Override
-    public final void removeComponent(@NotNull IFContext context, int index) {}
-
-    @Override
-    public final void renderComponent(@NotNull IFContext context, @NotNull Component component) {
-        if (component instanceof ComponentComposition) {
-            for (final Component child : (ComponentComposition) component) {
-                renderSingleComponent(context, child);
-            }
-            return;
-        }
-
-        renderSingleComponent(context, component);
-    }
-
-    private void renderSingleComponent(@NotNull IFContext context, @NotNull Component component) {
-        if (!(component instanceof IFItem))
-            throw new UnsupportedOperationException("Only IFItem can be rendered for now");
-
-        final IFItem<?> item = (IFItem<?>) component;
-        context.getContainer().renderItem(component.getPosition(), item.getItem());
-    }
-
-    @Override
     public final @NotNull ViewConfig getConfig() {
         return config;
     }
@@ -134,5 +111,10 @@ class DefaultRootView implements RootView {
     @Override
     public final Iterator<IFContext> iterator() {
         return getContexts().iterator();
+    }
+
+    @ApiStatus.Internal
+    public @NotNull ElementFactory getElementFactory() {
+        throw new UnsupportedOperationException("Element factory not provided");
     }
 }

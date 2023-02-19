@@ -1,6 +1,5 @@
 package me.devnatan.inventoryframework.internal;
 
-import me.devnatan.inventoryframework.PlatformView;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.ViewType;
@@ -53,17 +52,15 @@ public abstract class ElementFactory {
             @Nullable IFContext parent);
 
     @NotNull
-    public abstract IFSlotContext createSlotContext(
+    public abstract <T extends IFSlotContext> T createSlotContext(
             int slot,
             Component component,
             @NotNull ViewContainer container,
             @NotNull Viewer viewer,
-            @NotNull IFContext parent);
+            @NotNull IFContext parent,
+            @NotNull Class<?> kind);
 
     public abstract Object createItem(@Nullable Object stack);
 
     public abstract boolean worksInCurrentPlatform();
-
-    @SuppressWarnings("rawtypes")
-    public abstract void registerPlatformInterceptors(@NotNull PlatformView view);
 }

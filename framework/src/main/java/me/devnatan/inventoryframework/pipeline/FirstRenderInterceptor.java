@@ -1,8 +1,9 @@
 package me.devnatan.inventoryframework.pipeline;
 
-import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.component.Component;
+import me.devnatan.inventoryframework.context.IFConfinedContext;
 import me.devnatan.inventoryframework.context.IFContext;
+import me.devnatan.inventoryframework.context.IFSlotRenderContext;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -12,7 +13,6 @@ public final class FirstRenderInterceptor implements PipelineInterceptor<IFConte
 
     @Override
     public void intercept(@NotNull PipelineContext<IFContext> pipeline, IFContext context) {
-        final RootView root = context.getRoot();
         final int len = context.getContainer().getSize();
 
         for (int i = 0; i < len; i++) {
@@ -22,7 +22,17 @@ public final class FirstRenderInterceptor implements PipelineInterceptor<IFConte
                 continue;
             }
 
-            root.renderComponent(context, component);
+            final IFSlotRenderContext renderContext = context.getRoot()
+                    .getElementFactory()
+                    .createSlotContext(
+                            i,
+                            component,
+                            context.getContainer(),
+                            ((IFConfinedContext) context).getViewer(),
+                            context,
+                            IFSlotRenderContext.class);
+
+            component.render(renderContext);
         }
     }
 }

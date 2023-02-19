@@ -156,12 +156,12 @@ public class BaseViewContext implements IFContext {
         throw new UnsupportedOperationException();
     }
 
-	@Override
-	public void update() {
-		getRoot().getPipeline().execute(StandardPipelinePhases.UPDATE, this);
-	}
+    @Override
+    public void update() {
+        getRoot().getPipeline().execute(StandardPipelinePhases.UPDATE, this);
+    }
 
-	@Override
+    @Override
     public @NotNull StateHost getStateHost() {
         return stateHost;
     }

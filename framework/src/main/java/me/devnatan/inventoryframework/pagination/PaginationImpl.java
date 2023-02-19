@@ -11,13 +11,16 @@ import me.devnatan.inventoryframework.IFItem;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.InteractionHandler;
+import me.devnatan.inventoryframework.context.IFContext;
+import me.devnatan.inventoryframework.context.IFSlotClickContext;
+import me.devnatan.inventoryframework.context.IFSlotRenderContext;
 import me.devnatan.inventoryframework.state.StateHost;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnmodifiableView;
 
 @Data
-public final class PaginationImpl implements Pagination {
+public final class PaginationImpl implements Pagination, InteractionHandler {
 
     private final @NotNull RootView root;
     private final @Nullable String layoutTarget;
@@ -37,7 +40,17 @@ public final class PaginationImpl implements Pagination {
 
     @Override
     public @NotNull InteractionHandler getInteractionHandler() {
-        return null;
+        return this;
+    }
+
+    @Override
+    public void render(@NotNull IFSlotRenderContext context) {
+        // TODO
+    }
+
+    @Override
+    public void clear(@NotNull IFContext context) {
+        // TODO
     }
 
     @Override
@@ -121,4 +134,7 @@ public final class PaginationImpl implements Pagination {
 
     @Override
     public void attached(long id, @NotNull StateHost holder) {}
+
+    @Override
+    public void clicked(@NotNull Component component, @NotNull IFSlotClickContext context) {}
 }

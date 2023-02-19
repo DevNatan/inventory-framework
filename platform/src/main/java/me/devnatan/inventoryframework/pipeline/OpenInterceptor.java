@@ -46,7 +46,7 @@ public final class OpenInterceptor implements PipelineInterceptor<IFContext> {
         if (skipOpen) return;
 
         final RootView root = openContext.getRoot();
-        final ElementFactory elementFactory = ((PlatformView) root).getElementFactory();
+        final ElementFactory elementFactory = root.getElementFactory();
         final ViewContainer container = elementFactory.createContainer(
                 openContext,
                 openContext.getType().normalize(openContext.getSize()),
@@ -59,6 +59,8 @@ public final class OpenInterceptor implements PipelineInterceptor<IFContext> {
 
         renderCtx.addViewer(viewer);
         root.addContext(renderCtx);
+
+        // TODO call onFirstRender on `renderContext` and move this interceptor to framework module
         if (root instanceof PlatformView) ((PlatformView) root).onFirstRender(renderCtx);
         root.renderContext(renderCtx);
         container.open(viewer);
