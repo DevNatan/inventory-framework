@@ -1,5 +1,6 @@
 package me.devnatan.inventoryframework.context;
 
+import java.util.List;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
@@ -12,6 +13,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.UnmodifiableView;
 
 @ApiStatus.Internal
 public class SlotContext extends ConfinedContext implements IFSlotContext, Context {
@@ -97,5 +99,10 @@ public class SlotContext extends ConfinedContext implements IFSlotContext, Conte
 
     public void setItem(@Nullable ItemStack item) {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public @UnmodifiableView @NotNull List<Component> getComponents() {
+        return getParent().getComponents();
     }
 }

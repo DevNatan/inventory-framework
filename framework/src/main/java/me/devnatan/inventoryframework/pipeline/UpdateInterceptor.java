@@ -12,56 +12,55 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class UpdateInterceptor implements PipelineInterceptor<IFContext> {
 
-	@Override
-	public void intercept(@NotNull PipelineContext<IFContext> pipeline, IFContext context) {
-		for (final Component component : context.getComponents()) {
-			if (component.isMarkedForRemoval()) {
-				component.clear(context);
-				continue;
-			}
+    @Override
+    public void intercept(@NotNull PipelineContext<IFContext> pipeline, IFContext context) {
+        for (final Component component : context.getComponents()) {
+            if (component.isMarkedForRemoval()) {
+                component.clear(context);
+                continue;
+            }
 
-			if (!shouldBeUpdated(component))
-				continue;
+            if (!shouldBeUpdated(component)) continue;
 
-			renderComponent(context, component);
-		}
-	}
+            renderComponent(context, component);
+        }
+    }
 
-	/**
-	 * Determines if a component should be updated.
-	 *
-	 * @param component The component.
-	 * @return {@code true} if component should be updated or {@code false} otherwise.
-	 */
-	private boolean shouldBeUpdated(@NotNull Component component) {
-		if (component instanceof IFItem) {
-			final IFItem<?> item = (IFItem<?>) component;
+    /**
+     * Determines if a component should be updated.
+     *
+     * @param component The component.
+     * @return {@code true} if component should be updated or {@code false} otherwise.
+     */
+    private boolean shouldBeUpdated(@NotNull Component component) {
+        if (component instanceof IFItem) {
+            final IFItem<?> item = (IFItem<?>) component;
 
-			// items without a render handler are ignored because the fallback item is only rendered
-			// once in the initial rendering phase
-			return item.getRenderHandler() != null;
-		}
+            // items without a render handler are ignored because the fallback item is only rendered
+            // once in the initial rendering phase
+            return item.getRenderHandler() != null;
+        }
 
-		return true;
-	}
+        return true;
+    }
 
-	/**
-	 * Renders a component in the given context.
-	 *
-	 * @param context   The context.
-	 * @param component The component that'll be rendered
-	 */
-	public void renderComponent(@NotNull IFContext context, @NotNull Component component) {
-		final IFSlotRenderContext renderContext = context.getRoot()
-			.getElementFactory()
-			.createSlotContext(
-				component.getPosition(),
-				component,
-				context.getContainer(),
-				((IFConfinedContext) context).getViewer(),
-				context,
-				IFSlotRenderContext.class);
+    /**
+     * Renders a component in the given context.
+     *
+     * @param context   The context.
+     * @param component The component that'll be rendered
+     */
+    public void renderComponent(@NotNull IFContext context, @NotNull Component component) {
+        final IFSlotRenderContext renderContext = context.getRoot()
+                .getElementFactory()
+                .createSlotContext(
+                        component.getPosition(),
+                        component,
+                        context.getContainer(),
+                        ((IFConfinedContext) context).getViewer(),
+                        context,
+                        IFSlotRenderContext.class);
 
-		component.render(renderContext);
-	}
+        component.render(renderContext);
+    }
 }

@@ -56,6 +56,10 @@ public abstract class IFItem<S extends IFItem<?>> implements Component {
     @Getter(AccessLevel.PUBLIC)
     private boolean closeOnClick, cancelOnClick, cancelOnShiftClick;
 
+    @Getter(AccessLevel.PUBLIC)
+    @Setter(AccessLevel.PUBLIC)
+    private boolean markedForRemoval;
+
     @SuppressWarnings("Convert2Lambda")
     private final InteractionHandler interactionHandler = new InteractionHandler() {
         @Override
@@ -100,10 +104,7 @@ public abstract class IFItem<S extends IFItem<?>> implements Component {
             }
 
             context.getContainer().renderItem(getPosition(), getItem());
-            return;
         }
-
-        throw new UnsupportedOperationException("render(...) must be implemented by IFItem overriders");
     }
 
     @Override

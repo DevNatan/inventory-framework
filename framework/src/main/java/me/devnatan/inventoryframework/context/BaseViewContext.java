@@ -12,7 +12,6 @@ import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.component.Component;
-import me.devnatan.inventoryframework.component.ComponentComposition;
 import me.devnatan.inventoryframework.pagination.Pagination;
 import me.devnatan.inventoryframework.pipeline.StandardPipelinePhases;
 import me.devnatan.inventoryframework.state.DefaultStateHost;
@@ -120,19 +119,14 @@ public class BaseViewContext implements IFContext {
     }
 
     @Override
-    public final @UnmodifiableView @NotNull List<Component> getComponents() {
+    public @UnmodifiableView @NotNull List<Component> getComponents() {
         return Collections.unmodifiableList(components);
     }
 
     @Override
     public final Component getComponent(int position) {
         for (final Component component : getComponents()) {
-            if (component instanceof ComponentComposition
-                    && ((ComponentComposition) component).isContainedWithin(position)) {
-                return component;
-            }
-
-            if (component.getPosition() == position) return component;
+            if (component.isContainedWithin(position)) return component;
         }
         return null;
     }

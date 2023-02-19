@@ -25,6 +25,7 @@ public final class PaginationImpl implements Pagination, InteractionHandler {
     private final @NotNull RootView root;
     private final @Nullable String layoutTarget;
     private final List<Component> components = new LinkedList<>();
+    private boolean markedForRemoval;
 
     // --- User provided ---
     private final @NotNull Function<?, ?> sourceProvider;
