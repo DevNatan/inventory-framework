@@ -52,11 +52,16 @@ class AwesomeView extends View {
 
     @Override
     public void onFirstRender(RenderContext ctx) {
-        ctx.slot(2, new ItemStack(Material.EGG));
+        System.out.println(pagination);
+        ctx.slot(2, new ItemStack(Material.EGG)).cancelOnClick().onClick(click -> {
+            click.getPlayer()
+                    .sendMessage("Clicou nozovo: " + pagination.get(click).currentPageIndex());
+        });
     }
 
     @Override
     public void onOpen(OpenContext ctx) {
         ctx.getPlayer().sendMessage("dentro do open :)");
+        ctx.setTitle("Teste titulo dinamico");
     }
 }

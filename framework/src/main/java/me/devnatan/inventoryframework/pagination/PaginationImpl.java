@@ -6,8 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.Data;
 import me.devnatan.inventoryframework.IFItem;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.component.Component;
@@ -17,8 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnmodifiableView;
 
-@Getter
-@RequiredArgsConstructor
+@Data
 public final class PaginationImpl implements Pagination {
 
     private final @NotNull RootView root;
