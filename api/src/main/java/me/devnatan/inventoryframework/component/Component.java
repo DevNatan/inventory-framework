@@ -1,6 +1,8 @@
 package me.devnatan.inventoryframework.component;
 
 import me.devnatan.inventoryframework.VirtualView;
+import me.devnatan.inventoryframework.context.IFContext;
+import me.devnatan.inventoryframework.context.IFSlotRenderContext;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -38,4 +40,18 @@ public interface Component {
      */
     @NotNull
     InteractionHandler getInteractionHandler();
+
+    /**
+     * Renders this component to the given context.
+     *
+     * @param context The context that this component will be rendered on.
+     */
+    void render(@NotNull IFSlotRenderContext context);
+
+    /**
+     * Clears this component from the given context.
+     *
+     * @param context The context that this component will be cleared from.
+     */
+    void clear(@NotNull IFContext context);
 }
