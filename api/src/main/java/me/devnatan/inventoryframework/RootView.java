@@ -2,8 +2,8 @@ package me.devnatan.inventoryframework;
 
 import java.util.Set;
 import java.util.UUID;
-import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.context.IFContext;
+import me.devnatan.inventoryframework.internal.ElementFactory;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -26,10 +26,6 @@ public interface RootView extends VirtualView, Iterable<IFContext> {
     void removeContext(@NotNull IFContext context);
 
     void renderContext(@NotNull IFContext context);
-
-    void removeComponent(@NotNull IFContext context, int index);
-
-    void renderComponent(@NotNull IFContext context, @NotNull Component component);
 
     /**
      * Called when the view is about to be configured, the returned object will be the view's
@@ -70,4 +66,7 @@ public interface RootView extends VirtualView, Iterable<IFContext> {
     void open(@NotNull Viewer viewer);
 
     void closeForEveryone();
+
+    @NotNull
+    ElementFactory getElementFactory();
 }
