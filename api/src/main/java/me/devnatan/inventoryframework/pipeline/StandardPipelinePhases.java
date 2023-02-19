@@ -24,7 +24,7 @@ public final class StandardPipelinePhases {
     /**
      * Called when a {@link IFContext context} is going to be rendered.
      */
-    public static final PipelinePhase RENDER = new PipelinePhase("render");
+    public static final PipelinePhase FIRST_RENDER = new PipelinePhase("first-render");
 
     /**
      * Called when a {@link IFContext context} is going to be updated.

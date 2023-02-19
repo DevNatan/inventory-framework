@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Intercepts the rendering phase of a context and renders all components on it.
  */
-public final class RenderInterceptor implements PipelineInterceptor<IFContext> {
+public final class FirstRenderInterceptor implements PipelineInterceptor<IFContext> {
 
     @Override
     public void intercept(@NotNull PipelineContext<IFContext> pipeline, IFContext context) {

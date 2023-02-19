@@ -17,8 +17,10 @@ import me.devnatan.inventoryframework.pagination.Pagination;
 import me.devnatan.inventoryframework.pagination.PaginationImpl;
 import me.devnatan.inventoryframework.pipeline.InitInterceptor;
 import me.devnatan.inventoryframework.pipeline.OpenInterceptor;
-import me.devnatan.inventoryframework.pipeline.RenderInterceptor;
+import me.devnatan.inventoryframework.pipeline.Pipeline;
+import me.devnatan.inventoryframework.pipeline.FirstRenderInterceptor;
 import me.devnatan.inventoryframework.pipeline.StandardPipelinePhases;
+import me.devnatan.inventoryframework.pipeline.UpdateInterceptor;
 import me.devnatan.inventoryframework.state.ImmutableValue;
 import me.devnatan.inventoryframework.state.MutableState;
 import me.devnatan.inventoryframework.state.State;
@@ -453,11 +455,13 @@ public abstract class PlatformView<
         if (isInitialized())
             throw new IllegalStateException("Tried to call internal initialization but view is already initialized");
 
-        getPipeline().intercept(StandardPipelinePhases.INIT, new InitInterceptor());
-        getPipeline().intercept(StandardPipelinePhases.OPEN, new OpenInterceptor());
-        getPipeline().intercept(StandardPipelinePhases.RENDER, new RenderInterceptor());
+		final Pipeline<? super VirtualView> pipeline = getPipeline();
+        pipeline.intercept(StandardPipelinePhases.INIT, new InitInterceptor());
+        pipeline.intercept(StandardPipelinePhases.OPEN, new OpenInterceptor());
+        pipeline.intercept(StandardPipelinePhases.FIRST_RENDER, new FirstRenderInterceptor());
+		pipeline.intercept(StandardPipelinePhases.UPDATE, new UpdateInterceptor());
         getElementFactory().registerPlatformInterceptors(this);
-        getPipeline().execute(StandardPipelinePhases.INIT, this);
+		pipeline.execute(StandardPipelinePhases.INIT, this);
     }
 
     @ApiStatus.Internal

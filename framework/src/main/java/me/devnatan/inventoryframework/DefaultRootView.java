@@ -8,7 +8,7 @@ import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.CLO
 import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.INIT;
 import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.INVALIDATION;
 import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.OPEN;
-import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.RENDER;
+import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.FIRST_RENDER;
 import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.UPDATE;
 
 import java.util.ArrayList;
@@ -32,7 +32,7 @@ class DefaultRootView implements RootView {
     private final UUID id = UUID.randomUUID();
     private ViewConfig config;
     private final Pipeline<? super VirtualView> pipeline =
-            new Pipeline<>(INIT, OPEN, RENDER, UPDATE, CLICK, CLOSE, INVALIDATION);
+            new Pipeline<>(INIT, OPEN, FIRST_RENDER, UPDATE, CLICK, CLOSE, INVALIDATION);
     private final Set<IFContext> contexts = newSetFromMap(synchronizedMap(new HashMap<>()));
 
     // --- State Management --
@@ -74,7 +74,7 @@ class DefaultRootView implements RootView {
 
     @Override
     public final void renderContext(@NotNull IFContext context) {
-        getPipeline().execute(RENDER, context);
+        getPipeline().execute(FIRST_RENDER, context);
     }
 
     @Override

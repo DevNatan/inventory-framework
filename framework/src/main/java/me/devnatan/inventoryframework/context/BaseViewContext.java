@@ -14,6 +14,7 @@ import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.ComponentComposition;
 import me.devnatan.inventoryframework.pagination.Pagination;
+import me.devnatan.inventoryframework.pipeline.StandardPipelinePhases;
 import me.devnatan.inventoryframework.state.DefaultStateHost;
 import me.devnatan.inventoryframework.state.StateHost;
 import org.jetbrains.annotations.ApiStatus;
@@ -155,7 +156,12 @@ public class BaseViewContext implements IFContext {
         throw new UnsupportedOperationException();
     }
 
-    @Override
+	@Override
+	public void update() {
+		getRoot().getPipeline().execute(StandardPipelinePhases.UPDATE, this);
+	}
+
+	@Override
     public @NotNull StateHost getStateHost() {
         return stateHost;
     }

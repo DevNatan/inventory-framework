@@ -178,4 +178,6 @@ public interface IFContext extends VirtualView, StateHostAware {
     void removeComponent(@NotNull Component component);
 
     Pagination pagination();
+
+	void update();
 }
