@@ -82,7 +82,7 @@ public final class BukkitViewContainer implements ViewContainer {
     @Override
     public void renderItem(int slot, Object item) {
         requireSupportedItem(item);
-        inventory.setItem(slot, convertItem(item));
+        inventory.setItem(slot, (ItemStack) item);
     }
 
     @Override
@@ -96,24 +96,13 @@ public final class BukkitViewContainer implements ViewContainer {
         final ItemStack target = inventory.getItem(slot);
         if (target == null) return item == null;
         if (item instanceof ItemStack) return exactly ? target.equals(item) : target.isSimilar((ItemStack) item);
-        if (item instanceof Material) return target.getType() == item;
 
         return false;
     }
 
     @Override
-    public ItemStack convertItem(Object source) {
-        requireSupportedItem(source);
-
-        if (source instanceof ItemStack) return ((ItemStack) source).clone();
-        if (source instanceof Material) return new ItemStack((Material) source);
-
-        return null;
-    }
-
-    @Override
     public boolean isSupportedItem(Object item) {
-        return item == null || item instanceof ItemStack || item instanceof Material;
+        return item == null || item instanceof ItemStack;
     }
 
     private void requireSupportedItem(Object item) {
