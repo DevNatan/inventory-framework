@@ -5,8 +5,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.Data;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.ViewType;
 import me.devnatan.inventoryframework.Viewer;
@@ -22,11 +20,10 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
 @Data
-@RequiredArgsConstructor
 public final class BukkitViewContainer implements ViewContainer {
 
-    @Getter
-    private final @NotNull Inventory inventory;
+    @NotNull
+    private final Inventory inventory;
 
     private final boolean shared;
 

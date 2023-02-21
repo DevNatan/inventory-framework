@@ -9,7 +9,7 @@ import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.component.Component;
-import me.devnatan.inventoryframework.pagination.Pagination;
+import me.devnatan.inventoryframework.component.Pagination;
 import me.devnatan.inventoryframework.state.StateHostAware;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

@@ -1,4 +1,4 @@
-package me.devnatan.inventoryframework;
+package me.devnatan.inventoryframework.component;
 
 import java.time.Duration;
 import java.util.HashMap;
@@ -10,8 +10,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import me.devnatan.inventoryframework.component.Component;
-import me.devnatan.inventoryframework.component.InteractionHandler;
+import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.context.IFSlotContext;

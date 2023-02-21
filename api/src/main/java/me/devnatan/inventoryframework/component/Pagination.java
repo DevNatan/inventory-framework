@@ -1,19 +1,21 @@
-package me.devnatan.inventoryframework.pagination;
+package me.devnatan.inventoryframework.component;
 
-import me.devnatan.inventoryframework.component.ComponentComposition;
 import me.devnatan.inventoryframework.state.StateHandler;
 import me.devnatan.inventoryframework.state.StateHost;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Pagination is a host to multiple components that can be paginated, essentially it is a {@link ComponentComposition}
- * divided into sections called <i>pages</i>.
- * <p>
- * It's a "malformed" structure from a data rendering point of view, that is, the components from
- * its minimum slot position to its maximum slot position may or may not be part of your composition.
- * <p>
- * This component has an internal state used to control which <i>page</i> will be displayed during
- * rendering, this component is determined from the {@link #currentPageIndex() current page index}.
+ * Pagination is a host to multiple components that can be paginated, essentially it is a {@link
+ * me.devnatan.inventoryframework.component.ComponentComposition} divided into sections called
+ * <i>pages</i>.
+ *
+ * <p>It's a "malformed" structure from a data rendering point of view, that is, the components from
+ * its minimum slot position to its maximum slot position may or may not be part of your
+ * composition.
+ *
+ * <p>This component has an internal state used to control which <i>page</i> will be displayed
+ * during rendering, this component is determined from the {@link #currentPageIndex() current page
+ * index}.
  */
 public interface Pagination extends StateHandler, ComponentComposition {
 

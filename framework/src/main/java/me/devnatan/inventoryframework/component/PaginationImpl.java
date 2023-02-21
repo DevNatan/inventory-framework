@@ -1,4 +1,4 @@
-package me.devnatan.inventoryframework.pagination;
+package me.devnatan.inventoryframework.component;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -7,10 +7,7 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import lombok.Data;
-import me.devnatan.inventoryframework.IFItem;
 import me.devnatan.inventoryframework.RootView;
-import me.devnatan.inventoryframework.component.Component;
-import me.devnatan.inventoryframework.component.InteractionHandler;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.context.IFSlotRenderContext;
