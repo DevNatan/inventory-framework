@@ -9,7 +9,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import me.devnatan.inventoryframework.bukkit.BukkitViewer;
-import me.devnatan.inventoryframework.bukkit.listener.IFInventoryInteractionListener;
+import me.devnatan.inventoryframework.bukkit.listener.IFInventoryListener;
 import me.devnatan.inventoryframework.bukkit.listener.IFLibraryConflictWarningListener;
 import me.devnatan.inventoryframework.bukkit.thirdparty.Metrics;
 import me.devnatan.inventoryframework.feature.DefaultFeatureInstaller;
@@ -163,7 +163,7 @@ public final class ViewFrame extends IFViewFrame<ViewFrame> implements FeatureIn
                     .registerEvents(new IFLibraryConflictWarningListener(RELOCATION_MESSAGE), plugin);
         }
 
-        plugin.getServer().getPluginManager().registerEvents(new IFInventoryInteractionListener(this), plugin);
+        plugin.getServer().getPluginManager().registerEvents(new IFInventoryListener(this), plugin);
     }
 
     /**

@@ -20,7 +20,7 @@ import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
 @RequiredArgsConstructor
-public final class IFInventoryInteractionListener implements Listener {
+public final class IFInventoryListener implements Listener {
 
     private final ViewFrame viewFrame;
 
