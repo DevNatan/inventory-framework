@@ -26,8 +26,10 @@ import me.devnatan.inventoryframework.state.StateFactory;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
+import org.jetbrains.annotations.VisibleForTesting;
 
-class DefaultRootView implements RootView {
+@VisibleForTesting
+public class DefaultRootView implements RootView {
 
     private final UUID id = UUID.randomUUID();
     private ViewConfig config;

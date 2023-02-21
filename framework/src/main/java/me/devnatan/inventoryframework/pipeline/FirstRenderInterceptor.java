@@ -1,5 +1,6 @@
 package me.devnatan.inventoryframework.pipeline;
 
+import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.context.IFConfinedContext;
 import me.devnatan.inventoryframework.context.IFContext;
@@ -13,26 +14,18 @@ public final class FirstRenderInterceptor implements PipelineInterceptor<IFConte
 
     @Override
     public void intercept(@NotNull PipelineContext<IFContext> pipeline, IFContext context) {
-        final int len = context.getContainer().getSize();
+        final Viewer viewer = ((IFConfinedContext) context).getViewer();
 
-        for (int i = 0; i < len; i++) {
-            final Component component = context.getComponent(i);
-            if (component == null) {
-                context.getContainer().removeItem(i);
-                continue;
-            }
-
-            final IFSlotRenderContext renderContext = context.getRoot()
+        for (final Component component : context.getComponents()) {
+            component.render(context.getRoot()
                     .getElementFactory()
                     .createSlotContext(
-                            i,
+                            component.getPosition(),
                             component,
                             context.getContainer(),
-                            ((IFConfinedContext) context).getViewer(),
+                            viewer,
                             context,
-                            IFSlotRenderContext.class);
-
-            component.render(renderContext);
+                            IFSlotRenderContext.class));
         }
     }
 }
