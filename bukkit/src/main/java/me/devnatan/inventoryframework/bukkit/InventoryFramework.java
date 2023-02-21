@@ -8,6 +8,7 @@ import me.devnatan.inventoryframework.ViewConfigBuilder;
 import me.devnatan.inventoryframework.ViewFrame;
 import me.devnatan.inventoryframework.context.Context;
 import me.devnatan.inventoryframework.context.RenderContext;
+import me.devnatan.inventoryframework.context.SlotClickContext;
 import me.devnatan.inventoryframework.pagination.Pagination;
 import me.devnatan.inventoryframework.state.State;
 import org.bukkit.Material;
@@ -67,6 +68,11 @@ class AwesomeView extends View {
 
     @Override
     public void onUpdate(Context ctx) {
-        ctx.getPlayer().sendMessage("Global update called");
+		System.out.println("Global update called: " + ctx);
     }
+
+	@Override
+	public void onClick(SlotClickContext ctx) {
+		System.out.println("Global click called: " + ctx);
+	}
 }

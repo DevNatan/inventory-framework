@@ -97,11 +97,12 @@ public final class BukkitElementFactory extends ElementFactory {
             @NotNull Viewer viewer,
             @NotNull Class<T> kind,
             boolean shared,
-            @Nullable IFContext parent) {
+            @Nullable IFContext parent
+	) {
         if (shared) throw new IllegalStateException("Shared contexts are not yet supported");
         if (isTypeOf(IFOpenContext.class, kind)) return (T) new OpenContext(root, viewer);
-        if (isTypeOf(IFRenderContext.class, kind)) return (T) new RenderContext(root, container, viewer, parent);
-        if (isTypeOf(IFCloseContext.class, kind)) return (T) new CloseContext(root, container, viewer, parent);
+        if (isTypeOf(IFRenderContext.class, kind)) return (T) new RenderContext(root, container, viewer, requireNonNull(parent));
+        if (isTypeOf(IFCloseContext.class, kind)) return (T) new CloseContext(root, container, viewer, requireNonNull(parent));
 
         throw new UnsupportedOperationException("Unsupported context kind: " + kind);
     }
@@ -119,16 +120,6 @@ public final class BukkitElementFactory extends ElementFactory {
             return (T) new SlotRenderContext(parent.getRoot(), container, viewer, slot, parent, component);
 
         return (T) new SlotContext(parent.getRoot(), container, viewer, slot, parent, component);
-    }
-
-    @Override
-    public Object createItem(@Nullable Object stack) {
-        if (stack instanceof ItemStack) return ((ItemStack) stack).clone();
-        if (stack instanceof Material) return new ItemStack((Material) stack);
-        if (stack == null) return null;
-
-        throw new IllegalArgumentException(String.format(
-                "Unsupported Bukkit item type \"%s\": %s", stack.getClass().getName(), stack));
     }
 
     @Override

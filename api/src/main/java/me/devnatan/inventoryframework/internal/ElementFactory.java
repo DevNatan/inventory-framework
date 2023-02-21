@@ -60,7 +60,5 @@ public abstract class ElementFactory {
             @NotNull IFContext parent,
             @NotNull Class<?> kind);
 
-    public abstract Object createItem(@Nullable Object stack);
-
     public abstract boolean worksInCurrentPlatform();
 }

@@ -46,8 +46,6 @@ public abstract class IFItem<S extends IFItem<?>> implements Component {
     private String referenceKey;
 
     private Map<String, Object> data;
-    private IFItem<?> overlay;
-    private boolean removed, navigationItem;
     private long updateIntervalInTicks = NO_INTERVAL;
 
     @Setter(AccessLevel.PUBLIC)

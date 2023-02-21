@@ -17,7 +17,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-@ToString
+@ToString(callSuper = true)
 public class SlotClickContext extends SlotContext implements IFSlotClickContext {
 
     @NotNull
@@ -39,7 +39,12 @@ public class SlotClickContext extends SlotContext implements IFSlotClickContext 
         this.clickOrigin = clickOrigin;
     }
 
-    /**
+	@Override
+	public int getClickedSlot() {
+		return clickOrigin.getRawSlot();
+	}
+
+	/**
      * The event that triggered this context.
      * <p>
      * This is an internal inventory-framework API that should not be used from outside of

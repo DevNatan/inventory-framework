@@ -24,7 +24,8 @@ public final class IFInventoryInteractionListener implements Listener {
 
     private final ViewFrame viewFrame;
 
-    @EventHandler
+    @SuppressWarnings("unused")
+	@EventHandler
     public void onInventoryClick(final InventoryClickEvent event) {
         if (!(event.getWhoClicked() instanceof Player)) return;
 
