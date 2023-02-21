@@ -14,13 +14,18 @@ public final class UpdateInterceptor implements PipelineInterceptor<IFContext> {
 
     @Override
     public void intercept(@NotNull PipelineContext<IFContext> pipeline, IFContext context) {
+        System.out.println("update intercepted");
         for (final Component component : context.getComponents()) {
             if (component.isMarkedForRemoval()) {
                 component.clear(context);
+                System.out.println("markedForRemoval: " + component);
                 continue;
             }
 
-            if (!shouldBeUpdated(component)) continue;
+            if (!shouldBeUpdated(component)) {
+                System.out.println("shouldNotBeUpdated: " + component);
+                continue;
+            }
 
             renderComponent(context, component);
         }
@@ -51,6 +56,7 @@ public final class UpdateInterceptor implements PipelineInterceptor<IFContext> {
      * @param component The component that'll be rendered
      */
     public void renderComponent(@NotNull IFContext context, @NotNull Component component) {
+        System.out.println("renderComponent: " + component);
         final IFSlotRenderContext renderContext = context.getRoot()
                 .getElementFactory()
                 .createSlotContext(

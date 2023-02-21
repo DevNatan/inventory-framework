@@ -59,6 +59,15 @@ class DefaultRootView implements RootView {
     }
 
     @Override
+    public @NotNull IFContext getContextByViewer(@NotNull String id) {
+        for (final IFContext context : contexts) {
+            if (context.getIndexedViewers().containsKey(id)) return context;
+        }
+
+        throw new IllegalArgumentException(format("Unable to get context for %s", id));
+    }
+
+    @Override
     public final void addContext(@NotNull IFContext context) {
         synchronized (contexts) {
             contexts.add(context);

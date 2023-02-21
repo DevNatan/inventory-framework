@@ -6,6 +6,7 @@ import static me.devnatan.inventoryframework.bukkit.util.InventoryUtils.toInvent
 import static me.devnatan.inventoryframework.util.IsTypeOf.isTypeOf;
 import static org.bukkit.Bukkit.createInventory;
 
+import java.util.UUID;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.View;
 import me.devnatan.inventoryframework.ViewContainer;
@@ -27,11 +28,10 @@ import me.devnatan.inventoryframework.context.SlotContext;
 import me.devnatan.inventoryframework.context.SlotRenderContext;
 import me.devnatan.inventoryframework.logging.Logger;
 import me.devnatan.inventoryframework.logging.NoopLogger;
-import org.bukkit.Material;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -89,6 +89,15 @@ public final class BukkitElementFactory extends ElementFactory {
         return new BukkitViewer((Player) playerObject);
     }
 
+    @Override
+    public @NotNull String transformViewerIdentifier(Object input) {
+        if (input instanceof String) return UUID.fromString((String) input).toString();
+        if (input instanceof UUID) return ((UUID) input).toString();
+        if (input instanceof Entity) return ((Entity) input).getUniqueId().toString();
+
+        throw new IllegalArgumentException("Inconvertible viewer id: " + input);
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public <T extends IFContext> @NotNull T createContext(
@@ -97,12 +106,13 @@ public final class BukkitElementFactory extends ElementFactory {
             @NotNull Viewer viewer,
             @NotNull Class<T> kind,
             boolean shared,
-            @Nullable IFContext parent
-	) {
+            @Nullable IFContext parent) {
         if (shared) throw new IllegalStateException("Shared contexts are not yet supported");
         if (isTypeOf(IFOpenContext.class, kind)) return (T) new OpenContext(root, viewer);
-        if (isTypeOf(IFRenderContext.class, kind)) return (T) new RenderContext(root, container, viewer, requireNonNull(parent));
-        if (isTypeOf(IFCloseContext.class, kind)) return (T) new CloseContext(root, container, viewer, requireNonNull(parent));
+        if (isTypeOf(IFRenderContext.class, kind))
+            return (T) new RenderContext(root, container, viewer, requireNonNull(parent));
+        if (isTypeOf(IFCloseContext.class, kind))
+            return (T) new CloseContext(root, container, viewer, requireNonNull(parent));
 
         throw new UnsupportedOperationException("Unsupported context kind: " + kind);
     }

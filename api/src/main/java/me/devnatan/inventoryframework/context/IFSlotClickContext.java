@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface IFSlotClickContext extends IFSlotContext {
 
-	int getClickedSlot();
+    int getClickedSlot();
 
     /**
      * If the click was using the left mouse button.

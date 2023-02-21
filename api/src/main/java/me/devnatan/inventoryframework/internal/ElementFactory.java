@@ -43,6 +43,9 @@ public abstract class ElementFactory {
     public abstract Viewer createViewer(Object... parameters);
 
     @NotNull
+    public abstract String transformViewerIdentifier(Object input);
+
+    @NotNull
     public abstract <T extends IFContext> T createContext(
             @NotNull RootView root,
             ViewContainer container,

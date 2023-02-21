@@ -36,14 +36,13 @@ public final class BukkitItem extends IFItem<BukkitItem> {
     public void render(@NotNull IFSlotRenderContext context) {
         super.render(context);
 
-        if (getRenderHandler() == null)
-			return;
+        if (getRenderHandler() == null) return;
 
         getRenderHandler().accept(context);
 
-		ItemStack item = ((SlotRenderContext) context).getItem();
+        ItemStack item = ((SlotRenderContext) context).getItem();
         context.getContainer().renderItem(getPosition(), item);
-		System.out.println("render: " + item);
+        System.out.println("render: " + item);
     }
 
     /**

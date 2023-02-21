@@ -21,6 +21,9 @@ public interface RootView extends VirtualView, Iterable<IFContext> {
     @NotNull
     IFContext getContext(@NotNull Viewer viewer);
 
+    @NotNull
+    IFContext getContextByViewer(@NotNull String id);
+
     void addContext(@NotNull IFContext context);
 
     void removeContext(@NotNull IFContext context);

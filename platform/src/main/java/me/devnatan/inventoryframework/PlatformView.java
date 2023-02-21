@@ -15,6 +15,7 @@ import me.devnatan.inventoryframework.internal.ElementFactory;
 import me.devnatan.inventoryframework.internal.PlatformUtils;
 import me.devnatan.inventoryframework.pagination.Pagination;
 import me.devnatan.inventoryframework.pagination.PaginationImpl;
+import me.devnatan.inventoryframework.pipeline.CloseInterceptor;
 import me.devnatan.inventoryframework.pipeline.FirstRenderInterceptor;
 import me.devnatan.inventoryframework.pipeline.InitInterceptor;
 import me.devnatan.inventoryframework.pipeline.OpenInterceptor;
@@ -413,6 +414,7 @@ public abstract class PlatformView<
         pipeline.intercept(StandardPipelinePhases.OPEN, new OpenInterceptor());
         pipeline.intercept(StandardPipelinePhases.FIRST_RENDER, new FirstRenderInterceptor());
         pipeline.intercept(StandardPipelinePhases.UPDATE, new UpdateInterceptor());
+        pipeline.intercept(StandardPipelinePhases.CLOSE, new CloseInterceptor());
         registerPlatformInterceptors();
         pipeline.execute(StandardPipelinePhases.INIT, this);
     }

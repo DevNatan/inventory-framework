@@ -1,7 +1,6 @@
 package me.devnatan.inventoryframework.context;
 
 import java.util.List;
-
 import lombok.ToString;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewContainer;

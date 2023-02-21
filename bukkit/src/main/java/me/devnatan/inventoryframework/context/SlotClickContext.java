@@ -39,12 +39,12 @@ public class SlotClickContext extends SlotContext implements IFSlotClickContext 
         this.clickOrigin = clickOrigin;
     }
 
-	@Override
-	public int getClickedSlot() {
-		return clickOrigin.getRawSlot();
-	}
+    @Override
+    public int getClickedSlot() {
+        return clickOrigin.getRawSlot();
+    }
 
-	/**
+    /**
      * The event that triggered this context.
      * <p>
      * This is an internal inventory-framework API that should not be used from outside of
