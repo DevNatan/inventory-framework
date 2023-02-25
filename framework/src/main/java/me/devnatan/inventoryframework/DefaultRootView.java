@@ -25,6 +25,7 @@ import me.devnatan.inventoryframework.state.State;
 import me.devnatan.inventoryframework.state.StateFactory;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.annotations.UnmodifiableView;
 import org.jetbrains.annotations.VisibleForTesting;
 
@@ -44,6 +45,11 @@ public class DefaultRootView implements RootView {
     @Override
     public final @NotNull UUID getUniqueId() {
         return id;
+    }
+
+    @TestOnly
+    public final @NotNull Set<IFContext> getInternalContexts() {
+        return contexts;
     }
 
     @Override
