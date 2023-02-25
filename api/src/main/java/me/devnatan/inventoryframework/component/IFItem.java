@@ -106,6 +106,8 @@ public abstract class IFItem<S extends IFItem<?>> implements Component {
 
     @Override
     public void updated(@NotNull IFSlotRenderContext context) {
+		if (getUpdateHandler() == null)
+			return;
         getUpdateHandler().accept(context);
     }
 
