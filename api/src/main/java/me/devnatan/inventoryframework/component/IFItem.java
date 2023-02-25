@@ -1,4 +1,4 @@
-package me.devnatan.inventoryframework;
+package me.devnatan.inventoryframework.component;
 
 import java.time.Duration;
 import java.util.HashMap;
@@ -10,11 +10,13 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import me.devnatan.inventoryframework.component.Component;
-import me.devnatan.inventoryframework.component.InteractionHandler;
+import me.devnatan.inventoryframework.VirtualView;
+import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.context.IFSlotContext;
+import me.devnatan.inventoryframework.context.IFSlotRenderContext;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
@@ -43,8 +45,6 @@ public abstract class IFItem<S extends IFItem<?>> implements Component {
     private String referenceKey;
 
     private Map<String, Object> data;
-    private IFItem<?> overlay;
-    private boolean removed, navigationItem;
     private long updateIntervalInTicks = NO_INTERVAL;
 
     @Setter(AccessLevel.PUBLIC)
@@ -52,6 +52,10 @@ public abstract class IFItem<S extends IFItem<?>> implements Component {
 
     @Getter(AccessLevel.PUBLIC)
     private boolean closeOnClick, cancelOnClick, cancelOnShiftClick;
+
+    @Getter(AccessLevel.PUBLIC)
+    @Setter(AccessLevel.PUBLIC)
+    private boolean markedForRemoval;
 
     @SuppressWarnings("Convert2Lambda")
     private final InteractionHandler interactionHandler = new InteractionHandler() {
@@ -85,6 +89,24 @@ public abstract class IFItem<S extends IFItem<?>> implements Component {
     @ApiStatus.Internal
     public IFItem(int slot) {
         this.slot = slot;
+    }
+
+    @Override
+    @MustBeInvokedByOverriders
+    public void render(@NotNull IFSlotRenderContext context) {
+        if (getRenderHandler() == null) {
+            if (getItem() == null) {
+                throw new UnsupportedOperationException(
+                        "At least one fallback item or item render handler must be provided.");
+            }
+
+            context.getContainer().renderItem(getPosition(), getItem());
+        }
+    }
+
+    @Override
+    public void clear(@NotNull IFContext context) {
+        context.getContainer().removeItem(getPosition());
     }
 
     /**
@@ -271,7 +293,7 @@ public abstract class IFItem<S extends IFItem<?>> implements Component {
     }
 
     @ApiStatus.Internal
-    public abstract Consumer<? super IFSlotContext> getRenderHandler();
+    public abstract Consumer<? super IFSlotRenderContext> getRenderHandler();
 
     @ApiStatus.Internal
     public abstract Consumer<? super IFSlotContext> getUpdateHandler();

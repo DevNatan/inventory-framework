@@ -21,6 +21,7 @@ subprojects {
         testCompileOnly libs.lombok
         testRuntimeOnly libs.junit.engine
         testImplementation libs.junit.api
+        testImplementation libs.mockito.core
         testAnnotationProcessor libs.lombok
     }
 

@@ -1,7 +1,7 @@
 package me.devnatan.inventoryframework.pipeline;
 
-import me.devnatan.inventoryframework.IFItem;
 import me.devnatan.inventoryframework.component.Component;
+import me.devnatan.inventoryframework.component.IFItem;
 import me.devnatan.inventoryframework.context.SlotClickContext;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;

@@ -1,5 +1,7 @@
 package me.devnatan.inventoryframework.context;
 
+import java.util.List;
+import lombok.ToString;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
@@ -12,8 +14,10 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.UnmodifiableView;
 
 @ApiStatus.Internal
+@ToString(callSuper = true)
 public class SlotContext extends ConfinedContext implements IFSlotContext, Context {
 
     private final int slot;
@@ -95,7 +99,18 @@ public class SlotContext extends ConfinedContext implements IFSlotContext, Conte
         return ((BukkitViewContainer) getContainer()).getInventory().getItem(getSlot());
     }
 
-    public void setItem(@Nullable ItemStack item) {
-        throw new UnsupportedOperationException();
+    @Override
+    public final @UnmodifiableView @NotNull List<Component> getComponents() {
+        return getParent().getComponents();
+    }
+
+    @Override
+    public final void addComponent(@NotNull Component component) {
+        throw new UnsupportedOperationException("Slot context do not have components");
+    }
+
+    @Override
+    public final void removeComponent(@NotNull Component component) {
+        throw new UnsupportedOperationException("Slot context do not have components");
     }
 }

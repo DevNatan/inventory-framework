@@ -2,9 +2,9 @@ package me.devnatan.inventoryframework.example.warpList;
 
 import me.devnatan.inventoryframework.View;
 import me.devnatan.inventoryframework.ViewConfigBuilder;
+import me.devnatan.inventoryframework.component.Pagination;
 import me.devnatan.inventoryframework.context.OpenContext;
 import me.devnatan.inventoryframework.context.RenderContext;
-import me.devnatan.inventoryframework.pagination.Pagination;
 import me.devnatan.inventoryframework.state.State;
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;

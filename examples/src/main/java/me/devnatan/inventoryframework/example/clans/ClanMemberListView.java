@@ -7,9 +7,9 @@ import java.util.UUID;
 import me.devnatan.inventoryframework.View;
 import me.devnatan.inventoryframework.ViewConfigBuilder;
 import me.devnatan.inventoryframework.bukkit.BukkitItem;
+import me.devnatan.inventoryframework.component.Pagination;
 import me.devnatan.inventoryframework.context.OpenContext;
 import me.devnatan.inventoryframework.context.RenderContext;
-import me.devnatan.inventoryframework.pagination.Pagination;
 import me.devnatan.inventoryframework.state.State;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -21,7 +21,7 @@ public final class ClanMemberListView extends View {
 
     private final State<List<ClanMember>> membersListState;
     private final State<Clan> clanState;
-    private final State<Pagination> pagination;
+    private State<Pagination> pagination;
 
     public ClanMemberListView(@NotNull ClansManager clansManager) {
         this.clanState = state(ctx -> {
@@ -32,7 +32,7 @@ public final class ClanMemberListView extends View {
             // TODO fix this example using ctx.get(...)
             return clansManager.getMembers(UUID.randomUUID());
         });
-        this.pagination = pagination(membersListState, this::createPaginationItem);
+        //        this.pagination = pagination(membersListState, this::createPaginationItem);
     }
 
     @Override

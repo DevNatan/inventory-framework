@@ -7,13 +7,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import lombok.ToString;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.component.Component;
-import me.devnatan.inventoryframework.component.ComponentComposition;
-import me.devnatan.inventoryframework.pagination.Pagination;
+import me.devnatan.inventoryframework.component.Pagination;
+import me.devnatan.inventoryframework.pipeline.StandardPipelinePhases;
 import me.devnatan.inventoryframework.state.DefaultStateHost;
 import me.devnatan.inventoryframework.state.StateHost;
 import org.jetbrains.annotations.ApiStatus;
@@ -25,16 +26,22 @@ import org.jetbrains.annotations.VisibleForTesting;
 
 @ApiStatus.Internal
 @VisibleForTesting
+@ToString
 public class BaseViewContext implements IFContext {
 
+    @ToString.Exclude
     private final @NotNull RootView root;
 
     /* container can be null on pre-render/intermediate contexts */
     private final @Nullable ViewContainer container;
 
+    @ToString.Exclude
     private final StateHost stateHost = new DefaultStateHost();
+
     protected final Map<String, Viewer> viewers = new HashMap<>();
     protected final ViewConfig config;
+
+    @ToString.Exclude
     private final List<Component> components = new ArrayList<>();
 
     public BaseViewContext(@NotNull RootView root, @Nullable ViewContainer container) {
@@ -119,32 +126,27 @@ public class BaseViewContext implements IFContext {
     }
 
     @Override
-    public final @UnmodifiableView @NotNull List<Component> getComponents() {
+    public @UnmodifiableView @NotNull List<Component> getComponents() {
         return Collections.unmodifiableList(components);
     }
 
     @Override
-    public final Component getComponent(int position) {
+    public Component getComponent(int position) {
         for (final Component component : getComponents()) {
-            if (component instanceof ComponentComposition
-                    && ((ComponentComposition) component).isContainedWithin(position)) {
-                return component;
-            }
-
-            if (component.getPosition() == position) return component;
+            if (component.isContainedWithin(position)) return component;
         }
         return null;
     }
 
     @Override
-    public final void addComponent(@NotNull Component component) {
+    public void addComponent(@NotNull Component component) {
         synchronized (components) {
             components.add(component);
         }
     }
 
     @Override
-    public final void removeComponent(@NotNull Component component) {
+    public void removeComponent(@NotNull Component component) {
         synchronized (components) {
             components.remove(component);
         }
@@ -153,6 +155,11 @@ public class BaseViewContext implements IFContext {
     @Override
     public Pagination pagination() {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void update() {
+        getRoot().getPipeline().execute(StandardPipelinePhases.UPDATE, this);
     }
 
     @Override

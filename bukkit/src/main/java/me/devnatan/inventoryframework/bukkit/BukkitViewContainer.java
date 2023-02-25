@@ -5,13 +5,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.Data;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.ViewType;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.bukkit.thirdparty.InventoryUpdate;
-import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -23,11 +20,10 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
 @Data
-@RequiredArgsConstructor
 public final class BukkitViewContainer implements ViewContainer {
 
-    @Getter
-    private final @NotNull Inventory inventory;
+    @NotNull
+    private final Inventory inventory;
 
     private final boolean shared;
 
@@ -82,7 +78,7 @@ public final class BukkitViewContainer implements ViewContainer {
     @Override
     public void renderItem(int slot, Object item) {
         requireSupportedItem(item);
-        inventory.setItem(slot, convertItem(item));
+        inventory.setItem(slot, (ItemStack) item);
     }
 
     @Override
@@ -96,24 +92,13 @@ public final class BukkitViewContainer implements ViewContainer {
         final ItemStack target = inventory.getItem(slot);
         if (target == null) return item == null;
         if (item instanceof ItemStack) return exactly ? target.equals(item) : target.isSimilar((ItemStack) item);
-        if (item instanceof Material) return target.getType() == item;
 
         return false;
     }
 
     @Override
-    public ItemStack convertItem(Object source) {
-        requireSupportedItem(source);
-
-        if (source instanceof ItemStack) return ((ItemStack) source).clone();
-        if (source instanceof Material) return new ItemStack((Material) source);
-
-        return null;
-    }
-
-    @Override
     public boolean isSupportedItem(Object item) {
-        return item == null || item instanceof ItemStack || item instanceof Material;
+        return item == null || item instanceof ItemStack;
     }
 
     private void requireSupportedItem(Object item) {

@@ -4,7 +4,7 @@ import java.util.Stack;
 import java.util.function.Function;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import me.devnatan.inventoryframework.IFItem;
+import me.devnatan.inventoryframework.component.IFItem;
 
 @Data
 public final class LayoutPattern {

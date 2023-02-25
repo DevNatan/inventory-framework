@@ -1,13 +1,15 @@
 package me.devnatan.inventoryframework.bukkit;
 
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import me.devnatan.inventoryframework.View;
 import me.devnatan.inventoryframework.ViewConfigBuilder;
 import me.devnatan.inventoryframework.ViewFrame;
-import me.devnatan.inventoryframework.context.OpenContext;
+import me.devnatan.inventoryframework.component.Pagination;
+import me.devnatan.inventoryframework.context.Context;
 import me.devnatan.inventoryframework.context.RenderContext;
-import me.devnatan.inventoryframework.pagination.Pagination;
+import me.devnatan.inventoryframework.context.SlotClickContext;
 import me.devnatan.inventoryframework.state.State;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
@@ -52,16 +54,25 @@ class AwesomeView extends View {
 
     @Override
     public void onFirstRender(RenderContext ctx) {
-        System.out.println(pagination);
-        ctx.slot(2, new ItemStack(Material.EGG)).cancelOnClick().onClick(click -> {
-            click.getPlayer()
-                    .sendMessage("Clicou nozovo: " + pagination.get(click).currentPageIndex());
-        });
+        ctx.slot(2, new ItemStack(Material.EGG))
+                .cancelOnClick()
+                .onUpdate(update -> update.getPlayer().sendMessage("Item update called"))
+                .onClick(click -> {
+                    click.getPlayer().sendMessage("Clicked update");
+                    click.update();
+                });
+
+        ctx.slot(
+                3, () -> new ItemStack(Material.EGG, ThreadLocalRandom.current().nextInt(1, 17)));
     }
 
     @Override
-    public void onOpen(OpenContext ctx) {
-        ctx.getPlayer().sendMessage("dentro do open :)");
-        ctx.setTitle("Teste titulo dinamico");
+    public void onUpdate(Context ctx) {
+        System.out.println("Global update called: " + ctx);
+    }
+
+    @Override
+    public void onClick(SlotClickContext ctx) {
+        System.out.println("Global click called: " + ctx);
     }
 }

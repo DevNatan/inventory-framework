@@ -47,8 +47,6 @@ public interface ViewContainer {
 
     boolean matchesItem(int slot, Object item, boolean exactly);
 
-    Object convertItem(Object source);
-
     boolean isSupportedItem(Object item);
 
     /**

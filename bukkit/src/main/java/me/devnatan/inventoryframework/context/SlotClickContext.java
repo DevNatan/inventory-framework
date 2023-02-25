@@ -2,6 +2,7 @@ package me.devnatan.inventoryframework.context;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
@@ -16,6 +17,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+@ToString(callSuper = true)
 public class SlotClickContext extends SlotContext implements IFSlotClickContext {
 
     @NotNull
@@ -35,6 +37,11 @@ public class SlotClickContext extends SlotContext implements IFSlotClickContext 
             @NotNull InventoryClickEvent clickOrigin) {
         super(root, container, viewer, slot, parent, component);
         this.clickOrigin = clickOrigin;
+    }
+
+    @Override
+    public int getClickedSlot() {
+        return clickOrigin.getRawSlot();
     }
 
     /**

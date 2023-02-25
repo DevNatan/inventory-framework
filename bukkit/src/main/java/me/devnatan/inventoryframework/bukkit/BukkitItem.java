@@ -5,20 +5,24 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import lombok.Getter;
-import me.devnatan.inventoryframework.IFItem;
+import me.devnatan.inventoryframework.component.IFItem;
 import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.context.IFSlotContext;
+import me.devnatan.inventoryframework.context.IFSlotRenderContext;
 import me.devnatan.inventoryframework.context.SlotClickContext;
 import me.devnatan.inventoryframework.context.SlotContext;
+import me.devnatan.inventoryframework.context.SlotRenderContext;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @Getter
 public final class BukkitItem extends IFItem<BukkitItem> {
 
-    private Consumer<? super IFSlotContext> renderHandler, updateHandler;
+    private Consumer<? super IFSlotRenderContext> renderHandler;
+    private Consumer<? super IFSlotContext> updateHandler;
     private Consumer<? super IFSlotClickContext> clickHandler;
     private Consumer<? super IFSlotClickContext> holdHandler;
     private BiConsumer<? super IFSlotClickContext, ? super IFSlotClickContext> releaseHandler;
@@ -26,6 +30,19 @@ public final class BukkitItem extends IFItem<BukkitItem> {
     @ApiStatus.Internal
     public BukkitItem(int slot) {
         super(slot);
+    }
+
+    @Override
+    public void render(@NotNull IFSlotRenderContext context) {
+        super.render(context);
+
+        if (getRenderHandler() == null) return;
+
+        getRenderHandler().accept(context);
+
+        ItemStack item = ((SlotRenderContext) context).getItem();
+        context.getContainer().renderItem(getPosition(), item);
+        System.out.println("render: " + item);
     }
 
     /**
@@ -99,8 +116,8 @@ public final class BukkitItem extends IFItem<BukkitItem> {
      * @param renderHandler The render handler.
      * @return This item.
      */
-    public BukkitItem onRender(@Nullable Consumer<? super SlotContext> renderHandler) {
-        this.renderHandler = (Consumer<? super IFSlotContext>) renderHandler;
+    public BukkitItem onRender(@Nullable Consumer<? super SlotRenderContext> renderHandler) {
+        this.renderHandler = (Consumer<? super IFSlotRenderContext>) renderHandler;
         return this;
     }
 
@@ -117,7 +134,7 @@ public final class BukkitItem extends IFItem<BukkitItem> {
      * @param renderHandler The render handler.
      * @return This item.
      */
-    public BukkitItem rendered(@Nullable Function<SlotContext, ItemStack> renderHandler) {
+    public BukkitItem rendered(@Nullable Function<SlotRenderContext, ItemStack> renderHandler) {
         return renderHandler == null
                 ? this
                 : onRender(renderContext -> renderContext.setItem(renderHandler.apply(renderContext)));

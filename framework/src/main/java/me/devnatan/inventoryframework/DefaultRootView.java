@@ -5,10 +5,10 @@ import static java.util.Collections.newSetFromMap;
 import static java.util.Collections.synchronizedMap;
 import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.CLICK;
 import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.CLOSE;
+import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.FIRST_RENDER;
 import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.INIT;
 import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.INVALIDATION;
 import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.OPEN;
-import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.RENDER;
 import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.UPDATE;
 
 import java.util.ArrayList;
@@ -18,21 +18,24 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import me.devnatan.inventoryframework.component.Component;
-import me.devnatan.inventoryframework.component.ComponentComposition;
 import me.devnatan.inventoryframework.context.IFContext;
+import me.devnatan.inventoryframework.internal.ElementFactory;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
 import me.devnatan.inventoryframework.state.State;
 import me.devnatan.inventoryframework.state.StateFactory;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.annotations.UnmodifiableView;
+import org.jetbrains.annotations.VisibleForTesting;
 
-class DefaultRootView implements RootView {
+@VisibleForTesting
+public class DefaultRootView implements RootView {
 
     private final UUID id = UUID.randomUUID();
     private ViewConfig config;
     private final Pipeline<? super VirtualView> pipeline =
-            new Pipeline<>(INIT, OPEN, RENDER, UPDATE, CLICK, CLOSE, INVALIDATION);
+            new Pipeline<>(INIT, OPEN, FIRST_RENDER, UPDATE, CLICK, CLOSE, INVALIDATION);
     private final Set<IFContext> contexts = newSetFromMap(synchronizedMap(new HashMap<>()));
 
     // --- State Management --
@@ -42,6 +45,11 @@ class DefaultRootView implements RootView {
     @Override
     public final @NotNull UUID getUniqueId() {
         return id;
+    }
+
+    @TestOnly
+    public final @NotNull Set<IFContext> getInternalContexts() {
+        return contexts;
     }
 
     @Override
@@ -56,6 +64,15 @@ class DefaultRootView implements RootView {
         }
 
         throw new IllegalArgumentException(format("Unable to get context for %s", viewer));
+    }
+
+    @Override
+    public @NotNull IFContext getContextByViewer(@NotNull String id) {
+        for (final IFContext context : contexts) {
+            if (context.getIndexedViewers().containsKey(id)) return context;
+        }
+
+        throw new IllegalArgumentException(format("Unable to get context for %s", id));
     }
 
     @Override
@@ -74,30 +91,7 @@ class DefaultRootView implements RootView {
 
     @Override
     public final void renderContext(@NotNull IFContext context) {
-        getPipeline().execute(RENDER, context);
-    }
-
-    @Override
-    public final void removeComponent(@NotNull IFContext context, int index) {}
-
-    @Override
-    public final void renderComponent(@NotNull IFContext context, @NotNull Component component) {
-        if (component instanceof ComponentComposition) {
-            for (final Component child : (ComponentComposition) component) {
-                renderSingleComponent(context, child);
-            }
-            return;
-        }
-
-        renderSingleComponent(context, component);
-    }
-
-    private void renderSingleComponent(@NotNull IFContext context, @NotNull Component component) {
-        if (!(component instanceof IFItem))
-            throw new UnsupportedOperationException("Only IFItem can be rendered for now");
-
-        final IFItem<?> item = (IFItem<?>) component;
-        context.getContainer().renderItem(component.getPosition(), item.getItem());
+        getPipeline().execute(FIRST_RENDER, context);
     }
 
     @Override
@@ -134,5 +128,10 @@ class DefaultRootView implements RootView {
     @Override
     public final Iterator<IFContext> iterator() {
         return getContexts().iterator();
+    }
+
+    @ApiStatus.Internal
+    public @NotNull ElementFactory getElementFactory() {
+        throw new UnsupportedOperationException("Element factory not provided");
     }
 }

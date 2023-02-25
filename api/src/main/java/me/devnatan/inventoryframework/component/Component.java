@@ -1,6 +1,9 @@
 package me.devnatan.inventoryframework.component;
 
 import me.devnatan.inventoryframework.VirtualView;
+import me.devnatan.inventoryframework.context.IFContext;
+import me.devnatan.inventoryframework.context.IFSlotRenderContext;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -38,4 +41,36 @@ public interface Component {
      */
     @NotNull
     InteractionHandler getInteractionHandler();
+
+    /**
+     * Renders this component to the given context.
+     *
+     * @param context The context that this component will be rendered on.
+     */
+    void render(@NotNull IFSlotRenderContext context);
+
+    /**
+     * Clears this component from the given context.
+     *
+     * @param context The context that this component will be cleared from.
+     */
+    void clear(@NotNull IFContext context);
+
+    /**
+     * If this component is marked for removal.
+     *
+     * @return {@code true} if this component will be removed in the next update.
+     */
+    boolean isMarkedForRemoval();
+
+    /**
+     * Marks this component for removal.
+     * <p>
+     * <b>This is an internal Inventory Framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided.</b>
+     *
+     * @param markedForRemoval If this component should be removed in the next update.
+     */
+    @ApiStatus.Internal
+    void setMarkedForRemoval(boolean markedForRemoval);
 }
