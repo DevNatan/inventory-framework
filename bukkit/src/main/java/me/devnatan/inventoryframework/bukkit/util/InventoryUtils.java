@@ -13,7 +13,7 @@ public final class InventoryUtils {
         if (type == ViewType.HOPPER) return InventoryType.HOPPER;
         if (type == ViewType.FURNACE) return InventoryType.FURNACE;
         if (type == ViewType.CHEST) return InventoryType.CHEST;
-		if (type == ViewType.CRAFTING_TABLE) return InventoryType.WORKBENCH;
+        if (type == ViewType.CRAFTING_TABLE) return InventoryType.WORKBENCH;
 
         return null;
     }
