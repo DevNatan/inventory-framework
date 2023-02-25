@@ -50,6 +50,13 @@ public interface Component {
     void render(@NotNull IFSlotRenderContext context);
 
     /**
+     * Called when this component is updated in the given context.
+     *
+     * @param context The update context.
+     */
+    void updated(@NotNull IFSlotRenderContext context);
+
+    /**
      * Clears this component from the given context.
      *
      * @param context The context that this component will be cleared from.

@@ -22,7 +22,7 @@ public final class UpdateInterceptor implements PipelineInterceptor<IFContext> {
 
             if (!shouldBeUpdated(component)) continue;
 
-            renderComponent(context, component);
+            updateComponent(context, component);
         }
     }
 
@@ -36,8 +36,8 @@ public final class UpdateInterceptor implements PipelineInterceptor<IFContext> {
         if (component instanceof IFItem) {
             final IFItem<?> item = (IFItem<?>) component;
 
-            // items without a render handler are ignored because the fallback item is only rendered
-            // once in the initial rendering phase
+            // items without a render or update handler are ignored because the fallback item is
+            // only rendered once in the initial rendering phase
             return item.getRenderHandler() != null;
         }
 
@@ -50,7 +50,7 @@ public final class UpdateInterceptor implements PipelineInterceptor<IFContext> {
      * @param context   The context.
      * @param component The component that'll be rendered
      */
-    public void renderComponent(@NotNull IFContext context, @NotNull Component component) {
+    public void updateComponent(@NotNull IFContext context, @NotNull Component component) {
         final IFSlotRenderContext renderContext = context.getRoot()
                 .getElementFactory()
                 .createSlotContext(
@@ -60,6 +60,10 @@ public final class UpdateInterceptor implements PipelineInterceptor<IFContext> {
                         ((IFConfinedContext) context).getViewer(),
                         context,
                         IFSlotRenderContext.class);
+
+        component.updated(renderContext);
+
+        if (renderContext.isCancelled()) return;
 
         component.render(renderContext);
     }

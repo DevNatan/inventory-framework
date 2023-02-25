@@ -46,6 +46,9 @@ public class FakeComponent implements Component, InteractionHandler {
     }
 
     @Override
+    public void updated(@NotNull IFSlotRenderContext context) {}
+
+    @Override
     public void clear(@NotNull IFContext context) {
         context.getContainer().removeItem(position);
     }
