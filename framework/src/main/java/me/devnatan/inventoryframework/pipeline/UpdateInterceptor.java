@@ -36,8 +36,8 @@ public final class UpdateInterceptor implements PipelineInterceptor<IFContext> {
         if (component instanceof IFItem) {
             final IFItem<?> item = (IFItem<?>) component;
 
-            // items without a render handler are ignored because the fallback item is only rendered
-            // once in the initial rendering phase
+            // items without a render or update handler are ignored because the fallback item is
+            // only rendered once in the initial rendering phase
             return item.getRenderHandler() != null;
         }
 
@@ -62,6 +62,7 @@ public final class UpdateInterceptor implements PipelineInterceptor<IFContext> {
                         IFSlotRenderContext.class);
 
         component.updated(renderContext);
+
         if (renderContext.isCancelled()) return;
 
         component.render(renderContext);
