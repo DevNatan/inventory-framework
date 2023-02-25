@@ -15,11 +15,7 @@ public final class CloseInterceptor implements PipelineInterceptor<IFCloseContex
         tryCallPlatformRootCloseHandler(root, context);
 
         final Viewer viewer = context.getViewer();
-        if (context.isCancelled()) {
-            // prevent platform-specific post-close handling since context was cancelled
-            pipeline.finish();
-            return;
-        }
+        if (context.isCancelled()) return;
 
         context.removeViewer(viewer);
 

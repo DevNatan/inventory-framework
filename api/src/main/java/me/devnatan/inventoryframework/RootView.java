@@ -72,4 +72,6 @@ public interface RootView extends VirtualView, Iterable<IFContext> {
 
     @NotNull
     ElementFactory getElementFactory();
+
+    void nextTick(Runnable task);
 }

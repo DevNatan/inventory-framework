@@ -7,6 +7,7 @@ import me.devnatan.inventoryframework.View;
 import me.devnatan.inventoryframework.ViewConfigBuilder;
 import me.devnatan.inventoryframework.ViewFrame;
 import me.devnatan.inventoryframework.component.Pagination;
+import me.devnatan.inventoryframework.context.CloseContext;
 import me.devnatan.inventoryframework.context.Context;
 import me.devnatan.inventoryframework.context.RenderContext;
 import me.devnatan.inventoryframework.context.SlotClickContext;
@@ -47,7 +48,7 @@ class AwesomeView extends View {
     @Override
     public void onInit(ViewConfigBuilder config) {
         config.title("Awesome view")
-                .size(6)
+                .size(4)
                 .cancelOnClick()
                 .layout("XXXXXXXXX", "XOOOOOOOX", "XOOOOOOOX", "XOOOOOOOX", "XOOOOOOOX", "XXXXXXXXX");
     }
@@ -71,4 +72,10 @@ class AwesomeView extends View {
 
     @Override
     public void onClick(SlotClickContext ctx) {}
+
+    @Override
+    public void onClose(CloseContext ctx) {
+        ctx.getPlayer().sendMessage("closed");
+        ctx.setCancelled(true);
+    }
 }
