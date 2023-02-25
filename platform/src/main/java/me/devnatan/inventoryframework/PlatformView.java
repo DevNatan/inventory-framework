@@ -5,6 +5,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import lombok.AccessLevel;
+import lombok.Getter;
 import me.devnatan.inventoryframework.component.IFItem;
 import me.devnatan.inventoryframework.component.Pagination;
 import me.devnatan.inventoryframework.component.PaginationImpl;
@@ -39,6 +41,9 @@ public abstract class PlatformView<
                 TSlotContext extends IFSlotContext,
                 TSlotClickContext extends IFSlotClickContext>
         extends DefaultRootView {
+
+    @Getter(AccessLevel.PACKAGE)
+    private IFViewFrame<?> framework;
 
     private boolean initialized;
 
@@ -406,9 +411,11 @@ public abstract class PlatformView<
      *
      * @throws IllegalStateException If this platform view is already initialized.
      */
-    void internalInitialization() {
+    final void internalInitialization(IFViewFrame<?> framework) {
         if (isInitialized())
             throw new IllegalStateException("Tried to call internal initialization but view is already initialized");
+
+        this.framework = framework;
 
         final Pipeline<? super VirtualView> pipeline = getPipeline();
         pipeline.intercept(StandardPipelinePhases.INIT, new InitInterceptor());

@@ -140,7 +140,7 @@ public final class ViewFrame extends IFViewFrame<ViewFrame> implements FeatureIn
 
             final PlatformView platformView = (PlatformView) rootView;
             try {
-                platformView.internalInitialization();
+                platformView.internalInitialization(this);
                 platformView.setInitialized(true);
             } catch (final RuntimeException exception) {
                 platformView.setInitialized(false);

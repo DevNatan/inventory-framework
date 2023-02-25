@@ -1,5 +1,6 @@
 package me.devnatan.inventoryframework.context;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 import me.devnatan.inventoryframework.RootView;
@@ -10,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 
 @Getter
 @ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 class ConfinedContext extends BaseViewContext implements IFConfinedContext {
 
     private final Viewer viewer;

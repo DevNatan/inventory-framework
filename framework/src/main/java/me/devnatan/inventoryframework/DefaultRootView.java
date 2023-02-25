@@ -17,7 +17,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.Spliterator;
 import java.util.UUID;
+import java.util.function.Consumer;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.internal.ElementFactory;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
@@ -54,12 +56,12 @@ public class DefaultRootView implements RootView {
 
     @Override
     public final @NotNull @UnmodifiableView Set<IFContext> getContexts() {
-        return Collections.unmodifiableSet(contexts);
+        return Collections.unmodifiableSet(getInternalContexts());
     }
 
     @Override
-    public @NotNull IFContext getContext(@NotNull Viewer viewer) {
-        for (final IFContext context : contexts) {
+    public final @NotNull IFContext getContext(@NotNull Viewer viewer) {
+        for (final IFContext context : getInternalContexts()) {
             if (context.getIndexedViewers().containsKey(viewer.getId())) return context;
         }
 
@@ -67,8 +69,8 @@ public class DefaultRootView implements RootView {
     }
 
     @Override
-    public @NotNull IFContext getContextByViewer(@NotNull String id) {
-        for (final IFContext context : contexts) {
+    public final @NotNull IFContext getContextByViewer(@NotNull String id) {
+        for (final IFContext context : getInternalContexts()) {
             if (context.getIndexedViewers().containsKey(id)) return context;
         }
 
@@ -77,15 +79,15 @@ public class DefaultRootView implements RootView {
 
     @Override
     public final void addContext(@NotNull IFContext context) {
-        synchronized (contexts) {
-            contexts.add(context);
+        synchronized (getInternalContexts()) {
+            getInternalContexts().add(context);
         }
     }
 
     @Override
     public final void removeContext(@NotNull IFContext context) {
-        synchronized (contexts) {
-            contexts.add(context);
+        synchronized (getInternalContexts()) {
+            getInternalContexts().removeIf(other -> other.getId() == context.getId());
         }
     }
 
@@ -100,7 +102,7 @@ public class DefaultRootView implements RootView {
     }
 
     @Override
-    public void setConfig(@NotNull ViewConfig config) {
+    public final void setConfig(@NotNull ViewConfig config) {
         if (this.config != null) throw new IllegalStateException("Configuration was already set on initialization");
 
         this.config = config;
@@ -130,8 +132,23 @@ public class DefaultRootView implements RootView {
         return getContexts().iterator();
     }
 
+    @Override
+    public final void forEach(Consumer<? super IFContext> action) {
+        RootView.super.forEach(action);
+    }
+
+    @Override
+    public final Spliterator<IFContext> spliterator() {
+        return RootView.super.spliterator();
+    }
+
     @ApiStatus.Internal
     public @NotNull ElementFactory getElementFactory() {
         throw new UnsupportedOperationException("Element factory not provided");
+    }
+
+    @Override
+    public void nextTick(Runnable task) {
+        throw new UnsupportedOperationException("Missing nextTick(...) implementation");
     }
 }

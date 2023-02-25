@@ -1,5 +1,10 @@
 package me.devnatan.inventoryframework.context;
 
+import java.util.UUID;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
@@ -8,10 +13,15 @@ import me.devnatan.inventoryframework.state.StateHost;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
+@Getter
 public final class CloseContext extends ConfinedContext implements IFCloseContext, Context {
 
     private final IFContext parent;
     private final Player player;
+
+    @Setter
     private boolean cancelled;
 
     public CloseContext(
@@ -25,8 +35,13 @@ public final class CloseContext extends ConfinedContext implements IFCloseContex
     }
 
     @Override
+    public @NotNull UUID getId() {
+        return getParent().getId();
+    }
+
+    @Override
     public @NotNull StateHost getStateHost() {
-        return parent.getStateHost();
+        return getParent().getStateHost();
     }
 
     @Override
@@ -34,19 +49,4 @@ public final class CloseContext extends ConfinedContext implements IFCloseContex
 
     @Override
     public void closeForPlayer() {}
-
-    @Override
-    public @NotNull Player getPlayer() {
-        return player;
-    }
-
-    @Override
-    public boolean isCancelled() {
-        return cancelled;
-    }
-
-    @Override
-    public void setCancelled(boolean cancelled) {
-        this.cancelled = cancelled;
-    }
 }

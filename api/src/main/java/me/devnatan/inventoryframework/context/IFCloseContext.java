@@ -1,6 +1,6 @@
 package me.devnatan.inventoryframework.context;
 
-public interface IFCloseContext extends IFContext {
+public interface IFCloseContext extends IFConfinedContext {
 
     /**
      * Cancellation state of that context.

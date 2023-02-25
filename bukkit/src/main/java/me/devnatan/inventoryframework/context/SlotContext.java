@@ -1,6 +1,7 @@
 package me.devnatan.inventoryframework.context;
 
 import java.util.List;
+import java.util.UUID;
 import lombok.ToString;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewContainer;
@@ -37,6 +38,11 @@ public class SlotContext extends ConfinedContext implements IFSlotContext, Conte
         this.player = ((BukkitViewer) viewer).getPlayer();
         this.parent = parent;
         this.component = component;
+    }
+
+    @Override
+    public final @NotNull UUID getId() {
+        return parent.getId();
     }
 
     @Override

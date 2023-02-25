@@ -7,6 +7,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.ToString;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewConfig;
@@ -27,7 +30,12 @@ import org.jetbrains.annotations.VisibleForTesting;
 @ApiStatus.Internal
 @VisibleForTesting
 @ToString
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class BaseViewContext implements IFContext {
+
+    @Getter
+    @EqualsAndHashCode.Include
+    private final UUID id = UUID.randomUUID();
 
     @ToString.Exclude
     private final @NotNull RootView root;

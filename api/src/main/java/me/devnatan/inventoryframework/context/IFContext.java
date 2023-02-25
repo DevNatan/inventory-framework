@@ -3,6 +3,7 @@ package me.devnatan.inventoryframework.context;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewContainer;
@@ -17,6 +18,13 @@ import org.jetbrains.annotations.Unmodifiable;
 import org.jetbrains.annotations.UnmodifiableView;
 
 public interface IFContext extends VirtualView, StateHostAware {
+
+    /**
+     * An unique id for this context.
+     * @return The unique identifier for this context.
+     */
+    @NotNull
+    UUID getId();
 
     /**
      * The configuration for this context.
