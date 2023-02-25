@@ -43,12 +43,17 @@ public final class PaginationImpl implements Pagination, InteractionHandler {
 
     @Override
     public void render(@NotNull IFSlotRenderContext context) {
-        // TODO
+        throw new UnsupportedOperationException("TODO");
+    }
+
+    @Override
+    public void updated(@NotNull IFSlotRenderContext context) {
+        throw new UnsupportedOperationException("TODO");
     }
 
     @Override
     public void clear(@NotNull IFContext context) {
-        // TODO
+        throw new UnsupportedOperationException("TODO");
     }
 
     @Override
