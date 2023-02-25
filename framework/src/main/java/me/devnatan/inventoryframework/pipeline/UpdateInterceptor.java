@@ -14,7 +14,6 @@ public final class UpdateInterceptor implements PipelineInterceptor<IFContext> {
 
     @Override
     public void intercept(@NotNull PipelineContext<IFContext> pipeline, IFContext context) {
-        System.out.println("update intercepted");
         for (final Component component : context.getComponents()) {
             if (component.isMarkedForRemoval()) {
                 component.clear(context);

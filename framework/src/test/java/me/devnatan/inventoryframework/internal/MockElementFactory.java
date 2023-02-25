@@ -61,9 +61,9 @@ public class MockElementFactory extends ElementFactory {
             @NotNull IFContext parent,
             @NotNull Class<?> kind) {
         @SuppressWarnings("unchecked")
-		T value = (T) mock(kind);
-		when(value.getSlot()).thenReturn(slot);
-		when(value.getParent()).thenReturn(parent);
+        T value = (T) mock(kind);
+        when(value.getSlot()).thenReturn(slot);
+        when(value.getParent()).thenReturn(parent);
         when(value.getContainer()).thenReturn(container);
         return value;
     }
