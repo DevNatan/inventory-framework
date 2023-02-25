@@ -54,12 +54,12 @@ public class DefaultRootView implements RootView {
 
     @Override
     public final @NotNull @UnmodifiableView Set<IFContext> getContexts() {
-        return Collections.unmodifiableSet(contexts);
+        return Collections.unmodifiableSet(getInternalContexts());
     }
 
     @Override
     public @NotNull IFContext getContext(@NotNull Viewer viewer) {
-        for (final IFContext context : contexts) {
+        for (final IFContext context : getInternalContexts()) {
             if (context.getIndexedViewers().containsKey(viewer.getId())) return context;
         }
 
@@ -68,7 +68,7 @@ public class DefaultRootView implements RootView {
 
     @Override
     public @NotNull IFContext getContextByViewer(@NotNull String id) {
-        for (final IFContext context : contexts) {
+        for (final IFContext context : getInternalContexts()) {
             if (context.getIndexedViewers().containsKey(id)) return context;
         }
 
@@ -77,15 +77,15 @@ public class DefaultRootView implements RootView {
 
     @Override
     public final void addContext(@NotNull IFContext context) {
-        synchronized (contexts) {
-            contexts.add(context);
+        synchronized (getInternalContexts()) {
+            getInternalContexts().add(context);
         }
     }
 
     @Override
     public final void removeContext(@NotNull IFContext context) {
-        synchronized (contexts) {
-            contexts.add(context);
+        synchronized (getInternalContexts()) {
+            getInternalContexts().removeIf(other -> other.getId() == context.getId());
         }
     }
 

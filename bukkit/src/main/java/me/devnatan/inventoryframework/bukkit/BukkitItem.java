@@ -42,7 +42,6 @@ public final class BukkitItem extends IFItem<BukkitItem> {
 
         ItemStack item = ((SlotRenderContext) context).getItem();
         context.getContainer().renderItem(getPosition(), item);
-        System.out.println("render: " + item);
     }
 
     /**

@@ -67,12 +67,8 @@ class AwesomeView extends View {
     }
 
     @Override
-    public void onUpdate(Context ctx) {
-        System.out.println("Global update called: " + ctx);
-    }
+    public void onUpdate(Context ctx) {}
 
     @Override
-    public void onClick(SlotClickContext ctx) {
-        System.out.println("Global click called: " + ctx);
-    }
+    public void onClick(SlotClickContext ctx) {}
 }

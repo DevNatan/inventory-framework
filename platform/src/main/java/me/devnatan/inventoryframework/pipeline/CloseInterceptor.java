@@ -21,12 +21,12 @@ public final class CloseInterceptor implements PipelineInterceptor<IFCloseContex
             return;
         }
 
+        context.removeViewer(viewer);
+
         if (canContextBeInvalidated(context)) {
             // TODO invalidate context
             root.removeContext(context);
         }
-
-        context.removeViewer(viewer);
     }
 
     /**
@@ -49,6 +49,6 @@ public final class CloseInterceptor implements PipelineInterceptor<IFCloseContex
      * @return If context can be invalidated.
      */
     private boolean canContextBeInvalidated(IFContext context) {
-        return context.getViewers().size() == 1 /* last one is the current actor */;
+        return context.getViewers().isEmpty();
     }
 }

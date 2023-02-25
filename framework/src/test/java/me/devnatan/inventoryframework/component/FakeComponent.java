@@ -42,10 +42,6 @@ public class FakeComponent implements Component, InteractionHandler {
 
     @Override
     public void render(@NotNull IFSlotRenderContext context) {
-        System.out.println("context = " + context);
-        System.out.println("context.getContainer() = " + context.getContainer());
-        System.out.println("item = " + item);
-        System.out.println("position = " + position);
         context.getContainer().renderItem(position, item);
     }
 

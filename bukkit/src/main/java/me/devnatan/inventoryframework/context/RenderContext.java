@@ -1,5 +1,6 @@
 package me.devnatan.inventoryframework.context;
 
+import java.util.UUID;
 import java.util.function.Supplier;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -33,6 +34,11 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
         super(root, container, viewer);
         this.player = ((BukkitViewer) viewer).getPlayer();
         this.parent = parent;
+    }
+
+    @Override
+    public @NotNull UUID getId() {
+        return getParent().getId();
     }
 
     @Override
