@@ -7,7 +7,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import lombok.AccessLevel;
 import lombok.Getter;
-import me.devnatan.inventoryframework.component.ItemBuilder;
+import me.devnatan.inventoryframework.component.IFItemBuilder;
 import me.devnatan.inventoryframework.component.Pagination;
 import me.devnatan.inventoryframework.component.PaginationImpl;
 import me.devnatan.inventoryframework.context.IFCloseContext;
@@ -33,7 +33,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class PlatformView<
-                TItem extends ItemBuilder<TItem>,
+                TItem extends IFItemBuilder<TItem>,
                 TContext extends IFContext,
                 TOpenContext extends IFOpenContext,
                 TCloseContext extends IFCloseContext,

@@ -1,6 +1,6 @@
 package me.devnatan.inventoryframework.component;
 
-public interface ItemBuilder<S extends ItemBuilder<S>> extends ComponentBuilder<S> {
+public interface IFItemBuilder<S extends IFItemBuilder<S>> extends ComponentBuilder<S> {
 
 	/**
 	 * Sets the slot that the item will be positioned.

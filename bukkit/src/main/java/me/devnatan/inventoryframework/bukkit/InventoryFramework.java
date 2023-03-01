@@ -50,6 +50,8 @@ class AwesomeView extends View {
 
     @Override
     public void onFirstRender(RenderContext ctx) {
+		ctx.availableSlot().
+
         ctx.availableSlot(() -> new ItemStack(Material.EGG))
                 .cancelOnClick()
                 .onUpdate(update -> update.getPlayer().sendMessage("Item update called"))

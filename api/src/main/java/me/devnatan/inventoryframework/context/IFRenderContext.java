@@ -1,10 +1,10 @@
 package me.devnatan.inventoryframework.context;
 
 import me.devnatan.inventoryframework.ViewConfigBuilder;
-import me.devnatan.inventoryframework.component.ItemBuilder;
+import me.devnatan.inventoryframework.component.IFItemBuilder;
 import org.jetbrains.annotations.NotNull;
 
-public interface IFRenderContext<B extends ItemBuilder<B>> extends IFConfinedContext {
+public interface IFRenderContext<B extends IFItemBuilder<B>> extends IFConfinedContext {
 
     IFContext getParent();
 
