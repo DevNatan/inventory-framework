@@ -10,6 +10,7 @@ import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.bukkit.BukkitItem;
 import me.devnatan.inventoryframework.bukkit.BukkitViewer;
+import me.devnatan.inventoryframework.component.BukkitItemBuilder;
 import me.devnatan.inventoryframework.state.StateHost;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -17,7 +18,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 @Getter
-public final class RenderContext extends ConfinedContext implements IFRenderContext<BukkitItem>, Context {
+public final class RenderContext extends ConfinedContext implements IFRenderContext<BukkitItemBuilder>, Context {
 
     private final @NotNull IFContext parent;
     private final @NotNull Player player;
@@ -52,20 +53,20 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
     }
 
     @Override
-    public @NotNull BukkitItem layoutSlot(String character) {
+    public @NotNull BukkitItemBuilder layoutSlot(String character) {
         throw new UnsupportedOperationException();
     }
 
-    public @NotNull BukkitItem layoutSlot(String character, ItemStack item) {
+    public @NotNull BukkitItemBuilder layoutSlot(String character, ItemStack item) {
         return layoutSlot(character).item(item);
     }
 
-    public @NotNull BukkitItem layoutSlot(String character, Supplier<ItemStack> itemRenderHandler) {
+    public @NotNull BukkitItemBuilder layoutSlot(String character, Supplier<ItemStack> itemRenderHandler) {
         return layoutSlot(character).rendered(itemRenderHandler);
     }
 
     @Override
-    public @NotNull BukkitItem slot(int slot) {
+    public @NotNull BukkitItemBuilder slot(int slot) {
         BukkitItem item = new BukkitItem(slot);
         addComponent(item);
         return item;
@@ -93,7 +94,7 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
     }
 
     @Override
-    public @NotNull BukkitItem firstSlot() {
+    public @NotNull BukkitItemBuilder firstSlot() {
         throw new UnsupportedOperationException();
     }
 
@@ -106,7 +107,7 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
     }
 
     @Override
-    public @NotNull BukkitItem lastSlot() {
+    public @NotNull BukkitItemBuilder lastSlot() {
         throw new UnsupportedOperationException();
     }
 
@@ -119,7 +120,7 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
     }
 
     @Override
-    public @NotNull BukkitItem availableSlot() {
+    public @NotNull BukkitItemBuilder availableSlot() {
         throw new UnsupportedOperationException();
     }
 

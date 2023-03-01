@@ -9,7 +9,6 @@ import java.util.function.Consumer;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import me.devnatan.inventoryframework.component.IFItem;
 import me.devnatan.inventoryframework.internal.LayoutPattern;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
