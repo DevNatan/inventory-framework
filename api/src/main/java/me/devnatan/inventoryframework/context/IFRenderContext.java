@@ -4,7 +4,7 @@ import me.devnatan.inventoryframework.ViewConfigBuilder;
 import me.devnatan.inventoryframework.component.IFItemBuilder;
 import org.jetbrains.annotations.NotNull;
 
-public interface IFRenderContext<B extends IFItemBuilder<B>> extends IFConfinedContext {
+public interface IFRenderContext extends IFConfinedContext {
 
     IFContext getParent();
 
@@ -22,46 +22,4 @@ public interface IFRenderContext<B extends IFItemBuilder<B>> extends IFConfinedC
      */
     @NotNull
     ViewConfigBuilder modifyConfig();
-
-    /**
-     * Adds an item to a specific slot in the context container.
-     *
-     * @param slot The slot in which the item will be positioned.
-     * @return A item builder to configure the item.
-     */
-    @NotNull
-	B slot(int slot);
-
-    /**
-     * Adds an item at the specific column and ROW (X, Y) in that context's container.
-     *
-     * @param row    The row (Y) in which the item will be positioned.
-     * @param column The column (X) in which the item will be positioned.
-     * @return A item builder to configure the item.
-     */
-    @NotNull
-	B slot(int row, int column);
-
-    /**
-     * Adds an item to the first slot of this context's container.
-     *
-     * @return A item builder to configure the item.
-     */
-    @NotNull
-	B firstSlot();
-
-    /**
-     * Adds an item to the first slot of this context's container.
-     *
-     * @return A item builder to configure the item.
-     */
-    @NotNull
-	B lastSlot();
-
-    // TODO doc
-    @NotNull
-	B availableSlot();
-
-    @NotNull
-	B layoutSlot(String character);
 }

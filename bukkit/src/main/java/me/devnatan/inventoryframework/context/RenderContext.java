@@ -1,134 +1,150 @@
 package me.devnatan.inventoryframework.context;
 
-import java.util.UUID;
-import java.util.function.Supplier;
 import lombok.AccessLevel;
 import lombok.Getter;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewConfigBuilder;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
-import me.devnatan.inventoryframework.bukkit.BukkitItem;
 import me.devnatan.inventoryframework.bukkit.BukkitViewer;
 import me.devnatan.inventoryframework.component.BukkitItemBuilder;
+import me.devnatan.inventoryframework.component.ComponentBuilder;
 import me.devnatan.inventoryframework.state.StateHost;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+import static me.devnatan.inventoryframework.utils.SlotConverter.convertSlot;
 
 @Getter
-public final class RenderContext extends ConfinedContext implements IFRenderContext<BukkitItemBuilder>, Context {
+public final class RenderContext extends ConfinedContext implements IFRenderContext, Context {
 
-    private final @NotNull IFContext parent;
-    private final @NotNull Player player;
+	private final @NotNull IFContext parent;
+	private final @NotNull Player player;
 
-    @Getter(AccessLevel.PRIVATE)
-    private final ViewConfigBuilder inheritedConfigBuilder = new ViewConfigBuilder();
+	@Getter(AccessLevel.PRIVATE)
+	private final ViewConfigBuilder inheritedConfigBuilder = new ViewConfigBuilder();
 
-    @ApiStatus.Internal
-    public RenderContext(
-            @NotNull RootView root,
-            @NotNull ViewContainer container,
-            @NotNull Viewer viewer,
-            @NotNull IFContext parent) {
-        super(root, container, viewer);
-        this.player = ((BukkitViewer) viewer).getPlayer();
-        this.parent = parent;
-    }
+	@Getter(AccessLevel.PROTECTED)
+	private final List<ComponentBuilder<?>> componentBuilders = new ArrayList<>();
 
-    @Override
-    public @NotNull UUID getId() {
-        return getParent().getId();
-    }
+	@ApiStatus.Internal
+	public RenderContext(
+		@NotNull RootView root,
+		@NotNull ViewContainer container,
+		@NotNull Viewer viewer,
+		@NotNull IFContext parent) {
+		super(root, container, viewer);
+		this.player = ((BukkitViewer) viewer).getPlayer();
+		this.parent = parent;
+	}
 
-    @Override
-    public @NotNull StateHost getStateHost() {
-        return getParent().getStateHost();
-    }
+	@Override
+	public @NotNull UUID getId() {
+		return getParent().getId();
+	}
 
-    @Override
-    public @NotNull ViewConfigBuilder modifyConfig() {
-        return inheritedConfigBuilder;
-    }
+	@Override
+	public @NotNull StateHost getStateHost() {
+		return getParent().getStateHost();
+	}
 
-    @Override
-    public @NotNull BukkitItemBuilder layoutSlot(String character) {
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	public @NotNull ViewConfigBuilder modifyConfig() {
+		return inheritedConfigBuilder;
+	}
 
-    public @NotNull BukkitItemBuilder layoutSlot(String character, ItemStack item) {
-        return layoutSlot(character).item(item);
-    }
+	/**
+	 * Adds an item to a specific slot in the context container.
+	 *
+	 * @param slot The slot in which the item will be positioned.
+	 * @return An item builder to configure the item.
+	 */
+	public @NotNull BukkitItemBuilder slot(int slot) {
+		return createItemBuilder().withSlot(slot);
+	}
 
-    public @NotNull BukkitItemBuilder layoutSlot(String character, Supplier<ItemStack> itemRenderHandler) {
-        return layoutSlot(character).rendered(itemRenderHandler);
-    }
+	/**
+	 * Adds an item to a specific slot in the context container.
+	 *
+	 * @param slot The slot in which the item will be positioned.
+	 * @return An item builder to configure the item.
+	 */
+	public @NotNull BukkitItemBuilder slot(int slot, @Nullable ItemStack item) {
+		return createItemBuilder().withSlot(slot).withItem(item);
+	}
 
-    @Override
-    public @NotNull BukkitItemBuilder slot(int slot) {
-        BukkitItem item = new BukkitItem(slot);
-        addComponent(item);
-        return item;
-    }
+	/**
+	 * Adds an item at the specific column and ROW (X, Y) in that context's container.
+	 *
+	 * @param row    The row (Y) in which the item will be positioned.
+	 * @param column The column (X) in which the item will be positioned.
+	 * @return An item builder to configure the item.
+	 */
+	@NotNull
+	public BukkitItemBuilder slot(int row, int column) {
+		return createItemBuilder().withSlot(
+			convertSlot(row, column, getContainer().getRowsCount(), getContainer().getColumnsCount())
+		);
+	}
 
-    public @NotNull BukkitItem slot(int slot, ItemStack item) {
-        return slot(slot).item(item);
-    }
+	/**
+	 * Adds an item at the specific column and ROW (X, Y) in that context's container.
+	 *
+	 * @param row    The row (Y) in which the item will be positioned.
+	 * @param column The column (X) in which the item will be positioned.
+	 * @return An item builder to configure the item.
+	 */
+	@NotNull
+	public BukkitItemBuilder slot(int row, int column, @Nullable ItemStack item) {
+		return createItemBuilder().withSlot(
+			convertSlot(row, column, getContainer().getRowsCount(), getContainer().getColumnsCount())
+		).withItem(item);
+	}
 
-    public @NotNull BukkitItem slot(int slot, Supplier<ItemStack> itemRenderHandler) {
-        return slot(slot).rendered(itemRenderHandler);
-    }
+	/**
+	 * Adds an item to the first slot of this context's container.
+	 *
+	 * @return An item builder to configure the item.
+	 */
+	public @NotNull BukkitItemBuilder firstSlot() {
+		return createItemBuilder().withSlot(getContainer().getFirstSlot());
+	}
 
-    @Override
-    public @NotNull BukkitItem slot(int row, int column) {
-        throw new UnsupportedOperationException();
-    }
+	/**
+	 * Adds an item to the first slot of this context's container.
+	 *
+	 * @return An item builder to configure the item.
+	 */
+	public @NotNull BukkitItemBuilder lastSlot() {
+		return createItemBuilder().withSlot(getContainer().getLastSlot());
+	}
 
-    public @NotNull BukkitItem slot(int row, int column, ItemStack item) {
-        return slot(row, column).item(item);
-    }
+	// TODO documentation
+	public @NotNull BukkitItemBuilder availableSlot() {
+		throw new UnsupportedOperationException();
+	}
 
-    public @NotNull BukkitItem slot(int row, int column, Supplier<ItemStack> itemRenderHandler) {
-        return slot(row, column).rendered(itemRenderHandler);
-    }
+	// TODO documentation
+	public @NotNull BukkitItemBuilder layoutSlot(String character) {
+		throw new UnsupportedOperationException();
+	}
 
-    @Override
-    public @NotNull BukkitItemBuilder firstSlot() {
-        throw new UnsupportedOperationException();
-    }
+	/**
+	 * Creates a BukkitItemBuilder instance and registers it in this context.
+	 *
+	 * @return A new registered BukkitItemBuilder instance.
+	 */
+	private BukkitItemBuilder createItemBuilder() {
+		final BukkitItemBuilder builder = new BukkitItemBuilder();
+		componentBuilders.add(builder);
+		return builder;
+	}
 
-    public @NotNull BukkitItem firstSlot(ItemStack item) {
-        return firstSlot().item(item);
-    }
-
-    public @NotNull BukkitItem firstSlot(Supplier<ItemStack> itemRenderHandler) {
-        return lastSlot().rendered(itemRenderHandler);
-    }
-
-    @Override
-    public @NotNull BukkitItemBuilder lastSlot() {
-        throw new UnsupportedOperationException();
-    }
-
-    public @NotNull BukkitItem lastSlot(ItemStack item) {
-        return lastSlot().item(item);
-    }
-
-    public @NotNull BukkitItem lastSlot(Supplier<ItemStack> itemRenderHandler) {
-        return lastSlot().rendered(itemRenderHandler);
-    }
-
-    @Override
-    public @NotNull BukkitItemBuilder availableSlot() {
-        throw new UnsupportedOperationException();
-    }
-
-    public @NotNull BukkitItem availableSlot(ItemStack item) {
-        return availableSlot().item(item);
-    }
-
-    public @NotNull BukkitItem availableSlot(Supplier<ItemStack> itemRenderHandler) {
-        return availableSlot().rendered(itemRenderHandler);
-    }
 }
