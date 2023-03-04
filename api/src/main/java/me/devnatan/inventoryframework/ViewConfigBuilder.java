@@ -4,8 +4,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -94,13 +92,14 @@ public final class ViewConfigBuilder {
         return this;
     }
 
-    public ViewConfigBuilder layout(char character, @NotNull Consumer<IFItem> handler) {
-        throw new UnsupportedOperationException();
-    }
-
-    public ViewConfigBuilder layout(char character, @NotNull BiConsumer<Integer, IFItem> handler) {
-        throw new UnsupportedOperationException();
-    }
+    // TODO move to layout to platform layer
+    //    public ViewConfigBuilder layout(char character, @NotNull Consumer<IFItem> handler) {
+    //        throw new UnsupportedOperationException();
+    //    }
+    //
+    //    public ViewConfigBuilder layout(char character, @NotNull BiConsumer<Integer, IFItem> handler) {
+    //        throw new UnsupportedOperationException();
+    //    }
 
     public ViewConfigBuilder options(ViewConfig.Option<?>... options) {
         this.options.addAll(Arrays.asList(options));

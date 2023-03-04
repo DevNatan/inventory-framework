@@ -25,7 +25,14 @@ import org.jetbrains.annotations.NotNull;
  */
 @ApiStatus.OverrideOnly
 public class View
-        extends PlatformView<BukkitItemComponentBuilder, Context, OpenContext, CloseContext, RenderContext, SlotContext, SlotClickContext>
+        extends PlatformView<
+                BukkitItemComponentBuilder,
+                Context,
+                OpenContext,
+                CloseContext,
+                RenderContext,
+                SlotContext,
+                SlotClickContext>
         implements InventoryHolder {
 
     @Override

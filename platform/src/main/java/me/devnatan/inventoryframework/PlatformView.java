@@ -7,7 +7,6 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import lombok.AccessLevel;
 import lombok.Getter;
-import me.devnatan.inventoryframework.component.ItemComponent;
 import me.devnatan.inventoryframework.component.ItemComponentBuilder;
 import me.devnatan.inventoryframework.component.Pagination;
 import me.devnatan.inventoryframework.component.PaginationImpl;
@@ -281,8 +280,8 @@ public abstract class PlatformView<
     protected final <V> State<Pagination> pagination(
             @NotNull Function<TSlotContext, List<? super V>> sourceProvider,
             @NotNull BiConsumer<TItem, V> itemFactory) {
-        return stateFactory.createState(new ImmutableValue(new PaginationImpl(
-                this, null /* TODO */, sourceProvider, (BiConsumer<ItemComponent<?>, Object>) itemFactory)));
+        return stateFactory.createState(new ImmutableValue(
+                new PaginationImpl(this, null /* TODO */, sourceProvider, (BiConsumer<TItem, Object>) itemFactory)));
     }
 
     /**

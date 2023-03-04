@@ -74,8 +74,8 @@ public class MockElementFactory extends ElementFactory {
         return true;
     }
 
-	@Override
-	public Component buildComponent(ComponentBuilder<?> builder) {
-		return mock(Component.class);
-	}
+    @Override
+    public Component buildComponent(ComponentBuilder<?> builder) {
+        return mock(Component.class);
+    }
 }

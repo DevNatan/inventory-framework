@@ -61,11 +61,4 @@ public interface Component {
      * @param context The context that this component will be cleared from.
      */
     void clear(@NotNull IFContext context);
-
-    /**
-     * If this component is marked for removal.
-     *
-     * @return {@code true} if this component will be removed in the next update.
-     */
-    boolean isMarkedForRemoval();
 }

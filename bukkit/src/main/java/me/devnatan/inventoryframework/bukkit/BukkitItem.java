@@ -2,20 +2,14 @@ package me.devnatan.inventoryframework.bukkit;
 
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
 import lombok.Getter;
 import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.context.IFSlotContext;
 import me.devnatan.inventoryframework.context.IFSlotRenderContext;
-import me.devnatan.inventoryframework.context.SlotClickContext;
-import me.devnatan.inventoryframework.context.SlotContext;
 import me.devnatan.inventoryframework.context.SlotRenderContext;
-import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 @Getter
 public final class BukkitItem extends IFItem<BukkitItem> {
@@ -42,5 +36,4 @@ public final class BukkitItem extends IFItem<BukkitItem> {
         ItemStack item = ((SlotRenderContext) context).getItem();
         context.getContainer().renderItem(getPosition(), item);
     }
-
 }

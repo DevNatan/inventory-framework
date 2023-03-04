@@ -26,7 +26,7 @@ public final class PaginationImpl implements Pagination, InteractionHandler {
 
     // --- User provided ---
     private final @NotNull Function<?, ?> sourceProvider;
-    private final @NotNull BiConsumer<ItemComponent<?>, Object> itemFactory;
+    private final @NotNull BiConsumer<? extends ItemComponentBuilder<?>, Object> itemFactory;
 
     // --- Data ---
     private int page;

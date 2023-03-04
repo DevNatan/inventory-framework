@@ -13,7 +13,6 @@ import org.jetbrains.annotations.NotNull;
 public final class ItemComponent implements Component, InteractionHandler {
 
     private final int position;
-    private final boolean markedForRemoval;
     private final Object stack;
 
     // --- Handlers ---
@@ -42,7 +41,7 @@ public final class ItemComponent implements Component, InteractionHandler {
                 throw new IllegalStateException("At least one fallback item or item render handler must be provided.");
 
             renderHandler.accept(context);
-            context.getContainer().renderItem(getPosition(), context.get);
+            context.getContainer().renderItem(getPosition(), context.getResult());
         }
 
         context.getContainer().renderItem(getPosition(), stack);

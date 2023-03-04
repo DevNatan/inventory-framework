@@ -155,13 +155,17 @@ public final class BukkitElementFactory extends ElementFactory {
         return new NoopLogger();
     }
 
-	@Override
-	public Component buildComponent(ComponentBuilder<?> builder) {
-		if (!(builder instanceof BukkitItemComponentBuilder))
-			throw new IllegalArgumentException("Only BukkitItemBuilder is accepted as component builder");
+    @Override
+    public Component buildComponent(ComponentBuilder<?> builder) {
+        if (!(builder instanceof BukkitItemComponentBuilder))
+            throw new IllegalArgumentException("Only BukkitItemBuilder is accepted as component builder");
 
-		final BukkitItemComponentBuilder itemBuilder = (BukkitItemComponentBuilder) builder;
+        final BukkitItemComponentBuilder itemBuilder = (BukkitItemComponentBuilder) builder;
 
-		return new ItemComponent(itemBuilder.)
-	}
+        return new ItemComponent(
+                itemBuilder.getSlot(),
+                itemBuilder.getItem(),
+                itemBuilder.getRenderHandler(),
+                itemBuilder.getUpdateHandler());
+    }
 }
