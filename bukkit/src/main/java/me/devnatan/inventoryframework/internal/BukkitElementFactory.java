@@ -77,7 +77,9 @@ public final class BukkitElementFactory extends ElementFactory {
         } else if (!finalType.isExtendable()) {
             inventory = createInventory(holder, requireNonNull(toInventoryType(finalType)), finalTitle);
         } else {
-            inventory = createInventory(holder, size, finalTitle);
+            inventory = size == 0
+                    ? createInventory(holder, requireNonNull(toInventoryType(finalType)), finalTitle)
+                    : createInventory(holder, size, finalTitle);
         }
 
         return new BukkitViewContainer(inventory, false);
