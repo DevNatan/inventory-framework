@@ -7,7 +7,7 @@ import me.devnatan.inventoryframework.ViewConfigBuilder;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.bukkit.BukkitViewer;
-import me.devnatan.inventoryframework.component.BukkitItemBuilder;
+import me.devnatan.inventoryframework.component.BukkitItemComponentBuilder;
 import me.devnatan.inventoryframework.component.ComponentBuilder;
 import me.devnatan.inventoryframework.state.StateHost;
 import org.bukkit.entity.Player;
@@ -66,7 +66,7 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
 	 * @param slot The slot in which the item will be positioned.
 	 * @return An item builder to configure the item.
 	 */
-	public @NotNull BukkitItemBuilder slot(int slot) {
+	public @NotNull BukkitItemComponentBuilder slot(int slot) {
 		return createItemBuilder().withSlot(slot);
 	}
 
@@ -76,7 +76,7 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
 	 * @param slot The slot in which the item will be positioned.
 	 * @return An item builder to configure the item.
 	 */
-	public @NotNull BukkitItemBuilder slot(int slot, @Nullable ItemStack item) {
+	public @NotNull BukkitItemComponentBuilder slot(int slot, @Nullable ItemStack item) {
 		return createItemBuilder().withSlot(slot).withItem(item);
 	}
 
@@ -88,7 +88,7 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
 	 * @return An item builder to configure the item.
 	 */
 	@NotNull
-	public BukkitItemBuilder slot(int row, int column) {
+	public BukkitItemComponentBuilder slot(int row, int column) {
 		return createItemBuilder().withSlot(
 			convertSlot(row, column, getContainer().getRowsCount(), getContainer().getColumnsCount())
 		);
@@ -102,7 +102,7 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
 	 * @return An item builder to configure the item.
 	 */
 	@NotNull
-	public BukkitItemBuilder slot(int row, int column, @Nullable ItemStack item) {
+	public BukkitItemComponentBuilder slot(int row, int column, @Nullable ItemStack item) {
 		return createItemBuilder().withSlot(
 			convertSlot(row, column, getContainer().getRowsCount(), getContainer().getColumnsCount())
 		).withItem(item);
@@ -113,7 +113,7 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
 	 *
 	 * @return An item builder to configure the item.
 	 */
-	public @NotNull BukkitItemBuilder firstSlot() {
+	public @NotNull BukkitItemComponentBuilder firstSlot() {
 		return createItemBuilder().withSlot(getContainer().getFirstSlot());
 	}
 
@@ -122,17 +122,17 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
 	 *
 	 * @return An item builder to configure the item.
 	 */
-	public @NotNull BukkitItemBuilder lastSlot() {
+	public @NotNull BukkitItemComponentBuilder lastSlot() {
 		return createItemBuilder().withSlot(getContainer().getLastSlot());
 	}
 
 	// TODO documentation
-	public @NotNull BukkitItemBuilder availableSlot() {
+	public @NotNull BukkitItemComponentBuilder availableSlot() {
 		throw new UnsupportedOperationException();
 	}
 
 	// TODO documentation
-	public @NotNull BukkitItemBuilder layoutSlot(String character) {
+	public @NotNull BukkitItemComponentBuilder layoutSlot(String character) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -141,8 +141,8 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
 	 *
 	 * @return A new registered BukkitItemBuilder instance.
 	 */
-	private BukkitItemBuilder createItemBuilder() {
-		final BukkitItemBuilder builder = new BukkitItemBuilder();
+	private BukkitItemComponentBuilder createItemBuilder() {
+		final BukkitItemComponentBuilder builder = new BukkitItemComponentBuilder();
 		componentBuilders.add(builder);
 		return builder;
 	}

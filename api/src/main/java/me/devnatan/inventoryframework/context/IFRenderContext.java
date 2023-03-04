@@ -1,7 +1,6 @@
 package me.devnatan.inventoryframework.context;
 
 import me.devnatan.inventoryframework.ViewConfigBuilder;
-import me.devnatan.inventoryframework.component.IFItemBuilder;
 import org.jetbrains.annotations.NotNull;
 
 public interface IFRenderContext extends IFConfinedContext {

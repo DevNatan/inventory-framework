@@ -11,9 +11,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.Consumer;
 
 @Getter(AccessLevel.PACKAGE)
-public final class BukkitItemBuilder
-	extends DefaultComponentBuilder<BukkitItemBuilder>
-	implements IFItemBuilder<BukkitItemBuilder> {
+public final class BukkitItemComponentBuilder
+	extends DefaultComponentBuilder<BukkitItemComponentBuilder>
+	implements ItemComponentBuilder<BukkitItemComponentBuilder> {
 
 	private int slot;
 	private ItemStack item;
@@ -27,7 +27,7 @@ public final class BukkitItemBuilder
 	 * {@inheritDoc}
 	 */
 	@Override
-	public BukkitItemBuilder withSlot(int slot) {
+	public BukkitItemComponentBuilder withSlot(int slot) {
 		this.slot = slot;
 		return this;
 	}
@@ -39,7 +39,7 @@ public final class BukkitItemBuilder
 	 * @param item The new fallback item stack.
 	 * @return This item builder.
 	 */
-	public BukkitItemBuilder withItem(@Nullable ItemStack item) {
+	public BukkitItemComponentBuilder withItem(@Nullable ItemStack item) {
 		this.item = item;
 		return this;
 	}
@@ -54,7 +54,7 @@ public final class BukkitItemBuilder
 	 * @param renderHandler The render handler.
 	 * @return This item builder.
 	 */
-	public BukkitItemBuilder onRender(@Nullable Consumer<? super SlotRenderContext> renderHandler) {
+	public BukkitItemComponentBuilder onRender(@Nullable Consumer<? super SlotRenderContext> renderHandler) {
 		this.renderHandler = renderHandler;
 		return this;
 	}
@@ -68,7 +68,7 @@ public final class BukkitItemBuilder
 	 * @param clickHandler The click handler.
 	 * @return This item builder.
 	 */
-	public BukkitItemBuilder onClick(@Nullable Consumer<? super SlotClickContext> clickHandler) {
+	public BukkitItemComponentBuilder onClick(@Nullable Consumer<? super SlotClickContext> clickHandler) {
 		this.clickHandler = clickHandler;
 		return this;
 	}
@@ -79,7 +79,7 @@ public final class BukkitItemBuilder
 	 * @param updateHandler The update handler.
 	 * @return This item builder.
 	 */
-	public BukkitItemBuilder onUpdate(@Nullable Consumer<? super SlotContext> updateHandler) {
+	public BukkitItemComponentBuilder onUpdate(@Nullable Consumer<? super SlotContext> updateHandler) {
 		this.updateHandler = updateHandler;
 		return this;
 	}

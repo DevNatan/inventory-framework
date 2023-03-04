@@ -14,10 +14,10 @@ import me.devnatan.inventoryframework.ViewType;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.bukkit.BukkitViewContainer;
 import me.devnatan.inventoryframework.bukkit.BukkitViewer;
-import me.devnatan.inventoryframework.component.BukkitItemBuilder;
+import me.devnatan.inventoryframework.component.BukkitItemComponentBuilder;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.ComponentBuilder;
-import me.devnatan.inventoryframework.component.IFItem;
+import me.devnatan.inventoryframework.component.ItemComponent;
 import me.devnatan.inventoryframework.context.CloseContext;
 import me.devnatan.inventoryframework.context.IFCloseContext;
 import me.devnatan.inventoryframework.context.IFContext;
@@ -157,11 +157,11 @@ public final class BukkitElementFactory extends ElementFactory {
 
 	@Override
 	public Component buildComponent(ComponentBuilder<?> builder) {
-		if (!(builder instanceof BukkitItemBuilder))
+		if (!(builder instanceof BukkitItemComponentBuilder))
 			throw new IllegalArgumentException("Only BukkitItemBuilder is accepted as component builder");
 
-		final BukkitItemBuilder itemBuilder = (BukkitItemBuilder) builder;
+		final BukkitItemComponentBuilder itemBuilder = (BukkitItemComponentBuilder) builder;
 
-		return new IFItem(itemBuilder.)
+		return new ItemComponent(itemBuilder.)
 	}
 }

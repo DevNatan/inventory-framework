@@ -66,6 +66,5 @@ public abstract class ElementFactory {
 
     public abstract boolean worksInCurrentPlatform();
 
-	public abstract Component buildComponent(ComponentBuilder<?> builder);
-
+    public abstract Component buildComponent(ComponentBuilder<?> builder);
 }

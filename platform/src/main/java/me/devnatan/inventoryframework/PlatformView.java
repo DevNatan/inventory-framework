@@ -7,8 +7,8 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import lombok.AccessLevel;
 import lombok.Getter;
-import me.devnatan.inventoryframework.component.IFItem;
-import me.devnatan.inventoryframework.component.IFItemBuilder;
+import me.devnatan.inventoryframework.component.ItemComponent;
+import me.devnatan.inventoryframework.component.ItemComponentBuilder;
 import me.devnatan.inventoryframework.component.Pagination;
 import me.devnatan.inventoryframework.component.PaginationImpl;
 import me.devnatan.inventoryframework.context.IFCloseContext;
@@ -34,7 +34,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class PlatformView<
-                TItem extends IFItemBuilder<TItem>,
+                TItem extends ItemComponentBuilder<TItem>,
                 TContext extends IFContext,
                 TOpenContext extends IFOpenContext,
                 TCloseContext extends IFCloseContext,
@@ -282,7 +282,7 @@ public abstract class PlatformView<
             @NotNull Function<TSlotContext, List<? super V>> sourceProvider,
             @NotNull BiConsumer<TItem, V> itemFactory) {
         return stateFactory.createState(new ImmutableValue(new PaginationImpl(
-                this, null /* TODO */, sourceProvider, (BiConsumer<IFItem<?>, Object>) itemFactory)));
+                this, null /* TODO */, sourceProvider, (BiConsumer<ItemComponent<?>, Object>) itemFactory)));
     }
 
     /**

@@ -3,7 +3,6 @@ package me.devnatan.inventoryframework.component;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFSlotRenderContext;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -69,5 +68,4 @@ public interface Component {
      * @return {@code true} if this component will be removed in the next update.
      */
     boolean isMarkedForRemoval();
-
 }
