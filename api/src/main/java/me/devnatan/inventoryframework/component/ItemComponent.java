@@ -8,9 +8,11 @@ import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.context.IFSlotContext;
 import me.devnatan.inventoryframework.context.IFSlotRenderContext;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.VisibleForTesting;
 
 @Data
-public final class ItemComponent implements Component, InteractionHandler {
+@VisibleForTesting
+public class ItemComponent implements Component, InteractionHandler {
 
     private final int position;
     private final Object stack;
