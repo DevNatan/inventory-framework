@@ -1,6 +1,6 @@
 package me.devnatan.inventoryframework;
 
-import me.devnatan.inventoryframework.bukkit.BukkitItem;
+import me.devnatan.inventoryframework.component.BukkitItemComponentBuilder;
 import me.devnatan.inventoryframework.context.CloseContext;
 import me.devnatan.inventoryframework.context.Context;
 import me.devnatan.inventoryframework.context.OpenContext;
@@ -26,7 +26,13 @@ import org.jetbrains.annotations.NotNull;
 @ApiStatus.OverrideOnly
 public class View
         extends PlatformView<
-                BukkitItem, Context, OpenContext, CloseContext, RenderContext, SlotContext, SlotClickContext>
+                BukkitItemComponentBuilder,
+                Context,
+                OpenContext,
+                CloseContext,
+                RenderContext,
+                SlotContext,
+                SlotClickContext>
         implements InventoryHolder {
 
     @Override

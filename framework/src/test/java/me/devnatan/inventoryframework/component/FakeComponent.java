@@ -54,15 +54,5 @@ public class FakeComponent implements Component, InteractionHandler {
     }
 
     @Override
-    public boolean isMarkedForRemoval() {
-        return markedForRemoval;
-    }
-
-    @Override
-    public void setMarkedForRemoval(boolean markedForRemoval) {
-        this.markedForRemoval = markedForRemoval;
-    }
-
-    @Override
     public void clicked(@NotNull Component component, @NotNull IFSlotClickContext context) {}
 }

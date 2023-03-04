@@ -14,7 +14,10 @@ import me.devnatan.inventoryframework.ViewType;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.bukkit.BukkitViewContainer;
 import me.devnatan.inventoryframework.bukkit.BukkitViewer;
+import me.devnatan.inventoryframework.component.BukkitItemComponentBuilder;
 import me.devnatan.inventoryframework.component.Component;
+import me.devnatan.inventoryframework.component.ComponentBuilder;
+import me.devnatan.inventoryframework.component.ItemComponent;
 import me.devnatan.inventoryframework.context.CloseContext;
 import me.devnatan.inventoryframework.context.IFCloseContext;
 import me.devnatan.inventoryframework.context.IFContext;
@@ -150,5 +153,21 @@ public final class BukkitElementFactory extends ElementFactory {
     @Override
     public Logger getLogger() {
         return new NoopLogger();
+    }
+
+    @Override
+    public Component buildComponent(ComponentBuilder<?> builder) {
+        if (!(builder instanceof BukkitItemComponentBuilder))
+            throw new IllegalArgumentException("Only BukkitItemBuilder is accepted as component builder");
+
+        final BukkitItemComponentBuilder itemBuilder = (BukkitItemComponentBuilder) builder;
+
+        return new ItemComponent(
+                itemBuilder.getSlot(),
+                itemBuilder.getItem(),
+                itemBuilder.isCancelOnClick(),
+                itemBuilder.isCloseOnClick(),
+                itemBuilder.getRenderHandler(),
+                itemBuilder.getUpdateHandler());
     }
 }

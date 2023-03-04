@@ -19,11 +19,12 @@ public final class CounterWithWatcherView extends View {
 
     @Override
     public void onFirstRender(RenderContext ctx) {
-        ctx.slot(2, 3).item(Material.ACACIA_BUTTON).onClick(click -> counter.set(counter.get(click) + 1, click));
-        ctx.slot(2, 5).item(Material.ACACIA_BUTTON).onClick(click -> counter.set(counter.get(click) - 1, click));
+        ctx.slot(2, 3, new ItemStack(Material.ACACIA_BUTTON))
+                .onClick(click -> counter.set(counter.get(click) + 1, click));
+        ctx.slot(2, 5, new ItemStack(Material.ACACIA_BUTTON))
+                .onClick(click -> counter.set(counter.get(click) - 1, click));
         ctx.slot(2, 7)
-                .rendered(() -> new ItemStack(Material.GOLD_INGOT, counter.get(ctx)))
-                .onUpdate(slotCtx -> slotCtx.updateTitle(String.format("Counter - %d", counter.get(slotCtx))))
-                .watch(counter);
+                .onRender(render -> render.setItem(new ItemStack(Material.GOLD_INGOT, counter.get(render))))
+                .onUpdate(update -> update.updateTitle(String.format("Counter - %d", counter.get(update))));
     }
 }

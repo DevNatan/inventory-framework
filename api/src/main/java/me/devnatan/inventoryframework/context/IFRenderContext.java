@@ -1,9 +1,12 @@
 package me.devnatan.inventoryframework.context;
 
+import java.util.List;
 import me.devnatan.inventoryframework.ViewConfigBuilder;
+import me.devnatan.inventoryframework.component.ComponentBuilder;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.UnmodifiableView;
 
-public interface IFRenderContext<TItem> extends IFConfinedContext {
+public interface IFRenderContext extends IFConfinedContext {
 
     IFContext getParent();
 
@@ -22,45 +25,7 @@ public interface IFRenderContext<TItem> extends IFConfinedContext {
     @NotNull
     ViewConfigBuilder modifyConfig();
 
-    /**
-     * Adds an item to a specific slot in the context container.
-     *
-     * @param slot The slot in which the item will be positioned.
-     * @return A item builder to configure the item.
-     */
     @NotNull
-    TItem slot(int slot);
-
-    /**
-     * Adds an item at the specific column and ROW (X, Y) in that context's container.
-     *
-     * @param row    The row (Y) in which the item will be positioned.
-     * @param column The column (X) in which the item will be positioned.
-     * @return A item builder to configure the item.
-     */
-    @NotNull
-    TItem slot(int row, int column);
-
-    /**
-     * Adds an item to the first slot of this context's container.
-     *
-     * @return A {@link TItem item builder} to configure the item.
-     */
-    @NotNull
-    TItem firstSlot();
-
-    /**
-     * Adds an item to the first slot of this context's container.
-     *
-     * @return A {@link TItem item builder} to configure the item.
-     */
-    @NotNull
-    TItem lastSlot();
-
-    // TODO doc
-    @NotNull
-    TItem availableSlot();
-
-    @NotNull
-    TItem layoutSlot(String character);
+    @UnmodifiableView
+    List<ComponentBuilder<?>> getRegisteredComponentBuilders();
 }

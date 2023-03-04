@@ -15,6 +15,7 @@ import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.internal.MockElementFactory;
 import org.junit.jupiter.api.Test;
 
+// TODO missing component builders registration for IFRenderContext test
 public class FirstRenderInterceptorTest {
 
     @Test

@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @ToString(callSuper = true)
-public class SlotClickContext extends SlotContext implements IFSlotClickContext {
+public final class SlotClickContext extends SlotContext implements IFSlotClickContext {
 
     @NotNull
     private final InventoryClickEvent clickOrigin;

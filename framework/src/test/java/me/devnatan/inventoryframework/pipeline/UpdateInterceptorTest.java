@@ -15,7 +15,7 @@ import java.util.Collections;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.component.Component;
-import me.devnatan.inventoryframework.component.IFItem;
+import me.devnatan.inventoryframework.component.ItemComponent;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFSlotRenderContext;
 import me.devnatan.inventoryframework.internal.ElementFactory;
@@ -34,7 +34,7 @@ public class UpdateInterceptorTest {
         when(context.getContainer()).thenReturn(container);
 
         Component component = mock(Component.class);
-        when(component.isMarkedForRemoval()).thenReturn(true);
+        when(context.isMarkedForRemoval(anyInt())).thenReturn(true);
         when(context.getComponents()).thenReturn(Collections.singletonList(component));
         when(root.getContexts()).thenReturn(Collections.singleton(context));
 
@@ -55,7 +55,7 @@ public class UpdateInterceptorTest {
         ViewContainer container = mock(ViewContainer.class);
         when(context.getContainer()).thenReturn(container);
 
-        IFItem<?> component = mock(IFItem.class);
+        ItemComponent component = mock(ItemComponent.class);
         when(component.getRenderHandler()).thenReturn($ -> {
             /* do nothing */
         });
@@ -80,7 +80,7 @@ public class UpdateInterceptorTest {
         ViewContainer container = mock(ViewContainer.class);
         when(context.getContainer()).thenReturn(container);
 
-        IFItem<?> component = mock(IFItem.class);
+        ItemComponent component = mock(ItemComponent.class);
         when(component.getRenderHandler()).thenReturn(null);
 
         when(context.getComponents()).thenReturn(Collections.singletonList(component));

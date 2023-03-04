@@ -1,16 +1,12 @@
 package me.devnatan.inventoryframework.bukkit;
 
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import me.devnatan.inventoryframework.View;
 import me.devnatan.inventoryframework.ViewConfigBuilder;
 import me.devnatan.inventoryframework.ViewFrame;
 import me.devnatan.inventoryframework.component.Pagination;
-import me.devnatan.inventoryframework.context.CloseContext;
-import me.devnatan.inventoryframework.context.Context;
 import me.devnatan.inventoryframework.context.RenderContext;
-import me.devnatan.inventoryframework.context.SlotClickContext;
 import me.devnatan.inventoryframework.state.State;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
@@ -42,40 +38,22 @@ public final class InventoryFramework extends JavaPlugin {
 class AwesomeView extends View {
 
     private final State<Pagination> pagination = pagination(
-            () -> IntStream.range(1, 100).boxed().collect(Collectors.toList()),
-            (item, value) -> item.item(new ItemStack(Material.EGG)));
+            () -> IntStream.rangeClosed(1, 100).boxed().collect(Collectors.toList()),
+            (item, value) -> item.withItem(new ItemStack(Material.PAPER)));
 
     @Override
     public void onInit(ViewConfigBuilder config) {
-        config.title("Awesome view")
-                .size(4)
-                .cancelOnClick()
-                .layout("XXXXXXXXX", "XOOOOOOOX", "XOOOOOOOX", "XOOOOOOOX", "XOOOOOOOX", "XXXXXXXXX");
+        config.title("Awesome view").size(6).cancelOnClick();
     }
 
     @Override
     public void onFirstRender(RenderContext ctx) {
-        ctx.slot(2, new ItemStack(Material.EGG))
+        ctx.slot(3)
+                .withItem(new ItemStack(Material.EGG))
                 .cancelOnClick()
                 .onUpdate(update -> update.getPlayer().sendMessage("Item update called"))
                 .onClick(click -> {
                     click.getPlayer().sendMessage("Clicked update");
-                    click.update();
                 });
-
-        ctx.slot(
-                3, () -> new ItemStack(Material.EGG, ThreadLocalRandom.current().nextInt(1, 17)));
-    }
-
-    @Override
-    public void onUpdate(Context ctx) {}
-
-    @Override
-    public void onClick(SlotClickContext ctx) {}
-
-    @Override
-    public void onClose(CloseContext ctx) {
-        ctx.getPlayer().sendMessage("closed");
-        ctx.setCancelled(true);
     }
 }

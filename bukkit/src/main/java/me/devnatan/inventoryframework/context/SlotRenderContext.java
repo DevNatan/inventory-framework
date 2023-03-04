@@ -14,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 @Getter
 @Setter
 @ToString
-public class SlotRenderContext extends SlotContext implements IFSlotRenderContext {
+public final class SlotRenderContext extends SlotContext implements IFSlotRenderContext {
 
     private ItemStack item;
     private boolean cancelled;
@@ -27,5 +27,10 @@ public class SlotRenderContext extends SlotContext implements IFSlotRenderContex
             @NotNull IFContext parent,
             @Nullable Component component) {
         super(root, container, viewer, slot, parent, component);
+    }
+
+    @Override
+    public final Object getResult() {
+        return item;
     }
 }
