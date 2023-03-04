@@ -7,6 +7,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import lombok.AccessLevel;
 import lombok.Getter;
+import me.devnatan.inventoryframework.component.IFItem;
 import me.devnatan.inventoryframework.component.IFItemBuilder;
 import me.devnatan.inventoryframework.component.Pagination;
 import me.devnatan.inventoryframework.component.PaginationImpl;
@@ -37,7 +38,7 @@ public abstract class PlatformView<
                 TContext extends IFContext,
                 TOpenContext extends IFOpenContext,
                 TCloseContext extends IFCloseContext,
-                TRenderContext extends IFRenderContext<TItem>,
+                TRenderContext extends IFRenderContext,
                 TSlotContext extends IFSlotContext,
                 TSlotClickContext extends IFSlotClickContext>
         extends DefaultRootView {

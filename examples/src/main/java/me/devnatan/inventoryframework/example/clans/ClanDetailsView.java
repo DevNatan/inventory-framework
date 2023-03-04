@@ -6,6 +6,7 @@ import me.devnatan.inventoryframework.context.OpenContext;
 import me.devnatan.inventoryframework.context.RenderContext;
 import me.devnatan.inventoryframework.state.State;
 import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 public final class ClanDetailsView extends View {
@@ -36,6 +37,7 @@ public final class ClanDetailsView extends View {
     @Override
     public void onFirstRender(RenderContext ctx) {
         final Clan clan = clanState.get(ctx);
-        ctx.slot(2, 5).withItem(Material.PLAYER_HEAD).onClick(click -> click.open(ClanMemberListView.class));
+        ctx.slot(2, 5, new ItemStack(Material.PLAYER_HEAD))
+			.onClick(click -> click.open(ClanMemberListView.class));
     }
 }

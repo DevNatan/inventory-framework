@@ -19,21 +19,21 @@ import java.util.stream.IntStream;
 @SuppressWarnings("unused")
 public final class InventoryFramework extends JavaPlugin {
 
-    @Override
-    public void onEnable() {
-        ViewFrame vf = ViewFrame.create(this).with(new AwesomeView()).register();
+	@Override
+	public void onEnable() {
+		ViewFrame vf = ViewFrame.create(this).with(new AwesomeView()).register();
 
-        getServer()
-                .getPluginManager()
-                .registerEvents(
-                        new Listener() {
-                            @EventHandler
-                            void onChat(AsyncPlayerChatEvent event) {
-                                vf.open(AwesomeView.class, event.getPlayer());
-                            }
-                        },
-                        this);
-    }
+		getServer()
+			.getPluginManager()
+			.registerEvents(
+				new Listener() {
+					@EventHandler
+					void onChat(AsyncPlayerChatEvent event) {
+						vf.open(AwesomeView.class, event.getPlayer());
+					}
+				},
+				this);
+	}
 }
 
 class AwesomeView extends View {
@@ -43,21 +43,20 @@ class AwesomeView extends View {
 		(item, value) -> item.withItem(new ItemStack(Material.PAPER))
 	);
 
-    @Override
-    public void onInit(ViewConfigBuilder config) {
-        config.title("Awesome view").size(6).cancelOnClick();
-    }
+	@Override
+	public void onInit(ViewConfigBuilder config) {
+		config.title("Awesome view").size(6).cancelOnClick();
+	}
 
-    @Override
-    public void onFirstRender(RenderContext ctx) {
-		ctx.availableSlot().
-
-        ctx.availableSlot(() -> new ItemStack(Material.EGG))
-                .cancelOnClick()
-                .onUpdate(update -> update.getPlayer().sendMessage("Item update called"))
-                .onClick(click -> {
-                    click.getPlayer().sendMessage("Clicked update");
-                    ctx.update();
-                });
-    }
+	@Override
+	public void onFirstRender(RenderContext ctx) {
+		ctx.availableSlot()
+			.withItem(new ItemStack(Material.EGG))
+			.cancelOnClick()
+			.onUpdate(update -> update.getPlayer().sendMessage("Item update called"))
+			.onClick(click -> {
+				click.getPlayer().sendMessage("Clicked update");
+				ctx.update();
+			});
+	}
 }

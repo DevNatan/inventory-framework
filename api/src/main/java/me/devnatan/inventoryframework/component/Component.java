@@ -70,14 +70,4 @@ public interface Component {
      */
     boolean isMarkedForRemoval();
 
-    /**
-     * Marks this component for removal.
-     * <p>
-     * <b>This is an internal Inventory Framework API that should not be used from outside of
-     * this library. No compatibility guarantees are provided.</b>
-     *
-     * @param markedForRemoval If this component should be removed in the next update.
-     */
-    @ApiStatus.Internal
-    void setMarkedForRemoval(boolean markedForRemoval);
 }
