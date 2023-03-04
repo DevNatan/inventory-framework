@@ -1,7 +1,10 @@
 package me.devnatan.inventoryframework.context;
 
+import java.util.List;
 import me.devnatan.inventoryframework.ViewConfigBuilder;
+import me.devnatan.inventoryframework.component.ComponentBuilder;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.UnmodifiableView;
 
 public interface IFRenderContext extends IFConfinedContext {
 
@@ -21,4 +24,8 @@ public interface IFRenderContext extends IFConfinedContext {
      */
     @NotNull
     ViewConfigBuilder modifyConfig();
+
+    @NotNull
+    @UnmodifiableView
+    List<ComponentBuilder<?>> getRegisteredComponentBuilders();
 }

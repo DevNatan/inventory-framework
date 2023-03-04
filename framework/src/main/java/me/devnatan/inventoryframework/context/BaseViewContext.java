@@ -170,7 +170,7 @@ public class BaseViewContext implements IFContext {
     }
 
     @Override
-    public final void update() {
+    public final void updateRoot() {
         getRoot().getPipeline().execute(StandardPipelinePhases.UPDATE, this);
     }
 

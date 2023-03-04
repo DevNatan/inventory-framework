@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.Getter;
 import me.devnatan.inventoryframework.RootView;
@@ -14,7 +15,9 @@ import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.bukkit.BukkitViewer;
 import me.devnatan.inventoryframework.component.BukkitItemComponentBuilder;
+import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.ComponentBuilder;
+import me.devnatan.inventoryframework.internal.ElementFactory;
 import me.devnatan.inventoryframework.state.StateHost;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -154,8 +157,16 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
         return builder;
     }
 
-    @ApiStatus.Internal
-    public @UnmodifiableView List<ComponentBuilder<?>> getComponentBuilders() {
+    @Override
+    public @UnmodifiableView @NotNull List<Component> getComponents() {
+        final ElementFactory elementFactory = getRoot().getElementFactory();
+        return getComponentBuilders().stream()
+                .map(elementFactory::buildComponent)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public @NotNull @UnmodifiableView List<ComponentBuilder<?>> getRegisteredComponentBuilders() {
         return Collections.unmodifiableList(componentBuilders);
     }
 }
