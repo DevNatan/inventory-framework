@@ -3,6 +3,7 @@ package me.devnatan.inventoryframework.context;
 import static me.devnatan.inventoryframework.utils.SlotConverter.convertSlot;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import lombok.AccessLevel;
@@ -20,6 +21,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.UnmodifiableView;
 
 @Getter
 public final class RenderContext extends ConfinedContext implements IFRenderContext, Context {
@@ -30,7 +32,6 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
     @Getter(AccessLevel.PRIVATE)
     private final ViewConfigBuilder inheritedConfigBuilder = new ViewConfigBuilder();
 
-    @Getter(AccessLevel.PROTECTED)
     private final List<ComponentBuilder<?>> componentBuilders = new ArrayList<>();
 
     @ApiStatus.Internal
@@ -134,12 +135,12 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
 
     // TODO documentation
     public @NotNull BukkitItemComponentBuilder availableSlot() {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("Available slot is not implemented");
     }
 
     // TODO documentation
     public @NotNull BukkitItemComponentBuilder layoutSlot(String character) {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("Layout slot is not implemented");
     }
 
     /**
@@ -151,5 +152,10 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
         final BukkitItemComponentBuilder builder = new BukkitItemComponentBuilder();
         componentBuilders.add(builder);
         return builder;
+    }
+
+    @ApiStatus.Internal
+    public @UnmodifiableView List<ComponentBuilder<?>> getComponentBuilders() {
+        return Collections.unmodifiableList(componentBuilders);
     }
 }
