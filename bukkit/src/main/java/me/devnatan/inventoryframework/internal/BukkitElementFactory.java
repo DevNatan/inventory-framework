@@ -165,6 +165,8 @@ public final class BukkitElementFactory extends ElementFactory {
         return new ItemComponent(
                 itemBuilder.getSlot(),
                 itemBuilder.getItem(),
+                itemBuilder.isCancelOnClick(),
+                itemBuilder.isCloseOnClick(),
                 itemBuilder.getRenderHandler(),
                 itemBuilder.getUpdateHandler());
     }

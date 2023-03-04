@@ -1,6 +1,8 @@
 package me.devnatan.inventoryframework.pipeline;
 
+import java.util.List;
 import me.devnatan.inventoryframework.component.Component;
+import me.devnatan.inventoryframework.component.ItemComponent;
 import me.devnatan.inventoryframework.context.IFConfinedContext;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFSlotRenderContext;
@@ -13,8 +15,10 @@ public final class UpdateInterceptor implements PipelineInterceptor<IFContext> {
 
     @Override
     public void intercept(@NotNull PipelineContext<IFContext> pipeline, IFContext context) {
-        for (final Component component : context.getComponents()) {
-            if (component.isMarkedForRemoval()) {
+        final List<Component> componentList = context.getComponents();
+        for (int i = 0; i < componentList.size(); i++) {
+            final Component component = componentList.get(i);
+            if (context.isMarkedForRemoval(i)) {
                 component.clear(context);
                 continue;
             }
@@ -32,8 +36,8 @@ public final class UpdateInterceptor implements PipelineInterceptor<IFContext> {
      * @return {@code true} if component should be updated or {@code false} otherwise.
      */
     private boolean shouldBeUpdated(@NotNull Component component) {
-        if (component instanceof IFItem) {
-            final IFItem<?> item = (IFItem<?>) component;
+        if (component instanceof ItemComponent) {
+            final ItemComponent item = (ItemComponent) component;
 
             // items without a render or update handler are ignored because the fallback item is
             // only rendered once in the initial rendering phase

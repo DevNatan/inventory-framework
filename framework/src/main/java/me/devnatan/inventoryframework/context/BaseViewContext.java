@@ -1,7 +1,9 @@
 package me.devnatan.inventoryframework.context;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -51,6 +53,8 @@ public class BaseViewContext implements IFContext {
 
     @ToString.Exclude
     private final List<Component> components = new ArrayList<>();
+
+    private final Deque<Integer> markedForRemoval = new ArrayDeque<>();
 
     public BaseViewContext(@NotNull RootView root, @Nullable ViewContainer container) {
         this.root = root;
@@ -168,6 +172,11 @@ public class BaseViewContext implements IFContext {
     @Override
     public final void update() {
         getRoot().getPipeline().execute(StandardPipelinePhases.UPDATE, this);
+    }
+
+    @Override
+    public boolean isMarkedForRemoval(int componentIndex) {
+        return markedForRemoval.contains(componentIndex);
     }
 
     @Override

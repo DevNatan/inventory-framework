@@ -48,8 +48,6 @@ public final class BukkitItemComponentBuilder extends DefaultComponentBuilder<Bu
      * Called when the item is rendered.
      * <p>
      * This handler is called every time the item or the view that owns it is updated.
-     * <p>
-     * It is allowed to change the item that will be displayed in this handler using {@link SlotRenderContext#setItem(ItemStack)}.
      *
      * @param renderHandler The render handler.
      * @return This item builder.

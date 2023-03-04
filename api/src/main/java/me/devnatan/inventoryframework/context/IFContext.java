@@ -188,4 +188,6 @@ public interface IFContext extends VirtualView, StateHostAware {
     Pagination pagination();
 
     void update();
+
+    boolean isMarkedForRemoval(int componentIndex);
 }

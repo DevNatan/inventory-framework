@@ -1,6 +1,7 @@
 package me.devnatan.inventoryframework.pipeline;
 
 import me.devnatan.inventoryframework.component.Component;
+import me.devnatan.inventoryframework.component.ItemComponent;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.SlotClickContext;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -24,8 +25,8 @@ public final class ItemClickInterceptor implements PipelineInterceptor<IFContext
         final Component component = clickCtx.getComponent();
         if (component == null) return;
 
-        if (component instanceof IFItem<?>) {
-            final IFItem<?> item = (IFItem<?>) component;
+        if (component instanceof ItemComponent) {
+            final ItemComponent item = (ItemComponent) component;
             // inherit cancellation so we can un-cancel it
             clickCtx.setCancelled(item.isCancelOnClick());
         }

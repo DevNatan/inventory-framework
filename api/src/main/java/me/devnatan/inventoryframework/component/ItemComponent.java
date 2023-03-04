@@ -15,6 +15,10 @@ public final class ItemComponent implements Component, InteractionHandler {
     private final int position;
     private final Object stack;
 
+    // --- Options ---
+    private final boolean cancelOnClick;
+    private final boolean closeOnClick;
+
     // --- Handlers ---
     private final Consumer<? super IFSlotRenderContext> renderHandler;
     private final Consumer<? super IFSlotContext> updateHandler;

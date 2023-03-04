@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.UUID;
 import me.devnatan.inventoryframework.View;
 import me.devnatan.inventoryframework.ViewConfigBuilder;
-import me.devnatan.inventoryframework.bukkit.BukkitItem;
 import me.devnatan.inventoryframework.component.Pagination;
 import me.devnatan.inventoryframework.context.OpenContext;
 import me.devnatan.inventoryframework.context.RenderContext;
@@ -50,11 +49,11 @@ public final class ClanMemberListView extends View {
     @Override
     public void onFirstRender(RenderContext ctx) {
         final Pagination localPagination = pagination.get(ctx);
-        ctx.layoutSlot("<").onClick(localPagination::back);
-        ctx.layoutSlot(">").onClick(localPagination::advance);
+        ctx.layoutSlot("<").onClick($ -> localPagination.back());
+        ctx.layoutSlot(">").onClick($ -> localPagination.advance());
     }
 
-    private void createPaginationItem(BukkitItem item, ClanMember member) {
+    private ItemStack createPaginationItem(ClanMember member) {
         final ItemStack stack = new ItemStack(Material.PLAYER_HEAD);
         final SkullMeta meta = (SkullMeta) requireNonNull(stack.getItemMeta());
 
@@ -62,6 +61,6 @@ public final class ClanMemberListView extends View {
         meta.setOwningPlayer(Bukkit.getOfflinePlayer(member.getUUID()));
         stack.setItemMeta(meta);
 
-        item.withItem(stack);
+        return stack;
     }
 }

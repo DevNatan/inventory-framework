@@ -7,6 +7,7 @@ import me.devnatan.inventoryframework.context.OpenContext;
 import me.devnatan.inventoryframework.context.RenderContext;
 import me.devnatan.inventoryframework.state.State;
 import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 public final class WarpListView extends View {
@@ -32,7 +33,7 @@ public final class WarpListView extends View {
     @Override
     public void onFirstRender(RenderContext ctx) {
         final Pagination localPagination = pagination.get(ctx);
-        ctx.layoutSlot("<").withItem(Material.ARROW).onClick(localPagination::back);
-        ctx.layoutSlot(">").withItem(Material.ARROW).onClick(localPagination::advance);
+        ctx.layoutSlot("<").withItem(new ItemStack(Material.ARROW)).onClick($ -> localPagination.back());
+        ctx.layoutSlot(">").withItem(new ItemStack(Material.ARROW)).onClick($ -> localPagination.advance());
     }
 }
