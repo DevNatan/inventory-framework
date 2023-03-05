@@ -1,10 +1,13 @@
 package me.devnatan.inventoryframework.context;
 
+import static java.lang.String.format;
 import static me.devnatan.inventoryframework.utils.SlotConverter.convertSlot;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.AccessLevel;
@@ -18,6 +21,7 @@ import me.devnatan.inventoryframework.component.BukkitItemComponentBuilder;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.ComponentBuilder;
 import me.devnatan.inventoryframework.internal.ElementFactory;
+import me.devnatan.inventoryframework.pipeline.LayoutResolutionInterceptor;
 import me.devnatan.inventoryframework.state.StateHost;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -36,6 +40,7 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
     private final ViewConfigBuilder inheritedConfigBuilder = new ViewConfigBuilder();
 
     private final List<ComponentBuilder<?>> componentBuilders = new ArrayList<>();
+    private final Map<Character, ComponentBuilder<?>> layoutSlots = new HashMap<>();
 
     @ApiStatus.Internal
     public RenderContext(
@@ -167,7 +172,14 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
      * @return An item builder to configure the item.
      */
     public @NotNull BukkitItemComponentBuilder layoutSlot(char character) {
-        throw new UnsupportedOperationException("Layout slot is not implemented");
+        if (character == LayoutResolutionInterceptor.LAYOUT_FILLED)
+            throw new IllegalArgumentException(format(
+                    "The '%c' character cannot be used because it is only available for backwards compatibility. Please use another character.",
+                    character));
+
+        final BukkitItemComponentBuilder builder = createItemBuilder();
+        layoutSlots.put(character, builder);
+        return builder;
     }
 
     /**
@@ -178,7 +190,14 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
      * @return An item builder to configure the item.
      */
     public @NotNull BukkitItemComponentBuilder layoutSlot(char character, @Nullable ItemStack item) {
-        throw new UnsupportedOperationException("Layout slot is not implemented");
+        if (character == LayoutResolutionInterceptor.LAYOUT_FILLED)
+            throw new IllegalArgumentException(format(
+                    "The '%c' character cannot be used because it is only available for backwards compatibility. Please use another character.",
+                    character));
+
+        final BukkitItemComponentBuilder builder = createItemBuilder().withItem(item);
+        layoutSlots.put(character, builder);
+        return builder;
     }
 
     /**
@@ -218,5 +237,10 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
     @Override
     public @NotNull @UnmodifiableView List<ComponentBuilder<?>> getRegisteredComponentBuilders() {
         return Collections.unmodifiableList(componentBuilders);
+    }
+
+    @Override
+    public @NotNull @UnmodifiableView Map<Character, ComponentBuilder<?>> getLayoutSlots() {
+        return Collections.unmodifiableMap(layoutSlots);
     }
 }

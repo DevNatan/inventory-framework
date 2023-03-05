@@ -1,6 +1,7 @@
 package me.devnatan.inventoryframework.context;
 
 import java.util.List;
+import java.util.Map;
 import me.devnatan.inventoryframework.ViewConfigBuilder;
 import me.devnatan.inventoryframework.component.ComponentBuilder;
 import org.jetbrains.annotations.NotNull;
@@ -28,4 +29,8 @@ public interface IFRenderContext extends IFConfinedContext {
     @NotNull
     @UnmodifiableView
     List<ComponentBuilder<?>> getRegisteredComponentBuilders();
+
+    @NotNull
+    @UnmodifiableView
+    Map<Character, ComponentBuilder<?>> getLayoutSlots();
 }

@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 public final class LayoutResolutionInterceptor implements PipelineInterceptor<IFContext> {
 
-    private static final char LAYOUT_FILLED = 'O';
+    public static final char LAYOUT_FILLED = 'O';
 
     @Override
     public void intercept(@NotNull PipelineContext<IFContext> pipeline, IFContext context) {

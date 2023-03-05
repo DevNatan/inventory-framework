@@ -49,8 +49,8 @@ public final class ClanMemberListView extends View {
     @Override
     public void onFirstRender(RenderContext ctx) {
         final Pagination localPagination = pagination.get(ctx);
-        ctx.layoutSlot("<").onClick($ -> localPagination.back());
-        ctx.layoutSlot(">").onClick($ -> localPagination.advance());
+        ctx.layoutSlot('<').onClick($ -> localPagination.back());
+        ctx.layoutSlot('>').onClick($ -> localPagination.advance());
     }
 
     private ItemStack createPaginationItem(ClanMember member) {
