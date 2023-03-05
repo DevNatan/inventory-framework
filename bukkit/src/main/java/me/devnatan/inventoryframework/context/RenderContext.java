@@ -48,21 +48,6 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
         this.parent = parent;
     }
 
-    @Override
-    public @NotNull UUID getId() {
-        return getParent().getId();
-    }
-
-    @Override
-    public @NotNull StateHost getStateHost() {
-        return getParent().getStateHost();
-    }
-
-    @Override
-    public @NotNull ViewConfigBuilder modifyConfig() {
-        return inheritedConfigBuilder;
-    }
-
     /**
      * Adds an item to a specific slot in the context container.
      *
@@ -119,7 +104,7 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
     }
 
     /**
-     * Adds an item to the first slot of this context's container.
+     * Sets an item in the first slot of this context's container.
      *
      * @return An item builder to configure the item.
      */
@@ -128,7 +113,17 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
     }
 
     /**
-     * Adds an item to the first slot of this context's container.
+     * Sets an item in the first slot of this context's container.
+     *
+     * @param item The item that'll be set.
+     * @return An item builder to configure the item.
+     */
+    public @NotNull BukkitItemComponentBuilder firstSlot(@Nullable ItemStack item) {
+        return createItemBuilder().withSlot(getContainer().getFirstSlot()).withItem(item);
+    }
+
+    /**
+     * Sets an item in the last slot of this context's container.
      *
      * @return An item builder to configure the item.
      */
@@ -136,13 +131,53 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
         return createItemBuilder().withSlot(getContainer().getLastSlot());
     }
 
-    // TODO documentation
+    /**
+     * Sets an item in the last slot of this context's container.
+     *
+     * @param item The item that'll be set.
+     * @return An item builder to configure the item.
+     */
+    public @NotNull BukkitItemComponentBuilder lastSlot(@Nullable ItemStack item) {
+        return createItemBuilder().withSlot(getContainer().getLastSlot()).withItem(item);
+    }
+
+    /**
+     * Adds an item in the next available slot of this context's container.
+     *
+     * @return An item builder to configure the item.
+     */
     public @NotNull BukkitItemComponentBuilder availableSlot() {
         throw new UnsupportedOperationException("Available slot is not implemented");
     }
 
-    // TODO documentation
-    public @NotNull BukkitItemComponentBuilder layoutSlot(String character) {
+    /**
+     * Adds an item in the next available slot of this context's container.
+     *
+     * @param item The item that'll be added.
+     * @return An item builder to configure the item.
+     */
+    public @NotNull BukkitItemComponentBuilder availableSlot(@Nullable ItemStack item) {
+        throw new UnsupportedOperationException("Available slot is not implemented");
+    }
+
+    /**
+     * Defines the item that will represent a character provided in the context layout.
+     *
+     * @param character The layout character target.
+     * @return An item builder to configure the item.
+     */
+    public @NotNull BukkitItemComponentBuilder layoutSlot(char character) {
+        throw new UnsupportedOperationException("Layout slot is not implemented");
+    }
+
+    /**
+     * Defines the item that will represent a character provided in the context layout.
+     *
+     * @param character The layout character target.
+     * @param item      The item that'll represent the layout character.
+     * @return An item builder to configure the item.
+     */
+    public @NotNull BukkitItemComponentBuilder layoutSlot(char character, @Nullable ItemStack item) {
         throw new UnsupportedOperationException("Layout slot is not implemented");
     }
 
@@ -155,6 +190,21 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
         final BukkitItemComponentBuilder builder = new BukkitItemComponentBuilder();
         componentBuilders.add(builder);
         return builder;
+    }
+
+    @Override
+    public @NotNull UUID getId() {
+        return getParent().getId();
+    }
+
+    @Override
+    public @NotNull StateHost getStateHost() {
+        return getParent().getStateHost();
+    }
+
+    @Override
+    public @NotNull ViewConfigBuilder modifyConfig() {
+        return inheritedConfigBuilder;
     }
 
     @Override
