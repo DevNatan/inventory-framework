@@ -8,6 +8,7 @@ import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.CLO
 import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.FIRST_RENDER;
 import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.INIT;
 import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.INVALIDATION;
+import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.LAYOUT_RESOLUTION;
 import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.OPEN;
 import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.UPDATE;
 
@@ -29,15 +30,14 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.annotations.UnmodifiableView;
-import org.jetbrains.annotations.VisibleForTesting;
 
-@VisibleForTesting
+@ApiStatus.NonExtendable
 public class DefaultRootView implements RootView {
 
     private final UUID id = UUID.randomUUID();
     private ViewConfig config;
     private final Pipeline<? super VirtualView> pipeline =
-            new Pipeline<>(INIT, OPEN, FIRST_RENDER, UPDATE, CLICK, CLOSE, INVALIDATION);
+            new Pipeline<>(INIT, LAYOUT_RESOLUTION, OPEN, FIRST_RENDER, UPDATE, CLICK, CLOSE, INVALIDATION);
     private final Set<IFContext> contexts = newSetFromMap(synchronizedMap(new HashMap<>()));
 
     // --- State Management --

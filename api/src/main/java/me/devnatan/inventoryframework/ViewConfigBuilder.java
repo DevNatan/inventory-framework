@@ -7,6 +7,7 @@ import java.util.Set;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import me.devnatan.inventoryframework.exception.InvalidLayoutException;
 import me.devnatan.inventoryframework.internal.LayoutPattern;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -56,7 +57,7 @@ public final class ViewConfigBuilder {
      * If applied in view scope, it will be the default value for all contexts originated from it.
      *
      * @param title The container title.
-     * @return This config.
+     * @return This configuration builder.
      */
     public ViewConfigBuilder title(String title) {
         this.title = title;
@@ -69,7 +70,7 @@ public final class ViewConfigBuilder {
      * If applied in view scope, it will be the default value for all contexts originated from it.
      *
      * @param size The container size.
-     * @return This config.
+     * @return This configuration builder.
      */
     public ViewConfigBuilder size(int size) {
         this.size = size;
@@ -79,27 +80,27 @@ public final class ViewConfigBuilder {
     /**
      * Add a modifier to this setting.
      *
-     * @param modifier The modifier.
-     * @return This config.
+     * @param modifier The modifier that'll be added.
+     * @return This configuration builder.
      */
     public ViewConfigBuilder with(@NotNull ViewConfig.Modifier modifier) {
         this.modifiers.add(modifier);
         return this;
     }
 
+    /**
+     * Defines the layout that will be used.
+     *
+     * @param layout The layout.
+     * @return This configuration builder.
+     * @throws InvalidLayoutException If the layout does not respect the container contracts of the
+     *                                context in which it was applied (e.g. if the layout size
+     *                                differs from the container size).
+     */
     public ViewConfigBuilder layout(String... layout) {
         this.layout = layout;
         return this;
     }
-
-    // TODO move to layout to platform layer
-    //    public ViewConfigBuilder layout(char character, @NotNull Consumer<IFItem> handler) {
-    //        throw new UnsupportedOperationException();
-    //    }
-    //
-    //    public ViewConfigBuilder layout(char character, @NotNull BiConsumer<Integer, IFItem> handler) {
-    //        throw new UnsupportedOperationException();
-    //    }
 
     public ViewConfigBuilder options(ViewConfig.Option<?>... options) {
         this.options.addAll(Arrays.asList(options));

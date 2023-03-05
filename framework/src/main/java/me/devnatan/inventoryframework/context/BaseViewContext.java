@@ -27,10 +27,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 import org.jetbrains.annotations.UnmodifiableView;
-import org.jetbrains.annotations.VisibleForTesting;
 
 @ApiStatus.Internal
-@VisibleForTesting
+@ApiStatus.NonExtendable
 @ToString
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class BaseViewContext implements IFContext {

@@ -46,4 +46,9 @@ public final class StandardPipelinePhases {
      * A context is invalidated, or considered invalidated, when there are no more viewers in it.
      */
     public static final PipelinePhase INVALIDATION = new PipelinePhase("invalidation");
+
+    /**
+     * Called during layout resolution phase before {@link #FIRST_RENDER} phase.
+     */
+    public static final PipelinePhase LAYOUT_RESOLUTION = new PipelinePhase("layout-resolution");
 }
