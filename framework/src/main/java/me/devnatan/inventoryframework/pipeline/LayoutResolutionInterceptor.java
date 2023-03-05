@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import me.devnatan.inventoryframework.context.IFContext;
+import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.exception.InvalidLayoutException;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,15 +16,18 @@ public final class LayoutResolutionInterceptor implements PipelineInterceptor<IF
     public static final char LAYOUT_FILLED = 'O';
 
     @Override
-    public void intercept(@NotNull PipelineContext<IFContext> pipeline, IFContext context) {
+    public void intercept(PipelineContext<IFContext> pipeline, IFContext context) {
+        if (!(context instanceof IFRenderContext))
+            throw new IllegalArgumentException("LayoutResolutionInterceptor subject must be a render context");
+
         final String[] layout = context.getConfig().getLayout();
         if (layout == null) return;
         if (layout.length == 0) return;
 
-        resolveLayout(context, layout);
+        resolveLayout((IFRenderContext) context, layout);
     }
 
-    private void resolveLayout(IFContext context, String[] layout) {
+    private void resolveLayout(IFRenderContext context, @NotNull String[] layout) {
         final int layoutRows = layout.length;
         final int containerRows = context.getContainer().getRowsCount();
 
@@ -52,6 +56,14 @@ public final class LayoutResolutionInterceptor implements PipelineInterceptor<IF
                     slots.computeIfAbsent(character, ArrayList::new).add(slotIdx);
                     continue;
                 }
+
+                context.getLayoutSlots().stream()
+                        .filter(pattern -> pattern.getCharacter() == character)
+                        .findFirst()
+                        .ifPresent(layoutSlot -> {
+                            layoutSlot.getSlots().push(slotIdx);
+                            System.out.println("LayoutResolutionInterceptor: applied " + slotIdx + " to " + layoutSlot);
+                        });
             }
         }
     }

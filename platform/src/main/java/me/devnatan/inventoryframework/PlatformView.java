@@ -22,6 +22,7 @@ import me.devnatan.inventoryframework.pipeline.CloseInterceptor;
 import me.devnatan.inventoryframework.pipeline.FirstRenderInterceptor;
 import me.devnatan.inventoryframework.pipeline.InitInterceptor;
 import me.devnatan.inventoryframework.pipeline.LayoutResolutionInterceptor;
+import me.devnatan.inventoryframework.pipeline.LayoutSlotComponentRegistrationInterceptor;
 import me.devnatan.inventoryframework.pipeline.OpenInterceptor;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
 import me.devnatan.inventoryframework.pipeline.StandardPipelinePhases;
@@ -420,8 +421,9 @@ public abstract class PlatformView<
 
         final Pipeline<? super VirtualView> pipeline = getPipeline();
         pipeline.intercept(StandardPipelinePhases.INIT, new InitInterceptor());
-        pipeline.intercept(StandardPipelinePhases.LAYOUT_RESOLUTION, new LayoutResolutionInterceptor());
         pipeline.intercept(StandardPipelinePhases.OPEN, new OpenInterceptor());
+        pipeline.intercept(StandardPipelinePhases.FIRST_RENDER, new LayoutResolutionInterceptor());
+        pipeline.intercept(StandardPipelinePhases.FIRST_RENDER, new LayoutSlotComponentRegistrationInterceptor());
         pipeline.intercept(StandardPipelinePhases.FIRST_RENDER, new FirstRenderInterceptor());
         pipeline.intercept(StandardPipelinePhases.UPDATE, new UpdateInterceptor());
         pipeline.intercept(StandardPipelinePhases.CLOSE, new CloseInterceptor());

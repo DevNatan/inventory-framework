@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 public final class UpdateInterceptor implements PipelineInterceptor<IFContext> {
 
     @Override
-    public void intercept(@NotNull PipelineContext<IFContext> pipeline, IFContext context) {
+    public void intercept(PipelineContext<IFContext> pipeline, IFContext context) {
         final List<Component> componentList = context.getComponents();
         for (int i = 0; i < componentList.size(); i++) {
             final Component component = componentList.get(i);

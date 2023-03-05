@@ -8,7 +8,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import me.devnatan.inventoryframework.exception.InvalidLayoutException;
-import me.devnatan.inventoryframework.internal.LayoutPattern;
+import me.devnatan.inventoryframework.internal.LayoutSlot;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,7 +22,7 @@ public final class ViewConfigBuilder {
     private ViewType type = null;
     private final Set<ViewConfig.Option<?>> options = new HashSet<>();
     private String[] layout = null;
-    private final Set<LayoutPattern> patterns = new HashSet<>();
+    private final Set<LayoutSlot> patterns = new HashSet<>();
     private final Set<ViewConfig.Modifier> modifiers = new HashSet<>();
 
     /**

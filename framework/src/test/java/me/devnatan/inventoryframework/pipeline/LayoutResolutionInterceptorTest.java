@@ -17,8 +17,8 @@ public class LayoutResolutionInterceptorTest {
 
     @Test
     void invalidLayoutLengthForContainer() {
-        Pipeline<IFContext> pipeline = new Pipeline<>(StandardPipelinePhases.LAYOUT_RESOLUTION);
-        pipeline.intercept(StandardPipelinePhases.LAYOUT_RESOLUTION, new LayoutResolutionInterceptor());
+        Pipeline<IFContext> pipeline = new Pipeline<>(StandardPipelinePhases.FIRST_RENDER);
+        pipeline.intercept(StandardPipelinePhases.FIRST_RENDER, new LayoutResolutionInterceptor());
 
         ViewConfig config = mock(ViewConfig.class);
         String[] layout = new String[] {"XXXXXXX" /* rows count = 1 */};
@@ -32,8 +32,7 @@ public class LayoutResolutionInterceptorTest {
         when(context.getContainer()).thenReturn(container);
 
         Throwable throwable = assertThrows(
-                InvalidLayoutException.class,
-                () -> pipeline.execute(StandardPipelinePhases.LAYOUT_RESOLUTION, context));
+                InvalidLayoutException.class, () -> pipeline.execute(StandardPipelinePhases.FIRST_RENDER, context));
 
         assertEquals(
                 format(
@@ -44,8 +43,8 @@ public class LayoutResolutionInterceptorTest {
 
     @Test
     void invalidLayoutLengthForLayer() {
-        Pipeline<IFContext> pipeline = new Pipeline<>(StandardPipelinePhases.LAYOUT_RESOLUTION);
-        pipeline.intercept(StandardPipelinePhases.LAYOUT_RESOLUTION, new LayoutResolutionInterceptor());
+        Pipeline<IFContext> pipeline = new Pipeline<>(StandardPipelinePhases.FIRST_RENDER);
+        pipeline.intercept(StandardPipelinePhases.FIRST_RENDER, new LayoutResolutionInterceptor());
 
         ViewConfig config = mock(ViewConfig.class);
 
@@ -61,8 +60,7 @@ public class LayoutResolutionInterceptorTest {
         when(context.getContainer()).thenReturn(container);
 
         Throwable throwable = assertThrows(
-                InvalidLayoutException.class,
-                () -> pipeline.execute(StandardPipelinePhases.LAYOUT_RESOLUTION, context));
+                InvalidLayoutException.class, () -> pipeline.execute(StandardPipelinePhases.FIRST_RENDER, context));
 
         assertEquals(
                 format(

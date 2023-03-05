@@ -5,11 +5,9 @@ import static me.devnatan.inventoryframework.utils.SlotConverter.convertSlot;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
+import java.util.function.BiConsumer;
 import lombok.AccessLevel;
 import lombok.Getter;
 import me.devnatan.inventoryframework.RootView;
@@ -18,9 +16,8 @@ import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.bukkit.BukkitViewer;
 import me.devnatan.inventoryframework.component.BukkitItemComponentBuilder;
-import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.ComponentBuilder;
-import me.devnatan.inventoryframework.internal.ElementFactory;
+import me.devnatan.inventoryframework.internal.LayoutSlot;
 import me.devnatan.inventoryframework.pipeline.LayoutResolutionInterceptor;
 import me.devnatan.inventoryframework.state.StateHost;
 import org.bukkit.entity.Player;
@@ -40,7 +37,7 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
     private final ViewConfigBuilder inheritedConfigBuilder = new ViewConfigBuilder();
 
     private final List<ComponentBuilder<?>> componentBuilders = new ArrayList<>();
-    private final Map<Character, ComponentBuilder<?>> layoutSlots = new HashMap<>();
+    private final List<LayoutSlot> layoutSlots = new ArrayList<>();
 
     @ApiStatus.Internal
     public RenderContext(
@@ -60,7 +57,7 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
      * @return An item builder to configure the item.
      */
     public @NotNull BukkitItemComponentBuilder slot(int slot) {
-        return createItemBuilder().withSlot(slot);
+        return createRegisteredComponentBuilder().withSlot(slot);
     }
 
     /**
@@ -70,7 +67,7 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
      * @return An item builder to configure the item.
      */
     public @NotNull BukkitItemComponentBuilder slot(int slot, @Nullable ItemStack item) {
-        return createItemBuilder().withSlot(slot).withItem(item);
+        return createRegisteredComponentBuilder().withSlot(slot).withItem(item);
     }
 
     /**
@@ -82,7 +79,7 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
      */
     @NotNull
     public BukkitItemComponentBuilder slot(int row, int column) {
-        return createItemBuilder()
+        return createRegisteredComponentBuilder()
                 .withSlot(convertSlot(
                         row,
                         column,
@@ -99,7 +96,7 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
      */
     @NotNull
     public BukkitItemComponentBuilder slot(int row, int column, @Nullable ItemStack item) {
-        return createItemBuilder()
+        return createRegisteredComponentBuilder()
                 .withSlot(convertSlot(
                         row,
                         column,
@@ -114,7 +111,7 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
      * @return An item builder to configure the item.
      */
     public @NotNull BukkitItemComponentBuilder firstSlot() {
-        return createItemBuilder().withSlot(getContainer().getFirstSlot());
+        return createRegisteredComponentBuilder().withSlot(getContainer().getFirstSlot());
     }
 
     /**
@@ -124,7 +121,9 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
      * @return An item builder to configure the item.
      */
     public @NotNull BukkitItemComponentBuilder firstSlot(@Nullable ItemStack item) {
-        return createItemBuilder().withSlot(getContainer().getFirstSlot()).withItem(item);
+        return createRegisteredComponentBuilder()
+                .withSlot(getContainer().getFirstSlot())
+                .withItem(item);
     }
 
     /**
@@ -133,7 +132,7 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
      * @return An item builder to configure the item.
      */
     public @NotNull BukkitItemComponentBuilder lastSlot() {
-        return createItemBuilder().withSlot(getContainer().getLastSlot());
+        return createRegisteredComponentBuilder().withSlot(getContainer().getLastSlot());
     }
 
     /**
@@ -143,7 +142,9 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
      * @return An item builder to configure the item.
      */
     public @NotNull BukkitItemComponentBuilder lastSlot(@Nullable ItemStack item) {
-        return createItemBuilder().withSlot(getContainer().getLastSlot()).withItem(item);
+        return createRegisteredComponentBuilder()
+                .withSlot(getContainer().getLastSlot())
+                .withItem(item);
     }
 
     /**
@@ -177,8 +178,8 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
                     "The '%c' character cannot be used because it is only available for backwards compatibility. Please use another character.",
                     character));
 
-        final BukkitItemComponentBuilder builder = createItemBuilder();
-        layoutSlots.put(character, builder);
+        final BukkitItemComponentBuilder builder = new BukkitItemComponentBuilder();
+        layoutSlots.add(new LayoutSlot(character, $ -> builder));
         return builder;
     }
 
@@ -195,9 +196,27 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
                     "The '%c' character cannot be used because it is only available for backwards compatibility. Please use another character.",
                     character));
 
-        final BukkitItemComponentBuilder builder = createItemBuilder().withItem(item);
-        layoutSlots.put(character, builder);
+        final BukkitItemComponentBuilder builder = new BukkitItemComponentBuilder().withItem(item);
+        layoutSlots.add(new LayoutSlot(character, $ -> builder));
         return builder;
+    }
+
+    /**
+     * Defines the item that will represent a character provided in the context layout.
+     *
+     * @param character The layout character target.
+     */
+    public void layoutSlot(char character, @NotNull BiConsumer<Integer, BukkitItemComponentBuilder> factory) {
+        if (character == LayoutResolutionInterceptor.LAYOUT_FILLED)
+            throw new IllegalArgumentException(format(
+                    "The '%c' character cannot be used because it is only available for backwards compatibility. Please use another character.",
+                    character));
+
+        layoutSlots.add(new LayoutSlot(character, index -> {
+            final BukkitItemComponentBuilder builder = new BukkitItemComponentBuilder();
+            factory.accept(index, builder);
+            return builder;
+        }));
     }
 
     /**
@@ -205,7 +224,7 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
      *
      * @return A new registered BukkitItemBuilder instance.
      */
-    private BukkitItemComponentBuilder createItemBuilder() {
+    private BukkitItemComponentBuilder createRegisteredComponentBuilder() {
         final BukkitItemComponentBuilder builder = new BukkitItemComponentBuilder();
         componentBuilders.add(builder);
         return builder;
@@ -227,20 +246,12 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
     }
 
     @Override
-    public @UnmodifiableView @NotNull List<Component> getComponents() {
-        final ElementFactory elementFactory = getRoot().getElementFactory();
-        return getComponentBuilders().stream()
-                .map(elementFactory::buildComponent)
-                .collect(Collectors.toList());
-    }
-
-    @Override
     public @NotNull @UnmodifiableView List<ComponentBuilder<?>> getRegisteredComponentBuilders() {
         return Collections.unmodifiableList(componentBuilders);
     }
 
     @Override
-    public @NotNull @UnmodifiableView Map<Character, ComponentBuilder<?>> getLayoutSlots() {
-        return Collections.unmodifiableMap(layoutSlots);
+    public @NotNull @UnmodifiableView List<LayoutSlot> getLayoutSlots() {
+        return Collections.unmodifiableList(layoutSlots);
     }
 }

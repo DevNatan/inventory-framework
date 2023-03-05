@@ -4,10 +4,10 @@ import java.util.Stack;
 import java.util.function.Function;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import me.devnatan.inventoryframework.component.ItemComponentBuilder;
+import me.devnatan.inventoryframework.component.ComponentBuilder;
 
 @Data
-public final class LayoutPattern {
+public final class LayoutSlot {
 
     private final char character;
 
@@ -21,5 +21,5 @@ public final class LayoutPattern {
      * The first parameter is the current iteration index.
      */
     @EqualsAndHashCode.Exclude
-    private final Function<Integer, ItemComponentBuilder<?>> factory;
+    private final Function<Integer, ComponentBuilder<?>> factory;
 }
