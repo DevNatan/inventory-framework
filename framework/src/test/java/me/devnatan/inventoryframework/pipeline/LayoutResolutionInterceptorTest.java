@@ -6,13 +6,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.context.IFConfinedContext;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.exception.InvalidLayoutException;
-import me.devnatan.inventoryframework.internal.MockElementFactory;
 import org.junit.jupiter.api.Test;
 
 public class LayoutResolutionInterceptorTest {
@@ -22,20 +20,15 @@ public class LayoutResolutionInterceptorTest {
         Pipeline<IFContext> pipeline = new Pipeline<>(StandardPipelinePhases.LAYOUT_RESOLUTION);
         pipeline.intercept(StandardPipelinePhases.LAYOUT_RESOLUTION, new LayoutResolutionInterceptor());
 
-        RootView root = mock(RootView.class);
         ViewConfig config = mock(ViewConfig.class);
-
-        String[] layout = new String[] {"XXXXXXX"};
+        String[] layout = new String[] {"XXXXXXX" /* rows count = 1 */};
         when(config.getLayout()).thenReturn(layout);
-        when(root.getConfig()).thenReturn(config);
-        when(root.getElementFactory()).thenReturn(new MockElementFactory());
 
         IFConfinedContext context = mock(IFConfinedContext.class);
         when(context.getConfig()).thenReturn(config);
-        when(context.getRoot()).thenReturn(root);
 
         ViewContainer container = mock(ViewContainer.class);
-        when(container.getRowsCount()).thenReturn(layout.length + 1);
+        when(container.getRowsCount()).thenReturn(layout.length + 1 /* rows count = 2 */);
         when(context.getContainer()).thenReturn(container);
 
         Throwable throwable = assertThrows(
@@ -54,21 +47,17 @@ public class LayoutResolutionInterceptorTest {
         Pipeline<IFContext> pipeline = new Pipeline<>(StandardPipelinePhases.LAYOUT_RESOLUTION);
         pipeline.intercept(StandardPipelinePhases.LAYOUT_RESOLUTION, new LayoutResolutionInterceptor());
 
-        RootView root = mock(RootView.class);
         ViewConfig config = mock(ViewConfig.class);
 
-        String[] layout = new String[] {"XXX"};
+        String[] layout = new String[] {"XXX" /* columns count = 3 */};
         when(config.getLayout()).thenReturn(layout);
-        when(root.getConfig()).thenReturn(config);
-        when(root.getElementFactory()).thenReturn(new MockElementFactory());
 
         IFConfinedContext context = mock(IFConfinedContext.class);
         when(context.getConfig()).thenReturn(config);
-        when(context.getRoot()).thenReturn(root);
 
         ViewContainer container = mock(ViewContainer.class);
         when(container.getRowsCount()).thenReturn(layout.length);
-        when(container.getColumnsCount()).thenReturn(9);
+        when(container.getColumnsCount()).thenReturn(9 /* columns count = 9 */);
         when(context.getContainer()).thenReturn(container);
 
         Throwable throwable = assertThrows(
