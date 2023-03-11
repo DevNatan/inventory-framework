@@ -7,7 +7,6 @@ import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.context.IFSlotRenderContext;
 import me.devnatan.inventoryframework.internal.ElementFactory;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Intercepts the rendering phase of a context and renders all components on it.
@@ -15,8 +14,10 @@ import org.jetbrains.annotations.NotNull;
 public final class FirstRenderInterceptor implements PipelineInterceptor<IFContext> {
 
     @Override
-    public void intercept(@NotNull PipelineContext<IFContext> pipeline, IFContext context) {
-        if (context instanceof IFRenderContext) registerComponents((IFRenderContext) context);
+    public void intercept(PipelineContext<IFContext> pipeline, IFContext context) {
+        if (!(context instanceof IFRenderContext)) return;
+
+        registerComponents((IFRenderContext) context);
 
         final Viewer viewer = ((IFConfinedContext) context).getViewer();
         final ElementFactory elementFactory = context.getRoot().getElementFactory();

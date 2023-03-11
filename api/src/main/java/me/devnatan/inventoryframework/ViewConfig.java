@@ -7,11 +7,15 @@ import java.util.Objects;
 import java.util.Set;
 import lombok.Data;
 import lombok.experimental.Accessors;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.VisibleForTesting;
 
 @Data
-public final class ViewConfig {
+@VisibleForTesting
+@ApiStatus.NonExtendable
+public class ViewConfig {
 
     public static final ViewConfig.Option<Boolean> CancelOnClick = createOption("cancel-on-click", true);
 

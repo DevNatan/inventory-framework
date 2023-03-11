@@ -10,8 +10,8 @@ import java.util.Collections;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.component.FakeComponent;
-import me.devnatan.inventoryframework.context.IFConfinedContext;
 import me.devnatan.inventoryframework.context.IFContext;
+import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.internal.MockElementFactory;
 import org.junit.jupiter.api.Test;
 
@@ -26,7 +26,7 @@ public class FirstRenderInterceptorTest {
         RootView root = mock(RootView.class);
         when(root.getElementFactory()).thenReturn(new MockElementFactory());
 
-        IFConfinedContext context = mock(IFConfinedContext.class);
+        IFRenderContext context = mock(IFRenderContext.class);
         when(context.getRoot()).thenReturn(root);
 
         ViewContainer container = mock(ViewContainer.class);

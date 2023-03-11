@@ -29,9 +29,8 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.annotations.UnmodifiableView;
-import org.jetbrains.annotations.VisibleForTesting;
 
-@VisibleForTesting
+@ApiStatus.NonExtendable
 public class DefaultRootView implements RootView {
 
     private final UUID id = UUID.randomUUID();

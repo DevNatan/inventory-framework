@@ -9,18 +9,16 @@ import java.util.List;
 import java.util.Map;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.TestOnly;
 
 /**
  * The pipeline is a structure containing a sequence of functions (blocks/lambdas) that are called
  * one after another, distributed in phases topologically ordered, with the ability to mutate the
  * sequence and to call the remaining functions in the pipeline and then return to current block.
- *
- * <p>All the functions are blocking, thus the whole pipeline is synchronous. Since pipelines
- * contain blocks of code, they can be nested, effectively creating sub-pipelines.
- *
- * <p>Pipelines are used in IF as an extension mechanism to plug functionality in at the right
- * place.
+ * <p>
+ * All the functions are blocking, thus the whole pipeline is synchronous. Since pipelines contain
+ * blocks of code, they can be nested, effectively creating sub-pipelines.
+ * <p>
+ * Pipelines are used in IF as an extension mechanism to plug functionality in at the right place.
  *
  * @see PipelinePhase
  */
@@ -33,7 +31,7 @@ public final class Pipeline<S> {
         _phases = new LinkedList<>(Arrays.asList(phases));
     }
 
-    private PipelinePhase findPhase(final @NotNull PipelinePhase phase) {
+    private PipelinePhase findPhase(@NotNull PipelinePhase phase) {
         final List<PipelinePhase> phasesList = _phases;
 
         for (int i = 0; i < phasesList.size(); i++) {
@@ -47,7 +45,7 @@ public final class Pipeline<S> {
         return null;
     }
 
-    private int findIndexOrThrow(final @NotNull PipelinePhase phase) {
+    private int findIndexOrThrow(@NotNull PipelinePhase phase) {
         final List<PipelinePhase> phasesList = new ArrayList<>(_phases);
         for (int i = 0; i < phasesList.size(); i++) {
             final PipelinePhase curr = phasesList.get(i);
@@ -57,7 +55,7 @@ public final class Pipeline<S> {
         throw new IllegalArgumentException(String.format("Phase %s was not registered for this pipeline", phase));
     }
 
-    public boolean hasPhase(final @NotNull PipelinePhase phase) {
+    public boolean hasPhase(@NotNull PipelinePhase phase) {
         final List<PipelinePhase> phasesList = new ArrayList<>(_phases);
         for (final PipelinePhase curr : phasesList) {
             if (curr.equals(phase)) return true;
@@ -66,20 +64,20 @@ public final class Pipeline<S> {
         return false;
     }
 
-    public void addPhase(final @NotNull PipelinePhase phase) {
+    public void addPhase(@NotNull PipelinePhase phase) {
         if (hasPhase(phase)) return;
 
         _phases.add(phase);
     }
 
-    public void insertPhaseBefore(final @NotNull PipelinePhase reference, final @NotNull PipelinePhase phase) {
+    public void insertPhaseBefore(@NotNull PipelinePhase reference, @NotNull PipelinePhase phase) {
         if (hasPhase(phase)) return;
 
         final int refIdx = findIndexOrThrow(reference);
         _phases.add(refIdx, phase);
     }
 
-    public void insertPhaseAfter(final @NotNull PipelinePhase reference, final @NotNull PipelinePhase phase) {
+    public void insertPhaseAfter(@NotNull PipelinePhase reference, @NotNull PipelinePhase phase) {
         if (hasPhase(phase)) return;
 
         final int refIdx = findIndexOrThrow(reference);
@@ -87,8 +85,7 @@ public final class Pipeline<S> {
     }
 
     @SuppressWarnings("unchecked")
-    public void intercept(
-            final @NotNull PipelinePhase phase, final @NotNull PipelineInterceptor<? extends S> interceptor) {
+    public void intercept(final @NotNull PipelinePhase phase, @NotNull PipelineInterceptor<? extends S> interceptor) {
         final PipelinePhase pipelinePhase = findPhase(phase);
         if (pipelinePhase == null)
             throw new IllegalArgumentException(String.format("Phase %s was not registered for this pipeline", phase));
@@ -96,8 +93,7 @@ public final class Pipeline<S> {
         interceptors.computeIfAbsent(phase, $ -> new ArrayList<>()).add((PipelineInterceptor<S>) interceptor);
     }
 
-    @TestOnly
-    void execute(@Nullable final S subject) {
+    public void execute(@Nullable S subject) {
         final List<PipelineInterceptor<S>> pipelineInterceptors = new LinkedList<>();
         for (final PipelinePhase phase : _phases) {
             final List<PipelineInterceptor<S>> interceptors = this.interceptors.get(phase);
@@ -110,7 +106,7 @@ public final class Pipeline<S> {
         context.execute(subject);
     }
 
-    public void execute(@NotNull final PipelinePhase phase, @Nullable final S subject) {
+    public void execute(@NotNull PipelinePhase phase, @Nullable S subject) {
         final PipelineContext<S> context =
                 new PipelineContext<>(phase, interceptors.getOrDefault(phase, Collections.emptyList()));
         context.execute(subject);

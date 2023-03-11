@@ -5,6 +5,7 @@ import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.ItemComponent;
 import me.devnatan.inventoryframework.context.IFConfinedContext;
 import me.devnatan.inventoryframework.context.IFContext;
+import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.context.IFSlotRenderContext;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,7 +15,9 @@ import org.jetbrains.annotations.NotNull;
 public final class UpdateInterceptor implements PipelineInterceptor<IFContext> {
 
     @Override
-    public void intercept(@NotNull PipelineContext<IFContext> pipeline, IFContext context) {
+    public void intercept(PipelineContext<IFContext> pipeline, IFContext context) {
+        if (!(context instanceof IFRenderContext)) return;
+
         final List<Component> componentList = context.getComponents();
         for (int i = 0; i < componentList.size(); i++) {
             final Component component = componentList.get(i);

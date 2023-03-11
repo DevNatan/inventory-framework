@@ -21,6 +21,7 @@ import me.devnatan.inventoryframework.internal.PlatformUtils;
 import me.devnatan.inventoryframework.pipeline.CloseInterceptor;
 import me.devnatan.inventoryframework.pipeline.FirstRenderInterceptor;
 import me.devnatan.inventoryframework.pipeline.InitInterceptor;
+import me.devnatan.inventoryframework.pipeline.LayoutInterceptor;
 import me.devnatan.inventoryframework.pipeline.OpenInterceptor;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
 import me.devnatan.inventoryframework.pipeline.StandardPipelinePhases;
@@ -332,10 +333,10 @@ public abstract class PlatformView<
      * <p>It is not possible to manipulate the inventory in this handler, if it happens an exception
      * will be thrown.
      *
-     * @param ctx The player view context.
+     * @param open The player view context.
      */
     @ApiStatus.OverrideOnly
-    public void onOpen(TOpenContext ctx) {}
+    public void onOpen(TOpenContext open) {}
 
     /**
      * Called only once before the container is displayed to a player.
@@ -345,30 +346,30 @@ public abstract class PlatformView<
      * This function should only be used to render items, any external call is completely forbidden
      * as the function runs on the main thread.
      *
-     * @param ctx The renderization context.
+     * @param render The renderization context.
      */
     @ApiStatus.OverrideOnly
-    public void onFirstRender(TRenderContext ctx) {}
+    public void onFirstRender(TRenderContext render) {}
 
     /**
      * Called when the view is updated for a player.
      *
      * <p>This is a rendering function and can modify the view's inventory.
      *
-     * @param ctx The player view context.
+     * @param update The player view context.
      */
     @ApiStatus.OverrideOnly
-    public void onUpdate(TContext ctx) {}
+    public void onUpdate(TContext update) {}
 
     /**
      * Called when the player closes the view's inventory.
      *
      * <p>It is possible to cancel this event and have the view's inventory open again for the player.
      *
-     * @param ctx The player view context.
+     * @param close The player view context.
      */
     @ApiStatus.OverrideOnly
-    public void onClose(TCloseContext ctx) {}
+    public void onClose(TCloseContext close) {}
 
     /**
      * Called when an actor clicks on a container while it has a view open.
@@ -381,10 +382,10 @@ public abstract class PlatformView<
      * This context is cancelable and canceling this context will cancel the click, thus canceling
      * all subsequent interceptors causing the pipeline to terminate immediately.
      *
-     * @param ctx The click context.
+     * @param click The click context.
      */
     @ApiStatus.OverrideOnly
-    public void onClick(TSlotClickContext ctx) {}
+    public void onClick(TSlotClickContext click) {}
 
     /**
      * Initialization state of this view.
@@ -420,6 +421,7 @@ public abstract class PlatformView<
         final Pipeline<? super VirtualView> pipeline = getPipeline();
         pipeline.intercept(StandardPipelinePhases.INIT, new InitInterceptor());
         pipeline.intercept(StandardPipelinePhases.OPEN, new OpenInterceptor());
+        pipeline.intercept(StandardPipelinePhases.FIRST_RENDER, new LayoutInterceptor());
         pipeline.intercept(StandardPipelinePhases.FIRST_RENDER, new FirstRenderInterceptor());
         pipeline.intercept(StandardPipelinePhases.UPDATE, new UpdateInterceptor());
         pipeline.intercept(StandardPipelinePhases.CLOSE, new CloseInterceptor());

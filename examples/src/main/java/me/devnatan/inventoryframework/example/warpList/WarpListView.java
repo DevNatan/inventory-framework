@@ -33,7 +33,7 @@ public final class WarpListView extends View {
     @Override
     public void onFirstRender(RenderContext ctx) {
         final Pagination localPagination = pagination.get(ctx);
-        ctx.layoutSlot("<").withItem(new ItemStack(Material.ARROW)).onClick($ -> localPagination.back());
-        ctx.layoutSlot(">").withItem(new ItemStack(Material.ARROW)).onClick($ -> localPagination.advance());
+        ctx.layoutSlot('<', new ItemStack(Material.ARROW)).onClick($ -> localPagination.back());
+        ctx.layoutSlot('>', new ItemStack(Material.ARROW)).onClick($ -> localPagination.advance());
     }
 }

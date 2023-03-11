@@ -3,7 +3,7 @@ package me.devnatan.inventoryframework;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import me.devnatan.inventoryframework.context.IFConfinedContext;
+import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.internal.MockElementFactory;
 
 public class TestUtils {
@@ -14,8 +14,8 @@ public class TestUtils {
         return root;
     }
 
-    public static IFConfinedContext createContextMock(RootView root) {
-        IFConfinedContext context = mock(IFConfinedContext.class);
+    public static <T extends IFContext> T createContextMock(RootView root, Class<T> type) {
+        T context = mock(type);
         when(context.getRoot()).thenReturn(root);
         return context;
     }
