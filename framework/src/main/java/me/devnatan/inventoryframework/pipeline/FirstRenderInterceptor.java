@@ -15,7 +15,9 @@ public final class FirstRenderInterceptor implements PipelineInterceptor<IFConte
 
     @Override
     public void intercept(PipelineContext<IFContext> pipeline, IFContext context) {
-        if (context instanceof IFRenderContext) registerComponents((IFRenderContext) context);
+        if (!(context instanceof IFRenderContext)) return;
+
+        registerComponents((IFRenderContext) context);
 
         final Viewer viewer = ((IFConfinedContext) context).getViewer();
         final ElementFactory elementFactory = context.getRoot().getElementFactory();
@@ -28,7 +30,6 @@ public final class FirstRenderInterceptor implements PipelineInterceptor<IFConte
                     viewer,
                     context,
                     IFSlotRenderContext.class);
-            System.out.println("Rendering component " + component);
             component.render(slotRenderContext);
         }
     }

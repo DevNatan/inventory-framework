@@ -18,7 +18,7 @@ import me.devnatan.inventoryframework.bukkit.BukkitViewer;
 import me.devnatan.inventoryframework.component.BukkitItemComponentBuilder;
 import me.devnatan.inventoryframework.component.ComponentBuilder;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
-import me.devnatan.inventoryframework.pipeline.LayoutResolutionInterceptor;
+import me.devnatan.inventoryframework.pipeline.LayoutInterceptor;
 import me.devnatan.inventoryframework.state.StateHost;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -173,7 +173,7 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
      * @return An item builder to configure the item.
      */
     public @NotNull BukkitItemComponentBuilder layoutSlot(char character) {
-        if (character == LayoutResolutionInterceptor.LAYOUT_FILLED)
+        if (character == LayoutInterceptor.LAYOUT_FILLED)
             throw new IllegalArgumentException(format(
                     "The '%c' character cannot be used because it is only available for backwards compatibility. Please use another character.",
                     character));
@@ -191,7 +191,7 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
      * @return An item builder to configure the item.
      */
     public @NotNull BukkitItemComponentBuilder layoutSlot(char character, @Nullable ItemStack item) {
-        if (character == LayoutResolutionInterceptor.LAYOUT_FILLED)
+        if (character == LayoutInterceptor.LAYOUT_FILLED)
             throw new IllegalArgumentException(format(
                     "The '%c' character cannot be used because it is only available for backwards compatibility. Please use another character.",
                     character));
@@ -207,7 +207,7 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
      * @param character The layout character target.
      */
     public void layoutSlot(char character, @NotNull BiConsumer<Integer, BukkitItemComponentBuilder> factory) {
-        if (character == LayoutResolutionInterceptor.LAYOUT_FILLED)
+        if (character == LayoutInterceptor.LAYOUT_FILLED)
             throw new IllegalArgumentException(format(
                     "The '%c' character cannot be used because it is only available for backwards compatibility. Please use another character.",
                     character));

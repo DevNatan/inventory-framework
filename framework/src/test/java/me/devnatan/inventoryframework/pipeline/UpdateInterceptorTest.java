@@ -17,6 +17,7 @@ import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.ItemComponent;
 import me.devnatan.inventoryframework.context.IFContext;
+import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.context.IFSlotRenderContext;
 import me.devnatan.inventoryframework.internal.ElementFactory;
 import org.junit.jupiter.api.Test;
@@ -29,7 +30,7 @@ public class UpdateInterceptorTest {
         pipeline.intercept(StandardPipelinePhases.UPDATE, new UpdateInterceptor());
 
         RootView root = createRootMock();
-        IFContext context = createContextMock(root);
+        IFContext context = createContextMock(root, IFRenderContext.class);
         ViewContainer container = mock(ViewContainer.class);
         when(context.getContainer()).thenReturn(container);
 
@@ -51,7 +52,7 @@ public class UpdateInterceptorTest {
         pipeline.intercept(StandardPipelinePhases.UPDATE, new UpdateInterceptor());
 
         RootView root = createRootMock();
-        IFContext context = createContextMock(root);
+        IFContext context = createContextMock(root, IFRenderContext.class);
         ViewContainer container = mock(ViewContainer.class);
         when(context.getContainer()).thenReturn(container);
 
@@ -76,7 +77,7 @@ public class UpdateInterceptorTest {
         pipeline.intercept(StandardPipelinePhases.UPDATE, new UpdateInterceptor());
 
         RootView root = createRootMock();
-        IFContext context = createContextMock(root);
+        IFContext context = createContextMock(root, IFRenderContext.class);
         ViewContainer container = mock(ViewContainer.class);
         when(context.getContainer()).thenReturn(container);
 
@@ -107,7 +108,7 @@ public class UpdateInterceptorTest {
                 .thenReturn(cancelledContext);
         when(root.getElementFactory()).thenReturn(elementFactory);
 
-        IFContext context = createContextMock(root);
+        IFContext context = createContextMock(root, IFRenderContext.class);
         ViewContainer container = mock(ViewContainer.class);
         when(context.getContainer()).thenReturn(container);
 

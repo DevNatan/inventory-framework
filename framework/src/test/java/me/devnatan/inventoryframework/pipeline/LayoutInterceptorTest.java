@@ -8,23 +8,23 @@ import static org.mockito.Mockito.when;
 
 import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewContainer;
-import me.devnatan.inventoryframework.context.IFConfinedContext;
 import me.devnatan.inventoryframework.context.IFContext;
+import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.exception.InvalidLayoutException;
 import org.junit.jupiter.api.Test;
 
-public class LayoutResolutionInterceptorTest {
+public class LayoutInterceptorTest {
 
     @Test
     void invalidLayoutLengthForContainer() {
         Pipeline<IFContext> pipeline = new Pipeline<>(StandardPipelinePhases.FIRST_RENDER);
-        pipeline.intercept(StandardPipelinePhases.FIRST_RENDER, new LayoutResolutionInterceptor());
+        pipeline.intercept(StandardPipelinePhases.FIRST_RENDER, new LayoutInterceptor());
 
         ViewConfig config = mock(ViewConfig.class);
         String[] layout = new String[] {"XXXXXXX" /* rows count = 1 */};
         when(config.getLayout()).thenReturn(layout);
 
-        IFConfinedContext context = mock(IFConfinedContext.class);
+        IFRenderContext context = mock(IFRenderContext.class);
         when(context.getConfig()).thenReturn(config);
 
         ViewContainer container = mock(ViewContainer.class);
@@ -44,14 +44,14 @@ public class LayoutResolutionInterceptorTest {
     @Test
     void invalidLayoutLengthForLayer() {
         Pipeline<IFContext> pipeline = new Pipeline<>(StandardPipelinePhases.FIRST_RENDER);
-        pipeline.intercept(StandardPipelinePhases.FIRST_RENDER, new LayoutResolutionInterceptor());
+        pipeline.intercept(StandardPipelinePhases.FIRST_RENDER, new LayoutInterceptor());
 
         ViewConfig config = mock(ViewConfig.class);
 
         String[] layout = new String[] {"XXX" /* columns count = 3 */};
         when(config.getLayout()).thenReturn(layout);
 
-        IFConfinedContext context = mock(IFConfinedContext.class);
+        IFRenderContext context = mock(IFRenderContext.class);
         when(context.getConfig()).thenReturn(config);
 
         ViewContainer container = mock(ViewContainer.class);
