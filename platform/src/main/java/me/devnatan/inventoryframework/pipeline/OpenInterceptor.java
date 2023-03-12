@@ -2,6 +2,7 @@ package me.devnatan.inventoryframework.pipeline;
 
 import me.devnatan.inventoryframework.PlatformView;
 import me.devnatan.inventoryframework.RootView;
+import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.context.IFContext;
@@ -47,11 +48,12 @@ public final class OpenInterceptor implements PipelineInterceptor<IFContext> {
 
         final RootView root = openContext.getRoot();
         final ElementFactory elementFactory = root.getElementFactory();
+        final ViewConfig contextConfig = openContext.getConfig();
         final ViewContainer container = elementFactory.createContainer(
                 openContext,
-                openContext.getType().normalize(openContext.getSize()),
-                openContext.getTitle(),
-                openContext.getType());
+                contextConfig.getType().normalize(contextConfig.getSize()),
+                contextConfig.getTitle(),
+                contextConfig.getType());
 
         final Viewer viewer = openContext.getViewer();
         final IFRenderContext renderCtx =
