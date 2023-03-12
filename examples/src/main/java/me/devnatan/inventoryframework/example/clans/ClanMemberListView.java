@@ -40,17 +40,17 @@ public final class ClanMemberListView extends View {
     }
 
     @Override
-    public void onOpen(OpenContext ctx) {
-        final Clan clan = clanState.get(ctx);
-        final List<ClanMember> memberList = membersListState.get(ctx);
-        ctx.setTitle(String.format("[%s] Members (%d)", clan.getTag(), memberList.size()));
+    public void onOpen(OpenContext open) {
+        final Clan clan = clanState.get(open);
+        final List<ClanMember> memberList = membersListState.get(open);
+        open.modifyConfig().title(String.format("[%s] Members (%d)", clan.getTag(), memberList.size()));
     }
 
     @Override
-    public void onFirstRender(RenderContext ctx) {
-        final Pagination localPagination = pagination.get(ctx);
-        ctx.layoutSlot('<').onClick($ -> localPagination.back());
-        ctx.layoutSlot('>').onClick($ -> localPagination.advance());
+    public void onFirstRender(RenderContext render) {
+        final Pagination localPagination = pagination.get(render);
+        render.layoutSlot('<').onClick($ -> localPagination.back());
+        render.layoutSlot('>').onClick($ -> localPagination.advance());
     }
 
     private ItemStack createPaginationItem(ClanMember member) {

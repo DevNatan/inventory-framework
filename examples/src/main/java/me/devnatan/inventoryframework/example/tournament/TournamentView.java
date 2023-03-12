@@ -26,15 +26,15 @@ public final class TournamentView extends View {
     }
 
     @Override
-    public void onOpen(OpenContext ctx) {
-        ctx.setTitle(createTitle(ctx));
+    public void onOpen(OpenContext open) {
+        open.modifyConfig().title(createTitle(open));
     }
 
     @Override
-    public void onClose(CloseContext ctx) {
-        final Tournament tournament = tournamentState.get(ctx);
+    public void onClose(CloseContext close) {
+        final Tournament tournament = tournamentState.get(close);
         final TournamentParticipant participant =
-                tournament.getParticipant(ctx.getPlayer().getUniqueId());
+                tournament.getParticipant(close.getPlayer().getUniqueId());
         tournamentsManager.leaveTournament(tournament.getId(), participant.getId());
 
         for (final IFContext other : getContexts()) other.updateTitle(createTitle(other));
