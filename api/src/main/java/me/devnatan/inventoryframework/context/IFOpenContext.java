@@ -1,6 +1,7 @@
 package me.devnatan.inventoryframework.context;
 
 import java.util.concurrent.CompletableFuture;
+import me.devnatan.inventoryframework.ViewConfigBuilder;
 import me.devnatan.inventoryframework.ViewType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -64,4 +65,19 @@ public interface IFOpenContext extends IFConfinedContext {
      * @param cancelled If <code>true</code>, the container will not open for the player.
      */
     void setCancelled(boolean cancelled);
+
+    /**
+     * This allows access the current configuration with the possibility to change it only for that
+     * context.
+     * <p>
+     * By default, all contexts inherit their root configuration, context configuration always takes
+     * precedence over root.
+     * <p>
+     * Options that change the nature of the container are not allowed to be modifier as the
+     * container has already been created at that point.
+     *
+     * @return The current context configuration.
+     */
+    @NotNull
+    ViewConfigBuilder modifyConfig();
 }

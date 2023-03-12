@@ -8,10 +8,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.BiConsumer;
-import lombok.AccessLevel;
 import lombok.Getter;
 import me.devnatan.inventoryframework.RootView;
-import me.devnatan.inventoryframework.ViewConfigBuilder;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.bukkit.BukkitViewer;
@@ -32,9 +30,6 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
 
     private final @NotNull IFContext parent;
     private final @NotNull Player player;
-
-    @Getter(AccessLevel.PRIVATE)
-    private final ViewConfigBuilder inheritedConfigBuilder = new ViewConfigBuilder();
 
     private final List<ComponentBuilder<?>> componentBuilders = new ArrayList<>();
     private final List<LayoutSlot> layoutSlots = new ArrayList<>();
@@ -173,10 +168,7 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
      * @return An item builder to configure the item.
      */
     public @NotNull BukkitItemComponentBuilder layoutSlot(char character) {
-        if (character == LayoutInterceptor.LAYOUT_FILLED)
-            throw new IllegalArgumentException(format(
-                    "The '%c' character cannot be used because it is only available for backwards compatibility. Please use another character.",
-                    character));
+        requireNonReservedLayoutCharacter(character);
 
         final BukkitItemComponentBuilder builder = new BukkitItemComponentBuilder();
         layoutSlots.add(new LayoutSlot(character, $ -> builder));
@@ -191,10 +183,7 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
      * @return An item builder to configure the item.
      */
     public @NotNull BukkitItemComponentBuilder layoutSlot(char character, @Nullable ItemStack item) {
-        if (character == LayoutInterceptor.LAYOUT_FILLED)
-            throw new IllegalArgumentException(format(
-                    "The '%c' character cannot be used because it is only available for backwards compatibility. Please use another character.",
-                    character));
+        requireNonReservedLayoutCharacter(character);
 
         final BukkitItemComponentBuilder builder = new BukkitItemComponentBuilder().withItem(item);
         layoutSlots.add(new LayoutSlot(character, $ -> builder));
@@ -207,16 +196,20 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
      * @param character The layout character target.
      */
     public void layoutSlot(char character, @NotNull BiConsumer<Integer, BukkitItemComponentBuilder> factory) {
-        if (character == LayoutInterceptor.LAYOUT_FILLED)
-            throw new IllegalArgumentException(format(
-                    "The '%c' character cannot be used because it is only available for backwards compatibility. Please use another character.",
-                    character));
+        requireNonReservedLayoutCharacter(character);
 
         layoutSlots.add(new LayoutSlot(character, index -> {
             final BukkitItemComponentBuilder builder = new BukkitItemComponentBuilder();
             factory.accept(index, builder);
             return builder;
         }));
+    }
+
+    private void requireNonReservedLayoutCharacter(char character) {
+        if (character == LayoutInterceptor.LAYOUT_FILLED)
+            throw new IllegalArgumentException(format(
+                    "The '%c' character cannot be used because it is only available for backwards compatibility. Please use another character.",
+                    character));
     }
 
     /**
@@ -238,11 +231,6 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
     @Override
     public @NotNull StateHost getStateHost() {
         return getParent().getStateHost();
-    }
-
-    @Override
-    public @NotNull ViewConfigBuilder modifyConfig() {
-        return inheritedConfigBuilder;
     }
 
     @Override

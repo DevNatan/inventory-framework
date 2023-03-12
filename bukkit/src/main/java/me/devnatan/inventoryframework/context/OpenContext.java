@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import me.devnatan.inventoryframework.RootView;
+import me.devnatan.inventoryframework.ViewConfigBuilder;
 import me.devnatan.inventoryframework.ViewType;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.bukkit.BukkitViewer;
@@ -26,6 +27,9 @@ public final class OpenContext extends ConfinedContext implements IFOpenContext,
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
     private CompletableFuture<Void> waitTask;
+
+    @Getter(AccessLevel.PRIVATE)
+    private final ViewConfigBuilder inheritedConfigBuilder = new ViewConfigBuilder();
 
     @ApiStatus.Internal
     public OpenContext(@NotNull RootView root, @NotNull Viewer viewer) {
@@ -66,5 +70,10 @@ public final class OpenContext extends ConfinedContext implements IFOpenContext,
     @Override
     public void waitUntil(@NotNull CompletableFuture<Void> task) {
         this.waitTask = task;
+    }
+
+    @Override
+    public @NotNull ViewConfigBuilder modifyConfig() {
+        return inheritedConfigBuilder;
     }
 }
