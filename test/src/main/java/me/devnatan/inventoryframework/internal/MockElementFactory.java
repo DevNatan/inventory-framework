@@ -15,7 +15,7 @@ import me.devnatan.inventoryframework.logging.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class MockElementFactory extends ElementFactory {
+public final class MockElementFactory extends ElementFactory {
     @Override
     public Logger getLogger() {
         return mock(Logger.class);

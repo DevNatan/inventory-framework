@@ -3,4 +3,5 @@ apply from: '../publish.gradle'
 dependencies {
     compileOnlyApi projects.api
     compileOnlyApi projects.framework
+    testImplementation projects.test
 }
