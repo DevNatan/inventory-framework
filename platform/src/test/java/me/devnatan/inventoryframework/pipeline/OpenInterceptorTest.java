@@ -1,42 +1,58 @@
 package me.devnatan.inventoryframework.pipeline;
 
-import static org.mockito.ArgumentMatchers.eq;
+import static me.devnatan.inventoryframework.TestUtils.createRootMock;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.Collections;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import me.devnatan.inventoryframework.RootView;
-import me.devnatan.inventoryframework.ViewContainer;
-import me.devnatan.inventoryframework.component.FakeComponent;
 import me.devnatan.inventoryframework.context.IFContext;
-import me.devnatan.inventoryframework.context.IFRenderContext;
-import me.devnatan.inventoryframework.internal.MockElementFactory;
+import me.devnatan.inventoryframework.context.IFOpenContext;
 import org.junit.jupiter.api.Test;
 
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class OpenInterceptorTest {
 
     @Test
-    void finishPipelineIfContextIsCancelled() {
+    void rethrowExceptionWhenAsyncJobFails() {
         Pipeline<IFContext> pipeline = new Pipeline<>(StandardPipelinePhases.OPEN);
         pipeline.intercept(StandardPipelinePhases.OPEN, new OpenInterceptor());
 
-        RootView root = mock(RootView.class);
-        when(root.getElementFactory()).thenReturn(new MockElementFactory());
-
-        IFRenderContext context = mock(IFRenderContext.class);
+        RootView root = createRootMock();
+        IFOpenContext context = mock(IFOpenContext.class);
         when(context.getRoot()).thenReturn(root);
+        when(context.getAsyncOpenJob()).thenReturn(CompletableFuture.runAsync(() -> {
+            throw new RuntimeException();
+        }));
 
-        ViewContainer container = mock(ViewContainer.class);
-        when(context.getContainer()).thenReturn(container);
+        pipeline.execute(StandardPipelinePhases.OPEN, context);
 
-        FakeComponent component = new FakeComponent(root, 0);
-        when(context.getComponents()).thenReturn(Collections.singletonList(component));
-        when(root.getContexts()).thenReturn(Collections.singleton(context));
-
-        pipeline.execute(StandardPipelinePhases.FIRST_RENDER, context);
-
-        verify(container, times(1)).renderItem(eq(component.getPosition()), eq(component.item));
+        assertThrows(CompletionException.class, () -> context.getAsyncOpenJob().join());
+        assertTrue(context.getAsyncOpenJob().isCompletedExceptionally());
     }
+
+    @Test
+    void finishPipelineIfContextIsCancelled() {
+        RootView root = createRootMock();
+        IFOpenContext context = mock(IFOpenContext.class);
+        when(context.getRoot()).thenReturn(root);
+        when(context.getAsyncOpenJob()).thenReturn(null);
+        when(context.isCancelled()).thenReturn(true);
+
+        PipelineContext pipelineContext = mock(PipelineContext.class);
+        new OpenInterceptor().intercept(pipelineContext, context);
+
+        verify(pipelineContext, times(1)).finish();
+    }
+
+    @Test
+    void validatedRootConfiguration() {}
+
+    @Test
+    void validatedContextConfiguration() {}
 }

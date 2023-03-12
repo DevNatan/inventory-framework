@@ -5,9 +5,11 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.VisibleForTesting;
 
+@VisibleForTesting
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
-public final class PipelineContext<S> {
+public class PipelineContext<S> {
 
     @Getter
     private final @Nullable PipelinePhase phase;

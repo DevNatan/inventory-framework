@@ -8,6 +8,7 @@ import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFOpenContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
+import me.devnatan.inventoryframework.exception.InventoryFrameworkException;
 import me.devnatan.inventoryframework.internal.ElementFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
@@ -33,7 +34,7 @@ public final class OpenInterceptor implements PipelineInterceptor<IFContext> {
                 .exceptionally(error -> {
                     // TODO invalidate context
                     pipeline.finish();
-                    throw new IllegalStateException("An error occurred in the opening asynchronous job.", error);
+                    throw new InventoryFrameworkException("An error occurred in the opening asynchronous job.", error);
                 });
     }
 
