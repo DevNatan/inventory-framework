@@ -18,11 +18,17 @@ public final class OpenInterceptor implements PipelineInterceptor<IFContext> {
     @TestOnly
     boolean skipOpen = false;
 
+    @SuppressWarnings("unchecked")
     @Override
     public void intercept(@NotNull PipelineContext<IFContext> pipeline, IFContext context) {
         if (!(context instanceof IFOpenContext)) return;
 
         final IFOpenContext openContext = (IFOpenContext) context;
+
+        @SuppressWarnings("rawtypes")
+        final PlatformView platformRoot = (PlatformView) openContext.getRoot();
+        platformRoot.onOpen(openContext);
+
         if (openContext.getAsyncOpenJob() == null) {
             finishOpen(pipeline, openContext);
             return;

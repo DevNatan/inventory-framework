@@ -444,8 +444,6 @@ public abstract class PlatformView<
         final IFOpenContext context =
                 getElementFactory().createContext(this, null, viewer, IFOpenContext.class, false, null);
         context.addViewer(viewer);
-
-        onOpen((TOpenContext) context);
         getPipeline().execute(StandardPipelinePhases.OPEN, context);
     }
 }
