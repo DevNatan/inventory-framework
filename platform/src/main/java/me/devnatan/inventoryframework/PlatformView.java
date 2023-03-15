@@ -436,7 +436,6 @@ public abstract class PlatformView<
         return PlatformUtils.getFactory();
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public final void open(@NotNull Viewer viewer) {
         if (!isInitialized()) throw new IllegalStateException("Cannot open a uninitialized view");

@@ -69,7 +69,9 @@ public final class BukkitElementFactory extends ElementFactory {
                 context.getRoot() instanceof InventoryHolder ? (InventoryHolder) context.getRoot() : null;
 
         final Inventory inventory;
-        final String finalTitle = context.getTitle().isEmpty() ? null : context.getTitle();
+        final String finalTitle = context.getConfig().getTitle().isEmpty()
+                ? null
+                : context.getConfig().getTitle();
         if (finalTitle == null) {
             inventory = !finalType.isExtendable() || size == 0
                     ? createInventory(holder, requireNonNull(toInventoryType(finalType)))

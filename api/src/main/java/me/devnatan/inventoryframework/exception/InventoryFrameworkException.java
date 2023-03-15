@@ -9,6 +9,10 @@ public class InventoryFrameworkException extends RuntimeException {
         super(message);
     }
 
+    public InventoryFrameworkException(Throwable cause) {
+        super(cause);
+    }
+
     public InventoryFrameworkException(String message, Throwable cause) {
         super(message, cause);
     }

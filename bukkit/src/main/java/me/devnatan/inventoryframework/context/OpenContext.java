@@ -5,9 +5,11 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import me.devnatan.inventoryframework.RootView;
+import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewConfigBuilder;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.bukkit.BukkitViewer;
+import me.devnatan.inventoryframework.exception.InventoryFrameworkException;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -24,12 +26,44 @@ public final class OpenContext extends ConfinedContext implements IFOpenContext,
     private CompletableFuture<Void> waitTask;
 
     @Getter(AccessLevel.PRIVATE)
-    private final ViewConfigBuilder inheritedConfigBuilder = new ViewConfigBuilder();
+    private ViewConfigBuilder inheritedConfigBuilder;
 
     @ApiStatus.Internal
     public OpenContext(@NotNull RootView root, @NotNull Viewer viewer) {
         super(root, null, viewer);
         this.player = ((BukkitViewer) viewer).getPlayer();
+    }
+
+    @Override
+    public @NotNull ViewConfig getConfig() {
+        return inheritedConfigBuilder == null
+                ? super.getConfig()
+                : super.getConfig().merge(inheritedConfigBuilder.build());
+    }
+
+    @Override
+    public void close() {
+        unsupportedOperation("#setCancelled(true)");
+    }
+
+    @Override
+    public void closeForPlayer() {
+        unsupportedOperation("#setCancelled(true)");
+    }
+
+    @Override
+    public void openForPlayer(Class<? extends RootView> other) {
+        unsupportedOperation();
+    }
+
+    @Override
+    public void resetTitleForPlayer() {
+        unsupportedOperation();
+    }
+
+    @Override
+    public void updateTitleForPlayer(@NotNull String title) {
+        unsupportedOperation();
     }
 
     //    @Override
@@ -69,6 +103,18 @@ public final class OpenContext extends ConfinedContext implements IFOpenContext,
 
     @Override
     public @NotNull ViewConfigBuilder modifyConfig() {
+        if (inheritedConfigBuilder == null) inheritedConfigBuilder = new ViewConfigBuilder();
+
         return inheritedConfigBuilder;
+    }
+
+    private void unsupportedOperation() {
+        throw new InventoryFrameworkException(
+                new IllegalStateException("This operation cannot be called on open handler."));
+    }
+
+    private void unsupportedOperation(String usage) {
+        throw new InventoryFrameworkException(new IllegalStateException(
+                String.format("This operation cannot be called on open handler. Use %s instead.", usage)));
     }
 }
