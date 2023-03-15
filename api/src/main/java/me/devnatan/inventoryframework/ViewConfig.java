@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.jetbrains.annotations.ApiStatus;
@@ -13,6 +15,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.VisibleForTesting;
 
 @Data
+@AllArgsConstructor
 @VisibleForTesting
 @ApiStatus.NonExtendable
 public class ViewConfig {
@@ -46,6 +49,35 @@ public class ViewConfig {
             if (other.name().equals(option.name()) && Objects.equals(definedValue, value)) return true;
         }
         return false;
+    }
+
+    /**
+     * Merges other config into this configuration.
+     *
+     * @param other The configuration to be merged.
+     * @return A ViewConfig with both {@code this} and the other configuration.
+     */
+    public ViewConfig merge(ViewConfig other) {
+        if (other == null) return this;
+
+        // TODO merge "options" and "modifiers" from both, distinctly
+        return new ViewConfig(
+                merge(other, ViewConfig::getTitle, value -> value != null && !value.isEmpty()),
+                merge(other, ViewConfig::getSize, value -> value != 0),
+                merge(other, ViewConfig::getType),
+                merge(other, ViewConfig::getOptions, value -> value != null && !value.isEmpty()),
+                merge(other, ViewConfig::getLayout),
+                merge(other, ViewConfig::getModifiers, value -> value != null && !value.isEmpty()));
+    }
+
+    private <T> T merge(ViewConfig other, Function<ViewConfig, T> retriever) {
+        return merge(other, retriever, Objects::nonNull);
+    }
+
+    private <T> T merge(ViewConfig other, Function<ViewConfig, T> retriever, Function<T, Boolean> mergeCondition) {
+        T value = retriever.apply(other);
+        if (!mergeCondition.apply(value)) return retriever.apply(this);
+        return value;
     }
 
     @FunctionalInterface
