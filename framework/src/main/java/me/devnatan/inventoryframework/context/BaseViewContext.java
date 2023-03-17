@@ -62,7 +62,7 @@ public class BaseViewContext implements IFContext {
     }
 
     @Override
-    public @NotNull ViewConfig getConfig() {
+    public final @NotNull ViewConfig getConfig() {
         return config;
     }
 

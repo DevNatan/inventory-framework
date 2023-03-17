@@ -5,7 +5,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import me.devnatan.inventoryframework.RootView;
-import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewConfigBuilder;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.bukkit.BukkitViewer;
@@ -16,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 
 @Getter
 @Setter
-public final class OpenContext extends ConfinedContext implements IFOpenContext, Context {
+public class OpenContext extends ConfinedContext implements IFOpenContext, Context {
 
     private final Player player;
     private boolean cancelled;
@@ -32,13 +31,6 @@ public final class OpenContext extends ConfinedContext implements IFOpenContext,
     public OpenContext(@NotNull RootView root, @NotNull Viewer viewer) {
         super(root, null, viewer);
         this.player = ((BukkitViewer) viewer).getPlayer();
-    }
-
-    @Override
-    public @NotNull ViewConfig getConfig() {
-        return inheritedConfigBuilder == null
-                ? super.getConfig()
-                : super.getConfig().merge(inheritedConfigBuilder.build());
     }
 
     @Override
@@ -65,26 +57,6 @@ public final class OpenContext extends ConfinedContext implements IFOpenContext,
     public void updateTitleForPlayer(@NotNull String title) {
         unsupportedOperation();
     }
-
-    //    @Override
-    //    public @NotNull String getTitle() {
-    //        return title == null ? getRoot().getConfig().getTitle() : title;
-    //    }
-    //
-    //    @Override
-    //    public int getSize() {
-    //        return size == 0 ? getRoot().getConfig().getSize() : size;
-    //    }
-    //
-    //    @Override
-    //    public @NotNull ViewType getType() {
-    //        if (type != null) return type;
-    //
-    //        final ViewType rootType = getRoot().getConfig().getType();
-    //        if (rootType == null) return ViewType.CHEST;
-    //
-    //        return rootType;
-    //    }
 
     @Override
     public CompletableFuture<Void> getAsyncOpenJob() {

@@ -27,7 +27,7 @@ public final class WarpListView extends View {
 
     @Override
     public void onOpen(OpenContext ctx) {
-        ctx.setTitle("Warps");
+        ctx.modifyConfig().title("Warps");
     }
 
     @Override

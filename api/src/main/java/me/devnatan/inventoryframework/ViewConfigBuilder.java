@@ -19,7 +19,7 @@ public final class ViewConfigBuilder {
 
     private String title = "";
     private int size = 0;
-    private ViewType type = ViewType.CHEST;
+    private ViewType type;
     private final Set<ViewConfig.Option<?>> options = new HashSet<>();
     private String[] layout = null;
     private final Set<LayoutSlot> patterns = new HashSet<>();

@@ -4,5 +4,6 @@ dependencies {
     compileOnlyApi projects.api
     compileOnlyApi projects.framework
     testImplementation projects.api
+    testImplementation projects.framework
     testImplementation projects.test
 }

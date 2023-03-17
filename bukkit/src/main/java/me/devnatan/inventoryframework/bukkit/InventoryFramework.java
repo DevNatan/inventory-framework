@@ -38,7 +38,6 @@ class AwesomeView extends View {
 
     @Override
     public void onOpen(OpenContext open) {
-        open.closeForPlayer();
-        open.modifyConfig().title(String.format("Hi %s!", open.getPlayer().getName()));
+        open.modifyConfig().size(6);
     }
 }

@@ -29,11 +29,7 @@ public class ViewConfig {
     private final String[] layout;
     private final Set<Modifier> modifiers;
 
-    public static <T> Option<T> createOption(@NotNull String name, @NotNull T defaultValue) {
-        return new OptionImpl<>(name, defaultValue);
-    }
-
-    public <T> boolean isOptionSet(@NotNull Option<T> option) {
+    public final <T> boolean isOptionSet(@NotNull Option<T> option) {
         for (final Map.Entry<Option<?>, Object> entry : options.entrySet()) {
             final Option<?> other = entry.getKey();
             final Object definedValue = entry.getValue();
@@ -42,7 +38,7 @@ public class ViewConfig {
         return false;
     }
 
-    public <T> boolean isOptionSet(@NotNull Option<T> option, T value) {
+    public final <T> boolean isOptionSet(@NotNull Option<T> option, T value) {
         for (final Map.Entry<Option<?>, Object> entry : options.entrySet()) {
             final Option<?> other = entry.getKey();
             final Object definedValue = entry.getValue();
@@ -51,12 +47,18 @@ public class ViewConfig {
         return false;
     }
 
+    public static <T> Option<T> createOption(@NotNull String name, @NotNull T defaultValue) {
+        return new OptionImpl<>(name, defaultValue);
+    }
+
     /**
      * Merges other config into this configuration.
      *
      * @param other The configuration to be merged.
      * @return A ViewConfig with both {@code this} and the other configuration.
      */
+    @ApiStatus.Internal
+    @VisibleForTesting
     public ViewConfig merge(ViewConfig other) {
         if (other == null) return this;
 

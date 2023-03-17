@@ -9,6 +9,7 @@ import me.devnatan.inventoryframework.ViewType;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.ComponentBuilder;
+import me.devnatan.inventoryframework.context.IFConfinedContext;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFSlotContext;
 import me.devnatan.inventoryframework.logging.Logger;
@@ -29,7 +30,11 @@ public final class MockElementFactory extends ElementFactory {
     @Override
     public @NotNull ViewContainer createContainer(
             @NotNull IFContext context, int size, @Nullable String title, @Nullable ViewType type) {
-        return mock(ViewContainer.class);
+        ViewContainer container = mock(ViewContainer.class);
+        when(container.getSize()).thenReturn(size);
+        when(container.getTitle()).thenReturn(title);
+        when(container.getType()).thenReturn(type);
+        return container;
     }
 
     @Override
@@ -50,7 +55,11 @@ public final class MockElementFactory extends ElementFactory {
             @NotNull Class<T> kind,
             boolean shared,
             @Nullable IFContext parent) {
-        return mock(kind);
+        T value = (T) mock(kind);
+        when(value.getContainer()).thenReturn(container);
+        if (value instanceof IFConfinedContext)
+            when(((IFConfinedContext) value).getViewer()).thenReturn(viewer);
+        return value;
     }
 
     @Override
