@@ -6,7 +6,7 @@ lombok = "1.18.24"
 kotlin = "1.8.10"
 mockito = "4.7.0"
 plugin-shadowjar = "7.1.2"
-plugin-ktlint = "3.11.1"
+plugin-ktlint = "3.14.0"
 
 [libraries.spigot-api]
 module = "org.spigotmc:spigot-api"
