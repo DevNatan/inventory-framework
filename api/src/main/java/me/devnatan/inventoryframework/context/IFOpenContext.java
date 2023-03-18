@@ -1,9 +1,8 @@
 package me.devnatan.inventoryframework.context;
 
 import java.util.concurrent.CompletableFuture;
-import me.devnatan.inventoryframework.ViewType;
+import me.devnatan.inventoryframework.ViewConfigBuilder;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * This context is created before the container is opened, it is used for cancellation by previously
@@ -11,38 +10,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public interface IFOpenContext extends IFConfinedContext {
 
-    @NotNull
-    String getTitle();
-
-    int getSize();
-
-    ViewType getType();
-
     CompletableFuture<Void> getAsyncOpenJob();
-
-    /**
-     * Sets the title of the container.
-     *
-     * @param title The title of the container that will be created.
-     */
-    void setTitle(@Nullable String title);
-
-    /**
-     * Sets the size of the container.
-     * <p>
-     * Can be the total number of slots like <code>36</code> or the number of horizontal
-     * lines in the container.
-     *
-     * @param size The size of the container that will be created.
-     */
-    void setSize(int size);
-
-    /**
-     * Sets the type of the container.
-     * <p>
-     * @param type The type of the container that will be created.
-     */
-    void setType(@Nullable ViewType type);
 
     /**
      * Waits until the specified task to be completed to show the container to the player.
@@ -64,4 +32,15 @@ public interface IFOpenContext extends IFConfinedContext {
      * @param cancelled If <code>true</code>, the container will not open for the player.
      */
     void setCancelled(boolean cancelled);
+
+    /**
+     * Allows access and change the current configuration specifically to that context.
+     * <p>
+     * By default, all contexts inherit their root configuration but context configuration always
+     * takes precedence over root.
+     *
+     * @return The current context configuration.
+     */
+    @NotNull
+    ViewConfigBuilder modifyConfig();
 }

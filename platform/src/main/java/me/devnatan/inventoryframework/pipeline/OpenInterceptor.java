@@ -2,11 +2,13 @@ package me.devnatan.inventoryframework.pipeline;
 
 import me.devnatan.inventoryframework.PlatformView;
 import me.devnatan.inventoryframework.RootView;
+import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFOpenContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
+import me.devnatan.inventoryframework.exception.InventoryFrameworkException;
 import me.devnatan.inventoryframework.internal.ElementFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
@@ -16,11 +18,17 @@ public final class OpenInterceptor implements PipelineInterceptor<IFContext> {
     @TestOnly
     boolean skipOpen = false;
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     public void intercept(@NotNull PipelineContext<IFContext> pipeline, IFContext context) {
         if (!(context instanceof IFOpenContext)) return;
 
         final IFOpenContext openContext = (IFOpenContext) context;
+
+        if (openContext.getRoot() instanceof PlatformView) {
+            ((PlatformView) openContext.getRoot()).onOpen(openContext);
+        }
+
         if (openContext.getAsyncOpenJob() == null) {
             finishOpen(pipeline, openContext);
             return;
@@ -32,7 +40,7 @@ public final class OpenInterceptor implements PipelineInterceptor<IFContext> {
                 .exceptionally(error -> {
                     // TODO invalidate context
                     pipeline.finish();
-                    throw new IllegalStateException("An error occurred in the opening asynchronous job.", error);
+                    throw new InventoryFrameworkException("An error occurred in the opening asynchronous job.", error);
                 });
     }
 
@@ -46,23 +54,30 @@ public final class OpenInterceptor implements PipelineInterceptor<IFContext> {
         if (skipOpen) return;
 
         final RootView root = openContext.getRoot();
-        final ElementFactory elementFactory = root.getElementFactory();
-        final ViewContainer container = elementFactory.createContainer(
-                openContext,
-                openContext.getType().normalize(openContext.getSize()),
-                openContext.getTitle(),
-                openContext.getType());
-
         final Viewer viewer = openContext.getViewer();
-        final IFRenderContext renderCtx =
-                elementFactory.createContext(root, container, viewer, IFRenderContext.class, false, openContext);
-
-        renderCtx.addViewer(viewer);
-        root.addContext(renderCtx);
+        final IFRenderContext render = createRenderContext(openContext);
 
         // TODO call onFirstRender on `renderContext` and move this interceptor to framework module
-        if (root instanceof PlatformView) ((PlatformView) root).onFirstRender(renderCtx);
-        root.renderContext(renderCtx);
-        container.open(viewer);
+        if (root instanceof PlatformView) ((PlatformView) root).onFirstRender(render);
+
+        root.renderContext(render);
+        render.getContainer().open(viewer);
+    }
+
+    IFRenderContext createRenderContext(IFOpenContext openContext) {
+        final ElementFactory elementFactory = openContext.getRoot().getElementFactory();
+        final ViewConfig config = openContext
+                .getRoot()
+                .getConfig()
+                .merge(openContext.modifyConfig().build());
+        final ViewContainer container = elementFactory.createContainer(
+                openContext, config.getType().normalize(config.getSize()), config.getTitle(), config.getType());
+        final Viewer viewer = openContext.getViewer();
+        final IFRenderContext renderCtx = elementFactory.createContext(
+                openContext.getRoot(), container, viewer, IFRenderContext.class, false, openContext);
+
+        renderCtx.addViewer(viewer);
+        openContext.getRoot().addContext(renderCtx);
+        return renderCtx;
     }
 }

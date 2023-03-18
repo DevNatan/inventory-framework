@@ -3,12 +3,10 @@ package me.devnatan.inventoryframework.bukkit;
 import me.devnatan.inventoryframework.View;
 import me.devnatan.inventoryframework.ViewConfigBuilder;
 import me.devnatan.inventoryframework.ViewFrame;
-import me.devnatan.inventoryframework.context.RenderContext;
-import org.bukkit.Material;
+import me.devnatan.inventoryframework.context.OpenContext;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 @SuppressWarnings("unused")
@@ -35,12 +33,11 @@ class AwesomeView extends View {
 
     @Override
     public void onInit(ViewConfigBuilder config) {
-        config.size(3).layout("  FFFFF  ", " AAAAAAA ", "  FFFFF  ");
+        config.title("Awesome view");
     }
 
     @Override
-    public void onFirstRender(RenderContext render) {
-        render.layoutSlot('A', new ItemStack(Material.GOLD_INGOT));
-        render.layoutSlot('F', new ItemStack(Material.DIAMOND));
+    public void onOpen(OpenContext open) {
+        open.modifyConfig().size(6);
     }
 }

@@ -29,14 +29,14 @@ public final class ClanDetailsView extends View {
     }
 
     @Override
-    public void onOpen(OpenContext ctx) {
-        final Clan clan = clanState.get(ctx);
-        ctx.setTitle(String.format("[%s] %s", clan.getTag(), clan.getName()));
+    public void onOpen(OpenContext open) {
+        final Clan clan = clanState.get(open);
+        open.modifyConfig().title(String.format("[%s] %s", clan.getTag(), clan.getName()));
     }
 
     @Override
-    public void onFirstRender(RenderContext ctx) {
-        final Clan clan = clanState.get(ctx);
-        ctx.slot(2, 5, new ItemStack(Material.PLAYER_HEAD)).onClick(click -> click.open(ClanMemberListView.class));
+    public void onFirstRender(RenderContext render) {
+        final Clan clan = clanState.get(render);
+        render.slot(2, 5, new ItemStack(Material.PLAYER_HEAD)).onClick(click -> click.open(ClanMemberListView.class));
     }
 }

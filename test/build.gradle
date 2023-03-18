@@ -1,3 +1,5 @@
 dependencies {
+    compileOnly projects.api
     compileOnly projects.framework
+    compileOnly libs.mockito.core
 }

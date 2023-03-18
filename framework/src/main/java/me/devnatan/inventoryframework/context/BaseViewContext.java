@@ -48,7 +48,7 @@ public class BaseViewContext implements IFContext {
     private final StateHost stateHost = new DefaultStateHost();
 
     protected final Map<String, Viewer> viewers = new HashMap<>();
-    protected final ViewConfig config;
+    protected ViewConfig config;
 
     @ToString.Exclude
     private final List<Component> components = new ArrayList<>();
