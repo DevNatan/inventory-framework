@@ -20,11 +20,12 @@ import org.jetbrains.annotations.UnmodifiableView;
 public final class PaginationImpl implements Pagination, InteractionHandler {
 
     private final @NotNull RootView root;
-    private final @Nullable String layoutTarget;
+    private final @NotNull IFContext host;
     private final List<Component> components = new LinkedList<>();
     private boolean markedForRemoval;
 
     // --- User provided ---
+	private final @Nullable String layoutTarget;
     private final @NotNull Function<?, ?> sourceProvider;
     private final @NotNull BiConsumer<? extends ItemComponentBuilder<?>, Object> itemFactory;
 

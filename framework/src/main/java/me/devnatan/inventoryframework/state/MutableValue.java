@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public final class MutableValue implements InternalStateValue {
+public class MutableValue implements InternalStateValue {
 
     private Object currValue;
 

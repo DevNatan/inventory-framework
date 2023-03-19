@@ -2,18 +2,24 @@ package me.devnatan.inventoryframework.state;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.jetbrains.annotations.ApiStatus;
 
+@ApiStatus.Internal
 public final class DefaultStateHost implements StateHost {
 
     private final Map<Long, InternalStateValue> valuesMap = new HashMap<>();
 
-    synchronized Object get(long state, State<?> instance, InternalStateValue value) {
-        if (!valuesMap.containsKey(state)) valuesMap.put(state, value);
-
-        return valuesMap.get(state).get();
+    Object get(long id) {
+        if (!valuesMap.containsKey(id)) throw new UninitializedStateException();
+        return valuesMap.get(id).get();
     }
 
-    synchronized void set(long state, InternalStateValue stateValue, Object newValue) {
-        valuesMap.computeIfAbsent(state, $ -> stateValue).set(newValue);
+    void set(long id, Object newValue) {
+        if (!valuesMap.containsKey(id)) throw new UninitializedStateException();
+        valuesMap.get(id).set(newValue);
+    }
+
+    void init(long id, InternalStateValue value) {
+        valuesMap.put(id, value);
     }
 }

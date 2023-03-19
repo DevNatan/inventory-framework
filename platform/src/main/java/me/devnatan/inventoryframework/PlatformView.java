@@ -282,8 +282,8 @@ public abstract class PlatformView<
     protected final <V> State<Pagination> pagination(
             @NotNull Function<TSlotContext, List<? super V>> sourceProvider,
             @NotNull BiConsumer<TItem, V> itemFactory) {
-        return stateFactory.createState(new ImmutableValue(
-                new PaginationImpl(this, null /* TODO */, sourceProvider, (BiConsumer<TItem, Object>) itemFactory)));
+        return stateFactory.createState(host -> new ImmutableValue(new PaginationImpl(
+                this, (IFContext) host, null /* TODO */, sourceProvider, (BiConsumer<TItem, Object>) itemFactory)));
     }
 
     /**
@@ -318,7 +318,6 @@ public abstract class PlatformView<
      * @param <V>            The pagination data type.
      * @return A immutable pagination state.
      */
-    @SuppressWarnings({"unchecked", "rawtypes"})
     protected final <V> State<Pagination> pagination(
             @NotNull Supplier<List<? super V>> sourceProvider, @NotNull BiConsumer<TItem, V> itemFactory) {
         return pagination($ -> sourceProvider.get(), itemFactory);
