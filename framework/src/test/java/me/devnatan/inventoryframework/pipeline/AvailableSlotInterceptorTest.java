@@ -91,16 +91,15 @@ public class AvailableSlotInterceptorTest {
 
     @Test
     void interceptFromLayoutSlot() {
-        AvailableSlotInterceptor interceptor = new AvailableSlotInterceptor();
         RootView root = createRootMock();
         IFRenderContext context = createContextMock(root, IFRenderContext.class);
         when(context.getConfig()).thenReturn(createLayoutConfig(defaultLayout));
 
-        BiFunction<Integer, Integer, ComponentFactory> availableSlotFactory = mock(BiFunction.class);
         ComponentFactory componentFactory = mock(ComponentFactory.class);
         Component component = new FakeComponent(root);
-
         when(componentFactory.create()).thenReturn(component);
+
+        BiFunction<Integer, Integer, ComponentFactory> availableSlotFactory = mock(BiFunction.class);
         when(availableSlotFactory.apply(anyInt(), anyInt())).thenReturn(componentFactory);
         when(context.getAvailableSlotsFactories()).thenReturn(Collections.singletonList(availableSlotFactory));
 
@@ -108,7 +107,7 @@ public class AvailableSlotInterceptorTest {
         layoutSlot.updatePositions(defaultLayoutSlotRange);
         when(context.getLayoutSlots()).thenReturn(Collections.singletonList(layoutSlot));
 
-        interceptor.intercept(mock(PipelineContext.class), context);
+        new AvailableSlotInterceptor().intercept(mock(PipelineContext.class), context);
 
         verify(availableSlotFactory).apply(eq(0), eq(defaultLayoutSlotRange.get(0)));
         verify(context).addComponent(eq(component));
