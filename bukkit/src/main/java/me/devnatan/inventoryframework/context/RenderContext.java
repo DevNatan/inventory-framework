@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.BiConsumer;
+import java.util.function.Function;
 import lombok.Getter;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewContainer;
@@ -16,7 +17,6 @@ import me.devnatan.inventoryframework.bukkit.BukkitViewer;
 import me.devnatan.inventoryframework.component.BukkitItemComponentBuilder;
 import me.devnatan.inventoryframework.component.ComponentBuilder;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
-import me.devnatan.inventoryframework.pipeline.LayoutInterceptor;
 import me.devnatan.inventoryframework.state.StateHost;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -33,6 +33,7 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
 
     private final List<ComponentBuilder<?>> componentBuilders = new ArrayList<>();
     private final List<LayoutSlot> layoutSlots = new ArrayList<>();
+    private final List<Function<Integer, ComponentBuilder<?>>> availableSlots = new ArrayList<>();
 
     @ApiStatus.Internal
     public RenderContext(
@@ -148,7 +149,9 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
      * @return An item builder to configure the item.
      */
     public @NotNull BukkitItemComponentBuilder availableSlot() {
-        throw new UnsupportedOperationException("Available slot is not implemented");
+        final BukkitItemComponentBuilder builder = new BukkitItemComponentBuilder();
+        availableSlots.add($ -> builder);
+        return builder;
     }
 
     /**
@@ -158,7 +161,7 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
      * @return An item builder to configure the item.
      */
     public @NotNull BukkitItemComponentBuilder availableSlot(@Nullable ItemStack item) {
-        throw new UnsupportedOperationException("Available slot is not implemented");
+        return availableSlot().withItem(item);
     }
 
     /**
@@ -206,7 +209,7 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
     }
 
     private void requireNonReservedLayoutCharacter(char character) {
-        if (character == LayoutInterceptor.LAYOUT_FILLED)
+        if (character == LayoutSlot.FILLED_RESERVED_CHAR)
             throw new IllegalArgumentException(format(
                     "The '%c' character cannot be used because it is only available for backwards compatibility. Please use another character.",
                     character));
@@ -241,5 +244,10 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
     @Override
     public @NotNull @UnmodifiableView List<LayoutSlot> getLayoutSlots() {
         return Collections.unmodifiableList(layoutSlots);
+    }
+
+    @Override
+    public @NotNull @UnmodifiableView List<Function<Integer, ComponentBuilder<?>>> getAvailableSlots() {
+        return Collections.unmodifiableList(availableSlots);
     }
 }

@@ -14,6 +14,7 @@ import static org.mockito.Mockito.when;
 import java.util.Collections;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewContainer;
+import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.ItemComponent;
 import me.devnatan.inventoryframework.context.IFContext;
@@ -26,7 +27,7 @@ public class UpdateInterceptorTest {
 
     @Test
     void clearWhenMarkedForRemoval() {
-        Pipeline<IFContext> pipeline = new Pipeline<>(StandardPipelinePhases.UPDATE);
+        Pipeline<VirtualView> pipeline = new Pipeline<>(StandardPipelinePhases.UPDATE);
         pipeline.intercept(StandardPipelinePhases.UPDATE, new UpdateInterceptor());
 
         RootView root = createRootMock();
@@ -48,7 +49,7 @@ public class UpdateInterceptorTest {
 
     @Test
     void alwaysRenderIfItemHasRenderHandler() {
-        Pipeline<IFContext> pipeline = new Pipeline<>(StandardPipelinePhases.UPDATE);
+        Pipeline<VirtualView> pipeline = new Pipeline<>(StandardPipelinePhases.UPDATE);
         pipeline.intercept(StandardPipelinePhases.UPDATE, new UpdateInterceptor());
 
         RootView root = createRootMock();
@@ -73,7 +74,7 @@ public class UpdateInterceptorTest {
 
     @Test
     void neverRenderIfItemDoNotHaveRenderHandler() {
-        Pipeline<IFContext> pipeline = new Pipeline<>(StandardPipelinePhases.UPDATE);
+        Pipeline<VirtualView> pipeline = new Pipeline<>(StandardPipelinePhases.UPDATE);
         pipeline.intercept(StandardPipelinePhases.UPDATE, new UpdateInterceptor());
 
         RootView root = createRootMock();
@@ -96,7 +97,7 @@ public class UpdateInterceptorTest {
 
     @Test
     void skipRenderIfContextWasCancelledOnUpdateHandler() {
-        Pipeline<IFContext> pipeline = new Pipeline<>(StandardPipelinePhases.UPDATE);
+        Pipeline<VirtualView> pipeline = new Pipeline<>(StandardPipelinePhases.UPDATE);
         pipeline.intercept(StandardPipelinePhases.UPDATE, new UpdateInterceptor());
 
         RootView root = mock(RootView.class);

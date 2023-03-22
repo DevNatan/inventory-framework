@@ -8,6 +8,8 @@ import me.devnatan.inventoryframework.component.ComponentBuilder;
 @Data
 public final class LayoutSlot {
 
+    public static final char FILLED_RESERVED_CHAR = 'O';
+
     private final char character;
 
     /**

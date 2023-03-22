@@ -18,6 +18,7 @@ import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.context.IFSlotContext;
 import me.devnatan.inventoryframework.internal.ElementFactory;
 import me.devnatan.inventoryframework.internal.PlatformUtils;
+import me.devnatan.inventoryframework.pipeline.AvailableSlotInterceptor;
 import me.devnatan.inventoryframework.pipeline.CloseInterceptor;
 import me.devnatan.inventoryframework.pipeline.FirstRenderInterceptor;
 import me.devnatan.inventoryframework.pipeline.InitInterceptor;
@@ -422,11 +423,12 @@ public abstract class PlatformView<
         pipeline.intercept(StandardPipelinePhases.INIT, new InitInterceptor());
         pipeline.intercept(StandardPipelinePhases.OPEN, new OpenInterceptor());
         pipeline.intercept(StandardPipelinePhases.FIRST_RENDER, new LayoutInterceptor());
+        pipeline.intercept(StandardPipelinePhases.FIRST_RENDER, new AvailableSlotInterceptor());
         pipeline.intercept(StandardPipelinePhases.FIRST_RENDER, new FirstRenderInterceptor());
         pipeline.intercept(StandardPipelinePhases.UPDATE, new UpdateInterceptor());
         pipeline.intercept(StandardPipelinePhases.CLOSE, new CloseInterceptor());
         registerPlatformInterceptors();
-        pipeline.execute(StandardPipelinePhases.INIT, this);
+        pipeline.execute(this);
     }
 
     public abstract void registerPlatformInterceptors();

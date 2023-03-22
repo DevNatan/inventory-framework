@@ -1,15 +1,20 @@
 package me.devnatan.inventoryframework.pipeline;
 
 import me.devnatan.inventoryframework.PlatformView;
+import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewConfigBuilder;
+import me.devnatan.inventoryframework.VirtualView;
 import org.jetbrains.annotations.NotNull;
 
-@SuppressWarnings("rawtypes")
-public final class InitInterceptor implements PipelineInterceptor<PlatformView> {
+public final class InitInterceptor implements PipelineInterceptor<VirtualView> {
 
-    public void intercept(@NotNull PipelineContext<PlatformView> pipeline, PlatformView view) {
-        ViewConfigBuilder configBuilder = view.createConfig();
-        view.onInit(configBuilder);
-        view.setConfig(configBuilder.build());
+    public void intercept(@NotNull PipelineContext<VirtualView> pipeline, VirtualView view) {
+        if (!(view instanceof RootView)) return;
+
+        @SuppressWarnings("rawtypes")
+        final PlatformView root = (PlatformView) view;
+        ViewConfigBuilder configBuilder = root.createConfig();
+        root.onInit(configBuilder);
+        root.setConfig(configBuilder.build());
     }
 }

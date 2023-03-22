@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.TestOnly;
 
 /**
  * The pipeline is a structure containing a sequence of functions (blocks/lambdas) that are called
@@ -106,6 +107,7 @@ public final class Pipeline<S> {
         context.execute(subject);
     }
 
+    @TestOnly
     public void execute(@NotNull PipelinePhase phase, @Nullable S subject) {
         final PipelineContext<S> context =
                 new PipelineContext<>(phase, interceptors.getOrDefault(phase, Collections.emptyList()));

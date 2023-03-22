@@ -3,14 +3,18 @@ package me.devnatan.inventoryframework.pipeline;
 import me.devnatan.inventoryframework.PlatformView;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.Viewer;
+import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.IFCloseContext;
 import me.devnatan.inventoryframework.context.IFContext;
 import org.jetbrains.annotations.NotNull;
 
-public final class CloseInterceptor implements PipelineInterceptor<IFCloseContext> {
+public final class CloseInterceptor implements PipelineInterceptor<VirtualView> {
 
     @Override
-    public void intercept(@NotNull PipelineContext<IFCloseContext> pipeline, IFCloseContext context) {
+    public void intercept(@NotNull PipelineContext<VirtualView> pipeline, VirtualView subject) {
+        if (!(subject instanceof IFCloseContext)) return;
+
+        final IFCloseContext context = (IFCloseContext) subject;
         final RootView root = context.getRoot();
         tryCallPlatformRootCloseHandler(root, context);
 

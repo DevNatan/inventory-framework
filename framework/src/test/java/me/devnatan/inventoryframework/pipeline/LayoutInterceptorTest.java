@@ -8,7 +8,7 @@ import static org.mockito.Mockito.when;
 
 import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewContainer;
-import me.devnatan.inventoryframework.context.IFContext;
+import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.exception.InvalidLayoutException;
 import org.junit.jupiter.api.Test;
@@ -17,7 +17,7 @@ public class LayoutInterceptorTest {
 
     @Test
     void invalidLayoutLengthForContainer() {
-        Pipeline<IFContext> pipeline = new Pipeline<>(StandardPipelinePhases.FIRST_RENDER);
+        Pipeline<VirtualView> pipeline = new Pipeline<>(StandardPipelinePhases.FIRST_RENDER);
         pipeline.intercept(StandardPipelinePhases.FIRST_RENDER, new LayoutInterceptor());
 
         ViewConfig config = mock(ViewConfig.class);
@@ -43,7 +43,7 @@ public class LayoutInterceptorTest {
 
     @Test
     void invalidLayoutLengthForLayer() {
-        Pipeline<IFContext> pipeline = new Pipeline<>(StandardPipelinePhases.FIRST_RENDER);
+        Pipeline<VirtualView> pipeline = new Pipeline<>(StandardPipelinePhases.FIRST_RENDER);
         pipeline.intercept(StandardPipelinePhases.FIRST_RENDER, new LayoutInterceptor());
 
         ViewConfig config = mock(ViewConfig.class);

@@ -18,7 +18,7 @@ import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewConfigBuilder;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.ViewType;
-import me.devnatan.inventoryframework.context.IFContext;
+import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.IFOpenContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
 import org.junit.jupiter.api.Test;
@@ -28,7 +28,7 @@ public class OpenInterceptorTest {
 
     @Test
     void rethrowExceptionWhenAsyncJobFails() {
-        Pipeline<IFContext> pipeline = new Pipeline<>(StandardPipelinePhases.OPEN);
+        Pipeline<VirtualView> pipeline = new Pipeline<>(StandardPipelinePhases.OPEN);
         pipeline.intercept(StandardPipelinePhases.OPEN, new OpenInterceptor());
 
         RootView root = createRootMock();
@@ -60,7 +60,7 @@ public class OpenInterceptorTest {
 
     @Test
     void mergeConfigurationPreservedRoot() {
-        Pipeline<IFContext> pipeline = new Pipeline<>(StandardPipelinePhases.OPEN);
+        Pipeline<VirtualView> pipeline = new Pipeline<>(StandardPipelinePhases.OPEN);
         OpenInterceptor interceptor = new OpenInterceptor();
         pipeline.intercept(StandardPipelinePhases.OPEN, interceptor);
 

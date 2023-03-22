@@ -9,8 +9,8 @@ import static org.mockito.Mockito.when;
 import java.util.Collections;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewContainer;
+import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.component.FakeComponent;
-import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.internal.MockElementFactory;
 import org.junit.jupiter.api.Test;
@@ -20,7 +20,7 @@ public class FirstRenderInterceptorTest {
 
     @Test
     void renderComponents() {
-        Pipeline<IFContext> pipeline = new Pipeline<>(StandardPipelinePhases.FIRST_RENDER);
+        Pipeline<VirtualView> pipeline = new Pipeline<>(StandardPipelinePhases.FIRST_RENDER);
         pipeline.intercept(StandardPipelinePhases.FIRST_RENDER, new FirstRenderInterceptor());
 
         RootView root = mock(RootView.class);

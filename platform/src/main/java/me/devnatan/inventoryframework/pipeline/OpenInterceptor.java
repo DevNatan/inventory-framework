@@ -5,7 +5,7 @@ import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
-import me.devnatan.inventoryframework.context.IFContext;
+import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.IFOpenContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.exception.InventoryFrameworkException;
@@ -13,17 +13,17 @@ import me.devnatan.inventoryframework.internal.ElementFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 
-public final class OpenInterceptor implements PipelineInterceptor<IFContext> {
+public final class OpenInterceptor implements PipelineInterceptor<VirtualView> {
 
     @TestOnly
     boolean skipOpen = false;
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
-    public void intercept(@NotNull PipelineContext<IFContext> pipeline, IFContext context) {
-        if (!(context instanceof IFOpenContext)) return;
+    public void intercept(@NotNull PipelineContext<VirtualView> pipeline, VirtualView subject) {
+        if (!(subject instanceof IFOpenContext)) return;
 
-        final IFOpenContext openContext = (IFOpenContext) context;
+        final IFOpenContext openContext = (IFOpenContext) subject;
 
         if (openContext.getRoot() instanceof PlatformView) {
             ((PlatformView) openContext.getRoot()).onOpen(openContext);
@@ -45,7 +45,7 @@ public final class OpenInterceptor implements PipelineInterceptor<IFContext> {
     }
 
     @SuppressWarnings("rawtypes")
-    private void finishOpen(@NotNull PipelineContext<IFContext> pipeline, @NotNull IFOpenContext openContext) {
+    private void finishOpen(@NotNull PipelineContext<VirtualView> pipeline, @NotNull IFOpenContext openContext) {
         if (openContext.isCancelled()) {
             pipeline.finish();
             return;

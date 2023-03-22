@@ -1,9 +1,8 @@
 package me.devnatan.inventoryframework.pipeline;
 
 import me.devnatan.inventoryframework.Viewer;
+import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.component.Component;
-import me.devnatan.inventoryframework.context.IFConfinedContext;
-import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.context.IFSlotRenderContext;
 import me.devnatan.inventoryframework.internal.ElementFactory;
@@ -11,15 +10,16 @@ import me.devnatan.inventoryframework.internal.ElementFactory;
 /**
  * Intercepts the rendering phase of a context and renders all components on it.
  */
-public final class FirstRenderInterceptor implements PipelineInterceptor<IFContext> {
+public final class FirstRenderInterceptor implements PipelineInterceptor<VirtualView> {
 
     @Override
-    public void intercept(PipelineContext<IFContext> pipeline, IFContext context) {
-        if (!(context instanceof IFRenderContext)) return;
+    public void intercept(PipelineContext<VirtualView> pipeline, VirtualView subject) {
+        if (!(subject instanceof IFRenderContext)) return;
 
-        registerComponents((IFRenderContext) context);
+        final IFRenderContext context = (IFRenderContext) subject;
+        registerComponents(context);
 
-        final Viewer viewer = ((IFConfinedContext) context).getViewer();
+        final Viewer viewer = context.getViewer();
         final ElementFactory elementFactory = context.getRoot().getElementFactory();
 
         for (final Component component : context.getComponents()) {

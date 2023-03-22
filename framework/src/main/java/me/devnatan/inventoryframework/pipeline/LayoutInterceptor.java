@@ -8,29 +8,27 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
+import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.ComponentBuilder;
 import me.devnatan.inventoryframework.component.ItemComponentBuilder;
-import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.exception.InvalidLayoutException;
 import me.devnatan.inventoryframework.internal.ElementFactory;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
 import org.jetbrains.annotations.NotNull;
 
-public final class LayoutInterceptor implements PipelineInterceptor<IFContext> {
-
-    public static final char LAYOUT_FILLED = 'O';
+public final class LayoutInterceptor implements PipelineInterceptor<VirtualView> {
 
     @Override
-    public void intercept(PipelineContext<IFContext> pipeline, IFContext context) {
-        if (!(context instanceof IFRenderContext)) return;
+    public void intercept(PipelineContext<VirtualView> pipeline, VirtualView subject) {
+        if (!(subject instanceof IFRenderContext)) return;
 
-        final String[] layout = context.getConfig().getLayout();
+        final IFRenderContext renderContext = (IFRenderContext) subject;
+        final String[] layout = renderContext.getConfig().getLayout();
         if (layout == null) return;
         if (layout.length == 0) return;
 
-        final IFRenderContext renderContext = (IFRenderContext) context;
         final Map<Character, List<Integer>> slots = resolveLayout(renderContext, layout);
         registerLayout(renderContext, slots);
     }
