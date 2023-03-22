@@ -3,6 +3,7 @@ package me.devnatan.inventoryframework.pipeline;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.component.Component;
+import me.devnatan.inventoryframework.component.ComponentFactory;
 import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.context.IFSlotRenderContext;
 import me.devnatan.inventoryframework.internal.ElementFactory;
@@ -35,9 +36,6 @@ public final class FirstRenderInterceptor implements PipelineInterceptor<Virtual
     }
 
     private void registerComponents(IFRenderContext context) {
-        final ElementFactory elementFactory = context.getRoot().getElementFactory();
-        context.getRegisteredComponentBuilders().stream()
-                .map(elementFactory::buildComponent)
-                .forEach(context::addComponent);
+        context.getComponentFactories().stream().map(ComponentFactory::create).forEach(context::addComponent);
     }
 }

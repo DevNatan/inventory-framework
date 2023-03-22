@@ -15,7 +15,7 @@ import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.bukkit.BukkitViewer;
 import me.devnatan.inventoryframework.component.BukkitItemComponentBuilder;
-import me.devnatan.inventoryframework.component.ComponentBuilder;
+import me.devnatan.inventoryframework.component.ComponentFactory;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
 import me.devnatan.inventoryframework.state.StateHost;
 import org.bukkit.entity.Player;
@@ -31,9 +31,9 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
     private final @NotNull IFContext parent;
     private final @NotNull Player player;
 
-    private final List<ComponentBuilder<?>> componentBuilders = new ArrayList<>();
+    private final List<ComponentFactory> componentBuilders = new ArrayList<>();
     private final List<LayoutSlot> layoutSlots = new ArrayList<>();
-    private final List<BiFunction<Integer, Integer, ComponentBuilder<?>>> availableSlots = new ArrayList<>();
+    private final List<BiFunction<Integer, Integer, ComponentFactory>> availableSlots = new ArrayList<>();
 
     @ApiStatus.Internal
     public RenderContext(
@@ -247,7 +247,7 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
     }
 
     @Override
-    public @NotNull @UnmodifiableView List<ComponentBuilder<?>> getRegisteredComponentBuilders() {
+    public @NotNull @UnmodifiableView List<ComponentFactory> getComponentFactories() {
         return Collections.unmodifiableList(componentBuilders);
     }
 
@@ -257,7 +257,8 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
     }
 
     @Override
-    public @NotNull @UnmodifiableView List<BiFunction<Integer, Integer, ComponentBuilder<?>>> getAvailableSlots() {
+    public @NotNull @UnmodifiableView List<BiFunction<Integer, Integer, ComponentFactory>>
+            getAvailableSlotsFactories() {
         return Collections.unmodifiableList(availableSlots);
     }
 }

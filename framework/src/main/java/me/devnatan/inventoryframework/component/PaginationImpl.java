@@ -140,4 +140,9 @@ public final class PaginationImpl implements Pagination, InteractionHandler {
 
     @Override
     public void clicked(@NotNull Component component, @NotNull IFSlotClickContext context) {}
+
+    @Override
+    public boolean isLayoutComponent() {
+        return false;
+    }
 }

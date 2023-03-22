@@ -1,9 +1,13 @@
 package me.devnatan.inventoryframework.internal;
 
+import java.util.List;
 import java.util.function.Function;
+import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import me.devnatan.inventoryframework.component.ComponentBuilder;
+import lombok.Setter;
+import me.devnatan.inventoryframework.component.ComponentFactory;
+import org.jetbrains.annotations.ApiStatus;
 
 @Data
 public final class LayoutSlot {
@@ -16,5 +20,16 @@ public final class LayoutSlot {
      * The first parameter is the current iteration index.
      */
     @EqualsAndHashCode.Exclude
-    private final Function<Integer, ComponentBuilder<?>> factory;
+    private final Function<Integer, ComponentFactory> factory;
+
+    @EqualsAndHashCode.Exclude
+    @Setter(AccessLevel.NONE)
+    private List<Integer> positions;
+
+    @ApiStatus.Internal
+    public void updatePositions(List<Integer> positions) {
+        if (this.positions != null) throw new IllegalStateException("Positions can only be updated once");
+
+        this.positions = positions;
+    }
 }

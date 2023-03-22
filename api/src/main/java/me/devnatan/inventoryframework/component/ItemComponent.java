@@ -16,6 +16,7 @@ public class ItemComponent implements Component, InteractionHandler {
 
     private final int position;
     private final Object stack;
+    private final boolean isLayoutComponent;
 
     // --- Options ---
     private final boolean cancelOnClick;

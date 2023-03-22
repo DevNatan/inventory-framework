@@ -10,13 +10,11 @@ import java.util.Optional;
 import java.util.function.Function;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.component.Component;
-import me.devnatan.inventoryframework.component.ComponentBuilder;
+import me.devnatan.inventoryframework.component.ComponentFactory;
 import me.devnatan.inventoryframework.component.ItemComponentBuilder;
 import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.exception.InvalidLayoutException;
-import me.devnatan.inventoryframework.internal.ElementFactory;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
-import org.jetbrains.annotations.NotNull;
 
 public final class LayoutInterceptor implements PipelineInterceptor<VirtualView> {
 
@@ -26,35 +24,38 @@ public final class LayoutInterceptor implements PipelineInterceptor<VirtualView>
 
         final IFRenderContext renderContext = (IFRenderContext) subject;
         final String[] layout = renderContext.getConfig().getLayout();
-        if (layout == null) return;
-        if (layout.length == 0) return;
+        if (layout == null || layout.length == 0) return;
 
         final Map<Character, List<Integer>> slots = resolveLayout(renderContext, layout);
-        registerLayout(renderContext, slots);
+        registerLayoutComponents(renderContext, slots);
     }
 
-    private void registerLayout(IFRenderContext context, Map<Character, List<Integer>> slots) {
-        final ElementFactory elementFactory = context.getRoot().getElementFactory();
+    private void registerLayoutComponents(IFRenderContext context, Map<Character, List<Integer>> slots) {
         for (final Map.Entry<Character, List<Integer>> entry : slots.entrySet()) {
-            final Optional<LayoutSlot> layoutSlotOptional = context.getLayoutSlots().stream()
+            final Optional<LayoutSlot> layoutSlotOption = context.getLayoutSlots().stream()
                     .filter(layoutSlot -> layoutSlot.getCharacter() == entry.getKey())
                     .findFirst();
-            if (!layoutSlotOptional.isPresent()) continue;
 
-            final Function<Integer, ComponentBuilder<?>> factory =
-                    layoutSlotOptional.get().getFactory();
+            if (!layoutSlotOption.isPresent()) continue;
+
+            final LayoutSlot layoutSlot = layoutSlotOption.get();
+            final Function<Integer, ComponentFactory> factory = layoutSlot.getFactory();
             int iterationIndex = 0;
-            for (final int slot : entry.getValue()) {
-                final ComponentBuilder<?> builder = factory.apply(iterationIndex++);
-                if (builder instanceof ItemComponentBuilder) ((ItemComponentBuilder<?>) builder).withSlot(slot);
 
-                final Component component = elementFactory.buildComponent(builder);
+            for (final int slot : entry.getValue()) {
+                final ComponentFactory componentFactory = factory.apply(iterationIndex++);
+                if (componentFactory instanceof ItemComponentBuilder)
+                    ((ItemComponentBuilder<?>) componentFactory).withSlot(slot);
+
+                final Component component = componentFactory.create();
                 context.addComponent(component);
             }
+
+            layoutSlot.updatePositions(entry.getValue());
         }
     }
 
-    private Map<Character, List<Integer>> resolveLayout(IFRenderContext context, @NotNull String[] layout) {
+    private Map<Character, List<Integer>> resolveLayout(IFRenderContext context, String[] layout) {
         final int layoutRows = layout.length;
         final int containerRows = context.getContainer().getRowsCount();
 

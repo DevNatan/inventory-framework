@@ -61,4 +61,6 @@ public interface Component extends VirtualView {
      * @param context The context that this component will be cleared from.
      */
     void clear(@NotNull IFContext context);
+
+    boolean isLayoutComponent();
 }
