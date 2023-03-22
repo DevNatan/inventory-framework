@@ -24,9 +24,7 @@ public final class BukkitItemComponentBuilder extends DefaultComponentBuilder<Bu
     private Consumer<? super IFSlotClickContext> clickHandler;
     private Consumer<? super IFSlotContext> updateHandler;
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public BukkitItemComponentBuilder withSlot(int slot) {
         this.slot = slot;

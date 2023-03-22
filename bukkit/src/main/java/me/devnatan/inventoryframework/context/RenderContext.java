@@ -4,6 +4,7 @@ import static java.lang.String.format;
 import static me.devnatan.inventoryframework.utils.SlotConverter.convertSlot;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -28,11 +29,16 @@ import org.jetbrains.annotations.UnmodifiableView;
 @Getter
 public final class RenderContext extends ConfinedContext implements IFRenderContext, Context {
 
+    private static final LayoutSlot filledReservedCharLayoutSlot =
+            new LayoutSlot(LayoutSlot.FILLED_RESERVED_CHAR, $ -> {
+                throw new IllegalStateException("Cannot use factory of reserved char");
+            });
+
     private final @NotNull IFContext parent;
     private final @NotNull Player player;
 
     private final List<ComponentFactory> componentBuilders = new ArrayList<>();
-    private final List<LayoutSlot> layoutSlots = new ArrayList<>();
+    private final List<LayoutSlot> layoutSlots = new ArrayList<>(Arrays.asList(filledReservedCharLayoutSlot));
     private final List<BiFunction<Integer, Integer, ComponentFactory>> availableSlots = new ArrayList<>();
 
     @ApiStatus.Internal
@@ -150,7 +156,7 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
      */
     public @NotNull BukkitItemComponentBuilder availableSlot() {
         final BukkitItemComponentBuilder builder = new BukkitItemComponentBuilder();
-        availableSlots.add(($, $$) -> builder);
+        availableSlots.add((index, slot) -> builder.withSlot(slot));
         return builder;
     }
 
@@ -164,7 +170,12 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
         return availableSlot().withItem(item);
     }
 
-    // TODO documentation
+    /**
+     * Adds an item in the next available slot of this context's container.
+     *
+     * @param factory A factory to create the item builder to configure the item.
+     *                The first parameter is the iteration index of the available slot.
+     */
     public void availableSlot(@NotNull BiConsumer<Integer, BukkitItemComponentBuilder> factory) {
         final BukkitItemComponentBuilder builder = new BukkitItemComponentBuilder();
         availableSlots.add((index, slot) -> {

@@ -39,16 +39,18 @@ public final class LayoutInterceptor implements PipelineInterceptor<VirtualView>
             if (!layoutSlotOption.isPresent()) continue;
 
             final LayoutSlot layoutSlot = layoutSlotOption.get();
-            final Function<Integer, ComponentFactory> factory = layoutSlot.getFactory();
-            int iterationIndex = 0;
+            if (layoutSlot.getCharacter() != LayoutSlot.FILLED_RESERVED_CHAR) {
+                final Function<Integer, ComponentFactory> factory = layoutSlot.getFactory();
+                int iterationIndex = 0;
 
-            for (final int slot : entry.getValue()) {
-                final ComponentFactory componentFactory = factory.apply(iterationIndex++);
-                if (componentFactory instanceof ItemComponentBuilder)
-                    ((ItemComponentBuilder<?>) componentFactory).withSlot(slot);
+                for (final int slot : entry.getValue()) {
+                    final ComponentFactory componentFactory = factory.apply(iterationIndex++);
+                    if (componentFactory instanceof ItemComponentBuilder)
+                        ((ItemComponentBuilder<?>) componentFactory).withSlot(slot);
 
-                final Component component = componentFactory.create();
-                context.addComponent(component);
+                    final Component component = componentFactory.create();
+                    context.addComponent(component);
+                }
             }
 
             layoutSlot.updatePositions(entry.getValue());

@@ -428,7 +428,7 @@ public abstract class PlatformView<
         pipeline.intercept(StandardPipelinePhases.UPDATE, new UpdateInterceptor());
         pipeline.intercept(StandardPipelinePhases.CLOSE, new CloseInterceptor());
         registerPlatformInterceptors();
-        pipeline.execute(this);
+        pipeline.execute(StandardPipelinePhases.INIT, this);
     }
 
     public abstract void registerPlatformInterceptors();
