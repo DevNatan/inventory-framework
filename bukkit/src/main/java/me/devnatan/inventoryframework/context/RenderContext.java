@@ -8,7 +8,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.BiConsumer;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 import lombok.Getter;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewContainer;
@@ -33,7 +33,7 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
 
     private final List<ComponentBuilder<?>> componentBuilders = new ArrayList<>();
     private final List<LayoutSlot> layoutSlots = new ArrayList<>();
-    private final List<Function<Integer, ComponentBuilder<?>>> availableSlots = new ArrayList<>();
+    private final List<BiFunction<Integer, Integer, ComponentBuilder<?>>> availableSlots = new ArrayList<>();
 
     @ApiStatus.Internal
     public RenderContext(
@@ -150,7 +150,7 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
      */
     public @NotNull BukkitItemComponentBuilder availableSlot() {
         final BukkitItemComponentBuilder builder = new BukkitItemComponentBuilder();
-        availableSlots.add($ -> builder);
+        availableSlots.add(($, $$) -> builder);
         return builder;
     }
 
@@ -162,6 +162,16 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
      */
     public @NotNull BukkitItemComponentBuilder availableSlot(@Nullable ItemStack item) {
         return availableSlot().withItem(item);
+    }
+
+    // TODO documentation
+    public void availableSlot(@NotNull BiConsumer<Integer, BukkitItemComponentBuilder> factory) {
+        final BukkitItemComponentBuilder builder = new BukkitItemComponentBuilder();
+        availableSlots.add((index, slot) -> {
+            builder.withSlot(slot);
+            factory.accept(index, builder);
+            return builder;
+        });
     }
 
     /**
@@ -247,7 +257,7 @@ public final class RenderContext extends ConfinedContext implements IFRenderCont
     }
 
     @Override
-    public @NotNull @UnmodifiableView List<Function<Integer, ComponentBuilder<?>>> getAvailableSlots() {
+    public @NotNull @UnmodifiableView List<BiFunction<Integer, Integer, ComponentBuilder<?>>> getAvailableSlots() {
         return Collections.unmodifiableList(availableSlots);
     }
 }

@@ -1,7 +1,7 @@
 package me.devnatan.inventoryframework.context;
 
 import java.util.List;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 import me.devnatan.inventoryframework.component.ComponentBuilder;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
 import org.jetbrains.annotations.NotNull;
@@ -21,5 +21,5 @@ public interface IFRenderContext extends IFConfinedContext {
 
     @NotNull
     @UnmodifiableView
-    List<Function<Integer, ComponentBuilder<?>>> getAvailableSlots();
+    List<BiFunction<Integer, Integer, ComponentBuilder<?>>> getAvailableSlots();
 }
