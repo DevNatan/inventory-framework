@@ -100,6 +100,10 @@ abstract class PlatformRenderContext<T extends ItemComponentBuilder<T>> extends 
     /**
      * Adds an item in the next available slot of this context's container.
      *
+     * <pre>{@code
+     * availableSlot((index, builder) -> builder.withItem(...));
+     * }</pre>
+     *
      * @param factory A factory to create the item builder to configure the item.
      *                The first parameter is the iteration index of the available slot.
      */
@@ -129,6 +133,10 @@ abstract class PlatformRenderContext<T extends ItemComponentBuilder<T>> extends 
     /**
      * Defines the item that will represent a character provided in the context layout.
      *
+     * <pre>{@code
+     * layoutSlot('F', (index, builder) -> builder.withItem(...));
+     * }</pre>
+     *
      * @param character The layout character target.
      */
     public void layoutSlot(char character, @NotNull BiConsumer<Integer, T> factory) {
@@ -144,7 +152,7 @@ abstract class PlatformRenderContext<T extends ItemComponentBuilder<T>> extends 
     /**
      * Checks if the character is a reserved layout character.
      *
-     * @param character The character to be checked.re
+     * @param character The character to be checked.
      * @throws IllegalArgumentException If the given character is a reserved layout character.
      */
     private void requireNonReservedLayoutCharacter(char character) {
