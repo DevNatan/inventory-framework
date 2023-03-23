@@ -18,6 +18,8 @@ import java.util.stream.IntStream;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewConfigBuilder;
+import me.devnatan.inventoryframework.ViewContainer;
+import me.devnatan.inventoryframework.ViewType;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.ComponentFactory;
 import me.devnatan.inventoryframework.component.FakeComponent;
@@ -69,7 +71,11 @@ public class AvailableSlotInterceptorTest {
     @Test
     void resolveFromLayoutSlot() {
         RootView root = createRootMock();
+        ViewContainer container = mock(ViewContainer.class);
+        when(container.hasItem(anyInt())).thenReturn(false);
+
         IFRenderContext context = createContextMock(root, IFRenderContext.class);
+        when(context.getContainer()).thenReturn(container);
         when(context.getConfig()).thenReturn(createLayoutConfig(defaultLayout));
 
         BiFunction<Integer, Integer, ComponentFactory> availableSlotFactory = mock(BiFunction.class);
@@ -92,7 +98,11 @@ public class AvailableSlotInterceptorTest {
     @Test
     void interceptFromLayoutSlot() {
         RootView root = createRootMock();
+        ViewContainer container = mock(ViewContainer.class);
+        when(container.hasItem(anyInt())).thenReturn(false);
+
         IFRenderContext context = createContextMock(root, IFRenderContext.class);
+        when(context.getContainer()).thenReturn(container);
         when(context.getConfig()).thenReturn(createLayoutConfig(defaultLayout));
 
         ComponentFactory componentFactory = mock(ComponentFactory.class);
@@ -114,6 +124,10 @@ public class AvailableSlotInterceptorTest {
     }
 
     private ViewConfig createLayoutConfig(String... layout) {
-        return new ViewConfigBuilder().size(3).layout(layout).build();
+        return new ViewConfigBuilder()
+                .type(ViewType.CHEST)
+                .size(3)
+                .layout(layout)
+                .build();
     }
 }
