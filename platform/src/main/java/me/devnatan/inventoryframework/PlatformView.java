@@ -63,7 +63,7 @@ public abstract class PlatformView<
      */
     @NotNull
     public final ViewConfigBuilder createConfig() {
-        return new ViewConfigBuilder();
+        return new ViewConfigBuilder().type(ViewType.CHEST);
     }
 
     /**
