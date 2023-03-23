@@ -1,7 +1,8 @@
 package me.devnatan.inventoryframework.context;
 
 import java.util.List;
-import me.devnatan.inventoryframework.component.ComponentBuilder;
+import java.util.function.BiFunction;
+import me.devnatan.inventoryframework.component.ComponentFactory;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
@@ -12,9 +13,13 @@ public interface IFRenderContext extends IFConfinedContext {
 
     @NotNull
     @UnmodifiableView
-    List<ComponentBuilder<?>> getRegisteredComponentBuilders();
+    List<ComponentFactory> getComponentFactories();
 
     @NotNull
     @UnmodifiableView
     List<LayoutSlot> getLayoutSlots();
+
+    @NotNull
+    @UnmodifiableView
+    List<BiFunction<Integer, Integer, ComponentFactory>> getAvailableSlotsFactories();
 }

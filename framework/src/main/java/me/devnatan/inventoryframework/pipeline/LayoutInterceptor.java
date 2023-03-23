@@ -8,55 +8,56 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
+import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.component.Component;
-import me.devnatan.inventoryframework.component.ComponentBuilder;
+import me.devnatan.inventoryframework.component.ComponentFactory;
 import me.devnatan.inventoryframework.component.ItemComponentBuilder;
-import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.exception.InvalidLayoutException;
-import me.devnatan.inventoryframework.internal.ElementFactory;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
-import org.jetbrains.annotations.NotNull;
 
-public final class LayoutInterceptor implements PipelineInterceptor<IFContext> {
-
-    public static final char LAYOUT_FILLED = 'O';
+public final class LayoutInterceptor implements PipelineInterceptor<VirtualView> {
 
     @Override
-    public void intercept(PipelineContext<IFContext> pipeline, IFContext context) {
-        if (!(context instanceof IFRenderContext)) return;
+    public void intercept(PipelineContext<VirtualView> pipeline, VirtualView subject) {
+        if (!(subject instanceof IFRenderContext)) return;
 
-        final String[] layout = context.getConfig().getLayout();
-        if (layout == null) return;
-        if (layout.length == 0) return;
+        final IFRenderContext renderContext = (IFRenderContext) subject;
+        final String[] layout = renderContext.getConfig().getLayout();
+        if (layout == null || layout.length == 0) return;
 
-        final IFRenderContext renderContext = (IFRenderContext) context;
         final Map<Character, List<Integer>> slots = resolveLayout(renderContext, layout);
-        registerLayout(renderContext, slots);
+        registerLayoutComponents(renderContext, slots);
     }
 
-    private void registerLayout(IFRenderContext context, Map<Character, List<Integer>> slots) {
-        final ElementFactory elementFactory = context.getRoot().getElementFactory();
+    private void registerLayoutComponents(IFRenderContext context, Map<Character, List<Integer>> slots) {
         for (final Map.Entry<Character, List<Integer>> entry : slots.entrySet()) {
-            final Optional<LayoutSlot> layoutSlotOptional = context.getLayoutSlots().stream()
+            final Optional<LayoutSlot> layoutSlotOption = context.getLayoutSlots().stream()
                     .filter(layoutSlot -> layoutSlot.getCharacter() == entry.getKey())
                     .findFirst();
-            if (!layoutSlotOptional.isPresent()) continue;
 
-            final Function<Integer, ComponentBuilder<?>> factory =
-                    layoutSlotOptional.get().getFactory();
-            int iterationIndex = 0;
-            for (final int slot : entry.getValue()) {
-                final ComponentBuilder<?> builder = factory.apply(iterationIndex++);
-                if (builder instanceof ItemComponentBuilder) ((ItemComponentBuilder<?>) builder).withSlot(slot);
+            if (!layoutSlotOption.isPresent()) continue;
 
-                final Component component = elementFactory.buildComponent(builder);
-                context.addComponent(component);
+            final LayoutSlot layoutSlot = layoutSlotOption.get();
+            if (layoutSlot.getCharacter() != LayoutSlot.FILLED_RESERVED_CHAR) {
+                final Function<Integer, ComponentFactory> factory = layoutSlot.getFactory();
+                int iterationIndex = 0;
+
+                for (final int slot : entry.getValue()) {
+                    final ComponentFactory componentFactory = factory.apply(iterationIndex++);
+                    if (componentFactory instanceof ItemComponentBuilder)
+                        ((ItemComponentBuilder<?>) componentFactory).withSlot(slot);
+
+                    final Component component = componentFactory.create();
+                    context.addComponent(component);
+                }
             }
+
+            layoutSlot.updatePositions(entry.getValue());
         }
     }
 
-    private Map<Character, List<Integer>> resolveLayout(IFRenderContext context, @NotNull String[] layout) {
+    private Map<Character, List<Integer>> resolveLayout(IFRenderContext context, String[] layout) {
         final int layoutRows = layout.length;
         final int containerRows = context.getContainer().getRowsCount();
 

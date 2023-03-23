@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * A component represents one or {@link ComponentComposition more} items within a {@link VirtualView}.
  */
-public interface Component {
+public interface Component extends VirtualView {
 
     /**
      * The root of this component.

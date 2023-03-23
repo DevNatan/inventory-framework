@@ -9,11 +9,12 @@ import me.devnatan.inventoryframework.context.SlotClickContext;
 import me.devnatan.inventoryframework.context.SlotContext;
 import me.devnatan.inventoryframework.context.SlotRenderContext;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @Getter
 public final class BukkitItemComponentBuilder extends DefaultComponentBuilder<BukkitItemComponentBuilder>
-        implements ItemComponentBuilder<BukkitItemComponentBuilder> {
+        implements ItemComponentBuilder<BukkitItemComponentBuilder>, ComponentFactory {
 
     private int slot;
     private ItemStack item;
@@ -23,9 +24,12 @@ public final class BukkitItemComponentBuilder extends DefaultComponentBuilder<Bu
     private Consumer<? super IFSlotClickContext> clickHandler;
     private Consumer<? super IFSlotContext> updateHandler;
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
+    public boolean isContainedWithin(int position) {
+        return position == slot;
+    }
+
+    /** {@inheritDoc} */
     @Override
     public BukkitItemComponentBuilder withSlot(int slot) {
         this.slot = slot;
@@ -83,5 +87,11 @@ public final class BukkitItemComponentBuilder extends DefaultComponentBuilder<Bu
     public BukkitItemComponentBuilder onUpdate(@Nullable Consumer<? super SlotContext> updateHandler) {
         this.updateHandler = (Consumer<? super IFSlotContext>) updateHandler;
         return this;
+    }
+
+    @Override
+    public @NotNull Component create() {
+        return new ItemComponent(
+                getSlot(), getItem(), isCancelOnClick(), isCloseOnClick(), getRenderHandler(), getUpdateHandler());
     }
 }
