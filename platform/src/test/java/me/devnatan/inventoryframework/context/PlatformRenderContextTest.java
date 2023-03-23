@@ -2,7 +2,6 @@ package me.devnatan.inventoryframework.context;
 
 import static me.devnatan.inventoryframework.TestUtils.createRootMock;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 
 import java.util.function.BiFunction;
@@ -33,7 +32,7 @@ public class PlatformRenderContextTest {
         BiFunction<Integer, Integer, ComponentFactory> factory = (BiFunction<Integer, Integer, ComponentFactory>)
                 context.getAvailableSlotsFactories().get(0);
 
-        ComponentFactory value = factory.apply(anyInt(), anyInt());
+        ComponentFactory value = factory.apply(0, 0);
         assertEquals(itemBuilder, value);
     }
 }
