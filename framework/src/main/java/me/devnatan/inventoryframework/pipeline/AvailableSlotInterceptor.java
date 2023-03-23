@@ -37,10 +37,16 @@ public final class AvailableSlotInterceptor implements PipelineInterceptor<Virtu
     List<ComponentFactory> resolveFromInitialSlot(IFRenderContext context) {
         final List<BiFunction<Integer, Integer, ComponentFactory>> availableSlots =
                 context.getAvailableSlotsFactories();
+        final List<ComponentFactory> result = new ArrayList<>();
 
-        for (int i = 0; i < availableSlots.size(); i++) {}
+        int slot = 0;
+        for (int i = 0; i < availableSlots.size(); i++) {
+            while (!isSlotAvailableForAutoFilling(context, slot)) slot++;
 
-        return Collections.emptyList();
+            result.add(availableSlots.get(i).apply(i, slot++));
+        }
+
+        return result;
     }
 
     /**
