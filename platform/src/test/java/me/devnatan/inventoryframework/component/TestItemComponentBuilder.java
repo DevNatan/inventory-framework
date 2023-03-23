@@ -5,6 +5,8 @@ import org.jetbrains.annotations.NotNull;
 public class TestItemComponentBuilder extends DefaultComponentBuilder<TestItemComponentBuilder>
         implements ItemComponentBuilder<TestItemComponentBuilder>, ComponentFactory {
 
+    int slot;
+
     @Override
     public @NotNull Component create() {
         return null;
@@ -12,6 +14,12 @@ public class TestItemComponentBuilder extends DefaultComponentBuilder<TestItemCo
 
     @Override
     public TestItemComponentBuilder withSlot(int slot) {
+        this.slot = slot;
         return this;
+    }
+
+    @Override
+    public boolean isContainedWithin(int position) {
+        return slot == position;
     }
 }

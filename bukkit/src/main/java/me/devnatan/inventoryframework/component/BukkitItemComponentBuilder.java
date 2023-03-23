@@ -24,6 +24,11 @@ public final class BukkitItemComponentBuilder extends DefaultComponentBuilder<Bu
     private Consumer<? super IFSlotClickContext> clickHandler;
     private Consumer<? super IFSlotContext> updateHandler;
 
+    @Override
+    public boolean isContainedWithin(int position) {
+        return position == slot;
+    }
+
     /** {@inheritDoc} */
     @Override
     public BukkitItemComponentBuilder withSlot(int slot) {
