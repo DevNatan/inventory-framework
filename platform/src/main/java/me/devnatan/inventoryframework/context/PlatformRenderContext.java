@@ -23,17 +23,14 @@ import org.jetbrains.annotations.UnmodifiableView;
 abstract class PlatformRenderContext<T extends ItemComponentBuilder<T>> extends ConfinedContext
         implements IFRenderContext {
 
-    private static final LayoutSlot filledReservedCharLayoutSlot =
-            new LayoutSlot(LayoutSlot.FILLED_RESERVED_CHAR, $ -> {
-                throw new IllegalStateException("Cannot use factory of reserved char");
-            });
-
     @Getter
     private final @NotNull IFContext parent;
 
     private final List<ComponentFactory> componentBuilders = new ArrayList<>();
     private final List<LayoutSlot> layoutSlots =
-            new ArrayList<>(Collections.singletonList(filledReservedCharLayoutSlot));
+            new ArrayList<>(Collections.singletonList(new LayoutSlot(LayoutSlot.FILLED_RESERVED_CHAR, $ -> {
+                throw new IllegalStateException("Cannot use factory of reserved char");
+            })));
     private final List<BiFunction<Integer, Integer, ComponentFactory>> availableSlots = new ArrayList<>();
 
     PlatformRenderContext(RootView root, ViewContainer container, Viewer viewer, @NotNull IFContext parent) {

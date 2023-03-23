@@ -27,7 +27,8 @@ public final class AvailableSlotInterceptor implements PipelineInterceptor<Virtu
     }
 
     /**
-     * Resolves the components to register with their defined slots starting from the first container slot
+     * Resolves the components to register with their defined slots starting from the first
+     * container slot.
      *
      * @param context The renderization context.
      */
