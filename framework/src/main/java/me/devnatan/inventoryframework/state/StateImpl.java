@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 public final class StateImpl<T> implements MutableState<T> {
 
     private final long id;
-    private final Function<StateHost, InternalStateValue> valueFactory;
+    private final Function<StateHost, StateValue> valueFactory;
 
     @SuppressWarnings("unchecked")
     @Override

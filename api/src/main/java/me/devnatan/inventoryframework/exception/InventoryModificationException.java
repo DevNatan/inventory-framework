@@ -1,5 +1,7 @@
 package me.devnatan.inventoryframework.exception;
 
+import me.devnatan.inventoryframework.InventoryFrameworkException;
+
 /**
  * Thrown when a method explicitly needs to specify that it will directly modify the view's container
  * when executed, that method is overridden by implementations whose direct modification of the

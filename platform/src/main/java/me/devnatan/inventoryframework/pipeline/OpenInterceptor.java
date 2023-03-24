@@ -8,7 +8,7 @@ import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.IFOpenContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
-import me.devnatan.inventoryframework.exception.InventoryFrameworkException;
+import me.devnatan.inventoryframework.InventoryFrameworkException;
 import me.devnatan.inventoryframework.internal.ElementFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;

@@ -1,30 +1,63 @@
 package me.devnatan.inventoryframework.state;
 
-import java.util.function.Supplier;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.jetbrains.annotations.NotNull;
 
-@Data
-public final class LazyValue implements InternalStateValue {
+import java.util.Objects;
+import java.util.function.Supplier;
 
-    public static final Object uninitialized = new Object();
+/**
+ * Lazy value whose initial value is undefined if the host has not previously attempted to retrieve it.
+ * <p>
+ * The initial state value is set by a {@link LazyValue#computation}, and this value remains the
+ * {@link LazyValue#currValue current value} throughout the lifecycle of that value.
+ */
+public final class LazyValue extends StateValue {
 
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    private final Supplier<Object> computation;
+	private static final Object UNINITIALIZED = new Object();
 
-    private Object currValue = uninitialized;
+	private final Supplier<Object> computation;
+	private Object currValue = UNINITIALIZED;
 
-    @Override
-    public Object get() {
-        if (currValue.equals(uninitialized)) currValue = computation.get();
+	LazyValue(long id, @NotNull Supplier<Object> computation) {
+		super(id);
+		this.computation = computation;
+	}
 
-        return currValue;
-    }
+	@Override
+	public Object get() {
+		if (currValue.equals(UNINITIALIZED))
+			currValue = computation.get();
 
-    @Override
-    public void set(Object value) {
-        throw new IllegalStateModificationException();
-    }
+		return currValue;
+	}
+
+	@Override
+	public void set(Object value) {
+		throw new IllegalStateModificationException("Immutable");
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		if (!super.equals(o)) return false;
+		LazyValue lazyValue = (LazyValue) o;
+		return computation.equals(lazyValue.computation) && Objects.equals(currValue, lazyValue.currValue);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(super.hashCode(), computation, currValue);
+	}
+
+	@Override
+	public String toString() {
+		return "LazyValue{" +
+			"computation=" + computation +
+			", currValue=" + currValue +
+			"} " + super.toString();
+	}
 }

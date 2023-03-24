@@ -1,29 +1,24 @@
 package me.devnatan.inventoryframework.state;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.HashMap;
 import java.util.Map;
-import org.jetbrains.annotations.ApiStatus;
 
-@ApiStatus.Internal
+/**
+ * HashMap-backed Default implementation for StateHost.
+ */
 public final class DefaultStateHost implements StateHost {
 
-    private final Map<Long, InternalStateValue> valuesMap = new HashMap<>();
+	private final Map<Long, StateValue> valuesMap = new HashMap<>();
 
-    Object get(long id) {
-        if (!valuesMap.containsKey(id))
-			throw new UninitializedStateException();
+	@Override
+	public StateValue getState(long id) {
+		return valuesMap.get(id);
+	}
 
-        return valuesMap.get(id).get();
-    }
-
-    void set(long id, Object newValue) {
-        if (!valuesMap.containsKey(id))
-			throw new UninitializedStateException();
-
-		valuesMap.get(id).set(newValue);
-    }
-
-    void init(long id, InternalStateValue value) {
-        valuesMap.put(id, value);
-    }
+	@Override
+	public void setState(long id, @NotNull StateValue value) {
+		valuesMap.put(id, value);
+	}
 }

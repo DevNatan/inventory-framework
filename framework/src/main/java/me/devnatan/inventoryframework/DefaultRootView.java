@@ -24,7 +24,7 @@ import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.internal.ElementFactory;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
 import me.devnatan.inventoryframework.state.State;
-import me.devnatan.inventoryframework.state.StateFactory;
+import me.devnatan.inventoryframework.state.StateValueFactory;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
@@ -40,7 +40,7 @@ public class DefaultRootView implements RootView {
     private final Set<IFContext> contexts = newSetFromMap(synchronizedMap(new HashMap<>()));
 
     // --- State Management --
-    protected final StateFactory stateFactory = new StateFactory();
+    protected final StateValueFactory stateValueFactory = new StateValueFactory();
     private final List<State<?>> states = new ArrayList<>();
 
     @Override

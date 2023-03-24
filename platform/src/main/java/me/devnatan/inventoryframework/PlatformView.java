@@ -225,7 +225,7 @@ public abstract class PlatformView<
      * @return A mutable state with an initial value.
      */
     protected final <V> MutableState<V> mutableState(V initialValue) {
-		return (MutableState<V>) stateFactory.createState(host -> new MutableValue(initialValue));
+		return (MutableState<V>) stateValueFactory.createState(host -> new MutableValue(initialValue));
     }
 
     /**
@@ -264,7 +264,7 @@ public abstract class PlatformView<
     protected final <V> State<Pagination> pagination(
             @NotNull Function<TSlotContext, List<? super V>> sourceProvider,
             @NotNull BiConsumer<TItem, V> itemFactory) {
-        return stateFactory.createState(host -> new ImmutableValue(new PaginationImpl(
+        return stateValueFactory.createState(host -> new ImmutableValue(new PaginationImpl(
                 this, (IFContext) host, null /* TODO */, sourceProvider, (BiConsumer<TItem, Object>) itemFactory)));
     }
 

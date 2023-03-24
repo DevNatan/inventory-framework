@@ -1,14 +1,9 @@
 package me.devnatan.inventoryframework.bukkit;
 
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import me.devnatan.inventoryframework.View;
-import me.devnatan.inventoryframework.ViewConfigBuilder;
 import me.devnatan.inventoryframework.ViewFrame;
-import me.devnatan.inventoryframework.ViewType;
-import me.devnatan.inventoryframework.component.Pagination;
 import me.devnatan.inventoryframework.context.RenderContext;
-import me.devnatan.inventoryframework.state.State;
+import me.devnatan.inventoryframework.state.MutableState;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -38,17 +33,15 @@ public final class InventoryFramework extends JavaPlugin {
 
 class AwesomeView extends View {
 
-    private final State<Pagination> paginationState = pagination(
-            () -> IntStream.rangeClosed(0, 100).boxed().collect(Collectors.toList()),
-            (item, value) -> item.withItem(new ItemStack(Material.DIAMOND)));
-
-    @Override
-    public void onInit(ViewConfigBuilder config) {
-        config.type(ViewType.CHEST).layout("         ", " OOOOOOO ", "         ");
-    }
+    private final MutableState<Integer> counter = mutableState(3);
 
     @Override
     public void onFirstRender(RenderContext render) {
-        render.availableSlot((index, builder) -> builder.withItem(new ItemStack(Material.GOLD_INGOT)));
+        render.availableSlot()
+                .onRender(slotRender -> slotRender.setItem(new ItemStack(Material.DIAMOND, counter.get(render))))
+                .onClick(click -> {
+                    click.getPlayer().sendMessage("clicked");
+                    counter.set(counter.get(render) + 1, render);
+                });
     }
 }

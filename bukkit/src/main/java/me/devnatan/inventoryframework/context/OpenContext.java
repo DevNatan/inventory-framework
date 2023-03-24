@@ -8,7 +8,7 @@ import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewConfigBuilder;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.bukkit.BukkitViewer;
-import me.devnatan.inventoryframework.exception.InventoryFrameworkException;
+import me.devnatan.inventoryframework.InventoryFrameworkException;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
