@@ -5,6 +5,7 @@ junit = "5.9.2"
 lombok = "1.18.26"
 kotlin = "1.8.20"
 mockito = "4.7.0"
+adventure-api = "4.13.0"
 plugin-shadowjar = "8.1.1"
 plugin-ktlint = "3.14.0"
 plugin-spotless = "6.12.0"
@@ -40,6 +41,10 @@ version.ref = "mockito"
 [libraries.mockito-junit]
 module = "org.mockito:mockito-junit-jupiter"
 version.ref = "mockito"
+
+[libraries.adventure-api]
+module = "net.kyori:adventure-api"
+version.ref = "adventure-api"
 
 [plugins]
 shadowjar = { id = "com.github.johnrengelman.shadow", version.ref = "plugin-shadowjar" }
