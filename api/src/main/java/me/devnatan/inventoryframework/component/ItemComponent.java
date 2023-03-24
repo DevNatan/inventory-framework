@@ -24,6 +24,7 @@ public class ItemComponent implements Component, InteractionHandler {
     // --- Handlers ---
     private final Consumer<? super IFSlotRenderContext> renderHandler;
     private final Consumer<? super IFSlotContext> updateHandler;
+	private final Consumer<? super IFSlotClickContext> clickHandler;
 
     @Override
     public @NotNull VirtualView getRoot() {
@@ -43,12 +44,14 @@ public class ItemComponent implements Component, InteractionHandler {
     @Override
     public void render(@NotNull IFSlotRenderContext context) {
         if (renderHandler != null) {
-            if (stack == null)
-                throw new IllegalStateException("At least one fallback item or item render handler must be provided.");
-
             renderHandler.accept(context);
             context.getContainer().renderItem(getPosition(), context.getResult());
+			return;
         }
+
+		if (stack == null) {
+			throw new IllegalStateException("At least one fallback item or render handler must be provided");
+		}
 
         context.getContainer().renderItem(getPosition(), stack);
     }
@@ -65,5 +68,8 @@ public class ItemComponent implements Component, InteractionHandler {
     }
 
     @Override
-    public void clicked(@NotNull Component component, @NotNull IFSlotClickContext context) {}
+    public void clicked(@NotNull Component component, @NotNull IFSlotClickContext context) {
+		if (clickHandler == null) return;
+		clickHandler.accept(context);
+	}
 }

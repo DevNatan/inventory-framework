@@ -29,6 +29,7 @@ import me.devnatan.inventoryframework.pipeline.StandardPipelinePhases;
 import me.devnatan.inventoryframework.pipeline.UpdateInterceptor;
 import me.devnatan.inventoryframework.state.ImmutableValue;
 import me.devnatan.inventoryframework.state.MutableState;
+import me.devnatan.inventoryframework.state.MutableValue;
 import me.devnatan.inventoryframework.state.State;
 import me.devnatan.inventoryframework.state.StateHost;
 import org.jetbrains.annotations.ApiStatus;
@@ -223,27 +224,8 @@ public abstract class PlatformView<
      * @param <V>          The state value type.
      * @return A mutable state with an initial value.
      */
-    protected final <V> MutableState<V> mutable(V initialValue) {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * Creates a {@link MutableState mutable state} with an initial {@code int} value.
-     *
-     * @param initialValue The initial value of the state.
-     * @return A mutable state with an initial {@code int} value.
-     */
-    protected final MutableState<Integer> mutableInt(int initialValue) {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * Creates a {@link MutableState mutable state} with an initial {@code int} value of {@code 0}.
-     *
-     * @return A mutable state with an initial {@code int} value of {@code 0}.
-     */
-    protected final MutableState<Integer> mutableInt() {
-        throw new UnsupportedOperationException();
+    protected final <V> MutableState<V> mutableState(V initialValue) {
+		return (MutableState<V>) stateFactory.createState(host -> new MutableValue(initialValue));
     }
 
     /**

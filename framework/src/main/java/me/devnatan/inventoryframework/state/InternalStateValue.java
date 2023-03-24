@@ -1,6 +1,6 @@
 package me.devnatan.inventoryframework.state;
 
-interface InternalStateValue {
+public interface InternalStateValue {
 
     Object get();
 

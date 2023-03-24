@@ -14,6 +14,10 @@ public final class StateFactory {
         return new StateImpl<>(nextStateId(), valueFactory);
     }
 
+	public <T> MutableState<T> createMutableState(@NotNull Function<StateHost, InternalStateValue> valueFactory) {
+		return (MutableState<T>) createState(valueFactory);
+	}
+
     private static synchronized long nextStateId() {
         return ids.getAndIncrement();
     }

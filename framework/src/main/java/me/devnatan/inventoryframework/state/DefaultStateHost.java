@@ -10,13 +10,17 @@ public final class DefaultStateHost implements StateHost {
     private final Map<Long, InternalStateValue> valuesMap = new HashMap<>();
 
     Object get(long id) {
-        if (!valuesMap.containsKey(id)) throw new UninitializedStateException();
+        if (!valuesMap.containsKey(id))
+			throw new UninitializedStateException();
+
         return valuesMap.get(id).get();
     }
 
     void set(long id, Object newValue) {
-        if (!valuesMap.containsKey(id)) throw new UninitializedStateException();
-        valuesMap.get(id).set(newValue);
+        if (!valuesMap.containsKey(id))
+			throw new UninitializedStateException();
+
+		valuesMap.get(id).set(newValue);
     }
 
     void init(long id, InternalStateValue value) {
