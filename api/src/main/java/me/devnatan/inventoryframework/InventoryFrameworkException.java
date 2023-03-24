@@ -1,4 +1,4 @@
-package me.devnatan.inventoryframework.exception;
+package me.devnatan.inventoryframework;
 
 public class InventoryFrameworkException extends RuntimeException {
     public InventoryFrameworkException() {
