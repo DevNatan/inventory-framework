@@ -113,11 +113,13 @@ public final class ViewConfigBuilder {
     }
 
     public ViewConfigBuilder cancelOnPickup() {
-        throw new UnsupportedOperationException();
+        options.add(ViewConfig.CANCEL_ON_PICKUP);
+        return this;
     }
 
     public ViewConfigBuilder cancelOnDrop() {
-        throw new UnsupportedOperationException();
+        options.add(ViewConfig.CANCEL_ON_DROP);
+        return this;
     }
 
     public ViewConfigBuilder cancelOnDrag() {

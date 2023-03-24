@@ -24,9 +24,11 @@ import org.bukkit.plugin.ServicesManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.VisibleForTesting;
 
+@VisibleForTesting
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public final class ViewFrame extends IFViewFrame<ViewFrame> implements FeatureInstaller<ViewFrame> {
+public class ViewFrame extends IFViewFrame<ViewFrame> implements FeatureInstaller<ViewFrame> {
 
     private static final String BSTATS_SYSTEM_PROP = "inventory-framework.enable-bstats";
     private static final int BSTATS_PROJECT_ID = 15518;
@@ -175,7 +177,7 @@ public final class ViewFrame extends IFViewFrame<ViewFrame> implements FeatureIn
      * @return The current view the player is viewing or {@code null} if it was not found, or it was
      * not possible to determine it.
      */
-    public View getCurrentView(@NotNull Player player) {
+    public RootView getCurrentView(@NotNull Player player) {
         final Inventory topInventory = player.getOpenInventory().getTopInventory();
         if (!(topInventory.getHolder() instanceof View)) return null;
 

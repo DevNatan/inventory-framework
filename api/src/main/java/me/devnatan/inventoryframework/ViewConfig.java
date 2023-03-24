@@ -21,6 +21,8 @@ import org.jetbrains.annotations.VisibleForTesting;
 public class ViewConfig {
 
     public static final ViewConfig.Option<Boolean> CancelOnClick = createOption("cancel-on-click", true);
+    public static final ViewConfig.Option<Boolean> CANCEL_ON_PICKUP = createOption("cancel-on-pickup", false);
+    public static final ViewConfig.Option<Boolean> CANCEL_ON_DROP = createOption("cancel-on-drop", false);
 
     private final String title;
     private final int size;
@@ -29,8 +31,20 @@ public class ViewConfig {
     private final String[] layout;
     private final Set<Modifier> modifiers;
 
-    public final <T> boolean isOptionSet(@NotNull Option<T> option) {
-        for (final Map.Entry<Option<?>, Object> entry : options.entrySet()) {
+    @VisibleForTesting
+    @SuppressWarnings("unchecked")
+    public <T> T getOptionValue(@NotNull Option<T> option) {
+        for (final Map.Entry<Option<?>, Object> entry : getOptions().entrySet()) {
+            final Option<?> other = entry.getKey();
+            if (other.name().equals(option.name())) return (T) entry.getValue();
+        }
+
+        throw new IllegalArgumentException("Unknown option: " + option);
+    }
+
+    @VisibleForTesting
+    public <T> boolean isOptionSet(@NotNull Option<T> option) {
+        for (final Map.Entry<Option<?>, Object> entry : getOptions().entrySet()) {
             final Option<?> other = entry.getKey();
             final Object definedValue = entry.getValue();
             if (other.name().equals(option.name()) && Objects.equals(definedValue, other.defaultValue())) return true;
@@ -38,8 +52,9 @@ public class ViewConfig {
         return false;
     }
 
-    public final <T> boolean isOptionSet(@NotNull Option<T> option, T value) {
-        for (final Map.Entry<Option<?>, Object> entry : options.entrySet()) {
+    @VisibleForTesting
+    public <T> boolean isOptionSet(@NotNull Option<T> option, T value) {
+        for (final Map.Entry<Option<?>, Object> entry : getOptions().entrySet()) {
             final Option<?> other = entry.getKey();
             final Object definedValue = entry.getValue();
             if (other.name().equals(option.name()) && Objects.equals(definedValue, value)) return true;
@@ -83,7 +98,7 @@ public class ViewConfig {
     }
 
     @FunctionalInterface
-    interface Modifier {
+    public interface Modifier {
 
         /**
          * Applies this modifier to a given configuration.
@@ -93,7 +108,7 @@ public class ViewConfig {
         void apply(@NotNull ViewConfigBuilder config);
     }
 
-    interface Option<T> {
+    public interface Option<T> {
 
         @NotNull
         String name();
