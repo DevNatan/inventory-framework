@@ -21,8 +21,8 @@ import org.jetbrains.annotations.VisibleForTesting;
 public class ViewConfig {
 
     public static final ViewConfig.Option<Boolean> CancelOnClick = createOption("cancel-on-click", true);
-    public static final ViewConfig.Option<Boolean> CANCEL_ON_PICKUP = createOption("cancel-on-pickup", false);
-    public static final ViewConfig.Option<Boolean> CANCEL_ON_DROP = createOption("cancel-on-drop", false);
+    public static final ViewConfig.Option<Boolean> CANCEL_ON_PICKUP = createOption("cancel-on-pickup", true);
+    public static final ViewConfig.Option<Boolean> CANCEL_ON_DROP = createOption("cancel-on-drop", true);
 
     private final String title;
     private final int size;
