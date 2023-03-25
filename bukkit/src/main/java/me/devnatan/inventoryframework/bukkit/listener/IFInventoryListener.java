@@ -2,6 +2,7 @@ package me.devnatan.inventoryframework.bukkit.listener;
 
 import lombok.RequiredArgsConstructor;
 import me.devnatan.inventoryframework.RootView;
+import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.ViewFrame;
 import me.devnatan.inventoryframework.Viewer;
@@ -17,6 +18,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -73,5 +76,33 @@ public final class IFInventoryListener implements Listener {
                 root, mainContext.getContainer(), viewer, IFCloseContext.class, false, mainContext);
 
         root.getPipeline().execute(StandardPipelinePhases.CLOSE, closeContext);
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onItemPickup(PlayerPickupItemEvent event) {
+        final Player player = event.getPlayer();
+        final RootView root = viewFrame.getCurrentView(player);
+        if (root == null) return;
+
+        final IFContext context =
+                root.getContextByViewer(root.getElementFactory().transformViewerIdentifier(player));
+
+        if (!context.getConfig().isOptionSet(ViewConfig.CANCEL_ON_PICKUP)) return;
+
+        event.setCancelled(context.getConfig().getOptionValue(ViewConfig.CANCEL_ON_PICKUP));
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onItemDrop(PlayerDropItemEvent event) {
+        final Player player = event.getPlayer();
+        final RootView root = viewFrame.getCurrentView(player);
+        if (root == null) return;
+
+        final IFContext context =
+                root.getContextByViewer(root.getElementFactory().transformViewerIdentifier(player));
+
+        if (!context.getConfig().isOptionSet(ViewConfig.CANCEL_ON_DROP)) return;
+
+        event.setCancelled(context.getConfig().getOptionValue(ViewConfig.CANCEL_ON_DROP));
     }
 }

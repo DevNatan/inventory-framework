@@ -1,9 +1,11 @@
 package me.devnatan.inventoryframework;
 
+import java.util.AbstractMap;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -107,17 +109,31 @@ public final class ViewConfigBuilder {
         return this;
     }
 
-    public ViewConfigBuilder cancelOnClick() {
-        options.add(ViewConfig.CancelOnClick);
+    private ViewConfigBuilder addOption(ViewConfig.Option<?> option) {
+        options.add(option);
         return this;
     }
 
-    public ViewConfigBuilder cancelOnPickup() {
-        throw new UnsupportedOperationException();
+    public ViewConfigBuilder cancelOnClick() {
+        return addOption(ViewConfig.CancelOnClick);
     }
 
+    /**
+     * Cancels any item pickup by the player while the view is open.
+     *
+     * @return This configuration builder.
+     */
+    public ViewConfigBuilder cancelOnPickup() {
+        return addOption(ViewConfig.CANCEL_ON_PICKUP);
+    }
+
+    /**
+     * Cancels any item drops by the player while the view is open.
+     *
+     * @return This configuration builder.
+     */
     public ViewConfigBuilder cancelOnDrop() {
-        throw new UnsupportedOperationException();
+        return addOption(ViewConfig.CANCEL_ON_DROP);
     }
 
     public ViewConfigBuilder cancelOnDrag() {
@@ -125,7 +141,11 @@ public final class ViewConfigBuilder {
     }
 
     public ViewConfig build() {
-        // TODO convert options
-        return new ViewConfig(title, size, type, new HashMap<>(), layout, modifiers);
+        final Map<ViewConfig.Option<?>, Object> optionsMap = options.stream()
+                .map(option -> new AbstractMap.SimpleImmutableEntry<ViewConfig.Option<?>, Object>(
+                        option, option.defaultValue()))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+        return new ViewConfig(title, size, type, optionsMap, layout, modifiers);
     }
 }

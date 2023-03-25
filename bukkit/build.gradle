@@ -15,6 +15,10 @@ dependencies {
     implementation projects.api
     implementation projects.framework
     implementation projects.platform
+    testCompileOnly libs.spigot.api
+    testRuntimeOnly libs.spigot.api
+    testImplementation projects.api
+    testImplementation projects.test
 }
 
 shadowJar {
