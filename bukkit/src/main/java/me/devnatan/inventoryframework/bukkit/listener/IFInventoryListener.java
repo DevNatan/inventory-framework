@@ -78,22 +78,6 @@ public final class IFInventoryListener implements Listener {
         root.getPipeline().execute(StandardPipelinePhases.CLOSE, closeContext);
     }
 
-    //    @EventHandler(ignoreCancelled = true)
-    //    public void onItemPickup(EntityPickupItemEvent event) {
-    //        if (event.getEntityType() != EntityType.PLAYER) return;
-    //
-    //        final Player player = (Player) event.getEntity();
-    //        final RootView root = viewFrame.getCurrentView(player);
-    //        if (root == null) return;
-    //
-    //        final IFContext context =
-    //                root.getContextByViewer(root.getElementFactory().transformViewerIdentifier(player));
-    //
-    //        if (!context.getConfig().isOptionSet(ViewConfig.CANCEL_ON_PICKUP)) return;
-    //
-    //        event.setCancelled(context.getConfig().getOptionValue(ViewConfig.CANCEL_ON_PICKUP));
-    //    }
-
     @EventHandler(ignoreCancelled = true)
     public void onItemPickup(PlayerPickupItemEvent event) {
         final Player player = event.getPlayer();
