@@ -16,9 +16,8 @@ import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewFrame;
 import me.devnatan.inventoryframework.context.IFContext;
-import org.bukkit.entity.EntityType;
-import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.junit.jupiter.api.Test;
 
 public class IFInventoryListenerTest {
@@ -79,9 +78,7 @@ public class IFInventoryListenerTest {
     @Test
     void shouldCancelItemPickup() {
         RootView root = createRootMock();
-        EntityPickupItemEvent event = mock(EntityPickupItemEvent.class);
-        when(event.getEntityType()).thenReturn(EntityType.PLAYER);
-
+        PlayerPickupItemEvent event = mock(PlayerPickupItemEvent.class);
         ViewFrame viewFrame = mock(ViewFrame.class);
         when(viewFrame.getCurrentView(any())).thenReturn(root);
 
@@ -102,22 +99,17 @@ public class IFInventoryListenerTest {
     @Test
     void skipItemPickupEventIfRootIsNotFound() {
         RootView root = createRootMock();
-        EntityPickupItemEvent event = mock(EntityPickupItemEvent.class);
-        when(event.getEntityType()).thenReturn(EntityType.PLAYER);
-
         ViewFrame viewFrame = mock(ViewFrame.class);
         when(viewFrame.getCurrentView(any())).thenReturn(null);
 
-        new IFInventoryListener(viewFrame).onItemPickup(event);
+        new IFInventoryListener(viewFrame).onItemPickup(mock(PlayerPickupItemEvent.class));
         verify(root, never()).getContextByViewer(any());
     }
 
     @Test
     void skipItemPickupEventIfConfigIsNotSet() {
         RootView root = createRootMock();
-        EntityPickupItemEvent event = mock(EntityPickupItemEvent.class);
-        when(event.getEntityType()).thenReturn(EntityType.PLAYER);
-
+        PlayerPickupItemEvent event = mock(PlayerPickupItemEvent.class);
         ViewFrame viewFrame = mock(ViewFrame.class);
         when(viewFrame.getCurrentView(any())).thenReturn(root);
 
