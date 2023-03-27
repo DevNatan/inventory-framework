@@ -2,8 +2,8 @@ package me.devnatan.inventoryframework.state;
 
 import org.jetbrains.annotations.NotNull;
 
-public interface StateHostAware extends StateHost {
+public interface StateValueHostAware extends StateValueHost {
 
     @NotNull
-    StateHost getStateHost();
+    StateValueHost getStateValueHost();
 }

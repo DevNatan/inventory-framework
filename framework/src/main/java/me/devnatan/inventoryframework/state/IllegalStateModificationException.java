@@ -5,7 +5,7 @@ public class IllegalStateModificationException extends StateException {
         super();
     }
 
-	public IllegalStateModificationException(String message) {
-		super(message);
-	}
+    public IllegalStateModificationException(String message) {
+        super(message);
+    }
 }

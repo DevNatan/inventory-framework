@@ -7,7 +7,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-class StateHostTest {
+class StateValueHostTest {
 
     private final StateValueFactory stateValueFactory = new StateValueFactory();
 

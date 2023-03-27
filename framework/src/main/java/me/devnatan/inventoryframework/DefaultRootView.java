@@ -11,11 +11,9 @@ import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.INV
 import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.OPEN;
 import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.UPDATE;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 import java.util.Spliterator;
 import java.util.UUID;
@@ -23,8 +21,7 @@ import java.util.function.Consumer;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.internal.ElementFactory;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
-import me.devnatan.inventoryframework.state.State;
-import me.devnatan.inventoryframework.state.StateValueFactory;
+import me.devnatan.inventoryframework.state.StateContainer;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
@@ -38,10 +35,7 @@ public class DefaultRootView implements RootView {
     private final Pipeline<? super VirtualView> pipeline =
             new Pipeline<>(INIT, OPEN, FIRST_RENDER, UPDATE, CLICK, CLOSE, INVALIDATION);
     private final Set<IFContext> contexts = newSetFromMap(synchronizedMap(new HashMap<>()));
-
-    // --- State Management --
-    protected final StateValueFactory stateValueFactory = new StateValueFactory();
-    private final List<State<?>> states = new ArrayList<>();
+    final StateContainer stateContainer = new StateContainer();
 
     @Override
     public final @NotNull UUID getUniqueId() {

@@ -1,5 +1,6 @@
 package me.devnatan.inventoryframework.pipeline;
 
+import me.devnatan.inventoryframework.InventoryFrameworkException;
 import me.devnatan.inventoryframework.PlatformView;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewConfig;
@@ -8,7 +9,6 @@ import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.IFOpenContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
-import me.devnatan.inventoryframework.InventoryFrameworkException;
 import me.devnatan.inventoryframework.internal.ElementFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;

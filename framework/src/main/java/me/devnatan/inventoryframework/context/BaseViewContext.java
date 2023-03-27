@@ -21,7 +21,8 @@ import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.Pagination;
 import me.devnatan.inventoryframework.pipeline.StandardPipelinePhases;
 import me.devnatan.inventoryframework.state.DefaultStateHost;
-import me.devnatan.inventoryframework.state.StateHost;
+import me.devnatan.inventoryframework.state.StateValue;
+import me.devnatan.inventoryframework.state.StateValueHost;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -45,7 +46,7 @@ public class BaseViewContext implements IFContext {
     private final @Nullable ViewContainer container;
 
     @ToString.Exclude
-    private final StateHost stateHost = new DefaultStateHost();
+    private final StateValueHost stateValueHost = new DefaultStateHost();
 
     protected final Map<String, Viewer> viewers = new HashMap<>();
     protected ViewConfig config;
@@ -178,8 +179,17 @@ public class BaseViewContext implements IFContext {
         return markedForRemoval.contains(componentIndex);
     }
 
+    public @NotNull StateValueHost getStateValueHost() {
+        return stateValueHost;
+    }
+
     @Override
-    public @NotNull StateHost getStateHost() {
-        return stateHost;
+    public StateValue getState(long id) {
+        return getStateValueHost().getState(id);
+    }
+
+    @Override
+    public void setState(long id, @NotNull StateValue value) {
+        getStateValueHost().setState(id, value);
     }
 }

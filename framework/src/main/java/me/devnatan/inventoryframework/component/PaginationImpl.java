@@ -11,7 +11,7 @@ import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.context.IFSlotRenderContext;
-import me.devnatan.inventoryframework.state.StateHost;
+import me.devnatan.inventoryframework.state.StateValueHost;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnmodifiableView;
@@ -25,7 +25,7 @@ public final class PaginationImpl implements Pagination, InteractionHandler {
     private boolean markedForRemoval;
 
     // --- User provided ---
-	private final @Nullable String layoutTarget;
+    private final @Nullable String layoutTarget;
     private final @NotNull Function<?, ?> sourceProvider;
     private final @NotNull BiConsumer<? extends ItemComponentBuilder<?>, Object> itemFactory;
 
@@ -137,7 +137,7 @@ public final class PaginationImpl implements Pagination, InteractionHandler {
     }
 
     @Override
-    public void attached(long id, @NotNull StateHost holder) {}
+    public void attached(long id, @NotNull StateValueHost holder) {}
 
     @Override
     public void clicked(@NotNull Component component, @NotNull IFSlotClickContext context) {}

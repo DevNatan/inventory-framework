@@ -9,7 +9,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import me.devnatan.inventoryframework.component.ItemComponentBuilder;
 import me.devnatan.inventoryframework.component.Pagination;
-import me.devnatan.inventoryframework.component.PaginationImpl;
 import me.devnatan.inventoryframework.context.IFCloseContext;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFOpenContext;
@@ -27,11 +26,11 @@ import me.devnatan.inventoryframework.pipeline.OpenInterceptor;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
 import me.devnatan.inventoryframework.pipeline.StandardPipelinePhases;
 import me.devnatan.inventoryframework.pipeline.UpdateInterceptor;
-import me.devnatan.inventoryframework.state.ImmutableValue;
 import me.devnatan.inventoryframework.state.MutableState;
+import me.devnatan.inventoryframework.state.MutableStateImpl;
 import me.devnatan.inventoryframework.state.MutableValue;
 import me.devnatan.inventoryframework.state.State;
-import me.devnatan.inventoryframework.state.StateHost;
+import me.devnatan.inventoryframework.state.StateValueHost;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -172,7 +171,7 @@ public abstract class PlatformView<
 
     /**
      * Creates an immutable {@link #lazyState(Function) lazy state} whose value is always computed
-     * from the initial data set by its {@link StateHost}.
+     * from the initial data set by its {@link StateValueHost}.
      * <p>
      * When the holder is a {@link IFOpenContext}, the initial value will be the value defined
      * in the initial opening data of the container. This state is specifically set for backwards
@@ -191,7 +190,7 @@ public abstract class PlatformView<
 
     /**
      * Creates an immutable {@link #lazyState(Function) lazy state} whose value is always computed
-     * from the initial data set by its {@link StateHost}.
+     * from the initial data set by its {@link StateValueHost}.
      * <p>
      * When the holder is a {@code OpenViewContext}, the initial value will be the value defined
      * in the initial opening data of the container. This state is specifically set for backwards
@@ -221,11 +220,15 @@ public abstract class PlatformView<
      * }</pre>
      *
      * @param initialValue The initial value of the state.
-     * @param <V>          The state value type.
+     * @param <T>          The state value type.
      * @return A mutable state with an initial value.
      */
-    protected final <V> MutableState<V> mutableState(V initialValue) {
-		return (MutableState<V>) stateValueFactory.createState(host -> new MutableValue(initialValue));
+    protected final <T> MutableState<T> mutableState(T initialValue) {
+        final long id = State.next();
+        final MutableState<T> state = new MutableStateImpl<>(id, host -> new MutableValue(id, initialValue));
+        stateContainer.addState(state);
+
+        return state;
     }
 
     /**
@@ -264,8 +267,10 @@ public abstract class PlatformView<
     protected final <V> State<Pagination> pagination(
             @NotNull Function<TSlotContext, List<? super V>> sourceProvider,
             @NotNull BiConsumer<TItem, V> itemFactory) {
-        return stateValueFactory.createState(host -> new ImmutableValue(new PaginationImpl(
-                this, (IFContext) host, null /* TODO */, sourceProvider, (BiConsumer<TItem, Object>) itemFactory)));
+        throw new UnsupportedOperationException();
+        //        return stateValueFactory.createState(host -> new ImmutableValue(new PaginationImpl(
+        //                this, (IFContext) host, null /* TODO */, sourceProvider, (BiConsumer<TItem, Object>)
+        // itemFactory)));
     }
 
     /**

@@ -4,5 +4,5 @@ import org.jetbrains.annotations.NotNull;
 
 public interface StateHandler {
 
-    void attached(long id, @NotNull StateHost holder);
+    void attached(long id, @NotNull StateValueHost holder);
 }

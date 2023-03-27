@@ -7,9 +7,9 @@ public class StateException extends InventoryFrameworkException {
         super();
     }
 
-	public StateException(String message) {
-		super(message);
-	}
+    public StateException(String message) {
+        super(message);
+    }
 
     public StateException(String message, Throwable cause) {
         super(message, cause);
