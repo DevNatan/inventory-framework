@@ -1,13 +1,14 @@
 package me.devnatan.inventoryframework.state;
 
 import java.util.Objects;
+import org.jetbrains.annotations.NotNull;
 
 public class MutableValue extends StateValue {
 
     private Object currValue;
 
-    public MutableValue(long id, Object currValue) {
-        super(id);
+    public MutableValue(@NotNull State<?> state, Object currValue) {
+        super(state);
         this.currValue = currValue;
     }
 

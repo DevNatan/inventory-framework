@@ -17,8 +17,8 @@ public final class LazyValue extends StateValue {
     private final Supplier<Object> computation;
     private Object currValue = UNINITIALIZED;
 
-    LazyValue(long id, @NotNull Supplier<Object> computation) {
-        super(id);
+    LazyValue(@NotNull State<?> state, @NotNull Supplier<Object> computation) {
+        super(state);
         this.computation = computation;
     }
 

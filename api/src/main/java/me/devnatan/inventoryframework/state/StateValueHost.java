@@ -14,12 +14,12 @@ public interface StateValueHost {
      * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
      * this library. No compatibility guarantees are provided.</i></b>
      *
-     * @param id The state id.
+     * @param state The target state.
      * @return A StateValue from the state with the specified id.
      * @throws UninitializedStateException
      */
     @ApiStatus.Internal
-    StateValue getState(long id);
+    StateValue getState(State<?> state);
 
     /**
      * Sets the internal value of a state.
@@ -31,5 +31,12 @@ public interface StateValueHost {
      * @param value The new state value.
      */
     @ApiStatus.Internal
-    void setState(long id, @NotNull StateValue value);
+    void initState(long id, @NotNull StateValue value, Object initialValue);
+
+    @ApiStatus.Internal
+    void updateState(long id, Object value);
+
+    void attachStateListener(@NotNull StateManagementListener listener);
+
+    void detachStateListener(@NotNull StateManagementListener listener);
 }

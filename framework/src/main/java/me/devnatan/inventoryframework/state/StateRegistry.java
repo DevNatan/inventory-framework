@@ -4,27 +4,25 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * HashMap-backed state container to store a collection of states.
  */
-public final class StateContainer implements Iterable<State<?>> {
+public final class StateRegistry implements Iterable<State<?>> {
 
     private final Map<Long, State<?>> stateMap = new HashMap<>();
-
-    @Getter
-    private final StateValueFactory valueFactory = new StateValueFactory();
 
     /**
      * Adds a new state to the states' collection.
      *
      * @param state The state to be added.
      */
-    public void addState(@NotNull State<?> state) {
+    public void registerState(@NotNull State<?> state, Object caller) {
         synchronized (stateMap) {
             stateMap.put(state.internalId(), state);
+            if (state instanceof StateManagementListener)
+                ((StateManagementListener) state).stateRegistered(state, caller);
         }
     }
 
@@ -33,9 +31,10 @@ public final class StateContainer implements Iterable<State<?>> {
      *
      * @param stateId The id of the state to be removed.
      */
-    public void removeState(long stateId) {
+    public void unregisterState(long stateId) {
         synchronized (stateMap) {
-            stateMap.remove(stateId);
+            final State<?> state = stateMap.remove(stateId);
+            if (state instanceof StateManagementListener) ((StateManagementListener) state).stateUnregistered(state);
         }
     }
 

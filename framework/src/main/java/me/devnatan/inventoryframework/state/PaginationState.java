@@ -1,12 +1,10 @@
 package me.devnatan.inventoryframework.state;
 
-import java.util.function.Function;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.component.Pagination;
-import me.devnatan.inventoryframework.context.IFContext;
 import org.jetbrains.annotations.NotNull;
 
 @ToString(callSuper = true)
@@ -16,35 +14,35 @@ public final class PaginationState extends BaseState<Pagination> implements Stat
     @Setter
     private boolean lazilyInitialized;
 
-    public PaginationState(long internalId, Function<StateValueHost, StateValue> valueFactory) {
-        super(internalId, valueFactory);
+    public PaginationState(long id, @NotNull StateValueFactory valueFactory) {
+        super(id, valueFactory);
     }
 
     @Override
-    public void registered(@NotNull State<?> state, @NotNull StateValueHost host) {
-        if (!(host instanceof IFContext))
-            throw new IllegalArgumentException("Pagination state can only be registered on IFContext");
+    public void stateRegistered(@NotNull State<?> state, Object caller) {
+        if (!(caller instanceof RootView))
+            throw new IllegalArgumentException("Pagination state can only be registered on RootView");
 
         if (isLazilyInitialized()) return;
 
-        setupPipeline(((IFContext) host).getRoot());
+        final RootView root = (RootView) caller;
         setLazilyInitialized(true);
     }
 
     @Override
-    public void valueGet(
+    public void stateUnregistered(@NotNull State<?> state) {}
+
+    @Override
+    public void stateValueInitialized(@NotNull StateValueHost host, @NotNull StateValue value, Object initialValue) {}
+
+    @Override
+    public void stateValueGet(
             @NotNull State<?> state,
             @NotNull StateValueHost host,
             @NotNull StateValue internalValue,
             Object rawValue) {}
 
     @Override
-    public void valueSet(
-            @NotNull State<?> state,
-            @NotNull StateValueHost host,
-            @NotNull StateValue internalValue,
-            Object rawOldValue,
-            Object rawNewValue) {}
-
-    private void setupPipeline(RootView root) {}
+    public void stateValueSet(
+            @NotNull StateValueHost host, @NotNull StateValue value, Object rawOldValue, Object rawNewValue) {}
 }

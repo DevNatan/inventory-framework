@@ -1,5 +1,6 @@
 package me.devnatan.inventoryframework.component;
 
+import me.devnatan.inventoryframework.state.State;
 import org.jetbrains.annotations.NotNull;
 
 public class TestItemComponentBuilder extends DefaultComponentBuilder<TestItemComponentBuilder>
@@ -16,6 +17,11 @@ public class TestItemComponentBuilder extends DefaultComponentBuilder<TestItemCo
     public TestItemComponentBuilder withSlot(int slot) {
         this.slot = slot;
         return this;
+    }
+
+    @Override
+    public TestItemComponentBuilder watch(@NotNull State<?> state) {
+        return null;
     }
 
     @Override

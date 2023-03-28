@@ -8,6 +8,7 @@ import me.devnatan.inventoryframework.context.IFSlotRenderContext;
 import me.devnatan.inventoryframework.context.SlotClickContext;
 import me.devnatan.inventoryframework.context.SlotContext;
 import me.devnatan.inventoryframework.context.SlotRenderContext;
+import me.devnatan.inventoryframework.state.State;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -34,6 +35,11 @@ public final class BukkitItemComponentBuilder extends DefaultComponentBuilder<Bu
     public BukkitItemComponentBuilder withSlot(int slot) {
         this.slot = slot;
         return this;
+    }
+
+    @Override
+    public BukkitItemComponentBuilder watch(@NotNull State<?> state) {
+        return null;
     }
 
     /**

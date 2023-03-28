@@ -12,8 +12,8 @@ public final class ComputedValue extends StateValue {
 
     private final Supplier<Object> factory;
 
-    ComputedValue(long id, @NotNull Supplier<Object> factory) {
-        super(id);
+    ComputedValue(@NotNull State<?> state, @NotNull Supplier<Object> factory) {
+        super(state);
         this.factory = factory;
     }
 

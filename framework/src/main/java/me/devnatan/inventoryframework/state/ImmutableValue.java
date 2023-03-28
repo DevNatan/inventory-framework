@@ -1,13 +1,14 @@
 package me.devnatan.inventoryframework.state;
 
 import java.util.Objects;
+import org.jetbrains.annotations.NotNull;
 
 public final class ImmutableValue extends StateValue {
 
     private final Object value;
 
-    ImmutableValue(long id, Object value) {
-        super(id);
+    ImmutableValue(@NotNull State<?> state, Object value) {
+        super(state);
         this.value = value;
     }
 

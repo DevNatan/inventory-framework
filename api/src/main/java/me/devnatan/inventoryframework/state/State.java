@@ -27,6 +27,17 @@ public interface State<T> {
     T get(@NotNull StateValueHost host);
 
     /**
+     * The value factory of this state.
+     *
+     * <p><b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     *
+     * @return The internal value factory for this state.
+     */
+    @ApiStatus.Internal
+    StateValueFactory factory();
+
+    /**
      * Returns the internal unique id of this state.
      *
      * <p><b><i> This is an internal inventory-framework API that should not be used from outside of

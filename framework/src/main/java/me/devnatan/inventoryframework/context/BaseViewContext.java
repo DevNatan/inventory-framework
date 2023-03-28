@@ -20,7 +20,9 @@ import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.Pagination;
 import me.devnatan.inventoryframework.pipeline.StandardPipelinePhases;
-import me.devnatan.inventoryframework.state.DefaultStateHost;
+import me.devnatan.inventoryframework.state.DefaultStateValueHost;
+import me.devnatan.inventoryframework.state.State;
+import me.devnatan.inventoryframework.state.StateManagementListener;
 import me.devnatan.inventoryframework.state.StateValue;
 import me.devnatan.inventoryframework.state.StateValueHost;
 import org.jetbrains.annotations.ApiStatus;
@@ -46,7 +48,7 @@ public class BaseViewContext implements IFContext {
     private final @Nullable ViewContainer container;
 
     @ToString.Exclude
-    private final StateValueHost stateValueHost = new DefaultStateHost();
+    private final StateValueHost stateValueHost = new DefaultStateValueHost();
 
     protected final Map<String, Viewer> viewers = new HashMap<>();
     protected ViewConfig config;
@@ -184,12 +186,27 @@ public class BaseViewContext implements IFContext {
     }
 
     @Override
-    public StateValue getState(long id) {
-        return getStateValueHost().getState(id);
+    public final StateValue getState(State<?> state) {
+        return getStateValueHost().getState(state);
     }
 
     @Override
-    public void setState(long id, @NotNull StateValue value) {
-        getStateValueHost().setState(id, value);
+    public final void initState(long id, @NotNull StateValue value, Object initialValue) {
+        getStateValueHost().initState(id, value, initialValue);
+    }
+
+    @Override
+    public final void updateState(long id, Object value) {
+        getStateValueHost().updateState(id, value);
+    }
+
+    @Override
+    public final void attachStateListener(@NotNull StateManagementListener listener) {
+        getStateValueHost().attachStateListener(listener);
+    }
+
+    @Override
+    public final void detachStateListener(@NotNull StateManagementListener listener) {
+        getStateValueHost().detachStateListener(listener);
     }
 }

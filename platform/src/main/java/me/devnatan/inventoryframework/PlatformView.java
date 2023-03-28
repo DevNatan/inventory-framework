@@ -26,10 +26,13 @@ import me.devnatan.inventoryframework.pipeline.OpenInterceptor;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
 import me.devnatan.inventoryframework.pipeline.StandardPipelinePhases;
 import me.devnatan.inventoryframework.pipeline.UpdateInterceptor;
+import me.devnatan.inventoryframework.state.BaseState;
+import me.devnatan.inventoryframework.state.InitialDataStateValue;
 import me.devnatan.inventoryframework.state.MutableState;
 import me.devnatan.inventoryframework.state.MutableStateImpl;
 import me.devnatan.inventoryframework.state.MutableValue;
 import me.devnatan.inventoryframework.state.State;
+import me.devnatan.inventoryframework.state.StateValueFactory;
 import me.devnatan.inventoryframework.state.StateValueHost;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -205,7 +208,11 @@ public abstract class PlatformView<
      * @return A state computed with an initial opening data value.
      */
     protected final <T> State<T> initialState(@NotNull Class<? extends T> stateClassType) {
-        throw new UnsupportedOperationException();
+        final long id = State.next();
+        final State<T> state = new BaseState<>(id, (host, valueState) -> new InitialDataStateValue(valueState, host));
+        stateRegistry.registerState(state, this);
+
+        return state;
     }
 
     /**
@@ -225,8 +232,9 @@ public abstract class PlatformView<
      */
     protected final <T> MutableState<T> mutableState(T initialValue) {
         final long id = State.next();
-        final MutableState<T> state = new MutableStateImpl<>(id, host -> new MutableValue(id, initialValue));
-        stateContainer.addState(state);
+        final StateValueFactory factory = (host, state) -> new MutableValue(state, initialValue);
+        final MutableState<T> state = new MutableStateImpl<>(id, factory);
+        stateRegistry.registerState(state, this);
 
         return state;
     }
