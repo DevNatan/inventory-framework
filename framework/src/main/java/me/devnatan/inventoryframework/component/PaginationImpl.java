@@ -6,31 +6,56 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
-import lombok.Data;
-import me.devnatan.inventoryframework.RootView;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
+import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.context.IFSlotRenderContext;
-import me.devnatan.inventoryframework.state.StateValueHost;
+import me.devnatan.inventoryframework.state.State;
+import me.devnatan.inventoryframework.state.StateValue;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnmodifiableView;
 
-@Data
-public final class PaginationImpl implements Pagination, InteractionHandler {
+@Getter
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
+public final class PaginationImpl extends StateValue implements Pagination, InteractionHandler {
 
-    private final @NotNull RootView root;
     private final @NotNull IFContext host;
     private final List<Component> components = new LinkedList<>();
-    private boolean markedForRemoval;
 
     // --- User provided ---
-    private final @Nullable String layoutTarget;
+    private final String layoutTarget;
     private final @NotNull Function<?, ?> sourceProvider;
-    private final @NotNull BiConsumer<? extends ItemComponentBuilder<?>, Object> itemFactory;
+    private final @NotNull BiConsumer<? extends ItemComponentBuilder<?>, ?> itemFactory;
 
     // --- Data ---
     private int page;
+
+    public PaginationImpl(
+            @NotNull State<?> state,
+            @NotNull IFContext host,
+            String layoutTarget,
+            @NotNull Function<?, ?> sourceProvider,
+            @NotNull BiConsumer<? extends ItemComponentBuilder<?>, ?> itemFactory) {
+        super(state);
+        this.host = host;
+        this.layoutTarget = layoutTarget;
+        this.sourceProvider = sourceProvider;
+        this.itemFactory = itemFactory;
+    }
+
+    @Override
+    public Object get() {
+        return this;
+    }
+
+    @Override
+    public @NotNull VirtualView getRoot() {
+        return host;
+    }
 
     @Override
     public int getPosition() {
@@ -135,9 +160,6 @@ public final class PaginationImpl implements Pagination, InteractionHandler {
     public Iterator<Component> iterator() {
         return getComponents().iterator();
     }
-
-    @Override
-    public void attached(long id, @NotNull StateValueHost holder) {}
 
     @Override
     public void clicked(@NotNull Component component, @NotNull IFSlotClickContext context) {}
