@@ -153,7 +153,7 @@ public class DefaultRootView implements RootView, StateManagementListener {
     public final void stateRegistered(@NotNull State<?> state, Object caller) {}
 
     @Override
-    public final void stateUnregistered(@NotNull State<?> state) {}
+    public final void stateUnregistered(@NotNull State<?> state, Object caller) {}
 
     @Override
     public final void stateValueInitialized(

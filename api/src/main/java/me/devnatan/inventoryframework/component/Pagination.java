@@ -18,96 +18,114 @@ import org.jetbrains.annotations.Nullable;
  */
 public interface Pagination extends ComponentComposition {
 
-    /**
-     * The current page number.
-     *
-     * @return The current page number. Returns {@code 1} if it's in the first page.
-     */
-    int currentPage();
+	/**
+	 * The current page number.
+	 *
+	 * @return The current page number. Returns {@code 1} if it's in the first page.
+	 */
+	int currentPage();
 
-    /**
-     * The index of the current page.
-     *
-     * @return The index of the current page. Returns {@code 0} if it's in the first page.
-     */
-    int currentPageIndex();
+	/**
+	 * The index of the current page.
+	 *
+	 * @return The index of the current page. Returns {@code 0} if it's in the first page.
+	 */
+	int currentPageIndex();
 
-    /**
-     * The number of the last page.
-     * <p>
-     * This is a shortcut to {@link #lastPageIndex()} {@code + 1}.
-     *
-     * @return The number of the last page.
-     */
-    int lastPage();
+	/**
+	 * The number of the next page.
+	 *
+	 * @return The number of the next page at least {@link #lastPage()}.
+	 */
+	int nextPage();
 
-    /**
-     * The index of the last page.
-     * <p>
-     * Pages starts from {@code 0} so the last page should be displayed as {@code lastPage + 1}.
-     *
-     * @return The index of the last page.
-     */
-    int lastPageIndex();
+	/**
+	 * The index of the next page.
+	 *
+	 * @return The index of the next page at least {@link #lastPageIndex()}.
+	 */
+	int nextPageIndex();
 
-    /**
-     * Checks if the {@link #currentPage() current page} is the first page (at index 0).
-     *
-     * @return If the current page is the first page.
-     */
-    boolean isFirstPage();
+	/**
+	 * The number of the last page.
+	 * <p>
+	 * This is a shortcut to {@link #lastPageIndex()} {@code + 1}.
+	 *
+	 * @return The number of the last page.
+	 */
+	int lastPage();
 
-    /**
-     * Checks if the {@link #currentPage() current page} is the last page (at {@link #lastPage()}).
-     *
-     * @return If the current page is the first page.
-     */
-    boolean isLastPage();
+	/**
+	 * The index of the last page.
+	 * <p>
+	 * Pages starts from {@code 0} so the last page should be displayed as {@code lastPage + 1}.
+	 *
+	 * @return The index of the last page.
+	 */
+	int lastPageIndex();
 
-    /**
-     * Checks for pages before the current page.
-     *
-     * @return {@code true} if there are previous pages or {@code false} otherwise.
-     */
-    boolean hasPreviousPage();
+	/**
+	 * Checks if the {@link #currentPage() current page} is the first page (at index 0).
+	 *
+	 * @return If the current page is the first page.
+	 */
+	boolean isFirstPage();
 
-    /**
-     * Checks for pages after the current page.
-     *
-     * @return {@code true} if there are next pages or {@code false} otherwise.
-     */
-    boolean hasNextPage();
+	/**
+	 * Checks if the {@link #currentPage() current page} is the last page (at {@link #lastPage()}).
+	 *
+	 * @return If the current page is the first page.
+	 */
+	boolean isLastPage();
 
-    /**
-     * Advances to the next page if available.
-     */
-    void advance();
+	/**
+	 * Checks if a page exists.
+	 *
+	 * @param pageIndex The page index to check.
+	 * @return If exists a page with the specified index.
+	 */
+	boolean hasPage(int pageIndex);
 
-    /**
-     * Checks for pages to advance.
-     *
-     * @return {@code true} if there are pages to advance or {@code false} otherwise.
-     */
-    boolean canAdvance();
+	/**
+	 * Switches to a specific page index.
+	 *
+	 * @param pageIndex The page index to switch to.
+	 */
+	void switchTo(int pageIndex);
 
-    /**
-     * Backs to the previous page if available.
-     */
-    void back();
+	/**
+	 * Advances to the next page if available.
+	 */
+	void advance();
 
-    /**
-     * Checks for pages to back.
-     *
-     * @return {@code true} if there are pages to back or {@code false} otherwise.
-     */
-    boolean canBack();
+	/**
+	 * Checks for pages to advance.
+	 *
+	 * @return {@code true} if there are pages to advance or {@code false} otherwise.
+	 */
+	boolean canAdvance();
 
-    /**
-     * Layout target character that determines the boundary positions that this component should be
-     * rendered. Used if there is more than one pagination component sharing the same {@link StateValueHost}.
-     *
-     * @return The layout character target if set or {@code null}.
-     */
-    @Nullable
-    String getLayoutTarget();
+	/**
+	 * Backs to the previous page if available.
+	 */
+	void back();
+
+	/**
+	 * Checks for pages to back.
+	 *
+	 * @return {@code true} if there are pages to back or {@code false} otherwise.
+	 */
+	boolean canBack();
+
+	/**
+	 * Layout target character that determines the boundary positions that this component should be
+	 * rendered. Used if there is more than one pagination component sharing the same {@link StateValueHost}.
+	 *
+	 * @return The layout character target if set or {@code null}.
+	 */
+	char getLayoutTarget();
+
+	// TODO documentation
+	boolean isDynamic();
+
 }

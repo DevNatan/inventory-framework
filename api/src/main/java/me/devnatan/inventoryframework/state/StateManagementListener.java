@@ -12,7 +12,7 @@ public interface StateManagementListener {
      */
     void stateRegistered(@NotNull State<?> state, Object caller);
 
-    void stateUnregistered(@NotNull State<?> state);
+    void stateUnregistered(@NotNull State<?> state, Object caller);
 
     void stateValueInitialized(@NotNull StateValueHost host, @NotNull StateValue value, Object initialValue);
 

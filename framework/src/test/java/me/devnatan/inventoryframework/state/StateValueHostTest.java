@@ -11,7 +11,7 @@ class StateValueHostTest {
         StateValueHost host = new DefaultStateValueHost();
         State<?> state = new BaseState<>(0, ($, valueState) -> new ImmutableValue(valueState, "abc"));
 
-        assertEquals("abc", host.getState(state).get());
+        assertEquals("abc", host.getState(state));
     }
 
     //    @Test
