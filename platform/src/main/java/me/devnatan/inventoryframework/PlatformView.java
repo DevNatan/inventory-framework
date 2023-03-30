@@ -9,6 +9,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import me.devnatan.inventoryframework.component.ItemComponentBuilder;
 import me.devnatan.inventoryframework.component.Pagination;
+import me.devnatan.inventoryframework.component.PaginationImpl;
 import me.devnatan.inventoryframework.context.IFCloseContext;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFOpenContext;
@@ -27,10 +28,14 @@ import me.devnatan.inventoryframework.pipeline.Pipeline;
 import me.devnatan.inventoryframework.pipeline.StandardPipelinePhases;
 import me.devnatan.inventoryframework.pipeline.UpdateInterceptor;
 import me.devnatan.inventoryframework.state.BaseState;
+import me.devnatan.inventoryframework.state.ComputedValue;
+import me.devnatan.inventoryframework.state.ImmutableValue;
 import me.devnatan.inventoryframework.state.InitialDataStateValue;
+import me.devnatan.inventoryframework.state.LazyValue;
 import me.devnatan.inventoryframework.state.MutableState;
 import me.devnatan.inventoryframework.state.MutableStateImpl;
 import me.devnatan.inventoryframework.state.MutableValue;
+import me.devnatan.inventoryframework.state.PaginationState;
 import me.devnatan.inventoryframework.state.State;
 import me.devnatan.inventoryframework.state.StateValueFactory;
 import me.devnatan.inventoryframework.state.StateValueHost;
@@ -70,146 +75,22 @@ public abstract class PlatformView<
     }
 
     /**
-     * Creates an immutable lazy state.
-     * <p>
-     * {@code factory} defines what the value will be, a holder try to get the value, and the value
-     * obtained from there will be the value that will be obtained in subsequent calls to get the
-     * value of the state.
-     * <pre>{@code
-     * State<Integer> intState = lazyState(ThreadLocalRandom.current()::nextInt);
+     * Creates an immutable state with an initial value.
      *
-     * intState.get(...); // 54 - from initial computation of random integer ^^
-     * intState.get(...); // 54 - previously defined by the initial computation
+     * <pre>{@code
+     * State<String> textState = state("test");
+     *
+     * intState.get(...); // "test"
      * }</pre>
      *
-     * @param computation The value factory.
-     * @param <R>         The state type and computation return value.
-     * @return A lazy state.
+     * @param initialValue The initial value of the state.
+     * @param <T>          The state value type.
+     * @return A state with an initial value.
      */
-    protected final <R> State<R> state(@NotNull Function<TContext, R> computation) {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * Creates an immutable computed state.
-     * <p>
-     * A computed state is a state that every time an attempt is made to obtain the value of that
-     * state, the obtained value is computed again by the {@code computation} function.
-     * <pre>{@code
-     * State<Integer> intState = computedState($ -> ThreadLocalRandom.current().nextInt());
-     *
-     * intState.get(...); // some random number
-     * intState.get(...); // another random number
-     * }</pre>
-     *
-     * @param computation The function to compute the value.
-     * @param <V>         The state value type.
-     * @return An immutable computed state.
-     */
-    protected final <V> State<V> computedState(@NotNull Function<TContext, V> computation) {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * Creates an immutable computed state.
-     * <p>
-     * A computed state is a state that every time an attempt is made to obtain the value of that
-     * state, the obtained value is computed again by the {@code computation} function.
-     * <pre>{@code
-     * State<Integer> randomIntState = computedState(ThreadLocalRandom.current()::nextInt);
-     *
-     * randomIntState.get(...); // some random number
-     * randomIntState.get(...); // another random number
-     * }</pre>
-     *
-     * @param computation The function to compute the value.
-     * @param <V>         The state holder type.
-     * @return An immutable computed state.
-     */
-    protected final <V> State<V> computedState(@NotNull Supplier<V> computation) {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * Creates an immutable lazy state.
-     * <p>
-     * {@code factory} defines what the value will be, a holder try to get the value, and the value
-     * obtained from there will be the value that will be obtained in subsequent calls to get the
-     * value of the state.
-     * <pre>{@code
-     * State<Integer> intState = lazyState($ -> ThreadLocalRandom.current().nextInt());
-     *
-     * intState.get(...); // 54 - from initial computation of random integer ^^
-     * intState.get(...); // 54 - previously defined by the initial computation
-     * }</pre>
-     *
-     * @param computation The value factory.
-     * @param <V>         The state value type.
-     * @return A lazy state.
-     */
-    protected final <V> State<V> lazyState(@NotNull Function<TContext, V> computation) {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * Creates an immutable lazy state.
-     * <p>
-     * {@code factory} defines what the value will be, a holder try to get the value, and the value
-     * obtained from there will be the value that will be obtained in subsequent calls to get the
-     * value of the state.
-     * <pre>{@code
-     * State<Integer> intState = lazyState(ThreadLocalRandom.current()::nextInt);
-     *
-     * intState.get(...); // 54 - from initial computation of random integer ^^
-     * intState.get(...); // 54 - previously defined by the initial computation
-     * }</pre>
-     *
-     * @param computation The value factory.
-     * @param <V>         The state holder type.
-     * @return A lazy state.
-     */
-    protected final <V> State<V> lazyState(@NotNull Supplier<V> computation) {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * Creates an immutable {@link #lazyState(Function) lazy state} whose value is always computed
-     * from the initial data set by its {@link StateValueHost}.
-     * <p>
-     * When the holder is a {@link IFOpenContext}, the initial value will be the value defined
-     * in the initial opening data of the container. This state is specifically set for backwards
-     * compatibility with the old way of applying data to a context before or during container open.
-     * <p>
-     * As to open a view it is necessary to pass a {@link java.util.Map}, the {@code key} is used to
-     * get the value from that map.
-     *
-     * @param key The initial data identifier.
-     * @param <V> The initial data value type.
-     * @return A state computed with an initial opening data value.
-     */
-    protected final <V> State<V> initialState(@NotNull String key) {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * Creates an immutable {@link #lazyState(Function) lazy state} whose value is always computed
-     * from the initial data set by its {@link StateValueHost}.
-     * <p>
-     * When the holder is a {@code OpenViewContext}, the initial value will be the value defined
-     * in the initial opening data of the container. This state is specifically set for backwards
-     * compatibility with the old way of applying data to a context before or during container open.
-     * <p>
-     * The class parameter is used to convert all initial state into a value. Note that support for
-     * obtaining a specific value from the initial data is only available from version 2.5.4 of the
-     * library.
-     *
-     * @param stateClassType The initial data class type.
-     * @param <T>            The initial data type.
-     * @return A state computed with an initial opening data value.
-     */
-    protected final <T> State<T> initialState(@NotNull Class<? extends T> stateClassType) {
+    protected final <T> State<T> state(T initialValue) {
         final long id = State.next();
-        final State<T> state = new BaseState<>(id, (host, valueState) -> new InitialDataStateValue(valueState, host));
+        final StateValueFactory factory = (host, state) -> new ImmutableValue(state, initialValue);
+        final State<T> state = new BaseState<>(id, factory);
         stateRegistry.registerState(state, this);
 
         return state;
@@ -234,6 +115,161 @@ public abstract class PlatformView<
         final long id = State.next();
         final StateValueFactory factory = (host, state) -> new MutableValue(state, initialValue);
         final MutableState<T> state = new MutableStateImpl<>(id, factory);
+        stateRegistry.registerState(state, this);
+
+        return state;
+    }
+
+    /**
+     * Creates an immutable computed state.
+     * <p>
+     * A computed state is a state that every time an attempt is made to obtain the value of that
+     * state, the obtained value is computed again by the {@code computation} function.
+     * <pre>{@code
+     * State<Integer> intState = computedState($ -> ThreadLocalRandom.current().nextInt());
+     *
+     * intState.get(...); // some random number
+     * intState.get(...); // another random number
+     * }</pre>
+     *
+     * @param computation The function to compute the value.
+     * @param <T>         The state value type.
+     * @return An immutable computed state.
+     */
+    protected final <T> State<T> computedState(@NotNull Function<TContext, T> computation) {
+        final long id = State.next();
+        @SuppressWarnings("unchecked")
+        final StateValueFactory factory =
+                (host, state) -> new ComputedValue(state, () -> computation.apply((TContext) host));
+        final State<T> state = new BaseState<>(id, factory);
+        stateRegistry.registerState(state, this);
+
+        return state;
+    }
+
+    /**
+     * Creates an immutable computed state.
+     * <p>
+     * A computed state is a state that every time an attempt is made to obtain the value of that
+     * state, the obtained value is computed again by the {@code computation} function.
+     * <pre>{@code
+     * State<Integer> randomIntState = computedState(ThreadLocalRandom.current()::nextInt);
+     *
+     * randomIntState.get(...); // some random number
+     * randomIntState.get(...); // another random number
+     * }</pre>
+     *
+     * @param computation The function to compute the value.
+     * @param <T>         The state holder type.
+     * @return An immutable computed state.
+     */
+    protected final <T> State<T> computedState(@NotNull Supplier<T> computation) {
+        final long id = State.next();
+        final StateValueFactory factory = (host, state) -> new ComputedValue(state, computation);
+        final State<T> state = new BaseState<>(id, factory);
+        stateRegistry.registerState(state, this);
+
+        return state;
+    }
+
+    /**
+     * Creates an immutable lazy state.
+     * <p>
+     * {@code factory} defines what the value will be, a holder try to get the value, and the value
+     * obtained from there will be the value that will be obtained in subsequent calls to get the
+     * value of the state.
+     * <pre>{@code
+     * State<Integer> intState = lazyState($ -> ThreadLocalRandom.current().nextInt());
+     *
+     * intState.get(...); // 54 - from initial computation of random integer ^^
+     * intState.get(...); // 54 - previously defined by the initial computation
+     * }</pre>
+     *
+     * @param computation The value factory.
+     * @param <T>         The state value type.
+     * @return A lazy state.
+     */
+    protected final <T> State<T> lazyState(@NotNull Function<TContext, T> computation) {
+        final long id = State.next();
+        @SuppressWarnings("unchecked")
+        final StateValueFactory factory =
+                (host, state) -> new LazyValue(state, () -> computation.apply((TContext) host));
+        final State<T> state = new BaseState<>(id, factory);
+        stateRegistry.registerState(state, this);
+
+        return state;
+    }
+
+    /**
+     * Creates an immutable lazy state.
+     * <p>
+     * {@code factory} defines what the value will be, a holder try to get the value, and the value
+     * obtained from there will be the value that will be obtained in subsequent calls to get the
+     * value of the state.
+     * <pre>{@code
+     * State<Integer> intState = lazyState(ThreadLocalRandom.current()::nextInt);
+     *
+     * intState.get(...); // 54 - from initial computation of random integer ^^
+     * intState.get(...); // 54 - previously defined by the initial computation
+     * }</pre>
+     *
+     * @param computation The value factory.
+     * @param <T>         The state holder type.
+     * @return A lazy state.
+     */
+    protected final <T> State<T> lazyState(@NotNull Supplier<T> computation) {
+        final long id = State.next();
+        final StateValueFactory factory = (host, state) -> new LazyValue(state, computation);
+        final State<T> state = new BaseState<>(id, factory);
+        stateRegistry.registerState(state, this);
+
+        return state;
+    }
+
+    /**
+     * Creates an immutable {@link #lazyState(Function) lazy state} whose value is always computed
+     * from the initial data set by its {@link StateValueHost}.
+     * <p>
+     * When the holder is a {@link IFOpenContext}, the initial value will be the value defined
+     * in the initial opening data of the container. This state is specifically set for backwards
+     * compatibility with the old way of applying data to a context before or during container open.
+     * <p>
+     * As to open a view it is necessary to pass a {@link java.util.Map}, the {@code key} is used to
+     * get the value from that map.
+     *
+     * @param key The initial data identifier.
+     * @param <T> The initial data value type.
+     * @return A state computed with an initial opening data value.
+     */
+    protected final <T> State<T> initialState(@NotNull String key) {
+        // TODO missing use of `key`
+        final long id = State.next();
+        final State<T> state = new BaseState<>(id, (host, valueState) -> new InitialDataStateValue(valueState, host));
+        stateRegistry.registerState(state, this);
+
+        return state;
+    }
+
+    /**
+     * Creates an immutable {@link #lazyState(Function) lazy state} whose value is always computed
+     * from the initial data set by its {@link StateValueHost}.
+     * <p>
+     * When the holder is a {@code OpenViewContext}, the initial value will be the value defined
+     * in the initial opening data of the container. This state is specifically set for backwards
+     * compatibility with the old way of applying data to a context before or during container open.
+     * <p>
+     * The class parameter is used to convert all initial state into a value. Note that support for
+     * obtaining a specific value from the initial data is only available from version 2.5.4 of the
+     * library.
+     *
+     * @param stateClassType The initial data class type.
+     * @param <T>            The initial data type.
+     * @return A state computed with an initial opening data value.
+     */
+    protected final <T> State<T> initialState(@NotNull Class<? extends T> stateClassType) {
+        // TODO missing use of `stateClassType`
+        final long id = State.next();
+        final State<T> state = new BaseState<>(id, (host, valueState) -> new InitialDataStateValue(valueState, host));
         stateRegistry.registerState(state, this);
 
         return state;
@@ -268,17 +304,20 @@ public abstract class PlatformView<
      * @param sourceProvider The data provider for pagination.
      * @param itemFactory    The function for creating pagination items, this function is called for
      *                       each paged element (item) on a page.
-     * @param <V>            The pagination data type.
+     * @param <T>            The pagination data type.
      * @return A immutable pagination state.
      */
     @SuppressWarnings("unchecked")
-    protected final <V> State<Pagination> pagination(
-            @NotNull Function<TSlotContext, List<? super V>> sourceProvider,
-            @NotNull BiConsumer<TItem, V> itemFactory) {
-        throw new UnsupportedOperationException();
-        //        return stateValueFactory.createState(host -> new ImmutableValue(new PaginationImpl(
-        //                this, (IFContext) host, null /* TODO */, sourceProvider, (BiConsumer<TItem, Object>)
-        // itemFactory)));
+    protected final <T> State<Pagination> pagination(
+            @NotNull Function<TSlotContext, List<? super T>> sourceProvider,
+            @NotNull BiConsumer<TItem, T> itemFactory) {
+        final long id = State.next();
+        final StateValueFactory factory =
+                (host, state) -> new PaginationImpl(state, (TContext) host, null, sourceProvider, itemFactory);
+        final State<Pagination> state = new PaginationState(id, factory);
+        stateRegistry.registerState(state, this);
+
+        return state;
     }
 
     /**
