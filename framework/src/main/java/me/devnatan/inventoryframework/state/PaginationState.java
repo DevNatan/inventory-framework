@@ -14,60 +14,57 @@ import org.jetbrains.annotations.NotNull;
 @ToString(callSuper = true)
 public final class PaginationState extends BaseState<Pagination> implements StateManagementListener {
 
-	private final PipelineInterceptor<VirtualView> pipelineInterceptor = new Interceptor(this);
+    private final PipelineInterceptor<VirtualView> pipelineInterceptor = new Interceptor(this);
 
-	public PaginationState(long id, @NotNull StateValueFactory valueFactory) {
-		super(id, valueFactory);
-	}
+    public PaginationState(long id, @NotNull StateValueFactory valueFactory) {
+        super(id, valueFactory);
+    }
 
-	@Override
-	public void stateRegistered(@NotNull State<?> state, Object caller) {
-		if (!(caller instanceof RootView))
-			throw new IllegalArgumentException("Pagination state can only be registered by RootView");
+    @Override
+    public void stateRegistered(@NotNull State<?> state, Object caller) {
+        if (!(caller instanceof RootView))
+            throw new IllegalArgumentException("Pagination state can only be registered by RootView");
 
-		final RootView root = (RootView) caller;
-		root.getPipeline().intercept(StandardPipelinePhases.FIRST_RENDER, pipelineInterceptor);
-	}
+        final RootView root = (RootView) caller;
+        root.getPipeline().intercept(StandardPipelinePhases.FIRST_RENDER, pipelineInterceptor);
+    }
 
-	@Override
-	public void stateUnregistered(@NotNull State<?> state, Object caller) {
-		if (!(caller instanceof RootView))
-			throw new IllegalArgumentException("Pagination state can only be unregistered by RootView");
+    @Override
+    public void stateUnregistered(@NotNull State<?> state, Object caller) {
+        if (!(caller instanceof RootView))
+            throw new IllegalArgumentException("Pagination state can only be unregistered by RootView");
 
-		final RootView root = (RootView) caller;
-		root.getPipeline().removeInterceptor(StandardPipelinePhases.FIRST_RENDER, pipelineInterceptor);
-	}
+        final RootView root = (RootView) caller;
+        root.getPipeline().removeInterceptor(StandardPipelinePhases.FIRST_RENDER, pipelineInterceptor);
+    }
 
-	@Override
-	public void stateValueInitialized(@NotNull StateValueHost host, @NotNull StateValue value, Object initialValue) {
+    @Override
+    public void stateValueInitialized(@NotNull StateValueHost host, @NotNull StateValue value, Object initialValue) {}
 
-	}
+    @Override
+    public void stateValueGet(
+            @NotNull State<?> state,
+            @NotNull StateValueHost host,
+            @NotNull StateValue internalValue,
+            Object rawValue) {}
 
-	@Override
-	public void stateValueGet(
-		@NotNull State<?> state, @NotNull StateValueHost host, @NotNull StateValue internalValue, Object rawValue) {
+    @Override
+    public void stateValueSet(
+            @NotNull StateValueHost host, @NotNull StateValue value, Object rawOldValue, Object rawNewValue) {}
 
-	}
+    @RequiredArgsConstructor
+    private static final class Interceptor implements PipelineInterceptor<VirtualView> {
 
-	@Override
-	public void stateValueSet(@NotNull StateValueHost host, @NotNull StateValue value, Object rawOldValue, Object rawNewValue) {
+        private final State<?> state;
 
-	}
+        @Override
+        public void intercept(PipelineContext<VirtualView> pipeline, VirtualView subject) {
+            if (!(subject instanceof IFContext)) return;
 
-	@RequiredArgsConstructor
-	private static final class Interceptor implements PipelineInterceptor<VirtualView> {
+            final IFContext context = (IFContext) subject;
+            final Pagination pagination = (Pagination) context.getState(state);
 
-		private final State<?> state;
-
-		@Override
-		public void intercept(PipelineContext<VirtualView> pipeline, VirtualView subject) {
-			if (!(subject instanceof IFContext)) return;
-
-			final IFContext context = (IFContext) subject;
-			final Pagination pagination = (Pagination) context.getState(state);
-
-			context.addComponent(pagination);
-		}
-	}
-
+            context.addComponent(pagination);
+        }
+    }
 }

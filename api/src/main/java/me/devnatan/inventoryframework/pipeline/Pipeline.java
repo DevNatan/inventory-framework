@@ -94,9 +94,9 @@ public final class Pipeline<S> {
         interceptors.computeIfAbsent(phase, $ -> new ArrayList<>()).add((PipelineInterceptor<S>) interceptor);
     }
 
-	public void removeInterceptor(@NotNull PipelinePhase phase, @NotNull PipelineInterceptor<? extends S> interceptor) {
-		interceptors.computeIfAbsent(phase, $ -> new ArrayList<>()).remove(interceptor);
-	}
+    public void removeInterceptor(@NotNull PipelinePhase phase, @NotNull PipelineInterceptor<? extends S> interceptor) {
+        interceptors.computeIfAbsent(phase, $ -> new ArrayList<>()).remove(interceptor);
+    }
 
     public void execute(@Nullable S subject) {
         final List<PipelineInterceptor<S>> pipelineInterceptors = new LinkedList<>();
