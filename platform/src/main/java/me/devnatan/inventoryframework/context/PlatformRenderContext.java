@@ -16,7 +16,6 @@ import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.component.ComponentFactory;
 import me.devnatan.inventoryframework.component.ItemComponentBuilder;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
-import me.devnatan.inventoryframework.state.StateHost;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
 
@@ -180,11 +179,6 @@ abstract class PlatformRenderContext<T extends ItemComponentBuilder<T>> extends 
     @Override
     public @NotNull UUID getId() {
         return getParent().getId();
-    }
-
-    @Override
-    public @NotNull StateHost getStateHost() {
-        return getParent().getStateHost();
     }
 
     @Override

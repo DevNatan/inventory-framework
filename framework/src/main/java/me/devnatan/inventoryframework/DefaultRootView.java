@@ -11,11 +11,9 @@ import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.INV
 import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.OPEN;
 import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.UPDATE;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 import java.util.Spliterator;
 import java.util.UUID;
@@ -24,24 +22,24 @@ import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.internal.ElementFactory;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
 import me.devnatan.inventoryframework.state.State;
-import me.devnatan.inventoryframework.state.StateFactory;
+import me.devnatan.inventoryframework.state.StateManagementListener;
+import me.devnatan.inventoryframework.state.StateRegistry;
+import me.devnatan.inventoryframework.state.StateValue;
+import me.devnatan.inventoryframework.state.StateValueHost;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.annotations.UnmodifiableView;
 
 @ApiStatus.NonExtendable
-public class DefaultRootView implements RootView {
+public class DefaultRootView implements RootView, StateManagementListener {
 
     private final UUID id = UUID.randomUUID();
     private ViewConfig config;
     private final Pipeline<? super VirtualView> pipeline =
             new Pipeline<>(INIT, OPEN, FIRST_RENDER, UPDATE, CLICK, CLOSE, INVALIDATION);
     private final Set<IFContext> contexts = newSetFromMap(synchronizedMap(new HashMap<>()));
-
-    // --- State Management --
-    protected final StateFactory stateFactory = new StateFactory();
-    private final List<State<?>> states = new ArrayList<>();
+    final StateRegistry stateRegistry = new StateRegistry();
 
     @Override
     public final @NotNull UUID getUniqueId() {
@@ -150,4 +148,25 @@ public class DefaultRootView implements RootView {
     public void nextTick(Runnable task) {
         throw new UnsupportedOperationException("Missing nextTick(...) implementation");
     }
+
+    @Override
+    public final void stateRegistered(@NotNull State<?> state, Object caller) {}
+
+    @Override
+    public final void stateUnregistered(@NotNull State<?> state) {}
+
+    @Override
+    public final void stateValueInitialized(
+            @NotNull StateValueHost host, @NotNull StateValue value, Object initialValue) {}
+
+    @Override
+    public final void stateValueGet(
+            @NotNull State<?> state,
+            @NotNull StateValueHost host,
+            @NotNull StateValue internalValue,
+            Object rawValue) {}
+
+    @Override
+    public final void stateValueSet(
+            @NotNull StateValueHost host, @NotNull StateValue value, Object rawOldValue, Object rawNewValue) {}
 }

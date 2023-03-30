@@ -4,7 +4,6 @@ enableFeaturePreview('TYPESAFE_PROJECT_ACCESSORS')
 include 'test',
         'api',
         'bukkit',
-        'examples',
         'platform',
         'framework',
         'bom'

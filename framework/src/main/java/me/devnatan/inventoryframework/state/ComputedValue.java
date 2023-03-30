@@ -1,12 +1,21 @@
 package me.devnatan.inventoryframework.state;
 
+import java.util.Objects;
 import java.util.function.Supplier;
-import lombok.Data;
+import org.jetbrains.annotations.NotNull;
 
-@Data
-public final class ComputedValue implements InternalStateValue {
+/**
+ * Computed value whose value returned by the function to get the state value is always a new value
+ * created by {@link ComputedValue#factory}.
+ */
+public final class ComputedValue extends StateValue {
 
-    private final Supplier<Object> factory;
+    private final Supplier<?> factory;
+
+    public ComputedValue(@NotNull State<?> state, @NotNull Supplier<?> factory) {
+        super(state);
+        this.factory = factory;
+    }
 
     @Override
     public Object get() {
@@ -14,7 +23,21 @@ public final class ComputedValue implements InternalStateValue {
     }
 
     @Override
-    public void set(Object value) {
-        throw new IllegalStateModificationException();
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        ComputedValue that = (ComputedValue) o;
+        return factory.equals(that.factory);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), factory);
+    }
+
+    @Override
+    public String toString() {
+        return "ComputedValue{" + "computation=" + factory + "} " + super.toString();
     }
 }

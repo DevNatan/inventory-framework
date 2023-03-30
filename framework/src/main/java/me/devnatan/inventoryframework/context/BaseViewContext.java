@@ -20,8 +20,8 @@ import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.Pagination;
 import me.devnatan.inventoryframework.pipeline.StandardPipelinePhases;
-import me.devnatan.inventoryframework.state.DefaultStateHost;
-import me.devnatan.inventoryframework.state.StateHost;
+import me.devnatan.inventoryframework.state.DefaultStateValueHost;
+import me.devnatan.inventoryframework.state.StateValueHost;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,8 +31,8 @@ import org.jetbrains.annotations.UnmodifiableView;
 @ApiStatus.Internal
 @ApiStatus.NonExtendable
 @ToString
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class BaseViewContext implements IFContext {
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
+public class BaseViewContext extends DefaultStateValueHost implements IFContext {
 
     @Getter
     @EqualsAndHashCode.Include
@@ -45,7 +45,7 @@ public class BaseViewContext implements IFContext {
     private final @Nullable ViewContainer container;
 
     @ToString.Exclude
-    private final StateHost stateHost = new DefaultStateHost();
+    private final StateValueHost stateValueHost = new DefaultStateValueHost();
 
     protected final Map<String, Viewer> viewers = new HashMap<>();
     protected ViewConfig config;
@@ -176,10 +176,5 @@ public class BaseViewContext implements IFContext {
     @Override
     public boolean isMarkedForRemoval(int componentIndex) {
         return markedForRemoval.contains(componentIndex);
-    }
-
-    @Override
-    public @NotNull StateHost getStateHost() {
-        return stateHost;
     }
 }

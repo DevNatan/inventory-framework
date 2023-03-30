@@ -1,5 +1,7 @@
 package me.devnatan.inventoryframework.exception;
 
+import me.devnatan.inventoryframework.InventoryFrameworkException;
+
 /**
  * Called when a function that changes the nature of the view is called after its initialization.
  *
