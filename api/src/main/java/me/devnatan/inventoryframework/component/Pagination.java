@@ -1,6 +1,5 @@
 package me.devnatan.inventoryframework.component;
 
-import me.devnatan.inventoryframework.state.StateHandler;
 import me.devnatan.inventoryframework.state.StateValueHost;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,7 +16,7 @@ import org.jetbrains.annotations.Nullable;
  * during rendering, this component is determined from the {@link #currentPageIndex() current page
  * index}.
  */
-public interface Pagination extends StateHandler, ComponentComposition {
+public interface Pagination extends ComponentComposition {
 
     /**
      * The current page number.
