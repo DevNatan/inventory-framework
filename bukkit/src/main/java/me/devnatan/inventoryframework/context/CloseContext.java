@@ -9,7 +9,6 @@ import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.bukkit.BukkitViewer;
-import me.devnatan.inventoryframework.state.StateValueHost;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -37,11 +36,6 @@ public final class CloseContext extends ConfinedContext implements IFCloseContex
     @Override
     public @NotNull UUID getId() {
         return getParent().getId();
-    }
-
-    @Override
-    public @NotNull StateValueHost getStateValueHost() {
-        return getParent().getStateValueHost();
     }
 
     @Override

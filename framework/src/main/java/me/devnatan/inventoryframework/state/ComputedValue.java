@@ -10,9 +10,9 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class ComputedValue extends StateValue {
 
-    private final Supplier<Object> factory;
+    private final Supplier<?> factory;
 
-    ComputedValue(@NotNull State<?> state, @NotNull Supplier<Object> factory) {
+    public ComputedValue(@NotNull State<?> state, @NotNull Supplier<?> factory) {
         super(state);
         this.factory = factory;
     }
@@ -20,11 +20,6 @@ public final class ComputedValue extends StateValue {
     @Override
     public Object get() {
         return factory.get();
-    }
-
-    @Override
-    public void set(Object value) {
-        throw new IllegalStateModificationException("Immutable");
     }
 
     @Override

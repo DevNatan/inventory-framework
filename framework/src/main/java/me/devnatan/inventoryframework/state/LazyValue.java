@@ -14,10 +14,10 @@ public final class LazyValue extends StateValue {
 
     private static final Object UNINITIALIZED = new Object();
 
-    private final Supplier<Object> computation;
+    private final Supplier<?> computation;
     private Object currValue = UNINITIALIZED;
 
-    LazyValue(@NotNull State<?> state, @NotNull Supplier<Object> computation) {
+    public LazyValue(@NotNull State<?> state, @NotNull Supplier<?> computation) {
         super(state);
         this.computation = computation;
     }
@@ -27,11 +27,6 @@ public final class LazyValue extends StateValue {
         if (currValue.equals(UNINITIALIZED)) currValue = computation.get();
 
         return currValue;
-    }
-
-    @Override
-    public void set(Object value) {
-        throw new IllegalStateModificationException("Immutable");
     }
 
     @Override

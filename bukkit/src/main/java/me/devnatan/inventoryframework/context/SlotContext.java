@@ -9,7 +9,6 @@ import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.bukkit.BukkitViewContainer;
 import me.devnatan.inventoryframework.bukkit.BukkitViewer;
 import me.devnatan.inventoryframework.component.Component;
-import me.devnatan.inventoryframework.state.StateValueHost;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
@@ -43,11 +42,6 @@ public class SlotContext extends ConfinedContext implements IFSlotContext, Conte
     @Override
     public final @NotNull UUID getId() {
         return parent.getId();
-    }
-
-    @Override
-    public final @NotNull StateValueHost getStateValueHost() {
-        return getParent().getStateValueHost();
     }
 
     @Override

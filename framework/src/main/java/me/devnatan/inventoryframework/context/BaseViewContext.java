@@ -21,9 +21,6 @@ import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.Pagination;
 import me.devnatan.inventoryframework.pipeline.StandardPipelinePhases;
 import me.devnatan.inventoryframework.state.DefaultStateValueHost;
-import me.devnatan.inventoryframework.state.State;
-import me.devnatan.inventoryframework.state.StateManagementListener;
-import me.devnatan.inventoryframework.state.StateValue;
 import me.devnatan.inventoryframework.state.StateValueHost;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -34,8 +31,8 @@ import org.jetbrains.annotations.UnmodifiableView;
 @ApiStatus.Internal
 @ApiStatus.NonExtendable
 @ToString
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class BaseViewContext implements IFContext {
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
+public class BaseViewContext extends DefaultStateValueHost implements IFContext {
 
     @Getter
     @EqualsAndHashCode.Include
@@ -179,34 +176,5 @@ public class BaseViewContext implements IFContext {
     @Override
     public boolean isMarkedForRemoval(int componentIndex) {
         return markedForRemoval.contains(componentIndex);
-    }
-
-    public @NotNull StateValueHost getStateValueHost() {
-        return stateValueHost;
-    }
-
-    @Override
-    public final StateValue getState(State<?> state) {
-        return getStateValueHost().getState(state);
-    }
-
-    @Override
-    public final void initState(long id, @NotNull StateValue value, Object initialValue) {
-        getStateValueHost().initState(id, value, initialValue);
-    }
-
-    @Override
-    public final void updateState(long id, Object value) {
-        getStateValueHost().updateState(id, value);
-    }
-
-    @Override
-    public final void attachStateListener(@NotNull StateManagementListener listener) {
-        getStateValueHost().attachStateListener(listener);
-    }
-
-    @Override
-    public final void detachStateListener(@NotNull StateManagementListener listener) {
-        getStateValueHost().detachStateListener(listener);
     }
 }

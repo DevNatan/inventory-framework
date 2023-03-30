@@ -5,7 +5,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.UnknownNullability;
 
 /**
- * Represents the value of a {@link State} for a single {@link StateValueHost}.
+ * Wrapper of the value of a {@link State} for a single {@link StateValueHost}.
  */
 @Data
 public abstract class StateValue {
@@ -37,7 +37,7 @@ public abstract class StateValue {
      */
     @ApiStatus.Internal
     @UnknownNullability
-    abstract Object get();
+    protected abstract Object get();
 
     /**
      * Sets the new state value.
@@ -49,5 +49,7 @@ public abstract class StateValue {
      * @throws StateException If this value can't be set.
      */
     @ApiStatus.Internal
-    abstract void set(Object value);
+    protected void set(Object value) {
+        throw new IllegalStateModificationException("Immutable");
+    }
 }

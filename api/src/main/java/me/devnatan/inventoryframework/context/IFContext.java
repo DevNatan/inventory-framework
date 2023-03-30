@@ -11,13 +11,13 @@ import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.Pagination;
-import me.devnatan.inventoryframework.state.StateValueHostAware;
+import me.devnatan.inventoryframework.state.StateValueHost;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 import org.jetbrains.annotations.UnmodifiableView;
 
-public interface IFContext extends VirtualView, StateValueHostAware {
+public interface IFContext extends VirtualView, StateValueHost {
 
     /**
      * An unique id for this context.

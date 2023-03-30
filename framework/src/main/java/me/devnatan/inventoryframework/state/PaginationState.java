@@ -33,14 +33,15 @@ public final class PaginationState extends BaseState<Pagination> implements Stat
     public void stateUnregistered(@NotNull State<?> state) {}
 
     @Override
-    public void stateValueInitialized(@NotNull StateValueHost host, @NotNull StateValue value, Object initialValue) {}
+    public void stateValueInitialized(@NotNull StateValueHost host, @NotNull StateValue value, Object initialValue) {
+        System.out.println("pagination value initialized at " + host);
+    }
 
     @Override
     public void stateValueGet(
-            @NotNull State<?> state,
-            @NotNull StateValueHost host,
-            @NotNull StateValue internalValue,
-            Object rawValue) {}
+            @NotNull State<?> state, @NotNull StateValueHost host, @NotNull StateValue internalValue, Object rawValue) {
+        System.out.println("tried to get pagination value");
+    }
 
     @Override
     public void stateValueSet(

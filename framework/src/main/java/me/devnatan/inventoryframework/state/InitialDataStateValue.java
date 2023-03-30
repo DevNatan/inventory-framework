@@ -20,12 +20,12 @@ public final class InitialDataStateValue extends StateValue {
 
     @Override
     @UnknownNullability
-    Object get() {
+    public Object get() {
         return backingValue.get();
     }
 
     @Override
-    void set(Object value) {
+    public void set(Object value) {
         backingValue.set(value);
     }
 }

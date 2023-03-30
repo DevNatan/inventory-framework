@@ -7,7 +7,7 @@ public final class ImmutableValue extends StateValue {
 
     private final Object value;
 
-    ImmutableValue(@NotNull State<?> state, Object value) {
+    public ImmutableValue(@NotNull State<?> state, Object value) {
         super(state);
         this.value = value;
     }
@@ -15,11 +15,6 @@ public final class ImmutableValue extends StateValue {
     @Override
     public Object get() {
         return value;
-    }
-
-    @Override
-    public void set(Object value) {
-        throw new IllegalStateModificationException("Immutable");
     }
 
     @Override

@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * HashMap-backed Default implementation for StateHost.
  */
-public final class DefaultStateValueHost implements StateValueHost {
+public class DefaultStateValueHost implements StateValueHost {
 
     private final Map<Long, StateValue> valuesMap = new HashMap<>();
     private final List<StateManagementListener> listeners = new ArrayList<>();
