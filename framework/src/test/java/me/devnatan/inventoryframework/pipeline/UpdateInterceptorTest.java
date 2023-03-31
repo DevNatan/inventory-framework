@@ -61,6 +61,7 @@ public class UpdateInterceptorTest {
         when(component.getRenderHandler()).thenReturn($ -> {
             /* do nothing */
         });
+        when(component.shouldBeUpdated()).thenCallRealMethod();
 
         when(context.getComponents()).thenReturn(Collections.singletonList(component));
         when(root.getContexts()).thenReturn(Collections.singleton(context));
@@ -114,6 +115,7 @@ public class UpdateInterceptorTest {
         when(context.getContainer()).thenReturn(container);
 
         Component component = mock(Component.class);
+        when(component.shouldBeUpdated()).thenReturn(true);
         when(context.getComponents()).thenReturn(Collections.singletonList(component));
         when(root.getContexts()).thenReturn(Collections.singleton(context));
 

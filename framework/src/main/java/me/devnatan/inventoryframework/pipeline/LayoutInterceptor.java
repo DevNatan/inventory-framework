@@ -29,7 +29,6 @@ public final class LayoutInterceptor implements PipelineInterceptor<VirtualView>
 
         final Map<Character, List<Integer>> slots = resolveLayout(renderContext, layout);
         registerLayoutComponents(renderContext, slots);
-        System.out.println("LAYOUT INTERCEPTED " + slots);
     }
 
     private void registerLayoutComponents(IFRenderContext context, Map<Character, List<Integer>> slots) {

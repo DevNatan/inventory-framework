@@ -18,7 +18,7 @@ public final class RenderContext extends PlatformRenderContext<BukkitItemCompone
 
     private static final LayoutSlot filledReservedCharLayoutSlot =
             new LayoutSlot(LayoutSlot.FILLED_RESERVED_CHAR, $ -> {
-                throw new IllegalStateException("Cannot use factory of reserved char");
+                throw new UnsupportedOperationException("Cannot use factory of reserved layout character");
             });
 
     private final @NotNull Player player;

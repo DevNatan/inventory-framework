@@ -31,7 +31,9 @@ public final class ItemClickInterceptor implements PipelineInterceptor<VirtualVi
             context.setCancelled(item.isCancelOnClick());
         }
 
-        component.getInteractionHandler().clicked(component, context);
+        if (component.getInteractionHandler() != null)
+            component.getInteractionHandler().clicked(component, context);
+
         event.setCancelled(context.isCancelled());
     }
 }

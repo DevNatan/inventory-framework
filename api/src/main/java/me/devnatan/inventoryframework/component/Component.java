@@ -38,7 +38,6 @@ public interface Component extends VirtualView {
      *
      * @return The interaction handler for this component.
      */
-    @NotNull
     InteractionHandler getInteractionHandler();
 
     /**

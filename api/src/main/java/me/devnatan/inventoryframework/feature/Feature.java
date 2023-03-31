@@ -16,7 +16,6 @@ import org.jetbrains.annotations.NotNull;
  * which will be taken when the Feature is referenced, and the class of the feature itself is
  * private while its key is public for later installation.
  *
- * <h3>Configuration</h3>
  * <p>
  * Since features are immutable at runtime, there needs to be a way to pre-define their initial
  * values in case it is necessary for them to act together with these values, defined by the user,
@@ -30,7 +29,6 @@ import org.jetbrains.annotations.NotNull;
  *  final class SampleFeatureConfig {}
  * </code></pre>
  *
- * <h3>Preventing instance leak</h3>
  * <p>
  * It is important to note that features are singleton instances and can only be modified (by
  * themselves) once in their entire lifecycle, which is during their installation. The

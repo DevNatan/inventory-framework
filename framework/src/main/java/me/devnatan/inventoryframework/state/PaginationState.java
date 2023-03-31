@@ -11,12 +11,15 @@ import me.devnatan.inventoryframework.pipeline.PipelineContext;
 import me.devnatan.inventoryframework.pipeline.PipelineInterceptor;
 import me.devnatan.inventoryframework.pipeline.PipelinePhase;
 import me.devnatan.inventoryframework.pipeline.StandardPipelinePhases;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 @ToString(callSuper = true)
 public final class PaginationState extends BaseState<Pagination> implements StateManagementListener {
 
-    private static final PipelinePhase PAGINATION_RENDER = new PipelinePhase("pagination-render");
+    @ApiStatus.Internal
+    public static final PipelinePhase PAGINATION_RENDER = new PipelinePhase("pagination-render");
+
     private final PipelineInterceptor<VirtualView> pipelineInterceptor = new Interceptor(this);
 
     public PaginationState(long id, @NotNull StateValueFactory valueFactory) {

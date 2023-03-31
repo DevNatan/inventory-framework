@@ -6,16 +6,15 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
+import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
-import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.context.IFSlotRenderContext;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
 import me.devnatan.inventoryframework.state.State;
@@ -23,10 +22,11 @@ import me.devnatan.inventoryframework.state.StateValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
 
+// TODO add "key" to child pagination components and check if it needs to be updated based on it
 @Getter
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-public final class PaginationImpl extends StateValue implements Pagination, InteractionHandler {
+public final class PaginationImpl extends StateValue implements Pagination {
 
     private final List<Component> components = new LinkedList<>();
 
@@ -36,11 +36,11 @@ public final class PaginationImpl extends StateValue implements Pagination, Inte
     // --- User provided ---
     private final char layoutTarget;
     private final @NotNull Object sourceProvider;
-    private final @NotNull Function<Object, ComponentFactory> itemFactory;
+    private final @NotNull PaginationElementFactory<Object> elementFactory;
 
     // --- Internal ---
     private int currPageIndex;
-    private int pageSize;
+    private int pageSize = -1;
     private final boolean dynamic;
     private boolean pageWasChanged;
 
@@ -54,19 +54,18 @@ public final class PaginationImpl extends StateValue implements Pagination, Inte
      */
     private List<?> currSource;
 
-    @SuppressWarnings("unchecked")
     public PaginationImpl(
             @NotNull State<?> state,
             @NotNull IFContext host,
             char layoutTarget,
             @NotNull Object sourceProvider,
-            @NotNull Function<Object, ComponentFactory> itemFactory) {
+            @NotNull PaginationElementFactory<Object> elementFactory) {
         super(state);
         this.host = host;
         this.layoutTarget = layoutTarget;
         this.sourceProvider = sourceProvider;
-        this.itemFactory = itemFactory;
-        this.currSource = Objects.requireNonNull(convertSourceProvider(), "Converted source cannot never be null");
+        this.elementFactory = elementFactory;
+        this.currSource = convertSourceProvider();
         this.dynamic = sourceProvider instanceof Collection;
     }
 
@@ -91,78 +90,21 @@ public final class PaginationImpl extends StateValue implements Pagination, Inte
     }
 
     @Override
-    public @NotNull InteractionHandler getInteractionHandler() {
-        return this;
-    }
-
-    @Override
     public void render(@NotNull IFSlotRenderContext context) {
         final IFRenderContext renderContext = (IFRenderContext) context.getParent();
-        if (renderContext.getConfig().getLayout() != null) {
-            final Optional<LayoutSlot> layoutSlotOptional = renderContext.getLayoutSlots().stream()
-                    .filter(layoutSlot -> layoutSlot.getCharacter() == getLayoutTarget())
-                    .findFirst();
-
-            System.out.println(" ");
-            System.out.println("renderContext.getLayoutSlots() = " + renderContext.getLayoutSlots());
-            if (!layoutSlotOptional.isPresent())
-                throw new IllegalArgumentException(
-                        String.format("Layout slot target not found: %c", getLayoutTarget()));
-
-            System.out.println(" ");
-            final LayoutSlot layoutSlot = layoutSlotOptional.get();
-            pageSize = layoutSlot.getPositions().size();
-            final List<?> currItems = getPageContents(currPageIndex);
-
-            System.out.println("Using layout as page size");
-            System.out.println("pageSize = " + pageSize);
-
-            int elementIndex = 0;
-            final int itemsLen = currItems.size();
-            for (final int position : layoutSlot.getPositions()) {
-                if (elementIndex == itemsLen) break;
-
-                final Object value = currItems.get(elementIndex++);
-                final ItemComponentBuilder<?> builder = (ItemComponentBuilder<?>) itemFactory.apply(value);
-                builder.withSlot(position);
-
-                final Component component = ((ComponentFactory) builder).create();
-
-                System.out.printf("[%d] %s%n", position, component);
-                components.add(component);
-            }
-        } else {
-            pageSize = context.getContainer().getSize();
-            final List<?> currItems = getPageContents(currPageIndex);
-
-            final int firstSlot = context.getContainer().getFirstSlot();
-            final int iterationLimit = Math.min(context.getContainer().getLastSlot() + 1, currItems.size());
-
-            System.out.println("Using container as page size");
-            System.out.println("pageSize = " + pageSize);
-            System.out.println("firstSlot = " + firstSlot);
-            System.out.println("iterationLimit = " + iterationLimit);
-
-            for (int i = firstSlot; i < iterationLimit; i++) {
-                final Object value = currItems.get(i);
-                final ItemComponentBuilder<?> builder = (ItemComponentBuilder<?>) itemFactory.apply(value);
-                builder.withSlot(i);
-
-                final Component component = ((ComponentFactory) builder).create();
-
-                System.out.printf("[%d] %s%n", i, component);
-                components.add(component);
-            }
-        }
+        if (renderContext.getConfig().getLayout() != null) renderLayeredPagination(renderContext);
+        else renderUnconstrainedPagination(renderContext);
 
         getComponents().forEach(child -> child.render(context));
     }
 
     @Override
     public void updated(@NotNull IFSlotRenderContext context) {
+        // If page was changed all components will be removed, so don't trigger update on them
         if (pageWasChanged) {
             clear(context);
             pageWasChanged = false;
+            return;
         }
 
         getComponents().forEach(child -> child.updated(context));
@@ -175,12 +117,18 @@ public final class PaginationImpl extends StateValue implements Pagination, Inte
 
     @Override
     public void clear(@NotNull IFContext context) {
-        final Iterator<Component> childIterator = components.iterator();
-        while (childIterator.hasNext()) {
-            Component child = childIterator.next();
-            child.clear(context);
-            childIterator.remove();
+        // Only remove components if page was changed to not make the clear inconsistent
+        if (pageWasChanged) {
+            final Iterator<Component> childIterator = components.iterator();
+            while (childIterator.hasNext()) {
+                Component child = childIterator.next();
+                child.clear(context);
+                childIterator.remove();
+            }
+            return;
         }
+
+        getComponents().forEach(child -> child.clear(context));
     }
 
     @Override
@@ -194,6 +142,11 @@ public final class PaginationImpl extends StateValue implements Pagination, Inte
             if (component.isContainedWithin(position)) return true;
         }
         return false;
+    }
+
+    @Override
+    public InteractionHandler getInteractionHandler() {
+        return null;
     }
 
     @Override
@@ -250,15 +203,14 @@ public final class PaginationImpl extends StateValue implements Pagination, Inte
             throw new IndexOutOfBoundsException(
                     String.format("Page index not found (%d > %d)", pageIndex, getPagesCount()));
 
+        // TODO trigger page switch
         currPageIndex = pageIndex;
         pageWasChanged = true;
         host.updateRoot();
-        // TODO trigger update and page switch
     }
 
     @Override
     public void advance() {
-        System.out.println("tried to advance: " + canAdvance());
         if (!canAdvance()) return;
         switchTo(currentPageIndex() + 1);
     }
@@ -285,9 +237,6 @@ public final class PaginationImpl extends StateValue implements Pagination, Inte
         return getComponents().iterator();
     }
 
-    @Override
-    public void clicked(@NotNull Component component, @NotNull IFSlotClickContext context) {}
-
     /**
      * The pagination source.
      *
@@ -310,6 +259,17 @@ public final class PaginationImpl extends StateValue implements Pagination, Inte
     // TODO needs caching
     private int getPagesCount() {
         return (int) Math.ceil((double) getSourceOrThrow().size() / getPageSize());
+    }
+
+    /**
+     * The current page size.
+     *
+     * @return Number of available elements position for pagination in the current page.
+     */
+    public int getPageSize() {
+        if (pageSize == -1) throw new IllegalStateException("Page size need to be updated before try to get it");
+
+        return pageSize;
     }
 
     /**
@@ -345,8 +305,22 @@ public final class PaginationImpl extends StateValue implements Pagination, Inte
      * The position of the first paged item must be the first slot in the container, the last
      * position must be the last slot in the container, and {@link #pageSize} on the current page
      * must be the size of the container.
+     *
+     * @param context The render context.
      */
-    private void renderUnconstrainedPagination() {
+    private void renderUnconstrainedPagination(@NotNull IFRenderContext context) {
+        final ViewContainer container = context.getContainer();
+        pageSize = container.getSize();
+
+        final List<?> elements = getPageContents(currPageIndex);
+        final int lastSlot = container.getLastSlot();
+
+        for (int i = container.getFirstSlot(); i < Math.min(lastSlot + 1, elements.size()); i++) {
+            final Object value = elements.get(i);
+            final ComponentFactory factory = elementFactory.create(i, i, value);
+            components.add(factory.create());
+        }
+
         throw new UnsupportedOperationException("TODO");
     }
 
@@ -355,9 +329,32 @@ public final class PaginationImpl extends StateValue implements Pagination, Inte
      * <p>
      * The first position, last position and number of items on the page must be exactly the same as
      * the layout.
+     *
+     * @param context The render context.
      */
-    private void renderLayeredPagination() {
-        throw new UnsupportedOperationException("TODO");
+    private void renderLayeredPagination(@NotNull IFRenderContext context) {
+        final Optional<LayoutSlot> layoutSlotOptional = context.getLayoutSlots().stream()
+                .filter(layoutSlot -> layoutSlot.getCharacter() == getLayoutTarget())
+                .findFirst();
+
+        if (!layoutSlotOptional.isPresent())
+            // TODO more detailed error message
+            throw new IllegalArgumentException(String.format("Layout slot target not found: %c", getLayoutTarget()));
+
+        final LayoutSlot layoutSlot = layoutSlotOptional.get();
+        pageSize = layoutSlot.getPositions().size();
+
+        System.out.println("pageSize = " + pageSize);
+        final List<?> elements = getPageContents(currPageIndex);
+        final int elementsLen = elements.size();
+        int iterationIndex = 0;
+        for (final int position : layoutSlot.getPositions()) {
+            final Object value = elements.get(iterationIndex++);
+            final ComponentFactory factory = elementFactory.create(iterationIndex, position, value);
+            components.add(factory.create());
+
+            if (iterationIndex == elementsLen) break;
+        }
     }
 
     /**

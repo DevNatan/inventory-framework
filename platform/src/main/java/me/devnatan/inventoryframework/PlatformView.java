@@ -1,7 +1,5 @@
 package me.devnatan.inventoryframework;
 
-import static me.devnatan.inventoryframework.internal.LayoutSlot.FILLED_RESERVED_CHAR;
-
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -11,6 +9,7 @@ import lombok.Getter;
 import me.devnatan.inventoryframework.component.ComponentFactory;
 import me.devnatan.inventoryframework.component.ItemComponentBuilder;
 import me.devnatan.inventoryframework.component.Pagination;
+import me.devnatan.inventoryframework.component.PaginationElementFactory;
 import me.devnatan.inventoryframework.component.PaginationImpl;
 import me.devnatan.inventoryframework.context.IFCloseContext;
 import me.devnatan.inventoryframework.context.IFContext;
@@ -45,7 +44,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class PlatformView<
-                TItem extends ItemComponentBuilder<TItem>,
+                TItem extends ItemComponentBuilder<TItem> & ComponentFactory,
                 TContext extends IFContext,
                 TOpenContext extends IFOpenContext,
                 TCloseContext extends IFCloseContext,
@@ -296,36 +295,9 @@ public abstract class PlatformView<
      */
     protected final <T> State<Pagination> paginationState(
             @NotNull List<? super T> sourceProvider, @NotNull BiConsumer<TItem, T> itemFactory) {
-        final long id = State.next();
-        @SuppressWarnings("unchecked")
-        final StateValueFactory factory = (host, state) ->
-                new PaginationImpl(state, (TContext) host, FILLED_RESERVED_CHAR, sourceProvider, (value) -> {
-                    @SuppressWarnings("unchecked")
-                    TItem builder = (TItem) getElementFactory().createComponentBuilder();
-                    itemFactory.accept(builder, (T) value);
-                    return (ComponentFactory) builder;
-                });
-        final State<Pagination> state = new PaginationState(id, factory);
-        stateRegistry.registerState(state, this);
-
-        return state;
-    }
-
-    protected final <T> State<Pagination> paginationState(
-            @NotNull List<? super T> sourceProvider, @NotNull BiConsumer<TItem, T> itemFactory, char layoutTarget) {
-        final long id = State.next();
-        @SuppressWarnings("unchecked")
-        final StateValueFactory factory =
-                (host, state) -> new PaginationImpl(state, (TContext) host, layoutTarget, sourceProvider, (value) -> {
-                    @SuppressWarnings("unchecked")
-                    TItem builder = (TItem) getElementFactory().createComponentBuilder();
-                    itemFactory.accept(builder, (T) value);
-                    return (ComponentFactory) builder;
-                });
-        final State<Pagination> state = new PaginationState(id, factory);
-        stateRegistry.registerState(state, this);
-
-        return state;
+        return this.<T>buildPaginationState(sourceProvider)
+                .itemFactory(itemFactory)
+                .build();
     }
 
     /**
@@ -345,22 +317,12 @@ public abstract class PlatformView<
      * @param <T>            The pagination data type.
      * @return A immutable pagination state.
      */
-    @SuppressWarnings("unchecked")
     protected final <T> State<Pagination> paginationState(
             @NotNull Function<TSlotContext, List<? super T>> sourceProvider,
             @NotNull BiConsumer<TItem, T> itemFactory) {
-        final long id = State.next();
-        final StateValueFactory factory = (host, state) ->
-                new PaginationImpl(state, (TContext) host, FILLED_RESERVED_CHAR, sourceProvider, (value) -> {
-                    @SuppressWarnings("unchecked")
-                    TItem builder = (TItem) getElementFactory().createComponentBuilder();
-                    itemFactory.accept(builder, (T) value);
-                    return (ComponentFactory) builder;
-                });
-        final State<Pagination> state = new PaginationState(id, factory);
-        stateRegistry.registerState(state, this);
-
-        return state;
+        return this.buildPaginationState(sourceProvider)
+                .itemFactory(itemFactory)
+                .build();
     }
 
     /**
@@ -377,12 +339,50 @@ public abstract class PlatformView<
      * @param sourceProvider The data provider for pagination.
      * @param itemFactory    The function for creating pagination items, this function is called for
      *                       each paged element (item) on a page.
-     * @param <V>            The pagination data type.
+     * @param <T>            The pagination data type.
      * @return A immutable pagination state.
      */
-    protected final <V> State<Pagination> paginationState(
-            @NotNull Supplier<List<? super V>> sourceProvider, @NotNull BiConsumer<TItem, V> itemFactory) {
-        return paginationState($ -> sourceProvider.get(), itemFactory);
+    protected final <T> State<Pagination> paginationState(
+            @NotNull Supplier<List<? super T>> sourceProvider, @NotNull BiConsumer<TItem, T> itemFactory) {
+        return this.<T>buildPaginationState(sourceProvider)
+                .itemFactory(itemFactory)
+                .build();
+    }
+
+    @SuppressWarnings("unchecked")
+    protected final <T> PaginationStateBuilder<TSlotClickContext, TItem, T> buildPaginationState(
+            @NotNull List<? super T> sourceProvider) {
+        return new PaginationStateBuilder<>(
+                (PlatformView<TItem, ?, ?, ?, ?, TSlotClickContext, ?>) this, sourceProvider);
+    }
+
+    @SuppressWarnings("unchecked")
+    protected final <T> PaginationStateBuilder<TSlotClickContext, TItem, T> buildPaginationState(
+            @NotNull Supplier<List<? super T>> sourceProvider) {
+        return new PaginationStateBuilder<>(
+                (PlatformView<TItem, ?, ?, ?, ?, TSlotClickContext, ?>) this, sourceProvider);
+    }
+
+    @SuppressWarnings("unchecked")
+    protected final <T> PaginationStateBuilder<TSlotClickContext, TItem, T> buildPaginationState(
+            @NotNull Function<TSlotContext, List<? super T>> sourceProvider) {
+        return new PaginationStateBuilder<>(
+                (PlatformView<TItem, ?, ?, ?, ?, TSlotClickContext, ?>) this, sourceProvider);
+    }
+
+    final <V> State<Pagination> buildPaginationState(@NotNull PaginationStateBuilder<TSlotContext, TItem, V> builder) {
+        final long id = State.next();
+        @SuppressWarnings("unchecked")
+        final StateValueFactory factory = (host, state) -> new PaginationImpl(
+                state,
+                (TContext) host,
+                builder.getLayoutTarget(),
+                builder.getSourceProvider(),
+                (PaginationElementFactory<Object>) builder.getElementFactory());
+        final State<Pagination> state = new PaginationState(id, factory);
+        stateRegistry.registerState(state, this);
+
+        return state;
     }
 
     /**
