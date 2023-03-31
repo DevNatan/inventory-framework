@@ -6,14 +6,17 @@ import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.component.Pagination;
 import me.devnatan.inventoryframework.context.IFContext;
+import me.devnatan.inventoryframework.pipeline.Pipeline;
 import me.devnatan.inventoryframework.pipeline.PipelineContext;
 import me.devnatan.inventoryframework.pipeline.PipelineInterceptor;
+import me.devnatan.inventoryframework.pipeline.PipelinePhase;
 import me.devnatan.inventoryframework.pipeline.StandardPipelinePhases;
 import org.jetbrains.annotations.NotNull;
 
 @ToString(callSuper = true)
 public final class PaginationState extends BaseState<Pagination> implements StateManagementListener {
 
+	private static final PipelinePhase PAGINATION_RENDER = new PipelinePhase("pagination-render");
     private final PipelineInterceptor<VirtualView> pipelineInterceptor = new Interceptor(this);
 
     public PaginationState(long id, @NotNull StateValueFactory valueFactory) {
@@ -25,8 +28,9 @@ public final class PaginationState extends BaseState<Pagination> implements Stat
         if (!(caller instanceof RootView))
             throw new IllegalArgumentException("Pagination state can only be registered by RootView");
 
-        final RootView root = (RootView) caller;
-        root.getPipeline().intercept(StandardPipelinePhases.FIRST_RENDER, pipelineInterceptor);
+        final Pipeline<VirtualView> pipeline = ((RootView) caller).getPipeline();
+		pipeline.insertPhaseAfter(StandardPipelinePhases.LAYOUT_RESOLUTION, PAGINATION_RENDER);
+		pipeline.intercept(PAGINATION_RENDER, pipelineInterceptor);
     }
 
     @Override
@@ -34,8 +38,7 @@ public final class PaginationState extends BaseState<Pagination> implements Stat
         if (!(caller instanceof RootView))
             throw new IllegalArgumentException("Pagination state can only be unregistered by RootView");
 
-        final RootView root = (RootView) caller;
-        root.getPipeline().removeInterceptor(StandardPipelinePhases.FIRST_RENDER, pipelineInterceptor);
+		(((RootView) caller)).getPipeline().removeInterceptor(PAGINATION_RENDER, pipelineInterceptor);
     }
 
     @Override

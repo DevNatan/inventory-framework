@@ -9,6 +9,8 @@ import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFOpenContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
 
+import java.nio.channels.Pipe;
+
 /**
  * Pipeline phases used internally by the framework. All phases have a {@link IFContext} as subject.
  */
@@ -32,6 +34,8 @@ public final class StandardPipelinePhases {
      * In this pipeline phase the pipeline interceptor subject is a {@link IFRenderContext}.
      */
     public static final PipelinePhase FIRST_RENDER = new PipelinePhase("first-render");
+
+	public static final PipelinePhase LAYOUT_RESOLUTION = new PipelinePhase("layout-resolution");
 
     /**
      * Called when a {@link IFContext context} is going to be updated.

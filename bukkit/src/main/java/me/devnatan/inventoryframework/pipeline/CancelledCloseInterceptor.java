@@ -1,15 +1,20 @@
 package me.devnatan.inventoryframework.pipeline;
 
+import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.CloseContext;
+import me.devnatan.inventoryframework.context.IFCloseContext;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-public class CancelledCloseInterceptor implements PipelineInterceptor<CloseContext> {
+public class CancelledCloseInterceptor implements PipelineInterceptor<VirtualView> {
 
     @SuppressWarnings("ConstantValue")
     @Override
-    public void intercept(PipelineContext<CloseContext> pipeline, CloseContext context) {
+    public void intercept(PipelineContext<VirtualView> pipeline, VirtualView subject) {
+		if (!(subject instanceof IFCloseContext)) return;
+
+		final CloseContext context = (CloseContext) subject;
         if (!context.isCancelled()) return;
 
         final Player player = context.getPlayer();

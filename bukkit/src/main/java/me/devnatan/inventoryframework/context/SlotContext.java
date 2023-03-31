@@ -39,7 +39,12 @@ public class SlotContext extends ConfinedContext implements IFSlotContext, Conte
         this.component = component;
     }
 
-    @Override
+	@Override
+	public @NotNull ViewContainer getContainer() {
+		return getParent().getContainer();
+	}
+
+	@Override
     public final @NotNull UUID getId() {
         return parent.getId();
     }

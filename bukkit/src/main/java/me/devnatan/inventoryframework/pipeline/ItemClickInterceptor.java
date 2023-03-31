@@ -1,5 +1,6 @@
 package me.devnatan.inventoryframework.pipeline;
 
+import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.ItemComponent;
 import me.devnatan.inventoryframework.context.IFContext;
@@ -11,28 +12,27 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Intercepted when a player clicks on an item the view container.
  */
-public final class ItemClickInterceptor implements PipelineInterceptor<IFContext> {
+public final class ItemClickInterceptor implements PipelineInterceptor<VirtualView> {
 
     @Override
-    public void intercept(@NotNull PipelineContext<IFContext> pipeline, @NotNull IFContext ctx) {
-        if (!(ctx instanceof SlotClickContext))
-            throw new IllegalArgumentException("Subject must be IFSlotClickContext");
+    public void intercept(@NotNull PipelineContext<VirtualView> pipeline, @NotNull VirtualView subject) {
+        if (!(subject instanceof SlotClickContext)) return;
 
-        final SlotClickContext clickCtx = (SlotClickContext) ctx;
-        final InventoryClickEvent event = clickCtx.getClickOrigin();
+		final SlotClickContext context = (SlotClickContext) subject;
+        final InventoryClickEvent event = context.getClickOrigin();
         if (event.getSlotType() == InventoryType.SlotType.OUTSIDE) return;
 
-        final Component component = clickCtx.getComponent();
+        final Component component = context.getComponent();
         if (component == null) return;
 
         if (component instanceof ItemComponent) {
             final ItemComponent item = (ItemComponent) component;
 
             // inherit cancellation so we can un-cancel it
-            clickCtx.setCancelled(item.isCancelOnClick());
+			context.setCancelled(item.isCancelOnClick());
         }
 
-        component.getInteractionHandler().clicked(component, clickCtx);
-        event.setCancelled(clickCtx.isCancelled());
+        component.getInteractionHandler().clicked(component, context);
+        event.setCancelled(context.isCancelled());
     }
 }

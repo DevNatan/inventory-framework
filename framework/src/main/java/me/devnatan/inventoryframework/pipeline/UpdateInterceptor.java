@@ -28,28 +28,11 @@ public final class UpdateInterceptor implements PipelineInterceptor<VirtualView>
                 continue;
             }
 
-            if (!shouldBeUpdated(component)) continue;
+            if (!component.shouldBeUpdated())
+				continue;
 
             updateComponent(context, component);
         }
-    }
-
-    /**
-     * Determines if a component should be updated.
-     *
-     * @param component The component.
-     * @return {@code true} if component should be updated or {@code false} otherwise.
-     */
-    private boolean shouldBeUpdated(@NotNull Component component) {
-        if (component instanceof ItemComponent) {
-            final ItemComponent item = (ItemComponent) component;
-
-            // items without a render or update handler are ignored because the fallback item is
-            // only rendered once in the initial rendering phase
-            return item.getRenderHandler() != null;
-        }
-
-        return true;
     }
 
     /**
@@ -71,7 +54,8 @@ public final class UpdateInterceptor implements PipelineInterceptor<VirtualView>
 
         component.updated(renderContext);
 
-        if (renderContext.isCancelled()) return;
+        if (renderContext.isCancelled())
+			return;
 
         component.render(renderContext);
     }

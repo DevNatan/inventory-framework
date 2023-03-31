@@ -14,7 +14,9 @@ import me.devnatan.inventoryframework.ViewType;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.bukkit.BukkitViewContainer;
 import me.devnatan.inventoryframework.bukkit.BukkitViewer;
+import me.devnatan.inventoryframework.component.BukkitItemComponentBuilder;
 import me.devnatan.inventoryframework.component.Component;
+import me.devnatan.inventoryframework.component.ComponentBuilder;
 import me.devnatan.inventoryframework.context.CloseContext;
 import me.devnatan.inventoryframework.context.IFCloseContext;
 import me.devnatan.inventoryframework.context.IFContext;
@@ -136,7 +138,12 @@ public final class BukkitElementFactory extends ElementFactory {
         return (T) new SlotContext(parent.getRoot(), container, viewer, slot, parent, component);
     }
 
-    @Override
+	@Override
+	public ComponentBuilder<?> createComponentBuilder() {
+		return new BukkitItemComponentBuilder();
+	}
+
+	@Override
     public synchronized boolean worksInCurrentPlatform() {
         if (worksInCurrentPlatform != null) return worksInCurrentPlatform;
 

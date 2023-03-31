@@ -8,6 +8,7 @@ import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.CLO
 import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.FIRST_RENDER;
 import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.INIT;
 import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.INVALIDATION;
+import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.LAYOUT_RESOLUTION;
 import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.OPEN;
 import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.UPDATE;
 
@@ -36,8 +37,8 @@ public class DefaultRootView implements RootView, StateManagementListener {
 
     private final UUID id = UUID.randomUUID();
     private ViewConfig config;
-    private final Pipeline<? super VirtualView> pipeline =
-            new Pipeline<>(INIT, OPEN, FIRST_RENDER, UPDATE, CLICK, CLOSE, INVALIDATION);
+    private final Pipeline<VirtualView> pipeline =
+            new Pipeline<>(INIT, OPEN, LAYOUT_RESOLUTION, FIRST_RENDER, UPDATE, CLICK, CLOSE, INVALIDATION);
     private final Set<IFContext> contexts = newSetFromMap(synchronizedMap(new HashMap<>()));
     final StateRegistry stateRegistry = new StateRegistry();
 
@@ -90,7 +91,7 @@ public class DefaultRootView implements RootView, StateManagementListener {
 
     @Override
     public final void renderContext(@NotNull IFContext context) {
-        getPipeline().execute(FIRST_RENDER, context);
+        getPipeline().execute(context);
     }
 
     @Override
@@ -106,7 +107,7 @@ public class DefaultRootView implements RootView, StateManagementListener {
     }
 
     @Override
-    public final @NotNull Pipeline<? super VirtualView> getPipeline() {
+    public final @NotNull Pipeline<VirtualView> getPipeline() {
         return pipeline;
     }
 

@@ -6,15 +6,20 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.IFContext;
+import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.context.IFSlotRenderContext;
+import me.devnatan.inventoryframework.internal.LayoutSlot;
 import me.devnatan.inventoryframework.state.State;
 import me.devnatan.inventoryframework.state.StateValue;
 import org.jetbrains.annotations.NotNull;
@@ -31,17 +36,17 @@ public final class PaginationImpl extends StateValue implements Pagination, Inte
     // --- User provided ---
     private final char layoutTarget;
     private final @NotNull Object sourceProvider;
-    private final @NotNull BiConsumer<? extends ItemComponentBuilder<?>, ?> itemFactory;
+    private final @NotNull Function<Object, ComponentFactory> itemFactory;
 
     // --- Data ---
     private int currPageIndex;
 
     // --- Pagination ---
     private int pageSize;
-    private int pagesCount;
     private List<?> currSource;
     private final boolean dynamic;
     private Function<? extends IFContext, Collection<?>> _srcFactory;
+	private boolean pageWasChanged;
 
     @SuppressWarnings("unchecked")
     public PaginationImpl(
@@ -49,7 +54,7 @@ public final class PaginationImpl extends StateValue implements Pagination, Inte
             @NotNull IFContext host,
             char layoutTarget,
             @NotNull Object sourceProvider,
-            @NotNull BiConsumer<? extends ItemComponentBuilder<?>, ?> itemFactory) {
+            @NotNull Function<Object, ComponentFactory> itemFactory) {
         super(state);
         this.host = host;
         this.layoutTarget = layoutTarget;
@@ -96,17 +101,92 @@ public final class PaginationImpl extends StateValue implements Pagination, Inte
 
     @Override
     public void render(@NotNull IFSlotRenderContext context) {
-        System.out.println("lets render pagination :)");
+		final IFRenderContext renderContext = (IFRenderContext) context.getParent();
+		if (renderContext.getConfig().getLayout() != null) {
+			final Optional<LayoutSlot> layoutSlotOptional = renderContext.getLayoutSlots().stream()
+				.filter(layoutSlot -> layoutSlot.getCharacter() == getLayoutTarget())
+				.findFirst();
+
+			System.out.println(" ");
+			System.out.println("renderContext.getLayoutSlots() = " + renderContext.getLayoutSlots());
+			if (!layoutSlotOptional.isPresent())
+				throw new IllegalArgumentException(String.format("Layout slot target not found: %c", getLayoutTarget()));
+
+			System.out.println(" ");
+			final LayoutSlot layoutSlot = layoutSlotOptional.get();
+			pageSize = layoutSlot.getPositions().size();
+			final List<?> currItems = getStaticPageContents(currPageIndex);
+
+			System.out.println("Using layout as page size");
+			System.out.println("pageSize = " + pageSize);
+
+			int elementIndex = 0;
+			final int itemsLen = currItems.size();
+			for (final int position : layoutSlot.getPositions()) {
+				if (elementIndex == itemsLen) break;
+
+				final Object value = currItems.get(elementIndex++);
+				final ItemComponentBuilder<?> builder = (ItemComponentBuilder<?>) itemFactory.apply(value);
+				builder.withSlot(position);
+
+				final Component component = ((ComponentFactory) builder).create();
+
+				System.out.printf("[%d] %s%n", position, component);
+				components.add(component);
+			}
+		} else {
+			pageSize = context.getContainer().getSize();
+			final List<?> currItems = getStaticPageContents(currPageIndex);
+
+			final int firstSlot = context.getContainer().getFirstSlot();
+			final int iterationLimit = Math.min(
+				context.getContainer().getLastSlot() + 1,
+				currItems.size()
+			);
+
+			System.out.println("Using container as page size");
+			System.out.println("pageSize = " + pageSize);
+			System.out.println("firstSlot = " + firstSlot);
+			System.out.println("iterationLimit = " + iterationLimit);
+
+			for (int i = firstSlot; i < iterationLimit; i++) {
+				final Object value = currItems.get(i);
+				final ItemComponentBuilder<?> builder = (ItemComponentBuilder<?>) itemFactory.apply(value);
+				builder.withSlot(i);
+
+				final Component component = ((ComponentFactory) builder).create();
+
+				System.out.printf("[%d] %s%n", i, component);
+				components.add(component);
+			}
+		}
+
+		getComponents().forEach(child -> child.render(context));
     }
 
     @Override
     public void updated(@NotNull IFSlotRenderContext context) {
+		if (pageWasChanged) {
+			clear(context);
+			pageWasChanged = false;
+		}
+
         getComponents().forEach(child -> child.updated(context));
     }
 
-    @Override
+	@Override
+	public boolean shouldBeUpdated() {
+		return pageWasChanged;
+	}
+
+	@Override
     public void clear(@NotNull IFContext context) {
-        getComponents().forEach(child -> child.clear(context));
+		final Iterator<Component> childIterator = components.iterator();
+		while (childIterator.hasNext()) {
+			Component child = childIterator.next();
+			child.clear(context);
+			childIterator.remove();
+		}
     }
 
     @Override
@@ -134,7 +214,7 @@ public final class PaginationImpl extends StateValue implements Pagination, Inte
 
     @Override
     public int nextPage() {
-        return Math.min(pagesCount, currentPageIndex() + 1);
+        return Math.min(getPagesCount(), currentPageIndex() + 1);
     }
 
     @Override
@@ -144,12 +224,12 @@ public final class PaginationImpl extends StateValue implements Pagination, Inte
 
     @Override
     public int lastPage() {
-        return pagesCount;
+        return getPagesCount();
     }
 
     @Override
     public int lastPageIndex() {
-        return Math.max(0, pagesCount - 1);
+        return Math.max(0, getPagesCount() - 1);
     }
 
     @Override
@@ -164,22 +244,29 @@ public final class PaginationImpl extends StateValue implements Pagination, Inte
 
     @Override
     public boolean hasPage(int pageIndex) {
-        if (pageIndex <= 0) return true;
+        if (pageIndex < 0) return false;
+		if (pageIndex == 0) return true;
+
+		System.out.println("pages count: " + getPagesCount());
         return pageIndex < getPagesCount();
     }
 
     @Override
     public void switchTo(int pageIndex) {
+		System.out.println("switching to " + pageIndex + "...");
         if (!hasPage(pageIndex)) throw new IllegalArgumentException(String.format("Page %d not found", pageIndex));
 
         currPageIndex = pageIndex;
+		pageWasChanged = true;
+		host.updateRoot();
         // TODO trigger update and page switch
     }
 
     @Override
     public void advance() {
+		System.out.println("tried to advance: " + canAdvance());
         if (!canAdvance()) return;
-        switchTo(currentPageIndex() + 1);
+		switchTo(currentPageIndex() + 1);
     }
 
     @Override
@@ -217,20 +304,28 @@ public final class PaginationImpl extends StateValue implements Pagination, Inte
 
     private List<?> getStaticPageContents(int index) {
         final List<?> src = getSourceOrThrow();
-        if (src.isEmpty()) return Collections.emptyList();
+		System.out.println("src = " + src);
+		if (src.isEmpty()) return Collections.emptyList();
 
         if (src.size() <= pageSize) return new ArrayList<>(src);
-        if (index < 0 || index >= pagesCount)
+        if (index < 0 || index > getPagesCount())
             throw new IndexOutOfBoundsException(String.format(
-                    "Page index must be between the range of 0 and %d. Given: %d", pagesCount - 1, index));
+                    "Page index must be between the range of 0 and %d. Given: %d", getPagesCount() - 1, index));
 
         final List<Object> contents = new LinkedList<>();
         final int base = index * pageSize;
         int until = base + pageSize;
         if (until > src.size()) until = src.size();
 
-        for (int i = base; i < until; i++) contents.add(src.get(i));
+        for (int i = base; i < until; i++)
+			contents.add(src.get(i));
 
-        return contents;
+		System.out.println("contents = " + contents);
+		return contents;
     }
+
+	private int getPagesCount() {
+		return (int) Math.ceil((double) getSourceOrThrow().size() / getPageSize());
+	}
+
 }

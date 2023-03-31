@@ -8,6 +8,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import lombok.AccessLevel;
 import lombok.Getter;
+import me.devnatan.inventoryframework.component.ComponentFactory;
 import me.devnatan.inventoryframework.component.ItemComponentBuilder;
 import me.devnatan.inventoryframework.component.Pagination;
 import me.devnatan.inventoryframework.component.PaginationImpl;
@@ -294,16 +295,45 @@ public abstract class PlatformView<
      * @return A immutable pagination state.
      */
     protected final <T> State<Pagination> paginationState(
-            @NotNull List<? super T> sourceProvider, @NotNull BiConsumer<TItem, T> itemFactory) {
+            @NotNull List<? super T> sourceProvider,
+			@NotNull BiConsumer<TItem, T> itemFactory
+	) {
         final long id = State.next();
         @SuppressWarnings("unchecked")
         final StateValueFactory factory = (host, state) ->
-                new PaginationImpl(state, (TContext) host, FILLED_RESERVED_CHAR, sourceProvider, itemFactory);
+                new PaginationImpl(state, (TContext) host, FILLED_RESERVED_CHAR, sourceProvider,
+					(value) -> {
+						@SuppressWarnings("unchecked")
+						TItem builder = (TItem) getElementFactory().createComponentBuilder();
+						itemFactory.accept(builder, (T) value);
+						return (ComponentFactory) builder;
+					});
         final State<Pagination> state = new PaginationState(id, factory);
         stateRegistry.registerState(state, this);
 
         return state;
     }
+
+	protected final <T> State<Pagination> paginationState(
+		@NotNull List<? super T> sourceProvider,
+		@NotNull BiConsumer<TItem, T> itemFactory,
+		char layoutTarget
+	) {
+		final long id = State.next();
+		@SuppressWarnings("unchecked")
+		final StateValueFactory factory = (host, state) ->
+			new PaginationImpl(state, (TContext) host, layoutTarget, sourceProvider,
+				(value) -> {
+					@SuppressWarnings("unchecked")
+					TItem builder = (TItem) getElementFactory().createComponentBuilder();
+					itemFactory.accept(builder, (T) value);
+					return (ComponentFactory) builder;
+				});
+		final State<Pagination> state = new PaginationState(id, factory);
+		stateRegistry.registerState(state, this);
+
+		return state;
+	}
 
     /**
      * Creates an immutable state used to control the pagination.
@@ -328,7 +358,13 @@ public abstract class PlatformView<
             @NotNull BiConsumer<TItem, T> itemFactory) {
         final long id = State.next();
         final StateValueFactory factory = (host, state) ->
-                new PaginationImpl(state, (TContext) host, FILLED_RESERVED_CHAR, sourceProvider, itemFactory);
+                new PaginationImpl(state, (TContext) host, FILLED_RESERVED_CHAR, sourceProvider,
+					(value) -> {
+						@SuppressWarnings("unchecked")
+						TItem builder = (TItem) getElementFactory().createComponentBuilder();
+						itemFactory.accept(builder, (T) value);
+						return (ComponentFactory) builder;
+					});
         final State<Pagination> state = new PaginationState(id, factory);
         stateRegistry.registerState(state, this);
 
@@ -455,7 +491,7 @@ public abstract class PlatformView<
         final Pipeline<? super VirtualView> pipeline = getPipeline();
         pipeline.intercept(StandardPipelinePhases.INIT, new InitInterceptor());
         pipeline.intercept(StandardPipelinePhases.OPEN, new OpenInterceptor());
-        pipeline.intercept(StandardPipelinePhases.FIRST_RENDER, new LayoutInterceptor());
+        pipeline.intercept(StandardPipelinePhases.LAYOUT_RESOLUTION, new LayoutInterceptor());
         pipeline.intercept(StandardPipelinePhases.FIRST_RENDER, new AvailableSlotInterceptor());
         pipeline.intercept(StandardPipelinePhases.FIRST_RENDER, new FirstRenderInterceptor());
         pipeline.intercept(StandardPipelinePhases.UPDATE, new UpdateInterceptor());
