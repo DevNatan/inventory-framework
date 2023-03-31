@@ -3,7 +3,6 @@ package me.devnatan.inventoryframework.pipeline;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.ItemComponent;
-import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.SlotClickContext;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
@@ -18,7 +17,7 @@ public final class ItemClickInterceptor implements PipelineInterceptor<VirtualVi
     public void intercept(@NotNull PipelineContext<VirtualView> pipeline, @NotNull VirtualView subject) {
         if (!(subject instanceof SlotClickContext)) return;
 
-		final SlotClickContext context = (SlotClickContext) subject;
+        final SlotClickContext context = (SlotClickContext) subject;
         final InventoryClickEvent event = context.getClickOrigin();
         if (event.getSlotType() == InventoryType.SlotType.OUTSIDE) return;
 
@@ -29,7 +28,7 @@ public final class ItemClickInterceptor implements PipelineInterceptor<VirtualVi
             final ItemComponent item = (ItemComponent) component;
 
             // inherit cancellation so we can un-cancel it
-			context.setCancelled(item.isCancelOnClick());
+            context.setCancelled(item.isCancelOnClick());
         }
 
         component.getInteractionHandler().clicked(component, context);

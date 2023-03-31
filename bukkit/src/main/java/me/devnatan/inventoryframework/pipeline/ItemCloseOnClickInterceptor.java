@@ -16,9 +16,9 @@ public final class ItemCloseOnClickInterceptor implements PipelineInterceptor<Vi
 
     @Override
     public void intercept(@NotNull PipelineContext<VirtualView> pipeline, @NotNull VirtualView subject) {
-		if (!(subject instanceof SlotClickContext)) return;
+        if (!(subject instanceof SlotClickContext)) return;
 
-		final SlotClickContext context = (SlotClickContext) subject;
+        final SlotClickContext context = (SlotClickContext) subject;
         final InventoryClickEvent event = context.getClickOrigin();
         if (event.getSlotType() == InventoryType.SlotType.OUTSIDE) return;
 

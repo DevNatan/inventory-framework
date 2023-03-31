@@ -89,6 +89,7 @@ public interface Pagination extends ComponentComposition {
      * Switches to a specific page index.
      *
      * @param pageIndex The page index to switch to.
+     * @throws IndexOutOfBoundsException If a page with the specified index is not found.
      */
     void switchTo(int pageIndex);
 

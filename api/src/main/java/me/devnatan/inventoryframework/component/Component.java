@@ -10,65 +10,65 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface Component extends VirtualView {
 
-	/**
-	 * The root of this component.
-	 *
-	 * @return The root of this component.
-	 */
-	@NotNull
-	VirtualView getRoot();
+    /**
+     * The root of this component.
+     *
+     * @return The root of this component.
+     */
+    @NotNull
+    VirtualView getRoot();
 
-	/**
-	 * The current position of this component relative to its root view.
-	 *
-	 * @return The current position of this component.
-	 */
-	int getPosition();
+    /**
+     * The current position of this component relative to its root view.
+     *
+     * @return The current position of this component.
+     */
+    int getPosition();
 
-	/**
-	 * Checks if this component is in a specific position.
-	 *
-	 * @param position The position.
-	 * @return If this component is contained in the given position.
-	 */
-	boolean isContainedWithin(int position);
+    /**
+     * Checks if this component is in a specific position.
+     *
+     * @param position The position.
+     * @return If this component is contained in the given position.
+     */
+    boolean isContainedWithin(int position);
 
-	/**
-	 * The interaction handler for this component.
-	 *
-	 * @return The interaction handler for this component.
-	 */
-	@NotNull
-	InteractionHandler getInteractionHandler();
+    /**
+     * The interaction handler for this component.
+     *
+     * @return The interaction handler for this component.
+     */
+    @NotNull
+    InteractionHandler getInteractionHandler();
 
-	/**
-	 * Renders this component to the given context.
-	 *
-	 * @param context The context that this component will be rendered on.
-	 */
-	void render(@NotNull IFSlotRenderContext context);
+    /**
+     * Renders this component to the given context.
+     *
+     * @param context The context that this component will be rendered on.
+     */
+    void render(@NotNull IFSlotRenderContext context);
 
-	/**
-	 * Called when this component is updated in the given context.
-	 *
-	 * @param context The update context.
-	 */
-	void updated(@NotNull IFSlotRenderContext context);
+    /**
+     * Called when this component is updated in the given context.
+     *
+     * @param context The update context.
+     */
+    void updated(@NotNull IFSlotRenderContext context);
 
-	/**
-	 * Determines if this component should be updated.
-	 * <p>
-	 * This is a simple precondition to make checking the need for component updates more efficient,
-	 * checking your own conditions before going to more complex methods.
-	 *
-	 * @return {@code true} if this component should be updated or {@code false} otherwise.
-	 */
-	boolean shouldBeUpdated();
+    /**
+     * Determines if this component should be updated.
+     * <p>
+     * This is a simple precondition to make checking the need for component updates more efficient,
+     * checking your own conditions before going to more complex methods.
+     *
+     * @return {@code true} if this component should be updated or {@code false} otherwise.
+     */
+    boolean shouldBeUpdated();
 
-	/**
-	 * Clears this component from the given context.
-	 *
-	 * @param context The context that this component will be cleared from.
-	 */
-	void clear(@NotNull IFContext context);
+    /**
+     * Clears this component from the given context.
+     *
+     * @param context The context that this component will be cleared from.
+     */
+    void clear(@NotNull IFContext context);
 }

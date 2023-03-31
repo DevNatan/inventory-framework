@@ -29,29 +29,27 @@ public final class LayoutInterceptor implements PipelineInterceptor<VirtualView>
 
         final Map<Character, List<Integer>> slots = resolveLayout(renderContext, layout);
         registerLayoutComponents(renderContext, slots);
-		System.out.println("LAYOUT INTERCEPTED " + slots);
+        System.out.println("LAYOUT INTERCEPTED " + slots);
     }
 
     private void registerLayoutComponents(IFRenderContext context, Map<Character, List<Integer>> slots) {
         for (final Map.Entry<Character, List<Integer>> entry : slots.entrySet()) {
-			final char character = entry.getKey();
+            final char character = entry.getKey();
             final Optional<LayoutSlot> layoutSlotOption = context.getLayoutSlots().stream()
                     .filter(layoutSlot -> layoutSlot.getCharacter() == character)
                     .findFirst();
 
-			final LayoutSlot layoutSlot;
+            final LayoutSlot layoutSlot;
             if (!layoutSlotOption.isPresent()) {
-				layoutSlot = new LayoutSlot(character, null);
-				context.addLayoutSlot(layoutSlot);
-			} else {
-				layoutSlot = layoutSlotOption.get();
-			}
+                layoutSlot = new LayoutSlot(character, null);
+                context.addLayoutSlot(layoutSlot);
+            } else {
+                layoutSlot = layoutSlotOption.get();
+            }
 
             if (layoutSlot.getCharacter() != LayoutSlot.FILLED_RESERVED_CHAR && layoutSlot.isDefinedByTheUser()) {
                 final Function<Integer, ComponentFactory> factory = Objects.requireNonNull(
-					layoutSlot.getFactory(),
-					"Layout slot factory cannot be null when defined by the user"
-				);
+                        layoutSlot.getFactory(), "Layout slot factory cannot be null when defined by the user");
                 int iterationIndex = 0;
 
                 for (final int slot : entry.getValue()) {
@@ -92,8 +90,7 @@ public final class LayoutInterceptor implements PipelineInterceptor<VirtualView>
             for (int col = 0; col < containerColumns; col++) {
                 final int slotIdx = col + (row * containerColumns);
                 final char character = layer.charAt(col);
-				if (character == ' ')
-					continue;
+                if (character == ' ') continue;
 
                 slots.computeIfAbsent(character, ArrayList::new).add(slotIdx);
             }

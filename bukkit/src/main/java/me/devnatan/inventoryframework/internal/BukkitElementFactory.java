@@ -138,12 +138,12 @@ public final class BukkitElementFactory extends ElementFactory {
         return (T) new SlotContext(parent.getRoot(), container, viewer, slot, parent, component);
     }
 
-	@Override
-	public ComponentBuilder<?> createComponentBuilder() {
-		return new BukkitItemComponentBuilder();
-	}
+    @Override
+    public ComponentBuilder<?> createComponentBuilder() {
+        return new BukkitItemComponentBuilder();
+    }
 
-	@Override
+    @Override
     public synchronized boolean worksInCurrentPlatform() {
         if (worksInCurrentPlatform != null) return worksInCurrentPlatform;
 

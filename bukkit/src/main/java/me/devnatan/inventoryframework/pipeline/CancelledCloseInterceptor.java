@@ -12,9 +12,9 @@ public class CancelledCloseInterceptor implements PipelineInterceptor<VirtualVie
     @SuppressWarnings("ConstantValue")
     @Override
     public void intercept(PipelineContext<VirtualView> pipeline, VirtualView subject) {
-		if (!(subject instanceof IFCloseContext)) return;
+        if (!(subject instanceof IFCloseContext)) return;
 
-		final CloseContext context = (CloseContext) subject;
+        final CloseContext context = (CloseContext) subject;
         if (!context.isCancelled()) return;
 
         final Player player = context.getPlayer();

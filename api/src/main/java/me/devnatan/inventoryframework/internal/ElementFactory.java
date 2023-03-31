@@ -6,7 +6,6 @@ import me.devnatan.inventoryframework.ViewType;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.ComponentBuilder;
-import me.devnatan.inventoryframework.component.ItemComponentBuilder;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFSlotContext;
 import me.devnatan.inventoryframework.logging.Logger;
@@ -65,12 +64,12 @@ public abstract class ElementFactory {
             @NotNull IFContext parent,
             @NotNull Class<?> kind);
 
-	/**
-	 * Creates a new platform builder instance.
-	 *
-	 * @return A new platform builder instance.
-	 */
-	public abstract ComponentBuilder<?> createComponentBuilder();
+    /**
+     * Creates a new platform builder instance.
+     *
+     * @return A new platform builder instance.
+     */
+    public abstract ComponentBuilder<?> createComponentBuilder();
 
     public abstract boolean worksInCurrentPlatform();
 }

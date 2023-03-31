@@ -295,45 +295,38 @@ public abstract class PlatformView<
      * @return A immutable pagination state.
      */
     protected final <T> State<Pagination> paginationState(
-            @NotNull List<? super T> sourceProvider,
-			@NotNull BiConsumer<TItem, T> itemFactory
-	) {
+            @NotNull List<? super T> sourceProvider, @NotNull BiConsumer<TItem, T> itemFactory) {
         final long id = State.next();
         @SuppressWarnings("unchecked")
         final StateValueFactory factory = (host, state) ->
-                new PaginationImpl(state, (TContext) host, FILLED_RESERVED_CHAR, sourceProvider,
-					(value) -> {
-						@SuppressWarnings("unchecked")
-						TItem builder = (TItem) getElementFactory().createComponentBuilder();
-						itemFactory.accept(builder, (T) value);
-						return (ComponentFactory) builder;
-					});
+                new PaginationImpl(state, (TContext) host, FILLED_RESERVED_CHAR, sourceProvider, (value) -> {
+                    @SuppressWarnings("unchecked")
+                    TItem builder = (TItem) getElementFactory().createComponentBuilder();
+                    itemFactory.accept(builder, (T) value);
+                    return (ComponentFactory) builder;
+                });
         final State<Pagination> state = new PaginationState(id, factory);
         stateRegistry.registerState(state, this);
 
         return state;
     }
 
-	protected final <T> State<Pagination> paginationState(
-		@NotNull List<? super T> sourceProvider,
-		@NotNull BiConsumer<TItem, T> itemFactory,
-		char layoutTarget
-	) {
-		final long id = State.next();
-		@SuppressWarnings("unchecked")
-		final StateValueFactory factory = (host, state) ->
-			new PaginationImpl(state, (TContext) host, layoutTarget, sourceProvider,
-				(value) -> {
-					@SuppressWarnings("unchecked")
-					TItem builder = (TItem) getElementFactory().createComponentBuilder();
-					itemFactory.accept(builder, (T) value);
-					return (ComponentFactory) builder;
-				});
-		final State<Pagination> state = new PaginationState(id, factory);
-		stateRegistry.registerState(state, this);
+    protected final <T> State<Pagination> paginationState(
+            @NotNull List<? super T> sourceProvider, @NotNull BiConsumer<TItem, T> itemFactory, char layoutTarget) {
+        final long id = State.next();
+        @SuppressWarnings("unchecked")
+        final StateValueFactory factory =
+                (host, state) -> new PaginationImpl(state, (TContext) host, layoutTarget, sourceProvider, (value) -> {
+                    @SuppressWarnings("unchecked")
+                    TItem builder = (TItem) getElementFactory().createComponentBuilder();
+                    itemFactory.accept(builder, (T) value);
+                    return (ComponentFactory) builder;
+                });
+        final State<Pagination> state = new PaginationState(id, factory);
+        stateRegistry.registerState(state, this);
 
-		return state;
-	}
+        return state;
+    }
 
     /**
      * Creates an immutable state used to control the pagination.
@@ -358,13 +351,12 @@ public abstract class PlatformView<
             @NotNull BiConsumer<TItem, T> itemFactory) {
         final long id = State.next();
         final StateValueFactory factory = (host, state) ->
-                new PaginationImpl(state, (TContext) host, FILLED_RESERVED_CHAR, sourceProvider,
-					(value) -> {
-						@SuppressWarnings("unchecked")
-						TItem builder = (TItem) getElementFactory().createComponentBuilder();
-						itemFactory.accept(builder, (T) value);
-						return (ComponentFactory) builder;
-					});
+                new PaginationImpl(state, (TContext) host, FILLED_RESERVED_CHAR, sourceProvider, (value) -> {
+                    @SuppressWarnings("unchecked")
+                    TItem builder = (TItem) getElementFactory().createComponentBuilder();
+                    itemFactory.accept(builder, (T) value);
+                    return (ComponentFactory) builder;
+                });
         final State<Pagination> state = new PaginationState(id, factory);
         stateRegistry.registerState(state, this);
 

@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 @ToString(callSuper = true)
 public final class PaginationState extends BaseState<Pagination> implements StateManagementListener {
 
-	private static final PipelinePhase PAGINATION_RENDER = new PipelinePhase("pagination-render");
+    private static final PipelinePhase PAGINATION_RENDER = new PipelinePhase("pagination-render");
     private final PipelineInterceptor<VirtualView> pipelineInterceptor = new Interceptor(this);
 
     public PaginationState(long id, @NotNull StateValueFactory valueFactory) {
@@ -29,8 +29,8 @@ public final class PaginationState extends BaseState<Pagination> implements Stat
             throw new IllegalArgumentException("Pagination state can only be registered by RootView");
 
         final Pipeline<VirtualView> pipeline = ((RootView) caller).getPipeline();
-		pipeline.insertPhaseAfter(StandardPipelinePhases.LAYOUT_RESOLUTION, PAGINATION_RENDER);
-		pipeline.intercept(PAGINATION_RENDER, pipelineInterceptor);
+        pipeline.insertPhaseAfter(StandardPipelinePhases.LAYOUT_RESOLUTION, PAGINATION_RENDER);
+        pipeline.intercept(PAGINATION_RENDER, pipelineInterceptor);
     }
 
     @Override
@@ -38,7 +38,7 @@ public final class PaginationState extends BaseState<Pagination> implements Stat
         if (!(caller instanceof RootView))
             throw new IllegalArgumentException("Pagination state can only be unregistered by RootView");
 
-		(((RootView) caller)).getPipeline().removeInterceptor(PAGINATION_RENDER, pipelineInterceptor);
+        (((RootView) caller)).getPipeline().removeInterceptor(PAGINATION_RENDER, pipelineInterceptor);
     }
 
     @Override

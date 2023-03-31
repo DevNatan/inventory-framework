@@ -3,7 +3,6 @@ package me.devnatan.inventoryframework.pipeline;
 import java.util.List;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.component.Component;
-import me.devnatan.inventoryframework.component.ItemComponent;
 import me.devnatan.inventoryframework.context.IFConfinedContext;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
@@ -28,8 +27,7 @@ public final class UpdateInterceptor implements PipelineInterceptor<VirtualView>
                 continue;
             }
 
-            if (!component.shouldBeUpdated())
-				continue;
+            if (!component.shouldBeUpdated()) continue;
 
             updateComponent(context, component);
         }
@@ -54,8 +52,7 @@ public final class UpdateInterceptor implements PipelineInterceptor<VirtualView>
 
         component.updated(renderContext);
 
-        if (renderContext.isCancelled())
-			return;
+        if (renderContext.isCancelled()) return;
 
         component.render(renderContext);
     }

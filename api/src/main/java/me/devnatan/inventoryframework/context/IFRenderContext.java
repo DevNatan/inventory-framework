@@ -20,8 +20,8 @@ public interface IFRenderContext extends IFConfinedContext {
     @UnmodifiableView
     List<LayoutSlot> getLayoutSlots();
 
-	@ApiStatus.Internal
-	void addLayoutSlot(@NotNull LayoutSlot layoutSlot);
+    @ApiStatus.Internal
+    void addLayoutSlot(@NotNull LayoutSlot layoutSlot);
 
     @NotNull
     @UnmodifiableView

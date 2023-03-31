@@ -4,7 +4,6 @@ import static me.devnatan.inventoryframework.ViewConfig.CancelOnClick;
 
 import me.devnatan.inventoryframework.PlatformView;
 import me.devnatan.inventoryframework.VirtualView;
-import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.context.SlotClickContext;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.jetbrains.annotations.NotNull;
@@ -18,9 +17,9 @@ public final class GlobalClickInterceptor implements PipelineInterceptor<Virtual
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     public void intercept(@NotNull PipelineContext<VirtualView> pipeline, @NotNull VirtualView subject) {
-		if (!(subject instanceof SlotClickContext)) return;
+        if (!(subject instanceof SlotClickContext)) return;
 
-		final SlotClickContext context = (SlotClickContext) subject;
+        final SlotClickContext context = (SlotClickContext) subject;
         final InventoryClickEvent event = context.getClickOrigin();
 
         // inherit cancellation so we can un-cancel it
