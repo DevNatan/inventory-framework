@@ -350,27 +350,28 @@ public abstract class PlatformView<
     }
 
     @SuppressWarnings("unchecked")
-    protected final <T> PaginationStateBuilder<TSlotClickContext, TItem, T> buildPaginationState(
+    protected final <T> PaginationStateBuilder<TContext, TSlotClickContext, TItem, T> buildPaginationState(
             @NotNull List<? super T> sourceProvider) {
         return new PaginationStateBuilder<>(
-                (PlatformView<TItem, ?, ?, ?, ?, TSlotClickContext, ?>) this, sourceProvider);
+                (PlatformView<TItem, TContext, ?, ?, ?, TSlotClickContext, ?>) this, sourceProvider);
     }
 
     @SuppressWarnings("unchecked")
-    protected final <T> PaginationStateBuilder<TSlotClickContext, TItem, T> buildPaginationState(
+    protected final <T> PaginationStateBuilder<TContext, TSlotClickContext, TItem, T> buildPaginationState(
             @NotNull Supplier<List<? super T>> sourceProvider) {
         return new PaginationStateBuilder<>(
-                (PlatformView<TItem, ?, ?, ?, ?, TSlotClickContext, ?>) this, sourceProvider);
+                (PlatformView<TItem, TContext, ?, ?, ?, TSlotClickContext, ?>) this, sourceProvider);
     }
 
     @SuppressWarnings("unchecked")
-    protected final <T> PaginationStateBuilder<TSlotClickContext, TItem, T> buildPaginationState(
+    protected final <T> PaginationStateBuilder<TContext, TSlotClickContext, TItem, T> buildPaginationState(
             @NotNull Function<TSlotContext, List<? super T>> sourceProvider) {
         return new PaginationStateBuilder<>(
-                (PlatformView<TItem, ?, ?, ?, ?, TSlotClickContext, ?>) this, sourceProvider);
+                (PlatformView<TItem, TContext, ?, ?, ?, TSlotClickContext, ?>) this, sourceProvider);
     }
 
-    final <V> State<Pagination> buildPaginationState(@NotNull PaginationStateBuilder<TSlotContext, TItem, V> builder) {
+    final <V> State<Pagination> buildPaginationState(
+            @NotNull PaginationStateBuilder<TContext, TSlotContext, TItem, V> builder) {
         final long id = State.next();
         @SuppressWarnings("unchecked")
         final StateValueFactory factory = (host, state) -> new PaginationImpl(
@@ -379,7 +380,7 @@ public abstract class PlatformView<
                 builder.getLayoutTarget(),
                 builder.getSourceProvider(),
                 (PaginationElementFactory<Object>) builder.getElementFactory(),
-                builder.getPageSwitchHandler());
+                (BiConsumer<IFContext, Pagination>) builder.getPageSwitchHandler());
         final State<Pagination> state = new PaginationState(id, factory);
         stateRegistry.registerState(state, this);
 

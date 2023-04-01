@@ -8,6 +8,7 @@ import me.devnatan.inventoryframework.component.ComponentFactory;
 import me.devnatan.inventoryframework.component.ItemComponentBuilder;
 import me.devnatan.inventoryframework.component.Pagination;
 import me.devnatan.inventoryframework.component.PaginationElementFactory;
+import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFSlotContext;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
 import me.devnatan.inventoryframework.state.State;
@@ -16,13 +17,16 @@ import org.jetbrains.annotations.NotNull;
 @Getter(AccessLevel.PACKAGE)
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public final class PaginationStateBuilder<
-        C extends IFSlotContext, I extends ItemComponentBuilder<I> & ComponentFactory, V> {
+        TContext extends IFContext,
+        TSlotContext extends IFSlotContext,
+        I extends ItemComponentBuilder<I> & ComponentFactory,
+        V> {
 
-    private final PlatformView<I, ?, ?, ?, ?, C, ?> root;
+    private final PlatformView<I, TContext, ?, ?, ?, TSlotContext, ?> root;
     private final Object sourceProvider;
     private char layoutTarget = LayoutSlot.FILLED_RESERVED_CHAR;
     private PaginationElementFactory<V> elementFactory;
-    private BiConsumer<Integer, Pagination> pageSwitchHandler;
+    private BiConsumer<TContext, Pagination> pageSwitchHandler;
 
     /**
      * Sets the element factory for pagination.
@@ -36,7 +40,8 @@ public final class PaginationStateBuilder<
      * @param elementFactory The element factory.
      * @return This pagination state builder.
      */
-    public PaginationStateBuilder<C, I, V> elementFactory(@NotNull PaginationElementFactory<V> elementFactory) {
+    public PaginationStateBuilder<TContext, TSlotContext, I, V> elementFactory(
+            @NotNull PaginationElementFactory<V> elementFactory) {
         this.elementFactory = elementFactory;
         return this;
     }
@@ -53,7 +58,7 @@ public final class PaginationStateBuilder<
      * @param itemFactory The item factory.
      * @return This pagination state builder.
      */
-    public PaginationStateBuilder<C, I, V> itemFactory(@NotNull BiConsumer<I, V> itemFactory) {
+    public PaginationStateBuilder<TContext, TSlotContext, I, V> itemFactory(@NotNull BiConsumer<I, V> itemFactory) {
         return elementFactory((index, slot, value) -> {
             @SuppressWarnings("unchecked")
             I builder = (I) root.getElementFactory().createComponentBuilder();
@@ -75,7 +80,7 @@ public final class PaginationStateBuilder<
      * @param layoutTarget The target layout character.
      * @return This pagination state builder.
      */
-    public PaginationStateBuilder<C, I, V> layoutTarget(char layoutTarget) {
+    public PaginationStateBuilder<TContext, TSlotContext, I, V> layoutTarget(char layoutTarget) {
         this.layoutTarget = layoutTarget;
         return this;
     }
@@ -86,11 +91,12 @@ public final class PaginationStateBuilder<
      * The first parameter is the previous page and the current page can be
      * obtained through {@link Pagination#currentPage()}.
      *
-     * @param onPageSwitch The page switch handler.
+     * @param pageSwitchHandler The page switch handler.
      * @return This pagination state builder.
      */
-    public PaginationStateBuilder<C, I, V> onPageSwitched(@NotNull BiConsumer<Integer, Pagination> onPageSwitch) {
-        this.pageSwitchHandler = onPageSwitch;
+    public PaginationStateBuilder<TContext, TSlotContext, I, V> onPageSwitch(
+            @NotNull BiConsumer<TContext, Pagination> pageSwitchHandler) {
+        this.pageSwitchHandler = pageSwitchHandler;
         return this;
     }
 

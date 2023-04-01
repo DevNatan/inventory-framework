@@ -38,7 +38,7 @@ public final class PaginationImpl extends StateValue implements Pagination {
     private final char layoutTarget;
     private final @NotNull Object sourceProvider;
     private final @NotNull PaginationElementFactory<Object> elementFactory;
-    private final BiConsumer<Integer, Pagination> pageSwitchHandler;
+    private final BiConsumer<IFContext, Pagination> pageSwitchHandler;
 
     // --- Internal ---
     private int currPageIndex;
@@ -62,7 +62,7 @@ public final class PaginationImpl extends StateValue implements Pagination {
             char layoutTarget,
             @NotNull Object sourceProvider,
             @NotNull PaginationElementFactory<Object> elementFactory,
-            BiConsumer<Integer, Pagination> pageSwitchHandler) {
+            BiConsumer<IFContext, Pagination> pageSwitchHandler) {
         super(state);
         this.host = host;
         this.layoutTarget = layoutTarget;
@@ -207,8 +207,8 @@ public final class PaginationImpl extends StateValue implements Pagination {
             throw new IndexOutOfBoundsException(
                     String.format("Page index not found (%d > %d)", pageIndex, getPagesCount()));
 
+        if (pageSwitchHandler != null) pageSwitchHandler.accept(host, this);
         currPageIndex = pageIndex;
-        if (pageSwitchHandler != null) pageSwitchHandler.accept(pageIndex, this);
         pageWasChanged = true;
         host.updateRoot();
     }
