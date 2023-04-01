@@ -13,7 +13,6 @@ import me.devnatan.inventoryframework.internal.LayoutSlot;
 import me.devnatan.inventoryframework.state.State;
 import org.jetbrains.annotations.NotNull;
 
-// TODO needs documentation
 @Getter(AccessLevel.PACKAGE)
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public final class PaginationStateBuilder<
@@ -21,15 +20,39 @@ public final class PaginationStateBuilder<
 
     private final PlatformView<I, ?, ?, ?, ?, C, ?> root;
     private final Object sourceProvider;
-
     private char layoutTarget = LayoutSlot.FILLED_RESERVED_CHAR;
     private PaginationElementFactory<V> elementFactory;
+    private BiConsumer<Integer, Pagination> onPageSwitch;
 
+    /**
+     * Sets the element factory for pagination.
+     * <p>
+     * It consists of a function whose first parameter is a derivation of the
+     * {@link ItemComponentBuilder} that must be used to configure the item, and the second
+     * parameter is the current element being paginated.
+     * <p>
+     * This function is called for every single paginated element.
+     *
+     * @param elementFactory The element factory.
+     * @return This pagination state builder.
+     */
     public PaginationStateBuilder<C, I, V> elementFactory(@NotNull PaginationElementFactory<V> elementFactory) {
         this.elementFactory = elementFactory;
         return this;
     }
 
+    /**
+     * Sets the item factory for pagination.
+     * <p>
+     * It consists of a function whose first parameter is a derivation of the
+     * {@link ItemComponentBuilder} that must be used to configure the item, and the second
+     * parameter is the current element being paginated.
+     * <p>
+     * This function is called for every single paginated element.
+     *
+     * @param itemFactory The item factory.
+     * @return This pagination state builder.
+     */
     public PaginationStateBuilder<C, I, V> itemFactory(@NotNull BiConsumer<I, V> itemFactory) {
         return elementFactory((index, slot, value) -> {
             @SuppressWarnings("unchecked")
@@ -40,11 +63,42 @@ public final class PaginationStateBuilder<
         });
     }
 
+    /**
+     * Defines a target character in the layout whose pagination will be rendered.
+     * <p>
+     * By default, if there is a layout available and a target character has not
+     * been explicitly  defined in the layout, the layout's renderization target
+     * character will be the {@link LayoutSlot#FILLED_RESERVED_CHAR reserved layout character}.
+     * <p>
+     * If there is no layout configured, pagination will be rendered throughout the view container.
+     *
+     * @param layoutTarget The target layout character.
+     * @return This pagination state builder.
+     */
     public PaginationStateBuilder<C, I, V> layoutTarget(char layoutTarget) {
         this.layoutTarget = layoutTarget;
         return this;
     }
 
+    /**
+     * Handles the page switching action.
+     * <p>
+     * The first parameter is the previous page and the current page can be
+     * obtained through {@link Pagination#currentPage()}.
+     *
+     * @param onPageSwitch The page switch handler.
+     * @return This pagination state builder.
+     */
+    public PaginationStateBuilder<C, I, V> onPageSwitched(@NotNull BiConsumer<Integer, Pagination> onPageSwitch) {
+        this.onPageSwitch = onPageSwitch;
+        return this;
+    }
+
+    /**
+     * Builds a pagination state based on this builder values.
+     *
+     * @return A new {@link Pagination} state.
+     */
     public State<Pagination> build() {
         return root.buildPaginationState(this);
     }
