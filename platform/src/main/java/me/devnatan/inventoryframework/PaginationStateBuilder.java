@@ -104,8 +104,14 @@ public final class PaginationStateBuilder<
      * Builds a pagination state based on this builder values.
      *
      * @return A new {@link Pagination} state.
+     * @throws IllegalStateException If the element factory wasn't set.
      */
     public State<Pagination> build() {
+        if (elementFactory == null)
+            throw new IllegalStateException(String.format(
+                    "Element factory from buildPaginationState(...) cannot be null. Set it using %s or %s.",
+                    "#elementFactory(PaginationElementFactory)", "#itemFactory(BiConsumer)"));
+
         return root.buildPaginationState(this);
     }
 }
