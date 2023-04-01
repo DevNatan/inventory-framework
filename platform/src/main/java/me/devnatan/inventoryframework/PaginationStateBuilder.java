@@ -22,7 +22,7 @@ public final class PaginationStateBuilder<
     private final Object sourceProvider;
     private char layoutTarget = LayoutSlot.FILLED_RESERVED_CHAR;
     private PaginationElementFactory<V> elementFactory;
-    private BiConsumer<Integer, Pagination> onPageSwitch;
+    private BiConsumer<Integer, Pagination> pageSwitchHandler;
 
     /**
      * Sets the element factory for pagination.
@@ -90,7 +90,7 @@ public final class PaginationStateBuilder<
      * @return This pagination state builder.
      */
     public PaginationStateBuilder<C, I, V> onPageSwitched(@NotNull BiConsumer<Integer, Pagination> onPageSwitch) {
-        this.onPageSwitch = onPageSwitch;
+        this.pageSwitchHandler = onPageSwitch;
         return this;
     }
 

@@ -378,7 +378,8 @@ public abstract class PlatformView<
                 (TContext) host,
                 builder.getLayoutTarget(),
                 builder.getSourceProvider(),
-                (PaginationElementFactory<Object>) builder.getElementFactory());
+                (PaginationElementFactory<Object>) builder.getElementFactory(),
+                builder.getPageSwitchHandler());
         final State<Pagination> state = new PaginationState(id, factory);
         stateRegistry.registerState(state, this);
 

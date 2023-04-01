@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -37,6 +38,7 @@ public final class PaginationImpl extends StateValue implements Pagination {
     private final char layoutTarget;
     private final @NotNull Object sourceProvider;
     private final @NotNull PaginationElementFactory<Object> elementFactory;
+    private final BiConsumer<Integer, Pagination> pageSwitchHandler;
 
     // --- Internal ---
     private int currPageIndex;
@@ -59,12 +61,14 @@ public final class PaginationImpl extends StateValue implements Pagination {
             @NotNull IFContext host,
             char layoutTarget,
             @NotNull Object sourceProvider,
-            @NotNull PaginationElementFactory<Object> elementFactory) {
+            @NotNull PaginationElementFactory<Object> elementFactory,
+            BiConsumer<Integer, Pagination> pageSwitchHandler) {
         super(state);
         this.host = host;
         this.layoutTarget = layoutTarget;
         this.sourceProvider = sourceProvider;
         this.elementFactory = elementFactory;
+        this.pageSwitchHandler = pageSwitchHandler;
         this.currSource = convertSourceProvider();
         this.dynamic = sourceProvider instanceof Collection;
     }
@@ -203,8 +207,8 @@ public final class PaginationImpl extends StateValue implements Pagination {
             throw new IndexOutOfBoundsException(
                     String.format("Page index not found (%d > %d)", pageIndex, getPagesCount()));
 
-        // TODO trigger page switch
         currPageIndex = pageIndex;
+        if (pageSwitchHandler != null) pageSwitchHandler.accept(pageIndex, this);
         pageWasChanged = true;
         host.updateRoot();
     }
@@ -344,7 +348,6 @@ public final class PaginationImpl extends StateValue implements Pagination {
         final LayoutSlot layoutSlot = layoutSlotOptional.get();
         pageSize = layoutSlot.getPositions().size();
 
-        System.out.println("pageSize = " + pageSize);
         final List<?> elements = getPageContents(currPageIndex);
         final int elementsLen = elements.size();
         int iterationIndex = 0;
