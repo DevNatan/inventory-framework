@@ -277,21 +277,13 @@ public abstract class PlatformView<
     }
 
     /**
-     * Creates an immutable state used to control the pagination.
-     * <p>
-     * How each paginated element will be rendered is determined by the {@code itemFactory} parameter,
-     * that is called every time a paginated element is rendered in the context container.
-     * <pre>{@code
-     * State<Pagination> paginationState = paginationState(
-     *     new ArrayList<>(),
-     *     (item, value) -> item.withItem(...)
-     * )}</pre>
+     * Creates a new unmodifiable static pagination state.
      *
-     * @param sourceProvider The data provider for pagination.
+     * @param sourceProvider The data source for pagination.
      * @param itemFactory    The function for creating pagination items, this function is called for
      *                       each paged element (item) on a page.
      * @param <T>            The pagination data type.
-     * @return A immutable pagination state.
+     * @return A new immutable pagination state.
      */
     protected final <T> State<Pagination> paginationState(
             @NotNull List<? super T> sourceProvider, @NotNull BiConsumer<TItem, T> itemFactory) {
@@ -301,21 +293,13 @@ public abstract class PlatformView<
     }
 
     /**
-     * Creates an immutable state used to control the pagination.
-     * <p>
-     * How each paginated element will be rendered is determined in the {@code itemFactory}, that
-     * is called every time a paginated element is rendered in the context container.
-     * <pre>{@code
-     * State<Pagination> paginationState = pagination(
-     *     (context) -> new ArrayList<>(),
-     *     (item, value) -> item.withItem(...)
-     * )}</pre>
+     * Creates a new unmodifiable dynamic pagination state.
      *
-     * @param sourceProvider The data provider for pagination.
+     * @param sourceProvider The data source for pagination.
      * @param itemFactory    The function for creating pagination items, this function is called for
      *                       each paged element (item) on a page.
      * @param <T>            The pagination data type.
-     * @return A immutable pagination state.
+     * @return A new immutable pagination state.
      */
     protected final <T> State<Pagination> paginationState(
             @NotNull Function<TSlotContext, List<? super T>> sourceProvider,
@@ -326,21 +310,13 @@ public abstract class PlatformView<
     }
 
     /**
-     * Creates an immutable state used to control the pagination.
-     * <p>
-     * How each paginated element will be rendered is determined by the {@code itemFactory} parameter,
-     * that is called every time a paginated element is rendered in the context container.
-     * <pre>{@code
-     * State<Pagination> paginationState = paginationState(
-     *     () -> new ArrayList<>(),
-     *     (item, value) -> item.withItem(...)
-     * )}</pre>
+     * Creates a new unmodifiable dynamic pagination state.
      *
-     * @param sourceProvider The data provider for pagination.
+     * @param sourceProvider The data source for pagination.
      * @param itemFactory    The function for creating pagination items, this function is called for
      *                       each paged element (item) on a page.
      * @param <T>            The pagination data type.
-     * @return A immutable pagination state.
+     * @return A new immutable pagination state.
      */
     protected final <T> State<Pagination> paginationState(
             @NotNull Supplier<List<? super T>> sourceProvider, @NotNull BiConsumer<TItem, T> itemFactory) {
@@ -349,6 +325,13 @@ public abstract class PlatformView<
                 .build();
     }
 
+    /**
+     * Creates a new unmodifiable static pagination state builder.
+     *
+     * @param sourceProvider The data source for pagination.
+     * @param <T>            The pagination data type.
+     * @return A new pagination state builder.
+     */
     @SuppressWarnings("unchecked")
     protected final <T> PaginationStateBuilder<TContext, TSlotClickContext, TItem, T> buildPaginationState(
             @NotNull List<? super T> sourceProvider) {
@@ -356,6 +339,13 @@ public abstract class PlatformView<
                 (PlatformView<TItem, TContext, ?, ?, ?, TSlotClickContext, ?>) this, sourceProvider);
     }
 
+    /**
+     * Creates a new unmodifiable dynamic pagination state builder.
+     *
+     * @param sourceProvider The data source for pagination.
+     * @param <T>            The pagination data type.
+     * @return A new pagination state builder.
+     */
     @SuppressWarnings("unchecked")
     protected final <T> PaginationStateBuilder<TContext, TSlotClickContext, TItem, T> buildPaginationState(
             @NotNull Supplier<List<? super T>> sourceProvider) {
@@ -363,6 +353,13 @@ public abstract class PlatformView<
                 (PlatformView<TItem, TContext, ?, ?, ?, TSlotClickContext, ?>) this, sourceProvider);
     }
 
+    /**
+     * Creates a new unmodifiable dynamic pagination state builder.
+     *
+     * @param sourceProvider The data source for pagination.
+     * @param <T>            The pagination data type.
+     * @return A new pagination state builder.
+     */
     @SuppressWarnings("unchecked")
     protected final <T> PaginationStateBuilder<TContext, TSlotClickContext, TItem, T> buildPaginationState(
             @NotNull Function<TSlotContext, List<? super T>> sourceProvider) {
