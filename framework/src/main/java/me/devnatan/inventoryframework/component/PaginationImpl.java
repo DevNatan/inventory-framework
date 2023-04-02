@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -49,7 +50,7 @@ public final class PaginationImpl extends StateValue implements Pagination {
     /**
      * Final source factory for dynamic pagination converted from {@link #sourceProvider}.
      */
-    private Function<? extends IFContext, Collection<?>> _srcFactory;
+    private Function<IFContext, List<?>> _srcFactory;
 
     /**
      * Current page source. Only {@code null} before first pagination render.
@@ -70,7 +71,7 @@ public final class PaginationImpl extends StateValue implements Pagination {
         this.elementFactory = elementFactory;
         this.pageSwitchHandler = pageSwitchHandler;
         this.currSource = convertSourceProvider();
-        this.dynamic = sourceProvider instanceof Collection;
+        this.dynamic = !(sourceProvider instanceof Collection);
     }
 
     @Override
@@ -249,8 +250,12 @@ public final class PaginationImpl extends StateValue implements Pagination {
      */
     private List<?> getSourceOrThrow() {
         if (currSource != null) return currSource;
-        if (isDynamic())
-            throw new IllegalStateException("Dynamic pagination must set current source before try to access it");
+        if (isDynamic()) {
+            currSource = _srcFactory.apply(host);
+            if (currSource == null)
+                throw new IllegalStateException("Dynamic pagination must set current source before try to access it");
+            return currSource;
+        }
 
         throw new IllegalStateException("Pagination source cannot be null for static pagination");
     }
@@ -373,7 +378,9 @@ public final class PaginationImpl extends StateValue implements Pagination {
         if (sourceProvider instanceof Collection) {
             currSource = new ArrayList<>((Collection<?>) sourceProvider);
         } else if (sourceProvider instanceof Function) {
-            _srcFactory = (Function<? extends IFContext, Collection<?>>) sourceProvider;
+            _srcFactory = (Function<IFContext, List<?>>) sourceProvider;
+        } else if (sourceProvider instanceof Supplier) {
+            _srcFactory = $ -> ((Supplier<List<?>>) sourceProvider).get();
         } else {
             throw new IllegalArgumentException(String.format(
                     "Unsupported pagination source provider: %s",
