@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Setter;
 import me.devnatan.inventoryframework.component.ComponentFactory;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
 
 @Data
 public final class LayoutSlot {
@@ -20,6 +21,7 @@ public final class LayoutSlot {
      * The first parameter is the current iteration index.
      */
     @EqualsAndHashCode.Exclude
+    @Nullable
     private final Function<Integer, ComponentFactory> factory;
 
     @EqualsAndHashCode.Exclude
@@ -31,5 +33,9 @@ public final class LayoutSlot {
         if (this.positions != null) throw new IllegalStateException("Positions can only be updated once");
 
         this.positions = positions;
+    }
+
+    public boolean isDefinedByTheUser() {
+        return factory != null;
     }
 }

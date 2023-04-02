@@ -1,14 +1,15 @@
 package me.devnatan.inventoryframework;
 
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import lombok.AccessLevel;
 import lombok.Getter;
+import me.devnatan.inventoryframework.component.ComponentFactory;
 import me.devnatan.inventoryframework.component.ItemComponentBuilder;
 import me.devnatan.inventoryframework.component.Pagination;
+import me.devnatan.inventoryframework.component.PaginationElementFactory;
 import me.devnatan.inventoryframework.component.PaginationImpl;
 import me.devnatan.inventoryframework.context.IFCloseContext;
 import me.devnatan.inventoryframework.context.IFContext;
@@ -43,7 +44,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class PlatformView<
-                TItem extends ItemComponentBuilder<TItem>,
+                TItem extends ItemComponentBuilder<TItem> & ComponentFactory,
                 TContext extends IFContext,
                 TOpenContext extends IFOpenContext,
                 TCloseContext extends IFCloseContext,
@@ -276,85 +277,111 @@ public abstract class PlatformView<
     }
 
     /**
-     * Creates an immutable state used to control the pagination.
-     * <p>
-     * How each paginated element will be rendered is determined in the {@code itemFactory}, that
-     * is called every time a paginated element is rendered in the context container.
-     * <pre>{@code
-     * State<Pagination> paginationState = pagination(
-     *     (item, value) -> item.withItem(...)
-     * )}</pre>
-     * <p>
-     * Control and get pagination info by accessing the state.
-     * <pre>{@code
-     * Pagination pagination = paginationState.get(ctx);
-     * int currentPage = pagination.currentPage();
+     * Creates a new unmodifiable static pagination state.
      *
-     * // Advances the pagination for the selected context
-     * pagination.advance();
-     * }</pre>
-     * <p>
-     * Asynchronous pagination can be done using a {@link CompletableFuture} as {@code sourceProvider}.
-     * <pre>{@code
-     * State<Pagination> paginationState = pagination(
-     *     () -> getCompletedFutureSomehow(),
-     *     (item, value) -> item.withItem(...)
-     * )}</pre>
-     *
-     * @param sourceProvider The data provider for pagination.
+     * @param sourceProvider The data source for pagination.
      * @param itemFactory    The function for creating pagination items, this function is called for
      *                       each paged element (item) on a page.
      * @param <T>            The pagination data type.
-     * @return A immutable pagination state.
+     * @return A new immutable pagination state.
      */
-    @SuppressWarnings("unchecked")
-    protected final <T> State<Pagination> pagination(
+    protected final <T> State<Pagination> paginationState(
+            @NotNull List<? super T> sourceProvider, @NotNull BiConsumer<TItem, T> itemFactory) {
+        return this.<T>buildPaginationState(sourceProvider)
+                .itemFactory(itemFactory)
+                .build();
+    }
+
+    /**
+     * Creates a new unmodifiable dynamic pagination state.
+     *
+     * @param sourceProvider The data source for pagination.
+     * @param itemFactory    The function for creating pagination items, this function is called for
+     *                       each paged element (item) on a page.
+     * @param <T>            The pagination data type.
+     * @return A new immutable pagination state.
+     */
+    protected final <T> State<Pagination> paginationState(
             @NotNull Function<TSlotContext, List<? super T>> sourceProvider,
             @NotNull BiConsumer<TItem, T> itemFactory) {
+        return this.buildPaginationState(sourceProvider)
+                .itemFactory(itemFactory)
+                .build();
+    }
+
+    /**
+     * Creates a new unmodifiable dynamic pagination state.
+     *
+     * @param sourceProvider The data source for pagination.
+     * @param itemFactory    The function for creating pagination items, this function is called for
+     *                       each paged element (item) on a page.
+     * @param <T>            The pagination data type.
+     * @return A new immutable pagination state.
+     */
+    protected final <T> State<Pagination> paginationState(
+            @NotNull Supplier<List<? super T>> sourceProvider, @NotNull BiConsumer<TItem, T> itemFactory) {
+        return this.<T>buildPaginationState(sourceProvider)
+                .itemFactory(itemFactory)
+                .build();
+    }
+
+    /**
+     * Creates a new unmodifiable static pagination state builder.
+     *
+     * @param sourceProvider The data source for pagination.
+     * @param <T>            The pagination data type.
+     * @return A new pagination state builder.
+     */
+    @SuppressWarnings("unchecked")
+    protected final <T> PaginationStateBuilder<TContext, TSlotClickContext, TItem, T> buildPaginationState(
+            @NotNull List<? super T> sourceProvider) {
+        return new PaginationStateBuilder<>(
+                (PlatformView<TItem, TContext, ?, ?, ?, TSlotClickContext, ?>) this, sourceProvider);
+    }
+
+    /**
+     * Creates a new unmodifiable dynamic pagination state builder.
+     *
+     * @param sourceProvider The data source for pagination.
+     * @param <T>            The pagination data type.
+     * @return A new pagination state builder.
+     */
+    @SuppressWarnings("unchecked")
+    protected final <T> PaginationStateBuilder<TContext, TSlotClickContext, TItem, T> buildPaginationState(
+            @NotNull Supplier<List<? super T>> sourceProvider) {
+        return new PaginationStateBuilder<>(
+                (PlatformView<TItem, TContext, ?, ?, ?, TSlotClickContext, ?>) this, sourceProvider);
+    }
+
+    /**
+     * Creates a new unmodifiable dynamic pagination state builder.
+     *
+     * @param sourceProvider The data source for pagination.
+     * @param <T>            The pagination data type.
+     * @return A new pagination state builder.
+     */
+    @SuppressWarnings("unchecked")
+    protected final <T> PaginationStateBuilder<TContext, TSlotClickContext, TItem, T> buildPaginationState(
+            @NotNull Function<TSlotContext, List<? super T>> sourceProvider) {
+        return new PaginationStateBuilder<>(
+                (PlatformView<TItem, TContext, ?, ?, ?, TSlotClickContext, ?>) this, sourceProvider);
+    }
+
+    final <V> State<Pagination> buildPaginationState(
+            @NotNull PaginationStateBuilder<TContext, TSlotContext, TItem, V> builder) {
         final long id = State.next();
-        final StateValueFactory factory =
-                (host, state) -> new PaginationImpl(state, (TContext) host, null, sourceProvider, itemFactory);
+        @SuppressWarnings("unchecked")
+        final StateValueFactory factory = (host, state) -> new PaginationImpl(
+                state,
+                (TContext) host,
+                builder.getLayoutTarget(),
+                builder.getSourceProvider(),
+                (PaginationElementFactory<Object>) builder.getElementFactory(),
+                (BiConsumer<IFContext, Pagination>) builder.getPageSwitchHandler());
         final State<Pagination> state = new PaginationState(id, factory);
         stateRegistry.registerState(state, this);
 
         return state;
-    }
-
-    /**
-     * Creates an immutable state used to control the pagination.
-     * <p>
-     * How each paginated element will be rendered is determined by the {@code itemFactory} parameter,
-     * that is called every time a paginated element is rendered in the context container.
-     * <pre>{@code
-     * State<Pagination> paginationState = pagination(
-     *     (item, value) -> item.withItem(...)
-     * )}</pre>
-     * <p>
-     * Control and get pagination info by accessing the state.
-     * <pre>{@code
-     * Pagination pagination = paginationState.get(ctx);
-     * int currentPage = pagination.currentPage();
-     *
-     * // Advances the pagination for the selected context
-     * pagination.advance();
-     * }</pre>
-     * <p>
-     * Asynchronous pagination can be done using a {@link CompletableFuture} as {@code sourceProvider}.
-     * <pre>{@code
-     * State<Pagination> paginationState = pagination(
-     *     () -> getCompletedFutureSomehow(),
-     *     (item, value) -> item.withItem(...)
-     * )}</pre>
-     *
-     * @param sourceProvider The data provider for pagination.
-     * @param itemFactory    The function for creating pagination items, this function is called for
-     *                       each paged element (item) on a page.
-     * @param <V>            The pagination data type.
-     * @return A immutable pagination state.
-     */
-    protected final <V> State<Pagination> pagination(
-            @NotNull Supplier<List<? super V>> sourceProvider, @NotNull BiConsumer<TItem, V> itemFactory) {
-        return pagination($ -> sourceProvider.get(), itemFactory);
     }
 
     /**
@@ -455,7 +482,7 @@ public abstract class PlatformView<
         final Pipeline<? super VirtualView> pipeline = getPipeline();
         pipeline.intercept(StandardPipelinePhases.INIT, new InitInterceptor());
         pipeline.intercept(StandardPipelinePhases.OPEN, new OpenInterceptor());
-        pipeline.intercept(StandardPipelinePhases.FIRST_RENDER, new LayoutInterceptor());
+        pipeline.intercept(StandardPipelinePhases.LAYOUT_RESOLUTION, new LayoutInterceptor());
         pipeline.intercept(StandardPipelinePhases.FIRST_RENDER, new AvailableSlotInterceptor());
         pipeline.intercept(StandardPipelinePhases.FIRST_RENDER, new FirstRenderInterceptor());
         pipeline.intercept(StandardPipelinePhases.UPDATE, new UpdateInterceptor());

@@ -79,6 +79,11 @@ public final class ViewConfigBuilder {
         return this;
     }
 
+    // TODO needs documentation
+    public ViewConfigBuilder maxSize() {
+        throw new UnsupportedOperationException("TODO");
+    }
+
     /**
      * Add a modifier to this setting.
      *

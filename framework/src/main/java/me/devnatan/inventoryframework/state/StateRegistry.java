@@ -31,10 +31,11 @@ public final class StateRegistry implements Iterable<State<?>> {
      *
      * @param stateId The id of the state to be removed.
      */
-    public void unregisterState(long stateId) {
+    public void unregisterState(long stateId, Object caller) {
         synchronized (stateMap) {
             final State<?> state = stateMap.remove(stateId);
-            if (state instanceof StateManagementListener) ((StateManagementListener) state).stateUnregistered(state);
+            if (state instanceof StateManagementListener)
+                ((StateManagementListener) state).stateUnregistered(state, caller);
         }
     }
 

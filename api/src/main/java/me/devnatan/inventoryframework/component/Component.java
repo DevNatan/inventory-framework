@@ -38,7 +38,6 @@ public interface Component extends VirtualView {
      *
      * @return The interaction handler for this component.
      */
-    @NotNull
     InteractionHandler getInteractionHandler();
 
     /**
@@ -54,6 +53,16 @@ public interface Component extends VirtualView {
      * @param context The update context.
      */
     void updated(@NotNull IFSlotRenderContext context);
+
+    /**
+     * Determines if this component should be updated.
+     * <p>
+     * This is a simple precondition to make checking the need for component updates more efficient,
+     * checking your own conditions before going to more complex methods.
+     *
+     * @return {@code true} if this component should be updated or {@code false} otherwise.
+     */
+    boolean shouldBeUpdated();
 
     /**
      * Clears this component from the given context.

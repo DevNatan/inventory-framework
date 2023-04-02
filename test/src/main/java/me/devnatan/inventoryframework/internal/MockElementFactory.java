@@ -8,6 +8,7 @@ import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.ViewType;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.component.Component;
+import me.devnatan.inventoryframework.component.ComponentBuilder;
 import me.devnatan.inventoryframework.context.IFConfinedContext;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFSlotContext;
@@ -75,6 +76,11 @@ public final class MockElementFactory extends ElementFactory {
         when(value.getParent()).thenReturn(parent);
         when(value.getContainer()).thenReturn(container);
         return value;
+    }
+
+    @Override
+    public ComponentBuilder<?> createComponentBuilder() {
+        return null;
     }
 
     @Override

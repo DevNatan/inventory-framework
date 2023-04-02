@@ -1,9 +1,8 @@
 package me.devnatan.inventoryframework.state;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -12,24 +11,25 @@ import org.jetbrains.annotations.NotNull;
 public class DefaultStateValueHost implements StateValueHost {
 
     private final Map<Long, StateValue> valuesMap = new HashMap<>();
-    private final List<StateManagementListener> listeners = new ArrayList<>();
 
     @Override
-    public StateValue getState(State<?> state) {
+    public Object getState(State<?> state) {
         final long id = state.internalId();
         if (!valuesMap.containsKey(id)) {
             final StateValue value = state.factory().create(this, state);
             initState(id, value, null);
         }
 
-        return valuesMap.get(id);
+        final StateValue stateValue = valuesMap.get(id);
+        final Object result = stateValue.get();
+        callListeners(stateValue, listener -> listener.stateValueGet(state, this, stateValue, result));
+        return result;
     }
 
     @Override
     public void initState(long id, @NotNull StateValue value, Object initialValue) {
         valuesMap.put(id, value);
-        for (final StateManagementListener listener : listeners)
-            listener.stateValueInitialized(this, value, initialValue);
+        callListeners(value, listener -> listener.stateValueInitialized(this, value, initialValue));
     }
 
     @Override
@@ -37,22 +37,12 @@ public class DefaultStateValueHost implements StateValueHost {
         final StateValue stateValue = valuesMap.get(id);
         final Object currValue = stateValue.get();
         stateValue.set(value);
-        for (final StateManagementListener listener : listeners) {
-            listener.stateValueSet(this, stateValue, currValue, value);
-        }
+        callListeners(stateValue, listener -> listener.stateValueSet(this, stateValue, currValue, value));
     }
 
-    @Override
-    public void attachStateListener(@NotNull StateManagementListener listener) {
-        synchronized (listeners) {
-            listeners.add(listener);
-        }
-    }
-
-    @Override
-    public void detachStateListener(@NotNull StateManagementListener listener) {
-        synchronized (listeners) {
-            listeners.remove(listener);
-        }
+    private void callListeners(@NotNull StateValue value, Consumer<StateManagementListener> call) {
+        if (value instanceof StateManagementListener) call.accept((StateManagementListener) value);
+        if (value.getState() instanceof StateManagementListener)
+            call.accept((StateManagementListener) value.getState());
     }
 }

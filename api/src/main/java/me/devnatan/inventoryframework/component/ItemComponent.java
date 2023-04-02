@@ -63,6 +63,11 @@ public class ItemComponent implements Component, InteractionHandler {
     }
 
     @Override
+    public boolean shouldBeUpdated() {
+        return getRenderHandler() != null;
+    }
+
+    @Override
     public void clear(@NotNull IFContext context) {
         context.getContainer().removeItem(getPosition());
     }

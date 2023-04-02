@@ -33,6 +33,8 @@ public final class StandardPipelinePhases {
      */
     public static final PipelinePhase FIRST_RENDER = new PipelinePhase("first-render");
 
+    public static final PipelinePhase LAYOUT_RESOLUTION = new PipelinePhase("layout-resolution");
+
     /**
      * Called when a {@link IFContext context} is going to be updated.
      * In this pipeline phase the pipeline interceptor subject is a {@link IFRenderContext}.

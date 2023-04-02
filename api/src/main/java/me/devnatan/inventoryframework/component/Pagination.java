@@ -1,7 +1,6 @@
 package me.devnatan.inventoryframework.component;
 
 import me.devnatan.inventoryframework.state.StateValueHost;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Pagination is a host to multiple components that can be paginated, essentially it is a {@link
@@ -31,6 +30,20 @@ public interface Pagination extends ComponentComposition {
      * @return The index of the current page. Returns {@code 0} if it's in the first page.
      */
     int currentPageIndex();
+
+    /**
+     * The number of the next page.
+     *
+     * @return The number of the next page at least {@link #lastPage()}.
+     */
+    int nextPage();
+
+    /**
+     * The index of the next page.
+     *
+     * @return The index of the next page at least {@link #lastPageIndex()}.
+     */
+    int nextPageIndex();
 
     /**
      * The number of the last page.
@@ -65,18 +78,20 @@ public interface Pagination extends ComponentComposition {
     boolean isLastPage();
 
     /**
-     * Checks for pages before the current page.
+     * Checks if a page exists.
      *
-     * @return {@code true} if there are previous pages or {@code false} otherwise.
+     * @param pageIndex The page index to check.
+     * @return If exists a page with the specified index.
      */
-    boolean hasPreviousPage();
+    boolean hasPage(int pageIndex);
 
     /**
-     * Checks for pages after the current page.
+     * Switches to a specific page index.
      *
-     * @return {@code true} if there are next pages or {@code false} otherwise.
+     * @param pageIndex The page index to switch to.
+     * @throws IndexOutOfBoundsException If a page with the specified index is not found.
      */
-    boolean hasNextPage();
+    void switchTo(int pageIndex);
 
     /**
      * Advances to the next page if available.
@@ -108,6 +123,8 @@ public interface Pagination extends ComponentComposition {
      *
      * @return The layout character target if set or {@code null}.
      */
-    @Nullable
-    String getLayoutTarget();
+    char getLayoutTarget();
+
+    // TODO documentation
+    boolean isDynamic();
 }

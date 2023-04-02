@@ -7,9 +7,9 @@ import org.jetbrains.annotations.NotNull;
 /**
  * States are just intermediate interfaces to a {@link StateValueHost} and a {@link StateValue}.
  * <p>
- * A state has a unique id passed on to any value defined from it, a state does not keep any data
- * other than its id, who keeps it is the StateValue. A state id is needed to access a state value
- * within a StateHost.
+ * A state has a unique id that's passed on to any value defined from it, a state does not keep any
+ * data other than its id, who keeps it is the state value. A state id is needed to access a
+ * state value within a value host.
  *
  * @param <T> The state value type.
  * @see MutableState

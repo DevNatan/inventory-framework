@@ -16,10 +16,9 @@ public interface StateValueHost {
      *
      * @param state The target state.
      * @return A StateValue from the state with the specified id.
-     * @throws UninitializedStateException
      */
     @ApiStatus.Internal
-    StateValue getState(State<?> state);
+    Object getState(State<?> state);
 
     /**
      * Sets the internal value of a state.
@@ -35,8 +34,4 @@ public interface StateValueHost {
 
     @ApiStatus.Internal
     void updateState(long id, Object value);
-
-    void attachStateListener(@NotNull StateManagementListener listener);
-
-    void detachStateListener(@NotNull StateManagementListener listener);
 }

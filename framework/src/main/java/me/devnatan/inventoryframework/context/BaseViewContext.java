@@ -72,7 +72,7 @@ public class BaseViewContext extends DefaultStateValueHost implements IFContext 
     }
 
     @Override
-    public final @NotNull ViewContainer getContainer() {
+    public @NotNull ViewContainer getContainer() {
         if (container == null) throw new IllegalStateException("Unable to get null container");
         return container;
     }

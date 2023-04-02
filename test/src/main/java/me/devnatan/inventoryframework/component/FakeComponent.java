@@ -49,6 +49,11 @@ public class FakeComponent implements Component, InteractionHandler {
     public void updated(@NotNull IFSlotRenderContext context) {}
 
     @Override
+    public boolean shouldBeUpdated() {
+        throw new UnsupportedOperationException("Not implemented");
+    }
+
+    @Override
     public void clear(@NotNull IFContext context) {
         context.getContainer().removeItem(position);
     }

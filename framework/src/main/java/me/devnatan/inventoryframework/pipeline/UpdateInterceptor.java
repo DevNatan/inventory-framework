@@ -3,10 +3,10 @@ package me.devnatan.inventoryframework.pipeline;
 import java.util.List;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.component.Component;
-import me.devnatan.inventoryframework.component.ItemComponent;
+import me.devnatan.inventoryframework.context.IFCloseContext;
 import me.devnatan.inventoryframework.context.IFConfinedContext;
 import me.devnatan.inventoryframework.context.IFContext;
-import me.devnatan.inventoryframework.context.IFRenderContext;
+import me.devnatan.inventoryframework.context.IFOpenContext;
 import me.devnatan.inventoryframework.context.IFSlotRenderContext;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,9 +17,10 @@ public final class UpdateInterceptor implements PipelineInterceptor<VirtualView>
 
     @Override
     public void intercept(PipelineContext<VirtualView> pipeline, VirtualView subject) {
-        if (!(subject instanceof IFRenderContext)) return;
+        if (!(subject instanceof IFContext)) return;
+        if (subject instanceof IFOpenContext || subject instanceof IFCloseContext) return;
 
-        final IFRenderContext context = (IFRenderContext) subject;
+        final IFContext context = (IFContext) subject;
         final List<Component> componentList = context.getComponents();
         for (int i = 0; i < componentList.size(); i++) {
             final Component component = componentList.get(i);
@@ -28,28 +29,10 @@ public final class UpdateInterceptor implements PipelineInterceptor<VirtualView>
                 continue;
             }
 
-            if (!shouldBeUpdated(component)) continue;
+            if (!component.shouldBeUpdated()) continue;
 
             updateComponent(context, component);
         }
-    }
-
-    /**
-     * Determines if a component should be updated.
-     *
-     * @param component The component.
-     * @return {@code true} if component should be updated or {@code false} otherwise.
-     */
-    private boolean shouldBeUpdated(@NotNull Component component) {
-        if (component instanceof ItemComponent) {
-            final ItemComponent item = (ItemComponent) component;
-
-            // items without a render or update handler are ignored because the fallback item is
-            // only rendered once in the initial rendering phase
-            return item.getRenderHandler() != null;
-        }
-
-        return true;
     }
 
     /**

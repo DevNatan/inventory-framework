@@ -64,7 +64,7 @@ public interface RootView extends VirtualView, Iterable<IFContext> {
      * @return The pipeline for this view.
      */
     @NotNull
-    Pipeline<? super VirtualView> getPipeline();
+    Pipeline<VirtualView> getPipeline();
 
     void open(@NotNull Viewer viewer);
 

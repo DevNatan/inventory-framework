@@ -163,6 +163,7 @@ abstract class PlatformRenderContext<T extends ItemComponentBuilder<T>> extends 
      *
      * @return A new platform builder instance.
      */
+    // TODO use ElementFactory's `createBuilder` instead
     protected abstract T createBuilder();
 
     /**
@@ -189,6 +190,11 @@ abstract class PlatformRenderContext<T extends ItemComponentBuilder<T>> extends 
     @Override
     public final @NotNull @UnmodifiableView List<LayoutSlot> getLayoutSlots() {
         return Collections.unmodifiableList(layoutSlots);
+    }
+
+    @Override
+    public final void addLayoutSlot(@NotNull LayoutSlot layoutSlot) {
+        layoutSlots.add(layoutSlot);
     }
 
     @Override
