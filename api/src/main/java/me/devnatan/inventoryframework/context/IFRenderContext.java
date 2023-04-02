@@ -10,6 +10,7 @@ import org.jetbrains.annotations.UnmodifiableView;
 
 public interface IFRenderContext extends IFConfinedContext {
 
+    @NotNull
     IFContext getParent();
 
     @NotNull

@@ -46,7 +46,7 @@ public class SlotContext extends ConfinedContext implements IFSlotContext, Conte
 
     @Override
     public final @NotNull UUID getId() {
-        return parent.getId();
+        return getParent().getId();
     }
 
     @Override
@@ -80,7 +80,7 @@ public class SlotContext extends ConfinedContext implements IFSlotContext, Conte
     }
 
     @Override
-    public final IFContext getParent() {
+    public final @NotNull IFContext getParent() {
         return parent;
     }
 
