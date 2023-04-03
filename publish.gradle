@@ -3,10 +3,8 @@ apply plugin: 'maven-publish'
 project.afterEvaluate {
     publishing {
         publications {
-            release(MavenPublication) {
+            jitpack(MavenPublication) {
                 it.groupId = rootProject.group
-
-
                 it.artifactId = project.name.equals('framework')
                         ? rootProject.name + '-impl'
                         : (project.name.equals('bom') ? rootProject.name : rootProject.name + '-' + project.name)
