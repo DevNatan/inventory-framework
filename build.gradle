@@ -2,52 +2,5 @@ plugins {
     id "com.diffplug.spotless" version "6.12.0" apply false
 }
 
-subprojects {
-    apply plugin: 'java-library'
-    apply plugin: "com.diffplug.spotless"
-
-    group 'me.devnatan'
-    version '3.0.0-beta'
-
-    repositories {
-        mavenCentral()
-    }
-
-    dependencies {
-        compileOnly libs.lombok
-        compileOnlyApi libs.jetbrains.annotations
-        annotationProcessor libs.lombok
-        testCompileOnly libs.jetbrains.annotations
-        testCompileOnly libs.lombok
-        testRuntimeOnly libs.junit.engine
-        testImplementation libs.junit.api
-        testImplementation libs.mockito.core
-        testAnnotationProcessor libs.lombok
-    }
-
-    java {
-        withSourcesJar()
-        withJavadocJar()
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-
-    javadoc {
-        options.memberLevel = JavadocMemberLevel.PACKAGE
-    }
-
-    test {
-        useJUnitPlatform()
-    }
-
-    spotless {
-        java {
-            removeUnusedImports()
-            palantirJavaFormat()
-        }
-    }
-
-    tasks.withType(JavaCompile) {
-        options.encoding = 'UTF-8'
-    }
-}
+group 'me.devnatan.inventoryframework'
+version '3.0.0-beta'

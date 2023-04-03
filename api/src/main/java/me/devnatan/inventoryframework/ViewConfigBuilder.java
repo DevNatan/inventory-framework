@@ -11,12 +11,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import me.devnatan.inventoryframework.exception.InvalidLayoutException;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 @Getter(AccessLevel.PACKAGE)
 @NoArgsConstructor
-@ApiStatus.Internal
 public final class ViewConfigBuilder {
 
     private String title = "";
