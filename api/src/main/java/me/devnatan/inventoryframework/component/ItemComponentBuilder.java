@@ -20,7 +20,7 @@ public interface ItemComponentBuilder<S extends ItemComponentBuilder<S>> extends
      * @param state The state to watch.
      * @return This item builder.
      */
-    S watch(@NotNull State<?> state);
+    S watch(State<?>... states);
 
     @ApiStatus.Internal
     boolean isContainedWithin(int position);

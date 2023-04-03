@@ -2,10 +2,12 @@ package me.devnatan.inventoryframework.component;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import lombok.AccessLevel;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
-@Getter
+@Getter(AccessLevel.PROTECTED)
 @SuppressWarnings("unchecked")
 class DefaultComponentBuilder<S extends ComponentBuilder<S>> implements ComponentBuilder<S> {
 

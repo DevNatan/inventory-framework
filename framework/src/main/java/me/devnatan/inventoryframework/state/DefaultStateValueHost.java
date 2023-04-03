@@ -10,19 +10,23 @@ import org.jetbrains.annotations.NotNull;
  */
 public class DefaultStateValueHost implements StateValueHost {
 
+	public static final Object UNINITIALIZED_VALUE = new Object();
+
     private final Map<Long, StateValue> valuesMap = new HashMap<>();
 
     @Override
     public Object getState(State<?> state) {
         final long id = state.internalId();
+		final StateValue value;
         if (!valuesMap.containsKey(id)) {
-            final StateValue value = state.factory().create(this, state);
-            initState(id, value, null);
-        }
+            value = state.factory().create(this, state);
+            initState(id, value, UNINITIALIZED_VALUE);
+        } else {
+			value = valuesMap.get(id);
+		}
 
-        final StateValue stateValue = valuesMap.get(id);
-        final Object result = stateValue.get();
-        callListeners(stateValue, listener -> listener.stateValueGet(state, this, stateValue, result));
+        final Object result = value.get();
+        callListeners(value, listener -> listener.stateValueGet(state, this, value, result));
         return result;
     }
 

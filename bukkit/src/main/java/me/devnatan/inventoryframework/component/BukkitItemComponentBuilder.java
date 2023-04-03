@@ -1,6 +1,6 @@
 package me.devnatan.inventoryframework.component;
 
-import java.util.function.Consumer;
+import lombok.AccessLevel;
 import lombok.Getter;
 import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.context.IFSlotContext;
@@ -13,97 +13,122 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-@Getter
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+
 public final class BukkitItemComponentBuilder extends DefaultComponentBuilder<BukkitItemComponentBuilder>
-        implements ItemComponentBuilder<BukkitItemComponentBuilder>, ComponentFactory {
+	implements ItemComponentBuilder<BukkitItemComponentBuilder>, ComponentFactory {
 
-    private int slot;
-    private ItemStack item;
+	private int slot;
+	private ItemStack item;
 
-    // --- Handlers ---
-    private Consumer<? super IFSlotRenderContext> renderHandler;
-    private Consumer<? super IFSlotClickContext> clickHandler;
-    private Consumer<? super IFSlotContext> updateHandler;
+	// --- Handlers ---
+	private Consumer<? super IFSlotRenderContext> renderHandler;
+	private Consumer<? super IFSlotClickContext> clickHandler;
+	private Consumer<? super IFSlotContext> updateHandler;
 
-    @Override
-    public boolean isContainedWithin(int position) {
-        return position == slot;
-    }
+	private final Set<State<?>> watching = new LinkedHashSet<>();
 
-    /** {@inheritDoc} */
-    @Override
-    public BukkitItemComponentBuilder withSlot(int slot) {
-        this.slot = slot;
-        return this;
-    }
+	@Override
+	public boolean isContainedWithin(int position) {
+		return position == slot;
+	}
 
-    @Override
-    public BukkitItemComponentBuilder watch(@NotNull State<?> state) {
-        return null;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public BukkitItemComponentBuilder withSlot(int slot) {
+		this.slot = slot;
+		return this;
+	}
 
-    /**
-     * Defines the item that will be used as fallback for rendering in the slot where this item is
-     * positioned. The fallback item is always static.
-     *
-     * @param item The new fallback item stack.
-     * @return This item builder.
-     */
-    public BukkitItemComponentBuilder withItem(@Nullable ItemStack item) {
-        this.item = item;
-        return this;
-    }
+	@Override
+	public BukkitItemComponentBuilder watch(State<?>... states) {
+		watching.addAll(Arrays.asList(states));
+		return this;
+	}
 
-    /**
-     * Called when the item is rendered.
-     * <p>
-     * This handler is called every time the item or the view that owns it is updated.
-     *
-     * @param renderHandler The render handler.
-     * @return This item builder.
-     */
-    @SuppressWarnings("unchecked")
-    public BukkitItemComponentBuilder onRender(@Nullable Consumer<? super SlotRenderContext> renderHandler) {
-        this.renderHandler = (Consumer<? super IFSlotRenderContext>) renderHandler;
-        return this;
-    }
+	/**
+	 * Defines the item that will be used as fallback for rendering in the slot where this item is
+	 * positioned. The fallback item is always static.
+	 *
+	 * @param item The new fallback item stack.
+	 * @return This item builder.
+	 */
+	public BukkitItemComponentBuilder withItem(@Nullable ItemStack item) {
+		this.item = item;
+		return this;
+	}
 
-    /**
-     * Called when a player clicks on the item.
-     * <p>
-     * This handler works on any container that the actor has access to and only works if the
-     * interaction has not been cancelled.
-     *
-     * @param clickHandler The click handler.
-     * @return This item builder.
-     */
-    @SuppressWarnings("unchecked")
-    public BukkitItemComponentBuilder onClick(@Nullable Consumer<? super SlotClickContext> clickHandler) {
-        this.clickHandler = (Consumer<? super IFSlotClickContext>) clickHandler;
-        return this;
-    }
+	/**
+	 * Called when the item is rendered.
+	 * <p>
+	 * This handler is called every time the item or the view that owns it is updated.
+	 *
+	 * @param renderHandler The render handler.
+	 * @return This item builder.
+	 */
+	@SuppressWarnings("unchecked")
+	public BukkitItemComponentBuilder onRender(@Nullable Consumer<? super SlotRenderContext> renderHandler) {
+		this.renderHandler = (Consumer<? super IFSlotRenderContext>) renderHandler;
+		return this;
+	}
 
-    /**
-     * Called when the item is updated.
-     *
-     * @param updateHandler The update handler.
-     * @return This item builder.
-     */
-    @SuppressWarnings("unchecked")
-    public BukkitItemComponentBuilder onUpdate(@Nullable Consumer<? super SlotContext> updateHandler) {
-        this.updateHandler = (Consumer<? super IFSlotContext>) updateHandler;
-        return this;
-    }
+	/**
+	 * Called when the item is rendered.
+	 * <p>
+	 * This handler is called every time the item or the view that owns it is updated.
+	 *
+	 * @param renderFactory The render handler.
+	 * @return This item builder.
+	 */
+	public BukkitItemComponentBuilder onRender(@NotNull Supplier<@Nullable ItemStack> renderFactory) {
+		return onRender(render -> render.setItem(renderFactory.get()));
+	}
 
-    @Override
-    public @NotNull Component create() {
-        return new ItemComponent(
-                getSlot(),
-                getItem(),
-                isCancelOnClick(),
-                isCloseOnClick(),
-                getRenderHandler(),
-                getUpdateHandler(),
-                getClickHandler());
-    }
+	/**
+	 * Called when a player clicks on the item.
+	 * <p>
+	 * This handler works on any container that the actor has access to and only works if the
+	 * interaction has not been cancelled.
+	 *
+	 * @param clickHandler The click handler.
+	 * @return This item builder.
+	 */
+	@SuppressWarnings("unchecked")
+	public BukkitItemComponentBuilder onClick(@Nullable Consumer<? super SlotClickContext> clickHandler) {
+		this.clickHandler = (Consumer<? super IFSlotClickContext>) clickHandler;
+		return this;
+	}
+
+	/**
+	 * Called when the item is updated.
+	 *
+	 * @param updateHandler The update handler.
+	 * @return This item builder.
+	 */
+	@SuppressWarnings("unchecked")
+	public BukkitItemComponentBuilder onUpdate(@Nullable Consumer<? super SlotContext> updateHandler) {
+		this.updateHandler = (Consumer<? super IFSlotContext>) updateHandler;
+		return this;
+	}
+
+	@Override
+	public @NotNull Component create() {
+		return new ItemComponent(
+			slot,
+			item,
+			isCancelOnClick(),
+			isCloseOnClick(),
+			renderHandler,
+			updateHandler,
+			clickHandler,
+			watching
+		);
+	}
 }

@@ -33,6 +33,8 @@ import me.devnatan.inventoryframework.state.ComputedValue;
 import me.devnatan.inventoryframework.state.ImmutableValue;
 import me.devnatan.inventoryframework.state.InitialDataStateValue;
 import me.devnatan.inventoryframework.state.LazyValue;
+import me.devnatan.inventoryframework.state.MutableIntState;
+import me.devnatan.inventoryframework.state.MutableIntStateImpl;
 import me.devnatan.inventoryframework.state.MutableState;
 import me.devnatan.inventoryframework.state.MutableStateImpl;
 import me.devnatan.inventoryframework.state.MutableValue;
@@ -94,11 +96,11 @@ public abstract class PlatformView<
      * Creates a {@link MutableState mutable state} with an initial value.
      *
      * <pre>{@code
-     * MutableState<Integer> intState = mutableState(0);
+     * MutableState<String> textState = mutableState("");
      *
-     * intState.get(...); // 0
-     * intState.set(4, ...);
-     * intState.get(...); // 4
+     * textState.get(...); // ""
+     * textState.set("abc", ...);
+     * textState.get(...); // "abc"
      * }</pre>
      *
      * @param initialValue The initial value of the state.
@@ -113,6 +115,46 @@ public abstract class PlatformView<
 
         return state;
     }
+
+	/**
+	 * Creates a {@link MutableState mutable state} with an initial value.
+	 *
+	 * <pre>{@code
+	 * MutableIntState intState = mutableIntState();
+	 *
+	 * intState.get(...); // 0
+	 * intState.set(4, ...);
+	 * intState.get(...); // 4
+	 * }</pre>
+	 *
+	 * @return A mutable state with an initial value.
+	 */
+	protected final MutableIntState mutableIntState() {
+		return mutableIntState(0);
+	}
+
+	/**
+	 * Creates a {@link MutableState mutable state} with an initial value.
+	 *
+	 * <pre>{@code
+	 * MutableIntState intState = mutableIntState(0);
+	 *
+	 * intState.get(...); // 0
+	 * intState.set(4, ...);
+	 * intState.get(...); // 4
+	 * }</pre>
+	 *
+	 * @param initialValue The initial value of the state.
+	 * @return A mutable state with an initial value.
+	 */
+	protected final MutableIntState mutableIntState(int initialValue) {
+		final long id = State.next();
+		final StateValueFactory factory = (host, state) -> new MutableValue(state, initialValue);
+		final MutableIntState state = new MutableIntStateImpl(id, factory);
+		stateRegistry.registerState(state, this);
+
+		return state;
+	}
 
     /**
      * Creates an immutable computed state.

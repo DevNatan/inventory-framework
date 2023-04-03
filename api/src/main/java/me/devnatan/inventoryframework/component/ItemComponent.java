@@ -1,5 +1,6 @@
 package me.devnatan.inventoryframework.component;
 
+import java.util.Set;
 import java.util.function.Consumer;
 import lombok.Data;
 import me.devnatan.inventoryframework.VirtualView;
@@ -7,6 +8,7 @@ import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.context.IFSlotContext;
 import me.devnatan.inventoryframework.context.IFSlotRenderContext;
+import me.devnatan.inventoryframework.state.State;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,6 +27,8 @@ public class ItemComponent implements Component, InteractionHandler {
     private final Consumer<? super IFSlotRenderContext> renderHandler;
     private final Consumer<? super IFSlotContext> updateHandler;
     private final Consumer<? super IFSlotClickContext> clickHandler;
+
+	private final Set<State<?>> watching;
 
     @Override
     public @NotNull VirtualView getRoot() {
