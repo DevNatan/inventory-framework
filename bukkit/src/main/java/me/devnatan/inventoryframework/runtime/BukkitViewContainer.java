@@ -1,4 +1,4 @@
-package me.devnatan.inventoryframework.bukkit;
+package me.devnatan.inventoryframework.runtime;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -8,7 +8,7 @@ import lombok.Data;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.ViewType;
 import me.devnatan.inventoryframework.Viewer;
-import me.devnatan.inventoryframework.bukkit.thirdparty.InventoryUpdate;
+import me.devnatan.inventoryframework.runtime.thirdparty.InventoryUpdate;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;

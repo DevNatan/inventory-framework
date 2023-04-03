@@ -1,4 +1,4 @@
-package me.devnatan.inventoryframework.bukkit;
+package me.devnatan.inventoryframework.runtime;
 
 import lombok.Data;
 import me.devnatan.inventoryframework.ViewContainer;

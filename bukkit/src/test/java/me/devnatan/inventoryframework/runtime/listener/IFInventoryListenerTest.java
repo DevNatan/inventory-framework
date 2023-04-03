@@ -1,4 +1,4 @@
-package me.devnatan.inventoryframework.bukkit.listener;
+package me.devnatan.inventoryframework.runtime.listener;
 
 import static me.devnatan.inventoryframework.TestUtils.createContextMock;
 import static me.devnatan.inventoryframework.TestUtils.createRootMock;

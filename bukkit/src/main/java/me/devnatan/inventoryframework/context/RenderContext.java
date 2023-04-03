@@ -4,7 +4,7 @@ import lombok.Getter;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
-import me.devnatan.inventoryframework.bukkit.BukkitViewer;
+import me.devnatan.inventoryframework.runtime.BukkitViewer;
 import me.devnatan.inventoryframework.component.BukkitItemComponentBuilder;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
 import org.bukkit.entity.Player;

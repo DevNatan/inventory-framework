@@ -8,7 +8,7 @@ import lombok.ToString;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
-import me.devnatan.inventoryframework.bukkit.BukkitViewer;
+import me.devnatan.inventoryframework.runtime.BukkitViewer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 

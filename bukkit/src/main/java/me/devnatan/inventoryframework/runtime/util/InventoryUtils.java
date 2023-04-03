@@ -1,4 +1,4 @@
-package me.devnatan.inventoryframework.bukkit.util;
+package me.devnatan.inventoryframework.runtime.util;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

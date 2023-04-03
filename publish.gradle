@@ -3,19 +3,16 @@ apply plugin: 'maven-publish'
 project.afterEvaluate {
     publishing {
         publications {
-            jitpack(MavenPublication) {
-                it.groupId = 'com.github.DevNatan'
-                it.artifactId = project.name.equals('bom')
-                        ? rootProject.name
-                        : rootProject.name + '-' + project.name
+            release(MavenPublication) {
+                it.groupId = rootProject.group
+
+
+                it.artifactId = project.name.equals('framework')
+                        ? rootProject.name + '-impl'
+                        : (project.name.equals('bom') ? rootProject.name : rootProject.name + '-' + project.name)
                 it.version = rootProject.version
 
-                if (!project.name.equals('bom'))
-                    it.from components.java
-                else
-                    afterEvaluate {
-                        from(components["javaPlatform"])
-                    }
+                it.from project.name.equals('bom') ? components["javaPlatform"] : components.java
 
                 it.pom {
                     url.set('https://gihub.com/DevNatan/inventory-framework.git')
@@ -36,8 +33,3 @@ project.afterEvaluate {
         }
     }
 }
-
-//
-//tasks.withType(GenerateModuleMetadata).configureEach {
-//    enabled = false
-//}
