@@ -1,15 +1,21 @@
+<!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
 <idea-plugin>
     <id>me.devnatan.inventoryframework.tooling</id>
-    <name>InventoryFramework Tooling</name>
-    <vendor>DevNatan</vendor>
+    <name>Inventory Framework Tooling Plugin</name>
+    <vendor url="https://github.com/DevNatan"
+            email="natanvnascimento@gmail.com">
+        DevNatan
+    </vendor>
 
     <depends>com.intellij.modules.platform</depends>
-    <depends>com.intellij.modules.lang</depends>
-    <depends>com.intellij.modules.externalSystem</depends>
-    <depends>com.intellij.modules.java</depends>
+
+    <resource-bundle>messages.InventoryFramework</resource-bundle>
 
     <extensions defaultExtensionNs="com.intellij">
-        <fileEditorProvider implementation="me.devnatan.inventoryframework.tooling.PreviewFileEditorProvider"/>
-
+        <toolWindow factoryClass="me.devnatan.inventoryframework.tooling.toolWindow.MyToolWindowFactory" id="MyToolWindow"/>
     </extensions>
+
+    <applicationListeners>
+        <listener class="me.devnatan.inventoryframework.tooling.listeners.MyFrameStateListener" topic="com.intellij.ide.FrameStateListener"/>
+    </applicationListeners>
 </idea-plugin>
