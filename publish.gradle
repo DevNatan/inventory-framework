@@ -1,45 +1,33 @@
 apply plugin: 'maven-publish'
 
 project.afterEvaluate {
-    final def project = it
     publishing {
         publications {
             jitpack(MavenPublication) {
-                configurePublication(project, it)
+                it.groupId = rootProject.group
+                it.artifactId = project.name.equals('framework')
+                        ? rootProject.name + '-impl'
+                        : (project.name.equals('bom') ? rootProject.name : rootProject.name + '-' + project.name)
+                it.version = rootProject.version
+
+                it.from project.name.equals('bom') ? components["javaPlatform"] : components.java
+
+                it.pom {
+                    url.set('https://gihub.com/DevNatan/inventory-framework.git')
+                    licenses {
+                        license {
+                            name = 'MIT license'
+                            url = 'https://github.com/DevNatan/inventory-framework/blob/main/LICENSE'
+                        }
+                    }
+
+                    scm {
+                        connection = 'scm:git:git://github.com/DevNatan/inventory-framework.git'
+                        developerConnection = 'scm:git:ssh://github.com/DevNatan/inventory-framework.git'
+                        url = 'https://github.com/DevNatan/inventory-framework'
+                    }
+                }
             }
-        }
-    }
-}
-
-tasks.withType(GenerateModuleMetadata).configureEach {
-    enabled = false
-}
-
-@SuppressWarnings('unused')
-def configurePublication(Project project, Publication publication) {
-    publication.groupId = 'com.github.DevNatan'
-
-    final def base = 'inventory-framework'
-    def fixedName = base + '-' + project.name
-    if (project.name == 'bom') fixedName = base
-
-    publication.artifactId = fixedName
-
-    publication.from components.java
-
-    publication.pom {
-        url.set('https://gihub.com/DevNatan/inventory-framework.git')
-        licenses {
-            license {
-                name = 'MIT license'
-                url = 'https://github.com/DevNatan/inventory-framework/blob/main/LICENSE'
-            }
-        }
-
-        scm {
-            connection = 'scm:git:git://github.com/DevNatan/inventory-framework.git'
-            developerConnection = 'scm:git:ssh://github.com/DevNatan/inventory-framework.git'
-            url = 'https://github.com/DevNatan/inventory-framework'
         }
     }
 }

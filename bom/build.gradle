@@ -1,26 +1,15 @@
 plugins {
-    alias(libs.plugins.shadowjar)
+    id 'java-platform'
+    id 'maven-publish'
 }
 
 apply from: '../publish.gradle'
 
 dependencies {
-    compileOnlyApi projects.api
-    compileOnlyApi projects.framework
-    compileOnlyApi projects.platform
-    compileOnlyApi projects.bukkit
-}
-
-jar {
-    manifest {
-        attributes(
-                'Implementation-Title': 'inventory-framework',
-                'Implementation-Version': project.version
-        )
-    }
-
-    from {
-        configurations.runtimeClasspath.filter { it.exists() }
-                .collect { it.isDirectory() ? it : zipTree(it) }
+    constraints {
+        api(projects.api)
+        api(projects.framework)
+        api(projects.platform)
+        api(projects.bukkit)
     }
 }

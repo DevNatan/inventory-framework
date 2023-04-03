@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.shadowjar)
 }
 
+apply from: '../library.gradle'
 apply from: '../publish.gradle'
 
 repositories {
@@ -11,10 +12,10 @@ repositories {
 }
 
 dependencies {
+    api projects.api
+    api projects.framework
+    api projects.platform
     compileOnly libs.spigot.api
-    implementation projects.api
-    implementation projects.framework
-    implementation projects.platform
     testCompileOnly libs.spigot.api
     testRuntimeOnly libs.spigot.api
     testImplementation projects.api
@@ -24,7 +25,6 @@ dependencies {
 shadowJar {
     archiveBaseName.set('inventory-framework')
     archiveAppendix.set('bukkit')
-    archiveClassifier.set('')
 }
 
 processResources {

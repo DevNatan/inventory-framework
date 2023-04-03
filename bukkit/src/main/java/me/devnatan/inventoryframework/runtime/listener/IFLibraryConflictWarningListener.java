@@ -1,4 +1,4 @@
-package me.devnatan.inventoryframework.bukkit.listener;
+package me.devnatan.inventoryframework.runtime.listener;
 
 import lombok.RequiredArgsConstructor;
 import org.bukkit.ChatColor;

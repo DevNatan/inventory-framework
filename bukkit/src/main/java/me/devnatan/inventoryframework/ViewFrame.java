@@ -8,15 +8,15 @@ import java.util.function.UnaryOperator;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import me.devnatan.inventoryframework.bukkit.BukkitViewer;
-import me.devnatan.inventoryframework.bukkit.listener.IFInventoryListener;
-import me.devnatan.inventoryframework.bukkit.listener.IFLibraryConflictWarningListener;
-import me.devnatan.inventoryframework.bukkit.thirdparty.Metrics;
 import me.devnatan.inventoryframework.feature.DefaultFeatureInstaller;
 import me.devnatan.inventoryframework.feature.Feature;
 import me.devnatan.inventoryframework.feature.FeatureInstaller;
 import me.devnatan.inventoryframework.internal.BukkitElementFactory;
 import me.devnatan.inventoryframework.internal.PlatformUtils;
+import me.devnatan.inventoryframework.runtime.BukkitViewer;
+import me.devnatan.inventoryframework.runtime.listener.IFInventoryListener;
+import me.devnatan.inventoryframework.runtime.listener.IFLibraryConflictWarningListener;
+import me.devnatan.inventoryframework.runtime.thirdparty.Metrics;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.Plugin;
@@ -33,7 +33,7 @@ public class ViewFrame extends IFViewFrame<ViewFrame> implements FeatureInstalle
     private static final String BSTATS_SYSTEM_PROP = "inventory-framework.enable-bstats";
     private static final int BSTATS_PROJECT_ID = 15518;
     private static final String ROOT_PKG = "me.devnatan.inventoryframework";
-    private static final String MAIN_PLUGIN_QNAME = "me.devnatan.inventoryframework.bukkit.InventoryFramework";
+    private static final String MAIN_PLUGIN_QNAME = "me.devnatan.inventoryframework.runtime.InventoryFramework";
 
     private static final String RELOCATION_MESSAGE =
             "Inventory Framework is running as a shaded non-relocated library. It's extremely recommended that "

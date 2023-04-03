@@ -1,8 +1,8 @@
 package me.devnatan.inventoryframework.internal;
 
 import static java.util.Objects.requireNonNull;
-import static me.devnatan.inventoryframework.bukkit.util.InventoryUtils.checkInventoryTypeSupport;
-import static me.devnatan.inventoryframework.bukkit.util.InventoryUtils.toInventoryType;
+import static me.devnatan.inventoryframework.runtime.util.InventoryUtils.checkInventoryTypeSupport;
+import static me.devnatan.inventoryframework.runtime.util.InventoryUtils.toInventoryType;
 import static me.devnatan.inventoryframework.util.IsTypeOf.isTypeOf;
 import static org.bukkit.Bukkit.createInventory;
 
@@ -12,8 +12,6 @@ import me.devnatan.inventoryframework.View;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.ViewType;
 import me.devnatan.inventoryframework.Viewer;
-import me.devnatan.inventoryframework.bukkit.BukkitViewContainer;
-import me.devnatan.inventoryframework.bukkit.BukkitViewer;
 import me.devnatan.inventoryframework.component.BukkitItemComponentBuilder;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.ComponentBuilder;
@@ -30,6 +28,8 @@ import me.devnatan.inventoryframework.context.SlotContext;
 import me.devnatan.inventoryframework.context.SlotRenderContext;
 import me.devnatan.inventoryframework.logging.Logger;
 import me.devnatan.inventoryframework.logging.NoopLogger;
+import me.devnatan.inventoryframework.runtime.BukkitViewContainer;
+import me.devnatan.inventoryframework.runtime.BukkitViewer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
