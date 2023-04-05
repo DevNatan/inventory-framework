@@ -23,10 +23,12 @@ public final class ItemCloseOnClickInterceptor implements PipelineInterceptor<Vi
         if (event.getSlotType() == InventoryType.SlotType.OUTSIDE) return;
 
         final Component component = context.getComponent();
-        if (component == null) return;
-        if (component instanceof ItemComponent && !((ItemComponent) component).isCloseOnClick()) return;
+        if (!(component instanceof ItemComponent)) return;
 
-        context.close();
-        pipeline.finish();
+        final ItemComponent item = (ItemComponent) component;
+        if (item.isCloseOnClick()) {
+            context.close();
+            pipeline.finish();
+        }
     }
 }
