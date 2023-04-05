@@ -1,9 +1,12 @@
 package me.devnatan.inventoryframework.component;
 
+import java.util.Set;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFSlotRenderContext;
+import me.devnatan.inventoryframework.state.State;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.UnmodifiableView;
 
 /**
  * A component represents one or {@link ComponentComposition more} items within a {@link VirtualView}.
@@ -70,4 +73,12 @@ public interface Component extends VirtualView {
      * @param context The context that this component will be cleared from.
      */
     void clear(@NotNull IFContext context);
+
+    /**
+     * An unmodifiable set of all states that this component is watching.
+     *
+     * @return All states that this component is watching.
+     */
+    @UnmodifiableView
+    Set<State<?>> getWatchingStates();
 }

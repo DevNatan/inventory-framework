@@ -1,9 +1,13 @@
 package me.devnatan.inventoryframework.component;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 import lombok.AccessLevel;
 import lombok.Getter;
+import me.devnatan.inventoryframework.state.State;
 import org.jetbrains.annotations.NotNull;
 
 @Getter(AccessLevel.PROTECTED)
@@ -13,6 +17,7 @@ class DefaultComponentBuilder<S extends ComponentBuilder<S>> implements Componen
     private String referenceKey;
     private Map<String, Object> data;
     private boolean cancelOnClick, closeOnClick;
+    private final Set<State<?>> watching = new LinkedHashSet<>();
 
     @Override
     public S referencedBy(@NotNull String key) {
@@ -36,6 +41,12 @@ class DefaultComponentBuilder<S extends ComponentBuilder<S>> implements Componen
     @Override
     public S closeOnClick() {
         closeOnClick = !closeOnClick;
+        return (S) this;
+    }
+
+    @Override
+    public S watch(State<?>... states) {
+        watching.addAll(Arrays.asList(states));
         return (S) this;
     }
 }

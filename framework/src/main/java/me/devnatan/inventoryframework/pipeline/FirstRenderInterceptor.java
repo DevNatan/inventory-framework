@@ -1,11 +1,9 @@
 package me.devnatan.inventoryframework.pipeline;
 
-import java.util.Set;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.ComponentFactory;
-import me.devnatan.inventoryframework.component.ItemComponent;
 import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.context.IFSlotRenderContext;
 import me.devnatan.inventoryframework.internal.ElementFactory;
@@ -43,42 +41,59 @@ public final class FirstRenderInterceptor implements PipelineInterceptor<Virtual
         }
     }
 
+    /**
+     * Registers all components set up from {@link IFRenderContext#getComponentFactories()} to
+     * the renderization context.
+     *
+     * @param context The context.
+     */
     private void registerComponents(IFRenderContext context) {
         context.getComponentFactories().stream().map(ComponentFactory::create).forEach(context::addComponent);
     }
 
+    /**
+     * Registers all components as listeners of the states they want to watch to.
+     * <p>
+     * If the component is a {@link StateManagementListener} the component itself is registered as
+     * the state watcher.
+     *
+     * @param context   The context.
+     * @param component The component.
+     */
     private void setupWatchers(IFRenderContext context, Component component) {
-        if (!(component instanceof ItemComponent)) return;
+        for (final State<?> watch : component.getWatchingStates()) {
+            final StateManagementListener listener;
+            if (component instanceof StateManagementListener) listener = (StateManagementListener) component;
+            else
+                listener = new StateManagementListener() {
+                    @Override
+                    public void stateRegistered(@NotNull State<?> state, Object caller) {}
 
-        final Set<State<?>> watches = ((ItemComponent) component).getWatching();
-        for (final State<?> watch : watches) {
-            context.watchState(watch.internalId(), new StateManagementListener() {
-                @Override
-                public void stateRegistered(@NotNull State<?> state, Object caller) {}
+                    @Override
+                    public void stateUnregistered(@NotNull State<?> state, Object caller) {}
 
-                @Override
-                public void stateUnregistered(@NotNull State<?> state, Object caller) {}
+                    @Override
+                    public void stateValueInitialized(
+                            @NotNull StateValueHost host, @NotNull StateValue value, Object initialValue) {}
 
-                @Override
-                public void stateValueInitialized(
-                        @NotNull StateValueHost host, @NotNull StateValue value, Object initialValue) {}
+                    @Override
+                    public void stateValueGet(
+                            @NotNull State<?> state,
+                            @NotNull StateValueHost host,
+                            @NotNull StateValue internalValue,
+                            Object rawValue) {}
 
-                @Override
-                public void stateValueGet(
-                        @NotNull State<?> state,
-                        @NotNull StateValueHost host,
-                        @NotNull StateValue internalValue,
-                        Object rawValue) {}
+                    @Override
+                    public void stateValueSet(
+                            @NotNull StateValueHost host,
+                            @NotNull StateValue value,
+                            Object rawOldValue,
+                            Object rawNewValue) {
+                        context.updateRoot();
+                    }
+                };
 
-                @Override
-                public void stateValueSet(
-                        @NotNull StateValueHost host,
-                        @NotNull StateValue value,
-                        Object rawOldValue,
-                        Object rawNewValue) {
-                    context.updateRoot();
-                }
-            });
+            context.watchState(watch.internalId(), listener);
         }
     }
 }

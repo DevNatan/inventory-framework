@@ -1,8 +1,5 @@
 package me.devnatan.inventoryframework.component;
 
-import java.util.Arrays;
-import java.util.LinkedHashSet;
-import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import me.devnatan.inventoryframework.context.IFSlotClickContext;
@@ -11,7 +8,6 @@ import me.devnatan.inventoryframework.context.IFSlotRenderContext;
 import me.devnatan.inventoryframework.context.SlotClickContext;
 import me.devnatan.inventoryframework.context.SlotContext;
 import me.devnatan.inventoryframework.context.SlotRenderContext;
-import me.devnatan.inventoryframework.state.State;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,8 +23,6 @@ public final class BukkitItemComponentBuilder extends DefaultComponentBuilder<Bu
     private Consumer<? super IFSlotClickContext> clickHandler;
     private Consumer<? super IFSlotContext> updateHandler;
 
-    private final Set<State<?>> watching = new LinkedHashSet<>();
-
     @Override
     public boolean isContainedWithin(int position) {
         return position == slot;
@@ -40,12 +34,6 @@ public final class BukkitItemComponentBuilder extends DefaultComponentBuilder<Bu
     @Override
     public BukkitItemComponentBuilder withSlot(int slot) {
         this.slot = slot;
-        return this;
-    }
-
-    @Override
-    public BukkitItemComponentBuilder watch(State<?>... states) {
-        watching.addAll(Arrays.asList(states));
         return this;
     }
 

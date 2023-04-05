@@ -1,5 +1,6 @@
 package me.devnatan.inventoryframework.component;
 
+import me.devnatan.inventoryframework.state.State;
 import org.jetbrains.annotations.NotNull;
 
 public interface ComponentBuilder<S extends ComponentBuilder<S>> {
@@ -66,4 +67,12 @@ public interface ComponentBuilder<S extends ComponentBuilder<S>> {
      * @return This component builder.
      */
     S closeOnClick();
+
+    /**
+     * Watches a state, updating that item every time the state is updated.
+     *
+     * @param states The state to watch.
+     * @return This component builder.
+     */
+    S watch(State<?>... states);
 }
