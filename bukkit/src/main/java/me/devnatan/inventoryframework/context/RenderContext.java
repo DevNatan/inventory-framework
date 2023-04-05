@@ -1,6 +1,7 @@
 package me.devnatan.inventoryframework.context;
 
 import lombok.Getter;
+import lombok.ToString;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
@@ -14,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @Getter
+@ToString(callSuper = true)
 public final class RenderContext extends PlatformRenderContext<BukkitItemComponentBuilder> implements Context {
 
     private static final LayoutSlot filledReservedCharLayoutSlot =

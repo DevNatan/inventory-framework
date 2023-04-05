@@ -273,7 +273,8 @@ public final class PaginationImpl extends StateValue implements Pagination {
      */
     // TODO needs caching
     private int getPagesCount() {
-        return (int) Math.ceil((double) getSourceOrThrow().size() / getPageSize());
+        List<?> source = getSourceOrThrow();
+        return (int) Math.ceil((double) source.size() / getPageSize());
     }
 
     /**

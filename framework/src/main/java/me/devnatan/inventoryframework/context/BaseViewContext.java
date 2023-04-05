@@ -1,11 +1,11 @@
 package me.devnatan.inventoryframework.context;
 
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -21,10 +21,6 @@ import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.Pagination;
 import me.devnatan.inventoryframework.pipeline.StandardPipelinePhases;
 import me.devnatan.inventoryframework.state.DefaultStateValueHost;
-import me.devnatan.inventoryframework.state.State;
-import me.devnatan.inventoryframework.state.StateValue;
-import me.devnatan.inventoryframework.state.StateValueHost;
-import me.devnatan.inventoryframework.state.StateWatcher;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -35,7 +31,7 @@ import org.jetbrains.annotations.UnmodifiableView;
 @ApiStatus.NonExtendable
 @ToString
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
-public class BaseViewContext implements IFContext, StateValueHost {
+public class BaseViewContext extends DefaultStateValueHost implements IFContext {
 
     @Getter
     @EqualsAndHashCode.Include
@@ -47,14 +43,11 @@ public class BaseViewContext implements IFContext, StateValueHost {
     /* container can be null on pre-render/intermediate contexts */
     private final @Nullable ViewContainer container;
 
-    @ToString.Exclude
-    private final StateValueHost stateValueHost = new DefaultStateValueHost();
-
     protected final Map<String, Viewer> viewers = new HashMap<>();
     protected ViewConfig config;
 
     @ToString.Exclude
-    private final List<Component> components = new ArrayList<>();
+    private final List<Component> components = new LinkedList<>();
 
     private final Deque<Integer> markedForRemoval = new ArrayDeque<>();
 
@@ -155,7 +148,7 @@ public class BaseViewContext implements IFContext, StateValueHost {
     @Override
     public void addComponent(@NotNull Component component) {
         synchronized (components) {
-            components.add(component);
+            components.add(0, component);
         }
     }
 
@@ -179,25 +172,5 @@ public class BaseViewContext implements IFContext, StateValueHost {
     @Override
     public boolean isMarkedForRemoval(int componentIndex) {
         return markedForRemoval.contains(componentIndex);
-    }
-
-    @Override
-    public Object getState(State<?> state) {
-        return stateValueHost.getState(state);
-    }
-
-    @Override
-    public void initState(long id, @NotNull StateValue value, Object initialValue) {
-        stateValueHost.initState(id, value, initialValue);
-    }
-
-    @Override
-    public void updateState(long id, Object value) {
-        stateValueHost.updateState(id, value);
-    }
-
-    @Override
-    public void watchState(long id, StateWatcher listener) {
-        stateValueHost.watchState(id, listener);
     }
 }

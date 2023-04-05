@@ -34,6 +34,11 @@ public class OpenContext extends ConfinedContext implements IFOpenContext, Conte
     }
 
     @Override
+    public @NotNull IFContext getParent() {
+        throw new RuntimeException("OpenContext parent can't be accessed");
+    }
+
+    @Override
     public void close() {
         unsupportedOperation("#setCancelled(true)");
     }
