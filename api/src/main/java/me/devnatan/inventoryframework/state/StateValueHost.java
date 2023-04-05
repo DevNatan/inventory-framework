@@ -34,4 +34,6 @@ public interface StateValueHost {
 
     @ApiStatus.Internal
     void updateState(long id, Object value);
+
+    void watchState(long id, StateManagementListener listener);
 }

@@ -4,8 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 public interface MutableIntState extends MutableState<Integer> {
 
-	int increment(@NotNull StateValueHost host);
+    int increment(@NotNull StateValueHost host);
 
-	int decrement(@NotNull StateValueHost host);
-
+    int decrement(@NotNull StateValueHost host);
 }

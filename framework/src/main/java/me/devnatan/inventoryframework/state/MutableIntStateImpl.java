@@ -8,25 +8,24 @@ public final class MutableIntStateImpl extends BaseState<Integer> implements Mut
         super(id, valueFactory);
     }
 
-	@Override
-	public int increment(@NotNull StateValueHost host) {
-		return update(host, 1);
-	}
+    @Override
+    public int increment(@NotNull StateValueHost host) {
+        return update(host, 1);
+    }
 
-	@Override
-	public int decrement(@NotNull StateValueHost host) {
-		return update(host, -1);
-	}
+    @Override
+    public int decrement(@NotNull StateValueHost host) {
+        return update(host, -1);
+    }
 
-	private int update(@NotNull StateValueHost host, int diff) {
-		final int curr = get(host);
-		set(curr + diff, host);
-		return curr + diff;
-	}
+    private int update(@NotNull StateValueHost host, int diff) {
+        final int curr = get(host);
+        set(curr + diff, host);
+        return curr + diff;
+    }
 
-	@Override
-	public void set(Integer value, @NotNull StateValueHost host) {
-		System.out.println("Updated int to " + value);
-		host.updateState(internalId(), value);
-	}
+    @Override
+    public void set(Integer value, @NotNull StateValueHost host) {
+        host.updateState(internalId(), value);
+    }
 }

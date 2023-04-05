@@ -3,6 +3,8 @@ package me.devnatan.inventoryframework.component;
 import java.util.Set;
 import java.util.function.Consumer;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFSlotClickContext;
@@ -28,7 +30,9 @@ public class ItemComponent implements Component, InteractionHandler {
     private final Consumer<? super IFSlotContext> updateHandler;
     private final Consumer<? super IFSlotClickContext> clickHandler;
 
-	private final Set<State<?>> watching;
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private final Set<State<?>> watching;
 
     @Override
     public @NotNull VirtualView getRoot() {
@@ -67,11 +71,6 @@ public class ItemComponent implements Component, InteractionHandler {
     }
 
     @Override
-    public boolean shouldBeUpdated() {
-        return getRenderHandler() != null;
-    }
-
-    @Override
     public void clear(@NotNull IFContext context) {
         context.getContainer().removeItem(getPosition());
     }
@@ -80,5 +79,10 @@ public class ItemComponent implements Component, InteractionHandler {
     public void clicked(@NotNull Component component, @NotNull IFSlotClickContext context) {
         if (clickHandler == null) return;
         clickHandler.accept(context);
+    }
+
+    @Override
+    public boolean shouldBeUpdated() {
+        return getRenderHandler() != null;
     }
 }

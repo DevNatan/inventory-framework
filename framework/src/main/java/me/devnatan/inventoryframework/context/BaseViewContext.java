@@ -21,6 +21,9 @@ import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.Pagination;
 import me.devnatan.inventoryframework.pipeline.StandardPipelinePhases;
 import me.devnatan.inventoryframework.state.DefaultStateValueHost;
+import me.devnatan.inventoryframework.state.State;
+import me.devnatan.inventoryframework.state.StateManagementListener;
+import me.devnatan.inventoryframework.state.StateValue;
 import me.devnatan.inventoryframework.state.StateValueHost;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -32,7 +35,7 @@ import org.jetbrains.annotations.UnmodifiableView;
 @ApiStatus.NonExtendable
 @ToString
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
-public class BaseViewContext extends DefaultStateValueHost implements IFContext {
+public class BaseViewContext implements IFContext, StateValueHost {
 
     @Getter
     @EqualsAndHashCode.Include
@@ -176,5 +179,25 @@ public class BaseViewContext extends DefaultStateValueHost implements IFContext 
     @Override
     public boolean isMarkedForRemoval(int componentIndex) {
         return markedForRemoval.contains(componentIndex);
+    }
+
+    @Override
+    public Object getState(State<?> state) {
+        return stateValueHost.getState(state);
+    }
+
+    @Override
+    public void initState(long id, @NotNull StateValue value, Object initialValue) {
+        stateValueHost.initState(id, value, initialValue);
+    }
+
+    @Override
+    public void updateState(long id, Object value) {
+        stateValueHost.updateState(id, value);
+    }
+
+    @Override
+    public void watchState(long id, StateManagementListener listener) {
+        stateValueHost.watchState(id, listener);
     }
 }

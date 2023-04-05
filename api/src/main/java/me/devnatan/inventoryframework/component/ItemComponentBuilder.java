@@ -2,7 +2,6 @@ package me.devnatan.inventoryframework.component;
 
 import me.devnatan.inventoryframework.state.State;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
 
 public interface ItemComponentBuilder<S extends ItemComponentBuilder<S>> extends ComponentBuilder<S> {
 

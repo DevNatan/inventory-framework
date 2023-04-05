@@ -2,7 +2,6 @@ package me.devnatan.inventoryframework.component;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import lombok.AccessLevel;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
