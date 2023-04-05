@@ -23,17 +23,17 @@ import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.internal.ElementFactory;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
 import me.devnatan.inventoryframework.state.State;
-import me.devnatan.inventoryframework.state.StateManagementListener;
 import me.devnatan.inventoryframework.state.StateRegistry;
 import me.devnatan.inventoryframework.state.StateValue;
 import me.devnatan.inventoryframework.state.StateValueHost;
+import me.devnatan.inventoryframework.state.StateWatcher;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.annotations.UnmodifiableView;
 
 @ApiStatus.NonExtendable
-public class DefaultRootView implements RootView, StateManagementListener {
+public class DefaultRootView implements RootView, StateWatcher {
 
     private final UUID id = UUID.randomUUID();
     private ViewConfig config;

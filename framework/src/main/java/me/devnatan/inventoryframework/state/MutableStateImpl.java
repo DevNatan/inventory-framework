@@ -10,6 +10,6 @@ public final class MutableStateImpl<T> extends BaseState<T> implements MutableSt
 
     @Override
     public void set(T value, @NotNull StateValueHost host) {
-        host.updateState(internalId(), host);
+        host.updateState(internalId(), value);
     }
 }

@@ -1,14 +1,20 @@
 package me.devnatan.inventoryframework.component;
 
+import java.util.Collections;
+import java.util.Set;
 import java.util.function.Consumer;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.context.IFSlotContext;
 import me.devnatan.inventoryframework.context.IFSlotRenderContext;
+import me.devnatan.inventoryframework.state.State;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.UnmodifiableView;
 
 @Data
 @ApiStatus.NonExtendable
@@ -25,6 +31,10 @@ public class ItemComponent implements Component, InteractionHandler {
     private final Consumer<? super IFSlotRenderContext> renderHandler;
     private final Consumer<? super IFSlotContext> updateHandler;
     private final Consumer<? super IFSlotClickContext> clickHandler;
+
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private final Set<State<?>> watching;
 
     @Override
     public @NotNull VirtualView getRoot() {
@@ -63,18 +73,23 @@ public class ItemComponent implements Component, InteractionHandler {
     }
 
     @Override
-    public boolean shouldBeUpdated() {
-        return getRenderHandler() != null;
+    public void clear(@NotNull IFContext context) {
+        context.getContainer().removeItem(getPosition());
     }
 
     @Override
-    public void clear(@NotNull IFContext context) {
-        context.getContainer().removeItem(getPosition());
+    public @UnmodifiableView Set<State<?>> getWatchingStates() {
+        return Collections.unmodifiableSet(watching);
     }
 
     @Override
     public void clicked(@NotNull Component component, @NotNull IFSlotClickContext context) {
         if (clickHandler == null) return;
         clickHandler.accept(context);
+    }
+
+    @Override
+    public boolean shouldBeUpdated() {
+        return getRenderHandler() != null;
     }
 }

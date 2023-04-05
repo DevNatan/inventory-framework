@@ -2,7 +2,7 @@ package me.devnatan.inventoryframework.state;
 
 import org.jetbrains.annotations.NotNull;
 
-public interface StateManagementListener {
+public interface StateWatcher {
 
     /**
      * Called when a state is registered on a host.

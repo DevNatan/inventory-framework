@@ -1,11 +1,15 @@
 package me.devnatan.inventoryframework.component;
 
+import java.util.Collections;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.context.IFSlotRenderContext;
+import me.devnatan.inventoryframework.state.State;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.UnmodifiableView;
 
 @RequiredArgsConstructor
 public class FakeComponent implements Component, InteractionHandler {
@@ -56,6 +60,11 @@ public class FakeComponent implements Component, InteractionHandler {
     @Override
     public void clear(@NotNull IFContext context) {
         context.getContainer().removeItem(position);
+    }
+
+    @Override
+    public @UnmodifiableView Set<State<?>> getWatchingStates() {
+        return Collections.emptySet();
     }
 
     @Override

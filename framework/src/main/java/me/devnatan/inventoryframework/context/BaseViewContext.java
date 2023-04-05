@@ -1,11 +1,11 @@
 package me.devnatan.inventoryframework.context;
 
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -21,7 +21,6 @@ import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.Pagination;
 import me.devnatan.inventoryframework.pipeline.StandardPipelinePhases;
 import me.devnatan.inventoryframework.state.DefaultStateValueHost;
-import me.devnatan.inventoryframework.state.StateValueHost;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -44,14 +43,11 @@ public class BaseViewContext extends DefaultStateValueHost implements IFContext 
     /* container can be null on pre-render/intermediate contexts */
     private final @Nullable ViewContainer container;
 
-    @ToString.Exclude
-    private final StateValueHost stateValueHost = new DefaultStateValueHost();
-
     protected final Map<String, Viewer> viewers = new HashMap<>();
     protected ViewConfig config;
 
     @ToString.Exclude
-    private final List<Component> components = new ArrayList<>();
+    private final List<Component> components = new LinkedList<>();
 
     private final Deque<Integer> markedForRemoval = new ArrayDeque<>();
 
@@ -152,7 +148,7 @@ public class BaseViewContext extends DefaultStateValueHost implements IFContext 
     @Override
     public void addComponent(@NotNull Component component) {
         synchronized (components) {
-            components.add(component);
+            components.add(0, component);
         }
     }
 

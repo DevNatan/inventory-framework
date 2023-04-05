@@ -20,7 +20,7 @@ public class TestItemComponentBuilder extends DefaultComponentBuilder<TestItemCo
     }
 
     @Override
-    public TestItemComponentBuilder watch(@NotNull State<?> state) {
+    public TestItemComponentBuilder watch(State<?>... states) {
         return null;
     }
 

@@ -1,19 +1,17 @@
 package me.devnatan.inventoryframework.component;
 
 import java.util.function.Consumer;
-import lombok.Getter;
+import java.util.function.Supplier;
 import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.context.IFSlotContext;
 import me.devnatan.inventoryframework.context.IFSlotRenderContext;
 import me.devnatan.inventoryframework.context.SlotClickContext;
 import me.devnatan.inventoryframework.context.SlotContext;
 import me.devnatan.inventoryframework.context.SlotRenderContext;
-import me.devnatan.inventoryframework.state.State;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-@Getter
 public final class BukkitItemComponentBuilder extends DefaultComponentBuilder<BukkitItemComponentBuilder>
         implements ItemComponentBuilder<BukkitItemComponentBuilder>, ComponentFactory {
 
@@ -30,16 +28,13 @@ public final class BukkitItemComponentBuilder extends DefaultComponentBuilder<Bu
         return position == slot;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public BukkitItemComponentBuilder withSlot(int slot) {
         this.slot = slot;
         return this;
-    }
-
-    @Override
-    public BukkitItemComponentBuilder watch(@NotNull State<?> state) {
-        return null;
     }
 
     /**
@@ -66,6 +61,18 @@ public final class BukkitItemComponentBuilder extends DefaultComponentBuilder<Bu
     public BukkitItemComponentBuilder onRender(@Nullable Consumer<? super SlotRenderContext> renderHandler) {
         this.renderHandler = (Consumer<? super IFSlotRenderContext>) renderHandler;
         return this;
+    }
+
+    /**
+     * Called when the item is rendered.
+     * <p>
+     * This handler is called every time the item or the view that owns it is updated.
+     *
+     * @param renderFactory The render handler.
+     * @return This item builder.
+     */
+    public BukkitItemComponentBuilder onRender(@NotNull Supplier<@Nullable ItemStack> renderFactory) {
+        return onRender(render -> render.setItem(renderFactory.get()));
     }
 
     /**
@@ -98,12 +105,13 @@ public final class BukkitItemComponentBuilder extends DefaultComponentBuilder<Bu
     @Override
     public @NotNull Component create() {
         return new ItemComponent(
-                getSlot(),
-                getItem(),
+                slot,
+                item,
                 isCancelOnClick(),
                 isCloseOnClick(),
-                getRenderHandler(),
-                getUpdateHandler(),
-                getClickHandler());
+                renderHandler,
+                updateHandler,
+                clickHandler,
+                getWatching());
     }
 }

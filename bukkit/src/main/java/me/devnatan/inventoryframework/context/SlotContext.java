@@ -9,6 +9,9 @@ import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.runtime.BukkitViewContainer;
 import me.devnatan.inventoryframework.runtime.BukkitViewer;
+import me.devnatan.inventoryframework.state.State;
+import me.devnatan.inventoryframework.state.StateValue;
+import me.devnatan.inventoryframework.state.StateWatcher;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
@@ -122,5 +125,25 @@ public class SlotContext extends ConfinedContext implements IFSlotContext, Conte
     @Override
     public boolean isMarkedForRemoval(int componentIndex) {
         return getParent().isMarkedForRemoval(componentIndex);
+    }
+
+    @Override
+    public Object getState(State<?> state) {
+        return getParent().getState(state);
+    }
+
+    @Override
+    public void initState(long id, @NotNull StateValue value, Object initialValue) {
+        getParent().initState(id, value, initialValue);
+    }
+
+    @Override
+    public void updateState(long id, Object value) {
+        getParent().updateState(id, value);
+    }
+
+    @Override
+    public void watchState(long id, StateWatcher listener) {
+        getParent().watchState(id, listener);
     }
 }

@@ -1,6 +1,8 @@
 package me.devnatan.inventoryframework.state;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import org.jetbrains.annotations.NotNull;
@@ -10,19 +12,24 @@ import org.jetbrains.annotations.NotNull;
  */
 public class DefaultStateValueHost implements StateValueHost {
 
+    public static final Object UNINITIALIZED_VALUE = new Object();
+
     private final Map<Long, StateValue> valuesMap = new HashMap<>();
+    private final Map<Long, List<StateWatcher>> listeners = new HashMap<>();
 
     @Override
     public Object getState(State<?> state) {
         final long id = state.internalId();
+        final StateValue value;
         if (!valuesMap.containsKey(id)) {
-            final StateValue value = state.factory().create(this, state);
-            initState(id, value, null);
+            value = state.factory().create(this, state);
+            initState(id, value, UNINITIALIZED_VALUE);
+        } else {
+            value = valuesMap.get(id);
         }
 
-        final StateValue stateValue = valuesMap.get(id);
-        final Object result = stateValue.get();
-        callListeners(stateValue, listener -> listener.stateValueGet(state, this, stateValue, result));
+        final Object result = value.get();
+        callListeners(value, listener -> listener.stateValueGet(state, this, value, result));
         return result;
     }
 
@@ -40,9 +47,17 @@ public class DefaultStateValueHost implements StateValueHost {
         callListeners(stateValue, listener -> listener.stateValueSet(this, stateValue, currValue, value));
     }
 
-    private void callListeners(@NotNull StateValue value, Consumer<StateManagementListener> call) {
-        if (value instanceof StateManagementListener) call.accept((StateManagementListener) value);
-        if (value.getState() instanceof StateManagementListener)
-            call.accept((StateManagementListener) value.getState());
+    @Override
+    public void watchState(long id, StateWatcher listener) {
+        listeners.computeIfAbsent(id, $ -> new ArrayList<>()).add(listener);
+    }
+
+    private void callListeners(@NotNull StateValue value, Consumer<StateWatcher> call) {
+        if (value instanceof StateWatcher) call.accept((StateWatcher) value);
+        if (value.getState() instanceof StateWatcher) call.accept((StateWatcher) value.getState());
+
+        if (!listeners.containsKey(value.getId())) return;
+
+        listeners.get(value.getId()).forEach(call);
     }
 }

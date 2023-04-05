@@ -33,6 +33,8 @@ import me.devnatan.inventoryframework.state.ComputedValue;
 import me.devnatan.inventoryframework.state.ImmutableValue;
 import me.devnatan.inventoryframework.state.InitialDataStateValue;
 import me.devnatan.inventoryframework.state.LazyValue;
+import me.devnatan.inventoryframework.state.MutableIntState;
+import me.devnatan.inventoryframework.state.MutableIntStateImpl;
 import me.devnatan.inventoryframework.state.MutableState;
 import me.devnatan.inventoryframework.state.MutableStateImpl;
 import me.devnatan.inventoryframework.state.MutableValue;
@@ -82,6 +84,7 @@ public abstract class PlatformView<
      * @return A state with an initial value.
      */
     protected final <T> State<T> state(T initialValue) {
+        requireNotInitialized();
         final long id = State.next();
         final StateValueFactory factory = (host, state) -> new ImmutableValue(state, initialValue);
         final State<T> state = new BaseState<>(id, factory);
@@ -94,11 +97,11 @@ public abstract class PlatformView<
      * Creates a {@link MutableState mutable state} with an initial value.
      *
      * <pre>{@code
-     * MutableState<Integer> intState = mutableState(0);
+     * MutableState<String> textState = mutableState("");
      *
-     * intState.get(...); // 0
-     * intState.set(4, ...);
-     * intState.get(...); // 4
+     * textState.get(...); // ""
+     * textState.set("abc", ...);
+     * textState.get(...); // "abc"
      * }</pre>
      *
      * @param initialValue The initial value of the state.
@@ -106,9 +109,51 @@ public abstract class PlatformView<
      * @return A mutable state with an initial value.
      */
     protected final <T> MutableState<T> mutableState(T initialValue) {
+        requireNotInitialized();
         final long id = State.next();
         final StateValueFactory factory = (host, state) -> new MutableValue(state, initialValue);
         final MutableState<T> state = new MutableStateImpl<>(id, factory);
+        stateRegistry.registerState(state, this);
+
+        return state;
+    }
+
+    /**
+     * Creates a {@link MutableState mutable state} with an initial value.
+     *
+     * <pre>{@code
+     * MutableIntState intState = mutableIntState();
+     *
+     * intState.get(...); // 0
+     * intState.set(4, ...);
+     * intState.get(...); // 4
+     * }</pre>
+     *
+     * @return A mutable state with an initial value.
+     */
+    protected final MutableIntState mutableIntState() {
+        return mutableIntState(0);
+    }
+
+    /**
+     * Creates a {@link MutableState mutable state} with an initial value.
+     *
+     * <pre>{@code
+     * MutableIntState intState = mutableIntState(0);
+     *
+     * intState.get(...); // 0
+     * intState.set(4, ...);
+     * intState.get(...); // 4
+     * }</pre>
+     *
+     * @param initialValue The initial value of the state.
+     * @return A mutable state with an initial value.
+     */
+    protected final MutableIntState mutableIntState(int initialValue) {
+        requireNotInitialized();
+        final long id = State.next();
+        final StateValueFactory factory = (host, state) -> new MutableValue(state, initialValue);
+        final MutableIntState state = new MutableIntStateImpl(id, factory);
         stateRegistry.registerState(state, this);
 
         return state;
@@ -131,6 +176,7 @@ public abstract class PlatformView<
      * @return An immutable computed state.
      */
     protected final <T> State<T> computedState(@NotNull Function<TContext, T> computation) {
+        requireNotInitialized();
         final long id = State.next();
         @SuppressWarnings("unchecked")
         final StateValueFactory factory =
@@ -158,6 +204,7 @@ public abstract class PlatformView<
      * @return An immutable computed state.
      */
     protected final <T> State<T> computedState(@NotNull Supplier<T> computation) {
+        requireNotInitialized();
         final long id = State.next();
         final StateValueFactory factory = (host, state) -> new ComputedValue(state, computation);
         final State<T> state = new BaseState<>(id, factory);
@@ -184,6 +231,7 @@ public abstract class PlatformView<
      * @return A lazy state.
      */
     protected final <T> State<T> lazyState(@NotNull Function<TContext, T> computation) {
+        requireNotInitialized();
         final long id = State.next();
         @SuppressWarnings("unchecked")
         final StateValueFactory factory =
@@ -212,6 +260,7 @@ public abstract class PlatformView<
      * @return A lazy state.
      */
     protected final <T> State<T> lazyState(@NotNull Supplier<T> computation) {
+        requireNotInitialized();
         final long id = State.next();
         final StateValueFactory factory = (host, state) -> new LazyValue(state, computation);
         final State<T> state = new BaseState<>(id, factory);
@@ -236,6 +285,7 @@ public abstract class PlatformView<
      * @return A state computed with an initial opening data value.
      */
     protected final <T> State<T> initialState(@NotNull String key) {
+        requireNotInitialized();
         // TODO missing use of `key`
         final long id = State.next();
         final State<T> state = new BaseState<>(id, (host, valueState) -> new InitialDataStateValue(valueState, host));
@@ -261,6 +311,7 @@ public abstract class PlatformView<
      * @return A state computed with an initial opening data value.
      */
     protected final <T> State<T> initialState(@NotNull Class<? extends T> stateClassType) {
+        requireNotInitialized();
         // TODO missing use of `stateClassType`
         final long id = State.next();
         final State<T> state = new BaseState<>(id, (host, valueState) -> new InitialDataStateValue(valueState, host));
@@ -313,7 +364,7 @@ public abstract class PlatformView<
      */
     protected final <T> State<Pagination> paginationState(
             @NotNull Supplier<List<? super T>> sourceProvider, @NotNull BiConsumer<TItem, T> itemFactory) {
-        return this.<T>buildPaginationState(sourceProvider)
+        return this.buildPaginationState(sourceProvider)
                 .itemFactory(itemFactory)
                 .build();
     }
@@ -362,6 +413,7 @@ public abstract class PlatformView<
 
     final <V> State<Pagination> buildPaginationState(
             @NotNull PaginationStateBuilder<TContext, TSlotContext, TItem, V> builder) {
+        requireNotInitialized();
         final long id = State.next();
         @SuppressWarnings("unchecked")
         final StateValueFactory factory = (host, state) -> new PaginationImpl(
@@ -469,6 +521,12 @@ public abstract class PlatformView<
      */
     final void setInitialized(boolean initialized) {
         this.initialized = initialized;
+    }
+
+    private void requireNotInitialized() {
+        if (!isInitialized()) return;
+        throw new IllegalStateException(
+                "View is already initialized, please move this method call to class construtor or #onInit.");
     }
 
     /**
