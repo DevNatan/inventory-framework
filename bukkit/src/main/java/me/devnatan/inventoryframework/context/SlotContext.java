@@ -10,7 +10,7 @@ import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.runtime.BukkitViewContainer;
 import me.devnatan.inventoryframework.runtime.BukkitViewer;
 import me.devnatan.inventoryframework.state.State;
-import me.devnatan.inventoryframework.state.StateManagementListener;
+import me.devnatan.inventoryframework.state.StateWatcher;
 import me.devnatan.inventoryframework.state.StateValue;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -143,7 +143,7 @@ public class SlotContext extends ConfinedContext implements IFSlotContext, Conte
     }
 
     @Override
-    public void watchState(long id, StateManagementListener listener) {
+    public void watchState(long id, StateWatcher listener) {
         getParent().watchState(id, listener);
     }
 }

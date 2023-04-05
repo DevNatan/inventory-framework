@@ -15,7 +15,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 @ToString(callSuper = true)
-public final class PaginationState extends BaseState<Pagination> implements StateManagementListener {
+public final class PaginationState extends BaseState<Pagination> implements StateWatcher {
 
     @ApiStatus.Internal
     public static final PipelinePhase PAGINATION_RENDER = new PipelinePhase("pagination-render");

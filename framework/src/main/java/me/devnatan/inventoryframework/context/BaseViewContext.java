@@ -22,7 +22,7 @@ import me.devnatan.inventoryframework.component.Pagination;
 import me.devnatan.inventoryframework.pipeline.StandardPipelinePhases;
 import me.devnatan.inventoryframework.state.DefaultStateValueHost;
 import me.devnatan.inventoryframework.state.State;
-import me.devnatan.inventoryframework.state.StateManagementListener;
+import me.devnatan.inventoryframework.state.StateWatcher;
 import me.devnatan.inventoryframework.state.StateValue;
 import me.devnatan.inventoryframework.state.StateValueHost;
 import org.jetbrains.annotations.ApiStatus;
@@ -197,7 +197,7 @@ public class BaseViewContext implements IFContext, StateValueHost {
     }
 
     @Override
-    public void watchState(long id, StateManagementListener listener) {
+    public void watchState(long id, StateWatcher listener) {
         stateValueHost.watchState(id, listener);
     }
 }

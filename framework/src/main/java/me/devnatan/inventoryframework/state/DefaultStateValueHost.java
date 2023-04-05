@@ -15,7 +15,7 @@ public class DefaultStateValueHost implements StateValueHost {
     public static final Object UNINITIALIZED_VALUE = new Object();
 
     private final Map<Long, StateValue> valuesMap = new HashMap<>();
-    private final Map<Long, List<StateManagementListener>> listeners = new HashMap<>();
+    private final Map<Long, List<StateWatcher>> listeners = new HashMap<>();
 
     @Override
     public Object getState(State<?> state) {
@@ -48,14 +48,14 @@ public class DefaultStateValueHost implements StateValueHost {
     }
 
     @Override
-    public void watchState(long id, StateManagementListener listener) {
+    public void watchState(long id, StateWatcher listener) {
         listeners.computeIfAbsent(id, $ -> new ArrayList<>()).add(listener);
     }
 
-    private void callListeners(@NotNull StateValue value, Consumer<StateManagementListener> call) {
-        if (value instanceof StateManagementListener) call.accept((StateManagementListener) value);
-        if (value.getState() instanceof StateManagementListener)
-            call.accept((StateManagementListener) value.getState());
+    private void callListeners(@NotNull StateValue value, Consumer<StateWatcher> call) {
+        if (value instanceof StateWatcher) call.accept((StateWatcher) value);
+        if (value.getState() instanceof StateWatcher)
+            call.accept((StateWatcher) value.getState());
 
         if (!listeners.containsKey(value.getId())) return;
 

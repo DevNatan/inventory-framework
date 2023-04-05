@@ -21,8 +21,8 @@ public final class StateRegistry implements Iterable<State<?>> {
     public void registerState(@NotNull State<?> state, Object caller) {
         synchronized (stateMap) {
             stateMap.put(state.internalId(), state);
-            if (state instanceof StateManagementListener)
-                ((StateManagementListener) state).stateRegistered(state, caller);
+            if (state instanceof StateWatcher)
+                ((StateWatcher) state).stateRegistered(state, caller);
         }
     }
 
@@ -34,8 +34,8 @@ public final class StateRegistry implements Iterable<State<?>> {
     public void unregisterState(long stateId, Object caller) {
         synchronized (stateMap) {
             final State<?> state = stateMap.remove(stateId);
-            if (state instanceof StateManagementListener)
-                ((StateManagementListener) state).stateUnregistered(state, caller);
+            if (state instanceof StateWatcher)
+                ((StateWatcher) state).stateUnregistered(state, caller);
         }
     }
 

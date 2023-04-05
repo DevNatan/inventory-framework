@@ -8,7 +8,7 @@ import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.context.IFSlotRenderContext;
 import me.devnatan.inventoryframework.internal.ElementFactory;
 import me.devnatan.inventoryframework.state.State;
-import me.devnatan.inventoryframework.state.StateManagementListener;
+import me.devnatan.inventoryframework.state.StateWatcher;
 import me.devnatan.inventoryframework.state.StateValue;
 import me.devnatan.inventoryframework.state.StateValueHost;
 import org.jetbrains.annotations.NotNull;
@@ -54,7 +54,7 @@ public final class FirstRenderInterceptor implements PipelineInterceptor<Virtual
     /**
      * Registers all components as listeners of the states they want to watch to.
      * <p>
-     * If the component is a {@link StateManagementListener} the component itself is registered as
+     * If the component is a {@link StateWatcher} the component itself is registered as
      * the state watcher.
      *
      * @param context   The context.
@@ -62,10 +62,10 @@ public final class FirstRenderInterceptor implements PipelineInterceptor<Virtual
      */
     private void setupWatchers(IFRenderContext context, Component component) {
         for (final State<?> watch : component.getWatchingStates()) {
-            final StateManagementListener listener;
-            if (component instanceof StateManagementListener) listener = (StateManagementListener) component;
+            final StateWatcher listener;
+            if (component instanceof StateWatcher) listener = (StateWatcher) component;
             else
-                listener = new StateManagementListener() {
+                listener = new StateWatcher() {
                     @Override
                     public void stateRegistered(@NotNull State<?> state, Object caller) {}
 
