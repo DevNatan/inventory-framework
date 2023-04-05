@@ -18,6 +18,11 @@ version = properties("pluginVersion").get()
 
 repositories {
     mavenCentral()
+    maven("https://jitpack.io")
+}
+
+dependencies {
+    implementation("com.github.DevNatan.inventory-framework:inventory-framework-api:93dcfe4a3b")
 }
 
 kotlin {
@@ -30,7 +35,11 @@ intellij {
     type.set(properties("platformType"))
 
     // Plugin Dependencies. Uses `platformPlugins` property from the gradle.properties file.
-    plugins.set(properties("platformPlugins").map { it.split(',').map(String::trim).filter(String::isNotEmpty) })
+    plugins.set(properties("platformPlugins")
+        .map { it.split(',')
+            .map(String::trim)
+            .filter(String::isNotEmpty)
+        })
 }
 
 changelog {
