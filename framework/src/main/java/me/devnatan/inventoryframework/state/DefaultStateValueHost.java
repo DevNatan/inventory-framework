@@ -54,8 +54,7 @@ public class DefaultStateValueHost implements StateValueHost {
 
     private void callListeners(@NotNull StateValue value, Consumer<StateWatcher> call) {
         if (value instanceof StateWatcher) call.accept((StateWatcher) value);
-        if (value.getState() instanceof StateWatcher)
-            call.accept((StateWatcher) value.getState());
+        if (value.getState() instanceof StateWatcher) call.accept((StateWatcher) value.getState());
 
         if (!listeners.containsKey(value.getId())) return;
 

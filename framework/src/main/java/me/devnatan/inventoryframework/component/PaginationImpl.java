@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -134,6 +135,11 @@ public final class PaginationImpl extends StateValue implements Pagination {
         }
 
         getComponents().forEach(child -> child.clear(context));
+    }
+
+    @Override
+    public @UnmodifiableView Set<State<?>> getWatchingStates() {
+        return Collections.emptySet();
     }
 
     @Override

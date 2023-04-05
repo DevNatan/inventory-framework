@@ -1,5 +1,6 @@
 package me.devnatan.inventoryframework.component;
 
+import java.util.Collections;
 import java.util.Set;
 import java.util.function.Consumer;
 import lombok.Data;
@@ -13,6 +14,7 @@ import me.devnatan.inventoryframework.context.IFSlotRenderContext;
 import me.devnatan.inventoryframework.state.State;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.UnmodifiableView;
 
 @Data
 @ApiStatus.NonExtendable
@@ -73,6 +75,11 @@ public class ItemComponent implements Component, InteractionHandler {
     @Override
     public void clear(@NotNull IFContext context) {
         context.getContainer().removeItem(getPosition());
+    }
+
+    @Override
+    public @UnmodifiableView Set<State<?>> getWatchingStates() {
+        return Collections.unmodifiableSet(watching);
     }
 
     @Override

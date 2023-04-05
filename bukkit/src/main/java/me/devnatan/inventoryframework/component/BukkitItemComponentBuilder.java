@@ -105,6 +105,13 @@ public final class BukkitItemComponentBuilder extends DefaultComponentBuilder<Bu
     @Override
     public @NotNull Component create() {
         return new ItemComponent(
-                slot, item, isCancelOnClick(), isCloseOnClick(), renderHandler, updateHandler, clickHandler, watching);
+                slot,
+                item,
+                isCancelOnClick(),
+                isCloseOnClick(),
+                renderHandler,
+                updateHandler,
+                clickHandler,
+                getWatching());
     }
 }
