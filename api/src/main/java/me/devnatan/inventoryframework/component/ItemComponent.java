@@ -2,6 +2,7 @@ package me.devnatan.inventoryframework.component;
 
 import java.util.Collections;
 import java.util.Set;
+import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -26,6 +27,7 @@ public class ItemComponent implements Component, InteractionHandler {
     // --- Options ---
     private final boolean cancelOnClick;
     private final boolean closeOnClick;
+    private final BooleanSupplier shouldRender;
 
     // --- Handlers ---
     private final Consumer<? super IFSlotRenderContext> renderHandler;
