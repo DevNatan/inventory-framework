@@ -11,6 +11,8 @@ with varied interaction treatments that would be almost impossible to create man
 We provide to you with extra inventory manipulation functionality, common code for creating inventories of different types,
 resolution and detection of known platform issues that are resolved internally, high-level secure and robust API.
 
+Works for Minecraft versions 1.8-1.19 (see [Versions Compatibility](https://github.com/DevNatan/inventory-framework/wiki#versions-compatibility))
+
 * [Installation](https://github.com/DevNatan/inventory-framework/wiki/Installation)
 * [Documentation](https://github.com/DevNatan/inventory-framework/wiki)
 * [Code Samples](https://github.com/DevNatan/inventory-framework/tree/main/examples)
