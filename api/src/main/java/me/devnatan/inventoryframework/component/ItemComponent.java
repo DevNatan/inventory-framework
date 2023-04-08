@@ -18,12 +18,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
 
 @Data
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @ApiStatus.NonExtendable
 public class ItemComponent implements Component, InteractionHandler {
 
-    private final VirtualView root;
-    private final int position;
-    private final Object stack;
+	@ToString.Exclude private final VirtualView root;
+	@EqualsAndHashCode.Include private final int position;
+	@EqualsAndHashCode.Include private final Object stack;
     private final boolean cancelOnClick;
     private final boolean closeOnClick;
     private final BooleanSupplier shouldRender;
@@ -32,7 +33,6 @@ public class ItemComponent implements Component, InteractionHandler {
     private final Consumer<? super IFSlotClickContext> clickHandler;
 
     @ToString.Exclude
-    @EqualsAndHashCode.Exclude
     private final Set<State<?>> watching;
 
     @Override

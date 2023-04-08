@@ -31,6 +31,7 @@ import org.jetbrains.annotations.UnmodifiableView;
 @EqualsAndHashCode(callSuper = true)
 public final class PaginationImpl extends StateValue implements Pagination {
 
+	@EqualsAndHashCode.Exclude
     private final List<Component> components = new LinkedList<>();
 
     // --- State ---
