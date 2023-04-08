@@ -31,7 +31,7 @@ import org.jetbrains.annotations.UnmodifiableView;
 @EqualsAndHashCode(callSuper = true)
 public final class PaginationImpl extends StateValue implements Pagination {
 
-	@EqualsAndHashCode.Exclude
+    @EqualsAndHashCode.Exclude
     private final List<Component> components = new LinkedList<>();
 
     // --- State ---
@@ -396,5 +396,10 @@ public final class PaginationImpl extends StateValue implements Pagination {
         }
 
         return currSource;
+    }
+
+    @Override
+    public boolean isVisible() {
+        return true;
     }
 }

@@ -29,9 +29,9 @@ public final class UpdateInterceptor implements PipelineInterceptor<VirtualView>
                 continue;
             }
 
-            if (!component.shouldBeUpdated()) continue;
-
-            updateComponent(context, component);
+            if (component.shouldBeUpdated()) {
+                updateComponent(context, component);
+            }
         }
     }
 
@@ -54,8 +54,8 @@ public final class UpdateInterceptor implements PipelineInterceptor<VirtualView>
 
         component.updated(renderContext);
 
-        if (renderContext.isCancelled()) return;
-
-        component.render(renderContext);
+        if (!renderContext.isCancelled()) {
+            component.render(renderContext);
+        }
     }
 }
