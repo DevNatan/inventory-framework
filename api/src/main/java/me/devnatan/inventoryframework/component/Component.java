@@ -81,4 +81,12 @@ public interface Component extends VirtualView {
      */
     @UnmodifiableView
     Set<State<?>> getWatchingStates();
+
+    /**
+     * If this component can be seen, it is used in interaction treatments to ensure that the viewer
+     * does not interact with hidden components.
+     *
+     * @return If this component is visible.
+     */
+    boolean isVisible();
 }
