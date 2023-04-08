@@ -3,6 +3,9 @@ package me.devnatan.inventoryframework.component;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
+import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.context.IFSlotContext;
 import me.devnatan.inventoryframework.context.IFSlotRenderContext;
@@ -13,8 +16,12 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+@RequiredArgsConstructor
+@ToString
 public final class BukkitItemComponentBuilder extends DefaultComponentBuilder<BukkitItemComponentBuilder>
         implements ItemComponentBuilder<BukkitItemComponentBuilder>, ComponentFactory {
+
+    private final VirtualView root;
 
     private int slot;
     private ItemStack item;
@@ -89,8 +96,7 @@ public final class BukkitItemComponentBuilder extends DefaultComponentBuilder<Bu
      *     .renderIf(pagination::canAdvance)
      * }</pre>
      * <p>
-     * This method only works if a {@link #withItem(ItemStack) fallback item} is set or the item set on
-     * {@link #onRender(Consumer)} is not null.
+     * This method overwrites {@link #onRender(Consumer)} when the item set is null.
      *
      * @param renderCondition The renderization condition.
      * @return This item builder.
@@ -130,6 +136,7 @@ public final class BukkitItemComponentBuilder extends DefaultComponentBuilder<Bu
     @Override
     public @NotNull Component create() {
         return new ItemComponent(
+                root,
                 slot,
                 item,
                 isCancelOnClick(),

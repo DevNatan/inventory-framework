@@ -21,15 +21,12 @@ import org.jetbrains.annotations.UnmodifiableView;
 @ApiStatus.NonExtendable
 public class ItemComponent implements Component, InteractionHandler {
 
+    private final VirtualView root;
     private final int position;
     private final Object stack;
-
-    // --- Options ---
     private final boolean cancelOnClick;
     private final boolean closeOnClick;
     private final BooleanSupplier shouldRender;
-
-    // --- Handlers ---
     private final Consumer<? super IFSlotRenderContext> renderHandler;
     private final Consumer<? super IFSlotContext> updateHandler;
     private final Consumer<? super IFSlotClickContext> clickHandler;
@@ -37,11 +34,6 @@ public class ItemComponent implements Component, InteractionHandler {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private final Set<State<?>> watching;
-
-    @Override
-    public @NotNull VirtualView getRoot() {
-        throw new UnsupportedOperationException();
-    }
 
     @Override
     public boolean isContainedWithin(int position) {

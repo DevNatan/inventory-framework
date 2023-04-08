@@ -4,6 +4,7 @@ import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.ViewType;
 import me.devnatan.inventoryframework.Viewer;
+import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.ComponentBuilder;
 import me.devnatan.inventoryframework.context.IFContext;
@@ -69,7 +70,7 @@ public abstract class ElementFactory {
      *
      * @return A new platform builder instance.
      */
-    public abstract ComponentBuilder<?> createComponentBuilder();
+    public abstract ComponentBuilder<?> createComponentBuilder(@NotNull VirtualView root);
 
     public abstract boolean worksInCurrentPlatform();
 }

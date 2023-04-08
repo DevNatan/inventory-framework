@@ -39,7 +39,7 @@ public final class PaginationImpl extends StateValue implements Pagination {
     // --- User provided ---
     private final char layoutTarget;
     private final @NotNull Object sourceProvider;
-    private final @NotNull PaginationElementFactory<Object> elementFactory;
+    private final @NotNull PaginationElementFactory<IFContext, Object> elementFactory;
     private final BiConsumer<IFContext, Pagination> pageSwitchHandler;
 
     // --- Internal ---
@@ -63,7 +63,7 @@ public final class PaginationImpl extends StateValue implements Pagination {
             @NotNull IFContext host,
             char layoutTarget,
             @NotNull Object sourceProvider,
-            @NotNull PaginationElementFactory<Object> elementFactory,
+            @NotNull PaginationElementFactory<IFContext, Object> elementFactory,
             BiConsumer<IFContext, Pagination> pageSwitchHandler) {
         super(state);
         this.host = host;
@@ -333,7 +333,7 @@ public final class PaginationImpl extends StateValue implements Pagination {
 
         for (int i = container.getFirstSlot(); i < Math.min(lastSlot + 1, elements.size()); i++) {
             final Object value = elements.get(i);
-            final ComponentFactory factory = elementFactory.create(i, i, value);
+            final ComponentFactory factory = elementFactory.create(context, i, i, value);
             components.add(factory.create());
         }
 
@@ -365,7 +365,7 @@ public final class PaginationImpl extends StateValue implements Pagination {
         int iterationIndex = 0;
         for (final int position : layoutSlot.getPositions()) {
             final Object value = elements.get(iterationIndex++);
-            final ComponentFactory factory = elementFactory.create(iterationIndex, position, value);
+            final ComponentFactory factory = elementFactory.create(context, iterationIndex, position, value);
             components.add(factory.create());
 
             if (iterationIndex == elementsLen) break;
