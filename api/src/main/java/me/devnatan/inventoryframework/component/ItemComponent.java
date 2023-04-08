@@ -22,9 +22,15 @@ import org.jetbrains.annotations.UnmodifiableView;
 @ApiStatus.NonExtendable
 public class ItemComponent implements Component, InteractionHandler {
 
-	@ToString.Exclude private final VirtualView root;
-	@EqualsAndHashCode.Include private final int position;
-	@EqualsAndHashCode.Include private final Object stack;
+    @ToString.Exclude
+    private final VirtualView root;
+
+    @EqualsAndHashCode.Include
+    private final int position;
+
+    @EqualsAndHashCode.Include
+    private final Object stack;
+
     private final boolean cancelOnClick;
     private final boolean closeOnClick;
     private final BooleanSupplier shouldRender;
@@ -47,6 +53,11 @@ public class ItemComponent implements Component, InteractionHandler {
 
     @Override
     public void render(@NotNull IFSlotRenderContext context) {
+        if (shouldRender != null && !shouldRender.getAsBoolean()) {
+            context.getContainer().removeItem(getPosition());
+            return;
+        }
+
         if (renderHandler != null) {
             renderHandler.accept(context);
             context.getContainer().renderItem(getPosition(), context.getResult());
@@ -85,5 +96,10 @@ public class ItemComponent implements Component, InteractionHandler {
     @Override
     public boolean shouldBeUpdated() {
         return getRenderHandler() != null;
+    }
+
+    @Override
+    public boolean isVisible() {
+        return ((IFContext) root).getContainer().hasItem(getPosition());
     }
 }
