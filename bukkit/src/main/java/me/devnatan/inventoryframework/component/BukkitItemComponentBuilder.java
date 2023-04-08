@@ -93,7 +93,7 @@ public final class BukkitItemComponentBuilder extends DefaultComponentBuilder<Bu
      * // This example only renders the arrow if pagination can advance
      * render.layoutSlot('>')
      *     .renderWith(() -> new ItemStack(Material.ARROW))
-     *     .renderIf(pagination::canAdvance)
+     *     .displayIf(pagination::canAdvance)
      * }</pre>
      * <p>
      * This method overwrites {@link #onRender(Consumer)} when the item set is null.
@@ -101,7 +101,7 @@ public final class BukkitItemComponentBuilder extends DefaultComponentBuilder<Bu
      * @param renderCondition The renderization condition.
      * @return This item builder.
      */
-    public BukkitItemComponentBuilder renderIf(BooleanSupplier renderCondition) {
+    public BukkitItemComponentBuilder displayIf(BooleanSupplier renderCondition) {
         this.shouldRender = renderCondition;
         return this;
     }
