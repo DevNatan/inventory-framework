@@ -12,12 +12,7 @@ import org.jetbrains.annotations.NotNull;
 public final class BukkitViewer implements Viewer {
 
     private final Player player;
-    private final ViewContainer container;
-
-    public BukkitViewer(@NotNull Player player) {
-        this.player = player;
-        container = new BukkitViewContainer(player.getInventory(), false);
-    }
+    private ViewContainer container;
 
     @Override
     public @NotNull String getId() {
@@ -36,6 +31,8 @@ public final class BukkitViewer implements Viewer {
 
     @Override
     public @NotNull ViewContainer getSelfContainer() {
+        if (container == null) container = new BukkitViewContainer(player.getInventory(), false, null);
+
         return container;
     }
 }
