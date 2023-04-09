@@ -12,6 +12,7 @@ import me.devnatan.inventoryframework.View;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.ViewType;
 import me.devnatan.inventoryframework.Viewer;
+import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.component.BukkitItemComponentBuilder;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.ComponentBuilder;
@@ -139,8 +140,8 @@ public final class BukkitElementFactory extends ElementFactory {
     }
 
     @Override
-    public ComponentBuilder<?> createComponentBuilder() {
-        return new BukkitItemComponentBuilder();
+    public ComponentBuilder<?> createComponentBuilder(@NotNull VirtualView root) {
+        return new BukkitItemComponentBuilder(root);
     }
 
     @Override

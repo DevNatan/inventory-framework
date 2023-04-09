@@ -96,6 +96,6 @@ public final class RenderContext extends PlatformRenderContext<BukkitItemCompone
 
     @Override
     protected BukkitItemComponentBuilder createBuilder() {
-        return new BukkitItemComponentBuilder();
+        return new BukkitItemComponentBuilder(this);
     }
 }

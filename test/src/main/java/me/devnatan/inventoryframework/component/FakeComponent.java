@@ -68,5 +68,10 @@ public class FakeComponent implements Component, InteractionHandler {
     }
 
     @Override
+    public boolean isVisible() {
+        return true;
+    }
+
+    @Override
     public void clicked(@NotNull Component component, @NotNull IFSlotClickContext context) {}
 }

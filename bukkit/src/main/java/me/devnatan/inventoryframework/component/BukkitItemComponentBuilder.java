@@ -1,7 +1,11 @@
 package me.devnatan.inventoryframework.component;
 
+import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
+import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.context.IFSlotContext;
 import me.devnatan.inventoryframework.context.IFSlotRenderContext;
@@ -12,8 +16,12 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+@RequiredArgsConstructor
+@ToString
 public final class BukkitItemComponentBuilder extends DefaultComponentBuilder<BukkitItemComponentBuilder>
         implements ItemComponentBuilder<BukkitItemComponentBuilder>, ComponentFactory {
+
+    private final VirtualView root;
 
     private int slot;
     private ItemStack item;
@@ -22,6 +30,8 @@ public final class BukkitItemComponentBuilder extends DefaultComponentBuilder<Bu
     private Consumer<? super IFSlotRenderContext> renderHandler;
     private Consumer<? super IFSlotClickContext> clickHandler;
     private Consumer<? super IFSlotContext> updateHandler;
+
+    private BooleanSupplier shouldRender;
 
     @Override
     public boolean isContainedWithin(int position) {
@@ -64,15 +74,36 @@ public final class BukkitItemComponentBuilder extends DefaultComponentBuilder<Bu
     }
 
     /**
-     * Called when the item is rendered.
+     * Dynamic renderization of a specific item.
      * <p>
      * This handler is called every time the item or the view that owns it is updated.
      *
      * @param renderFactory The render handler.
      * @return This item builder.
      */
-    public BukkitItemComponentBuilder onRender(@NotNull Supplier<@Nullable ItemStack> renderFactory) {
+    public BukkitItemComponentBuilder renderWith(@NotNull Supplier<@Nullable ItemStack> renderFactory) {
         return onRender(render -> render.setItem(renderFactory.get()));
+    }
+
+    /**
+     * Only renders this item if the render condition is satisfied.
+     * <p>
+     * It's a help function to simplify the use with other things like {@link Pagination}.
+     * <pre>{@code
+     * // This example only renders the arrow if pagination can advance
+     * render.layoutSlot('>')
+     *     .renderWith(() -> new ItemStack(Material.ARROW))
+     *     .displayIf(pagination::canAdvance)
+     * }</pre>
+     * <p>
+     * This method overwrites {@link #onRender(Consumer)} when the item set is null.
+     *
+     * @param renderCondition The renderization condition.
+     * @return This item builder.
+     */
+    public BukkitItemComponentBuilder displayIf(BooleanSupplier renderCondition) {
+        this.shouldRender = renderCondition;
+        return this;
     }
 
     /**
@@ -105,10 +136,12 @@ public final class BukkitItemComponentBuilder extends DefaultComponentBuilder<Bu
     @Override
     public @NotNull Component create() {
         return new ItemComponent(
+                root,
                 slot,
                 item,
                 isCancelOnClick(),
                 isCloseOnClick(),
+                shouldRender,
                 renderHandler,
                 updateHandler,
                 clickHandler,

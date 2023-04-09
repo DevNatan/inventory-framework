@@ -7,6 +7,7 @@ import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.ViewType;
 import me.devnatan.inventoryframework.Viewer;
+import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.ComponentBuilder;
 import me.devnatan.inventoryframework.context.IFConfinedContext;
@@ -79,7 +80,7 @@ public final class MockElementFactory extends ElementFactory {
     }
 
     @Override
-    public ComponentBuilder<?> createComponentBuilder() {
+    public ComponentBuilder<?> createComponentBuilder(@NotNull VirtualView root) {
         return null;
     }
 

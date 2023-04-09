@@ -2,6 +2,7 @@ package me.devnatan.inventoryframework.component;
 
 import java.util.Collections;
 import java.util.Set;
+import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -17,29 +18,28 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
 
 @Data
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @ApiStatus.NonExtendable
 public class ItemComponent implements Component, InteractionHandler {
 
+    @ToString.Exclude
+    private final VirtualView root;
+
+    @EqualsAndHashCode.Include
     private final int position;
+
+    @EqualsAndHashCode.Include
     private final Object stack;
 
-    // --- Options ---
     private final boolean cancelOnClick;
     private final boolean closeOnClick;
-
-    // --- Handlers ---
+    private final BooleanSupplier shouldRender;
     private final Consumer<? super IFSlotRenderContext> renderHandler;
     private final Consumer<? super IFSlotContext> updateHandler;
     private final Consumer<? super IFSlotClickContext> clickHandler;
 
     @ToString.Exclude
-    @EqualsAndHashCode.Exclude
     private final Set<State<?>> watching;
-
-    @Override
-    public @NotNull VirtualView getRoot() {
-        throw new UnsupportedOperationException();
-    }
 
     @Override
     public boolean isContainedWithin(int position) {
@@ -53,6 +53,11 @@ public class ItemComponent implements Component, InteractionHandler {
 
     @Override
     public void render(@NotNull IFSlotRenderContext context) {
+        if (shouldRender != null && !shouldRender.getAsBoolean()) {
+            context.getContainer().removeItem(getPosition());
+            return;
+        }
+
         if (renderHandler != null) {
             renderHandler.accept(context);
             context.getContainer().renderItem(getPosition(), context.getResult());
@@ -90,6 +95,12 @@ public class ItemComponent implements Component, InteractionHandler {
 
     @Override
     public boolean shouldBeUpdated() {
+        if (shouldRender != null) return true;
         return getRenderHandler() != null;
+    }
+
+    @Override
+    public boolean isVisible() {
+        return ((IFContext) root).getContainer().hasItem(getPosition());
     }
 }

@@ -52,6 +52,8 @@ public final class IFInventoryListener implements Listener {
                 ? viewer.getSelfContainer()
                 : mainContext.getContainer();
         final Component component = mainContext.getComponent(event.getRawSlot());
+        if (!component.isVisible()) return;
+
         final IFSlotClickContext slotContext =
                 new SlotClickContext(root, container, viewer, event.getRawSlot(), mainContext, component, event);
 

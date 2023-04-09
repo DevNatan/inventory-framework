@@ -25,7 +25,7 @@ public final class PaginationStateBuilder<
     private final PlatformView<I, TContext, ?, ?, ?, TSlotContext, ?> root;
     private final Object sourceProvider;
     private char layoutTarget = LayoutSlot.FILLED_RESERVED_CHAR;
-    private PaginationElementFactory<V> elementFactory;
+    private PaginationElementFactory<TContext, V> elementFactory;
     private BiConsumer<TContext, Pagination> pageSwitchHandler;
 
     /**
@@ -41,7 +41,7 @@ public final class PaginationStateBuilder<
      * @return This pagination state builder.
      */
     public PaginationStateBuilder<TContext, TSlotContext, I, V> elementFactory(
-            @NotNull PaginationElementFactory<V> elementFactory) {
+            @NotNull PaginationElementFactory<TContext, V> elementFactory) {
         this.elementFactory = elementFactory;
         return this;
     }
@@ -59,9 +59,9 @@ public final class PaginationStateBuilder<
      * @return This pagination state builder.
      */
     public PaginationStateBuilder<TContext, TSlotContext, I, V> itemFactory(@NotNull BiConsumer<I, V> itemFactory) {
-        return elementFactory((index, slot, value) -> {
+        return elementFactory((context, index, slot, value) -> {
             @SuppressWarnings("unchecked")
-            I builder = (I) root.getElementFactory().createComponentBuilder();
+            I builder = (I) root.getElementFactory().createComponentBuilder(context);
             builder.withSlot(slot);
             itemFactory.accept(builder, value);
             return builder;
@@ -109,7 +109,7 @@ public final class PaginationStateBuilder<
     public State<Pagination> build() {
         if (elementFactory == null)
             throw new IllegalStateException(String.format(
-                    "Element factory from buildPaginationState(...) cannot be null. Set it using %s or %s.",
+                    "Element factory from #buildPaginationState(...) cannot be null. Set it using %s or %s.",
                     "#elementFactory(PaginationElementFactory)", "#itemFactory(BiConsumer)"));
 
         return root.buildPaginationState(this);
