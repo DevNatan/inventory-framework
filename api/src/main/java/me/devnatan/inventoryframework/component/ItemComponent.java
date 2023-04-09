@@ -95,6 +95,7 @@ public class ItemComponent implements Component, InteractionHandler {
 
     @Override
     public boolean shouldBeUpdated() {
+        if (shouldRender != null) return true;
         return getRenderHandler() != null;
     }
 
