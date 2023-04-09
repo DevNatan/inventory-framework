@@ -26,6 +26,7 @@ public final class BukkitViewContainer implements ViewContainer {
     private final Inventory inventory;
 
     private final boolean shared;
+    private final ViewType type;
 
     @Override
     public String getTitle() {
@@ -48,23 +49,17 @@ public final class BukkitViewContainer implements ViewContainer {
 
     @Override
     public @NotNull ViewType getType() {
-        //		if (type == null)
-        //			throw new IllegalStateException("View type cannot be null for " + inventory.getType() + " inventory type");
-
-        // TODO do proper conversion from InventoryType to supported Bukkit type
-        return ViewType.CHEST;
+        return type;
     }
 
     @Override
     public int getRowsCount() {
-        // TODO this "9" only works for chest types
-        return getSize() / 9;
+        return type.getRows();
     }
 
     @Override
     public int getColumnsCount() {
-        // TODO this "9" only works for chest types
-        return 9;
+        return type.getColumns();
     }
 
     @Override

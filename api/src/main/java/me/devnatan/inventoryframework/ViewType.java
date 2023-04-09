@@ -7,7 +7,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
-import org.jetbrains.annotations.ApiStatus;
 
 @Getter
 @ToString
@@ -16,14 +15,28 @@ import org.jetbrains.annotations.ApiStatus;
 public class ViewType {
 
     public static final ViewType CHEST = new ViewType("chest", 54, 6, 9, true);
-
-    @ApiStatus.Experimental
     public static final ViewType HOPPER = new ViewType("hopper", 5, 1, 5, false);
+    public static final ViewType DROPPER = new ViewType("dropper", 9, 3, 3, false);
+    public static final ViewType DISPENSER = new ViewType("dispenser", 9, 3, 3, false);
 
-    @ApiStatus.Experimental
-    public static final ViewType FURNACE = new ViewType("furnace", 2, 1, 1, false);
+    public static final ViewType FURNACE = new ViewType("furnace", 3, 2, 2, false) {
+        private final int[] resultSlots = {2};
 
-    @ApiStatus.Experimental
+        @Override
+        public int[] getResultSlots() {
+            return resultSlots;
+        }
+    };
+
+    public static final ViewType BLAST_FURNACE = new ViewType("blast-furnace", 3, 2, 2, false) {
+        private final int[] resultSlots = {2};
+
+        @Override
+        public int[] getResultSlots() {
+            return resultSlots;
+        }
+    };
+
     public static final ViewType CRAFTING_TABLE = new ViewType("crafting-table", 9, 3, 3, false) {
         private static final int RESULT_SLOT = 3;
 
@@ -32,6 +45,40 @@ public class ViewType {
             return slot != RESULT_SLOT;
         }
     };
+    public static final ViewType BREWING_STAND = new ViewType("brewing-stand", 4, 1, 1, false) {
+        private final int[] resultSlots = {0, 1, 2};
+
+        @Override
+        public int[] getResultSlots() {
+            return resultSlots;
+        }
+
+        @Override
+        public boolean isAligned() {
+            return false;
+        }
+    };
+    public static final ViewType BEACON = new ViewType("beacon", 1, 1, 1, false);
+    public static final ViewType ANVIL = new ViewType("anvil", 3, 1, 3, false);
+    public static final ViewType SHULKER_BOX = new ViewType("shulker-box", 27, 3, 9, false);
+    public static final ViewType SMOKER = new ViewType("smoker", 3, 2, 2, false) {
+        private final int[] resultSlots = {2};
+
+        @Override
+        public int[] getResultSlots() {
+            return resultSlots;
+        }
+    };
+    public static final ViewType VILLAGER_TRADING = new ViewType("villager-trading", 3, 1, 3, false) {
+        private final int[] resultSlots = {2};
+
+        @Override
+        public int[] getResultSlots() {
+            return resultSlots;
+        }
+    };
+
+    private static final int[] EMPTY_RESULT_SLOTS = new int[0];
 
     @EqualsAndHashCode.Include
     private final String identifier;
@@ -68,7 +115,19 @@ public class ViewType {
         return fullSize;
     }
 
+    public final int getResultSlot() {
+        return getResultSlots()[0];
+    }
+
+    public int[] getResultSlots() {
+        return EMPTY_RESULT_SLOTS;
+    }
+
     public boolean canPlayerInteractOn(int slot) {
+        return true;
+    }
+
+    public boolean isAligned() {
         return true;
     }
 }

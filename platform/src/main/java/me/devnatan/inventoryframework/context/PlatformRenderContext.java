@@ -37,6 +37,32 @@ abstract class PlatformRenderContext<T extends ItemComponentBuilder<T>> extends 
         this.parent = parent;
     }
 
+    @Override
+    public @NotNull UUID getId() {
+        return getParent().getId();
+    }
+
+    @Override
+    public final @NotNull @UnmodifiableView List<ComponentFactory> getComponentFactories() {
+        return Collections.unmodifiableList(componentBuilders);
+    }
+
+    @Override
+    public final @NotNull @UnmodifiableView List<LayoutSlot> getLayoutSlots() {
+        return Collections.unmodifiableList(layoutSlots);
+    }
+
+    @Override
+    public final void addLayoutSlot(@NotNull LayoutSlot layoutSlot) {
+        layoutSlots.add(layoutSlot);
+    }
+
+    @Override
+    public final @NotNull @UnmodifiableView List<BiFunction<Integer, Integer, ComponentFactory>>
+            getAvailableSlotsFactories() {
+        return Collections.unmodifiableList(availableSlots);
+    }
+
     /**
      * Adds an item to a specific slot in the context container.
      *
@@ -56,6 +82,7 @@ abstract class PlatformRenderContext<T extends ItemComponentBuilder<T>> extends 
      */
     @NotNull
     public T slot(int row, int column) {
+        checkAlignedContainerTypeForSlotAssignment();
         return createRegisteredBuilder()
                 .withSlot(convertSlot(
                         row,
@@ -146,19 +173,6 @@ abstract class PlatformRenderContext<T extends ItemComponentBuilder<T>> extends 
     }
 
     /**
-     * Checks if the character is a reserved layout character.
-     *
-     * @param character The character to be checked.
-     * @throws IllegalArgumentException If the given character is a reserved layout character.
-     */
-    private void requireNonReservedLayoutCharacter(char character) {
-        if (character == LayoutSlot.FILLED_RESERVED_CHAR)
-            throw new IllegalArgumentException(format(
-                    "The '%c' character cannot be used because it is only available for backwards compatibility. Please use another character.",
-                    character));
-    }
-
-    /**
      * Creates a new platform builder instance.
      *
      * @return A new platform builder instance.
@@ -177,29 +191,26 @@ abstract class PlatformRenderContext<T extends ItemComponentBuilder<T>> extends 
         return builder;
     }
 
-    @Override
-    public @NotNull UUID getId() {
-        return getParent().getId();
+    /**
+     * Throws an {@link IllegalStateException} if container type is not aligned.
+     */
+    private void checkAlignedContainerTypeForSlotAssignment() {
+        if (!getContainer().getType().isAligned())
+            throw new IllegalStateException(String.format(
+                    "Non-aligned container type %s cannot use row-column slots, use absolute %s instead",
+                    getContainer().getType().getIdentifier(), "#slot(n)"));
     }
 
-    @Override
-    public final @NotNull @UnmodifiableView List<ComponentFactory> getComponentFactories() {
-        return Collections.unmodifiableList(componentBuilders);
-    }
-
-    @Override
-    public final @NotNull @UnmodifiableView List<LayoutSlot> getLayoutSlots() {
-        return Collections.unmodifiableList(layoutSlots);
-    }
-
-    @Override
-    public final void addLayoutSlot(@NotNull LayoutSlot layoutSlot) {
-        layoutSlots.add(layoutSlot);
-    }
-
-    @Override
-    public final @NotNull @UnmodifiableView List<BiFunction<Integer, Integer, ComponentFactory>>
-            getAvailableSlotsFactories() {
-        return Collections.unmodifiableList(availableSlots);
+    /**
+     * Checks if the character is a reserved layout character.
+     *
+     * @param character The character to be checked.
+     * @throws IllegalArgumentException If the given character is a reserved layout character.
+     */
+    private void requireNonReservedLayoutCharacter(char character) {
+        if (character == LayoutSlot.FILLED_RESERVED_CHAR)
+            throw new IllegalArgumentException(format(
+                    "The '%c' character cannot be used because it is only available for backwards compatibility. Please use another character.",
+                    character));
     }
 }

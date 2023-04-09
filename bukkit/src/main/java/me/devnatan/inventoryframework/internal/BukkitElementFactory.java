@@ -83,7 +83,7 @@ public final class BukkitElementFactory extends ElementFactory {
                     : createInventory(holder, size, finalTitle);
         }
 
-        return new BukkitViewContainer(inventory, false);
+        return new BukkitViewContainer(inventory, false, finalType);
     }
 
     @Override
