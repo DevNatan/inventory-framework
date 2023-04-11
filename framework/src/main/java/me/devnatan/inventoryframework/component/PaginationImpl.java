@@ -25,12 +25,14 @@ import me.devnatan.inventoryframework.state.State;
 import me.devnatan.inventoryframework.state.StateValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
+import org.jetbrains.annotations.VisibleForTesting;
 
 // TODO add "key" to child pagination components and check if it needs to be updated based on it
 @Getter
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-public final class PaginationImpl extends StateValue implements Pagination, InteractionHandler {
+@VisibleForTesting
+public class PaginationImpl extends StateValue implements Pagination, InteractionHandler {
 
     @EqualsAndHashCode.Exclude
     private final List<Component> components = new LinkedList<>();
@@ -404,6 +406,7 @@ public final class PaginationImpl extends StateValue implements Pagination, Inte
 
     @Override
     public void clicked(@NotNull Component component, @NotNull IFSlotClickContext context) {
+        final List<Component> components = getComponentsInternal();
         if (components.isEmpty()) return;
         if (components.size() == 1) {
             final Component child = components.get(0);
@@ -420,5 +423,9 @@ public final class PaginationImpl extends StateValue implements Pagination, Inte
                 break;
             }
         }
+    }
+
+    List<Component> getComponentsInternal() {
+        return components;
     }
 }
