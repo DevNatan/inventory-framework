@@ -30,7 +30,7 @@ import org.jetbrains.annotations.UnmodifiableView;
 @Getter
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-public final class PaginationImpl extends StateValue implements Pagination {
+public final class PaginationImpl extends StateValue implements Pagination, InteractionHandler {
 
     @EqualsAndHashCode.Exclude
     private final List<Component> components = new LinkedList<>();
@@ -159,7 +159,7 @@ public final class PaginationImpl extends StateValue implements Pagination {
 
     @Override
     public InteractionHandler getInteractionHandler() {
-        return null;
+        return this;
     }
 
     @Override
@@ -399,6 +399,26 @@ public final class PaginationImpl extends StateValue implements Pagination {
 
     @Override
     public boolean isVisible() {
-        return true;
+        return !components.isEmpty();
+    }
+
+    @Override
+    public void clicked(@NotNull Component component, @NotNull IFSlotClickContext context) {
+        if (components.isEmpty()) return;
+        if (components.size() == 1) {
+            final Component child = components.get(0);
+            if (child.getInteractionHandler() != null && child.getInteractionHandler() != null) {
+                child.getInteractionHandler().clicked(component, context);
+            }
+            return;
+        }
+
+        for (final Component child : components) {
+            if (child.getInteractionHandler() == null) continue;
+            if (child.isContainedWithin(context.getClickedSlot())) {
+                child.getInteractionHandler().clicked(component, context);
+                break;
+            }
+        }
     }
 }
