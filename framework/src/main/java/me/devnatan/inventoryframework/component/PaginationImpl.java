@@ -18,6 +18,7 @@ import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
+import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.context.IFSlotRenderContext;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
 import me.devnatan.inventoryframework.state.State;
@@ -337,8 +338,6 @@ public final class PaginationImpl extends StateValue implements Pagination {
             final ComponentFactory factory = elementFactory.create(context, i, i, value);
             components.add(factory.create());
         }
-
-        throw new UnsupportedOperationException("TODO");
     }
 
     /**
