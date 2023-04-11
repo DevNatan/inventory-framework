@@ -103,7 +103,7 @@ public final class PaginationImpl extends StateValue implements Pagination, Inte
         if (renderContext.getConfig().getLayout() != null) renderLayeredPagination(renderContext);
         else renderUnconstrainedPagination(renderContext);
 
-        getComponents().forEach(child -> child.render(context));
+        components.forEach(child -> child.render(context));
     }
 
     @Override
@@ -115,7 +115,7 @@ public final class PaginationImpl extends StateValue implements Pagination, Inte
             return;
         }
 
-        getComponents().forEach(child -> child.updated(context));
+        components.forEach(child -> child.updated(context));
     }
 
     @Override
@@ -136,7 +136,7 @@ public final class PaginationImpl extends StateValue implements Pagination, Inte
             return;
         }
 
-        getComponents().forEach(child -> child.clear(context));
+        components.forEach(child -> child.clear(context));
     }
 
     @Override
@@ -151,7 +151,7 @@ public final class PaginationImpl extends StateValue implements Pagination, Inte
 
     @Override
     public boolean isContainedWithin(int position) {
-        for (final Component component : getComponents()) {
+        for (final Component component : components) {
             if (component.isContainedWithin(position)) return true;
         }
         return false;
