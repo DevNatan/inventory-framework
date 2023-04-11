@@ -91,6 +91,7 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
 
     @Override
     public int getPosition() {
+        final List<Component> components = getComponentsInternal();
         if (components.isEmpty()) return 0;
 
         final int first = components.get(0).getPosition();
@@ -105,7 +106,7 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
         if (renderContext.getConfig().getLayout() != null) renderLayeredPagination(renderContext);
         else renderUnconstrainedPagination(renderContext);
 
-        components.forEach(child -> child.render(context));
+        getComponentsInternal().forEach(child -> child.render(context));
     }
 
     @Override
@@ -117,7 +118,7 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
             return;
         }
 
-        components.forEach(child -> child.updated(context));
+        getComponentsInternal().forEach(child -> child.updated(context));
     }
 
     @Override
@@ -127,18 +128,18 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
 
     @Override
     public void clear(@NotNull IFContext context) {
-        // Only remove components if page was changed to not make the clear inconsistent
-        if (pageWasChanged) {
-            final Iterator<Component> childIterator = components.iterator();
-            while (childIterator.hasNext()) {
-                Component child = childIterator.next();
-                child.clear(context);
-                childIterator.remove();
-            }
+        // Only clear components if page was changed to not make the clear operation inconsistent
+        if (!pageWasChanged) {
+            getComponentsInternal().forEach(child -> child.clear(context));
             return;
         }
 
-        components.forEach(child -> child.clear(context));
+        final Iterator<Component> childIterator = getComponentsInternal().iterator();
+        while (childIterator.hasNext()) {
+            Component child = childIterator.next();
+            child.clear(context);
+            childIterator.remove();
+        }
     }
 
     @Override
@@ -153,7 +154,7 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
 
     @Override
     public boolean isContainedWithin(int position) {
-        for (final Component component : components) {
+        for (final Component component : getComponentsInternal()) {
             if (component.isContainedWithin(position)) return true;
         }
         return false;
@@ -338,7 +339,7 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
         for (int i = container.getFirstSlot(); i < Math.min(lastSlot + 1, elements.size()); i++) {
             final Object value = elements.get(i);
             final ComponentFactory factory = elementFactory.create(context, i, i, value);
-            components.add(factory.create());
+            getComponentsInternal().add(factory.create());
         }
     }
 
@@ -368,7 +369,7 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
         for (final int position : layoutSlot.getPositions()) {
             final Object value = elements.get(iterationIndex++);
             final ComponentFactory factory = elementFactory.create(context, iterationIndex, position, value);
-            components.add(factory.create());
+            getComponentsInternal().add(factory.create());
 
             if (iterationIndex == elementsLen) break;
         }
@@ -401,7 +402,7 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
 
     @Override
     public boolean isVisible() {
-        return !components.isEmpty();
+        return !getComponentsInternal().isEmpty();
     }
 
     @Override
@@ -425,6 +426,7 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
         }
     }
 
+    @VisibleForTesting
     List<Component> getComponentsInternal() {
         return components;
     }
