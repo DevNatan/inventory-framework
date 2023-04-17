@@ -18,18 +18,21 @@ import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
+import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.context.IFSlotRenderContext;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
 import me.devnatan.inventoryframework.state.State;
 import me.devnatan.inventoryframework.state.StateValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
+import org.jetbrains.annotations.VisibleForTesting;
 
 // TODO add "key" to child pagination components and check if it needs to be updated based on it
 @Getter
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-public final class PaginationImpl extends StateValue implements Pagination {
+@VisibleForTesting
+public class PaginationImpl extends StateValue implements Pagination, InteractionHandler {
 
     @EqualsAndHashCode.Exclude
     private final List<Component> components = new LinkedList<>();
@@ -88,6 +91,7 @@ public final class PaginationImpl extends StateValue implements Pagination {
 
     @Override
     public int getPosition() {
+        final List<Component> components = getComponentsInternal();
         if (components.isEmpty()) return 0;
 
         final int first = components.get(0).getPosition();
@@ -102,7 +106,7 @@ public final class PaginationImpl extends StateValue implements Pagination {
         if (renderContext.getConfig().getLayout() != null) renderLayeredPagination(renderContext);
         else renderUnconstrainedPagination(renderContext);
 
-        getComponents().forEach(child -> child.render(context));
+        getComponentsInternal().forEach(child -> child.render(context));
     }
 
     @Override
@@ -114,7 +118,7 @@ public final class PaginationImpl extends StateValue implements Pagination {
             return;
         }
 
-        getComponents().forEach(child -> child.updated(context));
+        getComponentsInternal().forEach(child -> child.updated(context));
     }
 
     @Override
@@ -124,18 +128,18 @@ public final class PaginationImpl extends StateValue implements Pagination {
 
     @Override
     public void clear(@NotNull IFContext context) {
-        // Only remove components if page was changed to not make the clear inconsistent
-        if (pageWasChanged) {
-            final Iterator<Component> childIterator = components.iterator();
-            while (childIterator.hasNext()) {
-                Component child = childIterator.next();
-                child.clear(context);
-                childIterator.remove();
-            }
+        // Only clear components if page was changed to not make the clear operation inconsistent
+        if (!pageWasChanged) {
+            getComponentsInternal().forEach(child -> child.clear(context));
             return;
         }
 
-        getComponents().forEach(child -> child.clear(context));
+        final Iterator<Component> childIterator = getComponentsInternal().iterator();
+        while (childIterator.hasNext()) {
+            Component child = childIterator.next();
+            child.clear(context);
+            childIterator.remove();
+        }
     }
 
     @Override
@@ -150,7 +154,7 @@ public final class PaginationImpl extends StateValue implements Pagination {
 
     @Override
     public boolean isContainedWithin(int position) {
-        for (final Component component : getComponents()) {
+        for (final Component component : getComponentsInternal()) {
             if (component.isContainedWithin(position)) return true;
         }
         return false;
@@ -158,7 +162,7 @@ public final class PaginationImpl extends StateValue implements Pagination {
 
     @Override
     public InteractionHandler getInteractionHandler() {
-        return null;
+        return this;
     }
 
     @Override
@@ -335,10 +339,8 @@ public final class PaginationImpl extends StateValue implements Pagination {
         for (int i = container.getFirstSlot(); i < Math.min(lastSlot + 1, elements.size()); i++) {
             final Object value = elements.get(i);
             final ComponentFactory factory = elementFactory.create(context, i, i, value);
-            components.add(factory.create());
+            getComponentsInternal().add(factory.create());
         }
-
-        throw new UnsupportedOperationException("TODO");
     }
 
     /**
@@ -367,7 +369,7 @@ public final class PaginationImpl extends StateValue implements Pagination {
         for (final int position : layoutSlot.getPositions()) {
             final Object value = elements.get(iterationIndex++);
             final ComponentFactory factory = elementFactory.create(context, iterationIndex, position, value);
-            components.add(factory.create());
+            getComponentsInternal().add(factory.create());
 
             if (iterationIndex == elementsLen) break;
         }
@@ -400,6 +402,32 @@ public final class PaginationImpl extends StateValue implements Pagination {
 
     @Override
     public boolean isVisible() {
-        return true;
+        return !getComponentsInternal().isEmpty();
+    }
+
+    @Override
+    public void clicked(@NotNull Component component, @NotNull IFSlotClickContext context) {
+        final List<Component> components = getComponentsInternal();
+        if (components.isEmpty()) return;
+        if (components.size() == 1) {
+            final Component child = components.get(0);
+            if (child.getInteractionHandler() != null && child.getInteractionHandler() != null) {
+                child.getInteractionHandler().clicked(component, context);
+            }
+            return;
+        }
+
+        for (final Component child : components) {
+            if (child.getInteractionHandler() == null) continue;
+            if (child.isContainedWithin(context.getClickedSlot())) {
+                child.getInteractionHandler().clicked(component, context);
+                break;
+            }
+        }
+    }
+
+    @VisibleForTesting
+    List<Component> getComponentsInternal() {
+        return components;
     }
 }
