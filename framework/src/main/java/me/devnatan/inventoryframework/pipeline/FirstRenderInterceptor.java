@@ -89,7 +89,7 @@ public final class FirstRenderInterceptor implements PipelineInterceptor<Virtual
                             @NotNull StateValue value,
                             Object rawOldValue,
                             Object rawNewValue) {
-                        context.updateRoot();
+                        context.update();
                     }
                 };
 

@@ -166,7 +166,7 @@ public class BaseViewContext extends DefaultStateValueHost implements IFContext 
     }
 
     @Override
-    public final void updateRoot() {
+    public final void update() {
         getRoot().getPipeline().execute(StandardPipelinePhases.UPDATE, this);
     }
 
