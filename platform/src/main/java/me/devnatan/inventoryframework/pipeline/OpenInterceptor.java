@@ -1,14 +1,9 @@
 package me.devnatan.inventoryframework.pipeline;
 
-import me.devnatan.inventoryframework.InventoryFrameworkException;
-import me.devnatan.inventoryframework.PlatformView;
-import me.devnatan.inventoryframework.RootView;
-import me.devnatan.inventoryframework.ViewConfig;
-import me.devnatan.inventoryframework.ViewContainer;
-import me.devnatan.inventoryframework.Viewer;
-import me.devnatan.inventoryframework.VirtualView;
+import me.devnatan.inventoryframework.*;
 import me.devnatan.inventoryframework.context.IFOpenContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
+import me.devnatan.inventoryframework.exception.InvalidLayoutException;
 import me.devnatan.inventoryframework.internal.ElementFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
@@ -66,10 +61,21 @@ public final class OpenInterceptor implements PipelineInterceptor<VirtualView> {
 
     IFRenderContext createRenderContext(IFOpenContext openContext) {
         final ElementFactory elementFactory = openContext.getRoot().getElementFactory();
+
+        final ViewConfig contextConfig = openContext.getConfig();
+        final String[] layout = contextConfig.getLayout();
+        if (layout != null) {
+            if (contextConfig.getSize() != 0 && contextConfig.getSize() != layout.length) {
+                throw new InvalidLayoutException("The layout length differs from the set inventory size.");
+            }
+            openContext.modifyConfig().size(layout.length);
+        }
+
         final ViewConfig config = openContext
                 .getRoot()
                 .getConfig()
                 .merge(openContext.modifyConfig().build());
+
         final ViewContainer container = elementFactory.createContainer(
                 openContext, config.getType().normalize(config.getSize()), config.getTitle(), config.getType());
         final Viewer viewer = openContext.getViewer();
