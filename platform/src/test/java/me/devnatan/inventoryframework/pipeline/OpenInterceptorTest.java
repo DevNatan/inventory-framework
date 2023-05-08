@@ -73,6 +73,7 @@ public class OpenInterceptorTest {
 
         IFOpenContext context = createContextMock(root, IFOpenContext.class);
         when(context.modifyConfig()).thenReturn(new ViewConfigBuilder());
+        when(context.getConfig()).thenReturn(new ViewConfigBuilder().build());
 
         ViewContainer container = mock(ViewContainer.class);
         when(context.getContainer()).thenReturn(container);
