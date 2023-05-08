@@ -40,9 +40,8 @@ public class BaseViewContext extends DefaultStateValueHost implements IFContext 
     @ToString.Exclude
     private final @NotNull RootView root;
 
-    /* container can be null on pre-render/intermediate contexts */
+    // container can be null on pre-render/intermediate contexts
     private final @Nullable ViewContainer container;
-
     protected final Map<String, Viewer> viewers = new HashMap<>();
     protected ViewConfig config;
 
@@ -172,5 +171,10 @@ public class BaseViewContext extends DefaultStateValueHost implements IFContext 
     @Override
     public boolean isMarkedForRemoval(int componentIndex) {
         return markedForRemoval.contains(componentIndex);
+    }
+
+    @Override
+    public Map<String, Object> getInitialData() {
+        return null;
     }
 }

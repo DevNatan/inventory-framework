@@ -190,4 +190,6 @@ public interface IFContext extends VirtualView, StateValueHost {
     void updateRoot();
 
     boolean isMarkedForRemoval(int componentIndex);
+
+    Map<String, Object> getInitialData();
 }

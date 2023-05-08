@@ -1,5 +1,6 @@
 package me.devnatan.inventoryframework;
 
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import me.devnatan.inventoryframework.context.IFContext;
@@ -66,7 +67,7 @@ public interface RootView extends VirtualView, Iterable<IFContext> {
     @NotNull
     Pipeline<VirtualView> getPipeline();
 
-    void open(@NotNull Viewer viewer);
+    void open(@NotNull Viewer viewer, @NotNull Map<String, Object> initialData);
 
     void closeForEveryone();
 

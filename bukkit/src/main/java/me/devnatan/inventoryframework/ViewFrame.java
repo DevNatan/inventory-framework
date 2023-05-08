@@ -1,6 +1,7 @@
 package me.devnatan.inventoryframework;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
@@ -30,6 +31,10 @@ import org.jetbrains.annotations.VisibleForTesting;
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class ViewFrame extends IFViewFrame<ViewFrame> implements FeatureInstaller<ViewFrame> {
 
+    static {
+        PlatformUtils.setFactory(new BukkitElementFactory());
+    }
+
     private static final String BSTATS_SYSTEM_PROP = "inventory-framework.enable-bstats";
     private static final int BSTATS_PROJECT_ID = 15518;
     private static final String ROOT_PKG = "me.devnatan.inventoryframework";
@@ -45,22 +50,6 @@ public class ViewFrame extends IFViewFrame<ViewFrame> implements FeatureInstalle
 
     private final FeatureInstaller<ViewFrame> featureInstaller = new DefaultFeatureInstaller<>(this);
 
-    static {
-        PlatformUtils.setFactory(new BukkitElementFactory());
-    }
-
-    @Override
-    public void open(@NotNull Class<? extends RootView> viewClass, @NotNull Viewer viewer) {
-        if (!(viewer instanceof BukkitViewer))
-            throw new IllegalArgumentException("Only BukkitViewer viewer impl is supported");
-
-        final RootView view = getRegisteredViewByType(viewClass);
-        if (!(view instanceof PlatformView))
-            throw new IllegalStateException("Only PlatformView can be opened through #open(...)");
-
-        view.open(viewer);
-    }
-
     /**
      * Opens a view to a player.
      *
@@ -69,6 +58,42 @@ public class ViewFrame extends IFViewFrame<ViewFrame> implements FeatureInstalle
      */
     public void open(@NotNull Class<? extends RootView> viewClass, @NotNull Player player) {
         open(viewClass, PlatformUtils.getFactory().createViewer(player));
+    }
+
+    /**
+     * Opens a view to a player with a initialized set data.
+     * <p>
+     * Initial data can be retrieved in view class using a {@link PlatformView#initialState(String)}.
+     *
+     * @param viewClass   The target view to be opened.
+     * @param player      The player that the view will be open to.
+     * @param initialData The initial data.
+     */
+    public void open(
+            @NotNull Class<? extends RootView> viewClass,
+            @NotNull Player player,
+            @NotNull Map<String, Object> initialData) {
+        open(viewClass, PlatformUtils.getFactory().createViewer(player), initialData);
+    }
+
+    @Override
+    public void open(@NotNull Class<? extends RootView> viewClass, @NotNull Viewer viewer) {
+        open(viewClass, viewer, Collections.emptyMap());
+    }
+
+    @Override
+    public void open(
+            @NotNull Class<? extends RootView> viewClass,
+            @NotNull Viewer viewer,
+            @NotNull Map<String, Object> initialData) {
+        if (!(viewer instanceof BukkitViewer))
+            throw new IllegalArgumentException("Only BukkitViewer viewer impl is supported");
+
+        final RootView view = getRegisteredViewByType(viewClass);
+        if (!(view instanceof PlatformView))
+            throw new IllegalStateException("Only PlatformView can be opened through #open(...)");
+
+        view.open(viewer, initialData);
     }
 
     @Override
@@ -133,7 +158,7 @@ public class ViewFrame extends IFViewFrame<ViewFrame> implements FeatureInstalle
         }
     }
 
-    @SuppressWarnings("rawtypes")
+    @SuppressWarnings({"rawtypes", "unchecked"})
     private void initializeViews() {
         for (final Map.Entry<UUID, RootView> entry : getRegisteredViews().entrySet()) {
             final RootView rootView = entry.getValue();
