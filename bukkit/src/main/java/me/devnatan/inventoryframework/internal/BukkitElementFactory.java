@@ -111,69 +111,69 @@ public class BukkitElementFactory extends ElementFactory {
         throw new IllegalArgumentException("Inconvertible viewer id: " + input);
     }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public <T extends IFContext> @NotNull T createContext(
-		@NotNull RootView root,
-		ViewContainer container,
-		@NotNull Viewer viewer,
-		@NotNull Class<T> kind,
-		boolean shared,
-		@Nullable IFContext parent) {
-		if (shared) throw new IllegalStateException("Shared contexts are not yet supported");
-		if (isTypeOf(IFOpenContext.class, kind)) return (T) new OpenContext(root, viewer);
-		if (isTypeOf(IFRenderContext.class, kind))
-			return (T) new RenderContext(root, container, viewer, requireNonNull(parent));
-		if (isTypeOf(IFCloseContext.class, kind))
-			return (T) new CloseContext(root, container, viewer, requireNonNull(parent));
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T extends IFContext> @NotNull T createContext(
+            @NotNull RootView root,
+            ViewContainer container,
+            @NotNull Viewer viewer,
+            @NotNull Class<T> kind,
+            boolean shared,
+            @Nullable IFContext parent) {
+        if (shared) throw new IllegalStateException("Shared contexts are not yet supported");
+        if (isTypeOf(IFOpenContext.class, kind)) return (T) new OpenContext(root, viewer);
+        if (isTypeOf(IFRenderContext.class, kind))
+            return (T) new RenderContext(root, container, viewer, requireNonNull(parent));
+        if (isTypeOf(IFCloseContext.class, kind))
+            return (T) new CloseContext(root, container, viewer, requireNonNull(parent));
 
-		throw new UnsupportedOperationException("Unsupported context kind: " + kind);
-	}
+        throw new UnsupportedOperationException("Unsupported context kind: " + kind);
+    }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public <T extends IFSlotContext> @NotNull T createSlotContext(
-		int slot,
-		Component component,
-		@NotNull ViewContainer container,
-		@NotNull Viewer viewer,
-		@NotNull IFContext parent,
-		@NotNull Class<?> kind) {
-		if (isTypeOf(IFSlotRenderContext.class, kind))
-			return (T) new SlotRenderContext(parent.getRoot(), container, viewer, slot, parent, component);
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T extends IFSlotContext> @NotNull T createSlotContext(
+            int slot,
+            Component component,
+            @NotNull ViewContainer container,
+            @NotNull Viewer viewer,
+            @NotNull IFContext parent,
+            @NotNull Class<?> kind) {
+        if (isTypeOf(IFSlotRenderContext.class, kind))
+            return (T) new SlotRenderContext(parent.getRoot(), container, viewer, slot, parent, component);
 
-		return (T) new SlotContext(parent.getRoot(), container, viewer, slot, parent, component);
-	}
+        return (T) new SlotContext(parent.getRoot(), container, viewer, slot, parent, component);
+    }
 
-	@Override
-	public ComponentBuilder<?> createComponentBuilder(@NotNull VirtualView root) {
-		return new BukkitItemComponentBuilder(root);
-	}
+    @Override
+    public ComponentBuilder<?> createComponentBuilder(@NotNull VirtualView root) {
+        return new BukkitItemComponentBuilder(root);
+    }
 
-	@Override
-	public synchronized boolean worksInCurrentPlatform() {
-		if (worksInCurrentPlatform != null) return worksInCurrentPlatform;
+    @Override
+    public synchronized boolean worksInCurrentPlatform() {
+        if (worksInCurrentPlatform != null) return worksInCurrentPlatform;
 
-		try {
-			Class.forName("org.bukkit.Bukkit");
-			worksInCurrentPlatform = true;
-		} catch (ClassNotFoundException ignored) {
-			// suppress ClassNotFoundException because it will be thrown in PlatformUtils
-			worksInCurrentPlatform = false;
-		}
+        try {
+            Class.forName("org.bukkit.Bukkit");
+            worksInCurrentPlatform = true;
+        } catch (ClassNotFoundException ignored) {
+            // suppress ClassNotFoundException because it will be thrown in PlatformUtils
+            worksInCurrentPlatform = false;
+        }
 
-		return worksInCurrentPlatform;
-	}
+        return worksInCurrentPlatform;
+    }
 
-	@Override
-	public Logger getLogger() {
-		return new NoopLogger();
-	}
+    @Override
+    public Logger getLogger() {
+        return new NoopLogger();
+    }
 
-	@Override
-	public Job scheduleJobInterval(@NotNull RootView root, long intervalInTicks, @NotNull Runnable execution) {
-		final View platformRoot = (View) root;
-		final ViewFrame platformFramework = (ViewFrame) platformRoot.getFramework();
-		return new BukkitTaskJobImpl(platformFramework.getOwner(), intervalInTicks, execution);
-	}
+    @Override
+    public Job scheduleJobInterval(@NotNull RootView root, long intervalInTicks, @NotNull Runnable execution) {
+        final View platformRoot = (View) root;
+        final ViewFrame platformFramework = (ViewFrame) platformRoot.getFramework();
+        return new BukkitTaskJobImpl(platformFramework.getOwner(), intervalInTicks, execution);
+    }
 }

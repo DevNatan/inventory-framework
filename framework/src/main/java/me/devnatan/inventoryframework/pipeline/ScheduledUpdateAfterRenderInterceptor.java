@@ -7,21 +7,20 @@ import me.devnatan.inventoryframework.internal.Job;
 
 public final class ScheduledUpdateAfterRenderInterceptor implements PipelineInterceptor<VirtualView> {
 
-	@Override
-	public void intercept(PipelineContext<VirtualView> pipeline, VirtualView subject) {
-		if (!(subject instanceof IFContext))
-			return;
+    @Override
+    public void intercept(PipelineContext<VirtualView> pipeline, VirtualView subject) {
+        if (!(subject instanceof IFContext)) return;
 
-		final IFContext context = (IFContext) subject;
-		final RootView root = context.getRoot();
-		final long updateIntervalInTicks = context.getConfig().getUpdateIntervalInTicks();
-		if (updateIntervalInTicks == 0) return;
+        final IFContext context = (IFContext) subject;
+        final RootView root = context.getRoot();
+        final long updateIntervalInTicks = context.getConfig().getUpdateIntervalInTicks();
+        if (updateIntervalInTicks == 0) return;
 
-		if (root.getScheduledUpdateJob() != null && root.getScheduledUpdateJob().isStarted())
-			return;
+        if (root.getScheduledUpdateJob() != null && root.getScheduledUpdateJob().isStarted()) return;
 
-		final Job updateJob = root.getElementFactory().scheduleJobInterval(root, updateIntervalInTicks, context::update);
-		updateJob.start();
-		root.setScheduledUpdateJob(updateJob);
-	}
+        final Job updateJob =
+                root.getElementFactory().scheduleJobInterval(root, updateIntervalInTicks, context::update);
+        updateJob.start();
+        root.setScheduledUpdateJob(updateJob);
+    }
 }

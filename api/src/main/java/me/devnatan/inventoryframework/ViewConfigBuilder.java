@@ -1,6 +1,5 @@
 package me.devnatan.inventoryframework;
 
-import java.time.Duration;
 import java.util.AbstractMap;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -37,7 +36,7 @@ public final class ViewConfigBuilder {
     private String[] layout = null;
     private final Set<LayoutSlot> patterns = new HashSet<>();
     private final Set<ViewConfig.Modifier> modifiers = new HashSet<>();
-	private long updateIntervalInTicks;
+    private long updateIntervalInTicks;
 
     /**
      * Inherits all configuration from another {@link ViewConfigBuilder} value.
@@ -163,10 +162,10 @@ public final class ViewConfigBuilder {
         return addOption(ViewConfig.CANCEL_ON_DRAG);
     }
 
-	public ViewConfigBuilder scheduleUpdate(long intervalInTicks) {
-		this.updateIntervalInTicks = intervalInTicks;
-		return this;
-	}
+    public ViewConfigBuilder scheduleUpdate(long intervalInTicks) {
+        this.updateIntervalInTicks = intervalInTicks;
+        return this;
+    }
 
     public ViewConfig build() {
         final Map<ViewConfig.Option<?>, Object> optionsMap = options.stream()

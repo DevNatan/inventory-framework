@@ -42,7 +42,7 @@ public class DefaultRootView implements RootView, StateWatcher {
             new Pipeline<>(INIT, OPEN, LAYOUT_RESOLUTION, FIRST_RENDER, UPDATE, CLICK, CLOSE, INVALIDATION);
     private final Set<IFContext> contexts = newSetFromMap(synchronizedMap(new HashMap<>()));
     final StateRegistry stateRegistry = new StateRegistry();
-	private Job scheduledUpdateJob;
+    private Job scheduledUpdateJob;
 
     @Override
     public final @NotNull UUID getUniqueId() {
@@ -152,17 +152,17 @@ public class DefaultRootView implements RootView, StateWatcher {
         throw new UnsupportedOperationException("Missing nextTick(...) implementation");
     }
 
-	@Override
-	public Job getScheduledUpdateJob() {
-		return scheduledUpdateJob;
-	}
+    @Override
+    public Job getScheduledUpdateJob() {
+        return scheduledUpdateJob;
+    }
 
-	@Override
-	public void setScheduledUpdateJob(@NotNull Job job) {
-		this.scheduledUpdateJob = job;
-	}
+    @Override
+    public void setScheduledUpdateJob(@NotNull Job job) {
+        this.scheduledUpdateJob = job;
+    }
 
-	@Override
+    @Override
     public final void stateRegistered(@NotNull State<?> state, Object caller) {}
 
     @Override
