@@ -8,7 +8,7 @@ import me.devnatan.inventoryframework.internal.ElementFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 
-public final class OpenInterceptor implements PipelineInterceptor<VirtualView> {
+public final class PlatformOpenInterceptor implements PipelineInterceptor<VirtualView> {
 
     @TestOnly
     boolean skipOpen = false;

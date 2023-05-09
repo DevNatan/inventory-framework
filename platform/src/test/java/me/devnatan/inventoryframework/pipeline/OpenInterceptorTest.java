@@ -21,7 +21,7 @@ public class OpenInterceptorTest {
     @Test
     void rethrowExceptionWhenAsyncJobFails() {
         Pipeline<VirtualView> pipeline = new Pipeline<>(StandardPipelinePhases.OPEN);
-        pipeline.intercept(StandardPipelinePhases.OPEN, new OpenInterceptor());
+        pipeline.intercept(StandardPipelinePhases.OPEN, new PlatformOpenInterceptor());
 
         RootView root = createRootMock();
         IFOpenContext context = mock(IFOpenContext.class);
@@ -45,7 +45,7 @@ public class OpenInterceptorTest {
         when(context.isCancelled()).thenReturn(true);
 
         PipelineContext pipelineContext = mock(PipelineContext.class);
-        new OpenInterceptor().intercept(pipelineContext, context);
+        new PlatformOpenInterceptor().intercept(pipelineContext, context);
 
         verify(pipelineContext, times(1)).finish();
     }

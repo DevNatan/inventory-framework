@@ -58,7 +58,7 @@ public class BaseViewContext extends DefaultStateValueHost implements IFContext 
     }
 
     @Override
-    public final @NotNull ViewConfig getConfig() {
+    public @NotNull ViewConfig getConfig() {
         return config;
     }
 

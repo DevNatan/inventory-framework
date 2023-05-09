@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import me.devnatan.inventoryframework.InventoryFrameworkException;
 import me.devnatan.inventoryframework.RootView;
+import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewConfigBuilder;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.runtime.BukkitViewer;
@@ -76,6 +77,11 @@ public class OpenContext extends ConfinedContext implements IFOpenContext, Conte
     @Override
     public void waitUntil(@NotNull CompletableFuture<Void> task) {
         this.waitTask = task;
+    }
+
+    @Override
+    public @NotNull ViewConfig getConfig() {
+        return inheritedConfigBuilder == null ? super.getConfig() : inheritedConfigBuilder.build();
     }
 
     @Override

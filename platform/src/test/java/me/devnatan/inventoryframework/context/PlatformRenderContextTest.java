@@ -4,7 +4,9 @@ import static me.devnatan.inventoryframework.TestUtils.createRootMock;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 
+import java.util.UUID;
 import java.util.function.BiFunction;
+import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.component.ComponentFactory;
@@ -20,7 +22,11 @@ public class PlatformRenderContextTest {
         ItemComponentBuilder itemBuilder = new TestItemComponentBuilder();
         PlatformRenderContext context =
                 new PlatformRenderContext(
-                        createRootMock(), mock(ViewContainer.class), mock(Viewer.class), mock(IFContext.class)) {
+                        UUID.randomUUID(),
+                        createRootMock(),
+                        mock(ViewContainer.class),
+                        mock(Viewer.class),
+                        mock(ViewConfig.class)) {
                     @Override
                     protected ItemComponentBuilder createBuilder() {
                         return itemBuilder;

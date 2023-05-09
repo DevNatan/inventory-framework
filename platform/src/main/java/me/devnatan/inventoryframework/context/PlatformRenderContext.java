@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
-import lombok.Getter;
 import me.devnatan.inventoryframework.RootView;
+import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.component.ComponentFactory;
@@ -22,24 +22,29 @@ import org.jetbrains.annotations.UnmodifiableView;
 abstract class PlatformRenderContext<T extends ItemComponentBuilder<T>> extends ConfinedContext
         implements IFRenderContext {
 
-    @Getter
-    private final @NotNull IFContext parent;
-
     private final List<ComponentFactory> componentBuilders = new ArrayList<>();
     private final List<LayoutSlot> layoutSlots =
             new ArrayList<>(Collections.singletonList(new LayoutSlot(LayoutSlot.FILLED_RESERVED_CHAR, $ -> {
                 throw new IllegalStateException("Cannot use factory of reserved char");
             })));
     private final List<BiFunction<Integer, Integer, ComponentFactory>> availableSlots = new ArrayList<>();
+    private final ViewConfig config;
+    private final UUID id;
 
-    PlatformRenderContext(RootView root, ViewContainer container, Viewer viewer, @NotNull IFContext parent) {
+    PlatformRenderContext(UUID id, RootView root, ViewContainer container, Viewer viewer, ViewConfig config) {
         super(root, container, viewer);
-        this.parent = parent;
+        this.id = id;
+        this.config = config;
     }
 
     @Override
     public @NotNull UUID getId() {
-        return getParent().getId();
+        return id;
+    }
+
+    @Override
+    public @NotNull ViewConfig getConfig() {
+        return config;
     }
 
     @Override

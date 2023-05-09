@@ -85,7 +85,7 @@ public final class MockElementFactory extends ElementFactory {
     }
 
     @Override
-    public Job scheduleJobInterval(long intervalInTicks) {
+    public Job scheduleJobInterval(@NotNull RootView root, long intervalInTicks, @NotNull Runnable execution) {
         return null;
     }
 }

@@ -13,17 +13,6 @@ import org.jetbrains.annotations.NotNull;
 public interface IFConfinedContext extends IFContext {
 
     /**
-     * The parent context of this confined context.
-     * <p>
-     * Not all confined contexts have a parent, in which case getting the parent will return the
-     * instance of that context itself.
-     *
-     * @return The parent context or this.
-     */
-    @NotNull
-    IFContext getParent();
-
-    /**
      * The viewer in current scope of execution.
      *
      * @return The {@link Viewer} in the current scope of execution.

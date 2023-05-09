@@ -8,7 +8,7 @@ import me.devnatan.inventoryframework.context.IFCloseContext;
 import me.devnatan.inventoryframework.context.IFContext;
 import org.jetbrains.annotations.NotNull;
 
-public final class CloseInterceptor implements PipelineInterceptor<VirtualView> {
+public final class PlatformCloseInterceptor implements PipelineInterceptor<VirtualView> {
 
     @Override
     public void intercept(@NotNull PipelineContext<VirtualView> pipeline, VirtualView subject) {

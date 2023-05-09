@@ -14,6 +14,8 @@ public final class ScheduledUpdateAfterRenderInterceptor implements PipelineInte
         final IFContext context = (IFContext) subject;
         final RootView root = context.getRoot();
         final long updateIntervalInTicks = context.getConfig().getUpdateIntervalInTicks();
+        System.out.println("context = " + context);
+        System.out.println("updateIntervalInTicks = " + updateIntervalInTicks);
         if (updateIntervalInTicks == 0) return;
 
         if (root.getScheduledUpdateJob() != null && root.getScheduledUpdateJob().isStarted()) return;
