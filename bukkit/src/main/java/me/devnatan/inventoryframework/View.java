@@ -59,29 +59,4 @@ public class View
     public final Inventory getInventory() {
         throw new UnsupportedOperationException("Cannot get inventory from RootView");
     }
-
-    @Override
-    public final int hashCode() {
-        return super.hashCode();
-    }
-
-    @Override
-    public final boolean equals(Object obj) {
-        return super.equals(obj);
-    }
-
-    @Override
-    protected final Object clone() throws CloneNotSupportedException {
-        return super.clone();
-    }
-
-    @Override
-    protected final void finalize() throws Throwable {
-        super.finalize();
-    }
-
-    @Override
-    public final String toString() {
-        return super.toString();
-    }
 }

@@ -19,7 +19,10 @@ public final class CloseInterceptor implements PipelineInterceptor<VirtualView> 
         tryCallPlatformRootCloseHandler(root, context);
 
         final Viewer viewer = context.getViewer();
-        if (context.isCancelled()) return;
+        if (context.isCancelled()) {
+			pipeline.finish();
+			return;
+		}
 
         context.removeViewer(viewer);
 

@@ -83,4 +83,9 @@ public final class MockElementFactory extends ElementFactory {
     public boolean worksInCurrentPlatform() {
         return true;
     }
+
+	@Override
+	public Job scheduleJobInterval(long intervalInTicks) {
+		return null;
+	}
 }
