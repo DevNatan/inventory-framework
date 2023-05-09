@@ -28,6 +28,7 @@ import me.devnatan.inventoryframework.pipeline.ScheduledUpdateAfterCloseIntercep
 import me.devnatan.inventoryframework.pipeline.ScheduledUpdateAfterRenderInterceptor;
 import me.devnatan.inventoryframework.pipeline.StandardPipelinePhases;
 import me.devnatan.inventoryframework.pipeline.UpdateInterceptor;
+import me.devnatan.inventoryframework.pipeline.PlatformUpdateHandlerInterceptor;
 import me.devnatan.inventoryframework.state.BaseState;
 import me.devnatan.inventoryframework.state.ComputedValue;
 import me.devnatan.inventoryframework.state.ImmutableValue;
@@ -555,6 +556,7 @@ public abstract class PlatformView<
 		pipeline.intercept(StandardPipelinePhases.FIRST_RENDER, new AvailableSlotInterceptor());
 		pipeline.intercept(StandardPipelinePhases.FIRST_RENDER, new FirstRenderInterceptor());
 		pipeline.intercept(StandardPipelinePhases.FIRST_RENDER, new ScheduledUpdateAfterRenderInterceptor());
+		pipeline.intercept(StandardPipelinePhases.UPDATE, new PlatformUpdateHandlerInterceptor());
 		pipeline.intercept(StandardPipelinePhases.UPDATE, new UpdateInterceptor());
 		pipeline.intercept(StandardPipelinePhases.CLOSE, new CloseInterceptor());
 		pipeline.intercept(StandardPipelinePhases.CLOSE, new ScheduledUpdateAfterCloseInterceptor());
