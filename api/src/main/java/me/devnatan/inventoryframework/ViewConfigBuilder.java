@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import me.devnatan.inventoryframework.exception.InvalidLayoutException;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
+import net.kyori.adventure.text.TextComponent;
 import org.jetbrains.annotations.NotNull;
 
 @Getter(AccessLevel.PACKAGE)
@@ -63,6 +64,10 @@ public final class ViewConfigBuilder {
         this.title = title;
         return this;
     }
+
+	public ViewConfigBuilder title(TextComponent title) {
+
+	}
 
     /**
      * Defines the size of the container.
