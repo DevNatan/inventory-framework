@@ -123,7 +123,12 @@ public class BukkitElementFactory extends ElementFactory {
         if (shared) throw new IllegalStateException("Shared contexts are not yet supported");
         if (isTypeOf(IFOpenContext.class, kind)) return (T) new OpenContext(root, viewer);
         if (isTypeOf(IFRenderContext.class, kind))
-            return (T) new RenderContext(root, container, viewer, requireNonNull(parent));
+            return (T) new RenderContext(
+                    requireNonNull(parent).getId(),
+                    root,
+                    container,
+                    viewer,
+                    requireNonNull(parent).getConfig());
         if (isTypeOf(IFCloseContext.class, kind))
             return (T) new CloseContext(root, container, viewer, requireNonNull(parent));
 
