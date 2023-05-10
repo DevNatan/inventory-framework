@@ -1,6 +1,6 @@
 package me.devnatan.inventoryframework.pipeline;
 
-import static me.devnatan.inventoryframework.ViewConfig.CancelOnClick;
+import static me.devnatan.inventoryframework.ViewConfig.CANCEL_ON_CLICK;
 
 import me.devnatan.inventoryframework.PlatformView;
 import me.devnatan.inventoryframework.VirtualView;
@@ -24,7 +24,7 @@ public final class GlobalClickInterceptor implements PipelineInterceptor<Virtual
 
         // inherit cancellation so we can un-cancel it
         context.setCancelled(
-                event.isCancelled() || context.getRoot().getConfig().isOptionSet(CancelOnClick));
+                event.isCancelled() || context.getRoot().getConfig().isOptionSet(CANCEL_ON_CLICK));
         ((PlatformView) context.getRoot()).onClick(context);
         event.setCancelled(context.isCancelled());
     }

@@ -18,6 +18,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.PlayerInventory;
@@ -105,5 +106,27 @@ public final class IFInventoryListener implements Listener {
         if (!context.getConfig().isOptionSet(ViewConfig.CANCEL_ON_DROP)) return;
 
         event.setCancelled(context.getConfig().getOptionValue(ViewConfig.CANCEL_ON_DROP));
+    }
+
+    @EventHandler
+    public void onInventoryDrag(InventoryDragEvent event) {
+        if (!(event.getWhoClicked() instanceof Player)) return;
+
+        final Player player = (Player) event.getWhoClicked();
+        final RootView root = viewFrame.getCurrentView(player);
+        if (root == null) return;
+
+        final IFContext context = root.getContext(root.getElementFactory().convertViewer(player));
+
+        if (!context.getConfig().isOptionSet(ViewConfig.CANCEL_ON_DRAG)) return;
+
+        final boolean configValue = context.getConfig().getOptionValue(ViewConfig.CANCEL_ON_DRAG);
+        final int size = event.getInventory().getSize();
+        for (final int rawSlot : event.getRawSlots()) {
+            if (!(rawSlot < size)) continue;
+
+            event.setCancelled(configValue);
+            break;
+        }
     }
 }

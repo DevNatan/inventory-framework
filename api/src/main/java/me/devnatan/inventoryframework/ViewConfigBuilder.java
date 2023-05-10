@@ -131,7 +131,7 @@ public final class ViewConfigBuilder {
     }
 
     public ViewConfigBuilder cancelOnClick() {
-        return addOption(ViewConfig.CancelOnClick);
+        return addOption(ViewConfig.CANCEL_ON_CLICK);
     }
 
     /**
@@ -152,8 +152,13 @@ public final class ViewConfigBuilder {
         return addOption(ViewConfig.CANCEL_ON_DROP);
     }
 
+    /**
+     * Cancels any item drag into the view.
+     *
+     * @return This configuration builder.
+     */
     public ViewConfigBuilder cancelOnDrag() {
-        throw new UnsupportedOperationException();
+        return addOption(ViewConfig.CANCEL_ON_DRAG);
     }
 
     public ViewConfig build() {
