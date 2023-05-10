@@ -95,7 +95,7 @@ public class BukkitElementFactory extends ElementFactory {
     }
 
     @Override
-    public @NotNull String transformViewerIdentifier(Object input) {
+    public @NotNull String convertViewer(Object input) {
         if (input instanceof String) return UUID.fromString((String) input).toString();
         if (input instanceof UUID) return input.toString();
         if (input instanceof Entity) return ((Entity) input).getUniqueId().toString();

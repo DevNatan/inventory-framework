@@ -16,6 +16,7 @@ import java.util.HashMap;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewFrame;
+import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.context.IFContext;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
@@ -37,10 +38,10 @@ public class IFInventoryListenerTest {
 
         IFContext context = createContextMock(root, IFContext.class);
         when(context.getConfig()).thenReturn(config);
-        when(root.getContext(anyString())).thenReturn(context);
+        when(root.getContext(any(Viewer.class))).thenReturn(context);
 
         new IFInventoryListener(viewFrame).onItemDrop(event);
-        verify(root).getContext(anyString());
+        verify(root).getContext(any(Viewer.class));
         verify(event).setCancelled(eq(true));
     }
 
@@ -68,10 +69,10 @@ public class IFInventoryListenerTest {
 
         IFContext context = createContextMock(root, IFContext.class);
         when(context.getConfig()).thenReturn(config);
-        when(root.getContext(anyString())).thenReturn(context);
+        when(root.getContext(any(Viewer.class))).thenReturn(context);
 
         new IFInventoryListener(viewFrame).onItemDrop(event);
-        verify(root).getContext(anyString());
+        verify(root).getContext(any(Viewer.class));
         verify(config, never()).getOptionValue(eq(CANCEL_ON_DROP));
         verify(event, never()).setCancelled(eq(true));
     }

@@ -44,7 +44,7 @@ public interface RootView extends VirtualView, Iterable<IFContext> {
 
     /**
      * Returns the context that is linked to the specified viewer in this view.
-     *
+     * <p>
      * <b><i> This is an internal inventory-framework API that should not be used from outside of
      * this library. No compatibility guarantees are provided. </i></b>
      *

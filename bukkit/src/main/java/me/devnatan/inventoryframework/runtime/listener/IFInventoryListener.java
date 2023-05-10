@@ -70,7 +70,7 @@ public final class IFInventoryListener implements Listener {
         if (root == null) return;
 
         final ElementFactory elementFactory = root.getElementFactory();
-        final String viewerIdentifier = elementFactory.transformViewerIdentifier(player);
+        final String viewerIdentifier = elementFactory.convertViewer(player);
         final IFContext mainContext = root.getContext(viewerIdentifier);
         final Viewer viewer = mainContext.getIndexedViewers().get(viewerIdentifier);
 
@@ -80,13 +80,14 @@ public final class IFInventoryListener implements Listener {
         root.getPipeline().execute(StandardPipelinePhases.CLOSE, closeContext);
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @SuppressWarnings("deprecation")
+	@EventHandler(ignoreCancelled = true)
     public void onItemPickup(PlayerPickupItemEvent event) {
         final Player player = event.getPlayer();
         final RootView root = viewFrame.getCurrentView(player);
         if (root == null) return;
 
-        final IFContext context = root.getContext(root.getElementFactory().transformViewerIdentifier(player));
+        final IFContext context = root.getContext(root.getElementFactory().convertViewer(player));
 
         if (!context.getConfig().isOptionSet(ViewConfig.CANCEL_ON_PICKUP)) return;
 
@@ -99,7 +100,7 @@ public final class IFInventoryListener implements Listener {
         final RootView root = viewFrame.getCurrentView(player);
         if (root == null) return;
 
-        final IFContext context = root.getContext(root.getElementFactory().transformViewerIdentifier(player));
+        final IFContext context = root.getContext(root.getElementFactory().convertViewer(player));
 
         if (!context.getConfig().isOptionSet(ViewConfig.CANCEL_ON_DROP)) return;
 
