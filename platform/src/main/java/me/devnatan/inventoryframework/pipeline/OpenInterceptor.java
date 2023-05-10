@@ -71,13 +71,7 @@ public final class OpenInterceptor implements PipelineInterceptor<VirtualView> {
             openContext.modifyConfig().size(layout.length);
         }
 
-        final ViewConfig config = openContext
-                .getRoot()
-                .getConfig()
-                .merge(openContext.modifyConfig().build());
-
-        final ViewContainer container = elementFactory.createContainer(
-                openContext, config.getType().normalize(config.getSize()), config.getTitle(), config.getType());
+        final ViewContainer container = elementFactory.createContainer(openContext);
         final Viewer viewer = openContext.getViewer();
         final IFRenderContext renderCtx = elementFactory.createContext(
                 openContext.getRoot(), container, viewer, IFRenderContext.class, false, openContext);

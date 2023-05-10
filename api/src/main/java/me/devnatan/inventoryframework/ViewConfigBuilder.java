@@ -11,14 +11,24 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import me.devnatan.inventoryframework.exception.InvalidLayoutException;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
-import net.kyori.adventure.text.TextComponent;
 import org.jetbrains.annotations.NotNull;
 
 @Getter(AccessLevel.PACKAGE)
 @NoArgsConstructor
 public final class ViewConfigBuilder {
 
-    private String title = "";
+    private static boolean titleAsComponentSupported;
+
+    static {
+        try {
+            Class.forName("net.kyori.adventure.text.TextComponent");
+            titleAsComponentSupported = true;
+        } catch (ClassNotFoundException ignored) {
+            titleAsComponentSupported = false;
+        }
+    }
+
+    private Object title;
     private int size = 0;
     private ViewType type;
     private final Set<ViewConfig.Option<?>> options = new HashSet<>();
@@ -60,14 +70,10 @@ public final class ViewConfigBuilder {
      * @param title The container title.
      * @return This configuration builder.
      */
-    public ViewConfigBuilder title(String title) {
+    public ViewConfigBuilder title(Object title) {
         this.title = title;
         return this;
     }
-
-	public ViewConfigBuilder title(TextComponent title) {
-
-	}
 
     /**
      * Defines the size of the container.
