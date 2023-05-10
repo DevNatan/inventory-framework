@@ -3,9 +3,9 @@ package me.devnatan.inventoryframework.internal;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.Objects;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewContainer;
-import me.devnatan.inventoryframework.ViewType;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.component.Component;
@@ -29,12 +29,12 @@ public final class MockElementFactory extends ElementFactory {
     }
 
     @Override
-    public @NotNull ViewContainer createContainer(
-            @NotNull IFContext context, int size, @Nullable String title, @Nullable ViewType type) {
+    public @NotNull ViewContainer createContainer(@NotNull IFContext context) {
         ViewContainer container = mock(ViewContainer.class);
-        when(container.getSize()).thenReturn(size);
-        when(container.getTitle()).thenReturn(title);
-        when(container.getType()).thenReturn(type);
+        when(container.getSize()).thenReturn(context.getConfig().getSize());
+        when(container.getTitle())
+                .thenReturn(Objects.toString(context.getConfig().getTitle()));
+        when(container.getType()).thenReturn(context.getConfig().getType());
         return container;
     }
 

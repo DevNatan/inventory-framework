@@ -31,9 +31,6 @@ public abstract class ElementFactory {
      * Create a new current platform container for the specified context.
      *
      * @param context The context.
-     * @param size    The size of the container. Fallbacks to platform default size if {@code 0}.
-     * @param title   The title of the container.
-     * @param type    The type of the container.
      * @return A new ViewContainer.
      */
     @NotNull

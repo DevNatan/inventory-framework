@@ -52,6 +52,8 @@ public class ViewConfig {
         return false;
     }
 
+    // TODO docs
+    @SuppressWarnings("unused")
     @VisibleForTesting
     public <T> boolean isOptionSet(@NotNull Option<T> option, T value) {
         for (final Map.Entry<Option<?>, Object> entry : getOptions().entrySet()) {
@@ -97,6 +99,8 @@ public class ViewConfig {
         return value;
     }
 
+    // TODO docs
+    @SuppressWarnings("unused")
     @FunctionalInterface
     public interface Modifier {
 

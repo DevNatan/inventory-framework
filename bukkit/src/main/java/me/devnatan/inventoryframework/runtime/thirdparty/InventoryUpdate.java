@@ -158,7 +158,7 @@ public final class InventoryUpdate {
 
             // If the container was added in a newer versions than the current, return.
             if (container.getContainerVersion() > ReflectionUtils.VER && useContainers()) {
-                Bukkit.getLogger().warning(String.format("This container doesn't work on your current version."));
+                Bukkit.getLogger().warning("This container doesn't work on your current version.");
                 return;
             }
 
