@@ -143,7 +143,7 @@ public interface IFContext extends VirtualView, StateValueHost {
     /**
      * Closes this context's container to all viewers who are viewing it.
      */
-    void close();
+    void closeForEveryone();
 
     /**
      * Opens a new view for all viewers in that context.
@@ -152,7 +152,7 @@ public interface IFContext extends VirtualView, StateValueHost {
      *
      * @param other The view to be opened.
      */
-    void open(Class<? extends RootView> other);
+    void openForEveryone(Class<? extends RootView> other);
 
     /**
      * All components in this context.

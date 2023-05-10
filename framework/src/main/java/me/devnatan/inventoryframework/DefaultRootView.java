@@ -67,12 +67,12 @@ public class DefaultRootView implements RootView, StateWatcher {
     }
 
     @Override
-    public final @NotNull IFContext getContextByViewer(@NotNull String id) {
+    public final @NotNull IFContext getContext(@NotNull String viewerId) {
         for (final IFContext context : getInternalContexts()) {
-            if (context.getIndexedViewers().containsKey(id)) return context;
+            if (context.getIndexedViewers().containsKey(viewerId)) return context;
         }
 
-        throw new IllegalArgumentException(format("Unable to get context for %s", id));
+        throw new IllegalArgumentException(format("Unable to get context for %s", viewerId));
     }
 
     @Override
@@ -118,7 +118,7 @@ public class DefaultRootView implements RootView, StateWatcher {
 
     @Override
     public final void closeForEveryone() {
-        getContexts().forEach(IFContext::close);
+        getContexts().forEach(IFContext::closeForEveryone);
     }
 
     @Override
@@ -170,4 +170,9 @@ public class DefaultRootView implements RootView, StateWatcher {
     @Override
     public final void stateValueSet(
             @NotNull StateValueHost host, @NotNull StateValue value, Object rawOldValue, Object rawNewValue) {}
+
+    @Override
+    public IFViewFrame<?> getFramework() {
+        throw new UnsupportedOperationException("Missing #getFramework() implementation");
+    }
 }

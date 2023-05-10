@@ -123,13 +123,14 @@ public class BaseViewContext extends DefaultStateValueHost implements IFContext 
     }
 
     @Override
-    public void close() {
+    public void closeForEveryone() {
         getContainer().close();
     }
 
     @Override
-    public final void open(Class<? extends RootView> other) {
-        throw new UnsupportedOperationException();
+    public final void openForEveryone(Class<? extends RootView> other) {
+        System.out.println("getViewers() = " + getViewers());
+        getViewers().forEach(viewer -> getRoot().getFramework().open(other, viewer));
     }
 
     @Override

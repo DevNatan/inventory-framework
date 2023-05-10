@@ -39,7 +39,7 @@ public final class CloseContext extends ConfinedContext implements IFCloseContex
     }
 
     @Override
-    public void close() {}
+    public void closeForEveryone() {}
 
     @Override
     public void closeForPlayer() {}

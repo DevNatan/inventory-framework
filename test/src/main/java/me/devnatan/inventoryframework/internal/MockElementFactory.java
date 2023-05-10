@@ -38,7 +38,7 @@ public final class MockElementFactory extends ElementFactory {
     }
 
     @Override
-    public @NotNull String transformViewerIdentifier(Object input) {
+    public @NotNull String convertViewer(Object input) {
         return (String) input;
     }
 

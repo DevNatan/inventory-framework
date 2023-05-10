@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 public interface Viewer {
 
     /**
-     * Unique identifier for this viewer used to indexing.
+     * Unique identifier for this viewer used for indexing.
      *
      * @return A unique identifier for this viewer.
      */
