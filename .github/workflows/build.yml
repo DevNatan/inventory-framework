@@ -9,10 +9,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-    - name: Set up JDK 8 for build
+    - name: Set up JDK 17 for build
       uses: actions/setup-java@v3
       with:
-        java-version: '8'
+        java-version: '17'
         distribution: 'temurin'
     - name: Build with Gradle
       uses: gradle/gradle-build-action@cd3cedc781988c804f626f4cd2dc51d0bdf02a12
@@ -24,10 +24,10 @@ jobs:
       - build
     steps:
       - uses: actions/checkout@v3
-      - name: Set up JDK 8 for test
+      - name: Set up JDK 17 for test
         uses: actions/setup-java@v3
         with:
-          java-version: '8'
+          java-version: '17'
           distribution: 'temurin'
       - name: Test with Gradle
         uses: gradle/gradle-build-action@64a1064eca4dce12f511de38c4afb06707e4e7fc
