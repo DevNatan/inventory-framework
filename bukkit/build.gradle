@@ -8,7 +8,8 @@ apply from: '../library.gradle'
 apply from: '../publish.gradle'
 
 repositories {
-    maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
+    mavenCentral()
+    maven { url = 'https://repo.papermc.io/repository/maven-public/' }
 }
 
 dependencies {
@@ -20,6 +21,11 @@ dependencies {
     testRuntimeOnly libs.spigot.api
     testImplementation projects.api
     testImplementation projects.test
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_17
 }
 
 shadowJar {

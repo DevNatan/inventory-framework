@@ -5,7 +5,6 @@ import static org.mockito.Mockito.when;
 
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewContainer;
-import me.devnatan.inventoryframework.ViewType;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.component.Component;
@@ -29,13 +28,8 @@ public final class MockElementFactory extends ElementFactory {
     }
 
     @Override
-    public @NotNull ViewContainer createContainer(
-            @NotNull IFContext context, int size, @Nullable String title, @Nullable ViewType type) {
-        ViewContainer container = mock(ViewContainer.class);
-        when(container.getSize()).thenReturn(size);
-        when(container.getTitle()).thenReturn(title);
-        when(container.getType()).thenReturn(type);
-        return container;
+    public @NotNull ViewContainer createContainer(@NotNull IFContext context) {
+        return mock(ViewContainer.class);
     }
 
     @Override
@@ -60,6 +54,7 @@ public final class MockElementFactory extends ElementFactory {
         when(value.getContainer()).thenReturn(container);
         if (value instanceof IFConfinedContext)
             when(((IFConfinedContext) value).getViewer()).thenReturn(viewer);
+        if (parent != null) when(value.getConfig()).thenCallRealMethod();
         return value;
     }
 

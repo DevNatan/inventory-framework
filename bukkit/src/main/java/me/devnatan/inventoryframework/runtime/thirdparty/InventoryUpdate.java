@@ -27,7 +27,7 @@ import java.lang.invoke.MethodType;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.Arrays;
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
@@ -158,7 +158,7 @@ public final class InventoryUpdate {
 
             // If the container was added in a newer versions than the current, return.
             if (container.getContainerVersion() > ReflectionUtils.VER && useContainers()) {
-                Bukkit.getLogger().warning(String.format("This container doesn't work on your current version."));
+                Bukkit.getLogger().warning("This container doesn't work on your current version.");
                 return;
             }
 

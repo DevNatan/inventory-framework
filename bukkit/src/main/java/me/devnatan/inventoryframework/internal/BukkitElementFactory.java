@@ -2,13 +2,12 @@ package me.devnatan.inventoryframework.internal;
 
 import static java.util.Objects.requireNonNull;
 import static me.devnatan.inventoryframework.runtime.util.InventoryUtils.checkInventoryTypeSupport;
-import static me.devnatan.inventoryframework.runtime.util.InventoryUtils.toInventoryType;
 import static me.devnatan.inventoryframework.util.IsTypeOf.isTypeOf;
-import static org.bukkit.Bukkit.createInventory;
 
 import java.util.UUID;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.View;
+import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.ViewType;
 import me.devnatan.inventoryframework.Viewer;
@@ -38,9 +37,22 @@ import org.bukkit.inventory.InventoryHolder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public final class BukkitElementFactory extends ElementFactory {
+public class BukkitElementFactory extends ElementFactory {
 
     private static final ViewType defaultType = ViewType.CHEST;
+    private static final InventoryFactory inventoryFactory;
+
+    static {
+        InventoryFactory factory = new InventoryFactory();
+        try {
+            Class.forName("net.kyori.adventure.text.Component");
+            factory = new PaperInventoryFactory();
+        } catch (ClassNotFoundException ignored) {
+        }
+
+        inventoryFactory = factory;
+    }
+
     private Boolean worksInCurrentPlatform = null;
 
     @Override
@@ -50,11 +62,12 @@ public final class BukkitElementFactory extends ElementFactory {
 
     // TODO Test it
     @Override
-    public @NotNull ViewContainer createContainer(
-            @NotNull IFContext context, int size, @Nullable String title, @Nullable ViewType type) {
-        final ViewType finalType = type == null ? defaultType : type;
+    public @NotNull ViewContainer createContainer(@NotNull IFContext context) {
+        final ViewConfig config = context.getConfig();
+        final ViewType finalType = config.getType() == null ? defaultType : config.getType();
         checkInventoryTypeSupport(finalType);
 
+        final int size = finalType.normalize(config.getSize());
         if (size != 0 && !finalType.isExtendable())
             throw new IllegalArgumentException(String.format(
                     "Only \"%s\" type can have a custom size,"
@@ -67,22 +80,7 @@ public final class BukkitElementFactory extends ElementFactory {
 
         final InventoryHolder holder =
                 context.getRoot() instanceof InventoryHolder ? (InventoryHolder) context.getRoot() : null;
-
-        final Inventory inventory;
-        final String finalTitle = context.getConfig().getTitle().isEmpty()
-                ? null
-                : context.getConfig().getTitle();
-        if (finalTitle == null) {
-            inventory = !finalType.isExtendable() || size == 0
-                    ? createInventory(holder, requireNonNull(toInventoryType(finalType)))
-                    : createInventory(holder, size);
-        } else if (!finalType.isExtendable()) {
-            inventory = createInventory(holder, requireNonNull(toInventoryType(finalType)), finalTitle);
-        } else {
-            inventory = size == 0
-                    ? createInventory(holder, requireNonNull(toInventoryType(finalType)), finalTitle)
-                    : createInventory(holder, size, finalTitle);
-        }
+        final Inventory inventory = inventoryFactory.createInventory(holder, finalType, size, config.getTitle());
 
         return new BukkitViewContainer(inventory, false, finalType);
     }
@@ -99,7 +97,7 @@ public final class BukkitElementFactory extends ElementFactory {
     @Override
     public @NotNull String transformViewerIdentifier(Object input) {
         if (input instanceof String) return UUID.fromString((String) input).toString();
-        if (input instanceof UUID) return ((UUID) input).toString();
+        if (input instanceof UUID) return input.toString();
         if (input instanceof Entity) return ((Entity) input).getUniqueId().toString();
 
         throw new IllegalArgumentException("Inconvertible viewer id: " + input);

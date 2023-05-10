@@ -24,7 +24,7 @@ public class ViewConfig {
     public static final ViewConfig.Option<Boolean> CANCEL_ON_PICKUP = createOption("cancel-on-pickup", true);
     public static final ViewConfig.Option<Boolean> CANCEL_ON_DROP = createOption("cancel-on-drop", true);
 
-    private final String title;
+    private final Object title;
     private final int size;
     private final ViewType type;
     private final Map<Option<?>, Object> options;
@@ -52,6 +52,8 @@ public class ViewConfig {
         return false;
     }
 
+    // TODO docs
+    @SuppressWarnings("unused")
     @VisibleForTesting
     public <T> boolean isOptionSet(@NotNull Option<T> option, T value) {
         for (final Map.Entry<Option<?>, Object> entry : getOptions().entrySet()) {
@@ -79,7 +81,7 @@ public class ViewConfig {
 
         // TODO merge "options" and "modifiers" from both, distinctly
         return new ViewConfig(
-                merge(other, ViewConfig::getTitle, value -> value != null && !value.isEmpty()),
+                merge(other, ViewConfig::getTitle, Objects::nonNull),
                 merge(other, ViewConfig::getSize, value -> value != 0),
                 merge(other, ViewConfig::getType),
                 merge(other, ViewConfig::getOptions, value -> value != null && !value.isEmpty()),
@@ -97,6 +99,8 @@ public class ViewConfig {
         return value;
     }
 
+    // TODO docs
+    @SuppressWarnings("unused")
     @FunctionalInterface
     public interface Modifier {
 

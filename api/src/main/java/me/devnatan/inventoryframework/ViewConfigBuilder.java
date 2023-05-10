@@ -13,11 +13,23 @@ import me.devnatan.inventoryframework.exception.InvalidLayoutException;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
 import org.jetbrains.annotations.NotNull;
 
+@SuppressWarnings("unused")
 @Getter(AccessLevel.PACKAGE)
 @NoArgsConstructor
 public final class ViewConfigBuilder {
 
-    private String title = "";
+    private static boolean titleAsComponentSupported;
+
+    static {
+        try {
+            Class.forName("net.kyori.adventure.text.TextComponent");
+            titleAsComponentSupported = true;
+        } catch (ClassNotFoundException ignored) {
+            titleAsComponentSupported = false;
+        }
+    }
+
+    private Object title;
     private int size = 0;
     private ViewType type;
     private final Set<ViewConfig.Option<?>> options = new HashSet<>();
@@ -54,12 +66,13 @@ public final class ViewConfigBuilder {
     /**
      * Defines the title of the container.
      * <p>
-     * If applied in view scope, it will be the default value for all contexts originated from it.
+     * <a href="https://github.com/KyoriPowered/adventure">Kyori's Adventure Text Component</a> is supported if your platform is PaperSpigot
+     * in a non-legacy version. Non-{@link String} titles will be converted to a plain text.
      *
      * @param title The container title.
      * @return This configuration builder.
      */
-    public ViewConfigBuilder title(String title) {
+    public ViewConfigBuilder title(Object title) {
         this.title = title;
         return this;
     }

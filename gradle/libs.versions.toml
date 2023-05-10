@@ -1,16 +1,17 @@
 [versions]
 jetbrains-annotations = "24.0.1"
-spigot-api = "1.16.5-R0.1-SNAPSHOT"
+spigot-api = "1.19.4-R0.1-SNAPSHOT"
 junit = "5.9.3"
 lombok = "1.18.26"
 kotlin = "1.8.21"
 mockito = "4.11.0"
+adventure-api = "4.13.0"
 plugin-shadowjar = "8.1.1"
 plugin-ktlint = "3.14.0"
 plugin-spotless = "6.12.0"
 
 [libraries.spigot-api]
-module = "org.spigotmc:spigot-api"
+module = "io.papermc.paper:paper-api"
 version.ref = "spigot-api"
 
 [libraries.jetbrains-annotations]
@@ -40,6 +41,10 @@ version.ref = "mockito"
 [libraries.mockito-junit]
 module = "org.mockito:mockito-junit-jupiter"
 version.ref = "mockito"
+
+[libraries.adventure-api]
+module = "net.kyori:adventure-api"
+version.ref = "adventure-api"
 
 [plugins]
 shadowjar = { id = "com.github.johnrengelman.shadow", version.ref = "plugin-shadowjar" }

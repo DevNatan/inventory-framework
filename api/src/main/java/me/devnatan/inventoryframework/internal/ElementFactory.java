@@ -2,7 +2,6 @@ package me.devnatan.inventoryframework.internal;
 
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewContainer;
-import me.devnatan.inventoryframework.ViewType;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.component.Component;
@@ -32,14 +31,10 @@ public abstract class ElementFactory {
      * Create a new current platform container for the specified context.
      *
      * @param context The context.
-     * @param size    The size of the container. Fallbacks to platform default size if {@code 0}.
-     * @param title   The title of the container.
-     * @param type    The type of the container.
      * @return A new ViewContainer.
      */
     @NotNull
-    public abstract ViewContainer createContainer(
-            @NotNull IFContext context, int size, @Nullable String title, @Nullable ViewType type);
+    public abstract ViewContainer createContainer(@NotNull IFContext context);
 
     @NotNull
     public abstract Viewer createViewer(Object... parameters);
