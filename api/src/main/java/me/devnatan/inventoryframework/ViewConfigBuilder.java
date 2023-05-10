@@ -66,7 +66,8 @@ public final class ViewConfigBuilder {
     /**
      * Defines the title of the container.
      * <p>
-     * If applied in view scope, it will be the default value for all contexts originated from it.
+     * <a href="https://github.com/KyoriPowered/adventure">Kyori's Adventure Text Component</a> is supported if your platform is PaperSpigot
+     * in a non-legacy version. Non-{@link String} titles will be converted to a plain text.
      *
      * @param title The container title.
      * @return This configuration builder.
