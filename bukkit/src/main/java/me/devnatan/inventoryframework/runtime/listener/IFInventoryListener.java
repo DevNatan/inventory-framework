@@ -81,7 +81,7 @@ public final class IFInventoryListener implements Listener {
     }
 
     @SuppressWarnings("deprecation")
-	@EventHandler(ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = true)
     public void onItemPickup(PlayerPickupItemEvent event) {
         final Player player = event.getPlayer();
         final RootView root = viewFrame.getCurrentView(player);
