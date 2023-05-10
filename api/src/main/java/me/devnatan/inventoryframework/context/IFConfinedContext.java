@@ -43,7 +43,7 @@ public interface IFConfinedContext extends IFContext {
      *
      * @param other The view to be opened.
      */
-    void openForPlayer(Class<? extends RootView> other);
+    void openForPlayer(@NotNull Class<? extends RootView> other);
 
     /**
      * Updates the container title only for the player current scope of execution.

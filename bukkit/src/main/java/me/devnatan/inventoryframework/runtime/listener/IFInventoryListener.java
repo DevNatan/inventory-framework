@@ -71,7 +71,7 @@ public final class IFInventoryListener implements Listener {
 
         final ElementFactory elementFactory = root.getElementFactory();
         final String viewerIdentifier = elementFactory.transformViewerIdentifier(player);
-        final IFContext mainContext = root.getContextByViewer(viewerIdentifier);
+        final IFContext mainContext = root.getContext(viewerIdentifier);
         final Viewer viewer = mainContext.getIndexedViewers().get(viewerIdentifier);
 
         final IFCloseContext closeContext = elementFactory.createContext(
@@ -86,8 +86,7 @@ public final class IFInventoryListener implements Listener {
         final RootView root = viewFrame.getCurrentView(player);
         if (root == null) return;
 
-        final IFContext context =
-                root.getContextByViewer(root.getElementFactory().transformViewerIdentifier(player));
+        final IFContext context = root.getContext(root.getElementFactory().transformViewerIdentifier(player));
 
         if (!context.getConfig().isOptionSet(ViewConfig.CANCEL_ON_PICKUP)) return;
 
@@ -100,8 +99,7 @@ public final class IFInventoryListener implements Listener {
         final RootView root = viewFrame.getCurrentView(player);
         if (root == null) return;
 
-        final IFContext context =
-                root.getContextByViewer(root.getElementFactory().transformViewerIdentifier(player));
+        final IFContext context = root.getContext(root.getElementFactory().transformViewerIdentifier(player));
 
         if (!context.getConfig().isOptionSet(ViewConfig.CANCEL_ON_DROP)) return;
 

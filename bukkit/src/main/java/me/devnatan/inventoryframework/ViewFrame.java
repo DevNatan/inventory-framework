@@ -58,7 +58,9 @@ public class ViewFrame extends IFViewFrame<ViewFrame> implements FeatureInstalle
         if (!(view instanceof PlatformView))
             throw new IllegalStateException("Only PlatformView can be opened through #open(...)");
 
+        System.out.println("view = " + view);
         view.open(viewer);
+        System.out.println("viewer = " + viewer);
     }
 
     /**

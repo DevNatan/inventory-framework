@@ -11,23 +11,81 @@ import org.jetbrains.annotations.UnmodifiableView;
 
 public interface RootView extends VirtualView, Iterable<IFContext> {
 
+    /**
+     * The unique identifier of this view.
+     *
+     * @return The unique id of this view.
+     */
     @NotNull
     UUID getUniqueId();
 
+    /**
+     * All contexts linked to this view.
+     *
+     * @return An unmodifiable set of all currently active contexts in this view.
+     */
     @NotNull
     @UnmodifiableView
     Set<IFContext> getContexts();
 
+    /**
+     * Returns the context that is linked to the specified viewer in this view.
+     * <p>
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     *
+     * @param viewer The viewer.
+     * @return The context of the viewer in this context.
+     * @throws IllegalArgumentException If there's no context linked to the given viewer.
+     */
+    @ApiStatus.Internal
     @NotNull
     IFContext getContext(@NotNull Viewer viewer);
 
+    /**
+     * Returns the context that is linked to the specified viewer in this view.
+     *
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     *
+     * @param viewerId The id of the viewer.
+     * @return The context of the viewer in this context.
+     * @throws IllegalArgumentException If there's no context linked to the given viewer.
+     */
     @NotNull
-    IFContext getContextByViewer(@NotNull String id);
+    IFContext getContext(@NotNull String viewerId);
 
+    /**
+     * Adds a context to this view.
+     * <p>
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     *
+     * @param context The context to add.
+     */
+    @ApiStatus.Internal
     void addContext(@NotNull IFContext context);
 
+    /**
+     * Removes a given context from this view if that context is linked to this view.
+     * <p>
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     *
+     * @param context The context to remove.
+     */
+    @ApiStatus.Internal
     void removeContext(@NotNull IFContext context);
 
+    /**
+     * Renders a given context in this view.
+     * <p>
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     *
+     * @param context The context to render.
+     */
+    @ApiStatus.Internal
     void renderContext(@NotNull IFContext context);
 
     /**
@@ -66,12 +124,50 @@ public interface RootView extends VirtualView, Iterable<IFContext> {
     @NotNull
     Pipeline<VirtualView> getPipeline();
 
+    /**
+     * Opens this view to a viewer.
+     * <p>
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     *
+     * @param viewer The viewer.
+     */
+    @ApiStatus.Internal
     void open(@NotNull Viewer viewer);
 
+    /**
+     * Closes all contexts that are currently active in this view.
+     */
     void closeForEveryone();
 
+    /**
+     * The ElementFactory for this view.
+     * <p>
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     *
+     * @return The current element factory.
+     */
+    @ApiStatus.Internal
     @NotNull
     ElementFactory getElementFactory();
 
+    /**
+     * Runs a task in the next tick.
+     *
+     * @param task The task to run.
+     */
     void nextTick(Runnable task);
+
+    /**
+     * The IFViewFrame for this view.
+     * <p>
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     *
+     * @return The current framework that holds this view.
+     * @throws UnsupportedOperationException If this view doesn't support a framework.
+     */
+    @ApiStatus.Internal
+    IFViewFrame<?> getFramework();
 }

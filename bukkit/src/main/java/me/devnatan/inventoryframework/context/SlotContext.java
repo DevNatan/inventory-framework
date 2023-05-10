@@ -1,6 +1,7 @@
 package me.devnatan.inventoryframework.context;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import lombok.ToString;
 import me.devnatan.inventoryframework.RootView;
@@ -45,6 +46,11 @@ public class SlotContext extends ConfinedContext implements IFSlotContext, Conte
     @Override
     public @NotNull ViewContainer getContainer() {
         return getParent().getContainer();
+    }
+
+    @Override
+    public @NotNull @UnmodifiableView Map<String, Viewer> getIndexedViewers() {
+        return getParent().getIndexedViewers();
     }
 
     @Override

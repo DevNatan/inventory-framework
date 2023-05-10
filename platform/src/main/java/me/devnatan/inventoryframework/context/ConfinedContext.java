@@ -32,8 +32,8 @@ class ConfinedContext extends BaseViewContext implements IFConfinedContext {
     }
 
     @Override
-    public void openForPlayer(Class<? extends RootView> other) {
-        getContainer().changeTitle(null, viewer);
+    public void openForPlayer(@NotNull Class<? extends RootView> other) {
+        getRoot().getFramework().open(other, getViewer());
     }
 
     @Override

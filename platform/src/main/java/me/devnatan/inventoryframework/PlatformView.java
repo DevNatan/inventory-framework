@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import lombok.AccessLevel;
-import lombok.Getter;
 import me.devnatan.inventoryframework.component.ComponentFactory;
 import me.devnatan.inventoryframework.component.ItemComponentBuilder;
 import me.devnatan.inventoryframework.component.Pagination;
@@ -55,7 +53,6 @@ public abstract class PlatformView<
                 TSlotClickContext extends IFSlotClickContext>
         extends DefaultRootView {
 
-    @Getter(AccessLevel.PACKAGE)
     private IFViewFrame<?> framework;
 
     private boolean initialized;
@@ -569,5 +566,10 @@ public abstract class PlatformView<
                 getElementFactory().createContext(this, null, viewer, IFOpenContext.class, false, null);
         context.addViewer(viewer);
         getPipeline().execute(StandardPipelinePhases.OPEN, context);
+    }
+
+    @Override
+    public IFViewFrame<?> getFramework() {
+        return framework;
     }
 }

@@ -39,7 +39,7 @@ public class OpenContext extends ConfinedContext implements IFOpenContext, Conte
     }
 
     @Override
-    public void close() {
+    public void closeForEveryone() {
         unsupportedOperation("#setCancelled(true)");
     }
 
@@ -49,7 +49,7 @@ public class OpenContext extends ConfinedContext implements IFOpenContext, Conte
     }
 
     @Override
-    public void openForPlayer(Class<? extends RootView> other) {
+    public void openForPlayer(@NotNull Class<? extends RootView> other) {
         unsupportedOperation();
     }
 

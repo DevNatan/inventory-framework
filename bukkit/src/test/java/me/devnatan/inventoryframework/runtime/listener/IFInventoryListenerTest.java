@@ -5,6 +5,7 @@ import static me.devnatan.inventoryframework.TestUtils.createRootMock;
 import static me.devnatan.inventoryframework.ViewConfig.CANCEL_ON_DROP;
 import static me.devnatan.inventoryframework.ViewConfig.CANCEL_ON_PICKUP;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -36,10 +37,10 @@ public class IFInventoryListenerTest {
 
         IFContext context = createContextMock(root, IFContext.class);
         when(context.getConfig()).thenReturn(config);
-        when(root.getContextByViewer(any())).thenReturn(context);
+        when(root.getContext(anyString())).thenReturn(context);
 
         new IFInventoryListener(viewFrame).onItemDrop(event);
-        verify(root).getContextByViewer(any());
+        verify(root).getContext(anyString());
         verify(event).setCancelled(eq(true));
     }
 
@@ -51,7 +52,7 @@ public class IFInventoryListenerTest {
         when(viewFrame.getCurrentView(any())).thenReturn(null);
 
         new IFInventoryListener(viewFrame).onItemDrop(event);
-        verify(root, never()).getContextByViewer(any());
+        verify(root, never()).getContext(anyString());
     }
 
     @Test
@@ -67,10 +68,10 @@ public class IFInventoryListenerTest {
 
         IFContext context = createContextMock(root, IFContext.class);
         when(context.getConfig()).thenReturn(config);
-        when(root.getContextByViewer(any())).thenReturn(context);
+        when(root.getContext(anyString())).thenReturn(context);
 
         new IFInventoryListener(viewFrame).onItemDrop(event);
-        verify(root).getContextByViewer(any());
+        verify(root).getContext(anyString());
         verify(config, never()).getOptionValue(eq(CANCEL_ON_DROP));
         verify(event, never()).setCancelled(eq(true));
     }
@@ -89,10 +90,10 @@ public class IFInventoryListenerTest {
 
         IFContext context = createContextMock(root, IFContext.class);
         when(context.getConfig()).thenReturn(config);
-        when(root.getContextByViewer(any())).thenReturn(context);
+        when(root.getContext(anyString())).thenReturn(context);
 
         new IFInventoryListener(viewFrame).onItemPickup(event);
-        verify(root).getContextByViewer(any());
+        verify(root).getContext(anyString());
         verify(event).setCancelled(eq(true));
     }
 
@@ -103,7 +104,7 @@ public class IFInventoryListenerTest {
         when(viewFrame.getCurrentView(any())).thenReturn(null);
 
         new IFInventoryListener(viewFrame).onItemPickup(mock(PlayerPickupItemEvent.class));
-        verify(root, never()).getContextByViewer(any());
+        verify(root, never()).getContext(anyString());
     }
 
     @Test
@@ -119,10 +120,10 @@ public class IFInventoryListenerTest {
 
         IFContext context = createContextMock(root, IFContext.class);
         when(context.getConfig()).thenReturn(config);
-        when(root.getContextByViewer(any())).thenReturn(context);
+        when(root.getContext(anyString())).thenReturn(context);
 
         new IFInventoryListener(viewFrame).onItemPickup(event);
-        verify(root).getContextByViewer(any());
+        verify(root).getContext(anyString());
         verify(config, never()).getOptionValue(eq(CANCEL_ON_PICKUP));
         verify(event, never()).setCancelled(eq(true));
     }
