@@ -41,7 +41,9 @@ import java.util.logging.Level;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPOutputStream;
 import javax.net.ssl.HttpsURLConnection;
+import me.devnatan.inventoryframework.runtime.InventoryFramework;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -129,12 +131,11 @@ public final class Metrics {
     }
 
     private void appendServiceData(JsonObjectBuilder builder) {
-        builder.appendField("pluginVersion", plugin.getDescription().getVersion());
-        // TODO missing inventory framework library version
-        //        builder.appendField("libraryVersion", IF.VERSION);
-
+        builder.appendField("pluginVersion", InventoryFramework.LIBRARY_VERSION);
         boolean isShaded = !plugin.getDescription().getName().equals("InventoryFramework");
         builder.appendField("libraryOrShaded", isShaded ? "shaded" : "library");
+        builder.appendField(
+                "server_motd", ChatColor.stripColor(Bukkit.getServer().getMotd()));
     }
 
     private int getPlayerAmount() {
