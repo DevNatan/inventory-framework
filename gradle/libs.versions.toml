@@ -2,7 +2,7 @@
 jetbrains-annotations = "24.0.1"
 spigot-api = "1.19.4-R0.1-SNAPSHOT"
 junit = "5.9.3"
-lombok = "1.18.26"
+lombok = "1.18.28"
 kotlin = "1.8.21"
 mockito = "4.11.0"
 adventure-api = "4.13.1"
