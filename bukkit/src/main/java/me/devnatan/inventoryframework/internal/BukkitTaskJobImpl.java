@@ -14,7 +14,7 @@ class BukkitTaskJobImpl implements Job {
 
     @Override
     public boolean isStarted() {
-        return task != null && !task.isCancelled();
+        return task != null;
     }
 
     @Override
@@ -25,7 +25,7 @@ class BukkitTaskJobImpl implements Job {
 
     @Override
     public void cancel() {
-        if (task == null || task.isCancelled()) return;
+        if (!isStarted()) return;
         task.cancel();
         task = null;
     }

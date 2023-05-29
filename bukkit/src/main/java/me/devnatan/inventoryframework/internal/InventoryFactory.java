@@ -18,7 +18,7 @@ class InventoryFactory {
     protected final Inventory createInventoryWithTextTitle(
             InventoryHolder holder, ViewType type, int size, String title) {
         final Inventory inventory;
-        title = title.isEmpty() ? null : title;
+        title = title == null || title.isEmpty() ? null : title;
 
         if (title == null) {
             inventory = !type.isExtendable() || size == 0

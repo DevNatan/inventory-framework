@@ -14,14 +14,13 @@ public final class ScheduledUpdateAfterRenderInterceptor implements PipelineInte
         final IFContext context = (IFContext) subject;
         final RootView root = context.getRoot();
         final long updateIntervalInTicks = context.getConfig().getUpdateIntervalInTicks();
-        System.out.println("context = " + context);
-        System.out.println("updateIntervalInTicks = " + updateIntervalInTicks);
-        if (updateIntervalInTicks == 0) return;
 
+        if (updateIntervalInTicks == 0) return;
         if (root.getScheduledUpdateJob() != null && root.getScheduledUpdateJob().isStarted()) return;
 
-        final Job updateJob =
-                root.getElementFactory().scheduleJobInterval(root, updateIntervalInTicks, context::update);
+        final Job updateJob = root.getElementFactory().scheduleJobInterval(root, updateIntervalInTicks, () -> {
+            root.getContexts().forEach(IFContext::update);
+        });
         updateJob.start();
         root.setScheduledUpdateJob(updateJob);
     }

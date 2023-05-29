@@ -16,7 +16,9 @@ public final class ScheduledUpdateAfterCloseInterceptor implements PipelineInter
         if (root.getScheduledUpdateJob() == null
                 || !root.getScheduledUpdateJob().isStarted()) return;
 
+        // check possible shared context viewers count first to optimize global viewers count check
         if (!context.getViewers().isEmpty()) return;
+        if (!root.getContexts().stream().allMatch(other -> other.getViewers().isEmpty())) return;
 
         root.getScheduledUpdateJob().cancel();
     }
