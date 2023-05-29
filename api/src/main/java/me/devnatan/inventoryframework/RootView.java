@@ -172,7 +172,7 @@ public interface RootView extends VirtualView, Iterable<IFContext> {
     @ApiStatus.Internal
     IFViewFrame<?> getFramework();
 
-	Job getScheduledUpdateJob();
+    Job getScheduledUpdateJob();
 
     @ApiStatus.Internal
     void setScheduledUpdateJob(@NotNull Job job);

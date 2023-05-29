@@ -24,7 +24,6 @@ import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.context.IFSlotContext;
 import me.devnatan.inventoryframework.context.IFSlotRenderContext;
 import me.devnatan.inventoryframework.context.OpenContext;
-import me.devnatan.inventoryframework.context.RenderContext;
 import me.devnatan.inventoryframework.context.SlotContext;
 import me.devnatan.inventoryframework.context.SlotRenderContext;
 import me.devnatan.inventoryframework.logging.Logger;
@@ -38,20 +37,12 @@ import org.bukkit.inventory.InventoryHolder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.UUID;
-
-import static java.util.Objects.requireNonNull;
-import static me.devnatan.inventoryframework.runtime.util.InventoryUtils.checkInventoryTypeSupport;
-import static me.devnatan.inventoryframework.runtime.util.InventoryUtils.toInventoryType;
-import static me.devnatan.inventoryframework.util.IsTypeOf.isTypeOf;
-import static org.bukkit.Bukkit.createInventory;
-
 public class BukkitElementFactory extends ElementFactory {
 
     private static final ViewType defaultType = ViewType.CHEST;
     private static final InventoryFactory inventoryFactory;
-	private Boolean worksInCurrentPlatform = null;
-	
+    private Boolean worksInCurrentPlatform = null;
+
     static {
         InventoryFactory factory = new InventoryFactory();
         try {
@@ -103,7 +94,7 @@ public class BukkitElementFactory extends ElementFactory {
     }
 
     @Override
-    public @NotNull String transformViewerIdentifier(Object input) {
+    public @NotNull String convertViewer(Object input) {
         if (input instanceof String) return UUID.fromString((String) input).toString();
         if (input instanceof UUID) return ((UUID) input).toString();
         if (input instanceof Entity) return ((Entity) input).getUniqueId().toString();
@@ -123,7 +114,7 @@ public class BukkitElementFactory extends ElementFactory {
         if (shared) throw new IllegalStateException("Shared contexts are not yet supported");
         if (isTypeOf(IFOpenContext.class, kind)) return (T) new OpenContext(root, viewer);
         if (isTypeOf(IFRenderContext.class, kind))
-            return (T) new RenderContext(
+            return (T) new me.devnatan.inventoryframework.context.RenderContext(
                     requireNonNull(parent).getId(),
                     root,
                     container,

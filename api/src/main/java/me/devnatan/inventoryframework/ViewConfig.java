@@ -31,7 +31,7 @@ public class ViewConfig {
     private final Map<Option<?>, Object> options;
     private final String[] layout;
     private final Set<Modifier> modifiers;
-	private final long updateIntervalInTicks;
+    private final long updateIntervalInTicks;
 
     @VisibleForTesting
     @SuppressWarnings("unchecked")
@@ -83,7 +83,7 @@ public class ViewConfig {
 
         // TODO merge "options" and "modifiers" from both, distinctly
         return new ViewConfig(
-                merge(other, ViewConfig::getTitle, value -> value != null && !value.isEmpty()),
+                merge(other, ViewConfig::getTitle, Objects::nonNull),
                 merge(other, ViewConfig::getSize, value -> value != 0),
                 merge(other, ViewConfig::getType),
                 merge(other, ViewConfig::getOptions, value -> value != null && !value.isEmpty()),
