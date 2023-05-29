@@ -31,7 +31,6 @@ publishing {
                     ? rootProject.name + '-impl'
                     : (project.name.equals('bom') ? rootProject.name : rootProject.name + '-' + project.name)
             it.version = rootProject.version
-//            it.from project.name.equals('bom') ? components["javaPlatform"] : components.java
 
             it.pom {
                 developers {
@@ -48,7 +47,7 @@ publishing {
 
 signing {
     useInMemoryPgpKeys(
-            project.findProperty('signing.keyId') ?: System.getenv('OSSRH_SIGNING_KEY'),
-            project.findProperty('signing.password') ?: System.getenv('OSSRH_SIGNING_PASSWORD')
+            System.getenv('OSSRH_SIGNING_PASSWORD'),
+            System.getenv('OSSRH_SIGNING_PASSWORD')
     )
 }
