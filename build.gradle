@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.spotless) apply false
+    alias(libs.plugins.publishOnCentral) apply false
 }
 
 group 'me.devnatan'
-version '3.0.0-beta'
+version '3.0.0-beta-SNAPSHOT'

@@ -1,33 +1,54 @@
-apply plugin: 'maven-publish'
+apply plugin: 'org.danilopianini.publish-on-central'
 
-project.afterEvaluate {
-    publishing {
-        publications {
-            jitpack(MavenPublication) {
-                it.groupId = rootProject.group
-                it.artifactId = project.name.equals('framework')
-                        ? rootProject.name + '-impl'
-                        : (project.name.equals('bom') ? rootProject.name : rootProject.name + '-' + project.name)
-                it.version = rootProject.version
+def isReleaseVersion = !version.endsWith("SNAPSHOT")
 
-                it.from project.name.equals('bom') ? components["javaPlatform"] : components.java
+publishOnCentral {
+    it.configureMavenCentral = true
+    it.projectDescription = 'Inventory Framework is a Bukkit Inventory API framework that allows you to create custom inventories with varied interaction treatments.'
+    it.projectLongName = project.name
+    it.licenseName = 'MIT license'
+    it.licenseUrl = 'https://github.com/DevNatan/inventory-framework/blob/main/LICENSE'
+    it.repoOwner = 'DevNatan'
+    it.projectUrl = 'https://github.com/' + it.repoOwner + '/' + project.name
+    it.scmConnection = 'scm:git:https://github.com/' + it.repoOwner + '/' + project.name
 
-                it.pom {
-                    url.set('https://gihub.com/DevNatan/inventory-framework.git')
-                    licenses {
-                        license {
-                            name = 'MIT license'
-                            url = 'https://github.com/DevNatan/inventory-framework/blob/main/LICENSE'
-                        }
-                    }
+    it.mavenCentral.user.set(System.getenv('OSSRH_USERNAME'))
+    it.mavenCentral.password.set(provider { System.getenv('OSSRH_PASSWORD') })
 
-                    scm {
-                        connection = 'scm:git:git://github.com/DevNatan/inventory-framework.git'
-                        developerConnection = 'scm:git:ssh://github.com/DevNatan/inventory-framework.git'
-                        url = 'https://github.com/DevNatan/inventory-framework'
+    if (!isReleaseVersion) {
+        it.mavenCentralSnapshotsRepository()
+    }
+}
+
+/*
+ * Developers and contributors must be added manually
+ */
+publishing {
+    publications {
+        javaOSSRH(MavenPublication) {
+            it.groupId = rootProject.group
+            it.artifactId = project.name.equals('framework')
+                    ? rootProject.name + '-impl'
+                    : (project.name.equals('bom') ? rootProject.name : rootProject.name + '-' + project.name)
+            it.version = rootProject.version
+//            it.from project.name.equals('bom') ? components["javaPlatform"] : components.java
+
+            it.pom {
+                developers {
+                    developer {
+                        name.set('Natan Vieira do Nascimento')
+                        email.set('natanvnascimento@gmail.com')
+                        url.set('https://github.com/DevNatan/')
                     }
                 }
             }
         }
     }
+}
+
+signing {
+    useInMemoryPgpKeys(
+            project.findProperty('signing.keyId') ?: System.getenv('OSSRH_SIGNING_KEY'),
+            project.findProperty('signing.password') ?: System.getenv('OSSRH_SIGNING_PASSWORD')
+    )
 }
