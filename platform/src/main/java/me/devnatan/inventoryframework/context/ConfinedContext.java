@@ -22,11 +22,6 @@ class ConfinedContext extends BaseViewContext implements IFConfinedContext {
     }
 
     @Override
-    public @NotNull IFContext getParent() {
-        return this;
-    }
-
-    @Override
     public void closeForPlayer() {
         getContainer().close(viewer);
     }

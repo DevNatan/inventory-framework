@@ -8,7 +8,7 @@ import me.devnatan.inventoryframework.context.IFCloseContext;
 import me.devnatan.inventoryframework.context.IFContext;
 import org.jetbrains.annotations.NotNull;
 
-public final class CloseInterceptor implements PipelineInterceptor<VirtualView> {
+public final class PlatformCloseInterceptor implements PipelineInterceptor<VirtualView> {
 
     @Override
     public void intercept(@NotNull PipelineContext<VirtualView> pipeline, VirtualView subject) {
@@ -19,7 +19,10 @@ public final class CloseInterceptor implements PipelineInterceptor<VirtualView> 
         tryCallPlatformRootCloseHandler(root, context);
 
         final Viewer viewer = context.getViewer();
-        if (context.isCancelled()) return;
+        if (context.isCancelled()) {
+            pipeline.finish();
+            return;
+        }
 
         context.removeViewer(viewer);
 

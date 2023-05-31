@@ -17,13 +17,13 @@ public final class InventoryUtils {
             .put(ViewType.DROPPER, InventoryType.DROPPER)
             .put(ViewType.DISPENSER, InventoryType.DISPENSER)
             .put(ViewType.FURNACE, InventoryType.FURNACE)
-            .put(ViewType.BLAST_FURNACE, InventoryType.BLAST_FURNACE)
+            //            .put(ViewType.BLAST_FURNACE, InventoryType.BLAST_FURNACE)
             .put(ViewType.CRAFTING_TABLE, InventoryType.DISPENSER)
             .put(ViewType.BREWING_STAND, InventoryType.BREWING)
             .put(ViewType.BEACON, InventoryType.BEACON)
             .put(ViewType.ANVIL, InventoryType.ANVIL)
-            .put(ViewType.SHULKER_BOX, InventoryType.SHULKER_BOX)
-            .put(ViewType.SMOKER, InventoryType.SMOKER)
+            //            .put(ViewType.SHULKER_BOX, InventoryType.SHULKER_BOX)
+            //            .put(ViewType.SMOKER, InventoryType.SMOKER)
             .put(ViewType.VILLAGER_TRADING, InventoryType.MERCHANT)
             .build();
 

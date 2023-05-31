@@ -21,6 +21,7 @@ import java.util.UUID;
 import java.util.function.Consumer;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.internal.ElementFactory;
+import me.devnatan.inventoryframework.internal.Job;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
 import me.devnatan.inventoryframework.state.State;
 import me.devnatan.inventoryframework.state.StateRegistry;
@@ -41,6 +42,7 @@ public class DefaultRootView implements RootView, StateWatcher {
             new Pipeline<>(INIT, OPEN, LAYOUT_RESOLUTION, FIRST_RENDER, UPDATE, CLICK, CLOSE, INVALIDATION);
     private final Set<IFContext> contexts = newSetFromMap(synchronizedMap(new HashMap<>()));
     final StateRegistry stateRegistry = new StateRegistry();
+    private Job scheduledUpdateJob;
 
     @Override
     public final @NotNull UUID getUniqueId() {
@@ -148,6 +150,16 @@ public class DefaultRootView implements RootView, StateWatcher {
     @Override
     public void nextTick(Runnable task) {
         throw new UnsupportedOperationException("Missing nextTick(...) implementation");
+    }
+
+    @Override
+    public Job getScheduledUpdateJob() {
+        return scheduledUpdateJob;
+    }
+
+    @Override
+    public void setScheduledUpdateJob(@NotNull Job job) {
+        this.scheduledUpdateJob = job;
     }
 
     @Override

@@ -1,8 +1,10 @@
 package me.devnatan.inventoryframework.context;
 
+import java.util.UUID;
 import lombok.Getter;
 import lombok.ToString;
 import me.devnatan.inventoryframework.RootView;
+import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.component.BukkitItemComponentBuilder;
@@ -26,8 +28,8 @@ public final class RenderContext extends PlatformRenderContext<BukkitItemCompone
     private final @NotNull Player player;
 
     @ApiStatus.Internal
-    public RenderContext(RootView root, ViewContainer container, Viewer viewer, @NotNull IFContext parent) {
-        super(root, container, viewer, parent);
+    public RenderContext(UUID id, RootView root, ViewContainer container, Viewer viewer, ViewConfig config) {
+        super(id, root, container, viewer, config);
         this.player = ((BukkitViewer) viewer).getPlayer();
     }
 

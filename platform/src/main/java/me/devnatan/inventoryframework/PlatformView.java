@@ -18,12 +18,15 @@ import me.devnatan.inventoryframework.context.IFSlotContext;
 import me.devnatan.inventoryframework.internal.ElementFactory;
 import me.devnatan.inventoryframework.internal.PlatformUtils;
 import me.devnatan.inventoryframework.pipeline.AvailableSlotInterceptor;
-import me.devnatan.inventoryframework.pipeline.CloseInterceptor;
 import me.devnatan.inventoryframework.pipeline.FirstRenderInterceptor;
-import me.devnatan.inventoryframework.pipeline.InitInterceptor;
 import me.devnatan.inventoryframework.pipeline.LayoutInterceptor;
-import me.devnatan.inventoryframework.pipeline.OpenInterceptor;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
+import me.devnatan.inventoryframework.pipeline.PlatformCloseInterceptor;
+import me.devnatan.inventoryframework.pipeline.PlatformInitInterceptor;
+import me.devnatan.inventoryframework.pipeline.PlatformOpenInterceptor;
+import me.devnatan.inventoryframework.pipeline.PlatformUpdateHandlerInterceptor;
+import me.devnatan.inventoryframework.pipeline.ScheduledUpdateAfterCloseInterceptor;
+import me.devnatan.inventoryframework.pipeline.ScheduledUpdateAfterRenderInterceptor;
 import me.devnatan.inventoryframework.pipeline.StandardPipelinePhases;
 import me.devnatan.inventoryframework.pipeline.UpdateInterceptor;
 import me.devnatan.inventoryframework.state.BaseState;
@@ -31,10 +34,10 @@ import me.devnatan.inventoryframework.state.ComputedValue;
 import me.devnatan.inventoryframework.state.ImmutableValue;
 import me.devnatan.inventoryframework.state.InitialDataStateValue;
 import me.devnatan.inventoryframework.state.LazyValue;
+import me.devnatan.inventoryframework.state.MutableGenericStateImpl;
 import me.devnatan.inventoryframework.state.MutableIntState;
 import me.devnatan.inventoryframework.state.MutableIntStateImpl;
 import me.devnatan.inventoryframework.state.MutableState;
-import me.devnatan.inventoryframework.state.MutableStateImpl;
 import me.devnatan.inventoryframework.state.MutableValue;
 import me.devnatan.inventoryframework.state.PaginationState;
 import me.devnatan.inventoryframework.state.State;
@@ -54,7 +57,6 @@ public abstract class PlatformView<
         extends DefaultRootView {
 
     private IFViewFrame<?> framework;
-
     private boolean initialized;
 
     /**
@@ -109,7 +111,7 @@ public abstract class PlatformView<
         requireNotInitialized();
         final long id = State.next();
         final StateValueFactory factory = (host, state) -> new MutableValue(state, initialValue);
-        final MutableState<T> state = new MutableStateImpl<>(id, factory);
+        final MutableState<T> state = new MutableGenericStateImpl<>(id, factory);
         stateRegistry.registerState(state, this);
 
         return state;
@@ -540,13 +542,16 @@ public abstract class PlatformView<
         this.framework = framework;
 
         final Pipeline<? super VirtualView> pipeline = getPipeline();
-        pipeline.intercept(StandardPipelinePhases.INIT, new InitInterceptor());
-        pipeline.intercept(StandardPipelinePhases.OPEN, new OpenInterceptor());
+        pipeline.intercept(StandardPipelinePhases.INIT, new PlatformInitInterceptor());
+        pipeline.intercept(StandardPipelinePhases.OPEN, new PlatformOpenInterceptor());
         pipeline.intercept(StandardPipelinePhases.LAYOUT_RESOLUTION, new LayoutInterceptor());
         pipeline.intercept(StandardPipelinePhases.FIRST_RENDER, new AvailableSlotInterceptor());
         pipeline.intercept(StandardPipelinePhases.FIRST_RENDER, new FirstRenderInterceptor());
+        pipeline.intercept(StandardPipelinePhases.FIRST_RENDER, new ScheduledUpdateAfterRenderInterceptor());
+        pipeline.intercept(StandardPipelinePhases.UPDATE, new PlatformUpdateHandlerInterceptor());
         pipeline.intercept(StandardPipelinePhases.UPDATE, new UpdateInterceptor());
-        pipeline.intercept(StandardPipelinePhases.CLOSE, new CloseInterceptor());
+        pipeline.intercept(StandardPipelinePhases.CLOSE, new PlatformCloseInterceptor());
+        pipeline.intercept(StandardPipelinePhases.CLOSE, new ScheduledUpdateAfterCloseInterceptor());
         registerPlatformInterceptors();
         pipeline.execute(StandardPipelinePhases.INIT, this);
     }
@@ -568,8 +573,12 @@ public abstract class PlatformView<
         getPipeline().execute(StandardPipelinePhases.OPEN, context);
     }
 
-    @Override
-    public IFViewFrame<?> getFramework() {
+    /**
+     * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided.</i></b>
+     */
+    @ApiStatus.Internal
+    public final IFViewFrame<?> getFramework() {
         return framework;
     }
 }

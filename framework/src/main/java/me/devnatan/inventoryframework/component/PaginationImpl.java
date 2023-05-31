@@ -222,7 +222,7 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
         if (pageSwitchHandler != null) pageSwitchHandler.accept(host, this);
         currPageIndex = pageIndex;
         pageWasChanged = true;
-        host.updateRoot();
+        host.update();
     }
 
     @Override

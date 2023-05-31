@@ -36,6 +36,7 @@ public final class ViewConfigBuilder {
     private String[] layout = null;
     private final Set<LayoutSlot> patterns = new HashSet<>();
     private final Set<ViewConfig.Modifier> modifiers = new HashSet<>();
+    private long updateIntervalInTicks;
 
     /**
      * Inherits all configuration from another {@link ViewConfigBuilder} value.
@@ -161,12 +162,17 @@ public final class ViewConfigBuilder {
         return addOption(ViewConfig.CANCEL_ON_DRAG);
     }
 
+    public ViewConfigBuilder scheduleUpdate(long intervalInTicks) {
+        this.updateIntervalInTicks = intervalInTicks;
+        return this;
+    }
+
     public ViewConfig build() {
         final Map<ViewConfig.Option<?>, Object> optionsMap = options.stream()
                 .map(option -> new AbstractMap.SimpleImmutableEntry<ViewConfig.Option<?>, Object>(
                         option, option.defaultValue()))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
-        return new ViewConfig(title, size, type, optionsMap, layout, modifiers);
+        return new ViewConfig(title, size, type, optionsMap, layout, modifiers, updateIntervalInTicks);
     }
 }

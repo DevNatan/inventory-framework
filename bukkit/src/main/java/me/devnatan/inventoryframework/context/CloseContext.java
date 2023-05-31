@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import me.devnatan.inventoryframework.RootView;
+import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.runtime.BukkitViewer;
@@ -36,6 +37,11 @@ public final class CloseContext extends ConfinedContext implements IFCloseContex
     @Override
     public @NotNull UUID getId() {
         return getParent().getId();
+    }
+
+    @Override
+    public @NotNull ViewConfig getConfig() {
+        return getParent().getConfig();
     }
 
     @Override

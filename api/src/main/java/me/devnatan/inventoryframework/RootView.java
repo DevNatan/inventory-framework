@@ -4,6 +4,7 @@ import java.util.Set;
 import java.util.UUID;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.internal.ElementFactory;
+import me.devnatan.inventoryframework.internal.Job;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -170,4 +171,9 @@ public interface RootView extends VirtualView, Iterable<IFContext> {
      */
     @ApiStatus.Internal
     IFViewFrame<?> getFramework();
+
+    Job getScheduledUpdateJob();
+
+    @ApiStatus.Internal
+    void setScheduledUpdateJob(@NotNull Job job);
 }

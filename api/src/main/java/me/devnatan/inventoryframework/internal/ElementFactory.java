@@ -68,4 +68,6 @@ public abstract class ElementFactory {
     public abstract ComponentBuilder<?> createComponentBuilder(@NotNull VirtualView root);
 
     public abstract boolean worksInCurrentPlatform();
+
+    public abstract Job scheduleJobInterval(@NotNull RootView root, long intervalInTicks, @NotNull Runnable execution);
 }

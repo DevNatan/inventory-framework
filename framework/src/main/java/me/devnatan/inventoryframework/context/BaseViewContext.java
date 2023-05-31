@@ -58,7 +58,7 @@ public class BaseViewContext extends DefaultStateValueHost implements IFContext 
     }
 
     @Override
-    public final @NotNull ViewConfig getConfig() {
+    public @NotNull ViewConfig getConfig() {
         return config;
     }
 
@@ -129,7 +129,6 @@ public class BaseViewContext extends DefaultStateValueHost implements IFContext 
 
     @Override
     public final void openForEveryone(Class<? extends RootView> other) {
-        System.out.println("getViewers() = " + getViewers());
         getViewers().forEach(viewer -> getRoot().getFramework().open(other, viewer));
     }
 
@@ -166,7 +165,7 @@ public class BaseViewContext extends DefaultStateValueHost implements IFContext 
     }
 
     @Override
-    public final void updateRoot() {
+    public final void update() {
         getRoot().getPipeline().execute(StandardPipelinePhases.UPDATE, this);
     }
 

@@ -9,6 +9,7 @@ import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.View;
 import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewContainer;
+import me.devnatan.inventoryframework.ViewFrame;
 import me.devnatan.inventoryframework.ViewType;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.VirtualView;
@@ -23,7 +24,6 @@ import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.context.IFSlotContext;
 import me.devnatan.inventoryframework.context.IFSlotRenderContext;
 import me.devnatan.inventoryframework.context.OpenContext;
-import me.devnatan.inventoryframework.context.RenderContext;
 import me.devnatan.inventoryframework.context.SlotContext;
 import me.devnatan.inventoryframework.context.SlotRenderContext;
 import me.devnatan.inventoryframework.logging.Logger;
@@ -41,6 +41,7 @@ public class BukkitElementFactory extends ElementFactory {
 
     private static final ViewType defaultType = ViewType.CHEST;
     private static final InventoryFactory inventoryFactory;
+    private Boolean worksInCurrentPlatform = null;
 
     static {
         InventoryFactory factory = new InventoryFactory();
@@ -52,8 +53,6 @@ public class BukkitElementFactory extends ElementFactory {
 
         inventoryFactory = factory;
     }
-
-    private Boolean worksInCurrentPlatform = null;
 
     @Override
     public @NotNull RootView createUninitializedRoot() {
@@ -97,7 +96,7 @@ public class BukkitElementFactory extends ElementFactory {
     @Override
     public @NotNull String convertViewer(Object input) {
         if (input instanceof String) return UUID.fromString((String) input).toString();
-        if (input instanceof UUID) return input.toString();
+        if (input instanceof UUID) return ((UUID) input).toString();
         if (input instanceof Entity) return ((Entity) input).getUniqueId().toString();
 
         throw new IllegalArgumentException("Inconvertible viewer id: " + input);
@@ -115,7 +114,12 @@ public class BukkitElementFactory extends ElementFactory {
         if (shared) throw new IllegalStateException("Shared contexts are not yet supported");
         if (isTypeOf(IFOpenContext.class, kind)) return (T) new OpenContext(root, viewer);
         if (isTypeOf(IFRenderContext.class, kind))
-            return (T) new RenderContext(root, container, viewer, requireNonNull(parent));
+            return (T) new me.devnatan.inventoryframework.context.RenderContext(
+                    requireNonNull(parent).getId(),
+                    root,
+                    container,
+                    viewer,
+                    requireNonNull(parent).getConfig());
         if (isTypeOf(IFCloseContext.class, kind))
             return (T) new CloseContext(root, container, viewer, requireNonNull(parent));
 
@@ -160,5 +164,12 @@ public class BukkitElementFactory extends ElementFactory {
     @Override
     public Logger getLogger() {
         return new NoopLogger();
+    }
+
+    @Override
+    public Job scheduleJobInterval(@NotNull RootView root, long intervalInTicks, @NotNull Runnable execution) {
+        final View platformRoot = (View) root;
+        final ViewFrame platformFramework = (ViewFrame) platformRoot.getFramework();
+        return new BukkitTaskJobImpl(platformFramework.getOwner(), intervalInTicks, execution);
     }
 }

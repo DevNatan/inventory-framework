@@ -4,9 +4,11 @@ import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 
 @Data
+@RequiredArgsConstructor
 @Getter(AccessLevel.NONE)
 public class BaseState<T> implements State<T> {
 
