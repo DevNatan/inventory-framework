@@ -2,7 +2,7 @@ package me.devnatan.inventoryframework.state;
 
 import org.jetbrains.annotations.NotNull;
 
-public final class MutableIntStateImpl extends BaseState<Integer> implements MutableIntState {
+public final class MutableIntStateImpl extends BaseMutableState<Integer> implements MutableIntState {
 
     public MutableIntStateImpl(long id, @NotNull StateValueFactory valueFactory) {
         super(id, valueFactory);
@@ -22,10 +22,5 @@ public final class MutableIntStateImpl extends BaseState<Integer> implements Mut
         final int curr = get(host);
         set(curr + diff, host);
         return curr + diff;
-    }
-
-    @Override
-    public void set(Integer value, @NotNull StateValueHost host) {
-        host.updateState(internalId(), value);
     }
 }

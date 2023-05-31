@@ -2,9 +2,9 @@ package me.devnatan.inventoryframework.state;
 
 import org.jetbrains.annotations.NotNull;
 
-public final class MutableStateImpl<T> extends BaseState<T> implements MutableState<T> {
+public final class MutableGenericStateImpl<T> extends BaseState<T> implements MutableState<T> {
 
-    public MutableStateImpl(long id, @NotNull StateValueFactory valueFactory) {
+    public MutableGenericStateImpl(long id, @NotNull StateValueFactory valueFactory) {
         super(id, valueFactory);
     }
 

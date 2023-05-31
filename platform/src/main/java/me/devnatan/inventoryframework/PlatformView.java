@@ -37,7 +37,7 @@ import me.devnatan.inventoryframework.state.LazyValue;
 import me.devnatan.inventoryframework.state.MutableIntState;
 import me.devnatan.inventoryframework.state.MutableIntStateImpl;
 import me.devnatan.inventoryframework.state.MutableState;
-import me.devnatan.inventoryframework.state.MutableStateImpl;
+import me.devnatan.inventoryframework.state.MutableGenericStateImpl;
 import me.devnatan.inventoryframework.state.MutableValue;
 import me.devnatan.inventoryframework.state.PaginationState;
 import me.devnatan.inventoryframework.state.State;
@@ -111,7 +111,7 @@ public abstract class PlatformView<
         requireNotInitialized();
         final long id = State.next();
         final StateValueFactory factory = (host, state) -> new MutableValue(state, initialValue);
-        final MutableState<T> state = new MutableStateImpl<>(id, factory);
+        final MutableState<T> state = new MutableGenericStateImpl<>(id, factory);
         stateRegistry.registerState(state, this);
 
         return state;
