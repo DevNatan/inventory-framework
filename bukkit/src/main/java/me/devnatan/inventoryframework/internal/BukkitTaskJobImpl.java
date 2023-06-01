@@ -20,7 +20,7 @@ class BukkitTaskJobImpl implements Job {
     @Override
     public void start() {
         if (isStarted()) return;
-        task = plugin.getServer().getScheduler().runTaskTimer(plugin, this::loop, 0, intervalInTicks);
+        task = plugin.getServer().getScheduler().runTaskTimer(plugin, this::loop, intervalInTicks, intervalInTicks);
     }
 
     @Override
