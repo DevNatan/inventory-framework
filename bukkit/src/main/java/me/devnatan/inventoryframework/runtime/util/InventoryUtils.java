@@ -11,21 +11,36 @@ import org.jetbrains.annotations.NotNull;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class InventoryUtils {
 
-    private static final Map<ViewType, InventoryType> typeMappings = ImmutableMap.<ViewType, InventoryType>builder()
-            .put(ViewType.CHEST, InventoryType.CHEST)
-            .put(ViewType.HOPPER, InventoryType.HOPPER)
-            .put(ViewType.DROPPER, InventoryType.DROPPER)
-            .put(ViewType.DISPENSER, InventoryType.DISPENSER)
-            .put(ViewType.FURNACE, InventoryType.FURNACE)
-            //            .put(ViewType.BLAST_FURNACE, InventoryType.BLAST_FURNACE)
-            .put(ViewType.CRAFTING_TABLE, InventoryType.DISPENSER)
-            .put(ViewType.BREWING_STAND, InventoryType.BREWING)
-            .put(ViewType.BEACON, InventoryType.BEACON)
-            .put(ViewType.ANVIL, InventoryType.ANVIL)
-            //            .put(ViewType.SHULKER_BOX, InventoryType.SHULKER_BOX)
-            //            .put(ViewType.SMOKER, InventoryType.SMOKER)
-            .put(ViewType.VILLAGER_TRADING, InventoryType.MERCHANT)
-            .build();
+    private static final Map<ViewType, InventoryType> typeMappings;
+
+    static {
+        final ImmutableMap.Builder<ViewType, InventoryType> builder = ImmutableMap.builder();
+        registerInventoryType(builder, "BLAST_FURNACE", ViewType.BLAST_FURNACE);
+        registerInventoryType(builder, "SHULKER_BOX", ViewType.SHULKER_BOX);
+        registerInventoryType(builder, "SMOKER", ViewType.SMOKER);
+
+        typeMappings = builder.put(ViewType.CHEST, InventoryType.CHEST)
+                .put(ViewType.HOPPER, InventoryType.HOPPER)
+                .put(ViewType.DROPPER, InventoryType.DROPPER)
+                .put(ViewType.DISPENSER, InventoryType.DISPENSER)
+                .put(ViewType.FURNACE, InventoryType.FURNACE)
+                .put(ViewType.CRAFTING_TABLE, InventoryType.DISPENSER)
+                .put(ViewType.BREWING_STAND, InventoryType.BREWING)
+                .put(ViewType.BEACON, InventoryType.BEACON)
+                .put(ViewType.ANVIL, InventoryType.ANVIL)
+                .put(ViewType.VILLAGER_TRADING, InventoryType.MERCHANT)
+                .build();
+    }
+
+    private static void registerInventoryType(
+            @NotNull ImmutableMap.Builder<ViewType, InventoryType> builder,
+            @NotNull String name,
+            @NotNull ViewType target) {
+        try {
+            builder.put(target, InventoryType.valueOf(name));
+        } catch (final IllegalArgumentException ignored) {
+        }
+    }
 
     public static InventoryType toInventoryType(@NotNull ViewType type) {
         return typeMappings.get(type);
