@@ -27,7 +27,7 @@ abstract class PlatformRenderContext<T extends ItemComponentBuilder<T>> extends 
             new ArrayList<>(Collections.singletonList(new LayoutSlot(LayoutSlot.FILLED_RESERVED_CHAR, $ -> {
                 throw new IllegalStateException("Cannot use factory of reserved char");
             })));
-    private final List<BiFunction<Integer, Integer, ComponentFactory>> availableSlots = new ArrayList<>();
+    private BiFunction<Integer, Integer, ComponentFactory> availableSlotFactory;
     private final ViewConfig config;
     private final UUID id;
 
@@ -62,13 +62,12 @@ abstract class PlatformRenderContext<T extends ItemComponentBuilder<T>> extends 
         layoutSlots.add(layoutSlot);
     }
 
-    @Override
-    public final @NotNull @UnmodifiableView List<BiFunction<Integer, Integer, ComponentFactory>>
-            getAvailableSlotsFactories() {
-        return Collections.unmodifiableList(availableSlots);
-    }
+	@Override
+	public BiFunction<Integer, Integer, ComponentFactory> getAvailableSlotFactory() {
+		return availableSlotFactory;
+	}
 
-    /**
+	/**
      * Adds an item to a specific slot in the context container.
      *
      * @param slot The slot in which the item will be positioned.
@@ -121,7 +120,7 @@ abstract class PlatformRenderContext<T extends ItemComponentBuilder<T>> extends 
      */
     public @NotNull T availableSlot() {
         final T builder = createBuilder();
-        availableSlots.add((index, slot) -> (ComponentFactory) builder.withSlot(slot));
+		availableSlotFactory = (index, slot) -> (ComponentFactory) builder.withSlot(slot);
         return builder;
     }
 
@@ -137,11 +136,11 @@ abstract class PlatformRenderContext<T extends ItemComponentBuilder<T>> extends 
      */
     public void availableSlot(@NotNull BiConsumer<Integer, T> factory) {
         final T builder = createBuilder();
-        availableSlots.add((index, slot) -> {
-            builder.withSlot(slot);
-            factory.accept(index, builder);
-            return (ComponentFactory) builder;
-        });
+		availableSlotFactory = (index, slot) -> {
+			builder.withSlot(slot);
+			factory.accept(index, builder);
+			return (ComponentFactory) builder;
+		};
     }
 
     /**
