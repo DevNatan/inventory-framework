@@ -23,11 +23,11 @@ jobs:
             - name: Build with Gradle
               uses: gradle/gradle-build-action@cd3cedc781988c804f626f4cd2dc51d0bdf02a12
               with:
-                  arguments: build --info -x test
+                  arguments: build -x check
             - name: Publish
               uses: gradle/gradle-build-action@cd3cedc781988c804f626f4cd2dc51d0bdf02a12
               with:
-                  arguments: publish --info
+                  arguments: publish
               env:
                   USERNAME: ${{ github.actor }}
                   TOKEN: ${{ secrets.GITHUB_TOKEN }}
