@@ -37,7 +37,7 @@ public class SlotContext extends ConfinedContext implements IFSlotContext, Conte
             int slot,
             @NotNull IFContext parent,
             @Nullable Component component) {
-        super(root, container, viewer);
+        super(root, container, viewer, parent.getInitialData());
         this.slot = slot;
         this.player = ((BukkitViewer) viewer).getPlayer();
         this.parent = parent;

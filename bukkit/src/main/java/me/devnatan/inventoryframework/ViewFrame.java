@@ -1,6 +1,7 @@
 package me.devnatan.inventoryframework;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
@@ -51,6 +52,14 @@ public class ViewFrame extends IFViewFrame<ViewFrame> implements FeatureInstalle
 
     @Override
     public void open(@NotNull Class<? extends RootView> viewClass, @NotNull Viewer viewer) {
+        open(viewClass, viewer, Collections.emptyMap());
+    }
+
+    @Override
+    public void open(
+            @NotNull Class<? extends RootView> viewClass,
+            @NotNull Viewer viewer,
+            @NotNull Map<String, Object> initialData) {
         if (!(viewer instanceof BukkitViewer))
             throw new IllegalArgumentException("Only BukkitViewer viewer impl is supported");
 
@@ -58,7 +67,7 @@ public class ViewFrame extends IFViewFrame<ViewFrame> implements FeatureInstalle
         if (!(view instanceof PlatformView))
             throw new IllegalStateException("Only PlatformView can be opened through #open(...)");
 
-        view.open(viewer);
+        view.open(viewer, initialData);
     }
 
     /**
@@ -69,6 +78,20 @@ public class ViewFrame extends IFViewFrame<ViewFrame> implements FeatureInstalle
      */
     public void open(@NotNull Class<? extends RootView> viewClass, @NotNull Player player) {
         open(viewClass, PlatformUtils.getFactory().createViewer(player));
+    }
+
+    /**
+     * Opens a view to a player with initial data.
+     *
+     * @param viewClass The target view to be opened.
+     * @param player    The player that the view will be open to.
+     * @param initialData The initial data.
+     */
+    public void open(
+            @NotNull Class<? extends RootView> viewClass,
+            @NotNull Player player,
+            @NotNull Map<String, Object> initialData) {
+        open(viewClass, PlatformUtils.getFactory().createViewer(player), initialData);
     }
 
     @Override

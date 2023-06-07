@@ -1,6 +1,7 @@
 package me.devnatan.inventoryframework;
 
 import java.util.List;
+import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -285,9 +286,9 @@ public abstract class PlatformView<
      */
     protected final <T> State<T> initialState(@NotNull String key) {
         requireNotInitialized();
-        // TODO missing use of `key`
         final long id = State.next();
-        final State<T> state = new BaseState<>(id, (host, valueState) -> new InitialDataStateValue(valueState, host));
+        final State<T> state =
+                new BaseState<>(id, (host, valueState) -> new InitialDataStateValue(valueState, host, key));
         stateRegistry.registerState(state, this);
 
         return state;
@@ -311,9 +312,9 @@ public abstract class PlatformView<
      */
     protected final <T> State<T> initialState(@NotNull Class<? extends T> stateClassType) {
         requireNotInitialized();
-        // TODO missing use of `stateClassType`
         final long id = State.next();
-        final State<T> state = new BaseState<>(id, (host, valueState) -> new InitialDataStateValue(valueState, host));
+        final State<T> state = new BaseState<>(
+                id, (host, valueState) -> new InitialDataStateValue(valueState, host, stateClassType.getName()));
         stateRegistry.registerState(state, this);
 
         return state;
@@ -564,11 +565,11 @@ public abstract class PlatformView<
     }
 
     @Override
-    public final void open(@NotNull Viewer viewer) {
+    public final void open(@NotNull Viewer viewer, @NotNull Map<String, Object> initialData) {
         if (!isInitialized()) throw new IllegalStateException("Cannot open a uninitialized view");
 
         final IFOpenContext context =
-                getElementFactory().createContext(this, null, viewer, IFOpenContext.class, false, null);
+                getElementFactory().createContext(this, null, viewer, IFOpenContext.class, false, null, initialData);
         context.addViewer(viewer);
         getPipeline().execute(StandardPipelinePhases.OPEN, context);
     }

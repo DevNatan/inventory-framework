@@ -1,5 +1,6 @@
 package me.devnatan.inventoryframework.context;
 
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -29,8 +30,8 @@ public class OpenContext extends ConfinedContext implements IFOpenContext, Conte
     private ViewConfigBuilder inheritedConfigBuilder;
 
     @ApiStatus.Internal
-    public OpenContext(@NotNull RootView root, @NotNull Viewer viewer) {
-        super(root, null, viewer);
+    public OpenContext(@NotNull RootView root, @NotNull Viewer viewer, @NotNull Map<String, Object> initialData) {
+        super(root, null, viewer, initialData);
         this.player = ((BukkitViewer) viewer).getPlayer();
     }
 

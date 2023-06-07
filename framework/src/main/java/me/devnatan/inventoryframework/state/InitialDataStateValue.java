@@ -8,14 +8,13 @@ public final class InitialDataStateValue extends StateValue {
 
     private final StateValue backingValue;
 
-    public InitialDataStateValue(@NotNull State<?> state, @NotNull StateValueHost host) {
+    public InitialDataStateValue(@NotNull State<?> state, @NotNull StateValueHost host, @NotNull String key) {
         super(state);
         if (!(host instanceof IFContext))
             throw new IllegalArgumentException("State host for initial data must be a IFContext");
 
-        this.backingValue = new LazyValue(state, () -> {
-            throw new UnsupportedOperationException("Initial data state is not supported yet");
-        });
+        final IFContext context = (IFContext) host;
+        this.backingValue = new LazyValue(state, () -> context.getInitialData().get(key));
     }
 
     @Override

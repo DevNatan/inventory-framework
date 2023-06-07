@@ -3,6 +3,7 @@ package me.devnatan.inventoryframework.internal;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.Map;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
@@ -49,7 +50,8 @@ public final class MockElementFactory extends ElementFactory {
             @NotNull Viewer viewer,
             @NotNull Class<T> kind,
             boolean shared,
-            @Nullable IFContext parent) {
+            @Nullable IFContext parent,
+            @NotNull Map<String, Object> initialData) {
         T value = (T) mock(kind);
         when(value.getContainer()).thenReturn(container);
         if (value instanceof IFConfinedContext)

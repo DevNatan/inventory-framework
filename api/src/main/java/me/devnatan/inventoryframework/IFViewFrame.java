@@ -96,6 +96,19 @@ public abstract class IFViewFrame<S extends IFViewFrame<S>> {
     public abstract void open(@NotNull Class<? extends RootView> viewClass, @NotNull Viewer viewer);
 
     /**
+     * Opens a view to a {@link Viewer} with an initially defined data.
+     *
+     * @param viewClass   The target view to be open.
+     * @param viewer      The viewer that the view will be open to.
+     * @param initialData The initial data.
+     * @throws IllegalStateException If this view is not registered in this view frame.
+     */
+    public abstract void open(
+            @NotNull Class<? extends RootView> viewClass,
+            @NotNull Viewer viewer,
+            @NotNull Map<String, Object> initialData);
+
+    /**
      * If this view frame is registered.
      *
      * @return {@code true} if it's registered or {@code false} otherwise.

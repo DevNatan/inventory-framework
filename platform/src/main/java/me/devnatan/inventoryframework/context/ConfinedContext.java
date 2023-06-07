@@ -1,5 +1,6 @@
 package me.devnatan.inventoryframework.context;
 
+import java.util.Map;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -16,8 +17,12 @@ class ConfinedContext extends BaseViewContext implements IFConfinedContext {
 
     private final Viewer viewer;
 
-    public ConfinedContext(@NotNull RootView root, @Nullable ViewContainer container, @NotNull Viewer viewer) {
-        super(root, container);
+    public ConfinedContext(
+            @NotNull RootView root,
+            @Nullable ViewContainer container,
+            @NotNull Viewer viewer,
+            @NotNull Map<String, Object> initialData) {
+        super(root, container, initialData);
         this.viewer = viewer;
     }
 

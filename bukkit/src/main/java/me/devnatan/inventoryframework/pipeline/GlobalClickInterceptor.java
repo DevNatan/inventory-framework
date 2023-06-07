@@ -23,8 +23,7 @@ public final class GlobalClickInterceptor implements PipelineInterceptor<Virtual
         final InventoryClickEvent event = context.getClickOrigin();
 
         // inherit cancellation so we can un-cancel it
-        context.setCancelled(
-                event.isCancelled() || context.getConfig().isOptionSet(CANCEL_ON_CLICK, true));
+        context.setCancelled(event.isCancelled() || context.getConfig().isOptionSet(CANCEL_ON_CLICK, true));
         ((PlatformView) context.getRoot()).onClick(context);
         event.setCancelled(context.isCancelled());
     }
