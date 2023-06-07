@@ -193,11 +193,10 @@ public interface IFContext extends VirtualView, StateValueHost {
     boolean isMarkedForRemoval(int componentIndex);
 
     /**
-     * An unmodifiable view of the data defined when this context was created.
+     * The data defined when this context was created.
      * It is usually the data set when the context is opened for a viewer.
      *
      * @return The initial context data.
      */
-    @UnmodifiableView
-    Map<String, Object> getInitialData();
+    Object getInitialData();
 }

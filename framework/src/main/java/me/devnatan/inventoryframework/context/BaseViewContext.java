@@ -50,10 +50,9 @@ public class BaseViewContext extends DefaultStateValueHost implements IFContext 
     private final List<Component> components = new LinkedList<>();
 
     private final Deque<Integer> markedForRemoval = new ArrayDeque<>();
-    private final Map<String, Object> initialData;
+    private final Object initialData;
 
-    public BaseViewContext(
-            @NotNull RootView root, @Nullable ViewContainer container, @NotNull Map<String, Object> initialData) {
+    public BaseViewContext(@NotNull RootView root, @Nullable ViewContainer container, Object initialData) {
         this.root = root;
         this.container = container;
         this.config = root.getConfig();
@@ -132,7 +131,7 @@ public class BaseViewContext extends DefaultStateValueHost implements IFContext 
 
     @Override
     public final void openForEveryone(Class<? extends RootView> other) {
-        getViewers().forEach(viewer -> getRoot().getFramework().open(other, viewer));
+        getViewers().forEach(viewer -> getRoot().getFramework().open(other, viewer, getInitialData()));
     }
 
     @Override
@@ -178,7 +177,7 @@ public class BaseViewContext extends DefaultStateValueHost implements IFContext 
     }
 
     @Override
-    public @UnmodifiableView Map<String, Object> getInitialData() {
-        return Collections.unmodifiableMap(initialData);
+    public Object getInitialData() {
+        return initialData instanceof Map ? Collections.unmodifiableMap((Map<?, ?>) initialData) : initialData;
     }
 }

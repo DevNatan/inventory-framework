@@ -1,7 +1,6 @@
 package me.devnatan.inventoryframework;
 
 import java.util.List;
-import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -306,15 +305,14 @@ public abstract class PlatformView<
      * obtaining a specific value from the initial data is only available from version 2.5.4 of the
      * library.
      *
-     * @param stateClassType The initial data class type.
      * @param <T>            The initial data type.
      * @return A state computed with an initial opening data value.
      */
-    protected final <T> State<T> initialState(@NotNull Class<? extends T> stateClassType) {
+    protected final <T> State<T> initialState() {
         requireNotInitialized();
         final long id = State.next();
-        final State<T> state = new BaseState<>(
-                id, (host, valueState) -> new InitialDataStateValue(valueState, host, stateClassType.getName()));
+        final State<T> state =
+                new BaseState<>(id, (host, valueState) -> new InitialDataStateValue(valueState, host, null));
         stateRegistry.registerState(state, this);
 
         return state;
@@ -565,7 +563,7 @@ public abstract class PlatformView<
     }
 
     @Override
-    public final void open(@NotNull Viewer viewer, @NotNull Map<String, Object> initialData) {
+    public final void open(@NotNull Viewer viewer, Object initialData) {
         if (!isInitialized()) throw new IllegalStateException("Cannot open a uninitialized view");
 
         final IFOpenContext context =

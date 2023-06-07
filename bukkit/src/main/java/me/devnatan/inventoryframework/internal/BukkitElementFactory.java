@@ -4,7 +4,6 @@ import static java.util.Objects.requireNonNull;
 import static me.devnatan.inventoryframework.runtime.util.InventoryUtils.checkInventoryTypeSupport;
 import static me.devnatan.inventoryframework.util.IsTypeOf.isTypeOf;
 
-import java.util.Map;
 import java.util.UUID;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.View;
@@ -112,7 +111,7 @@ public class BukkitElementFactory extends ElementFactory {
             @NotNull Class<T> kind,
             boolean shared,
             @Nullable IFContext parent,
-            @NotNull Map<String, Object> initialData) {
+            Object initialData) {
         if (shared) throw new IllegalStateException("Shared contexts are not yet supported");
         if (isTypeOf(IFOpenContext.class, kind)) return (T) new OpenContext(root, viewer, initialData);
         if (isTypeOf(IFRenderContext.class, kind))

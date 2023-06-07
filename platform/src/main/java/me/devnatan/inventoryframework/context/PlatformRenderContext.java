@@ -6,7 +6,6 @@ import static me.devnatan.inventoryframework.utils.SlotConverter.convertSlot;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -33,12 +32,7 @@ abstract class PlatformRenderContext<T extends ItemComponentBuilder<T>> extends 
     private final UUID id;
 
     PlatformRenderContext(
-            UUID id,
-            RootView root,
-            ViewContainer container,
-            Viewer viewer,
-            ViewConfig config,
-            Map<String, Object> initialData) {
+            UUID id, RootView root, ViewContainer container, Viewer viewer, ViewConfig config, Object initialData) {
         super(root, container, viewer, initialData);
         this.id = id;
         this.config = config;

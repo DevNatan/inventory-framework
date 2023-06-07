@@ -15,7 +15,6 @@ import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.UPD
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 import java.util.Spliterator;
 import java.util.UUID;
@@ -115,7 +114,7 @@ public class DefaultRootView implements RootView, StateWatcher {
     }
 
     @Override
-    public void open(@NotNull Viewer viewer, @NotNull Map<String, Object> initialData) {
+    public void open(@NotNull Viewer viewer, Object initialData) {
         throw new UnsupportedOperationException("Missing #open(...) implementation");
     }
 

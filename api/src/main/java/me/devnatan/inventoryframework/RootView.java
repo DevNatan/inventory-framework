@@ -1,6 +1,5 @@
 package me.devnatan.inventoryframework;
 
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import me.devnatan.inventoryframework.context.IFContext;
@@ -136,7 +135,7 @@ public interface RootView extends VirtualView, Iterable<IFContext> {
      * @param initialData The initial data.
      */
     @ApiStatus.Internal
-    void open(@NotNull Viewer viewer, @NotNull Map<String, Object> initialData);
+    void open(@NotNull Viewer viewer, Object initialData);
 
     /**
      * Closes all contexts that are currently active in this view.
