@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 @Getter(AccessLevel.PROTECTED)
 @SuppressWarnings("unchecked")
-class DefaultComponentBuilder<S extends ComponentBuilder<S>> implements ComponentBuilder<S> {
+abstract class DefaultComponentBuilder<S extends ComponentBuilder<S>> implements ComponentBuilder<S> {
 
     private String referenceKey;
     private Map<String, Object> data;

@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 @Data
 public final class LayoutSlot {
 
+    // Retro compatibility
     public static final char FILLED_RESERVED_CHAR = 'O';
 
     private final char character;

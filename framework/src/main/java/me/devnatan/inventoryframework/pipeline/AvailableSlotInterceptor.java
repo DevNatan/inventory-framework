@@ -3,7 +3,6 @@ package me.devnatan.inventoryframework.pipeline;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import me.devnatan.inventoryframework.VirtualView;
@@ -21,14 +20,13 @@ public final class AvailableSlotInterceptor implements PipelineInterceptor<Virtu
         if (!(subject instanceof IFRenderContext)) return;
 
         final IFRenderContext context = (IFRenderContext) subject;
-		if (context.getAvailableSlotFactory() == null)
-			return;
+        if (context.getAvailableSlotFactory() == null) return;
 
-		final List<ComponentFactory> slotComponents = context.getConfig().getLayout() == null
+        final List<ComponentFactory> slotComponents = context.getConfig().getLayout() == null
                 ? resolveFromInitialSlot(context)
                 : resolveFromLayoutSlot(context);
 
-		slotComponents.forEach(componentFactory -> context.addComponent(componentFactory.create()));
+        slotComponents.forEach(componentFactory -> context.addComponent(componentFactory.create()));
     }
 
     /**
@@ -39,8 +37,7 @@ public final class AvailableSlotInterceptor implements PipelineInterceptor<Virtu
      */
     @VisibleForTesting
     List<ComponentFactory> resolveFromInitialSlot(IFRenderContext context) {
-        final BiFunction<Integer, Integer, ComponentFactory> availableSlotFactory =
-			context.getAvailableSlotFactory();
+        final BiFunction<Integer, Integer, ComponentFactory> availableSlotFactory = context.getAvailableSlotFactory();
         final List<ComponentFactory> result = new ArrayList<>();
 
         int slot = 0;
@@ -69,22 +66,20 @@ public final class AvailableSlotInterceptor implements PipelineInterceptor<Virtu
 
         final LayoutSlot layoutSlot = layoutSlotOption.get();
         final List<Integer> fillablePositions = layoutSlot.getPositions();
-		System.out.println("fillablePositions = " + fillablePositions);
 
-		// positions may be null if the layout has not yet been resolved
+        // positions may be null if the layout has not yet been resolved
         if (fillablePositions == null || fillablePositions.isEmpty()) return Collections.emptyList();
 
-        final BiFunction<Integer, Integer, ComponentFactory> availableSlotFactory =
-                context.getAvailableSlotFactory();
+        final BiFunction<Integer, Integer, ComponentFactory> availableSlotFactory = context.getAvailableSlotFactory();
 
-		final List<ComponentFactory> result = new ArrayList<>();
+        final List<ComponentFactory> result = new ArrayList<>();
         int offset = 0; // incremented for each unavailable slot found
 
         for (int i = 0; i < fillablePositions.size(); i++) {
             int slot;
             try {
                 slot = fillablePositions.get(i + offset);
-			} catch (final IndexOutOfBoundsException exception) {
+            } catch (final IndexOutOfBoundsException exception) {
                 throw new SlotFillExceededException("Capacity to accommodate items in the layout"
                         + " for items in available slots has been exceeded.");
             }
@@ -92,7 +87,7 @@ public final class AvailableSlotInterceptor implements PipelineInterceptor<Virtu
             // if the selected slot is not available for autofill, move it until
             // we find the next an available position
             while (!isSlotAvailableForAutoFilling(context, slot)) {
-				try {
+                try {
                     slot = fillablePositions.get(i + (++offset));
                 } catch (final IndexOutOfBoundsException exception) {
                     throw new SlotFillExceededException(String.format(
@@ -104,8 +99,7 @@ public final class AvailableSlotInterceptor implements PipelineInterceptor<Virtu
                 }
             }
 
-			System.out.println("i = " + i + ", slot = " + slot);
-			result.add(availableSlotFactory.apply(i, slot));
+            result.add(availableSlotFactory.apply(i, slot));
         }
 
         return result;

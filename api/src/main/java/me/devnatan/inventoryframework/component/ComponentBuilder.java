@@ -75,4 +75,11 @@ public interface ComponentBuilder<S extends ComponentBuilder<S>> {
      * @return This component builder.
      */
     S watch(State<?>... states);
+
+    /**
+     * Returns a copy of this component builder.
+     *
+     * @return A copy of this component builder.
+     */
+    S copy();
 }

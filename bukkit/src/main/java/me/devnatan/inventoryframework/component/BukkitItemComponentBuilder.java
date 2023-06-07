@@ -3,6 +3,8 @@ package me.devnatan.inventoryframework.component;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import me.devnatan.inventoryframework.VirtualView;
@@ -16,6 +18,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @RequiredArgsConstructor
 @ToString
 public final class BukkitItemComponentBuilder extends DefaultComponentBuilder<BukkitItemComponentBuilder>
@@ -146,5 +149,11 @@ public final class BukkitItemComponentBuilder extends DefaultComponentBuilder<Bu
                 updateHandler,
                 clickHandler,
                 getWatching());
+    }
+
+    @Override
+    public BukkitItemComponentBuilder copy() {
+        return new BukkitItemComponentBuilder(
+                root, slot, item, renderHandler, clickHandler, updateHandler, shouldRender);
     }
 }

@@ -77,8 +77,8 @@ public class OpenContext extends ConfinedContext implements IFOpenContext, Conte
     @Override
     public @NotNull ViewConfig getConfig() {
         return inheritedConfigBuilder == null
-			? super.getConfig()
-			: inheritedConfigBuilder.build().merge(getRoot().getConfig());
+                ? super.getConfig()
+                : inheritedConfigBuilder.build().merge(getRoot().getConfig());
     }
 
     @Override

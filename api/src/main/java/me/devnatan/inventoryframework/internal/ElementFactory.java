@@ -49,8 +49,7 @@ public abstract class ElementFactory {
             @NotNull Viewer viewer,
             @NotNull Class<T> kind,
             boolean shared,
-            @Nullable IFContext parent
-	);
+            @Nullable IFContext parent);
 
     @NotNull
     public abstract <T extends IFSlotContext> T createSlotContext(

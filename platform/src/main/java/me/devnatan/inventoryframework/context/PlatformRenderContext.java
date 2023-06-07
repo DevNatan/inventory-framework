@@ -62,12 +62,12 @@ abstract class PlatformRenderContext<T extends ItemComponentBuilder<T>> extends 
         layoutSlots.add(layoutSlot);
     }
 
-	@Override
-	public BiFunction<Integer, Integer, ComponentFactory> getAvailableSlotFactory() {
-		return availableSlotFactory;
-	}
+    @Override
+    public BiFunction<Integer, Integer, ComponentFactory> getAvailableSlotFactory() {
+        return availableSlotFactory;
+    }
 
-	/**
+    /**
      * Adds an item to a specific slot in the context container.
      *
      * @param slot The slot in which the item will be positioned.
@@ -120,7 +120,8 @@ abstract class PlatformRenderContext<T extends ItemComponentBuilder<T>> extends 
      */
     public @NotNull T availableSlot() {
         final T builder = createBuilder();
-		availableSlotFactory = (index, slot) -> (ComponentFactory) builder.withSlot(slot);
+        availableSlotFactory =
+                (index, slot) -> (ComponentFactory) builder.copy().withSlot(slot);
         return builder;
     }
 
@@ -135,12 +136,12 @@ abstract class PlatformRenderContext<T extends ItemComponentBuilder<T>> extends 
      *                The first parameter is the iteration index of the available slot.
      */
     public void availableSlot(@NotNull BiConsumer<Integer, T> factory) {
-        final T builder = createBuilder();
-		availableSlotFactory = (index, slot) -> {
-			builder.withSlot(slot);
-			factory.accept(index, builder);
-			return (ComponentFactory) builder;
-		};
+        availableSlotFactory = (index, slot) -> {
+            final T builder = createBuilder();
+            builder.withSlot(slot);
+            factory.accept(index, builder);
+            return (ComponentFactory) builder;
+        };
     }
 
     /**
@@ -151,7 +152,6 @@ abstract class PlatformRenderContext<T extends ItemComponentBuilder<T>> extends 
      */
     public @NotNull T layoutSlot(char character) {
         requireNonReservedLayoutCharacter(character);
-
         final T builder = createBuilder();
         layoutSlots.add(new LayoutSlot(character, $ -> (ComponentFactory) builder));
         return builder;
@@ -168,7 +168,6 @@ abstract class PlatformRenderContext<T extends ItemComponentBuilder<T>> extends 
      */
     public void layoutSlot(char character, @NotNull BiConsumer<Integer, T> factory) {
         requireNonReservedLayoutCharacter(character);
-
         layoutSlots.add(new LayoutSlot(character, index -> {
             final T builder = createBuilder();
             factory.accept(index, builder);
