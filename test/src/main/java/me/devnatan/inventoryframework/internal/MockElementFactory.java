@@ -51,7 +51,7 @@ public final class MockElementFactory extends ElementFactory {
             @NotNull Class<T> kind,
             boolean shared,
             @Nullable IFContext parent,
-            @NotNull Map<String, Object> initialData) {
+            @NotNull Object initialData) {
         T value = (T) mock(kind);
         when(value.getContainer()).thenReturn(container);
         if (value instanceof IFConfinedContext)
