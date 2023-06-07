@@ -20,11 +20,13 @@ public final class AvailableSlotInterceptor implements PipelineInterceptor<Virtu
         if (!(subject instanceof IFRenderContext)) return;
 
         final IFRenderContext context = (IFRenderContext) subject;
-        final List<ComponentFactory> slotComponentList = context.getConfig().getLayout() == null
+        if (context.getAvailableSlotFactory() == null) return;
+
+        final List<ComponentFactory> slotComponents = context.getConfig().getLayout() == null
                 ? resolveFromInitialSlot(context)
                 : resolveFromLayoutSlot(context);
 
-        slotComponentList.forEach(componentFactory -> context.addComponent(componentFactory.create()));
+        slotComponents.forEach(componentFactory -> context.addComponent(componentFactory.create()));
     }
 
     /**
@@ -35,15 +37,14 @@ public final class AvailableSlotInterceptor implements PipelineInterceptor<Virtu
      */
     @VisibleForTesting
     List<ComponentFactory> resolveFromInitialSlot(IFRenderContext context) {
-        final List<BiFunction<Integer, Integer, ComponentFactory>> availableSlots =
-                context.getAvailableSlotsFactories();
+        final BiFunction<Integer, Integer, ComponentFactory> availableSlotFactory = context.getAvailableSlotFactory();
         final List<ComponentFactory> result = new ArrayList<>();
 
         int slot = 0;
-        for (int i = 0; i < availableSlots.size(); i++) {
+        for (int i = 0; i < context.getContainer().getSize(); i++) {
             while (!isSlotAvailableForAutoFilling(context, slot)) slot++;
 
-            result.add(availableSlots.get(i).apply(i, slot++));
+            result.add(availableSlotFactory.apply(i, slot++));
         }
 
         return result;
@@ -69,14 +70,12 @@ public final class AvailableSlotInterceptor implements PipelineInterceptor<Virtu
         // positions may be null if the layout has not yet been resolved
         if (fillablePositions == null || fillablePositions.isEmpty()) return Collections.emptyList();
 
-        final List<BiFunction<Integer, Integer, ComponentFactory>> availableSlots =
-                context.getAvailableSlotsFactories();
-        if (availableSlots.isEmpty()) return Collections.emptyList();
+        final BiFunction<Integer, Integer, ComponentFactory> availableSlotFactory = context.getAvailableSlotFactory();
 
         final List<ComponentFactory> result = new ArrayList<>();
         int offset = 0; // incremented for each unavailable slot found
 
-        for (int i = 0; i < availableSlots.size(); i++) {
+        for (int i = 0; i < fillablePositions.size(); i++) {
             int slot;
             try {
                 slot = fillablePositions.get(i + offset);
@@ -100,14 +99,14 @@ public final class AvailableSlotInterceptor implements PipelineInterceptor<Virtu
                 }
             }
 
-            result.add(availableSlots.get(i).apply(i, slot));
+            result.add(availableSlotFactory.apply(i, slot));
         }
 
         return result;
     }
 
     private boolean isSlotAvailableForAutoFilling(IFRenderContext context, int slot) {
-        if (!context.getConfig().getType().canPlayerInteractOn(slot)) return false;
+        if (!context.getContainer().getType().canPlayerInteractOn(slot)) return false;
 
         // fast path -- check for already rendered items
         if (context.getContainer().hasItem(slot)) return false;

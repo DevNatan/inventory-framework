@@ -20,7 +20,5 @@ public interface IFRenderContext extends IFConfinedContext {
     @ApiStatus.Internal
     void addLayoutSlot(@NotNull LayoutSlot layoutSlot);
 
-    @NotNull
-    @UnmodifiableView
-    List<BiFunction<Integer, Integer, ComponentFactory>> getAvailableSlotsFactories();
+    BiFunction<Integer, Integer, ComponentFactory> getAvailableSlotFactory();
 }

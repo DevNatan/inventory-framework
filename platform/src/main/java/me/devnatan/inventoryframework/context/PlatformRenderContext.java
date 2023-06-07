@@ -27,7 +27,7 @@ abstract class PlatformRenderContext<T extends ItemComponentBuilder<T>> extends 
             new ArrayList<>(Collections.singletonList(new LayoutSlot(LayoutSlot.FILLED_RESERVED_CHAR, $ -> {
                 throw new IllegalStateException("Cannot use factory of reserved char");
             })));
-    private final List<BiFunction<Integer, Integer, ComponentFactory>> availableSlots = new ArrayList<>();
+    private BiFunction<Integer, Integer, ComponentFactory> availableSlotFactory;
     private final ViewConfig config;
     private final UUID id;
 
@@ -63,9 +63,8 @@ abstract class PlatformRenderContext<T extends ItemComponentBuilder<T>> extends 
     }
 
     @Override
-    public final @NotNull @UnmodifiableView List<BiFunction<Integer, Integer, ComponentFactory>>
-            getAvailableSlotsFactories() {
-        return Collections.unmodifiableList(availableSlots);
+    public BiFunction<Integer, Integer, ComponentFactory> getAvailableSlotFactory() {
+        return availableSlotFactory;
     }
 
     /**
@@ -121,7 +120,8 @@ abstract class PlatformRenderContext<T extends ItemComponentBuilder<T>> extends 
      */
     public @NotNull T availableSlot() {
         final T builder = createBuilder();
-        availableSlots.add((index, slot) -> (ComponentFactory) builder.withSlot(slot));
+        availableSlotFactory =
+                (index, slot) -> (ComponentFactory) builder.copy().withSlot(slot);
         return builder;
     }
 
@@ -136,12 +136,12 @@ abstract class PlatformRenderContext<T extends ItemComponentBuilder<T>> extends 
      *                The first parameter is the iteration index of the available slot.
      */
     public void availableSlot(@NotNull BiConsumer<Integer, T> factory) {
-        final T builder = createBuilder();
-        availableSlots.add((index, slot) -> {
+        availableSlotFactory = (index, slot) -> {
+            final T builder = createBuilder();
             builder.withSlot(slot);
             factory.accept(index, builder);
             return (ComponentFactory) builder;
-        });
+        };
     }
 
     /**
@@ -152,7 +152,6 @@ abstract class PlatformRenderContext<T extends ItemComponentBuilder<T>> extends 
      */
     public @NotNull T layoutSlot(char character) {
         requireNonReservedLayoutCharacter(character);
-
         final T builder = createBuilder();
         layoutSlots.add(new LayoutSlot(character, $ -> (ComponentFactory) builder));
         return builder;
@@ -169,7 +168,6 @@ abstract class PlatformRenderContext<T extends ItemComponentBuilder<T>> extends 
      */
     public void layoutSlot(char character, @NotNull BiConsumer<Integer, T> factory) {
         requireNonReservedLayoutCharacter(character);
-
         layoutSlots.add(new LayoutSlot(character, index -> {
             final T builder = createBuilder();
             factory.accept(index, builder);
