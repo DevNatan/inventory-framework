@@ -28,8 +28,9 @@ public final class RenderContext extends PlatformRenderContext<BukkitItemCompone
     private final @NotNull Player player;
 
     @ApiStatus.Internal
-    public RenderContext(UUID id, RootView root, ViewContainer container, Viewer viewer, ViewConfig config) {
-        super(id, root, container, viewer, config);
+    public RenderContext(
+            UUID id, RootView root, ViewContainer container, Viewer viewer, ViewConfig config, Object initialData) {
+        super(id, root, container, viewer, config, initialData);
         this.player = ((BukkitViewer) viewer).getPlayer();
     }
 

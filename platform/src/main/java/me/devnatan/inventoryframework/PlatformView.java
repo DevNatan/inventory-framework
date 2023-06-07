@@ -285,9 +285,9 @@ public abstract class PlatformView<
      */
     protected final <T> State<T> initialState(@NotNull String key) {
         requireNotInitialized();
-        // TODO missing use of `key`
         final long id = State.next();
-        final State<T> state = new BaseState<>(id, (host, valueState) -> new InitialDataStateValue(valueState, host));
+        final State<T> state =
+                new BaseState<>(id, (host, valueState) -> new InitialDataStateValue(valueState, host, key));
         stateRegistry.registerState(state, this);
 
         return state;
@@ -305,15 +305,14 @@ public abstract class PlatformView<
      * obtaining a specific value from the initial data is only available from version 2.5.4 of the
      * library.
      *
-     * @param stateClassType The initial data class type.
      * @param <T>            The initial data type.
      * @return A state computed with an initial opening data value.
      */
-    protected final <T> State<T> initialState(@NotNull Class<? extends T> stateClassType) {
+    protected final <T> State<T> initialState() {
         requireNotInitialized();
-        // TODO missing use of `stateClassType`
         final long id = State.next();
-        final State<T> state = new BaseState<>(id, (host, valueState) -> new InitialDataStateValue(valueState, host));
+        final State<T> state =
+                new BaseState<>(id, (host, valueState) -> new InitialDataStateValue(valueState, host, null));
         stateRegistry.registerState(state, this);
 
         return state;
@@ -564,11 +563,11 @@ public abstract class PlatformView<
     }
 
     @Override
-    public final void open(@NotNull Viewer viewer) {
+    public final void open(@NotNull Viewer viewer, Object initialData) {
         if (!isInitialized()) throw new IllegalStateException("Cannot open a uninitialized view");
 
         final IFOpenContext context =
-                getElementFactory().createContext(this, null, viewer, IFOpenContext.class, false, null);
+                getElementFactory().createContext(this, null, viewer, IFOpenContext.class, false, null, initialData);
         context.addViewer(viewer);
         getPipeline().execute(StandardPipelinePhases.OPEN, context);
     }

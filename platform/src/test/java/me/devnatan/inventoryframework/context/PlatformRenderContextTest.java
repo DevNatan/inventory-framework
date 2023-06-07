@@ -26,7 +26,8 @@ public class PlatformRenderContextTest {
                         createRootMock(),
                         mock(ViewContainer.class),
                         mock(Viewer.class),
-                        mock(ViewConfig.class)) {
+                        mock(ViewConfig.class),
+                        null) {
                     @Override
                     protected ItemComponentBuilder createBuilder() {
                         return itemBuilder;
@@ -35,9 +36,7 @@ public class PlatformRenderContextTest {
 
         context.availableSlot();
 
-        BiFunction<Integer, Integer, ComponentFactory> factory = (BiFunction<Integer, Integer, ComponentFactory>)
-                context.getAvailableSlotsFactories().get(0);
-
+        BiFunction<Integer, Integer, ComponentFactory> factory = context.getAvailableSlotFactory();
         ComponentFactory value = factory.apply(0, 0);
         assertEquals(itemBuilder, value);
     }

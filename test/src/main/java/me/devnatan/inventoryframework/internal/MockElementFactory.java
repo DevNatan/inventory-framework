@@ -49,7 +49,8 @@ public final class MockElementFactory extends ElementFactory {
             @NotNull Viewer viewer,
             @NotNull Class<T> kind,
             boolean shared,
-            @Nullable IFContext parent) {
+            @Nullable IFContext parent,
+            @NotNull Object initialData) {
         T value = (T) mock(kind);
         when(value.getContainer()).thenReturn(container);
         if (value instanceof IFConfinedContext)

@@ -74,7 +74,13 @@ public final class PlatformOpenInterceptor implements PipelineInterceptor<Virtua
         final ViewContainer container = elementFactory.createContainer(openContext);
         final Viewer viewer = openContext.getViewer();
         final IFRenderContext renderCtx = elementFactory.createContext(
-                openContext.getRoot(), container, viewer, IFRenderContext.class, false, openContext);
+                openContext.getRoot(),
+                container,
+                viewer,
+                IFRenderContext.class,
+                false,
+                openContext,
+                openContext.getInitialData());
 
         renderCtx.addViewer(viewer);
         openContext.getRoot().addContext(renderCtx);

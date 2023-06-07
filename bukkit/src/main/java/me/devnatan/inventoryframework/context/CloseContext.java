@@ -29,7 +29,7 @@ public final class CloseContext extends ConfinedContext implements IFCloseContex
             @NotNull ViewContainer container,
             @NotNull Viewer viewer,
             @NotNull IFContext parent) {
-        super(root, container, viewer);
+        super(root, container, viewer, parent.getInitialData());
         this.player = ((BukkitViewer) viewer).getPlayer();
         this.parent = parent;
     }

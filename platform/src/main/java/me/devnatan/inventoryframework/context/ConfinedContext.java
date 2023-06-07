@@ -16,8 +16,9 @@ class ConfinedContext extends BaseViewContext implements IFConfinedContext {
 
     private final Viewer viewer;
 
-    public ConfinedContext(@NotNull RootView root, @Nullable ViewContainer container, @NotNull Viewer viewer) {
-        super(root, container);
+    public ConfinedContext(
+            @NotNull RootView root, @Nullable ViewContainer container, @NotNull Viewer viewer, Object initialData) {
+        super(root, container, initialData);
         this.viewer = viewer;
     }
 
@@ -28,7 +29,7 @@ class ConfinedContext extends BaseViewContext implements IFConfinedContext {
 
     @Override
     public void openForPlayer(@NotNull Class<? extends RootView> other) {
-        getRoot().getFramework().open(other, getViewer());
+        getRoot().getFramework().open(other, getViewer(), getInitialData());
     }
 
     @Override

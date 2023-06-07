@@ -131,10 +131,11 @@ public interface RootView extends VirtualView, Iterable<IFContext> {
      * <b><i> This is an internal inventory-framework API that should not be used from outside of
      * this library. No compatibility guarantees are provided. </i></b>
      *
-     * @param viewer The viewer.
+     * @param viewer      The viewer.
+     * @param initialData The initial data.
      */
     @ApiStatus.Internal
-    void open(@NotNull Viewer viewer);
+    void open(@NotNull Viewer viewer, Object initialData);
 
     /**
      * Closes all contexts that are currently active in this view.

@@ -114,7 +114,7 @@ public class DefaultRootView implements RootView, StateWatcher {
     }
 
     @Override
-    public void open(@NotNull Viewer viewer) {
+    public void open(@NotNull Viewer viewer, Object initialData) {
         throw new UnsupportedOperationException("Missing #open(...) implementation");
     }
 

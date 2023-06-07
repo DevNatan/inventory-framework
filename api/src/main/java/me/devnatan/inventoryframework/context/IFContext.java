@@ -21,6 +21,7 @@ public interface IFContext extends VirtualView, StateValueHost {
 
     /**
      * An unique id for this context.
+     *
      * @return The unique identifier for this context.
      */
     @NotNull
@@ -190,4 +191,12 @@ public interface IFContext extends VirtualView, StateValueHost {
     void update();
 
     boolean isMarkedForRemoval(int componentIndex);
+
+    /**
+     * The data defined when this context was created.
+     * It is usually the data set when the context is opened for a viewer.
+     *
+     * @return The initial context data.
+     */
+    Object getInitialData();
 }

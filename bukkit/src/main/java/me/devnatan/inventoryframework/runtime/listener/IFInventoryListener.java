@@ -76,7 +76,13 @@ public final class IFInventoryListener implements Listener {
         final Viewer viewer = mainContext.getIndexedViewers().get(viewerIdentifier);
 
         final IFCloseContext closeContext = elementFactory.createContext(
-                root, mainContext.getContainer(), viewer, IFCloseContext.class, false, mainContext);
+                root,
+                mainContext.getContainer(),
+                viewer,
+                IFCloseContext.class,
+                false,
+                mainContext,
+                mainContext.getInitialData());
 
         root.getPipeline().execute(StandardPipelinePhases.CLOSE, closeContext);
     }

@@ -50,7 +50,7 @@ public class ViewFrame extends IFViewFrame<ViewFrame> implements FeatureInstalle
     }
 
     @Override
-    public void open(@NotNull Class<? extends RootView> viewClass, @NotNull Viewer viewer) {
+    public void open(@NotNull Class<? extends RootView> viewClass, @NotNull Viewer viewer, Object initialData) {
         if (!(viewer instanceof BukkitViewer))
             throw new IllegalArgumentException("Only BukkitViewer viewer impl is supported");
 
@@ -58,7 +58,7 @@ public class ViewFrame extends IFViewFrame<ViewFrame> implements FeatureInstalle
         if (!(view instanceof PlatformView))
             throw new IllegalStateException("Only PlatformView can be opened through #open(...)");
 
-        view.open(viewer);
+        view.open(viewer, initialData);
     }
 
     /**
@@ -68,7 +68,19 @@ public class ViewFrame extends IFViewFrame<ViewFrame> implements FeatureInstalle
      * @param player    The player that the view will be open to.
      */
     public void open(@NotNull Class<? extends RootView> viewClass, @NotNull Player player) {
-        open(viewClass, PlatformUtils.getFactory().createViewer(player));
+        open(viewClass, PlatformUtils.getFactory().createViewer(player), null);
+    }
+
+    /**
+     * Opens a view to a player with initial data.
+     *
+     * @param viewClass The target view to be opened.
+     * @param player    The player that the view will be open to.
+     * @param initialData The initial data.
+     */
+    public void open(
+            @NotNull Class<? extends RootView> viewClass, @NotNull Player player, @NotNull Object initialData) {
+        open(viewClass, PlatformUtils.getFactory().createViewer(player), initialData);
     }
 
     @Override

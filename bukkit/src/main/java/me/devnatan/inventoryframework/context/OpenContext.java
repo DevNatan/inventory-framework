@@ -29,8 +29,8 @@ public class OpenContext extends ConfinedContext implements IFOpenContext, Conte
     private ViewConfigBuilder inheritedConfigBuilder;
 
     @ApiStatus.Internal
-    public OpenContext(@NotNull RootView root, @NotNull Viewer viewer) {
-        super(root, null, viewer);
+    public OpenContext(@NotNull RootView root, @NotNull Viewer viewer, Object initialData) {
+        super(root, null, viewer, initialData);
         this.player = ((BukkitViewer) viewer).getPlayer();
     }
 
