@@ -1,7 +1,7 @@
 # Changelog
 
-# 3.0.0-EAP (unreleased)
-Please refer to [Migrating to version 3 on Wiki](https://github.com/DevNatan/inventory-framework/wiki/Migrating-to-version-3) to details.
+# 3.0.0-EAP (06-07-2023)
+Please refer to [Migrating to version 3 on Wiki](https://github.com/DevNatan/inventory-framework/wiki/Migrating-to-version-3) for migration details.
 
 # 2.5.4-rc.1 (10-09-2022)
 * New context history feature (#120)

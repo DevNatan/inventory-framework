@@ -1,7 +1,6 @@
 main: me.devnatan.inventoryframework.runtime.InventoryFramework
 name: InventoryFramework
 version: @version@
-api-version: 1.16
 authors: [SaiintBrisson, DevNatan, sasuked]
 website: https://github.com/DevNatan/inventory-framework
-description: Bukkit Inventory API framework
+description: Minecraft Inventory API framework
