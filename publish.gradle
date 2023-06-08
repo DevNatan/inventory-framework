@@ -1,6 +1,6 @@
 apply plugin: 'org.danilopianini.publish-on-central'
 
-def isReleaseVersion = !version.endsWith("SNAPSHOT")
+ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
 
 publishOnCentral {
     it.configureMavenCentral = true
@@ -9,11 +9,11 @@ publishOnCentral {
     it.licenseName = 'MIT license'
     it.licenseUrl = 'https://github.com/DevNatan/inventory-framework/blob/main/LICENSE'
     it.repoOwner = 'DevNatan'
-    it.projectUrl = 'https://github.com/' + it.repoOwner + '/' + project.name
-    it.scmConnection = 'scm:git:https://github.com/' + it.repoOwner + '/' + project.name
+    it.projectUrl = 'https://github.com/DevNatan/inventory-framework'
+    it.scmConnection = 'scm:git:https://github.com/DevNatan/inventory-framework.git'
 
-    it.mavenCentral.user.set(System.getenv('OSSRH_USERNAME'))
-    it.mavenCentral.password.set(provider { System.getenv('OSSRH_PASSWORD') })
+    it.mavenCentral.user.set(project.findProperty("ossrh.username") ?: System.getenv('OSSRH_USERNAME'))
+    it.mavenCentral.password.set(provider { project.findProperty("ossrh.password") ?: System.getenv('OSSRH_PASSWORD') })
 
     if (!isReleaseVersion) {
         it.mavenCentralSnapshotsRepository()
@@ -46,8 +46,10 @@ publishing {
 }
 
 signing {
+    required { isReleaseVersion && gradle.taskGraph.hasTask("uploadArchives") }
     useInMemoryPgpKeys(
-            System.getenv('OSSRH_SIGNING_PASSWORD'),
-            System.getenv('OSSRH_SIGNING_PASSWORD')
+            project.findProperty("signing.keyId") ?: System.getenv('OSSRH_SIGNING_KEY'),
+            project.findProperty("signing.password") ?: System.getenv('OSSRH_SIGNING_PASSWORD')
     )
+    sign publishing.publications.javaOSSRH
 }
