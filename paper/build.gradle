@@ -1,0 +1,17 @@
+apply from: '../library.gradle'
+apply from: '../publish.gradle'
+
+repositories {
+    maven { url = 'https://repo.papermc.io/repository/maven-public/' }
+}
+
+dependencies {
+    compileOnly libs.paperSpigot
+    implementation projects.bukkit
+    implementation projects.framework
+    implementation projects.platform
+}
+
+java {
+    targetCompatibility = JavaVersion.VERSION_17
+}

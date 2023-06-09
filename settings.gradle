@@ -6,4 +6,4 @@ include 'test',
         'bukkit',
         'platform',
         'framework',
-        'bom'
+        'paper'
