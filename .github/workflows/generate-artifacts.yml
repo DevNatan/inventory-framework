@@ -9,7 +9,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [Bukkit]
+        platform: [Bukkit, Paper]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
