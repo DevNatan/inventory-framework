@@ -13,7 +13,6 @@ import me.devnatan.inventoryframework.exception.InvalidLayoutException;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
 import org.jetbrains.annotations.NotNull;
 
-@SuppressWarnings("unused")
 @Getter(AccessLevel.PACKAGE)
 @NoArgsConstructor
 public final class ViewConfigBuilder {

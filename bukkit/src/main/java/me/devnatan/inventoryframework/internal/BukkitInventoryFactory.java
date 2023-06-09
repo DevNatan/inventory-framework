@@ -3,34 +3,31 @@ package me.devnatan.inventoryframework.internal;
 import static java.util.Objects.requireNonNull;
 import static me.devnatan.inventoryframework.runtime.util.InventoryUtils.toInventoryType;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import me.devnatan.inventoryframework.ViewType;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 
-class PaperInventoryFactory extends InventoryFactory {
+@NoArgsConstructor(access = AccessLevel.PACKAGE)
+class BukkitInventoryFactory extends InventoryFactory {
 
     @Override
     public Inventory createInventory(InventoryHolder holder, ViewType type, int size, Object title) {
-        return title instanceof Component
-                ? createInventoryWithComponentTitle(holder, type, size, (Component) title)
-                : createInventoryWithTextTitle(holder, type, size, (String) title);
-    }
-
-    private Inventory createInventoryWithComponentTitle(
-            InventoryHolder holder, ViewType type, int size, Component title) {
         final Inventory inventory;
-        if (title == null) {
+        final String titleAsText = title == null || ((String) title).isEmpty() ? null : (String) title;
+
+        if (titleAsText == null) {
             inventory = !type.isExtendable() || size == 0
                     ? Bukkit.createInventory(holder, requireNonNull(toInventoryType(type)))
                     : Bukkit.createInventory(holder, size);
         } else if (!type.isExtendable()) {
-            inventory = Bukkit.createInventory(holder, requireNonNull(toInventoryType(type)), title);
+            inventory = Bukkit.createInventory(holder, requireNonNull(toInventoryType(type)), titleAsText);
         } else {
             inventory = size == 0
-                    ? Bukkit.createInventory(holder, requireNonNull(toInventoryType(type)), title)
-                    : Bukkit.createInventory(holder, size, title);
+                    ? Bukkit.createInventory(holder, requireNonNull(toInventoryType(type)), titleAsText)
+                    : Bukkit.createInventory(holder, size, titleAsText);
         }
         return inventory;
     }

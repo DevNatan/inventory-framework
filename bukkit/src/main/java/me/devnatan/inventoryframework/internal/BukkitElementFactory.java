@@ -40,19 +40,7 @@ import org.jetbrains.annotations.Nullable;
 public class BukkitElementFactory extends ElementFactory {
 
     private static final ViewType defaultType = ViewType.CHEST;
-    private static final InventoryFactory inventoryFactory;
     private Boolean worksInCurrentPlatform = null;
-
-    static {
-        InventoryFactory factory = new InventoryFactory();
-        try {
-            Class.forName("net.kyori.adventure.text.Component");
-            factory = new PaperInventoryFactory();
-        } catch (ClassNotFoundException ignored) {
-        }
-
-        inventoryFactory = factory;
-    }
 
     @Override
     public @NotNull RootView createUninitializedRoot() {
@@ -79,7 +67,8 @@ public class BukkitElementFactory extends ElementFactory {
 
         final InventoryHolder holder =
                 context.getRoot() instanceof InventoryHolder ? (InventoryHolder) context.getRoot() : null;
-        final Inventory inventory = inventoryFactory.createInventory(holder, finalType, size, config.getTitle());
+        final Inventory inventory =
+                InventoryFactory.current().createInventory(holder, finalType, size, config.getTitle());
 
         return new BukkitViewContainer(inventory, false, finalType);
     }

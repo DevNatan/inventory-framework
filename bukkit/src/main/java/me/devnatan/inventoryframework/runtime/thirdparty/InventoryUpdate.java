@@ -27,7 +27,6 @@ import java.lang.invoke.MethodType;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.Arrays;
-import org.apache.commons.lang3.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
@@ -117,7 +116,7 @@ public final class InventoryUpdate {
      * @param newTitle the new title for the inventory.
      */
     public static void updateInventory(Player player, String newTitle) {
-        Validate.notNull(player, "Cannot update inventory to null player.");
+        if (player == null) throw new IllegalArgumentException("Cannot update inventory to null player.");
 
         try {
             // Get EntityPlayer from CraftPlayer.

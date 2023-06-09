@@ -9,16 +9,17 @@ apply from: '../publish.gradle'
 
 repositories {
     mavenCentral()
-    maven { url = 'https://repo.papermc.io/repository/maven-public/' }
+    maven { url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
 }
 
 dependencies {
     api projects.api
     api projects.framework
     api projects.platform
-    compileOnly libs.spigot.api
-    testCompileOnly libs.spigot.api
-    testRuntimeOnly libs.spigot.api
+    compileOnly libs.spigot
+    testCompileOnly libs.spigot
+    testRuntimeOnly libs.spigot
     testImplementation projects.api
     testImplementation projects.test
 }
