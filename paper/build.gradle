@@ -1,3 +1,7 @@
+plugins {
+    alias(libs.plugins.shadowjar)
+}
+
 apply from: '../library.gradle'
 apply from: '../publish.gradle'
 
@@ -8,10 +12,13 @@ repositories {
 dependencies {
     compileOnly libs.paperSpigot
     implementation projects.bukkit
-    implementation projects.framework
-    implementation projects.platform
 }
 
 java {
     targetCompatibility = JavaVersion.VERSION_17
+}
+
+shadowJar {
+    archiveBaseName.set('inventory-framework')
+    archiveAppendix.set('paper')
 }
