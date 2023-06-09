@@ -13,10 +13,6 @@ import org.bukkit.inventory.InventoryHolder;
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
 class BukkitInventoryFactory extends InventoryFactory {
 
-    static {
-        instance = new BukkitInventoryFactory();
-    }
-
     @Override
     public Inventory createInventory(InventoryHolder holder, ViewType type, int size, Object title) {
         final Inventory inventory;
