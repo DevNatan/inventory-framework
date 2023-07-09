@@ -6,14 +6,12 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.ToString;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.IFContext;
@@ -28,16 +26,10 @@ import org.jetbrains.annotations.UnmodifiableView;
 import org.jetbrains.annotations.VisibleForTesting;
 
 // TODO add "key" to child pagination components and check if it needs to be updated based on it
-@Getter
-@ToString(callSuper = true)
-@EqualsAndHashCode(callSuper = true)
 @VisibleForTesting
 public class PaginationImpl extends StateValue implements Pagination, InteractionHandler {
 
-    @EqualsAndHashCode.Exclude
     private final List<Component> components = new LinkedList<>();
-
-    // --- State ---
     private final @NotNull IFContext host;
 
     // --- User provided ---
@@ -77,6 +69,10 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
         this.pageSwitchHandler = pageSwitchHandler;
         this.currSource = convertSourceProvider();
         this.dynamic = !(sourceProvider instanceof Collection);
+    }
+
+    public @NotNull IFContext getHost() {
+        return host;
     }
 
     @Override
@@ -245,6 +241,16 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
     @Override
     public boolean canBack() {
         return hasPage(currentPageIndex() - 1);
+    }
+
+    @Override
+    public char getLayoutTarget() {
+        return layoutTarget;
+    }
+
+    @Override
+    public boolean isDynamic() {
+        return dynamic;
     }
 
     @NotNull
@@ -429,5 +435,48 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
     @VisibleForTesting
     List<Component> getComponentsInternal() {
         return components;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PaginationImpl that = (PaginationImpl) o;
+        return getLayoutTarget() == that.getLayoutTarget()
+                && currPageIndex == that.currPageIndex
+                && getPageSize() == that.getPageSize()
+                && isDynamic() == that.isDynamic()
+                && pageWasChanged == that.pageWasChanged
+                && Objects.equals(sourceProvider, that.sourceProvider)
+                && Objects.equals(pageSwitchHandler, that.pageSwitchHandler);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(
+                getLayoutTarget(),
+                sourceProvider,
+                pageSwitchHandler,
+                currPageIndex,
+                getPageSize(),
+                isDynamic(),
+                pageWasChanged);
+    }
+
+    @Override
+    public String toString() {
+        return "PaginationImpl{" + ", host="
+                + host + ", layoutTarget="
+                + layoutTarget + ", sourceProvider="
+                + sourceProvider + ", elementFactory="
+                + elementFactory + ", pageSwitchHandler="
+                + pageSwitchHandler + ", currPageIndex="
+                + currPageIndex + ", pageSize="
+                + pageSize + ", dynamic="
+                + dynamic + ", pageWasChanged="
+                + pageWasChanged + ", _srcFactory="
+                + _srcFactory + ", currSource="
+                + currSource + "} "
+                + super.toString();
     }
 }

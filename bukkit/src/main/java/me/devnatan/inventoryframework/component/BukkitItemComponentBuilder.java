@@ -3,10 +3,6 @@ package me.devnatan.inventoryframework.component;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.context.IFSlotContext;
@@ -18,23 +14,49 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
-@RequiredArgsConstructor
-@ToString
 public final class BukkitItemComponentBuilder extends DefaultComponentBuilder<BukkitItemComponentBuilder>
         implements ItemComponentBuilder<BukkitItemComponentBuilder>, ComponentFactory {
 
     private final VirtualView root;
-
     private int slot;
     private ItemStack item;
-
-    // --- Handlers ---
     private Consumer<? super IFSlotRenderContext> renderHandler;
     private Consumer<? super IFSlotClickContext> clickHandler;
     private Consumer<? super IFSlotContext> updateHandler;
-
     private BooleanSupplier shouldRender;
+
+    public BukkitItemComponentBuilder(VirtualView root) {
+        this.root = root;
+    }
+
+    private BukkitItemComponentBuilder(
+            VirtualView root,
+            int slot,
+            ItemStack item,
+            Consumer<? super IFSlotRenderContext> renderHandler,
+            Consumer<? super IFSlotClickContext> clickHandler,
+            Consumer<? super IFSlotContext> updateHandler,
+            BooleanSupplier shouldRender) {
+        this(root);
+        this.slot = slot;
+        this.item = item;
+        this.renderHandler = renderHandler;
+        this.clickHandler = clickHandler;
+        this.updateHandler = updateHandler;
+        this.shouldRender = shouldRender;
+    }
+
+    @Override
+    public String toString() {
+        return "BukkitItemComponentBuilder{" + "slot="
+                + slot + ", item="
+                + item + ", renderHandler="
+                + renderHandler + ", clickHandler="
+                + clickHandler + ", updateHandler="
+                + updateHandler + ", shouldRender="
+                + shouldRender + "} "
+                + super.toString();
+    }
 
     @Override
     public boolean isContainedWithin(int position) {

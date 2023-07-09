@@ -1,19 +1,27 @@
 package me.devnatan.inventoryframework.state;
 
-import lombok.Data;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.UnknownNullability;
 
 /**
  * Wrapper of the value of a {@link State} for a single {@link StateValueHost}.
  */
-@Data
 public abstract class StateValue {
+
+    private final State<?> state;
+
+    public StateValue(State<?> state) {
+        this.state = state;
+    }
 
     /**
      * The state who holds this value.
+     *
+     * @return The state who holds this value.
      */
-    private final State<?> state;
+    public final State<?> getState() {
+        return state;
+    }
 
     /**
      * The id of this state on its current host.

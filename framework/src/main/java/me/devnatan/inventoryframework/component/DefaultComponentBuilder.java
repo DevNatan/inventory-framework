@@ -5,12 +5,9 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
-import lombok.AccessLevel;
-import lombok.Getter;
 import me.devnatan.inventoryframework.state.State;
 import org.jetbrains.annotations.NotNull;
 
-@Getter(AccessLevel.PROTECTED)
 @SuppressWarnings("unchecked")
 abstract class DefaultComponentBuilder<S extends ComponentBuilder<S>> implements ComponentBuilder<S> {
 
@@ -18,6 +15,26 @@ abstract class DefaultComponentBuilder<S extends ComponentBuilder<S>> implements
     private Map<String, Object> data;
     private boolean cancelOnClick, closeOnClick;
     private final Set<State<?>> watching = new LinkedHashSet<>();
+
+    protected final String getReferenceKey() {
+        return referenceKey;
+    }
+
+    protected final Map<String, Object> getData() {
+        return data;
+    }
+
+    protected final boolean isCancelOnClick() {
+        return cancelOnClick;
+    }
+
+    protected final boolean isCloseOnClick() {
+        return closeOnClick;
+    }
+
+    protected final Set<State<?>> getWatching() {
+        return watching;
+    }
 
     @Override
     public S referencedBy(@NotNull String key) {

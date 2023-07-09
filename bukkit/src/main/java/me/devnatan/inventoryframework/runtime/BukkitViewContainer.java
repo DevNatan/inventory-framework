@@ -3,8 +3,8 @@ package me.devnatan.inventoryframework.runtime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
-import lombok.Data;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.ViewType;
 import me.devnatan.inventoryframework.Viewer;
@@ -19,14 +19,25 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
-@Data
 public final class BukkitViewContainer implements ViewContainer {
 
-    @NotNull
     private final Inventory inventory;
-
     private final boolean shared;
     private final ViewType type;
+
+    public BukkitViewContainer(@NotNull Inventory inventory, boolean shared, ViewType type) {
+        this.inventory = inventory;
+        this.shared = shared;
+        this.type = type;
+    }
+
+    public Inventory getInventory() {
+        return inventory;
+    }
+
+    public boolean isShared() {
+        return shared;
+    }
 
     @Override
     public String getTitle() {
@@ -156,5 +167,25 @@ public final class BukkitViewContainer implements ViewContainer {
     @Override
     public void close(@NotNull Viewer viewer) {
         viewer.close();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BukkitViewContainer that = (BukkitViewContainer) o;
+        return shared == that.shared
+                && Objects.equals(inventory, that.inventory)
+                && Objects.equals(getType(), that.getType());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(inventory, shared, getType());
+    }
+
+    @Override
+    public String toString() {
+        return "BukkitViewContainer{" + "inventory=" + inventory + ", shared=" + shared + ", type=" + type + '}';
     }
 }

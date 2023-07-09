@@ -1,23 +1,30 @@
 package me.devnatan.inventoryframework.pipeline;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
 /**
  * Phases are groups of interceptors that can be ordered topologically, defining relationships
  * between them.
  *
  * @see Pipeline
  */
-@AllArgsConstructor
 public final class PipelinePhase {
 
-    /** The pipeline phase name. */
-    @Getter
     private final String name;
+
+    public PipelinePhase(String name) {
+        this.name = name;
+    }
+
+    /**
+     * The pipeline phase name.
+     *
+     * @return The name of this pipeline phase.
+     */
+    public String getName() {
+        return name;
+    }
 
     @Override
     public String toString() {
-        return "Phase('" + name + "')";
+        return "PipelinePhase{" + "name='" + name + '\'' + '}';
     }
 }

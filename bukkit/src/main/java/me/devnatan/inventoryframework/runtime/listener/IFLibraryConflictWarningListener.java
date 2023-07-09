@@ -1,17 +1,18 @@
 package me.devnatan.inventoryframework.runtime.listener;
 
-import lombok.RequiredArgsConstructor;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.jetbrains.annotations.ApiStatus;
 
-@ApiStatus.Internal
-@RequiredArgsConstructor
+// TODO Move to plugin package and make package-private
 public final class IFLibraryConflictWarningListener implements Listener {
 
     private final String message;
+
+    public IFLibraryConflictWarningListener(String message) {
+        this.message = message;
+    }
 
     @SuppressWarnings("unused")
     @EventHandler

@@ -1,6 +1,5 @@
 package me.devnatan.inventoryframework.runtime.listener;
 
-import lombok.RequiredArgsConstructor;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewContainer;
@@ -22,13 +21,15 @@ import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.PlayerInventory;
-import org.jetbrains.annotations.ApiStatus;
 
-@ApiStatus.Internal
-@RequiredArgsConstructor
+// TODO Move to plugin package and make package-private
 public final class IFInventoryListener implements Listener {
 
     private final ViewFrame viewFrame;
+
+    public IFInventoryListener(ViewFrame viewFrame) {
+        this.viewFrame = viewFrame;
+    }
 
     @SuppressWarnings("unused")
     @EventHandler(ignoreCancelled = true)

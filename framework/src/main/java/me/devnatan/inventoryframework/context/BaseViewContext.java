@@ -8,11 +8,9 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.ToString;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewContainer;
@@ -21,42 +19,34 @@ import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.Pagination;
 import me.devnatan.inventoryframework.pipeline.StandardPipelinePhases;
 import me.devnatan.inventoryframework.state.DefaultStateValueHost;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 import org.jetbrains.annotations.UnmodifiableView;
 
-@ApiStatus.Internal
-@ApiStatus.NonExtendable
-@ToString
-@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
 public class BaseViewContext extends DefaultStateValueHost implements IFContext {
 
-    @Getter
-    @EqualsAndHashCode.Include
     private final UUID id = UUID.randomUUID();
-
-    @ToString.Exclude
     private final @NotNull RootView root;
-
-    /* container can be null on pre-render/intermediate contexts */
+    // Container can be null on pre-render/intermediate contexts
     private final @Nullable ViewContainer container;
-
-    protected final Map<String, Viewer> viewers = new HashMap<>();
-    protected ViewConfig config;
-
-    @ToString.Exclude
     private final List<Component> components = new LinkedList<>();
-
     private final Deque<Integer> markedForRemoval = new ArrayDeque<>();
     private final Object initialData;
+    protected final Map<String, Viewer> viewers = new HashMap<>();
+    protected ViewConfig config;
 
     public BaseViewContext(@NotNull RootView root, @Nullable ViewContainer container, Object initialData) {
         this.root = root;
         this.container = container;
         this.config = root.getConfig();
         this.initialData = initialData;
+    }
+
+    @NotNull
+    @Override
+    public UUID getId() {
+        return id;
     }
 
     @Override
@@ -179,5 +169,30 @@ public class BaseViewContext extends DefaultStateValueHost implements IFContext 
     @Override
     public Object getInitialData() {
         return initialData instanceof Map ? Collections.unmodifiableMap((Map<?, ?>) initialData) : initialData;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BaseViewContext that = (BaseViewContext) o;
+        return Objects.equals(getId(), that.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
+    }
+
+    @Override
+    public String toString() {
+        return "BaseViewContext{" + "id="
+                + id + ", container="
+                + container + ", viewers="
+                + viewers + ", config="
+                + config + ", markedForRemoval="
+                + markedForRemoval + ", initialData="
+                + initialData + "} "
+                + super.toString();
     }
 }

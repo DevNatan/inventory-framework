@@ -1,8 +1,7 @@
 package me.devnatan.inventoryframework.context;
 
+import java.util.Objects;
 import java.util.UUID;
-import lombok.Getter;
-import lombok.ToString;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewContainer;
@@ -16,8 +15,6 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-@Getter
-@ToString(callSuper = true)
 public final class RenderContext extends PlatformRenderContext<BukkitItemComponentBuilder> implements Context {
 
     private static final LayoutSlot filledReservedCharLayoutSlot =
@@ -25,13 +22,23 @@ public final class RenderContext extends PlatformRenderContext<BukkitItemCompone
                 throw new UnsupportedOperationException("Cannot use factory of reserved layout character");
             });
 
-    private final @NotNull Player player;
+    private final Player player;
 
     @ApiStatus.Internal
     public RenderContext(
             UUID id, RootView root, ViewContainer container, Viewer viewer, ViewConfig config, Object initialData) {
         super(id, root, container, viewer, config, initialData);
         this.player = ((BukkitViewer) viewer).getPlayer();
+    }
+
+    public static LayoutSlot getFilledReservedCharLayoutSlot() {
+        return filledReservedCharLayoutSlot;
+    }
+
+    @NotNull
+    @Override
+    public Player getPlayer() {
+        return player;
     }
 
     /**
@@ -100,5 +107,24 @@ public final class RenderContext extends PlatformRenderContext<BukkitItemCompone
     @Override
     protected BukkitItemComponentBuilder createBuilder() {
         return new BukkitItemComponentBuilder(this);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        RenderContext that = (RenderContext) o;
+        return Objects.equals(getPlayer(), that.getPlayer());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), getPlayer());
+    }
+
+    @Override
+    public String toString() {
+        return "RenderContext{" + "player=" + player + "} " + super.toString();
     }
 }

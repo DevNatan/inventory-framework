@@ -1,9 +1,6 @@
 package me.devnatan.inventoryframework;
 
 import java.util.function.BiConsumer;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import me.devnatan.inventoryframework.component.ComponentFactory;
 import me.devnatan.inventoryframework.component.ItemComponentBuilder;
 import me.devnatan.inventoryframework.component.Pagination;
@@ -14,19 +11,39 @@ import me.devnatan.inventoryframework.internal.LayoutSlot;
 import me.devnatan.inventoryframework.state.State;
 import org.jetbrains.annotations.NotNull;
 
-@Getter(AccessLevel.PACKAGE)
-@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public final class PaginationStateBuilder<
-        TContext extends IFContext,
-        TSlotContext extends IFSlotContext,
-        I extends ItemComponentBuilder<I> & ComponentFactory,
-        V> {
+        C extends IFContext, SC extends IFSlotContext, B extends ItemComponentBuilder<B> & ComponentFactory, V> {
 
-    private final PlatformView<I, TContext, ?, ?, ?, TSlotContext, ?> root;
+    private final PlatformView<B, C, ?, ?, ?, SC, ?> root;
     private final Object sourceProvider;
     private char layoutTarget = LayoutSlot.FILLED_RESERVED_CHAR;
-    private PaginationElementFactory<TContext, V> elementFactory;
-    private BiConsumer<TContext, Pagination> pageSwitchHandler;
+    private PaginationElementFactory<C, V> elementFactory;
+    private BiConsumer<C, Pagination> pageSwitchHandler;
+
+    PaginationStateBuilder(PlatformView<B, C, ?, ?, ?, SC, ?> root, Object sourceProvider) {
+        this.root = root;
+        this.sourceProvider = sourceProvider;
+    }
+
+    PlatformView<B, C, ?, ?, ?, SC, ?> getRoot() {
+        return root;
+    }
+
+    Object getSourceProvider() {
+        return sourceProvider;
+    }
+
+    char getLayoutTarget() {
+        return layoutTarget;
+    }
+
+    PaginationElementFactory<C, V> getElementFactory() {
+        return elementFactory;
+    }
+
+    BiConsumer<C, Pagination> getPageSwitchHandler() {
+        return pageSwitchHandler;
+    }
 
     /**
      * Sets the element factory for pagination.
@@ -40,8 +57,7 @@ public final class PaginationStateBuilder<
      * @param elementFactory The element factory.
      * @return This pagination state builder.
      */
-    public PaginationStateBuilder<TContext, TSlotContext, I, V> elementFactory(
-            @NotNull PaginationElementFactory<TContext, V> elementFactory) {
+    public PaginationStateBuilder<C, SC, B, V> elementFactory(@NotNull PaginationElementFactory<C, V> elementFactory) {
         this.elementFactory = elementFactory;
         return this;
     }
@@ -58,10 +74,10 @@ public final class PaginationStateBuilder<
      * @param itemFactory The item factory.
      * @return This pagination state builder.
      */
-    public PaginationStateBuilder<TContext, TSlotContext, I, V> itemFactory(@NotNull BiConsumer<I, V> itemFactory) {
+    public PaginationStateBuilder<C, SC, B, V> itemFactory(@NotNull BiConsumer<B, V> itemFactory) {
         return elementFactory((context, index, slot, value) -> {
             @SuppressWarnings("unchecked")
-            I builder = (I) root.getElementFactory().createComponentBuilder(context);
+            B builder = (B) root.getElementFactory().createComponentBuilder(context);
             builder.withSlot(slot);
             itemFactory.accept(builder, value);
             return builder;
@@ -80,7 +96,7 @@ public final class PaginationStateBuilder<
      * @param layoutTarget The target layout character.
      * @return This pagination state builder.
      */
-    public PaginationStateBuilder<TContext, TSlotContext, I, V> layoutTarget(char layoutTarget) {
+    public PaginationStateBuilder<C, SC, B, V> layoutTarget(char layoutTarget) {
         this.layoutTarget = layoutTarget;
         return this;
     }
@@ -94,8 +110,7 @@ public final class PaginationStateBuilder<
      * @param pageSwitchHandler The page switch handler.
      * @return This pagination state builder.
      */
-    public PaginationStateBuilder<TContext, TSlotContext, I, V> onPageSwitch(
-            @NotNull BiConsumer<TContext, Pagination> pageSwitchHandler) {
+    public PaginationStateBuilder<C, SC, B, V> onPageSwitch(@NotNull BiConsumer<C, Pagination> pageSwitchHandler) {
         this.pageSwitchHandler = pageSwitchHandler;
         return this;
     }

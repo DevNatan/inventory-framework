@@ -2,7 +2,6 @@ package me.devnatan.inventoryframework.component;
 
 import java.util.Collections;
 import java.util.Set;
-import lombok.RequiredArgsConstructor;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFSlotClickContext;
@@ -11,13 +10,16 @@ import me.devnatan.inventoryframework.state.State;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
 
-@RequiredArgsConstructor
 public class FakeComponent implements Component, InteractionHandler {
 
     private final VirtualView root;
     private int position = 0;
     private boolean markedForRemoval = false;
     public Object item = new Object();
+
+    public FakeComponent(VirtualView root) {
+        this.root = root;
+    }
 
     public FakeComponent(VirtualView root, int position) {
         this(root);

@@ -3,16 +3,15 @@ package me.devnatan.inventoryframework;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class IFViewFrame<S extends IFViewFrame<S>> {
 
     private boolean registered;
     private final Map<UUID, RootView> registeredViews = new HashMap<>();
+
+    protected IFViewFrame() {}
 
     /**
      * All registered views.

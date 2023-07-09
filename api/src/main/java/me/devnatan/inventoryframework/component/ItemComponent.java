@@ -1,45 +1,97 @@
 package me.devnatan.inventoryframework.component;
 
 import java.util.Collections;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.context.IFSlotContext;
 import me.devnatan.inventoryframework.context.IFSlotRenderContext;
 import me.devnatan.inventoryframework.state.State;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
 
-@Data
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@ApiStatus.NonExtendable
 public class ItemComponent implements Component, InteractionHandler {
 
-    @ToString.Exclude
     private final VirtualView root;
-
-    @EqualsAndHashCode.Include
     private final int position;
-
-    @EqualsAndHashCode.Include
     private final Object stack;
-
     private final boolean cancelOnClick;
     private final boolean closeOnClick;
     private final BooleanSupplier shouldRender;
     private final Consumer<? super IFSlotRenderContext> renderHandler;
     private final Consumer<? super IFSlotContext> updateHandler;
     private final Consumer<? super IFSlotClickContext> clickHandler;
-
-    @ToString.Exclude
     private final Set<State<?>> watching;
+
+    public ItemComponent(
+            VirtualView root,
+            int position,
+            Object stack,
+            boolean cancelOnClick,
+            boolean closeOnClick,
+            BooleanSupplier shouldRender,
+            Consumer<? super IFSlotRenderContext> renderHandler,
+            Consumer<? super IFSlotContext> updateHandler,
+            Consumer<? super IFSlotClickContext> clickHandler,
+            Set<State<?>> watching) {
+        this.root = root;
+        this.position = position;
+        this.stack = stack;
+        this.cancelOnClick = cancelOnClick;
+        this.closeOnClick = closeOnClick;
+        this.shouldRender = shouldRender;
+        this.renderHandler = renderHandler;
+        this.updateHandler = updateHandler;
+        this.clickHandler = clickHandler;
+        this.watching = watching;
+    }
+
+    @NotNull
+    @Override
+    public VirtualView getRoot() {
+        return root;
+    }
+
+    @Override
+    public int getPosition() {
+        return position;
+    }
+
+    public Object getStack() {
+        return stack;
+    }
+
+    public boolean isCancelOnClick() {
+        return cancelOnClick;
+    }
+
+    public boolean isCloseOnClick() {
+        return closeOnClick;
+    }
+
+    public BooleanSupplier getShouldRender() {
+        return shouldRender;
+    }
+
+    public Consumer<? super IFSlotRenderContext> getRenderHandler() {
+        return renderHandler;
+    }
+
+    public Consumer<? super IFSlotContext> getUpdateHandler() {
+        return updateHandler;
+    }
+
+    public Consumer<? super IFSlotClickContext> getClickHandler() {
+        return clickHandler;
+    }
+
+    public Set<State<?>> getWatching() {
+        return watching;
+    }
 
     @Override
     public boolean isContainedWithin(int position) {
@@ -102,5 +154,31 @@ public class ItemComponent implements Component, InteractionHandler {
     @Override
     public boolean isVisible() {
         return ((IFContext) root).getContainer().hasItem(getPosition());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ItemComponent that = (ItemComponent) o;
+        return getPosition() == that.getPosition() && Objects.equals(getStack(), that.getStack());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getPosition(), getStack());
+    }
+
+    @Override
+    public String toString() {
+        return "ItemComponent{" + "position="
+                + position + ", stack="
+                + stack + ", cancelOnClick="
+                + cancelOnClick + ", closeOnClick="
+                + closeOnClick + ", shouldRender="
+                + shouldRender + ", renderHandler="
+                + renderHandler + ", updateHandler="
+                + updateHandler + ", clickHandler="
+                + clickHandler + '}';
     }
 }

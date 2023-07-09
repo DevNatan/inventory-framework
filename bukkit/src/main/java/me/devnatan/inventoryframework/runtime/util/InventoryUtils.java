@@ -2,13 +2,10 @@ package me.devnatan.inventoryframework.runtime.util;
 
 import com.google.common.collect.ImmutableMap;
 import java.util.Map;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import me.devnatan.inventoryframework.ViewType;
 import org.bukkit.event.inventory.InventoryType;
 import org.jetbrains.annotations.NotNull;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class InventoryUtils {
 
     private static final Map<ViewType, InventoryType> typeMappings;
@@ -31,6 +28,8 @@ public final class InventoryUtils {
                 .put(ViewType.VILLAGER_TRADING, InventoryType.MERCHANT)
                 .build();
     }
+
+    private InventoryUtils() {}
 
     private static void registerInventoryType(
             @NotNull ImmutableMap.Builder<ViewType, InventoryType> builder,

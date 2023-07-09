@@ -1,8 +1,5 @@
 package me.devnatan.inventoryframework.internal;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.TestOnly;
 
@@ -35,14 +32,24 @@ public interface Job {
     default void loop() {}
 
     @ApiStatus.Internal
-    @RequiredArgsConstructor
-    @ToString
     class InternalJobImpl implements Job {
 
         private final Runnable job;
-
-        @Getter
         private boolean started;
+
+        public InternalJobImpl(Runnable job) {
+            this.job = job;
+        }
+
+        @Override
+        public String toString() {
+            return "InternalJobImpl{" + "job=" + job + ", started=" + started + '}';
+        }
+
+        @Override
+        public boolean isStarted() {
+            return started;
+        }
 
         @Override
         public void start() {

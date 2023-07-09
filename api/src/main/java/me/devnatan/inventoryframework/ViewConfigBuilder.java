@@ -6,15 +6,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import me.devnatan.inventoryframework.exception.InvalidLayoutException;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
 import org.jetbrains.annotations.NotNull;
 
-@Getter(AccessLevel.PACKAGE)
-@NoArgsConstructor
 public final class ViewConfigBuilder {
 
     private static boolean titleAsComponentSupported;
@@ -36,6 +31,42 @@ public final class ViewConfigBuilder {
     private final Set<LayoutSlot> patterns = new HashSet<>();
     private final Set<ViewConfig.Modifier> modifiers = new HashSet<>();
     private long updateIntervalInTicks;
+
+    public static boolean isTitleAsComponentSupported() {
+        return titleAsComponentSupported;
+    }
+
+    Object getTitle() {
+        return title;
+    }
+
+    int getSize() {
+        return size;
+    }
+
+    ViewType getType() {
+        return type;
+    }
+
+    Set<ViewConfig.Option<?>> getOptions() {
+        return options;
+    }
+
+    String[] getLayout() {
+        return layout;
+    }
+
+    Set<LayoutSlot> getPatterns() {
+        return patterns;
+    }
+
+    Set<ViewConfig.Modifier> getModifiers() {
+        return modifiers;
+    }
+
+    long getUpdateIntervalInTicks() {
+        return updateIntervalInTicks;
+    }
 
     /**
      * Inherits all configuration from another {@link ViewConfigBuilder} value.
