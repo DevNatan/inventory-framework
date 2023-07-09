@@ -1,8 +1,7 @@
-package me.devnatan.inventoryframework.runtime;
+package me.devnatan.inventoryframework;
 
 import java.util.Objects;
-import me.devnatan.inventoryframework.ViewContainer;
-import me.devnatan.inventoryframework.Viewer;
+
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 

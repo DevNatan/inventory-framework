@@ -1,4 +1,4 @@
-package me.devnatan.inventoryframework.runtime.listener;
+package me.devnatan.inventoryframework;
 
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewConfig;
@@ -22,8 +22,7 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.PlayerInventory;
 
-// TODO Move to plugin package and make package-private
-public final class IFInventoryListener implements Listener {
+final class IFInventoryListener implements Listener {
 
     private final ViewFrame viewFrame;
 

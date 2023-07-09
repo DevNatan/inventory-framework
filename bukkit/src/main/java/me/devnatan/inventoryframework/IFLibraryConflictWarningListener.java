@@ -1,12 +1,11 @@
-package me.devnatan.inventoryframework.runtime.listener;
+package me.devnatan.inventoryframework;
 
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
-// TODO Move to plugin package and make package-private
-public final class IFLibraryConflictWarningListener implements Listener {
+final class IFLibraryConflictWarningListener implements Listener {
 
     private final String message;
 
