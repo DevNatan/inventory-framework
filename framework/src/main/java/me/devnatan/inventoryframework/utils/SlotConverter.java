@@ -2,11 +2,9 @@ package me.devnatan.inventoryframework.utils;
 
 import static java.lang.String.format;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class SlotConverter {
+
+    private SlotConverter() {}
 
     public static int convertSlot(int row, int column, int maxRowsCount, int maxColumnsCount) {
         if (row > maxRowsCount)

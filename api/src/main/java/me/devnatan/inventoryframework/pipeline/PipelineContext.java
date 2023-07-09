@@ -1,23 +1,25 @@
 package me.devnatan.inventoryframework.pipeline;
 
 import java.util.List;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.VisibleForTesting;
 
 @VisibleForTesting
-@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class PipelineContext<S> {
 
-    @Getter
-    private final @Nullable PipelinePhase phase;
-
+    private final PipelinePhase phase;
     private final List<PipelineInterceptor<S>> interceptors;
-
     private S subject;
     private int index;
+
+    PipelineContext(PipelinePhase phase, List<PipelineInterceptor<S>> interceptors) {
+        this.phase = phase;
+        this.interceptors = interceptors;
+    }
+
+    public @Nullable PipelinePhase getPhase() {
+        return phase;
+    }
 
     /** Finishes current pipeline execution */
     public void finish() {

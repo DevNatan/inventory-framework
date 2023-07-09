@@ -5,8 +5,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.UnaryOperator;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -14,13 +12,20 @@ import org.jetbrains.annotations.NotNull;
  *
  * @param <P> The feature installer platform.
  */
-@RequiredArgsConstructor
 public class DefaultFeatureInstaller<P> implements FeatureInstaller<P> {
 
     private final Map<Class<?>, Feature<?, ?, P>> featureList = new HashMap<>();
+    private final P platform;
 
-    @Getter
-    private final @NotNull P platform;
+    public DefaultFeatureInstaller(@NotNull P platform) {
+        this.platform = platform;
+    }
+
+    @NotNull
+    @Override
+    public P getPlatform() {
+        return platform;
+    }
 
     @Override
     public Collection<Feature<?, ?, P>> getInstalledFeatures() {

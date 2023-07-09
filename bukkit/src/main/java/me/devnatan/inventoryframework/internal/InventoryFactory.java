@@ -17,7 +17,7 @@ abstract class InventoryFactory {
         try {
             Class.forName("com.destroystokyo.paper.ParticleBuilder");
 
-            final Class<?> clazz = Class.forName("me.devnatan.inventoryframework.internal.PaperInventoryFramework");
+            final Class<?> clazz = Class.forName("me.devnatan.inventoryframework.internal.PaperInventoryFactory");
             return (InventoryFactory) clazz.newInstance();
         } catch (final ClassNotFoundException | InstantiationException | IllegalAccessException ignored) {
         }

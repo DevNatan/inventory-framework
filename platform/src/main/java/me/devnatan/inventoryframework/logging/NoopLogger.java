@@ -1,9 +1,7 @@
 package me.devnatan.inventoryframework.logging;
 
-import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.Nullable;
 
-@NoArgsConstructor
 public final class NoopLogger implements Logger {
 
     @Override

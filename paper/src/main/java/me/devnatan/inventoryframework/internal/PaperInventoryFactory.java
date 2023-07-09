@@ -2,8 +2,6 @@ package me.devnatan.inventoryframework.internal;
 
 import static java.util.Objects.requireNonNull;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import me.devnatan.inventoryframework.ViewType;
 import me.devnatan.inventoryframework.runtime.util.InventoryUtils;
 import net.kyori.adventure.text.Component;
@@ -11,8 +9,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 class PaperInventoryFactory extends BukkitInventoryFactory {
+
+    private PaperInventoryFactory() {}
 
     @Override
     public Inventory createInventory(InventoryHolder holder, ViewType type, int size, Object title) {

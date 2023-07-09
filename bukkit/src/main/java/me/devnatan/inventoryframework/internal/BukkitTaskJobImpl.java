@@ -1,16 +1,20 @@
 package me.devnatan.inventoryframework.internal;
 
-import lombok.RequiredArgsConstructor;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
 
-@RequiredArgsConstructor
 class BukkitTaskJobImpl implements Job {
 
     private final Plugin plugin;
     private final long intervalInTicks;
     private final Runnable execution;
     private BukkitTask task;
+
+    public BukkitTaskJobImpl(Plugin plugin, long intervalInTicks, Runnable execution) {
+        this.plugin = plugin;
+        this.intervalInTicks = intervalInTicks;
+        this.execution = execution;
+    }
 
     @Override
     public boolean isStarted() {

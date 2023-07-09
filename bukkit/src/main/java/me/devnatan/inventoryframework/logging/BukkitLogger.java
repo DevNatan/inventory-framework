@@ -1,16 +1,19 @@
 package me.devnatan.inventoryframework.logging;
 
-import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.Nullable;
 
-@RequiredArgsConstructor
 public final class BukkitLogger implements Logger {
 
     private final java.util.logging.Logger logger;
     private final String viewName;
     private final boolean isShaded;
-
     private String finalPrefix;
+
+    public BukkitLogger(java.util.logging.Logger logger, String viewName, boolean isShaded) {
+        this.logger = logger;
+        this.viewName = viewName;
+        this.isShaded = isShaded;
+    }
 
     @Override
     @Nullable

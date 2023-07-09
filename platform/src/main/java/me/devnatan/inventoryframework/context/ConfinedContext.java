@@ -1,17 +1,12 @@
 package me.devnatan.inventoryframework.context;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.ToString;
+import java.util.Objects;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-@Getter
-@ToString(callSuper = true)
-@EqualsAndHashCode(callSuper = true)
 class ConfinedContext extends BaseViewContext implements IFConfinedContext {
 
     private final Viewer viewer;
@@ -20,6 +15,12 @@ class ConfinedContext extends BaseViewContext implements IFConfinedContext {
             @NotNull RootView root, @Nullable ViewContainer container, @NotNull Viewer viewer, Object initialData) {
         super(root, container, initialData);
         this.viewer = viewer;
+    }
+
+    @NotNull
+    @Override
+    public Viewer getViewer() {
+        return viewer;
     }
 
     @Override
@@ -40,5 +41,23 @@ class ConfinedContext extends BaseViewContext implements IFConfinedContext {
     @Override
     public void resetTitleForPlayer() {
         getContainer().changeTitle(null, viewer);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ConfinedContext that = (ConfinedContext) o;
+        return Objects.equals(getViewer(), that.getViewer());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getViewer());
+    }
+
+    @Override
+    public String toString() {
+        return "ConfinedContext{" + "viewer=" + viewer + "} " + super.toString();
     }
 }

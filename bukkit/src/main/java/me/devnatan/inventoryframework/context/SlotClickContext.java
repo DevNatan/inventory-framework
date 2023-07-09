@@ -1,8 +1,5 @@
 package me.devnatan.inventoryframework.context;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
@@ -13,18 +10,12 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-@ToString(callSuper = true)
 public final class SlotClickContext extends SlotContext implements IFSlotClickContext {
 
-    @NotNull
     private final InventoryClickEvent clickOrigin;
-
-    @Getter
-    @Setter
     private boolean cancelled;
 
     public SlotClickContext(
@@ -40,6 +31,16 @@ public final class SlotClickContext extends SlotContext implements IFSlotClickCo
     }
 
     @Override
+    public boolean isCancelled() {
+        return cancelled;
+    }
+
+    @Override
+    public void setCancelled(boolean cancelled) {
+        this.cancelled = cancelled;
+    }
+
+    @Override
     public int getClickedSlot() {
         return clickOrigin.getRawSlot();
     }
@@ -50,8 +51,8 @@ public final class SlotClickContext extends SlotContext implements IFSlotClickCo
      * This is an internal inventory-framework API that should not be used from outside of
      * this library. No compatibility guarantees are provided.
      */
-    @ApiStatus.Internal
-    public final @NotNull InventoryClickEvent getClickOrigin() {
+    @NotNull
+    public final InventoryClickEvent getClickOrigin() {
         return clickOrigin;
     }
 
@@ -110,5 +111,13 @@ public final class SlotClickContext extends SlotContext implements IFSlotClickCo
     @Override
     public final boolean isOnEntityContainer() {
         return getClickOrigin().getClickedInventory() instanceof PlayerInventory;
+    }
+
+    @Override
+    public String toString() {
+        return "SlotClickContext{" + "clickOrigin="
+                + clickOrigin + ", cancelled="
+                + cancelled + "} "
+                + super.toString();
     }
 }

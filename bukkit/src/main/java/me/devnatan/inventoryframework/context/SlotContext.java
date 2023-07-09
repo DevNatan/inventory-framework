@@ -3,26 +3,22 @@ package me.devnatan.inventoryframework.context;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import lombok.ToString;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.component.Component;
-import me.devnatan.inventoryframework.runtime.BukkitViewContainer;
-import me.devnatan.inventoryframework.runtime.BukkitViewer;
+import me.devnatan.inventoryframework.BukkitViewContainer;
+import me.devnatan.inventoryframework.BukkitViewer;
 import me.devnatan.inventoryframework.state.State;
 import me.devnatan.inventoryframework.state.StateValue;
 import me.devnatan.inventoryframework.state.StateWatcher;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnmodifiableView;
 
-@ApiStatus.Internal
-@ToString(callSuper = true)
 public class SlotContext extends ConfinedContext implements IFSlotContext, Context {
 
     private final int slot;
@@ -157,5 +153,15 @@ public class SlotContext extends ConfinedContext implements IFSlotContext, Conte
     @Override
     public void watchState(long id, StateWatcher listener) {
         getParent().watchState(id, listener);
+    }
+
+    @Override
+    public String toString() {
+        return "SlotContext{" + "slot="
+                + slot + ", player="
+                + player + ", parent="
+                + parent + ", component="
+                + component + "} "
+                + super.toString();
     }
 }

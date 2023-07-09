@@ -1,17 +1,17 @@
-package me.devnatan.inventoryframework.runtime.listener;
+package me.devnatan.inventoryframework;
 
-import lombok.RequiredArgsConstructor;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.jetbrains.annotations.ApiStatus;
 
-@ApiStatus.Internal
-@RequiredArgsConstructor
-public final class IFLibraryConflictWarningListener implements Listener {
+final class IFLibraryConflictWarningListener implements Listener {
 
     private final String message;
+
+    public IFLibraryConflictWarningListener(String message) {
+        this.message = message;
+    }
 
     @SuppressWarnings("unused")
     @EventHandler

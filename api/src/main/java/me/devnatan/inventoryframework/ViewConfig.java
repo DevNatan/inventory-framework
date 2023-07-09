@@ -1,21 +1,17 @@
 package me.devnatan.inventoryframework;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.experimental.Accessors;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.VisibleForTesting;
 
-@Data
-@AllArgsConstructor
 @VisibleForTesting
 @ApiStatus.NonExtendable
 public class ViewConfig {
@@ -32,6 +28,51 @@ public class ViewConfig {
     private final String[] layout;
     private final Set<Modifier> modifiers;
     private final long updateIntervalInTicks;
+
+    public ViewConfig(
+            Object title,
+            int size,
+            ViewType type,
+            Map<Option<?>, Object> options,
+            String[] layout,
+            Set<Modifier> modifiers,
+            long updateIntervalInTicks) {
+        this.title = title;
+        this.size = size;
+        this.type = type;
+        this.options = options;
+        this.layout = layout;
+        this.modifiers = modifiers;
+        this.updateIntervalInTicks = updateIntervalInTicks;
+    }
+
+    public Object getTitle() {
+        return title;
+    }
+
+    public int getSize() {
+        return size;
+    }
+
+    public ViewType getType() {
+        return type;
+    }
+
+    public Map<Option<?>, Object> getOptions() {
+        return options;
+    }
+
+    public String[] getLayout() {
+        return layout;
+    }
+
+    public Set<Modifier> getModifiers() {
+        return modifiers;
+    }
+
+    public long getUpdateIntervalInTicks() {
+        return updateIntervalInTicks;
+    }
 
     @VisibleForTesting
     @SuppressWarnings("unchecked")
@@ -124,8 +165,6 @@ public class ViewConfig {
         T defaultValue();
     }
 
-    @Data
-    @Accessors(fluent = true)
     private static final class OptionImpl<T> implements Option<T> {
         private static final List<String> registeredNames = new ArrayList<>();
 
@@ -139,5 +178,67 @@ public class ViewConfig {
             this.name = name;
             this.defaultValue = defaultValue;
         }
+
+        @Override
+        public @NotNull String name() {
+            return null;
+        }
+
+        @Override
+        public @Nullable T defaultValue() {
+            return null;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            OptionImpl<?> option = (OptionImpl<?>) o;
+            return Objects.equals(name, option.name) && Objects.equals(defaultValue, option.defaultValue);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(name, defaultValue);
+        }
+
+        @Override
+        public String toString() {
+            return "OptionImpl{" + "name='" + name + '\'' + ", defaultValue=" + defaultValue + '}';
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ViewConfig that = (ViewConfig) o;
+        return getSize() == that.getSize()
+                && getUpdateIntervalInTicks() == that.getUpdateIntervalInTicks()
+                && Objects.equals(getTitle(), that.getTitle())
+                && Objects.equals(getType(), that.getType())
+                && Objects.equals(getOptions(), that.getOptions())
+                && Arrays.equals(getLayout(), that.getLayout())
+                && Objects.equals(getModifiers(), that.getModifiers());
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(
+                getTitle(), getSize(), getType(), getOptions(), getModifiers(), getUpdateIntervalInTicks());
+        result = 31 * result + Arrays.hashCode(getLayout());
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "ViewConfig{" + "title="
+                + title + ", size="
+                + size + ", type="
+                + type + ", options="
+                + options + ", layout="
+                + Arrays.toString(layout) + ", modifiers="
+                + modifiers + ", updateIntervalInTicks="
+                + updateIntervalInTicks + '}';
     }
 }

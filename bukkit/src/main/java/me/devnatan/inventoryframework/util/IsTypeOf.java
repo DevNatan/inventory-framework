@@ -1,11 +1,10 @@
 package me.devnatan.inventoryframework.util;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class IsTypeOf {
+
+    private IsTypeOf() {}
 
     public static boolean isTypeOf(@NotNull Class<?> superCls, @NotNull Class<?> cls) {
         return superCls.isAssignableFrom(cls);

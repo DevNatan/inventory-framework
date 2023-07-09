@@ -1,6 +1,5 @@
-package me.devnatan.inventoryframework.runtime.listener;
+package me.devnatan.inventoryframework;
 
-import lombok.RequiredArgsConstructor;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewContainer;
@@ -22,13 +21,14 @@ import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.PlayerInventory;
-import org.jetbrains.annotations.ApiStatus;
 
-@ApiStatus.Internal
-@RequiredArgsConstructor
-public final class IFInventoryListener implements Listener {
+final class IFInventoryListener implements Listener {
 
     private final ViewFrame viewFrame;
+
+    public IFInventoryListener(ViewFrame viewFrame) {
+        this.viewFrame = viewFrame;
+    }
 
     @SuppressWarnings("unused")
     @EventHandler(ignoreCancelled = true)

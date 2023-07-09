@@ -1,21 +1,17 @@
 package me.devnatan.inventoryframework.state;
 
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
 
-@Data
-@RequiredArgsConstructor
-@Getter(AccessLevel.NONE)
 public class BaseState<T> implements State<T> {
 
     private final long id;
-
-    @EqualsAndHashCode.Exclude
     private final StateValueFactory valueFactory;
+
+    public BaseState(long id, StateValueFactory valueFactory) {
+        this.id = id;
+        this.valueFactory = valueFactory;
+    }
 
     @SuppressWarnings("unchecked")
     @Override
@@ -31,5 +27,23 @@ public class BaseState<T> implements State<T> {
     @Override
     public final StateValueFactory factory() {
         return valueFactory;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BaseState<?> baseState = (BaseState<?>) o;
+        return id == baseState.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        return "BaseState{" + "id=" + id + ", valueFactory=" + valueFactory + '}';
     }
 }

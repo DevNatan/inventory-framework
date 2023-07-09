@@ -2,8 +2,6 @@ package me.devnatan.inventoryframework.state;
 
 import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.LAYOUT_RESOLUTION;
 
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.component.Pagination;
@@ -16,7 +14,6 @@ import me.devnatan.inventoryframework.pipeline.PipelinePhase;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
-@ToString(callSuper = true)
 public final class PaginationState extends BaseState<Pagination> implements StateWatcher {
 
     @ApiStatus.Internal
@@ -60,10 +57,18 @@ public final class PaginationState extends BaseState<Pagination> implements Stat
     public void stateValueSet(
             @NotNull StateValueHost host, @NotNull StateValue value, Object rawOldValue, Object rawNewValue) {}
 
-    @RequiredArgsConstructor
+    @Override
+    public String toString() {
+        return "PaginationState{" + "pipelineInterceptor=" + pipelineInterceptor + "} " + super.toString();
+    }
+
     private static final class Interceptor implements PipelineInterceptor<VirtualView> {
 
         private final State<?> state;
+
+        public Interceptor(State<?> state) {
+            this.state = state;
+        }
 
         @Override
         public void intercept(PipelineContext<VirtualView> pipeline, VirtualView subject) {

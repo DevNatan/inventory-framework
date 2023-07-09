@@ -1,7 +1,5 @@
 package me.devnatan.inventoryframework.pipeline;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.context.IFCloseContext;
 import me.devnatan.inventoryframework.context.IFConfinedContext;
@@ -12,8 +10,9 @@ import me.devnatan.inventoryframework.context.IFRenderContext;
 /**
  * Pipeline phases used internally by the framework. All phases have a {@link IFContext} as subject.
  */
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class StandardPipelinePhases {
+
+    private StandardPipelinePhases() {}
 
     /**
      * Called when a {@link RootView root} is initialized for the first time.

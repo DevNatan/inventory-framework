@@ -18,6 +18,7 @@ import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewFrame;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.context.IFContext;
+import me.devnatan.inventoryframework.runtime.IFInventoryListener;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.junit.jupiter.api.Test;

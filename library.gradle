@@ -9,15 +9,11 @@ repositories {
 }
 
 dependencies {
-    compileOnly libs.lombok
     compileOnly libs.jetbrains.annotations
-    annotationProcessor libs.lombok
     testCompileOnly libs.jetbrains.annotations
-    testCompileOnly libs.lombok
     testRuntimeOnly libs.junit.engine
     testImplementation libs.junit.api
     testImplementation libs.mockito.core
-    testAnnotationProcessor libs.lombok
 }
 
 java {
