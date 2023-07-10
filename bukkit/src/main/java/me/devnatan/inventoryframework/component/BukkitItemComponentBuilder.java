@@ -3,13 +3,16 @@ package me.devnatan.inventoryframework.component;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.VirtualView;
+import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.context.IFSlotContext;
 import me.devnatan.inventoryframework.context.IFSlotRenderContext;
 import me.devnatan.inventoryframework.context.SlotClickContext;
 import me.devnatan.inventoryframework.context.SlotContext;
 import me.devnatan.inventoryframework.context.SlotRenderContext;
+import me.devnatan.inventoryframework.utils.SlotConverter;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -18,7 +21,7 @@ public final class BukkitItemComponentBuilder extends DefaultComponentBuilder<Bu
         implements ItemComponentBuilder<BukkitItemComponentBuilder>, ComponentFactory {
 
     private final VirtualView root;
-    private int slot;
+    private int slot = -1;
     private ItemStack item;
     private Consumer<? super IFSlotRenderContext> renderHandler;
     private Consumer<? super IFSlotClickContext> clickHandler;
@@ -70,6 +73,12 @@ public final class BukkitItemComponentBuilder extends DefaultComponentBuilder<Bu
     public BukkitItemComponentBuilder withSlot(int slot) {
         this.slot = slot;
         return this;
+    }
+
+    @Override
+    public BukkitItemComponentBuilder withSlot(int row, int column) {
+        final ViewContainer container = ((IFContext) root).getContainer();
+        return withSlot(SlotConverter.convertSlot(row, column, container.getRowsCount(), container.getColumnsCount()));
     }
 
     /**

@@ -24,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 import org.jetbrains.annotations.UnmodifiableView;
 
-public class BaseViewContext extends DefaultStateValueHost implements IFContext {
+class BaseViewContext extends DefaultStateValueHost implements IFContext {
 
     private final UUID id = UUID.randomUUID();
     private final @NotNull RootView root;

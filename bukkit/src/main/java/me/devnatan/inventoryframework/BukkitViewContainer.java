@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-
 import me.devnatan.inventoryframework.runtime.thirdparty.InventoryUpdate;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -63,7 +62,7 @@ public final class BukkitViewContainer implements ViewContainer {
 
     @Override
     public int getRowsCount() {
-        return type.getRows();
+        return getSize() / getColumnsCount();
     }
 
     @Override
@@ -124,7 +123,7 @@ public final class BukkitViewContainer implements ViewContainer {
 
     @Override
     public int getSlotsCount() {
-        return inventory.getSize() - 1;
+        return getSize() - 1;
     }
 
     @Override

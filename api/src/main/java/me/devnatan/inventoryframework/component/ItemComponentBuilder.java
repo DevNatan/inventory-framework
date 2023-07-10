@@ -12,6 +12,10 @@ public interface ItemComponentBuilder<S extends ItemComponentBuilder<S>> extends
      */
     S withSlot(int slot);
 
+    // TODO needs documentation
+    @ApiStatus.Experimental
+    S withSlot(int row, int column);
+
     @ApiStatus.Internal
     boolean isContainedWithin(int position);
 }
