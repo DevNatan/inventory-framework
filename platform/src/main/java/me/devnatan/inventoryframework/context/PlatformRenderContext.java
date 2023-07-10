@@ -16,6 +16,7 @@ import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.component.ComponentFactory;
 import me.devnatan.inventoryframework.component.ItemComponentBuilder;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
 
@@ -69,8 +70,9 @@ abstract class PlatformRenderContext<T extends ItemComponentBuilder<T>> extends 
     }
 
     // TODO needs documentation
+    @ApiStatus.Experimental
     public final T unsetSlot() {
-        return createRegisteredBuilder();
+        return createRegisteredBuilder().withSlot();
     }
 
     /**
