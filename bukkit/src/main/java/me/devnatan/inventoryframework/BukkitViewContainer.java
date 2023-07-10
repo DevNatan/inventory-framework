@@ -63,7 +63,7 @@ public final class BukkitViewContainer implements ViewContainer {
 
     @Override
     public int getRowsCount() {
-        return type.getRows();
+        return getSize() / getColumnsCount();
     }
 
     @Override
@@ -124,7 +124,7 @@ public final class BukkitViewContainer implements ViewContainer {
 
     @Override
     public int getSlotsCount() {
-        return inventory.getSize() - 1;
+        return getSize() - 1;
     }
 
     @Override
