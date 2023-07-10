@@ -72,7 +72,7 @@ abstract class PlatformRenderContext<T extends ItemComponentBuilder<T>> extends 
     // TODO needs documentation
     @ApiStatus.Experimental
     public final T unsetSlot() {
-        return createRegisteredBuilder().withSlot();
+        return createRegisteredBuilder();
     }
 
     /**
