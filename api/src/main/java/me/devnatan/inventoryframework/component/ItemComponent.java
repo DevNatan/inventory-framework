@@ -5,6 +5,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
+import me.devnatan.inventoryframework.InventoryFrameworkException;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFSlotClickContext;
@@ -17,7 +18,7 @@ import org.jetbrains.annotations.UnmodifiableView;
 public class ItemComponent implements Component, InteractionHandler {
 
     private final VirtualView root;
-    private final int position;
+    private int position;
     private final Object stack;
     private final boolean cancelOnClick;
     private final boolean closeOnClick;
@@ -106,13 +107,28 @@ public class ItemComponent implements Component, InteractionHandler {
     @Override
     public void render(@NotNull IFSlotRenderContext context) {
         if (shouldRender != null && !shouldRender.getAsBoolean()) {
-            context.getContainer().removeItem(getPosition());
+            context.getContainer().removeItem(position);
             return;
         }
 
         if (renderHandler != null) {
+            final int currSlot = getPosition();
             renderHandler.accept(context);
-            context.getContainer().renderItem(getPosition(), context.getResult());
+
+            final int contextSlot = context.getSlot();
+            position = contextSlot;
+
+            if (contextSlot == -1 && currSlot == -1) {
+                // TODO needs more user-friendly "do something"-like message
+                throw new InventoryFrameworkException("Missing position (unset slot) for item component");
+            }
+
+            // Misplaced - TODO Move this to overall component misplacement check
+            if (currSlot != -1 && currSlot != contextSlot) {
+                context.getContainer().removeItem(currSlot);
+            }
+
+            context.getContainer().renderItem(contextSlot, context.getResult());
             return;
         }
 
