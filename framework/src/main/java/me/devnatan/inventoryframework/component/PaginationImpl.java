@@ -21,13 +21,15 @@ import me.devnatan.inventoryframework.context.IFSlotRenderContext;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
 import me.devnatan.inventoryframework.state.State;
 import me.devnatan.inventoryframework.state.StateValue;
+import me.devnatan.inventoryframework.state.StateValueHost;
+import me.devnatan.inventoryframework.state.StateWatcher;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
 import org.jetbrains.annotations.VisibleForTesting;
 
 // TODO add "key" to child pagination components and check if it needs to be updated based on it
 @VisibleForTesting
-public class PaginationImpl extends StateValue implements Pagination, InteractionHandler {
+public class PaginationImpl extends StateValue implements Pagination, InteractionHandler, StateWatcher {
 
     private final List<Component> components = new LinkedList<>();
     private final @NotNull IFContext host;
@@ -86,6 +88,28 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
     }
 
     @Override
+    public void stateValueInitialized(@NotNull StateValueHost host, @NotNull StateValue value, Object initialValue) {
+        init((IFRenderContext) host);
+    }
+
+    @Override
+    public void stateRegistered(@NotNull State<?> state, Object caller) {}
+
+    @Override
+    public void stateUnregistered(@NotNull State<?> state, Object caller) {}
+
+    @Override
+    public void stateValueGet(
+            @NotNull State<?> state,
+            @NotNull StateValueHost host,
+            @NotNull StateValue internalValue,
+            Object rawValue) {}
+
+    @Override
+    public void stateValueSet(
+            @NotNull StateValueHost host, @NotNull StateValue value, Object rawOldValue, Object rawNewValue) {}
+
+    @Override
     public int getPosition() {
         final List<Component> components = getComponentsInternal();
         if (components.isEmpty()) return 0;
@@ -96,12 +120,13 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
         return last - first;
     }
 
+    private void init(IFRenderContext context) {
+        if (context.getConfig().getLayout() != null) registerComponentsForLayeredPagination(context);
+        else registerComponentsForUnconstrainedPagination(context);
+    }
+
     @Override
     public void render(@NotNull IFSlotRenderContext context) {
-        final IFRenderContext renderContext = (IFRenderContext) context.getParent();
-        if (renderContext.getConfig().getLayout() != null) renderLayeredPagination(renderContext);
-        else renderUnconstrainedPagination(renderContext);
-
         getComponentsInternal().forEach(child -> child.render(context));
     }
 
@@ -110,6 +135,7 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
         // If page was changed all components will be removed, so don't trigger update on them
         if (pageWasChanged) {
             clear(context);
+            init((IFRenderContext) context.getParent());
             pageWasChanged = false;
             return;
         }
@@ -335,7 +361,7 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
      *
      * @param context The render context.
      */
-    private void renderUnconstrainedPagination(@NotNull IFRenderContext context) {
+    private void registerComponentsForUnconstrainedPagination(@NotNull IFRenderContext context) {
         final ViewContainer container = context.getContainer();
         pageSize = container.getSize();
 
@@ -357,7 +383,7 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
      *
      * @param context The render context.
      */
-    private void renderLayeredPagination(@NotNull IFRenderContext context) {
+    private void registerComponentsForLayeredPagination(@NotNull IFRenderContext context) {
         final Optional<LayoutSlot> layoutSlotOptional = context.getLayoutSlots().stream()
                 .filter(layoutSlot -> layoutSlot.getCharacter() == getLayoutTarget())
                 .findFirst();

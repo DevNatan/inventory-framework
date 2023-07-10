@@ -52,9 +52,6 @@ public final class PlatformOpenInterceptor implements PipelineInterceptor<Virtua
         final Viewer viewer = openContext.getViewer();
         final IFRenderContext render = createRenderContext(openContext);
 
-        // TODO call onFirstRender on `renderContext` and move this interceptor to framework module
-        if (root instanceof PlatformView) ((PlatformView) root).onFirstRender(render);
-
         root.renderContext(render);
         render.getContainer().open(viewer);
     }
