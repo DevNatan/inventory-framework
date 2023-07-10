@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-
 import me.devnatan.inventoryframework.runtime.thirdparty.InventoryUpdate;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;

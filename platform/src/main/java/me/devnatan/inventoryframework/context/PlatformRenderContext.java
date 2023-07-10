@@ -68,6 +68,11 @@ abstract class PlatformRenderContext<T extends ItemComponentBuilder<T>> extends 
         return availableSlotFactory;
     }
 
+    // TODO needs documentation
+    public final T unsetSlot() {
+        return createRegisteredBuilder();
+    }
+
     /**
      * Adds an item to a specific slot in the context container.
      *

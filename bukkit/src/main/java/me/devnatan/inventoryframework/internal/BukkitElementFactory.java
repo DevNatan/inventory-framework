@@ -5,6 +5,8 @@ import static me.devnatan.inventoryframework.runtime.util.InventoryUtils.checkIn
 import static me.devnatan.inventoryframework.util.IsTypeOf.isTypeOf;
 
 import java.util.UUID;
+import me.devnatan.inventoryframework.BukkitViewContainer;
+import me.devnatan.inventoryframework.BukkitViewer;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.View;
 import me.devnatan.inventoryframework.ViewConfig;
@@ -28,8 +30,6 @@ import me.devnatan.inventoryframework.context.SlotContext;
 import me.devnatan.inventoryframework.context.SlotRenderContext;
 import me.devnatan.inventoryframework.logging.Logger;
 import me.devnatan.inventoryframework.logging.NoopLogger;
-import me.devnatan.inventoryframework.BukkitViewContainer;
-import me.devnatan.inventoryframework.BukkitViewer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;

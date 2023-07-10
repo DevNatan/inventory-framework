@@ -36,6 +36,7 @@ public final class FirstRenderInterceptor implements PipelineInterceptor<Virtual
                     viewer,
                     context,
                     IFSlotRenderContext.class);
+
             component.render(slotRenderContext);
             setupWatchers(context, component);
         }

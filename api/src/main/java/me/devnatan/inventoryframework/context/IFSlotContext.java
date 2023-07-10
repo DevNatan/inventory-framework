@@ -46,6 +46,9 @@ public interface IFSlotContext extends IFContext {
      */
     int getSlot();
 
+    // TODO needs documentation about dynamic slot positioning (some cases are unsupported)
+    void setSlot(int slot);
+
     /**
      * Updates this slot.
      */

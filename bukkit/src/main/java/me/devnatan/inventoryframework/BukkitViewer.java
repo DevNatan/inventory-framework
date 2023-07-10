@@ -1,7 +1,6 @@
 package me.devnatan.inventoryframework;
 
 import java.util.Objects;
-
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 

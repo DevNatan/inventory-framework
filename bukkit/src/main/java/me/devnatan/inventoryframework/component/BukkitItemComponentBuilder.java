@@ -18,7 +18,7 @@ public final class BukkitItemComponentBuilder extends DefaultComponentBuilder<Bu
         implements ItemComponentBuilder<BukkitItemComponentBuilder>, ComponentFactory {
 
     private final VirtualView root;
-    private int slot;
+    private int slot = -1;
     private ItemStack item;
     private Consumer<? super IFSlotRenderContext> renderHandler;
     private Consumer<? super IFSlotClickContext> clickHandler;

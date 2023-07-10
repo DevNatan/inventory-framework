@@ -3,13 +3,13 @@ package me.devnatan.inventoryframework.context;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import me.devnatan.inventoryframework.BukkitViewContainer;
+import me.devnatan.inventoryframework.BukkitViewer;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.component.Component;
-import me.devnatan.inventoryframework.BukkitViewContainer;
-import me.devnatan.inventoryframework.BukkitViewer;
 import me.devnatan.inventoryframework.state.State;
 import me.devnatan.inventoryframework.state.StateValue;
 import me.devnatan.inventoryframework.state.StateWatcher;
@@ -21,7 +21,7 @@ import org.jetbrains.annotations.UnmodifiableView;
 
 public class SlotContext extends ConfinedContext implements IFSlotContext, Context {
 
-    private final int slot;
+    private int slot;
     private final Player player;
     private final IFContext parent;
     private final Component component;
@@ -63,6 +63,11 @@ public class SlotContext extends ConfinedContext implements IFSlotContext, Conte
     @Override
     public final int getSlot() {
         return slot;
+    }
+
+    @Override
+    public void setSlot(int slot) {
+        this.slot = slot;
     }
 
     @Override
