@@ -106,14 +106,14 @@ public class ItemComponent implements Component, InteractionHandler {
 
     @Override
     public void render(@NotNull IFSlotRenderContext context) {
-        if (shouldRender != null && !shouldRender.getAsBoolean()) {
-            context.getContainer().removeItem(position);
+        if (getShouldRender() != null && !getShouldRender().getAsBoolean()) {
+            context.getContainer().removeItem(getPosition());
             return;
         }
 
-        if (renderHandler != null) {
+        if (getRenderHandler() != null) {
             final int currSlot = getPosition();
-            renderHandler.accept(context);
+            getRenderHandler().accept(context);
 
             final int contextSlot = context.getSlot();
             position = contextSlot;
@@ -132,11 +132,11 @@ public class ItemComponent implements Component, InteractionHandler {
             return;
         }
 
-        if (stack == null) {
+        if (getStack() == null) {
             throw new IllegalStateException("At least one fallback item or render handler must be provided");
         }
 
-        context.getContainer().renderItem(getPosition(), stack);
+        context.getContainer().renderItem(getPosition(), getStack());
     }
 
     @Override

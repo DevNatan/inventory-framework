@@ -18,7 +18,7 @@ public class LayoutInterceptorTest {
     @Test
     void invalidLayoutLengthForContainer() {
         Pipeline<VirtualView> pipeline = new Pipeline<>(StandardPipelinePhases.FIRST_RENDER);
-        pipeline.intercept(StandardPipelinePhases.FIRST_RENDER, new LayoutInterceptor());
+        pipeline.intercept(StandardPipelinePhases.FIRST_RENDER, new LayoutRenderInterceptor());
 
         ViewConfig config = mock(ViewConfig.class);
         String[] layout = new String[] {"XXXXXXX" /* rows count = 1 */};
@@ -44,7 +44,7 @@ public class LayoutInterceptorTest {
     @Test
     void invalidLayoutLengthForLayer() {
         Pipeline<VirtualView> pipeline = new Pipeline<>(StandardPipelinePhases.FIRST_RENDER);
-        pipeline.intercept(StandardPipelinePhases.FIRST_RENDER, new LayoutInterceptor());
+        pipeline.intercept(StandardPipelinePhases.FIRST_RENDER, new LayoutRenderInterceptor());
 
         ViewConfig config = mock(ViewConfig.class);
 

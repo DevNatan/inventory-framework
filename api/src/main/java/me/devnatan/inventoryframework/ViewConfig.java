@@ -181,12 +181,12 @@ public class ViewConfig {
 
         @Override
         public @NotNull String name() {
-            return null;
+            return name;
         }
 
         @Override
         public @Nullable T defaultValue() {
-            return null;
+            return defaultValue;
         }
 
         @Override

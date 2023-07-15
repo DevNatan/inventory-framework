@@ -11,14 +11,15 @@ import org.jetbrains.annotations.UnmodifiableView;
 public interface IFRenderContext extends IFConfinedContext {
     @NotNull
     @UnmodifiableView
+    @ApiStatus.Internal
     List<ComponentFactory> getComponentFactories();
 
-    @NotNull
-    @UnmodifiableView
+    @ApiStatus.Internal
     List<LayoutSlot> getLayoutSlots();
 
     @ApiStatus.Internal
     void addLayoutSlot(@NotNull LayoutSlot layoutSlot);
 
+    @ApiStatus.Internal
     BiFunction<Integer, Integer, ComponentFactory> getAvailableSlotFactory();
 }

@@ -65,20 +65,20 @@ public final class AvailableSlotInterceptor implements PipelineInterceptor<Virtu
         if (!layoutSlotOption.isPresent()) return Collections.emptyList();
 
         final LayoutSlot layoutSlot = layoutSlotOption.get();
-        final List<Integer> fillablePositions = layoutSlot.getPositions();
+        final int[] fillablePositions = layoutSlot.getPositions();
 
         // positions may be null if the layout has not yet been resolved
-        if (fillablePositions == null || fillablePositions.isEmpty()) return Collections.emptyList();
+        if (fillablePositions == null || fillablePositions.length == 0) return Collections.emptyList();
 
         final BiFunction<Integer, Integer, ComponentFactory> availableSlotFactory = context.getAvailableSlotFactory();
 
         final List<ComponentFactory> result = new ArrayList<>();
         int offset = 0; // incremented for each unavailable slot found
 
-        for (int i = 0; i < fillablePositions.size(); i++) {
+        for (int i = 0; i < fillablePositions.length; i++) {
             int slot;
             try {
-                slot = fillablePositions.get(i + offset);
+                slot = fillablePositions[i + offset];
             } catch (final IndexOutOfBoundsException exception) {
                 throw new SlotFillExceededException("Capacity to accommodate items in the layout"
                         + " for items in available slots has been exceeded.");
@@ -88,7 +88,7 @@ public final class AvailableSlotInterceptor implements PipelineInterceptor<Virtu
             // we find the next an available position
             while (!isSlotAvailableForAutoFilling(context, slot)) {
                 try {
-                    slot = fillablePositions.get(i + (++offset));
+                    slot = fillablePositions[i + (++offset)];
                 } catch (final IndexOutOfBoundsException exception) {
                     throw new SlotFillExceededException(String.format(
                             "Capacity to accommodate items in the layout for items"

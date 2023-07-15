@@ -393,7 +393,7 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
             throw new IllegalArgumentException(String.format("Layout slot target not found: %c", getLayoutTarget()));
 
         final LayoutSlot layoutSlot = layoutSlotOptional.get();
-        pageSize = layoutSlot.getPositions().size();
+        pageSize = layoutSlot.getPositions().length;
 
         final List<?> elements = getPageContents(currPageIndex);
         final int elementsLen = elements.size();

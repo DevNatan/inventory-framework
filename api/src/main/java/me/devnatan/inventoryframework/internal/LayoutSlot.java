@@ -1,10 +1,9 @@
 package me.devnatan.inventoryframework.internal;
 
-import java.util.List;
+import java.util.Arrays;
 import java.util.Objects;
-import java.util.function.Function;
+import java.util.function.IntFunction;
 import me.devnatan.inventoryframework.component.ComponentFactory;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 public final class LayoutSlot {
@@ -13,36 +12,33 @@ public final class LayoutSlot {
     public static final char FILLED_RESERVED_CHAR = 'O';
 
     private final char character;
-    private final Function<Integer, ComponentFactory> factory;
-    private List<Integer> positions;
+    private final IntFunction<ComponentFactory> factory;
+    private final int[] positions;
 
-    public LayoutSlot(char character, @Nullable Function<Integer, ComponentFactory> factory) {
+    public LayoutSlot(char character, @Nullable IntFunction<ComponentFactory> factory, int[] positions) {
         this.character = character;
         this.factory = factory;
+        this.positions = positions;
     }
 
     public char getCharacter() {
         return character;
     }
 
-    // The first parameter is the current iteration index.
-    public Function<Integer, ComponentFactory> getFactory() {
+    public IntFunction<ComponentFactory> getFactory() {
         return factory;
     }
 
-    public List<Integer> getPositions() {
+    public LayoutSlot withFactory(@Nullable IntFunction<ComponentFactory> factory) {
+        return new LayoutSlot(character, factory, positions);
+    }
+
+    public int[] getPositions() {
         return positions;
     }
 
     public boolean isDefinedByTheUser() {
         return factory != null;
-    }
-
-    @ApiStatus.Internal
-    public void updatePositions(List<Integer> positions) {
-        if (this.positions != null) throw new IllegalStateException("Positions can only be updated once");
-
-        this.positions = positions;
     }
 
     @Override
@@ -60,6 +56,7 @@ public final class LayoutSlot {
 
     @Override
     public String toString() {
-        return "LayoutSlot{" + "character=" + character + ", factory=" + factory + ", positions=" + positions + '}';
+        return "LayoutSlot{" + "character=" + character + ", factory=" + factory + ", positions="
+                + Arrays.toString(positions) + '}';
     }
 }
