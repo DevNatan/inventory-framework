@@ -155,6 +155,19 @@ public final class BukkitItemComponentBuilder extends DefaultComponentBuilder<Bu
         return this;
     }
 
+	/**
+	 * Called when a player clicks on the item.
+	 * <p>
+	 * This handler works on any container that the actor has access to and only works if the
+	 * interaction has not been cancelled.
+	 *
+	 * @param clickHandler The click handler.
+	 * @return This item builder.
+	 */
+	public BukkitItemComponentBuilder onClick(@Nullable Runnable clickHandler) {
+		return onClick(clickHandler == null ? null : $ -> clickHandler.run());
+	}
+
     /**
      * Called when the item is updated.
      *
