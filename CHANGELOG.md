@@ -2,6 +2,15 @@
 
 # 3.0.0-alpha (unreleased)
 
+* Item render and update handler shortcuts (#274)
+* Wrong JDK version (#386)
+* Lombok removed (#391)
+* Allow change renderization slot target while item renderization phase (#395)
+* New `unsetSlot` (#395)
+* Fix layout component registration order to ensure it works with PaginationState (#399)
+* New item click handler `onClick(Runnable)` overload (#400)
+* Code and Wiki documentation improvement
+
 # 3.0.0-EAP (06-07-2023)
 Please refer to [Migrating to version 3 on Wiki](https://github.com/DevNatan/inventory-framework/wiki/Migrating-to-version-3) for migration details.
 
