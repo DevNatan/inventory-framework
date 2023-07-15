@@ -52,7 +52,7 @@ public final class SlotClickContext extends SlotContext implements IFSlotClickCo
      * this library. No compatibility guarantees are provided.
      */
     @NotNull
-    public final InventoryClickEvent getClickOrigin() {
+    public InventoryClickEvent getClickOrigin() {
         return clickOrigin;
     }
 
@@ -60,7 +60,7 @@ public final class SlotClickContext extends SlotContext implements IFSlotClickCo
      * The player who clicked on the slot.
      */
     @Override
-    public final @NotNull Player getPlayer() {
+    public @NotNull Player getPlayer() {
         return (Player) clickOrigin.getWhoClicked();
     }
 
@@ -68,48 +68,48 @@ public final class SlotClickContext extends SlotContext implements IFSlotClickCo
      * The item that was clicked.
      */
     @Override
-    public final ItemStack getItem() {
+    public ItemStack getItem() {
         return clickOrigin.getCurrentItem();
     }
 
     @Override
-    public final boolean isLeftClick() {
+    public boolean isLeftClick() {
         return getClickOrigin().isLeftClick();
     }
 
     @Override
-    public final boolean isRightClick() {
+    public boolean isRightClick() {
         return getClickOrigin().isRightClick();
     }
 
     @Override
-    public final boolean isMiddleClick() {
+    public boolean isMiddleClick() {
         return getClickOrigin().getClick() == ClickType.MIDDLE;
     }
 
     @Override
-    public final boolean isShiftClick() {
+    public boolean isShiftClick() {
         return getClickOrigin().isShiftClick();
     }
 
     @Override
-    public final boolean isKeyboardClick() {
+    public boolean isKeyboardClick() {
         return getClickOrigin().getClick().isKeyboardClick();
     }
 
     @Override
-    public final boolean isOutsideClick() {
+    public boolean isOutsideClick() {
         return getClickOrigin().getSlotType() == InventoryType.SlotType.OUTSIDE;
     }
 
     @Override
     @NotNull
-    public final String getClickIdentifier() {
+    public String getClickIdentifier() {
         return getClickOrigin().getClick().name();
     }
 
     @Override
-    public final boolean isOnEntityContainer() {
+    public boolean isOnEntityContainer() {
         return getClickOrigin().getClickedInventory() instanceof PlayerInventory;
     }
 
