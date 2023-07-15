@@ -8,7 +8,6 @@ import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.component.BukkitItemComponentBuilder;
-import me.devnatan.inventoryframework.internal.LayoutSlot;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
@@ -17,11 +16,6 @@ import org.jetbrains.annotations.Nullable;
 
 public final class RenderContext extends PlatformRenderContext<BukkitItemComponentBuilder> implements Context {
 
-    private static final LayoutSlot filledReservedCharLayoutSlot =
-            new LayoutSlot(LayoutSlot.FILLED_RESERVED_CHAR, $ -> {
-                throw new UnsupportedOperationException("Cannot use factory of reserved layout character");
-            });
-
     private final Player player;
 
     @ApiStatus.Internal
@@ -29,10 +23,6 @@ public final class RenderContext extends PlatformRenderContext<BukkitItemCompone
             UUID id, RootView root, ViewContainer container, Viewer viewer, ViewConfig config, Object initialData) {
         super(id, root, container, viewer, config, initialData);
         this.player = ((BukkitViewer) viewer).getPlayer();
-    }
-
-    public static LayoutSlot getFilledReservedCharLayoutSlot() {
-        return filledReservedCharLayoutSlot;
     }
 
     @NotNull

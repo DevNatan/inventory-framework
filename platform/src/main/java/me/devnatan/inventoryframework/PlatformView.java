@@ -19,7 +19,8 @@ import me.devnatan.inventoryframework.internal.ElementFactory;
 import me.devnatan.inventoryframework.internal.PlatformUtils;
 import me.devnatan.inventoryframework.pipeline.AvailableSlotInterceptor;
 import me.devnatan.inventoryframework.pipeline.FirstRenderInterceptor;
-import me.devnatan.inventoryframework.pipeline.LayoutInterceptor;
+import me.devnatan.inventoryframework.pipeline.LayoutRenderInterceptor;
+import me.devnatan.inventoryframework.pipeline.LayoutResolutionInterceptor;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
 import me.devnatan.inventoryframework.pipeline.PlatformCloseInterceptor;
 import me.devnatan.inventoryframework.pipeline.PlatformInitInterceptor;
@@ -345,8 +346,7 @@ public abstract class PlatformView<
      * @return A new immutable pagination state.
      */
     protected final <T> State<Pagination> paginationState(
-            @NotNull Function<TSlotContext, List<? super T>> sourceProvider,
-            @NotNull BiConsumer<TItem, T> itemFactory) {
+            @NotNull Function<TContext, List<? super T>> sourceProvider, @NotNull BiConsumer<TItem, T> itemFactory) {
         return this.buildPaginationState(sourceProvider)
                 .itemFactory(itemFactory)
                 .build();
@@ -405,7 +405,7 @@ public abstract class PlatformView<
      */
     @SuppressWarnings("unchecked")
     protected final <T> PaginationStateBuilder<TContext, TSlotClickContext, TItem, T> buildPaginationState(
-            @NotNull Function<TSlotContext, List<? super T>> sourceProvider) {
+            @NotNull Function<TContext, List<? super T>> sourceProvider) {
         return new PaginationStateBuilder<>(
                 (PlatformView<TItem, TContext, ?, ?, ?, TSlotClickContext, ?>) this, sourceProvider);
     }
@@ -544,8 +544,9 @@ public abstract class PlatformView<
         final Pipeline<? super VirtualView> pipeline = getPipeline();
         pipeline.intercept(StandardPipelinePhases.INIT, new PlatformInitInterceptor());
         pipeline.intercept(StandardPipelinePhases.OPEN, new PlatformOpenInterceptor());
-        pipeline.intercept(StandardPipelinePhases.LAYOUT_RESOLUTION, new LayoutInterceptor());
+        pipeline.intercept(StandardPipelinePhases.LAYOUT_RESOLUTION, new LayoutResolutionInterceptor());
         pipeline.intercept(StandardPipelinePhases.FIRST_RENDER, new PlatformRenderInterceptor());
+        pipeline.intercept(StandardPipelinePhases.FIRST_RENDER, new LayoutRenderInterceptor());
         pipeline.intercept(StandardPipelinePhases.FIRST_RENDER, new AvailableSlotInterceptor());
         pipeline.intercept(StandardPipelinePhases.FIRST_RENDER, new FirstRenderInterceptor());
         pipeline.intercept(StandardPipelinePhases.FIRST_RENDER, new ScheduledUpdateAfterRenderInterceptor());

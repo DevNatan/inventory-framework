@@ -35,6 +35,6 @@ public interface StateValueHost {
     @ApiStatus.Internal
     void updateState(long id, Object value);
 
-	@ApiStatus.Internal
+    @ApiStatus.Internal
     void watchState(long id, StateWatcher listener);
 }

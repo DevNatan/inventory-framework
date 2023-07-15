@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
+import me.devnatan.inventoryframework.InventoryFrameworkException;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewContainer;
@@ -24,10 +25,7 @@ abstract class PlatformRenderContext<T extends ItemComponentBuilder<T>> extends 
         implements IFRenderContext {
 
     private final List<ComponentFactory> componentBuilders = new ArrayList<>();
-    private final List<LayoutSlot> layoutSlots =
-            new ArrayList<>(Collections.singletonList(new LayoutSlot(LayoutSlot.FILLED_RESERVED_CHAR, $ -> {
-                throw new IllegalStateException("Cannot use factory of reserved char");
-            })));
+    private final List<LayoutSlot> layoutSlots = new ArrayList<>();
     private BiFunction<Integer, Integer, ComponentFactory> availableSlotFactory;
     private final ViewConfig config;
     private final UUID id;
@@ -55,8 +53,8 @@ abstract class PlatformRenderContext<T extends ItemComponentBuilder<T>> extends 
     }
 
     @Override
-    public final @NotNull @UnmodifiableView List<LayoutSlot> getLayoutSlots() {
-        return Collections.unmodifiableList(layoutSlots);
+    public final @NotNull List<LayoutSlot> getLayoutSlots() {
+        return layoutSlots;
     }
 
     @Override
@@ -160,8 +158,16 @@ abstract class PlatformRenderContext<T extends ItemComponentBuilder<T>> extends 
      */
     public @NotNull T layoutSlot(char character) {
         requireNonReservedLayoutCharacter(character);
+
+        // TODO More detailed exception message
+        final LayoutSlot layoutSlot = getLayoutSlots().stream()
+                .filter(value -> value.getCharacter() == character)
+                .findFirst()
+                .orElseThrow(() -> new InventoryFrameworkException("Missing layout character: " + character));
+
         final T builder = createBuilder();
-        layoutSlots.add(new LayoutSlot(character, $ -> (ComponentFactory) builder));
+        final int elIndex = getLayoutSlots().indexOf(layoutSlot);
+        getLayoutSlots().set(elIndex, layoutSlot.withFactory($ -> (ComponentFactory) builder));
         return builder;
     }
 
@@ -176,7 +182,15 @@ abstract class PlatformRenderContext<T extends ItemComponentBuilder<T>> extends 
      */
     public void layoutSlot(char character, @NotNull BiConsumer<Integer, T> factory) {
         requireNonReservedLayoutCharacter(character);
-        layoutSlots.add(new LayoutSlot(character, index -> {
+
+        // TODO More detailed exception message
+        final LayoutSlot layoutSlot = getLayoutSlots().stream()
+                .filter(value -> value.getCharacter() == character)
+                .findFirst()
+                .orElseThrow(() -> new InventoryFrameworkException("Missing layout character: " + character));
+
+        final int elIndex = getLayoutSlots().indexOf(layoutSlot);
+        getLayoutSlots().set(elIndex, layoutSlot.withFactory(index -> {
             final T builder = createBuilder();
             factory.accept(index, builder);
             return (ComponentFactory) builder;

@@ -6,18 +6,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.function.Function;
 import me.devnatan.inventoryframework.VirtualView;
-import me.devnatan.inventoryframework.component.Component;
-import me.devnatan.inventoryframework.component.ComponentFactory;
-import me.devnatan.inventoryframework.component.ItemComponentBuilder;
 import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.exception.InvalidLayoutException;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
 
-public final class LayoutInterceptor implements PipelineInterceptor<VirtualView> {
+public final class LayoutResolutionInterceptor implements PipelineInterceptor<VirtualView> {
 
     @Override
     public void intercept(PipelineContext<VirtualView> pipeline, VirtualView subject) {
@@ -28,40 +22,12 @@ public final class LayoutInterceptor implements PipelineInterceptor<VirtualView>
         if (layout == null || layout.length == 0) return;
 
         final Map<Character, List<Integer>> slots = resolveLayout(renderContext, layout);
-        registerLayoutComponents(renderContext, slots);
-    }
-
-    private void registerLayoutComponents(IFRenderContext context, Map<Character, List<Integer>> slots) {
         for (final Map.Entry<Character, List<Integer>> entry : slots.entrySet()) {
-            final char character = entry.getKey();
-            final Optional<LayoutSlot> layoutSlotOption = context.getLayoutSlots().stream()
-                    .filter(layoutSlot -> layoutSlot.getCharacter() == character)
-                    .findFirst();
-
-            final LayoutSlot layoutSlot;
-            if (!layoutSlotOption.isPresent()) {
-                layoutSlot = new LayoutSlot(character, null);
-                context.addLayoutSlot(layoutSlot);
-            } else {
-                layoutSlot = layoutSlotOption.get();
-            }
-
-            if (layoutSlot.getCharacter() != LayoutSlot.FILLED_RESERVED_CHAR && layoutSlot.isDefinedByTheUser()) {
-                final Function<Integer, ComponentFactory> factory = Objects.requireNonNull(
-                        layoutSlot.getFactory(), "Layout slot factory cannot be null when defined by the user");
-                int iterationIndex = 0;
-
-                for (final int slot : entry.getValue()) {
-                    final ComponentFactory componentFactory = factory.apply(iterationIndex++);
-                    if (componentFactory instanceof ItemComponentBuilder)
-                        ((ItemComponentBuilder<?>) componentFactory).withSlot(slot);
-
-                    final Component component = componentFactory.create();
-                    context.addComponent(component);
-                }
-            }
-
-            layoutSlot.updatePositions(entry.getValue());
+            final LayoutSlot layoutSlot = new LayoutSlot(
+                    entry.getKey(),
+                    null,
+                    entry.getValue().stream().mapToInt($ -> $).toArray());
+            renderContext.addLayoutSlot(layoutSlot);
         }
     }
 
