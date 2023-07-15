@@ -9,6 +9,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 
+@SuppressWarnings("unused")
 class PaperInventoryFactory extends BukkitInventoryFactory {
 
     private PaperInventoryFactory() {}

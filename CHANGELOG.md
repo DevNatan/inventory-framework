@@ -1,5 +1,7 @@
 # Changelog
 
+# 3.0.0-alpha (unreleased)
+
 # 3.0.0-EAP (06-07-2023)
 Please refer to [Migrating to version 3 on Wiki](https://github.com/DevNatan/inventory-framework/wiki/Migrating-to-version-3) for migration details.
 
