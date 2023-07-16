@@ -67,7 +67,21 @@ abstract class PlatformRenderContext<T extends ItemComponentBuilder<T>> extends 
         return availableSlotFactory;
     }
 
-    // TODO needs documentation
+    /**
+     * Creates a new item builder without a specified slot.
+     * <p>
+     * This function is for creating items whose slot is set dynamically during item rendering.
+     * <pre>{@code
+     * unsetSlot().onRender(render -> {
+     *     render.withSlot(...);
+     * });
+     * }</pre>
+     *
+     * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     *
+     * @return An item builder to configure the item.
+     */
     @ApiStatus.Experimental
     public final T unsetSlot() {
         return createRegisteredBuilder();
