@@ -123,23 +123,6 @@ public abstract class PlatformView<
      * Creates a {@link MutableState mutable state} with an initial value.
      *
      * <pre>{@code
-     * MutableIntState intState = mutableIntState();
-     *
-     * intState.get(...); // 0
-     * intState.set(4, ...);
-     * intState.get(...); // 4
-     * }</pre>
-     *
-     * @return A mutable state with an initial value.
-     */
-    protected final MutableIntState mutableIntState() {
-        return mutableIntState(0);
-    }
-
-    /**
-     * Creates a {@link MutableState mutable state} with an initial value.
-     *
-     * <pre>{@code
      * MutableIntState intState = mutableIntState(0);
      *
      * intState.get(...); // 0
@@ -150,7 +133,7 @@ public abstract class PlatformView<
      * @param initialValue The initial value of the state.
      * @return A mutable state with an initial value.
      */
-    protected final MutableIntState mutableIntState(int initialValue) {
+    protected final MutableIntState mutableState(int initialValue) {
         requireNotInitialized();
         final long id = State.next();
         final StateValueFactory factory = (host, state) -> new MutableValue(state, initialValue);
