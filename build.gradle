@@ -4,4 +4,4 @@ plugins {
 }
 
 group 'me.devnatan'
-version '3.0.0-EAP'
+version '3.0.0-alpha'

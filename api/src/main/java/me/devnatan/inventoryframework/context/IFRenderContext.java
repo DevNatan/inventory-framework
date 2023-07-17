@@ -9,17 +9,33 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
 
 public interface IFRenderContext extends IFConfinedContext {
-    @NotNull
+
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
     @UnmodifiableView
     @ApiStatus.Internal
     List<ComponentFactory> getComponentFactories();
 
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
     @ApiStatus.Internal
     List<LayoutSlot> getLayoutSlots();
 
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
     @ApiStatus.Internal
     void addLayoutSlot(@NotNull LayoutSlot layoutSlot);
 
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
     @ApiStatus.Internal
     BiFunction<Integer, Integer, ComponentFactory> getAvailableSlotFactory();
 }
