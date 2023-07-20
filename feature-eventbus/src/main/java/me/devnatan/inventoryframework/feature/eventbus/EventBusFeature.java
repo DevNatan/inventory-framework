@@ -18,7 +18,14 @@ public final class EventBusFeature implements Feature<Void, Void, IFViewFrame<?>
     private EventBusFeature() {}
 
     @Override
+    public @NotNull String name() {
+        return "Event Bus";
+    }
+
+    @Override
     public @NotNull Void install(IFViewFrame<?> framework, UnaryOperator<Void> configure) {
+        framework.checkNotRegisteredForFeatureInstall(name(), "EventBus");
+
         return null;
     }
 
