@@ -112,4 +112,18 @@ public abstract class IFViewFrame<S extends IFViewFrame<S>> {
     protected final void setRegistered(boolean registered) {
         this.registered = registered;
     }
+
+    /**
+     * Throws an {@link IllegalStateException} if this framework is already registered when trying
+     * to install a feature.
+     *
+     * @param featureName       The feature name.
+     * @param featureAccessName The feature installation constant name.
+     */
+    public final void checkNotRegisteredForFeatureInstall(String featureName, String featureAccessName) {
+        if (!isRegistered()) return;
+        throw new IllegalStateException(String.format(
+                "Framework must be unregistered to install %s feature. Call #install(%s) before #register().",
+                featureName, featureAccessName));
+    }
 }

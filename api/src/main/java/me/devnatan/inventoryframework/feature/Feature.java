@@ -41,6 +41,14 @@ import org.jetbrains.annotations.NotNull;
 public interface Feature<C, R, F> {
 
     /**
+     * The name of this feature.
+     *
+     * @return The name of this feature.
+     */
+    @NotNull
+    String name();
+
+    /**
      * Initializes and installs everything that must be installed within this feature using the
      * platform and configuration factory as providers.
      *

@@ -15,6 +15,7 @@ import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.UPD
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 import java.util.Spliterator;
 import java.util.UUID;
@@ -43,6 +44,7 @@ public class DefaultRootView implements RootView, StateWatcher {
     private final Set<IFContext> contexts = newSetFromMap(synchronizedMap(new HashMap<>()));
     final StateRegistry stateRegistry = new StateRegistry();
     private Job scheduledUpdateJob;
+	private final Map<String, Object> metadata = new HashMap<>();
 
     @Override
     public final @NotNull UUID getUniqueId() {
@@ -187,4 +189,10 @@ public class DefaultRootView implements RootView, StateWatcher {
     public IFViewFrame<?> getFramework() {
         throw new UnsupportedOperationException("Missing #getFramework() implementation");
     }
+
+	@NotNull
+	@Override
+	public final Map<String, Object> getMetadata() {
+		return metadata;
+	}
 }
