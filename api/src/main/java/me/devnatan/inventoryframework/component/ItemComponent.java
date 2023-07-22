@@ -15,6 +15,7 @@ import me.devnatan.inventoryframework.state.State;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
 
+// TODO Make this render abstract and remove `getResult` (Object) from IFSlotRenderContext
 public class ItemComponent implements Component, InteractionHandler {
 
     private final VirtualView root;

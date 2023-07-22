@@ -10,8 +10,8 @@ import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.component.Component;
-import me.devnatan.inventoryframework.component.Pagination;
 import me.devnatan.inventoryframework.state.StateValueHost;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
@@ -186,17 +186,32 @@ public interface IFContext extends VirtualView, StateValueHost {
      */
     void removeComponent(@NotNull Component component);
 
-    Pagination pagination();
-
+    /**
+     * Updates all components in this context.
+     */
     void update();
 
+    /**
+     * Checks if a component positioned in a given index is marked for removal.
+     *
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     *
+     * @param componentIndex The index of the component to be check if it's marked for removal.
+     * @return If the component in the specified index (if any) is marked for removal.
+     */
+    @ApiStatus.Internal
     boolean isMarkedForRemoval(int componentIndex);
 
     /**
-     * The data defined when this context was created.
-     * It is usually the data set when the context is opened for a viewer.
+     * Data defined when a context is created, usually this is data set when the context is
+     * opened for a viewer.
+     *
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
      *
      * @return The initial context data.
      */
+    @ApiStatus.Internal
     Object getInitialData();
 }

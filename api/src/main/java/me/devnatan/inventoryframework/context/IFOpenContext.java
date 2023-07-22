@@ -2,6 +2,7 @@ package me.devnatan.inventoryframework.context;
 
 import java.util.concurrent.CompletableFuture;
 import me.devnatan.inventoryframework.ViewConfigBuilder;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -10,24 +11,36 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface IFOpenContext extends IFConfinedContext {
 
+    /**
+     * The task that will run before this context transitions from opening to rendering context.
+     *
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     *
+     * @return The task that will run before this context gets completed.
+     */
+    @ApiStatus.Internal
     CompletableFuture<Void> getAsyncOpenJob();
 
     /**
-     * Waits until the specified task to be completed to show the container to the player.
+     * Waits for a task to run before ending this opening context and transitioning to the rendering
+     * context.
+     * <p>
+     * This transition represents the opening of this context's container to the player viewing it.
      *
      * @param task The task that will be waited for.
      */
     void waitUntil(@NotNull CompletableFuture<Void> task);
 
     /**
-     * If the event was cancelled.
+     * Whether opening the container to the viewer has been cancelled.
      *
      * @return If <code>true</code> the container will not be displayed to the player.
      */
     boolean isCancelled();
 
     /**
-     * Cancel opening the container for the player.
+     * Cancels the opening of this context's container to the viewer.
      *
      * @param cancelled If <code>true</code>, the container will not open for the player.
      */
