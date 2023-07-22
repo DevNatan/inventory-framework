@@ -1,5 +1,6 @@
 package me.devnatan.inventoryframework;
 
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import me.devnatan.inventoryframework.context.IFContext;
@@ -177,4 +178,7 @@ public interface RootView extends VirtualView, Iterable<IFContext> {
 
     @ApiStatus.Internal
     void setScheduledUpdateJob(@NotNull Job job);
+
+	@NotNull
+	Map<String, Object> getMetadata();
 }
