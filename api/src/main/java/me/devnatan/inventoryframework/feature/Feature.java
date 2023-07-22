@@ -58,4 +58,30 @@ public interface Feature<C, R, F> {
      * @see #install(Object, UnaryOperator)
      */
     void uninstall(F framework);
+
+    final class Keys {
+
+        /**
+         * Pagination feature key.
+         *
+         * @see <a href="https://github.com/DevNatan/inventory-framework/wiki/Pagination">Pagination on Wiki</a>
+         */
+        public static final String PAGINATION = "pagination";
+
+        /**
+         * Layouts feature key.
+         *
+         * @see <a href="https://github.com/DevNatan/inventory-framework/wiki/Layouts">Layouts on Wiki</a>
+         */
+        public static final String LAYOUTS = "layouts";
+
+        /**
+         * Scheduled updates feature key.
+         *
+         * @see <a href="https://github.com/DevNatan/inventory-framework/wiki/Scheduled-Updates">Scheduled Updates on Wiki</a>
+         */
+        public static final String SCHEDULED_UPDATES = "scheduled-updates";
+
+        private Keys() {}
+    }
 }
