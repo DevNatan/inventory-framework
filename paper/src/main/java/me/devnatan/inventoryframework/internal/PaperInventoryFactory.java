@@ -9,6 +9,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 
+/**
+ * InventoryFactory implementation for PaperSpigot software.
+ * Supports {@link Component} as inventory title.
+ */
 @SuppressWarnings("unused")
 class PaperInventoryFactory extends BukkitInventoryFactory {
 

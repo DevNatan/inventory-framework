@@ -3,6 +3,11 @@ package me.devnatan.inventoryframework.component;
 import me.devnatan.inventoryframework.state.State;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Builder base for any {@link Component} implementation.
+ *
+ * @param <S> The reference of the component builder itself used as return type for method chaining.
+ */
 public interface ComponentBuilder<S extends ComponentBuilder<S>> {
 
     /**
@@ -12,9 +17,7 @@ public interface ComponentBuilder<S extends ComponentBuilder<S>> {
      * this component in an unknown handler in your code and update this component manually, for
      * example, if necessary.
      * <pre>{@code
-     * onClick(click -> {
-     *     IFSlotContext myItemContext = click.ref("my-component");
-     * });
+     * IFSlotContext context = context.ref("my-component");
      * }</pre>
      *
      * @param key The component reference key.
@@ -61,7 +64,7 @@ public interface ComponentBuilder<S extends ComponentBuilder<S>> {
      * <p>
      * This method is a shortcut to:
      * <pre>{@code
-     * onClick(IFSlotClickContext::close);
+     * onClick(IFContext::close);
      * }</pre>
      *
      * @return This component builder.
@@ -69,7 +72,10 @@ public interface ComponentBuilder<S extends ComponentBuilder<S>> {
     S closeOnClick();
 
     /**
-     * Watches a state, updating that item every time the state is updated.
+     * Watches one or more states.
+     * <p>
+     * When any of the states provided as parameters are modified, the item generated from this
+     * builder will be updated.
      *
      * @param states The state to watch.
      * @return This component builder.

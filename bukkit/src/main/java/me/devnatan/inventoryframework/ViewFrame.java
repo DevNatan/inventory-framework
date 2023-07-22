@@ -24,7 +24,7 @@ public final class ViewFrame extends IFViewFrame<ViewFrame> implements FeatureIn
     private static final String BSTATS_SYSTEM_PROP = "inventory-framework.enable-bstats";
     private static final int BSTATS_PROJECT_ID = 15518;
     private static final String ROOT_PKG = "me.devnatan.inventoryframework";
-    private static final String MAIN_PLUGIN_QNAME = "me.devnatan.inventoryframework.runtime.InventoryFramework";
+    private static final String PLUGIN_FQN = "me.devnatan.inventoryframework.runtime.InventoryFramework";
 
     private static final String RELOCATION_MESSAGE =
             "Inventory Framework is running as a shaded non-relocated library. It's extremely recommended that "
@@ -112,7 +112,7 @@ public final class ViewFrame extends IFViewFrame<ViewFrame> implements FeatureIn
 
     @ApiStatus.Internal
     public boolean isLibraryAsPlugin() {
-        return getOwner().getDescription().getMain().equals(MAIN_PLUGIN_QNAME);
+        return getOwner().getDescription().getMain().equals(PLUGIN_FQN);
     }
 
     @ApiStatus.Internal
