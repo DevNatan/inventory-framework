@@ -41,12 +41,12 @@ import org.jetbrains.annotations.NotNull;
 public interface Feature<C, R, F> {
 
     /**
-     * The name of this feature.
+     * The feature descriptor of this feature.
      *
-     * @return The name of this feature.
+     * @return The feature descriptor of this feature.
      */
     @NotNull
-    String name();
+    FeatureDescriptor getDescriptor();
 
     /**
      * Initializes and installs everything that must be installed within this feature using the
@@ -89,6 +89,13 @@ public interface Feature<C, R, F> {
          * @see <a href="https://github.com/DevNatan/inventory-framework/wiki/Scheduled-Updates">Scheduled Updates on Wiki</a>
          */
         public static final String SCHEDULED_UPDATES = "scheduled-updates";
+
+        /**
+         * EventBus feature key.
+         *
+         * @see <a href="https://github.com/DevNatan/inventory-framework/wiki/Event-Bus">Event Bus on Wiki</a>
+         */
+        public static final String EVENT_BUS = "event-bus";
 
         private Keys() {}
     }

@@ -1,8 +1,9 @@
-package me.devnatan.inventoryframework.feature.eventbus;
+package me.devnatan.inventoryframework.feature;
+
+import static me.devnatan.inventoryframework.feature.Feature.Keys.EVENT_BUS;
 
 import java.util.function.UnaryOperator;
 import me.devnatan.inventoryframework.IFViewFrame;
-import me.devnatan.inventoryframework.feature.Feature;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -13,18 +14,20 @@ import org.jetbrains.annotations.NotNull;
 @SuppressWarnings("unused")
 public final class EventBusFeature implements Feature<Void, Void, IFViewFrame<?>> {
 
+    private final FeatureDescriptor descriptor = new FeatureDescriptor(EVENT_BUS, "Event Bus", "3.0.0");
+
     public static final Feature<Void, Void, IFViewFrame<?>> EventBus = new EventBusFeature();
 
     private EventBusFeature() {}
 
     @Override
-    public @NotNull String name() {
-        return "Event Bus";
+    public @NotNull FeatureDescriptor getDescriptor() {
+        return descriptor;
     }
 
     @Override
     public @NotNull Void install(IFViewFrame<?> framework, UnaryOperator<Void> configure) {
-        framework.checkNotRegisteredForFeatureInstall(name(), "EventBus");
+        framework.checkNotRegisteredForFeatureInstall(getDescriptor().getName(), "EventBus");
 
         return null;
     }
