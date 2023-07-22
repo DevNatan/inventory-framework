@@ -44,7 +44,7 @@ public class DefaultRootView implements RootView, StateWatcher {
     private final Set<IFContext> contexts = newSetFromMap(synchronizedMap(new HashMap<>()));
     final StateRegistry stateRegistry = new StateRegistry();
     private Job scheduledUpdateJob;
-	private final Map<String, Object> metadata = new HashMap<>();
+    private final Map<String, Object> metadata = new HashMap<>();
 
     @Override
     public final @NotNull UUID getUniqueId() {
@@ -190,9 +190,9 @@ public class DefaultRootView implements RootView, StateWatcher {
         throw new UnsupportedOperationException("Missing #getFramework() implementation");
     }
 
-	@NotNull
-	@Override
-	public final Map<String, Object> getMetadata() {
-		return metadata;
-	}
+    @NotNull
+    @Override
+    public final Map<String, Object> getMetadata() {
+        return metadata;
+    }
 }

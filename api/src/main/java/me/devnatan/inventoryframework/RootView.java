@@ -179,6 +179,6 @@ public interface RootView extends VirtualView, Iterable<IFContext> {
     @ApiStatus.Internal
     void setScheduledUpdateJob(@NotNull Job job);
 
-	@NotNull
-	Map<String, Object> getMetadata();
+    @NotNull
+    Map<String, Object> getMetadata();
 }

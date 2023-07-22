@@ -1,4 +1,3 @@
 package me.devnatan.inventoryframework.event;
 
-public interface EventBus {
-}
+public interface EventBus {}
