@@ -219,6 +219,7 @@ public final class ViewFrame extends IFViewFrame<ViewFrame> implements FeatureIn
 
     @Override
     public <C, R> @NotNull R install(@NotNull Feature<C, R, ViewFrame> feature, @NotNull UnaryOperator<C> configure) {
+        getOwner().getLogger().info(String.format("[IF] Feature %s installed.", feature.getDescriptor().getName()));
         return featureInstaller.install(feature, configure);
     }
 
