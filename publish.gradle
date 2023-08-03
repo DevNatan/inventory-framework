@@ -20,9 +20,6 @@ publishOnCentral {
     }
 }
 
-/*
- * Developers and contributors must be added manually
- */
 publishing {
     publications {
         javaOSSRH(MavenPublication) {
