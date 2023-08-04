@@ -1,41 +1,40 @@
-apply plugin: 'org.danilopianini.publish-on-central'
+apply plugin: 'maven-publish'
+apply plugin: 'signing'
 
-ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
-
-publishOnCentral {
-    it.configureMavenCentral = true
-    it.projectDescription = 'Inventory Framework is a Bukkit Inventory API framework that allows you to create custom inventories with varied interaction treatments.'
-    it.projectLongName = project.name
-    it.licenseName = 'MIT license'
-    it.licenseUrl = 'https://github.com/DevNatan/inventory-framework/blob/main/LICENSE'
-    it.repoOwner = 'DevNatan'
-    it.projectUrl = 'https://github.com/DevNatan/inventory-framework'
-    it.scmConnection = 'scm:git:https://github.com/DevNatan/inventory-framework.git'
-
-    it.mavenCentral.user.set(project.findProperty("ossrh.username") ?: System.getenv('OSSRH_USERNAME'))
-    it.mavenCentral.password.set(provider { project.findProperty("ossrh.password") ?: System.getenv('OSSRH_PASSWORD') })
-
-    if (!isReleaseVersion) {
-        it.mavenCentralSnapshotsRepository()
-    }
-}
+ext.isReleaseVersion = !version.endsWith('SNAPSHOT')
 
 publishing {
     publications {
         javaOSSRH(MavenPublication) {
-            it.groupId = rootProject.group
-            it.artifactId = project.name.equals('framework')
+            groupId = rootProject.group
+            artifactId = project.name == 'framework'
                     ? rootProject.name + '-impl'
-                    : (project.name.equals('bom') ? rootProject.name : rootProject.name + '-' + project.name)
-            it.version = rootProject.version
+                    : rootProject.name + '-' + project.name
+            version = rootProject.version
 
-            it.pom {
+            pom {
+                name = 'inventory-framework'
+                description = 'Inventory Framework is a Bukkit Inventory API framework that allows you to create custom inventories with varied interaction treatments'
+                url = 'https://github.com/DevNatan/inventory-framework'
+                inceptionYear = '2020'
+
+                licenses {
+                    license {
+                        name = 'MIT License'
+                        url = 'https://github.com/DevNatan/inventory-framework/blob/main/LICENSE'
+                    }
+                }
                 developers {
                     developer {
                         name.set('Natan Vieira do Nascimento')
                         email.set('natanvnascimento@gmail.com')
-                        url.set('https://github.com/DevNatan/')
+                        url.set('https://github.com/DevNatan')
                     }
+                }
+                scm {
+                    connection = 'scm:git:git:github.com/DevNatan/inventoryframework.git'
+                    developerConnection = 'scm:git:https://github.com/DevNatan/inventoryframework.git'
+                    url = 'https://github.com/DevNatan/inventoryframework'
                 }
             }
         }
@@ -43,10 +42,10 @@ publishing {
 }
 
 signing {
-    required { isReleaseVersion && gradle.taskGraph.hasTask("uploadArchives") }
+    required { isReleaseVersion && gradle.taskGraph.hasTask('uploadArchives') }
     useInMemoryPgpKeys(
-            project.findProperty("signing.keyId") ?: System.getenv('OSSRH_SIGNING_KEY'),
-            project.findProperty("signing.password") ?: System.getenv('OSSRH_SIGNING_PASSWORD')
+            project.findProperty('signing.keyId') ?: System.getenv('OSSRH_SIGNING_KEY'),
+            project.findProperty('signing.password') ?: System.getenv('OSSRH_SIGNING_PASSWORD')
     )
     sign publishing.publications.javaOSSRH
 }
