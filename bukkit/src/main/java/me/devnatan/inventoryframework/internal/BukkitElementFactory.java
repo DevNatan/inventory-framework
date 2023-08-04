@@ -4,31 +4,13 @@ import static java.util.Objects.requireNonNull;
 import static me.devnatan.inventoryframework.runtime.util.InventoryUtils.checkInventoryTypeSupport;
 import static me.devnatan.inventoryframework.util.IsTypeOf.isTypeOf;
 
-import java.util.List;
+import java.util.Map;
 import java.util.UUID;
-import me.devnatan.inventoryframework.BukkitViewContainer;
-import me.devnatan.inventoryframework.BukkitViewer;
-import me.devnatan.inventoryframework.RootView;
-import me.devnatan.inventoryframework.View;
-import me.devnatan.inventoryframework.ViewConfig;
-import me.devnatan.inventoryframework.ViewContainer;
-import me.devnatan.inventoryframework.ViewFrame;
-import me.devnatan.inventoryframework.ViewType;
-import me.devnatan.inventoryframework.Viewer;
-import me.devnatan.inventoryframework.VirtualView;
+import me.devnatan.inventoryframework.*;
 import me.devnatan.inventoryframework.component.BukkitItemComponentBuilder;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.ComponentBuilder;
-import me.devnatan.inventoryframework.context.CloseContext;
-import me.devnatan.inventoryframework.context.IFCloseContext;
-import me.devnatan.inventoryframework.context.IFContext;
-import me.devnatan.inventoryframework.context.IFOpenContext;
-import me.devnatan.inventoryframework.context.IFRenderContext;
-import me.devnatan.inventoryframework.context.IFSlotContext;
-import me.devnatan.inventoryframework.context.IFSlotRenderContext;
-import me.devnatan.inventoryframework.context.OpenContext;
-import me.devnatan.inventoryframework.context.SlotContext;
-import me.devnatan.inventoryframework.context.SlotRenderContext;
+import me.devnatan.inventoryframework.context.*;
 import me.devnatan.inventoryframework.logging.Logger;
 import me.devnatan.inventoryframework.logging.NoopLogger;
 import org.bukkit.entity.Entity;
@@ -86,7 +68,7 @@ public class BukkitElementFactory extends ElementFactory {
     @Override
     public @NotNull String convertViewer(Object input) {
         if (input instanceof String) return UUID.fromString((String) input).toString();
-        if (input instanceof UUID) return ((UUID) input).toString();
+        if (input instanceof UUID) return input.toString();
         if (input instanceof Entity) return ((Entity) input).getUniqueId().toString();
 
         throw new IllegalArgumentException("Inconvertible viewer id: " + input);
@@ -97,21 +79,23 @@ public class BukkitElementFactory extends ElementFactory {
     public <T extends IFContext> @NotNull T createContext(
             @NotNull RootView root,
             ViewContainer container,
-            @NotNull List<Viewer> viewers,
+            Viewer subject,
+            @NotNull Map<String, Viewer> viewers,
             @NotNull Class<T> kind,
             @Nullable IFContext parent,
             Object initialData) {
-        if (isTypeOf(IFOpenContext.class, kind)) return (T) new OpenContext(root, viewers, initialData);
+        if (isTypeOf(IFOpenContext.class, kind)) return (T) new OpenContext(root, subject, viewers, initialData);
         if (isTypeOf(IFRenderContext.class, kind))
             return (T) new me.devnatan.inventoryframework.context.RenderContext(
                     requireNonNull(parent).getId(),
                     root,
                     container,
-				viewers,
+                    subject,
+                    viewers,
                     requireNonNull(parent).getConfig(),
                     initialData);
         if (isTypeOf(IFCloseContext.class, kind))
-            return (T) new CloseContext(root, container, viewers.get(0), requireNonNull(parent));
+            return (T) new CloseContext(root, container, subject, viewers, requireNonNull(parent));
 
         throw new UnsupportedOperationException("Unsupported context kind: " + kind);
     }
@@ -122,13 +106,14 @@ public class BukkitElementFactory extends ElementFactory {
             int slot,
             Component component,
             @NotNull ViewContainer container,
-            @NotNull Viewer viewer,
+            Viewer subject,
+            @NotNull Map<String, Viewer> viewers,
             @NotNull IFContext parent,
             @NotNull Class<?> kind) {
         if (isTypeOf(IFSlotRenderContext.class, kind))
-            return (T) new SlotRenderContext(parent.getRoot(), container, viewer, slot, parent, component);
+            return (T) new SlotRenderContext(parent.getRoot(), container, subject, viewers, slot, parent, component);
 
-        return (T) new SlotContext(parent.getRoot(), container, viewer, slot, parent, component);
+        return (T) new SlotContext(parent.getRoot(), container, subject, viewers, slot, parent, component);
     }
 
     @Override

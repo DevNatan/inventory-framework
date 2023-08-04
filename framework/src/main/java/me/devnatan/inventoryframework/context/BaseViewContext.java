@@ -1,7 +1,6 @@
 package me.devnatan.inventoryframework.context;
 
 import java.util.*;
-
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewContainer;
@@ -23,14 +22,19 @@ class BaseViewContext extends DefaultStateValueHost implements IFContext {
     private final List<Component> components = new LinkedList<>();
     private final Deque<Integer> markedForRemoval = new ArrayDeque<>();
     private final Object initialData;
-    protected final Map<String, Viewer> viewers = new HashMap<>();
+    protected final Map<String, Viewer> viewers;
     protected ViewConfig config;
 
-    public BaseViewContext(@NotNull RootView root, @Nullable ViewContainer container, Object initialData) {
+    public BaseViewContext(
+            @NotNull RootView root,
+            @Nullable ViewContainer container,
+            @NotNull Map<String, Viewer> viewers,
+            Object initialData) {
         this.root = root;
         this.container = container;
         this.config = root.getConfig();
         this.initialData = initialData;
+        this.viewers = new HashMap<>(viewers);
     }
 
     @NotNull
@@ -111,7 +115,7 @@ class BaseViewContext extends DefaultStateValueHost implements IFContext {
 
     @Override
     public final void openForEveryone(Class<? extends RootView> other) {
-		getRoot().getFramework().open(other, getViewers(), getInitialData());
+        getRoot().getFramework().open(other, getViewers(), getInitialData());
     }
 
     @Override
@@ -156,12 +160,12 @@ class BaseViewContext extends DefaultStateValueHost implements IFContext {
         return initialData instanceof Map ? Collections.unmodifiableMap((Map<?, ?>) initialData) : initialData;
     }
 
-	@Override
-	public boolean isShared() {
-		return getViewers().size() > 1;
-	}
+    @Override
+    public boolean isShared() {
+        return getViewers().size() > 1;
+    }
 
-	@Override
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;

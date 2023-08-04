@@ -1,5 +1,6 @@
 package me.devnatan.inventoryframework.internal;
 
+import java.util.Map;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
@@ -11,8 +12,6 @@ import me.devnatan.inventoryframework.context.IFSlotContext;
 import me.devnatan.inventoryframework.logging.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 /**
  * Element creation factory for the current platform.
@@ -48,18 +47,19 @@ public abstract class ElementFactory {
     public abstract <T extends IFContext> T createContext(
             @NotNull RootView root,
             ViewContainer container,
-            @NotNull List<Viewer> viewers,
+            Viewer subject,
+            @NotNull Map<String, Viewer> viewers,
             @NotNull Class<T> kind,
             @Nullable IFContext parent,
-            Object initialData
-	);
+            Object initialData);
 
     @NotNull
     public abstract <T extends IFSlotContext> T createSlotContext(
             int slot,
             Component component,
             @NotNull ViewContainer container,
-            @NotNull Viewer viewer,
+            Viewer subject,
+            @NotNull Map<String, Viewer> viewers,
             @NotNull IFContext parent,
             @NotNull Class<?> kind);
 

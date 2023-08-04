@@ -51,7 +51,7 @@ public final class PlatformOpenInterceptor implements PipelineInterceptor<Virtua
         final IFRenderContext render = createRenderContext(openContext);
 
         root.renderContext(render);
-		render.getViewers().forEach(render.getContainer()::open);
+        render.getViewers().forEach(render.getContainer()::open);
     }
 
     IFRenderContext createRenderContext(IFOpenContext openContext) {
@@ -67,17 +67,16 @@ public final class PlatformOpenInterceptor implements PipelineInterceptor<Virtua
         }
 
         final ViewContainer container = elementFactory.createContainer(openContext);
-        final Viewer viewer = openContext.getViewer();
         final IFRenderContext renderCtx = elementFactory.createContext(
                 openContext.getRoot(),
                 container,
-                openContext.getViewers(),
+                openContext.getViewer(),
+                openContext.getIndexedViewers(),
                 IFRenderContext.class,
                 openContext,
                 openContext.getInitialData());
 
-
-        renderCtx.addViewer(viewer);
+        openContext.getViewers().forEach(renderCtx::addViewer);
         openContext.getRoot().addContext(renderCtx);
         return renderCtx;
     }

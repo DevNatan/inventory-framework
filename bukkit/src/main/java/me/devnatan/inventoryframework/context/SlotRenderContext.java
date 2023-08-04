@@ -1,5 +1,6 @@
 package me.devnatan.inventoryframework.context;
 
+import java.util.Map;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
@@ -16,11 +17,12 @@ public final class SlotRenderContext extends SlotContext implements IFSlotRender
     public SlotRenderContext(
             @NotNull RootView root,
             @NotNull ViewContainer container,
-            @NotNull Viewer viewer,
+            Viewer subject,
+            @NotNull Map<String, Viewer> viewers,
             int slot,
             @NotNull IFContext parent,
             @Nullable Component component) {
-        super(root, container, viewer, slot, parent, component);
+        super(root, container, subject, viewers, slot, parent, component);
     }
 
     @Override

@@ -1,7 +1,7 @@
 package me.devnatan.inventoryframework.context;
 
 import java.util.Collections;
-import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewContainer;
@@ -14,9 +14,13 @@ class ConfinedContext extends BaseViewContext implements IFConfinedContext {
     private final Viewer viewer;
 
     public ConfinedContext(
-		@NotNull RootView root, @Nullable ViewContainer container, @NotNull List<Viewer> viewers, Object initialData) {
-        super(root, container, initialData);
-        this.viewer = viewers.get(0);
+            @NotNull RootView root,
+            @Nullable ViewContainer container,
+            Viewer subject,
+            @NotNull Map<String, Viewer> viewers,
+            Object initialData) {
+        super(root, container, viewers, initialData);
+        this.viewer = subject;
     }
 
     @NotNull

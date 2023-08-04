@@ -1,8 +1,10 @@
 package me.devnatan.inventoryframework.context;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 import me.devnatan.inventoryframework.BukkitViewer;
 import me.devnatan.inventoryframework.InventoryFrameworkException;
 import me.devnatan.inventoryframework.RootView;
@@ -12,6 +14,7 @@ import me.devnatan.inventoryframework.Viewer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.UnmodifiableView;
 
 public class OpenContext extends ConfinedContext implements IFOpenContext, Context {
 
@@ -21,9 +24,10 @@ public class OpenContext extends ConfinedContext implements IFOpenContext, Conte
     private ViewConfigBuilder inheritedConfigBuilder;
 
     @ApiStatus.Internal
-    public OpenContext(@NotNull RootView root, @NotNull List<Viewer> viewers, Object initialData) {
-        super(root, null, viewers, initialData);
-        this.player = ((BukkitViewer) viewers.get(0)).getPlayer();
+    public OpenContext(
+            @NotNull RootView root, Viewer subject, @NotNull Map<String, Viewer> viewers, Object initialData) {
+        super(root, null, subject, viewers, initialData);
+        this.player = subject != null ? ((BukkitViewer) subject).getPlayer() : null;
     }
 
     @Override
@@ -77,6 +81,14 @@ public class OpenContext extends ConfinedContext implements IFOpenContext, Conte
     @Override
     public @NotNull Player getPlayer() {
         return player;
+    }
+
+    @Override
+    public @UnmodifiableView List<Player> getAllPlayers() {
+        return getViewers().stream()
+                .map(viewer -> (BukkitViewer) viewer)
+                .map(BukkitViewer::getPlayer)
+                .collect(Collectors.toList());
     }
 
     @Override

@@ -1,7 +1,10 @@
 package me.devnatan.inventoryframework.context;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import me.devnatan.inventoryframework.BukkitViewer;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewConfig;
@@ -9,6 +12,7 @@ import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.UnmodifiableView;
 
 public final class CloseContext extends ConfinedContext implements IFCloseContext, Context {
 
@@ -19,10 +23,11 @@ public final class CloseContext extends ConfinedContext implements IFCloseContex
     public CloseContext(
             @NotNull RootView root,
             @NotNull ViewContainer container,
-            @NotNull Viewer viewer,
+            Viewer subject,
+            @NotNull Map<String, Viewer> viewers,
             @NotNull IFContext parent) {
-        super(root, container, viewer, parent.getInitialData());
-        this.player = ((BukkitViewer) viewer).getPlayer();
+        super(root, container, subject, viewers, parent.getInitialData());
+        this.player = ((BukkitViewer) subject).getPlayer();
         this.parent = parent;
     }
 
@@ -34,6 +39,14 @@ public final class CloseContext extends ConfinedContext implements IFCloseContex
     @Override
     public Player getPlayer() {
         return player;
+    }
+
+    @Override
+    public @UnmodifiableView List<Player> getAllPlayers() {
+        return getViewers().stream()
+                .map(viewer -> (BukkitViewer) viewer)
+                .map(BukkitViewer::getPlayer)
+                .collect(Collectors.toList());
     }
 
     @Override

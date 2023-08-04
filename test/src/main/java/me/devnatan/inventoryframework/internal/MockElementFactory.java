@@ -3,6 +3,7 @@ package me.devnatan.inventoryframework.internal;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.List;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
@@ -15,8 +16,6 @@ import me.devnatan.inventoryframework.context.IFSlotContext;
 import me.devnatan.inventoryframework.logging.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 public final class MockElementFactory extends ElementFactory {
     @Override
