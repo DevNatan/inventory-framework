@@ -24,6 +24,9 @@ java {
 
 javadoc {
     options.memberLevel = JavadocMemberLevel.PACKAGE
+    if (JavaVersion.current().isJava9Compatible()) {
+        options.addBooleanOption('html5', true)
+    }
 }
 
 test {
