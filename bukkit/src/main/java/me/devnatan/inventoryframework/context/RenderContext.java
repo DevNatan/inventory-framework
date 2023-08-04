@@ -1,5 +1,6 @@
 package me.devnatan.inventoryframework.context;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import me.devnatan.inventoryframework.BukkitViewer;
@@ -20,9 +21,9 @@ public final class RenderContext extends PlatformRenderContext<BukkitItemCompone
 
     @ApiStatus.Internal
     public RenderContext(
-            UUID id, RootView root, ViewContainer container, Viewer viewer, ViewConfig config, Object initialData) {
-        super(id, root, container, viewer, config, initialData);
-        this.player = ((BukkitViewer) viewer).getPlayer();
+		UUID id, RootView root, ViewContainer container, List<Viewer> viewers, ViewConfig config, Object initialData) {
+        super(id, root, container, viewers, config, initialData);
+        this.player = ((BukkitViewer) viewers.get(0)).getPlayer();
     }
 
     @NotNull

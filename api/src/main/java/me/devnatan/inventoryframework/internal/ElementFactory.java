@@ -12,6 +12,8 @@ import me.devnatan.inventoryframework.logging.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 /**
  * Element creation factory for the current platform.
  */
@@ -46,11 +48,11 @@ public abstract class ElementFactory {
     public abstract <T extends IFContext> T createContext(
             @NotNull RootView root,
             ViewContainer container,
-            @NotNull Viewer viewer,
+            @NotNull List<Viewer> viewers,
             @NotNull Class<T> kind,
-            boolean shared,
             @Nullable IFContext parent,
-            Object initialData);
+            Object initialData
+	);
 
     @NotNull
     public abstract <T extends IFSlotContext> T createSlotContext(

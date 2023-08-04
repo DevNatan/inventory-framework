@@ -16,6 +16,8 @@ import me.devnatan.inventoryframework.logging.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 public final class MockElementFactory extends ElementFactory {
     @Override
     public Logger getLogger() {
@@ -46,15 +48,14 @@ public final class MockElementFactory extends ElementFactory {
     public <T extends IFContext> @NotNull T createContext(
             @NotNull RootView root,
             ViewContainer container,
-            @NotNull Viewer viewer,
+            @NotNull List<Viewer> viewer,
             @NotNull Class<T> kind,
-            boolean shared,
             @Nullable IFContext parent,
             @NotNull Object initialData) {
-        T value = (T) mock(kind);
+        T value = mock(kind);
         when(value.getContainer()).thenReturn(container);
         if (value instanceof IFConfinedContext)
-            when(((IFConfinedContext) value).getViewer()).thenReturn(viewer);
+            when(((IFConfinedContext) value).getViewer()).thenReturn(viewer.get(0));
         if (parent != null) when(value.getConfig()).thenCallRealMethod();
         return value;
     }

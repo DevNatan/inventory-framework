@@ -39,7 +39,6 @@ public final class PlatformOpenInterceptor implements PipelineInterceptor<Virtua
                 });
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
     private void finishOpen(@NotNull PipelineContext<VirtualView> pipeline, @NotNull IFOpenContext openContext) {
         if (openContext.isCancelled()) {
             pipeline.finish();
@@ -49,11 +48,10 @@ public final class PlatformOpenInterceptor implements PipelineInterceptor<Virtua
         if (skipOpen) return;
 
         final RootView root = openContext.getRoot();
-        final Viewer viewer = openContext.getViewer();
         final IFRenderContext render = createRenderContext(openContext);
 
         root.renderContext(render);
-        render.getContainer().open(viewer);
+		render.getViewers().forEach(render.getContainer()::open);
     }
 
     IFRenderContext createRenderContext(IFOpenContext openContext) {
@@ -73,11 +71,11 @@ public final class PlatformOpenInterceptor implements PipelineInterceptor<Virtua
         final IFRenderContext renderCtx = elementFactory.createContext(
                 openContext.getRoot(),
                 container,
-                viewer,
+                openContext.getViewers(),
                 IFRenderContext.class,
-                false,
                 openContext,
                 openContext.getInitialData());
+
 
         renderCtx.addViewer(viewer);
         openContext.getRoot().addContext(renderCtx);

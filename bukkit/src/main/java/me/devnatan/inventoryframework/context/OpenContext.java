@@ -1,5 +1,6 @@
 package me.devnatan.inventoryframework.context;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import me.devnatan.inventoryframework.BukkitViewer;
@@ -20,9 +21,9 @@ public class OpenContext extends ConfinedContext implements IFOpenContext, Conte
     private ViewConfigBuilder inheritedConfigBuilder;
 
     @ApiStatus.Internal
-    public OpenContext(@NotNull RootView root, @NotNull Viewer viewer, Object initialData) {
-        super(root, null, viewer, initialData);
-        this.player = ((BukkitViewer) viewer).getPlayer();
+    public OpenContext(@NotNull RootView root, @NotNull List<Viewer> viewers, Object initialData) {
+        super(root, null, viewers, initialData);
+        this.player = ((BukkitViewer) viewers.get(0)).getPlayer();
     }
 
     @Override

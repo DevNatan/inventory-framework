@@ -4,6 +4,7 @@ import static java.util.Objects.requireNonNull;
 import static me.devnatan.inventoryframework.runtime.util.InventoryUtils.checkInventoryTypeSupport;
 import static me.devnatan.inventoryframework.util.IsTypeOf.isTypeOf;
 
+import java.util.List;
 import java.util.UUID;
 import me.devnatan.inventoryframework.BukkitViewContainer;
 import me.devnatan.inventoryframework.BukkitViewer;
@@ -96,23 +97,21 @@ public class BukkitElementFactory extends ElementFactory {
     public <T extends IFContext> @NotNull T createContext(
             @NotNull RootView root,
             ViewContainer container,
-            @NotNull Viewer viewer,
+            @NotNull List<Viewer> viewers,
             @NotNull Class<T> kind,
-            boolean shared,
             @Nullable IFContext parent,
             Object initialData) {
-        if (shared) throw new IllegalStateException("Shared contexts are not yet supported");
-        if (isTypeOf(IFOpenContext.class, kind)) return (T) new OpenContext(root, viewer, initialData);
+        if (isTypeOf(IFOpenContext.class, kind)) return (T) new OpenContext(root, viewers, initialData);
         if (isTypeOf(IFRenderContext.class, kind))
             return (T) new me.devnatan.inventoryframework.context.RenderContext(
                     requireNonNull(parent).getId(),
                     root,
                     container,
-                    viewer,
+				viewers,
                     requireNonNull(parent).getConfig(),
                     initialData);
         if (isTypeOf(IFCloseContext.class, kind))
-            return (T) new CloseContext(root, container, viewer, requireNonNull(parent));
+            return (T) new CloseContext(root, container, viewers.get(0), requireNonNull(parent));
 
         throw new UnsupportedOperationException("Unsupported context kind: " + kind);
     }

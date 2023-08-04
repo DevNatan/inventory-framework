@@ -552,12 +552,12 @@ public abstract class PlatformView<
     }
 
     @Override
-    public final void open(@NotNull Viewer viewer, Object initialData) {
+    public final void open(@NotNull List<Viewer> viewers, Object initialData) {
         if (!isInitialized()) throw new IllegalStateException("Cannot open a uninitialized view");
 
         final IFOpenContext context =
-                getElementFactory().createContext(this, null, viewer, IFOpenContext.class, false, null, initialData);
-        context.addViewer(viewer);
+                getElementFactory().createContext(this, null, viewers, IFOpenContext.class, null, initialData);
+		viewers.forEach(context::addViewer);
         getPipeline().execute(StandardPipelinePhases.OPEN, context);
     }
 

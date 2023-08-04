@@ -31,8 +31,8 @@ abstract class PlatformRenderContext<T extends ItemComponentBuilder<T>> extends 
     private final UUID id;
 
     PlatformRenderContext(
-            UUID id, RootView root, ViewContainer container, Viewer viewer, ViewConfig config, Object initialData) {
-        super(root, container, viewer, initialData);
+            UUID id, RootView root, ViewContainer container, List<Viewer> viewers, ViewConfig config, Object initialData) {
+        super(root, container, viewers, initialData);
         this.id = id;
         this.config = config;
     }

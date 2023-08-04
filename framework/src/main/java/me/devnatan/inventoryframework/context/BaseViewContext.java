@@ -1,16 +1,7 @@
 package me.devnatan.inventoryframework.context;
 
-import java.util.ArrayDeque;
-import java.util.Collections;
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
+
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewContainer;
@@ -65,8 +56,8 @@ class BaseViewContext extends DefaultStateValueHost implements IFContext {
     }
 
     @Override
-    public final @NotNull @Unmodifiable Set<Viewer> getViewers() {
-        return Collections.unmodifiableSet(new HashSet<>(getIndexedViewers().values()));
+    public final @NotNull @Unmodifiable List<Viewer> getViewers() {
+        return Collections.unmodifiableList(new ArrayList<>(getIndexedViewers().values()));
     }
 
     @Override
@@ -120,7 +111,7 @@ class BaseViewContext extends DefaultStateValueHost implements IFContext {
 
     @Override
     public final void openForEveryone(Class<? extends RootView> other) {
-        getViewers().forEach(viewer -> getRoot().getFramework().open(other, viewer, getInitialData()));
+		getRoot().getFramework().open(other, getViewers(), getInitialData());
     }
 
     @Override
@@ -165,7 +156,12 @@ class BaseViewContext extends DefaultStateValueHost implements IFContext {
         return initialData instanceof Map ? Collections.unmodifiableMap((Map<?, ?>) initialData) : initialData;
     }
 
-    @Override
+	@Override
+	public boolean isShared() {
+		return getViewers().size() > 1;
+	}
+
+	@Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
