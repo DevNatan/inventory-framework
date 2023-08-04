@@ -20,8 +20,18 @@ public class TestItemComponentBuilder extends DefaultComponentBuilder<TestItemCo
     }
 
     @Override
+    public TestItemComponentBuilder withSlot(int row, int column) {
+        return null;
+    }
+
+    @Override
     public TestItemComponentBuilder watch(State<?>... states) {
         return null;
+    }
+
+    @Override
+    public TestItemComponentBuilder copy() {
+        return this;
     }
 
     @Override

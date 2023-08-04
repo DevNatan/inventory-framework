@@ -6,15 +6,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.function.BiFunction;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewConfigBuilder;
@@ -30,8 +26,7 @@ import org.junit.jupiter.api.Test;
 public class AvailableSlotInterceptorTest {
 
     private static final String[] defaultLayout = {"         ", " OOOOOOO ", "         "};
-    private static final List<Integer> defaultLayoutSlotRange =
-            IntStream.rangeClosed(11, 17).boxed().collect(Collectors.toList());
+    private static final int[] defaultLayoutSlotRange = new int[] {11, 12, 13, 14, 15, 16, 17};
 
     @Test
     void resolveFromLayoutMustBeEmptyIfNoCharacterAvailable() {
@@ -49,7 +44,7 @@ public class AvailableSlotInterceptorTest {
         when(context.getConfig()).thenReturn(createLayoutConfig(defaultLayout));
         when(context.getLayoutSlots())
                 .thenReturn(Collections.singletonList(
-                        new LayoutSlot(LayoutSlot.FILLED_RESERVED_CHAR, $ -> mock(ComponentFactory.class))));
+                        new LayoutSlot(LayoutSlot.FILLED_RESERVED_CHAR, $ -> mock(ComponentFactory.class), null)));
 
         assertTrue(new AvailableSlotInterceptor().resolveFromLayoutSlot(context).isEmpty());
     }
@@ -60,8 +55,8 @@ public class AvailableSlotInterceptorTest {
         IFRenderContext context = createContextMock(root, IFRenderContext.class);
         when(context.getConfig()).thenReturn(createLayoutConfig(defaultLayout));
 
-        LayoutSlot layoutSlot = new LayoutSlot(LayoutSlot.FILLED_RESERVED_CHAR, $ -> mock(ComponentFactory.class));
-        layoutSlot.updatePositions(Collections.emptyList());
+        LayoutSlot layoutSlot =
+                new LayoutSlot(LayoutSlot.FILLED_RESERVED_CHAR, $ -> mock(ComponentFactory.class), new int[0]);
 
         when(context.getLayoutSlots()).thenReturn(Collections.singletonList(layoutSlot));
 
@@ -73,6 +68,7 @@ public class AvailableSlotInterceptorTest {
         RootView root = createRootMock();
         ViewContainer container = mock(ViewContainer.class);
         when(container.hasItem(anyInt())).thenReturn(false);
+        when(container.getType()).thenReturn(ViewType.CHEST);
 
         IFRenderContext context = createContextMock(root, IFRenderContext.class);
         when(context.getContainer()).thenReturn(container);
@@ -86,13 +82,13 @@ public class AvailableSlotInterceptorTest {
         when(availableSlotFactory.apply(anyInt(), anyInt())).thenReturn(componentFactory);
         when(context.getAvailableSlotFactory()).thenReturn(availableSlotFactory);
 
-        LayoutSlot layoutSlot = new LayoutSlot(LayoutSlot.FILLED_RESERVED_CHAR, $ -> componentFactory);
-        layoutSlot.updatePositions(defaultLayoutSlotRange);
+        LayoutSlot layoutSlot =
+                new LayoutSlot(LayoutSlot.FILLED_RESERVED_CHAR, $ -> componentFactory, defaultLayoutSlotRange);
         when(context.getLayoutSlots()).thenReturn(Collections.singletonList(layoutSlot));
 
         List<ComponentFactory> resolved = new AvailableSlotInterceptor().resolveFromLayoutSlot(context);
         assertEquals(componentFactory, resolved.get(0));
-        verify(availableSlotFactory).apply(eq(0), eq(defaultLayoutSlotRange.get(0)));
+        verify(availableSlotFactory).apply(eq(0), eq(defaultLayoutSlotRange[0]));
     }
 
     @Test
@@ -100,6 +96,7 @@ public class AvailableSlotInterceptorTest {
         RootView root = createRootMock();
         ViewContainer container = mock(ViewContainer.class);
         when(container.hasItem(anyInt())).thenReturn(false);
+        when(container.getType()).thenReturn(ViewType.CHEST);
 
         IFRenderContext context = createContextMock(root, IFRenderContext.class);
         when(context.getContainer()).thenReturn(container);
@@ -113,14 +110,14 @@ public class AvailableSlotInterceptorTest {
         when(availableSlotFactory.apply(anyInt(), anyInt())).thenReturn(componentFactory);
         when(context.getAvailableSlotFactory()).thenReturn(availableSlotFactory);
 
-        LayoutSlot layoutSlot = new LayoutSlot(LayoutSlot.FILLED_RESERVED_CHAR, $ -> componentFactory);
-        layoutSlot.updatePositions(defaultLayoutSlotRange);
+        LayoutSlot layoutSlot =
+                new LayoutSlot(LayoutSlot.FILLED_RESERVED_CHAR, $ -> componentFactory, defaultLayoutSlotRange);
         when(context.getLayoutSlots()).thenReturn(Collections.singletonList(layoutSlot));
 
         new AvailableSlotInterceptor().intercept(mock(PipelineContext.class), context);
 
-        verify(availableSlotFactory).apply(eq(0), eq(defaultLayoutSlotRange.get(0)));
-        verify(context).addComponent(eq(component));
+        verify(availableSlotFactory).apply(eq(0), eq(defaultLayoutSlotRange[0]));
+        verify(context, atLeastOnce()).addComponent(eq(component));
     }
 
     private ViewConfig createLayoutConfig(String... layout) {

@@ -87,8 +87,10 @@ public final class ViewType {
     }
 
     public boolean canPlayerInteractOn(int slot) {
-        for (final int resultSlot : getResultSlots()) {
-            if (resultSlot == slot) return false;
+        if (getResultSlots() != null) {
+            for (final int resultSlot : getResultSlots()) {
+                if (resultSlot == slot) return false;
+            }
         }
         return true;
     }

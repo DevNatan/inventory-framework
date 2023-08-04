@@ -19,7 +19,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
-public final class ViewFrame extends IFViewFrame<ViewFrame> implements FeatureInstaller<ViewFrame> {
+public class ViewFrame extends IFViewFrame<ViewFrame> implements FeatureInstaller<ViewFrame> {
 
     private static final String BSTATS_SYSTEM_PROP = "inventory-framework.enable-bstats";
     private static final int BSTATS_PROJECT_ID = 15518;
