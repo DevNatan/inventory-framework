@@ -106,7 +106,7 @@ public class UpdateInterceptorTest {
 
         IFSlotRenderContext cancelledContext = mock(IFSlotRenderContext.class);
         when(cancelledContext.isCancelled()).thenReturn(true);
-        when(elementFactory.createSlotContext(anyInt(), any(), any(), any(), any(), eq(IFSlotRenderContext.class)))
+        when(elementFactory.createSlotContext(anyInt(), any(), any(), any(), any(), any(), eq(IFSlotRenderContext.class)))
                 .thenReturn(cancelledContext);
         when(root.getElementFactory()).thenReturn(elementFactory);
 

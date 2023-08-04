@@ -4,6 +4,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
+import java.util.Map;
+
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
@@ -45,28 +47,30 @@ public final class MockElementFactory extends ElementFactory {
 
     @Override
     public <T extends IFContext> @NotNull T createContext(
-            @NotNull RootView root,
-            ViewContainer container,
-            @NotNull List<Viewer> viewer,
-            @NotNull Class<T> kind,
-            @Nullable IFContext parent,
-            @NotNull Object initialData) {
+		@NotNull RootView root,
+		ViewContainer container,
+		Viewer subject,
+		@NotNull Map<String, Viewer> viewers,
+		@NotNull Class<T> kind,
+		@Nullable IFContext parent,
+		Object initialData) {
         T value = mock(kind);
         when(value.getContainer()).thenReturn(container);
         if (value instanceof IFConfinedContext)
-            when(((IFConfinedContext) value).getViewer()).thenReturn(viewer.get(0));
+            when(((IFConfinedContext) value).getViewer()).thenReturn(subject);
         if (parent != null) when(value.getConfig()).thenCallRealMethod();
         return value;
     }
 
     @Override
     public <T extends IFSlotContext> @NotNull T createSlotContext(
-            int slot,
-            Component component,
-            @NotNull ViewContainer container,
-            @NotNull Viewer viewer,
-            @NotNull IFContext parent,
-            @NotNull Class<?> kind) {
+		int slot,
+		Component component,
+		@NotNull ViewContainer container,
+		Viewer subject,
+		@NotNull Map<String, Viewer> viewers,
+		@NotNull IFContext parent,
+		@NotNull Class<?> kind) {
         @SuppressWarnings("unchecked")
         T value = (T) mock(kind);
         when(value.getSlot()).thenReturn(slot);
