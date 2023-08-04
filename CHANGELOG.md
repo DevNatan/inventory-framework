@@ -1,6 +1,8 @@
 # Changelog
 
-# 3.0.0-alpha (unreleased)
+# 3.0.0 (unreleased)
+
+# 3.0.0-alpha (08-01-2023)
 
 * Item render and update handler shortcuts (#274)
 * Wrong JDK version (#386)
@@ -12,9 +14,11 @@
 * Code and Wiki documentation improvement
 
 # 3.0.0-EAP (06-07-2023)
+
 Please refer to [Migrating to version 3 on Wiki](https://github.com/DevNatan/inventory-framework/wiki/Migrating-to-version-3) for migration details.
 
 # 2.5.4-rc.1 (10-09-2022)
+
 * New context history feature (#120)
 * Fixed context data inheritance (#219)
 * Fixed NullPointerException in context paginator (#224)
