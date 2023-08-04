@@ -1,6 +1,5 @@
 plugins {
     alias(libs.plugins.spotless) apply false
-    alias(libs.plugins.publishOnCentral) apply false
 }
 
 group 'me.devnatan'
