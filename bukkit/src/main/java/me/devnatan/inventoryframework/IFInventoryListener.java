@@ -75,10 +75,8 @@ final class IFInventoryListener implements Listener {
         final ElementFactory elementFactory = root.getElementFactory();
         final String viewerIdentifier = elementFactory.convertViewer(player);
         final IFContext mainContext = root.getContext(viewerIdentifier);
-        System.out.println("[close] mainContext.getViewers() = " + mainContext.getViewers());
 
         final Viewer viewer = mainContext.getIndexedViewers().get(viewerIdentifier);
-        System.out.println("[close] viewer = " + viewer);
 
         final IFCloseContext closeContext = elementFactory.createContext(
                 root,
