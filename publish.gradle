@@ -40,15 +40,15 @@ publishing {
         }
     }
 
-    repositories {
-        maven {
-            name = "OSSRH"
-            url = isReleaseVersion
-                    ? "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
-                    : "https://s01.oss.sonatype.org/content/repositories/snapshots/"
-            credentials {
-                username = project.findProperty('ossrh.username') ?: System.getenv('OSSRH_USERNAME')
-                password = project.findProperty('ossrh.password') ?: System.getenv('OSSRH_PASSWORD')
+    if (!isReleaseVersion) {
+        repositories {
+            maven {
+                name = "OSSRH"
+                url = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+                credentials {
+                    username = project.findProperty('ossrh.username') ?: System.getenv('OSSRH_USERNAME')
+                    password = project.findProperty('ossrh.password') ?: System.getenv('OSSRH_PASSWORD')
+                }
             }
         }
     }
