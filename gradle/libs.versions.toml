@@ -28,10 +28,6 @@ version.ref = "junit"
 module = "org.junit.jupiter:junit-jupiter-engine"
 version.ref = "junit"
 
-[libraries.kotlin]
-module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
-version.ref = "kotlin"
-
 [libraries.mockito-core]
 module = "org.mockito:mockito-core"
 version.ref = "mockito"
