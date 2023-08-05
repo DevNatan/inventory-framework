@@ -44,12 +44,12 @@ body:
     id: server-version
     attributes:
       label: ⭐ Server Version
-      description: What is your current Minecraft Server?
+      description: What is your current Minecraft Server version?
       placeholder: "e.g. 1.16.5"
     validations:
       required: true
   - type: input
-    id: mc-version
+    id: library-version
     attributes:
       label: 📚 Library Version
       description: What is your current Inventory Framework version?
