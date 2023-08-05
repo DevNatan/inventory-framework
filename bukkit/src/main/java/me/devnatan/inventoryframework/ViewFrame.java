@@ -75,9 +75,13 @@ public class ViewFrame extends IFViewFrame<ViewFrame> implements FeatureInstalle
      * <p>
      * These players will see the same inventory and share the same context.
      *
+     * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     *
      * @param viewClass The target view to be opened.
      * @param players   The players that the view will be open to.
      */
+    @ApiStatus.Experimental
     public void open(@NotNull Class<? extends RootView> viewClass, @NotNull Collection<? extends Player> players) {
         open(viewClass, players, null);
     }
@@ -87,10 +91,14 @@ public class ViewFrame extends IFViewFrame<ViewFrame> implements FeatureInstalle
      * <p>
      * These players will see the same inventory and share the same context.
      *
+     * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     *
      * @param viewClass   The target view to be opened.
      * @param players     The players that the view will be open to.
      * @param initialData The initial data.
      */
+    @ApiStatus.Experimental
     public void open(
             @NotNull Class<? extends RootView> viewClass,
             @NotNull Collection<? extends Player> players,

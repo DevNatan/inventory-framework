@@ -21,7 +21,10 @@ public final class UpdateInterceptor implements PipelineInterceptor<VirtualView>
         if (subject instanceof IFOpenContext || subject instanceof IFCloseContext) return;
 
         final IFContext context = (IFContext) subject;
+
+        // TODO Implement update reasons and expose the viewer that triggered the update
         final Viewer viewer = context.isShared() ? null : context.getViewers().get(0);
+
         final List<Component> componentList = context.getComponents();
         for (int i = 0; i < componentList.size(); i++) {
             final Component component = componentList.get(i);
