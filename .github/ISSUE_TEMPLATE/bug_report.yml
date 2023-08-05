@@ -41,11 +41,19 @@ body:
         - label: Sponge
         - label: Other
   - type: input
-    id: version
+    id: mc-version
     attributes:
-      label: ⭐ Versions
-      description: What is your current Minecraft server and IF version?
-      placeholder: "e.g. MC 1.16.5, IF v2.4.0"
+      label: ⭐ Server Version
+      description: What is your current Minecraft Server?
+      placeholder: "e.g. 1.16.5"
+    validations:
+      required: true
+  - type: input
+    id: mc-version
+    attributes:
+      label: 📚 Library Version
+      description: What is your current Inventory Framework version?
+      placeholder: "e.g. v3.0.0-beta"
     validations:
       required: true
   - type: textarea
