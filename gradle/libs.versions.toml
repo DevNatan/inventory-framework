@@ -2,7 +2,7 @@
 jetbrains-annotations = "24.0.1"
 spigot = "1.8.8-R0.1-SNAPSHOT"
 paperSpigot = "1.19.4-R0.1-SNAPSHOT"
-junit = "5.9.3"
+junit = "5.10.0"
 mockito = "4.11.0"
 adventure-api = "4.14.0"
 plugin-shadowjar = "8.1.1"
