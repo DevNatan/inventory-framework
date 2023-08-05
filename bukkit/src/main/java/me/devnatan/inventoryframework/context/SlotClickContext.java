@@ -1,5 +1,6 @@
 package me.devnatan.inventoryframework.context;
 
+import java.util.Map;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
@@ -21,12 +22,13 @@ public final class SlotClickContext extends SlotContext implements IFSlotClickCo
     public SlotClickContext(
             @NotNull RootView root,
             @NotNull ViewContainer container,
-            @NotNull Viewer viewer,
+            Viewer subject,
+            @NotNull Map<String, Viewer> viewers,
             int slot,
             @NotNull IFContext parent,
             @Nullable Component component,
             @NotNull InventoryClickEvent clickOrigin) {
-        super(root, container, viewer, slot, parent, component);
+        super(root, container, subject, viewers, slot, parent, component);
         this.clickOrigin = clickOrigin;
     }
 

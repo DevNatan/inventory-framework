@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import me.devnatan.inventoryframework.component.ComponentFactory;
 import me.devnatan.inventoryframework.component.ItemComponentBuilder;
 import me.devnatan.inventoryframework.component.Pagination;
@@ -552,12 +553,19 @@ public abstract class PlatformView<
     }
 
     @Override
-    public final void open(@NotNull Viewer viewer, Object initialData) {
+    public final void open(@NotNull List<Viewer> viewers, Object initialData) {
         if (!isInitialized()) throw new IllegalStateException("Cannot open a uninitialized view");
 
-        final IFOpenContext context =
-                getElementFactory().createContext(this, null, viewer, IFOpenContext.class, false, null, initialData);
-        context.addViewer(viewer);
+        final IFOpenContext context = getElementFactory()
+                .createContext(
+                        this,
+                        null,
+                        null,
+                        viewers.stream().collect(Collectors.toMap(Viewer::getId, Function.identity())),
+                        IFOpenContext.class,
+                        null,
+                        initialData);
+        viewers.forEach(context::addViewer);
         getPipeline().execute(StandardPipelinePhases.OPEN, context);
     }
 

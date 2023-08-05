@@ -32,6 +32,7 @@ public class UpdateInterceptorTest {
 
         RootView root = createRootMock();
         IFContext context = createContextMock(root, IFRenderContext.class);
+        when(context.isShared()).thenReturn(true);
         ViewContainer container = mock(ViewContainer.class);
         when(context.getContainer()).thenReturn(container);
 
@@ -64,6 +65,7 @@ public class UpdateInterceptorTest {
         when(component.shouldBeUpdated()).thenCallRealMethod();
 
         when(context.getComponents()).thenReturn(Collections.singletonList(component));
+        when(context.isShared()).thenReturn(true);
         when(root.getContexts()).thenReturn(Collections.singleton(context));
 
         pipeline.execute(StandardPipelinePhases.UPDATE, context);
@@ -80,6 +82,7 @@ public class UpdateInterceptorTest {
 
         RootView root = createRootMock();
         IFContext context = createContextMock(root, IFRenderContext.class);
+        when(context.isShared()).thenReturn(true);
         ViewContainer container = mock(ViewContainer.class);
         when(context.getContainer()).thenReturn(container);
 
@@ -106,11 +109,13 @@ public class UpdateInterceptorTest {
 
         IFSlotRenderContext cancelledContext = mock(IFSlotRenderContext.class);
         when(cancelledContext.isCancelled()).thenReturn(true);
-        when(elementFactory.createSlotContext(anyInt(), any(), any(), any(), any(), eq(IFSlotRenderContext.class)))
+        when(elementFactory.createSlotContext(
+                        anyInt(), any(), any(), any(), any(), any(), eq(IFSlotRenderContext.class)))
                 .thenReturn(cancelledContext);
         when(root.getElementFactory()).thenReturn(elementFactory);
 
         IFContext context = createContextMock(root, IFRenderContext.class);
+        when(context.isShared()).thenReturn(true);
         ViewContainer container = mock(ViewContainer.class);
         when(context.getContainer()).thenReturn(container);
 

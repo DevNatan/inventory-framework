@@ -3,6 +3,7 @@ package me.devnatan.inventoryframework.internal;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.Map;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
@@ -46,15 +47,15 @@ public final class MockElementFactory extends ElementFactory {
     public <T extends IFContext> @NotNull T createContext(
             @NotNull RootView root,
             ViewContainer container,
-            @NotNull Viewer viewer,
+            Viewer subject,
+            @NotNull Map<String, Viewer> viewers,
             @NotNull Class<T> kind,
-            boolean shared,
             @Nullable IFContext parent,
-            @NotNull Object initialData) {
-        T value = (T) mock(kind);
+            Object initialData) {
+        T value = mock(kind);
         when(value.getContainer()).thenReturn(container);
         if (value instanceof IFConfinedContext)
-            when(((IFConfinedContext) value).getViewer()).thenReturn(viewer);
+            when(((IFConfinedContext) value).getViewer()).thenReturn(subject);
         if (parent != null) when(value.getConfig()).thenCallRealMethod();
         return value;
     }
@@ -64,7 +65,8 @@ public final class MockElementFactory extends ElementFactory {
             int slot,
             Component component,
             @NotNull ViewContainer container,
-            @NotNull Viewer viewer,
+            Viewer subject,
+            @NotNull Map<String, Viewer> viewers,
             @NotNull IFContext parent,
             @NotNull Class<?> kind) {
         @SuppressWarnings("unchecked")

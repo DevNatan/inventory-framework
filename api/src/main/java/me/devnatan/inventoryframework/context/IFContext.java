@@ -2,19 +2,13 @@ package me.devnatan.inventoryframework.context;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
-import me.devnatan.inventoryframework.RootView;
-import me.devnatan.inventoryframework.ViewConfig;
-import me.devnatan.inventoryframework.ViewContainer;
-import me.devnatan.inventoryframework.Viewer;
-import me.devnatan.inventoryframework.VirtualView;
+import me.devnatan.inventoryframework.*;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.state.StateValueHost;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.Unmodifiable;
 import org.jetbrains.annotations.UnmodifiableView;
 
 public interface IFContext extends VirtualView, StateValueHost {
@@ -43,8 +37,8 @@ public interface IFContext extends VirtualView, StateValueHost {
      * @return All view of all viewers.
      */
     @NotNull
-    @Unmodifiable
-    Set<Viewer> getViewers();
+    @UnmodifiableView
+    List<Viewer> getViewers();
 
     /**
      * An unmodifiable view of all viewers that are tied to this context.
@@ -214,4 +208,11 @@ public interface IFContext extends VirtualView, StateValueHost {
      */
     @ApiStatus.Internal
     Object getInitialData();
+
+    /**
+     * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     */
+    @ApiStatus.Experimental
+    boolean isShared();
 }

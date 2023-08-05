@@ -12,13 +12,7 @@ import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.LAY
 import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.OPEN;
 import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.UPDATE;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.Spliterator;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Consumer;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.internal.ElementFactory;
@@ -116,7 +110,7 @@ public class DefaultRootView implements RootView, StateWatcher {
     }
 
     @Override
-    public void open(@NotNull Viewer viewer, Object initialData) {
+    public void open(@NotNull List<Viewer> viewers, Object initialData) {
         throw new UnsupportedOperationException("Missing #open(...) implementation");
     }
 

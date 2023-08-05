@@ -1,16 +1,6 @@
 package me.devnatan.inventoryframework.context;
 
-import java.util.ArrayDeque;
-import java.util.Collections;
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewContainer;
@@ -32,14 +22,19 @@ class BaseViewContext extends DefaultStateValueHost implements IFContext {
     private final List<Component> components = new LinkedList<>();
     private final Deque<Integer> markedForRemoval = new ArrayDeque<>();
     private final Object initialData;
-    protected final Map<String, Viewer> viewers = new HashMap<>();
+    protected final Map<String, Viewer> viewers;
     protected ViewConfig config;
 
-    public BaseViewContext(@NotNull RootView root, @Nullable ViewContainer container, Object initialData) {
+    public BaseViewContext(
+            @NotNull RootView root,
+            @Nullable ViewContainer container,
+            @NotNull Map<String, Viewer> viewers,
+            Object initialData) {
         this.root = root;
         this.container = container;
         this.config = root.getConfig();
         this.initialData = initialData;
+        this.viewers = new HashMap<>(viewers);
     }
 
     @NotNull
@@ -65,8 +60,8 @@ class BaseViewContext extends DefaultStateValueHost implements IFContext {
     }
 
     @Override
-    public final @NotNull @Unmodifiable Set<Viewer> getViewers() {
-        return Collections.unmodifiableSet(new HashSet<>(getIndexedViewers().values()));
+    public final @NotNull @Unmodifiable List<Viewer> getViewers() {
+        return Collections.unmodifiableList(new ArrayList<>(getIndexedViewers().values()));
     }
 
     @Override
@@ -120,7 +115,7 @@ class BaseViewContext extends DefaultStateValueHost implements IFContext {
 
     @Override
     public final void openForEveryone(Class<? extends RootView> other) {
-        getViewers().forEach(viewer -> getRoot().getFramework().open(other, viewer, getInitialData()));
+        getRoot().getFramework().open(other, getViewers(), getInitialData());
     }
 
     @Override
@@ -163,6 +158,11 @@ class BaseViewContext extends DefaultStateValueHost implements IFContext {
     @Override
     public Object getInitialData() {
         return initialData instanceof Map ? Collections.unmodifiableMap((Map<?, ?>) initialData) : initialData;
+    }
+
+    @Override
+    public boolean isShared() {
+        return getViewers().size() > 1;
     }
 
     @Override

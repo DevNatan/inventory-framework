@@ -4,6 +4,7 @@ import static me.devnatan.inventoryframework.TestUtils.createRootMock;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 
+import java.util.Map;
 import java.util.UUID;
 import java.util.function.BiFunction;
 import me.devnatan.inventoryframework.ViewConfig;
@@ -26,6 +27,7 @@ public class PlatformRenderContextTest {
                         createRootMock(),
                         mock(ViewContainer.class),
                         mock(Viewer.class),
+                        mock(Map.class),
                         mock(ViewConfig.class),
                         null) {
                     @Override

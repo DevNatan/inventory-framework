@@ -3,10 +3,7 @@ package me.devnatan.inventoryframework.context;
 import static java.lang.String.format;
 import static me.devnatan.inventoryframework.utils.SlotConverter.convertSlot;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import me.devnatan.inventoryframework.InventoryFrameworkException;
@@ -31,8 +28,14 @@ abstract class PlatformRenderContext<T extends ItemComponentBuilder<T>> extends 
     private final UUID id;
 
     PlatformRenderContext(
-            UUID id, RootView root, ViewContainer container, Viewer viewer, ViewConfig config, Object initialData) {
-        super(root, container, viewer, initialData);
+            UUID id,
+            RootView root,
+            ViewContainer container,
+            Viewer subject,
+            Map<String, Viewer> viewers,
+            ViewConfig config,
+            Object initialData) {
+        super(root, container, subject, viewers, initialData);
         this.id = id;
         this.config = config;
     }

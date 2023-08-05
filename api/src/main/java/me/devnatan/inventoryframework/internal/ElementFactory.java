@@ -1,5 +1,6 @@
 package me.devnatan.inventoryframework.internal;
 
+import java.util.Map;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
@@ -46,9 +47,9 @@ public abstract class ElementFactory {
     public abstract <T extends IFContext> T createContext(
             @NotNull RootView root,
             ViewContainer container,
-            @NotNull Viewer viewer,
+            Viewer subject,
+            @NotNull Map<String, Viewer> viewers,
             @NotNull Class<T> kind,
-            boolean shared,
             @Nullable IFContext parent,
             Object initialData);
 
@@ -57,7 +58,8 @@ public abstract class ElementFactory {
             int slot,
             Component component,
             @NotNull ViewContainer container,
-            @NotNull Viewer viewer,
+            Viewer subject,
+            @NotNull Map<String, Viewer> viewers,
             @NotNull IFContext parent,
             @NotNull Class<?> kind);
 

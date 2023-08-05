@@ -1,8 +1,6 @@
 package me.devnatan.inventoryframework;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -89,11 +87,12 @@ public abstract class IFViewFrame<S extends IFViewFrame<S>> {
      * Opens a view to a {@link Viewer}.
      *
      * @param viewClass   The target view to be open.
-     * @param viewer      The viewer that the view will be open to.
+     * @param viewers     The viewers that the view will be open to. They will share the same context.
      * @param initialData The initial data.
      * @throws IllegalStateException If this view is not registered in this view frame.
      */
-    public abstract void open(@NotNull Class<? extends RootView> viewClass, @NotNull Viewer viewer, Object initialData);
+    public abstract void open(
+            @NotNull Class<? extends RootView> viewClass, @NotNull Iterable<Viewer> viewers, Object initialData);
 
     /**
      * If this view frame is registered.

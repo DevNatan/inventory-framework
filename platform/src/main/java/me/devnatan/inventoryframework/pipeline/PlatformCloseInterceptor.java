@@ -2,7 +2,6 @@ package me.devnatan.inventoryframework.pipeline;
 
 import me.devnatan.inventoryframework.PlatformView;
 import me.devnatan.inventoryframework.RootView;
-import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.IFCloseContext;
 import me.devnatan.inventoryframework.context.IFContext;
@@ -15,20 +14,20 @@ public final class PlatformCloseInterceptor implements PipelineInterceptor<Virtu
         if (!(subject instanceof IFCloseContext)) return;
 
         final IFCloseContext context = (IFCloseContext) subject;
+        final IFContext parent = context.getParent();
         final RootView root = context.getRoot();
         tryCallPlatformRootCloseHandler(root, context);
 
-        final Viewer viewer = context.getViewer();
         if (context.isCancelled()) {
             pipeline.finish();
             return;
         }
 
-        context.removeViewer(viewer);
+        parent.removeViewer(context.getViewer());
 
-        if (canContextBeInvalidated(context)) {
+        if (canContextBeInvalidated(parent)) {
             // TODO invalidate context
-            root.removeContext(context);
+            root.removeContext(parent);
         }
     }
 

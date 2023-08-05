@@ -50,8 +50,15 @@ final class IFInventoryListener implements Listener {
         final Component component = mainContext.getComponent(event.getRawSlot());
         if (component != null && !component.isVisible()) return;
 
-        final IFSlotClickContext slotContext =
-                new SlotClickContext(root, container, viewer, event.getRawSlot(), mainContext, component, event);
+        final IFSlotClickContext slotContext = new SlotClickContext(
+                root,
+                container,
+                viewer,
+                mainContext.getIndexedViewers(),
+                event.getRawSlot(),
+                mainContext,
+                component,
+                event);
 
         root.getPipeline().execute(StandardPipelinePhases.CLICK, slotContext);
     }
@@ -68,14 +75,15 @@ final class IFInventoryListener implements Listener {
         final ElementFactory elementFactory = root.getElementFactory();
         final String viewerIdentifier = elementFactory.convertViewer(player);
         final IFContext mainContext = root.getContext(viewerIdentifier);
+
         final Viewer viewer = mainContext.getIndexedViewers().get(viewerIdentifier);
 
         final IFCloseContext closeContext = elementFactory.createContext(
                 root,
                 mainContext.getContainer(),
                 viewer,
+                mainContext.getIndexedViewers(),
                 IFCloseContext.class,
-                false,
                 mainContext,
                 mainContext.getInitialData());
 

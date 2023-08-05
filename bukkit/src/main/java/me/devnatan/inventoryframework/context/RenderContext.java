@@ -1,7 +1,10 @@
 package me.devnatan.inventoryframework.context;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import me.devnatan.inventoryframework.BukkitViewer;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewConfig;
@@ -20,15 +23,29 @@ public final class RenderContext extends PlatformRenderContext<BukkitItemCompone
 
     @ApiStatus.Internal
     public RenderContext(
-            UUID id, RootView root, ViewContainer container, Viewer viewer, ViewConfig config, Object initialData) {
-        super(id, root, container, viewer, config, initialData);
-        this.player = ((BukkitViewer) viewer).getPlayer();
+            UUID id,
+            RootView root,
+            ViewContainer container,
+            Viewer subject,
+            Map<String, Viewer> viewers,
+            ViewConfig config,
+            Object initialData) {
+        super(id, root, container, subject, viewers, config, initialData);
+        this.player = subject != null ? ((BukkitViewer) subject).getPlayer() : null;
     }
 
     @NotNull
     @Override
     public Player getPlayer() {
         return player;
+    }
+
+    @Override
+    public List<Player> getAllPlayers() {
+        return getViewers().stream()
+                .map(viewer -> (BukkitViewer) viewer)
+                .map(BukkitViewer::getPlayer)
+                .collect(Collectors.toList());
     }
 
     /**

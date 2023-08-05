@@ -1,10 +1,9 @@
 package me.devnatan.inventoryframework;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.UUID;
+import com.google.common.collect.Lists;
+import java.util.*;
 import java.util.function.UnaryOperator;
+import java.util.stream.Collectors;
 import me.devnatan.inventoryframework.feature.DefaultFeatureInstaller;
 import me.devnatan.inventoryframework.feature.Feature;
 import me.devnatan.inventoryframework.feature.FeatureInstaller;
@@ -48,15 +47,17 @@ public class ViewFrame extends IFViewFrame<ViewFrame> implements FeatureInstalle
     }
 
     @Override
-    public void open(@NotNull Class<? extends RootView> viewClass, @NotNull Viewer viewer, Object initialData) {
-        if (!(viewer instanceof BukkitViewer))
-            throw new IllegalArgumentException("Only BukkitViewer viewer impl is supported");
+    public void open(
+            @NotNull Class<? extends RootView> viewClass, @NotNull Iterable<Viewer> viewers, Object initialData) {
+        for (final Viewer viewer : viewers)
+            if (!(viewer instanceof BukkitViewer))
+                throw new IllegalArgumentException("Only BukkitViewer viewer impl is supported");
 
         final RootView view = getRegisteredViewByType(viewClass);
         if (!(view instanceof PlatformView))
             throw new IllegalStateException("Only PlatformView can be opened through #open(...)");
 
-        view.open(viewer, initialData);
+        view.open(Lists.newArrayList(viewers), initialData);
     }
 
     /**
@@ -66,19 +67,46 @@ public class ViewFrame extends IFViewFrame<ViewFrame> implements FeatureInstalle
      * @param player    The player that the view will be open to.
      */
     public void open(@NotNull Class<? extends RootView> viewClass, @NotNull Player player) {
-        open(viewClass, PlatformUtils.getFactory().createViewer(player), null);
+        open(viewClass, Collections.singletonList(player), null);
     }
 
     /**
-     * Opens a view to a player with initial data.
+     * Opens a view to more than one player.
+     * <p>
+     * These players will see the same inventory and share the same context.
+     *
+     * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
      *
      * @param viewClass The target view to be opened.
-     * @param player    The player that the view will be open to.
+     * @param players   The players that the view will be open to.
+     */
+    @ApiStatus.Experimental
+    public void open(@NotNull Class<? extends RootView> viewClass, @NotNull Collection<? extends Player> players) {
+        open(viewClass, players, null);
+    }
+
+    /**
+     * Opens a view to more than one player with initial data.
+     * <p>
+     * These players will see the same inventory and share the same context.
+     *
+     * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     *
+     * @param viewClass   The target view to be opened.
+     * @param players     The players that the view will be open to.
      * @param initialData The initial data.
      */
+    @ApiStatus.Experimental
     public void open(
-            @NotNull Class<? extends RootView> viewClass, @NotNull Player player, @NotNull Object initialData) {
-        open(viewClass, PlatformUtils.getFactory().createViewer(player), initialData);
+            @NotNull Class<? extends RootView> viewClass,
+            @NotNull Collection<? extends Player> players,
+            Object initialData) {
+        final Set<Viewer> viewers = players.stream()
+                .map(player -> PlatformUtils.getFactory().createViewer(player))
+                .collect(Collectors.toSet());
+        open(viewClass, viewers, initialData);
     }
 
     @Override

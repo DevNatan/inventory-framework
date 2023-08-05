@@ -3,6 +3,7 @@ package me.devnatan.inventoryframework.context;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import me.devnatan.inventoryframework.BukkitViewContainer;
 import me.devnatan.inventoryframework.BukkitViewer;
 import me.devnatan.inventoryframework.RootView;
@@ -29,13 +30,14 @@ public class SlotContext extends ConfinedContext implements IFSlotContext, Conte
     public SlotContext(
             @NotNull RootView root,
             @NotNull ViewContainer container,
-            @NotNull Viewer viewer,
+            Viewer subject,
+            @NotNull Map<String, Viewer> viewers,
             int slot,
             @NotNull IFContext parent,
             @Nullable Component component) {
-        super(root, container, viewer, parent.getInitialData());
+        super(root, container, subject, viewers, parent.getInitialData());
         this.slot = slot;
-        this.player = ((BukkitViewer) viewer).getPlayer();
+        this.player = subject == null ? null : ((BukkitViewer) subject).getPlayer();
         this.parent = parent;
         this.component = component;
     }
@@ -114,6 +116,14 @@ public class SlotContext extends ConfinedContext implements IFSlotContext, Conte
     @Override
     public @NotNull Player getPlayer() {
         return player;
+    }
+
+    @Override
+    public @UnmodifiableView List<Player> getAllPlayers() {
+        return getViewers().stream()
+                .map(viewer -> (BukkitViewer) viewer)
+                .map(BukkitViewer::getPlayer)
+                .collect(Collectors.toList());
     }
 
     public ItemStack getItem() {
