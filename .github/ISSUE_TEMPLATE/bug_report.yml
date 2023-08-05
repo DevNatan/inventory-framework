@@ -41,7 +41,7 @@ body:
         - label: Sponge
         - label: Other
   - type: input
-    id: mc-version
+    id: server-version
     attributes:
       label: ⭐ Server Version
       description: What is your current Minecraft Server?
