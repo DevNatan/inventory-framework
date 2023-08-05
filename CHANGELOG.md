@@ -2,6 +2,11 @@
 
 # 3.0.0 (unreleased)
 
+# 3.0.0-beta (08-04-2023)
+
+* Inventory Framework is now published to Maven Central (#408)
+* Shared Contextx preview (#409)
+
 # 3.0.0-alpha (08-01-2023)
 
 * Item render and update handler shortcuts (#274)
