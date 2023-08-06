@@ -33,20 +33,7 @@ import me.devnatan.inventoryframework.pipeline.ScheduledUpdateAfterCloseIntercep
 import me.devnatan.inventoryframework.pipeline.ScheduledUpdateAfterRenderInterceptor;
 import me.devnatan.inventoryframework.pipeline.StandardPipelinePhases;
 import me.devnatan.inventoryframework.pipeline.UpdateInterceptor;
-import me.devnatan.inventoryframework.state.BaseState;
-import me.devnatan.inventoryframework.state.ComputedValue;
-import me.devnatan.inventoryframework.state.ImmutableValue;
-import me.devnatan.inventoryframework.state.InitialDataStateValue;
-import me.devnatan.inventoryframework.state.LazyValue;
-import me.devnatan.inventoryframework.state.MutableGenericStateImpl;
-import me.devnatan.inventoryframework.state.MutableIntState;
-import me.devnatan.inventoryframework.state.MutableIntStateImpl;
-import me.devnatan.inventoryframework.state.MutableState;
-import me.devnatan.inventoryframework.state.MutableValue;
-import me.devnatan.inventoryframework.state.PaginationState;
-import me.devnatan.inventoryframework.state.State;
-import me.devnatan.inventoryframework.state.StateValueFactory;
-import me.devnatan.inventoryframework.state.StateValueHost;
+import me.devnatan.inventoryframework.state.*;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -258,7 +245,7 @@ public abstract class PlatformView<
     }
 
     /**
-     * Creates an immutable {@link #lazyState(Function) lazy state} whose value is always computed
+     * Creates an mutable {@link #lazyState(Function) lazy state} whose value is always computed
      * from the initial data set by its {@link StateValueHost}.
      * <p>
      * When the holder is a {@link IFOpenContext}, the initial value will be the value defined
@@ -272,18 +259,18 @@ public abstract class PlatformView<
      * @param <T> The initial data value type.
      * @return A state computed with an initial opening data value.
      */
-    protected final <T> State<T> initialState(@NotNull String key) {
+    protected final <T> MutableState<T> initialState(@NotNull String key) {
         requireNotInitialized();
         final long id = State.next();
-        final State<T> state =
-                new BaseState<>(id, (host, valueState) -> new InitialDataStateValue(valueState, host, key));
+        final MutableState<T> state =
+                new BaseMutableState<>(id, (host, valueState) -> new InitialDataStateValue(valueState, host, key));
         stateRegistry.registerState(state, this);
 
         return state;
     }
 
     /**
-     * Creates an immutable {@link #lazyState(Function) lazy state} whose value is always computed
+     * Creates an mutable {@link #lazyState(Function) lazy state} whose value is always computed
      * from the initial data set by its {@link StateValueHost}.
      * <p>
      * When the holder is a {@code OpenViewContext}, the initial value will be the value defined
