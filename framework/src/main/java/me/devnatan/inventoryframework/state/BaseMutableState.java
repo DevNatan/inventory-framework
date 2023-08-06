@@ -2,9 +2,13 @@ package me.devnatan.inventoryframework.state;
 
 import org.jetbrains.annotations.NotNull;
 
-class BaseMutableState<T> extends BaseState<T> implements MutableState<T> {
+/**
+ * <b><i> This is an internal inventory-framework API that should not be used from outside of
+ * this library. No compatibility guarantees are provided. </i></b>
+ */
+public class BaseMutableState<T> extends BaseState<T> implements MutableState<T> {
 
-    protected BaseMutableState(long id, StateValueFactory valueFactory) {
+    public BaseMutableState(long id, StateValueFactory valueFactory) {
         super(id, valueFactory);
     }
 

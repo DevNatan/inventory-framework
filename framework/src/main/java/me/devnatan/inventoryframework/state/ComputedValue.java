@@ -2,12 +2,17 @@ package me.devnatan.inventoryframework.state;
 
 import java.util.Objects;
 import java.util.function.Supplier;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Computed value whose value returned by the function to get the state value is always a new value
  * created by {@link ComputedValue#factory}.
+ *
+ * <b><i> This is an internal inventory-framework API that should not be used from outside of
+ * this library. No compatibility guarantees are provided. </i></b>
  */
+@ApiStatus.Internal
 public final class ComputedValue extends StateValue {
 
     private final Supplier<?> factory;

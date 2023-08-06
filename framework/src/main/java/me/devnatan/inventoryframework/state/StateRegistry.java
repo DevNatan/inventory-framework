@@ -4,11 +4,16 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * HashMap-backed state container to store a collection of states.
+ *
+ * <b><i> This is an internal inventory-framework API that should not be used from outside of
+ * this library. No compatibility guarantees are provided. </i></b>
  */
+@ApiStatus.Internal
 public final class StateRegistry implements Iterable<State<?>> {
 
     private final Map<Long, State<?>> stateMap = new HashMap<>();
