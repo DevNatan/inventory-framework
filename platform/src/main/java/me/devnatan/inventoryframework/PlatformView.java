@@ -556,11 +556,12 @@ public abstract class PlatformView<
     public final void open(@NotNull List<Viewer> viewers, Object initialData) {
         if (!isInitialized()) throw new IllegalStateException("Cannot open a uninitialized view");
 
+        final Viewer subject = viewers.size() == 1 ? viewers.get(0) : null;
         final IFOpenContext context = getElementFactory()
                 .createContext(
                         this,
                         null,
-                        null,
+                        subject,
                         viewers.stream().collect(Collectors.toMap(Viewer::getId, Function.identity())),
                         IFOpenContext.class,
                         null,
