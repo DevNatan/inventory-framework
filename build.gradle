@@ -3,4 +3,4 @@ plugins {
 }
 
 group 'me.devnatan'
-version '3.0.0-beta'
+version '3.0.0-rc.1'

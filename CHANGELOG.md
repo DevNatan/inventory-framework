@@ -1,6 +1,15 @@
 # Changelog
 
-# 3.0.0 (unreleased)
+# 3.0.0-rc.1 (08-07-2023)
+
+* Null `getPlayer()` in RenderContext (#414)
+* Error when a empty pagination source is provided (#415)
+* Dynamically rendered items in pagination being positioned in the wrong place (#416)
+* New `ViewFrame.open(view, player, data)` overload (#417)
+* New `item.updateOnClick()` to trigger context update on item click (#418)
+* `initialState()` is now mutable so its value can be changed now (#413)
+* Bump junit from 5.9.3 to 5.10.0 (#406)
+* Fix relocation warn by checking for InventoryFramework class in runtime (#412)
 
 # 3.0.0-beta (08-04-2023)
 
