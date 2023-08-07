@@ -2,6 +2,7 @@ package me.devnatan.inventoryframework.state;
 
 import java.util.Objects;
 import java.util.function.Supplier;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -9,7 +10,11 @@ import org.jetbrains.annotations.NotNull;
  * <p>
  * The initial state value is set by a {@link LazyValue#computation}, and this value remains the
  * {@link LazyValue#currValue current value} throughout the lifecycle of that value.
+ *
+ * <b><i> This is an internal inventory-framework API that should not be used from outside of
+ * this library. No compatibility guarantees are provided. </i></b>
  */
+@ApiStatus.Internal
 public final class LazyValue extends StateValue {
 
     private static final Object UNINITIALIZED = new Object();

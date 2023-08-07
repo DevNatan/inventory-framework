@@ -5,11 +5,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * HashMap-backed Default implementation for StateHost.
+ *
+ * <b><i> This is an internal inventory-framework API that should not be used from outside of
+ * this library. No compatibility guarantees are provided. </i></b>
  */
+@ApiStatus.Internal
 public class DefaultStateValueHost implements StateValueHost {
 
     public static final Object UNINITIALIZED_VALUE = new Object();
