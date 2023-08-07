@@ -1,14 +1,6 @@
 package me.devnatan.inventoryframework.component;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -396,6 +388,8 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
         pageSize = layoutSlot.getPositions().length;
 
         final List<?> elements = getPageContents(currPageIndex);
+        if (elements.isEmpty()) return;
+
         final int elementsLen = elements.size();
         int iterationIndex = 0;
         for (final int position : layoutSlot.getPositions()) {
