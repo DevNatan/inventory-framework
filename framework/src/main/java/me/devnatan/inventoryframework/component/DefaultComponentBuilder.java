@@ -13,7 +13,7 @@ abstract class DefaultComponentBuilder<S extends ComponentBuilder<S>> implements
 
     protected String referenceKey;
     protected Map<String, Object> data;
-    protected boolean cancelOnClick, closeOnClick;
+    protected boolean cancelOnClick, closeOnClick, updateOnClick;
     protected final Set<State<?>> watching = new LinkedHashSet<>();
     protected boolean isManagedExternally;
 
@@ -39,6 +39,12 @@ abstract class DefaultComponentBuilder<S extends ComponentBuilder<S>> implements
     @Override
     public S closeOnClick() {
         closeOnClick = !closeOnClick;
+        return (S) this;
+    }
+
+    @Override
+    public S updateOnClick() {
+        updateOnClick = !updateOnClick;
         return (S) this;
     }
 

@@ -29,6 +29,7 @@ public class ItemComponent implements Component, InteractionHandler {
     private final Consumer<? super IFSlotClickContext> clickHandler;
     private final Set<State<?>> watching;
     private final boolean isManagedExternally;
+    private final boolean updateOnClick;
 
     public ItemComponent(
             VirtualView root,
@@ -41,7 +42,8 @@ public class ItemComponent implements Component, InteractionHandler {
             Consumer<? super IFSlotContext> updateHandler,
             Consumer<? super IFSlotClickContext> clickHandler,
             Set<State<?>> watching,
-            boolean isManagedExternally) {
+            boolean isManagedExternally,
+            boolean updateOnClick) {
         this.root = root;
         this.position = position;
         this.stack = stack;
@@ -53,6 +55,7 @@ public class ItemComponent implements Component, InteractionHandler {
         this.clickHandler = clickHandler;
         this.watching = watching;
         this.isManagedExternally = isManagedExternally;
+        this.updateOnClick = updateOnClick;
     }
 
     @NotNull
@@ -76,6 +79,10 @@ public class ItemComponent implements Component, InteractionHandler {
 
     public boolean isCloseOnClick() {
         return closeOnClick;
+    }
+
+    public boolean isUpdateOnClick() {
+        return updateOnClick;
     }
 
     public BooleanSupplier getShouldRender() {
@@ -166,6 +173,7 @@ public class ItemComponent implements Component, InteractionHandler {
     public void clicked(@NotNull Component component, @NotNull IFSlotClickContext context) {
         if (clickHandler == null) return;
         clickHandler.accept(context);
+        if (isUpdateOnClick()) context.update();
     }
 
     @Override

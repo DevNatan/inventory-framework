@@ -193,7 +193,8 @@ public final class BukkitItemComponentBuilder extends DefaultComponentBuilder<Bu
                 updateHandler,
                 clickHandler,
                 watching,
-                isManagedExternally);
+                isManagedExternally,
+                updateOnClick);
     }
 
     @Override
