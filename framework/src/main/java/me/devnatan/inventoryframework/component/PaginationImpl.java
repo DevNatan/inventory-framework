@@ -396,6 +396,8 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
         pageSize = layoutSlot.getPositions().length;
 
         final List<?> elements = getPageContents(currPageIndex);
+        if (elements.isEmpty()) return;
+
         final int elementsLen = elements.size();
         int iterationIndex = 0;
         for (final int position : layoutSlot.getPositions()) {
