@@ -78,7 +78,7 @@ public final class PaginationStateBuilder<
         return elementFactory((context, index, slot, value) -> {
             @SuppressWarnings("unchecked")
             B builder = (B) root.getElementFactory().createComponentBuilder(context);
-            builder.withSlot(slot);
+            builder.withSlot(slot).withExternallyManaged(true);
             itemFactory.accept(builder, value);
             return builder;
         });

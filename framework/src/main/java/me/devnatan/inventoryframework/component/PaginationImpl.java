@@ -403,7 +403,9 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
         for (final int position : layoutSlot.getPositions()) {
             final Object value = elements.get(iterationIndex++);
             final ComponentFactory factory = elementFactory.create(context, iterationIndex, position, value);
-            getComponentsInternal().add(factory.create());
+            final Component component = factory.create();
+
+            getComponentsInternal().add(component);
 
             if (iterationIndex == elementsLen) break;
         }
@@ -458,6 +460,11 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
                 break;
             }
         }
+    }
+
+    @Override
+    public boolean isManagedExternally() {
+        return true;
     }
 
     @VisibleForTesting
