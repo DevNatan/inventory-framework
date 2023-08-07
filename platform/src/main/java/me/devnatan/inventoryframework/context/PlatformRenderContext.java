@@ -76,7 +76,8 @@ abstract class PlatformRenderContext<T extends ItemComponentBuilder<T>> extends 
      * This function is for creating items whose slot is set dynamically during item rendering.
      * <pre>{@code
      * unsetSlot().onRender(render -> {
-     *     render.withSlot(...);
+     *     render.setItem(...);
+     *     render.setSlot(...);
      * });
      * }</pre>
      *

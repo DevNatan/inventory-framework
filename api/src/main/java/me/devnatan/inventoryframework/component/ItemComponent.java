@@ -28,6 +28,7 @@ public class ItemComponent implements Component, InteractionHandler {
     private final Consumer<? super IFSlotContext> updateHandler;
     private final Consumer<? super IFSlotClickContext> clickHandler;
     private final Set<State<?>> watching;
+    private final boolean isManagedExternally;
 
     public ItemComponent(
             VirtualView root,
@@ -39,7 +40,8 @@ public class ItemComponent implements Component, InteractionHandler {
             Consumer<? super IFSlotRenderContext> renderHandler,
             Consumer<? super IFSlotContext> updateHandler,
             Consumer<? super IFSlotClickContext> clickHandler,
-            Set<State<?>> watching) {
+            Set<State<?>> watching,
+            boolean isManagedExternally) {
         this.root = root;
         this.position = position;
         this.stack = stack;
@@ -50,6 +52,7 @@ public class ItemComponent implements Component, InteractionHandler {
         this.updateHandler = updateHandler;
         this.clickHandler = clickHandler;
         this.watching = watching;
+        this.isManagedExternally = isManagedExternally;
     }
 
     @NotNull
@@ -113,23 +116,26 @@ public class ItemComponent implements Component, InteractionHandler {
         }
 
         if (getRenderHandler() != null) {
-            final int currSlot = getPosition();
+            final int initialSlot = getPosition();
             getRenderHandler().accept(context);
 
-            final int contextSlot = context.getSlot();
-            position = contextSlot;
+            // Externally managed components have its own displacement measures
+            if (!isManagedExternally()) {
+                final int updatedSlot = context.getSlot();
+                position = updatedSlot;
 
-            if (contextSlot == -1 && currSlot == -1) {
-                // TODO needs more user-friendly "do something"-like message
-                throw new InventoryFrameworkException("Missing position (unset slot) for item component");
+                if (updatedSlot == -1 && initialSlot == -1) {
+                    // TODO needs more user-friendly "do something"-like message
+                    throw new InventoryFrameworkException("Missing position (unset slot) for item component");
+                }
+
+                // TODO Misplaced - move this to overall item component misplacement check
+                if (initialSlot != -1 && initialSlot != updatedSlot) {
+                    context.getContainer().removeItem(initialSlot);
+                }
             }
 
-            // Misplaced - TODO Move this to overall component misplacement check
-            if (currSlot != -1 && currSlot != contextSlot) {
-                context.getContainer().removeItem(currSlot);
-            }
-
-            context.getContainer().renderItem(contextSlot, context.getResult());
+            context.getContainer().renderItem(getPosition(), context.getResult());
             return;
         }
 
@@ -174,6 +180,11 @@ public class ItemComponent implements Component, InteractionHandler {
     }
 
     @Override
+    public boolean isManagedExternally() {
+        return isManagedExternally;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -188,7 +199,8 @@ public class ItemComponent implements Component, InteractionHandler {
 
     @Override
     public String toString() {
-        return "ItemComponent{" + "position="
+        return "ItemComponent{" + "root="
+                + root + ", position="
                 + position + ", stack="
                 + stack + ", cancelOnClick="
                 + cancelOnClick + ", closeOnClick="
@@ -196,6 +208,8 @@ public class ItemComponent implements Component, InteractionHandler {
                 + shouldRender + ", renderHandler="
                 + renderHandler + ", updateHandler="
                 + updateHandler + ", clickHandler="
-                + clickHandler + '}';
+                + clickHandler + ", watching="
+                + watching + ", isManagedExternally="
+                + isManagedExternally + '}';
     }
 }

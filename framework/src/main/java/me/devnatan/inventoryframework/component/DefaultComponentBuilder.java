@@ -11,30 +11,11 @@ import org.jetbrains.annotations.NotNull;
 @SuppressWarnings("unchecked")
 abstract class DefaultComponentBuilder<S extends ComponentBuilder<S>> implements ComponentBuilder<S> {
 
-    private String referenceKey;
-    private Map<String, Object> data;
-    private boolean cancelOnClick, closeOnClick;
-    private final Set<State<?>> watching = new LinkedHashSet<>();
-
-    protected final String getReferenceKey() {
-        return referenceKey;
-    }
-
-    protected final Map<String, Object> getData() {
-        return data;
-    }
-
-    protected final boolean isCancelOnClick() {
-        return cancelOnClick;
-    }
-
-    protected final boolean isCloseOnClick() {
-        return closeOnClick;
-    }
-
-    protected final Set<State<?>> getWatching() {
-        return watching;
-    }
+    protected String referenceKey;
+    protected Map<String, Object> data;
+    protected boolean cancelOnClick, closeOnClick;
+    protected final Set<State<?>> watching = new LinkedHashSet<>();
+    protected boolean isManagedExternally;
 
     @Override
     public S referencedBy(@NotNull String key) {
@@ -64,6 +45,12 @@ abstract class DefaultComponentBuilder<S extends ComponentBuilder<S>> implements
     @Override
     public S watch(State<?>... states) {
         watching.addAll(Arrays.asList(states));
+        return (S) this;
+    }
+
+    @Override
+    public S withExternallyManaged(boolean isExternallyManaged) {
+        isManagedExternally = isExternallyManaged;
         return (S) this;
     }
 }

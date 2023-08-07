@@ -14,7 +14,6 @@ public class FakeComponent implements Component, InteractionHandler {
 
     private final VirtualView root;
     private int position = 0;
-    private boolean markedForRemoval = false;
     public Object item = new Object();
 
     public FakeComponent(VirtualView root) {
@@ -72,6 +71,11 @@ public class FakeComponent implements Component, InteractionHandler {
     @Override
     public boolean isVisible() {
         return true;
+    }
+
+    @Override
+    public boolean isManagedExternally() {
+        return false;
     }
 
     @Override

@@ -1,6 +1,7 @@
 package me.devnatan.inventoryframework.component;
 
 import me.devnatan.inventoryframework.state.State;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -88,4 +89,11 @@ public interface ComponentBuilder<S extends ComponentBuilder<S>> {
      * @return A copy of this component builder.
      */
     S copy();
+
+    /**
+     * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided.</i></b>
+     */
+    @ApiStatus.Internal
+    S withExternallyManaged(boolean isExternallyManaged);
 }

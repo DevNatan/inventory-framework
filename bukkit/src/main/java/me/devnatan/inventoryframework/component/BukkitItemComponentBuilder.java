@@ -186,18 +186,20 @@ public final class BukkitItemComponentBuilder extends DefaultComponentBuilder<Bu
                 root,
                 slot,
                 item,
-                isCancelOnClick(),
-                isCloseOnClick(),
+                cancelOnClick,
+                closeOnClick,
                 shouldRender,
                 renderHandler,
                 updateHandler,
                 clickHandler,
-                getWatching());
+                watching,
+                isManagedExternally);
     }
 
     @Override
     public BukkitItemComponentBuilder copy() {
         return new BukkitItemComponentBuilder(
-                root, slot, item, renderHandler, clickHandler, updateHandler, shouldRender);
+                        root, slot, item, renderHandler, clickHandler, updateHandler, shouldRender)
+                .withExternallyManaged(isManagedExternally);
     }
 }
