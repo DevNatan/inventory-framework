@@ -22,7 +22,6 @@ public class ViewFrame extends IFViewFrame<ViewFrame> implements FeatureInstalle
 
     private static final String BSTATS_SYSTEM_PROP = "inventory-framework.enable-bstats";
     private static final int BSTATS_PROJECT_ID = 15518;
-    private static final String ROOT_PKG = "me.devnatan.inventoryframework";
     private static final String PLUGIN_FQN = "me.devnatan.inventoryframework.runtime.InventoryFramework";
 
     private static final String RELOCATION_MESSAGE =
@@ -114,8 +113,9 @@ public class ViewFrame extends IFViewFrame<ViewFrame> implements FeatureInstalle
         if (isRegistered()) throw new IllegalStateException("This view frame is already registered");
 
         tryEnableMetrics();
+        checkRelocationIssues();
         initializeViews();
-        registerListeners();
+        getOwner().getServer().getPluginManager().registerEvents(new IFInventoryListener(this), getOwner());
         setRegistered(true);
         return this;
     }
@@ -136,16 +136,6 @@ public class ViewFrame extends IFViewFrame<ViewFrame> implements FeatureInstalle
             }
             iterator.remove();
         }
-    }
-
-    @ApiStatus.Internal
-    public boolean isLibraryAsPlugin() {
-        return getOwner().getDescription().getMain().equals(PLUGIN_FQN);
-    }
-
-    @ApiStatus.Internal
-    public boolean isShaded() {
-        return getClass().getPackage().getName().equals(ROOT_PKG);
     }
 
     private void tryEnableMetrics() {
@@ -171,7 +161,7 @@ public class ViewFrame extends IFViewFrame<ViewFrame> implements FeatureInstalle
         }
     }
 
-    @SuppressWarnings("rawtypes")
+    @SuppressWarnings({"rawtypes", "unchecked", "CallToPrintStackTrace"})
     private void initializeViews() {
         for (final Map.Entry<UUID, RootView> entry : getRegisteredViews().entrySet()) {
             final RootView rootView = entry.getValue();
@@ -194,16 +184,23 @@ public class ViewFrame extends IFViewFrame<ViewFrame> implements FeatureInstalle
         }
     }
 
-    private void registerListeners() {
+    private void checkRelocationIssues() {
         final Plugin plugin = getOwner();
-        if (!isLibraryAsPlugin() && isShaded()) {
+        final boolean isLibraryAsPluginEnabled =
+                getOwner().getServer().getPluginManager().isPluginEnabled("InventoryFramework");
+        boolean isLibraryPresent = false;
+        try {
+            Class.forName(PLUGIN_FQN);
+            isLibraryPresent = true;
+        } catch (ClassNotFoundException ignored) {
+        }
+
+        if (!isLibraryAsPluginEnabled && isLibraryPresent) {
             plugin.getLogger().warning(RELOCATION_MESSAGE);
             plugin.getServer()
                     .getPluginManager()
                     .registerEvents(new IFLibraryConflictWarningListener(RELOCATION_MESSAGE), plugin);
         }
-
-        plugin.getServer().getPluginManager().registerEvents(new IFInventoryListener(this), plugin);
     }
 
     /**
