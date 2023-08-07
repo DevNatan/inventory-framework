@@ -1,7 +1,12 @@
 package me.devnatan.inventoryframework;
 
 import com.google.common.collect.Lists;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import me.devnatan.inventoryframework.feature.DefaultFeatureInstaller;
@@ -45,6 +50,13 @@ public class ViewFrame extends IFViewFrame<ViewFrame> implements FeatureInstalle
         return owner;
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
     @Override
     public void open(
             @NotNull Class<? extends RootView> viewClass, @NotNull Iterable<Viewer> viewers, Object initialData) {
@@ -66,7 +78,18 @@ public class ViewFrame extends IFViewFrame<ViewFrame> implements FeatureInstalle
      * @param player    The player that the view will be open to.
      */
     public void open(@NotNull Class<? extends RootView> viewClass, @NotNull Player player) {
-        open(viewClass, Collections.singletonList(player), null);
+        open(viewClass, player, null);
+    }
+
+    /**
+     * Opens a view to a player with initial data.
+     *
+     * @param viewClass The target view to be opened.
+     * @param player    The player that the view will be open to.
+     * @param initialData The initial data.
+     */
+    public void open(@NotNull Class<? extends RootView> viewClass, @NotNull Player player, Object initialData) {
+        open(viewClass, Collections.singletonList(player), initialData);
     }
 
     /**
