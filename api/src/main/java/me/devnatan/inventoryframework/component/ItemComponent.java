@@ -171,8 +171,7 @@ public class ItemComponent implements Component, InteractionHandler {
 
     @Override
     public void clicked(@NotNull Component component, @NotNull IFSlotClickContext context) {
-        if (clickHandler == null) return;
-        clickHandler.accept(context);
+        if (clickHandler != null) clickHandler.accept(context);
         if (isUpdateOnClick()) context.update();
     }
 
