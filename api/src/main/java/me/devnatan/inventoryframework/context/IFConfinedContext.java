@@ -35,6 +35,17 @@ public interface IFConfinedContext extends IFContext {
     void openForPlayer(@NotNull Class<? extends RootView> other);
 
     /**
+     * Opens a new view only for the player that is in the current scope of execution with an
+     * initially defined data.
+     * <p>
+     * This context will be immediately invalidated if there are no viewers left after opening.
+     *
+     * @param other The view to be opened.
+     * @param initialData The initial context data.
+     */
+    void openForPlayer(@NotNull Class<? extends RootView> other, Object initialData);
+
+    /**
      * Updates the container title only for the player current scope of execution.
      *
      * <p>This should not be used before the container is opened, if you need to set the __initial

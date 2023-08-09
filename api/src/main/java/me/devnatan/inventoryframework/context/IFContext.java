@@ -150,6 +150,16 @@ public interface IFContext extends VirtualView, StateValueHost {
     void openForEveryone(Class<? extends RootView> other);
 
     /**
+     * Opens a new view for all viewers in that context with an initially defined data.
+     * <p>
+     * This context will be immediately invalidated if there are no viewers left after opening.
+     *
+     * @param other The view to be opened.
+     * @param initialData The initial data.
+     */
+    void openForEveryone(Class<? extends RootView> other, Object initialData);
+
+    /**
      * All components in this context.
      *
      * @return An unmodifiable List view of all components in this context.
@@ -201,12 +211,8 @@ public interface IFContext extends VirtualView, StateValueHost {
      * Data defined when a context is created, usually this is data set when the context is
      * opened for a viewer.
      *
-     * <b><i> This is an internal inventory-framework API that should not be used from outside of
-     * this library. No compatibility guarantees are provided. </i></b>
-     *
      * @return The initial context data.
      */
-    @ApiStatus.Internal
     Object getInitialData();
 
     /**
