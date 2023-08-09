@@ -64,6 +64,11 @@ public class OpenContext extends ConfinedContext implements IFOpenContext, Conte
     }
 
     @Override
+    public void openForPlayer(@NotNull Class<? extends RootView> other, Object initialData) {
+        unsupportedOperation();
+    }
+
+    @Override
     public void resetTitleForPlayer() {
         unsupportedOperation();
     }

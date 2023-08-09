@@ -115,7 +115,12 @@ class BaseViewContext extends DefaultStateValueHost implements IFContext {
 
     @Override
     public final void openForEveryone(Class<? extends RootView> other) {
-        getRoot().getFramework().open(other, getViewers(), getInitialData());
+        openForEveryone(other, null);
+    }
+
+    @Override
+    public void openForEveryone(Class<? extends RootView> other, Object initialData) {
+        getRoot().getFramework().open(other, getViewers(), initialData);
     }
 
     @Override
