@@ -67,7 +67,6 @@ public final class InventoryUpdate {
     // Methods factory.
     private static final MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
 
-    private static final JavaPlugin PLUGIN = JavaPlugin.getProvidingPlugin(InventoryUpdate.class);
     private static final Set<String> UNOPENABLES = Sets.newHashSet("CRAFTING", "CREATIVE", "PLAYER");
     private static final boolean SUPPORTS_19 = ReflectionUtils.supports(19);
     private static final Object[] DUMMY_COLOR_MODIFIERS = new Object[0];
@@ -170,7 +169,6 @@ public final class InventoryUpdate {
 
             // If the container was added in a newer version than the current, return.
             if (container.getContainerVersion() > ReflectionUtils.MINOR_NUMBER && useContainers()) {
-                PLUGIN.getLogger().warning("This container doesn't work on your current version.");
                 return;
             }
 
