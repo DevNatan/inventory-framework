@@ -32,7 +32,6 @@ import java.util.Set;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.InventoryView;
-import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * A utility class for update the inventory of a player. This is useful to change the title of an
