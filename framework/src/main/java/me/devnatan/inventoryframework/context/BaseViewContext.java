@@ -99,12 +99,12 @@ class BaseViewContext extends DefaultStateValueHost implements IFContext {
     }
 
     @Override
-    public final void updateTitle(@NotNull String title) {
+    public final void updateTitleForEveryone(@NotNull String title) {
         getContainer().changeTitle(title);
     }
 
     @Override
-    public final void resetTitle() {
+    public final void resetTitleForEveryone() {
         getContainer().changeTitle(null);
     }
 

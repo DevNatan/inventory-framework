@@ -143,7 +143,11 @@ public final class BukkitViewContainer implements ViewContainer {
 
     @Override
     public void changeTitle(@Nullable String title, @NotNull Viewer target) {
-        InventoryUpdate.updateInventory(((BukkitViewer) target).getPlayer(), title);
+        changeTitle(title, ((BukkitViewer) target).getPlayer());
+    }
+
+    public void changeTitle(@Nullable String title, @NotNull Player target) {
+        InventoryUpdate.updateInventory(target, title);
     }
 
     @Override

@@ -46,12 +46,12 @@ class ConfinedContext extends BaseViewContext implements IFConfinedContext {
 
     @Override
     public void updateTitleForPlayer(@NotNull String title) {
-        getContainer().changeTitle(title, viewer);
+        getContainer().changeTitle(title, getViewer());
     }
 
     @Override
     public void resetTitleForPlayer() {
-        getContainer().changeTitle(null, viewer);
+        getContainer().changeTitle(null, getViewer());
     }
 
     @Override

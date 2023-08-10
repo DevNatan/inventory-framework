@@ -126,6 +126,16 @@ public class SlotContext extends ConfinedContext implements IFSlotContext, Conte
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public void updateTitleForPlayer(@NotNull String title, @NotNull Player player) {
+        ((BukkitViewContainer) getContainer()).changeTitle(title, player);
+    }
+
+    @Override
+    public void resetTitleForPlayer(@NotNull Player player) {
+        ((BukkitViewContainer) getContainer()).changeTitle(null, player);
+    }
+
     public ItemStack getItem() {
         return ((BukkitViewContainer) getContainer()).getInventory().getItem(getSlot());
     }
