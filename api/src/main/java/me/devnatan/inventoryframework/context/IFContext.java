@@ -3,7 +3,11 @@ package me.devnatan.inventoryframework.context;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import me.devnatan.inventoryframework.*;
+import me.devnatan.inventoryframework.RootView;
+import me.devnatan.inventoryframework.ViewConfig;
+import me.devnatan.inventoryframework.ViewContainer;
+import me.devnatan.inventoryframework.Viewer;
+import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.state.StateValueHost;
 import org.jetbrains.annotations.ApiStatus;
@@ -107,10 +111,10 @@ public interface IFContext extends VirtualView, StateValueHost {
     String getInitialTitle();
 
     /**
-     * Title that has been {@link #updateTitle(String) dynamically changed} in this context.
+     * Title that has been {@link #updateTitleForEveryone(String) dynamically changed} in this context.
      *
      * @return The updated title or null if it wasn't updated.
-     * @see #updateTitle(String)
+     * @see #updateTitleForEveryone(String)
      */
     @Nullable
     String getUpdatedTitle();
@@ -127,13 +131,13 @@ public interface IFContext extends VirtualView, StateValueHost {
      *
      * @param title The new container title.
      */
-    void updateTitle(@NotNull String title);
+    void updateTitleForEveryone(@NotNull String title);
 
     /**
      * Updates the container title to all viewers in this context, to the initially defined title.
-     * Must be used after {@link #updateTitle(String)} to take effect.
+     * Must be used after {@link #updateTitleForEveryone(String)} to take effect.
      */
-    void resetTitle();
+    void resetTitleForEveryone();
 
     /**
      * Closes this context's container to all viewers who are viewing it.
@@ -154,7 +158,7 @@ public interface IFContext extends VirtualView, StateValueHost {
      * <p>
      * This context will be immediately invalidated if there are no viewers left after opening.
      *
-     * @param other The view to be opened.
+     * @param other       The view to be opened.
      * @param initialData The initial data.
      */
     void openForEveryone(Class<? extends RootView> other, Object initialData);

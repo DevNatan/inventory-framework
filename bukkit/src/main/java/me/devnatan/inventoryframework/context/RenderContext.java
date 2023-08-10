@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import me.devnatan.inventoryframework.BukkitViewContainer;
 import me.devnatan.inventoryframework.BukkitViewer;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewConfig;
@@ -46,6 +47,16 @@ public final class RenderContext extends PlatformRenderContext<BukkitItemCompone
                 .map(viewer -> (BukkitViewer) viewer)
                 .map(BukkitViewer::getPlayer)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public void updateTitleForPlayer(@NotNull String title, @NotNull Player player) {
+        ((BukkitViewContainer) getContainer()).changeTitle(title, player);
+    }
+
+    @Override
+    public void resetTitleForPlayer(@NotNull Player player) {
+        ((BukkitViewContainer) getContainer()).changeTitle(null, player);
     }
 
     /**

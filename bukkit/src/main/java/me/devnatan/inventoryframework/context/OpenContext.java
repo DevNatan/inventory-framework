@@ -79,6 +79,16 @@ public class OpenContext extends ConfinedContext implements IFOpenContext, Conte
     }
 
     @Override
+    public void updateTitleForPlayer(@NotNull String title, @NotNull Player player) {
+        unsupportedOperation();
+    }
+
+    @Override
+    public void resetTitleForPlayer(@NotNull Player player) {
+        unsupportedOperation();
+    }
+
+    @Override
     public CompletableFuture<Void> getAsyncOpenJob() {
         return waitTask;
     }
