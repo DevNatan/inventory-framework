@@ -37,7 +37,7 @@ import org.bukkit.inventory.InventoryView;
  * A utility class for update the inventory of a player. This is useful to change the title of an
  * inventory.
  */
-@SuppressWarnings("ConstantConditions")
+@SuppressWarnings({"ConstantConditions", "CallToPrintStackTrace"})
 public final class InventoryUpdate {
 
     // Classes.
