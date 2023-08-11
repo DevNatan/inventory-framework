@@ -32,8 +32,8 @@ public final class FirstRenderInterceptor implements PipelineInterceptor<Virtual
         final ElementFactory elementFactory = context.getRoot().getElementFactory();
         final List<Component> componentList = context.getComponents();
 
-        for (int i = componentList.size() - 1; i > 0; i--) {
-            final Component component = componentList.get(i);
+        for (int i = componentList.size(); i > 0; i--) {
+            final Component component = componentList.get(i - 1);
             final IFSlotRenderContext slotRenderContext = elementFactory.createSlotContext(
                     component.getPosition(),
                     component,
@@ -43,7 +43,7 @@ public final class FirstRenderInterceptor implements PipelineInterceptor<Virtual
                     context,
                     IFSlotRenderContext.class);
 
-			setupWatchers(context, component);
+            setupWatchers(context, component);
             component.render(slotRenderContext);
         }
     }

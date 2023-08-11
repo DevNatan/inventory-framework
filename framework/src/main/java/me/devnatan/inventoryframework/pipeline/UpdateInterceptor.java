@@ -24,7 +24,7 @@ public final class UpdateInterceptor implements PipelineInterceptor<VirtualView>
                 continue;
             }
 
-            if (component.shouldBeUpdated()) context.updateComponent(component);
+            context.updateComponent(component);
         }
     }
 }

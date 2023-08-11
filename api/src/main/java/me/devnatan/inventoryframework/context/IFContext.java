@@ -228,7 +228,7 @@ public interface IFContext extends VirtualView, StateValueHost {
      * <b><i> This is an internal inventory-framework API that should not be used from outside of
      * this library. No compatibility guarantees are provided. </i></b>
      *
-     * @param componentIndex The index of the component to be check if it's marked for removal.
+     * @param componentIndex The index of the component to be checked if it's marked for removal.
      * @return If the component in the specified index (if any) is marked for removal.
      */
     @ApiStatus.Internal

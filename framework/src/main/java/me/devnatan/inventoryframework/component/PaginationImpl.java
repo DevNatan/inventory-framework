@@ -117,7 +117,6 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
 
     @Override
     public void updated(@NotNull IFSlotRenderContext context) {
-        System.out.printf("PaginationImpl updated (pageWasChanged = %s)%n", pageWasChanged);
         // If page was changed all components will be removed, so don't trigger update on them
         if (pageWasChanged) {
             final IFRenderContext renderContext = (IFRenderContext) context.getParent();

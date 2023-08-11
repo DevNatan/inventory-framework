@@ -153,7 +153,6 @@ class BaseViewContext extends DefaultStateValueHost implements IFContext {
     @Override
     public void updateComponent(@NotNull Component component) {
         final Viewer subject = this instanceof IFConfinedContext ? ((IFConfinedContext) this).getViewer() : null;
-
         final IFSlotRenderContext context = getRoot()
                 .getElementFactory()
                 .createSlotContext(
