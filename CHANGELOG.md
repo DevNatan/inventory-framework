@@ -1,5 +1,9 @@
 # Changelog
 
+# 3.0.0-rc.2 (unreleased)
+
+* Changed how updates and component rendering are handled fixing some issues with Pagination and other components (#425)
+
 # 3.0.0-rc.1 (08-07-2023)
 
 * Null `getPlayer()` in RenderContext (#414)
