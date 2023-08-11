@@ -18,18 +18,14 @@ import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.internal.ElementFactory;
 import me.devnatan.inventoryframework.internal.Job;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
-import me.devnatan.inventoryframework.state.State;
 import me.devnatan.inventoryframework.state.StateRegistry;
-import me.devnatan.inventoryframework.state.StateValue;
-import me.devnatan.inventoryframework.state.StateValueHost;
-import me.devnatan.inventoryframework.state.StateWatcher;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.annotations.UnmodifiableView;
 
 @ApiStatus.NonExtendable
-public class DefaultRootView implements RootView, StateWatcher {
+public class DefaultRootView implements RootView {
 
     private final UUID id = UUID.randomUUID();
     private ViewConfig config;
@@ -157,27 +153,6 @@ public class DefaultRootView implements RootView, StateWatcher {
     public void setScheduledUpdateJob(@NotNull Job job) {
         this.scheduledUpdateJob = job;
     }
-
-    @Override
-    public final void stateRegistered(@NotNull State<?> state, Object caller) {}
-
-    @Override
-    public final void stateUnregistered(@NotNull State<?> state, Object caller) {}
-
-    @Override
-    public final void stateValueInitialized(
-            @NotNull StateValueHost host, @NotNull StateValue value, Object initialValue) {}
-
-    @Override
-    public final void stateValueGet(
-            @NotNull State<?> state,
-            @NotNull StateValueHost host,
-            @NotNull StateValue internalValue,
-            Object rawValue) {}
-
-    @Override
-    public final void stateValueSet(
-            @NotNull StateValueHost host, @NotNull StateValue value, Object rawOldValue, Object rawNewValue) {}
 
     @Override
     public IFViewFrame<?> getFramework() {

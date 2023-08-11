@@ -31,7 +31,7 @@ public interface IFSlotContext extends IFContext {
      * Clears this slot from the current context.
      * <p>
      * The slot will only be cleaned on the next update, so if you want it cleaned immediately
-     * update the slot using {@link #updateSlot()}.
+     * update the slot using {@link #update()}.
      *
      * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
      * such API may be changed or may be removed completely in any further release. </i></b>
@@ -48,11 +48,6 @@ public interface IFSlotContext extends IFContext {
 
     // TODO needs documentation about dynamic slot positioning (some cases are unsupported)
     void setSlot(int slot);
-
-    /**
-     * Updates this slot.
-     */
-    void updateSlot();
 
     /**
      * Returns the wrapper containing the item related to this context.

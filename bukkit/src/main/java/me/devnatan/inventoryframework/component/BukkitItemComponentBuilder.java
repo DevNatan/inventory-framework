@@ -125,9 +125,10 @@ public final class BukkitItemComponentBuilder extends DefaultComponentBuilder<Bu
      * It's a help function to simplify the use with other things like {@link Pagination}.
      * <pre>{@code
      * // This example only renders the arrow if pagination can advance
-     * render.layoutSlot('>')
-     *     .renderWith(() -> new ItemStack(Material.ARROW))
+     * render.layoutSlot('>', new ItemStack(Material.ARROW))
+     *     .watch(paginationState)
      *     .displayIf(pagination::canAdvance)
+     *     .onClick(pagination::advance)
      * }</pre>
      * <p>
      * This method overwrites {@link #onRender(Consumer)} when the item set is null.

@@ -175,37 +175,60 @@ public interface IFContext extends VirtualView, StateValueHost {
     /**
      * Gets the component that is at a certain position.
      *
+     * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided.</i></b>
+     *
      * @param position The position.
      * @return The component in the given position or {@code null}.
      */
+    @ApiStatus.Internal
     Component getComponent(int position);
 
     /**
      * Adds a new component to this context.
      *
+     * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided.</i></b>
+     *
      * @param component The component to be added.
      */
+    @ApiStatus.Internal
     void addComponent(@NotNull Component component);
 
     /**
      * Removes a component from this context.
      *
+     * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided.</i></b>
+     *
      * @param component The component to be removed.
      */
+    @ApiStatus.Internal
     void removeComponent(@NotNull Component component);
 
     /**
-     * Updates all components in this context.
+     * Updates a single component in this context.
+     *
+     * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided.</i></b>
+     *
+     * @param component To component to be updated.
+     */
+    @ApiStatus.Internal
+    void updateComponent(@NotNull Component component);
+
+    /**
+     * Updates all components for all viewers in this context.
      */
     void update();
 
     /**
      * Checks if a component positioned in a given index is marked for removal.
-     *
+     * <p>
      * <b><i> This is an internal inventory-framework API that should not be used from outside of
      * this library. No compatibility guarantees are provided. </i></b>
      *
-     * @param componentIndex The index of the component to be check if it's marked for removal.
+     * @param componentIndex The index of the component to be checked if it's marked for removal.
      * @return If the component in the specified index (if any) is marked for removal.
      */
     @ApiStatus.Internal
