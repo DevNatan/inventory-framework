@@ -1,5 +1,6 @@
 package me.devnatan.inventoryframework.pipeline;
 
+import java.util.List;
 import java.util.Map;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.VirtualView;
@@ -28,8 +29,10 @@ public final class FirstRenderInterceptor implements PipelineInterceptor<Virtual
 
         final Map<String, Viewer> viewers = context.getIndexedViewers();
         final ElementFactory elementFactory = context.getRoot().getElementFactory();
+        final List<Component> componentList = context.getComponents();
 
-        for (final Component component : context.getComponents()) {
+        for (int i = componentList.size() - 1; i > 0; i--) {
+            final Component component = componentList.get(i);
             final IFSlotRenderContext slotRenderContext = elementFactory.createSlotContext(
                     component.getPosition(),
                     component,
