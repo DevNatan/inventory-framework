@@ -21,15 +21,13 @@ import me.devnatan.inventoryframework.context.IFSlotRenderContext;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
 import me.devnatan.inventoryframework.state.State;
 import me.devnatan.inventoryframework.state.StateValue;
-import me.devnatan.inventoryframework.state.StateValueHost;
-import me.devnatan.inventoryframework.state.StateWatcher;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
 import org.jetbrains.annotations.VisibleForTesting;
 
 // TODO add "key" to child pagination components and check if it needs to be updated based on it
 @VisibleForTesting
-public class PaginationImpl extends StateValue implements Pagination, InteractionHandler, StateWatcher {
+public class PaginationImpl extends StateValue implements Pagination, InteractionHandler {
 
     private final List<Component> components = new LinkedList<>();
     private final @NotNull IFContext host;
@@ -45,6 +43,7 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
     private int pageSize = -1;
     private final boolean dynamic;
     private boolean pageWasChanged;
+    private boolean initialized;
 
     /**
      * Final source factory for dynamic pagination converted from {@link #sourceProvider}.
@@ -83,31 +82,12 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
     }
 
     @Override
+    protected void set(Object value) {}
+
+    @Override
     public @NotNull VirtualView getRoot() {
         return host;
     }
-
-    @Override
-    public void stateValueInitialized(@NotNull StateValueHost host, @NotNull StateValue value, Object initialValue) {
-        init((IFRenderContext) host);
-    }
-
-    @Override
-    public void stateRegistered(@NotNull State<?> state, Object caller) {}
-
-    @Override
-    public void stateUnregistered(@NotNull State<?> state, Object caller) {}
-
-    @Override
-    public void stateValueGet(
-            @NotNull State<?> state,
-            @NotNull StateValueHost host,
-            @NotNull StateValue internalValue,
-            Object rawValue) {}
-
-    @Override
-    public void stateValueSet(
-            @NotNull StateValueHost host, @NotNull StateValue value, Object rawOldValue, Object rawNewValue) {}
 
     @Override
     public int getPosition() {
@@ -120,22 +100,33 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
         return last - first;
     }
 
-    private void init(IFRenderContext context) {
+    private void setupComponentsForCurrentPage(IFRenderContext context) {
         if (context.getConfig().getLayout() != null) registerComponentsForLayeredPagination(context);
         else registerComponentsForUnconstrainedPagination(context);
     }
 
     @Override
     public void render(@NotNull IFSlotRenderContext context) {
+        if (!initialized) {
+            setupComponentsForCurrentPage((IFRenderContext) context.getParent());
+            initialized = true;
+        }
+
         getComponentsInternal().forEach(child -> child.render(context));
     }
 
     @Override
     public void updated(@NotNull IFSlotRenderContext context) {
+        System.out.printf("PaginationImpl updated (pageWasChanged = %s)%n", pageWasChanged);
         // If page was changed all components will be removed, so don't trigger update on them
         if (pageWasChanged) {
-            clear(context);
-            init((IFRenderContext) context.getParent());
+            final IFRenderContext renderContext = (IFRenderContext) context.getParent();
+            clearChild(renderContext, true);
+            setupComponentsForCurrentPage(renderContext);
+            render(context);
+
+            // Simulate state update to call listeners thus calling watches in parent components
+            host.updateState(getState().internalId(), this);
             pageWasChanged = false;
             return;
         }
@@ -152,6 +143,16 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
     public void clear(@NotNull IFContext context) {
         // Only clear components if page was changed to not make the clear operation inconsistent
         if (!pageWasChanged) {
+            getComponentsInternal().forEach(child -> child.clear(context));
+            return;
+        }
+
+        clearChild(context, false);
+    }
+
+    private void clearChild(IFContext context, boolean bulk) {
+        if (bulk) {
+            getComponentsInternal().clear();
             getComponentsInternal().forEach(child -> child.clear(context));
             return;
         }
@@ -244,7 +245,7 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
         if (pageSwitchHandler != null) pageSwitchHandler.accept(host, this);
         currPageIndex = pageIndex;
         pageWasChanged = true;
-        host.update();
+        host.updateComponent(this);
     }
 
     @Override
