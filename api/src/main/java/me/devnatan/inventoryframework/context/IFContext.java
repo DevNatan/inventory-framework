@@ -175,24 +175,47 @@ public interface IFContext extends VirtualView, StateValueHost {
     /**
      * Gets the component that is at a certain position.
      *
+     * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided.</i></b>
+     *
      * @param position The position.
      * @return The component in the given position or {@code null}.
      */
+    @ApiStatus.Internal
     Component getComponent(int position);
 
     /**
      * Adds a new component to this context.
      *
+     * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided.</i></b>
+     *
      * @param component The component to be added.
      */
+    @ApiStatus.Internal
     void addComponent(@NotNull Component component);
 
     /**
      * Removes a component from this context.
      *
+     * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided.</i></b>
+     *
      * @param component The component to be removed.
      */
+    @ApiStatus.Internal
     void removeComponent(@NotNull Component component);
+
+    /**
+     * Updates a single component in this context.
+     *
+     * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided.</i></b>
+     *
+     * @param component To component to be updated.
+     */
+    @ApiStatus.Internal
+    void updateComponent(@NotNull Component component);
 
     /**
      * Updates all components for all viewers in this context.
