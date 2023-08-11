@@ -3,6 +3,8 @@ package me.devnatan.inventoryframework.internal;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewContainer;
@@ -13,6 +15,7 @@ import me.devnatan.inventoryframework.component.ComponentBuilder;
 import me.devnatan.inventoryframework.context.IFConfinedContext;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFSlotContext;
+import me.devnatan.inventoryframework.context.IFSlotRenderContext;
 import me.devnatan.inventoryframework.logging.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -74,6 +77,17 @@ public final class MockElementFactory extends ElementFactory {
         when(value.getSlot()).thenReturn(slot);
         when(value.getParent()).thenReturn(parent);
         when(value.getContainer()).thenReturn(container);
+
+        final List<Viewer> viewerList = new ArrayList<>();
+        if (subject != null) viewerList.add(subject);
+        if (viewers != null) viewerList.addAll(viewers.values());
+
+        when(value.getViewers()).thenReturn(viewerList);
+
+        if (kind.equals(IFSlotRenderContext.class)) {
+            IFSlotRenderContext slotRenderContext = (IFSlotRenderContext) value;
+            when(slotRenderContext.isCancelled()).thenReturn(false);
+        }
         return value;
     }
 

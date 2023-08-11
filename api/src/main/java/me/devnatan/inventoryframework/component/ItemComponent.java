@@ -155,7 +155,7 @@ public class ItemComponent implements Component, InteractionHandler {
 
     @Override
     public void updated(@NotNull IFSlotRenderContext context) {
-        if (updateHandler != null) updateHandler.accept(context);
+        if (getUpdateHandler() != null) getUpdateHandler().accept(context);
         if (!context.isCancelled()) render(context);
     }
 
@@ -166,18 +166,18 @@ public class ItemComponent implements Component, InteractionHandler {
 
     @Override
     public @UnmodifiableView Set<State<?>> getWatchingStates() {
-        return Collections.unmodifiableSet(watching);
+        return Collections.unmodifiableSet(getWatching());
     }
 
     @Override
     public void clicked(@NotNull Component component, @NotNull IFSlotClickContext context) {
-        if (clickHandler != null) clickHandler.accept(context);
+        if (getClickHandler() != null) getClickHandler().accept(context);
         if (isUpdateOnClick()) context.update();
     }
 
     @Override
     public boolean shouldBeUpdated() {
-        if (shouldRender != null) return true;
+        if (getShouldRender() != null) return true;
         return getRenderHandler() != null;
     }
 

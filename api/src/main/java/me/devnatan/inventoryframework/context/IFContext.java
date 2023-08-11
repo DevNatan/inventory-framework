@@ -195,13 +195,13 @@ public interface IFContext extends VirtualView, StateValueHost {
     void removeComponent(@NotNull Component component);
 
     /**
-     * Updates all components in this context.
+     * Updates all components for all viewers in this context.
      */
     void update();
 
     /**
      * Checks if a component positioned in a given index is marked for removal.
-     *
+     * <p>
      * <b><i> This is an internal inventory-framework API that should not be used from outside of
      * this library. No compatibility guarantees are provided. </i></b>
      *
