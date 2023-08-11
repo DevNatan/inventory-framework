@@ -156,6 +156,11 @@ public class SlotContext extends ConfinedContext implements IFSlotContext, Conte
     }
 
     @Override
+    public void updateComponent(@NotNull Component component) {
+        throw new UnsupportedOperationException("Slot context do not have components");
+    }
+
+    @Override
     public boolean isMarkedForRemoval(int componentIndex) {
         return getParent().isMarkedForRemoval(componentIndex);
     }

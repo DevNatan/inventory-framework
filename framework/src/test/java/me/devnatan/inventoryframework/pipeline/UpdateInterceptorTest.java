@@ -54,7 +54,7 @@ public class UpdateInterceptorTest {
         pipeline.intercept(StandardPipelinePhases.UPDATE, new UpdateInterceptor());
 
         RootView root = createRootMock();
-        IFContext context = createContextMock(root, IFRenderContext.class);
+        IFRenderContext context = createContextMock(root, IFRenderContext.class);
         ViewContainer container = mock(ViewContainer.class);
         when(context.getContainer()).thenReturn(container);
 
@@ -62,7 +62,8 @@ public class UpdateInterceptorTest {
         when(component.getRenderHandler()).thenReturn($ -> {
             /* do nothing */
         });
-        when(component.shouldBeUpdated()).thenCallRealMethod();
+        when(component.getUpdateHandler()).thenCallRealMethod();
+        when(component.shouldBeUpdated()).thenReturn(true);
 
         when(context.getComponents()).thenReturn(Collections.singletonList(component));
         when(context.isShared()).thenReturn(true);
