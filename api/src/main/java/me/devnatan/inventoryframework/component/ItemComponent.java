@@ -156,11 +156,13 @@ public class ItemComponent implements Component, InteractionHandler {
     @Override
     public void updated(@NotNull IFSlotRenderContext context) {
         if (context.isCancelled()) return;
+        if (!shouldBeUpdated()) return;
         if (getUpdateHandler() != null) {
             getUpdateHandler().accept(context);
             if (context.isCancelled()) return;
         }
-        if (shouldBeUpdated()) render(context);
+
+        render(context);
     }
 
     @Override
