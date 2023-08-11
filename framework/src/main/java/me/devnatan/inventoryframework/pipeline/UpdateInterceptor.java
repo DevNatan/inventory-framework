@@ -58,9 +58,5 @@ public final class UpdateInterceptor implements PipelineInterceptor<VirtualView>
                         IFSlotRenderContext.class);
 
         component.updated(renderContext);
-
-        if (!renderContext.isCancelled()) {
-            component.render(renderContext);
-        }
     }
 }
