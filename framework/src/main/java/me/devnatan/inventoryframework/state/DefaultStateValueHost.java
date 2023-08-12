@@ -10,14 +10,12 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * HashMap-backed Default implementation for StateHost.
- *
+ * <p>
  * <b><i> This is an internal inventory-framework API that should not be used from outside of
  * this library. No compatibility guarantees are provided. </i></b>
  */
 @ApiStatus.Internal
 public class DefaultStateValueHost implements StateValueHost {
-
-    public static final Object UNINITIALIZED_VALUE = new Object();
 
     private final Map<Long, StateValue> valuesMap = new HashMap<>();
     private final Map<Long, List<StateWatcher>> listeners = new HashMap<>();
@@ -28,7 +26,7 @@ public class DefaultStateValueHost implements StateValueHost {
         final StateValue value;
         if (!valuesMap.containsKey(id)) {
             value = state.factory().create(this, state);
-            initState(id, value, UNINITIALIZED_VALUE);
+            initializeState(id, value);
         } else {
             value = valuesMap.get(id);
         }
@@ -39,9 +37,8 @@ public class DefaultStateValueHost implements StateValueHost {
     }
 
     @Override
-    public void initState(long id, @NotNull StateValue value, Object initialValue) {
+    public void initializeState(long id, @NotNull StateValue value) {
         valuesMap.put(id, value);
-        callListeners(value, listener -> listener.stateValueInitialized(this, value, initialValue));
     }
 
     @Override

@@ -49,9 +49,6 @@ public final class PaginationState extends BaseState<Pagination> implements Stat
     }
 
     @Override
-    public void stateValueInitialized(@NotNull StateValueHost host, @NotNull StateValue value, Object initialValue) {}
-
-    @Override
     public void stateValueGet(
             @NotNull State<?> state,
             @NotNull StateValueHost host,

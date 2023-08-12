@@ -171,8 +171,8 @@ public class SlotContext extends ConfinedContext implements IFSlotContext, Conte
     }
 
     @Override
-    public void initState(long id, @NotNull StateValue value, Object initialValue) {
-        getParent().initState(id, value, initialValue);
+    public void initializeState(long id, @NotNull StateValue value) {
+        getParent().initializeState(id, value);
     }
 
     @Override

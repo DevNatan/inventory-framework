@@ -21,6 +21,7 @@ import org.jetbrains.annotations.TestOnly;
  * <p>
  * Pipelines are used in IF as an extension mechanism to plug functionality in at the right place.
  *
+ * @param <S> Pipeline subject type.
  * @see PipelinePhase
  */
 public final class Pipeline<S> {

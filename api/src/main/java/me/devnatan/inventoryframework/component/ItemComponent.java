@@ -189,7 +189,7 @@ public class ItemComponent implements Component, InteractionHandler {
 
     @Override
     public boolean isVisible() {
-        return ((IFContext) root).getContainer().hasItem(getPosition());
+        return ((IFContext) getRoot()).getContainer().hasItem(getPosition());
     }
 
     @Override
