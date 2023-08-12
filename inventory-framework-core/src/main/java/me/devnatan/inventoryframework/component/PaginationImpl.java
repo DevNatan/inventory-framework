@@ -151,8 +151,8 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
 
     private void clearChild(IFContext context, boolean bulk) {
         if (bulk) {
+			getComponentsInternal().forEach(child -> child.clear(context));
             getComponentsInternal().clear();
-            getComponentsInternal().forEach(child -> child.clear(context));
             return;
         }
 
