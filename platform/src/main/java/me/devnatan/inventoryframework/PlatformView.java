@@ -16,7 +16,6 @@ import me.devnatan.inventoryframework.context.IFOpenContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.context.IFSlotContext;
-import me.devnatan.inventoryframework.event.EventBus;
 import me.devnatan.inventoryframework.internal.ElementFactory;
 import me.devnatan.inventoryframework.internal.PlatformUtils;
 import me.devnatan.inventoryframework.pipeline.AvailableSlotInterceptor;
@@ -564,20 +563,5 @@ public abstract class PlatformView<
     @ApiStatus.Internal
     public final IFViewFrame<?> getFramework() {
         return framework;
-    }
-
-    /**
-     * Returns a existing or create a new EventBus instance for this view.
-     *
-     * @return A EventBus instance for this view.
-     */
-    @SuppressWarnings("unchecked")
-    public final EventBus eventBus() {
-        if (!getMetadata().containsKey(METADATA_EVENTBUS)) {
-            // TODO Throw feature exception when it gets implemented
-            throw new InventoryFrameworkException("Event Bus feature is not installed.");
-        }
-
-        return ((Supplier<EventBus>) getMetadata().get(METADATA_EVENTBUS)).get();
     }
 }

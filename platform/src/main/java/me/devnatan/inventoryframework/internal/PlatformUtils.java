@@ -47,6 +47,7 @@ public class PlatformUtils {
         PlatformUtils.factory = null;
     }
 
+    @SuppressWarnings("deprecation")
     private static ElementFactory fallbackFactory()
             throws ClassNotFoundException, InstantiationException, IllegalAccessException {
         final Class<?> clazz = Class.forName("me.saiintbrisson.minecraft.BukkitViewComponentFactory");
