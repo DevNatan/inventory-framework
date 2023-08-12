@@ -7,9 +7,7 @@ publishing {
     publications {
         javaOSSRH(MavenPublication) {
             groupId = rootProject.group
-            artifactId = project.name == 'framework'
-                    ? rootProject.name + '-impl'
-                    : rootProject.name + '-' + project.name
+            artifactId = project.name
             version = rootProject.version
             from components.java
 

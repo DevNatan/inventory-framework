@@ -1,8 +1,0 @@
-apply from: '../library.gradle'
-apply from: '../publish.gradle'
-
-dependencies {
-    compileOnlyApi projects.api
-    testImplementation projects.api
-    testImplementation projects.test
-}
