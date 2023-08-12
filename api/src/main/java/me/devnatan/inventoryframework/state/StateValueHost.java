@@ -21,7 +21,19 @@ public interface StateValueHost {
     Object getState(State<?> state);
 
     /**
-     * Sets the internal value of a state.
+     * Initializes the value of a state in this value host.
+     *
+     * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided.</i></b>
+     *
+     * @param id    The state id.
+     * @param value The initial state value.
+     */
+    @ApiStatus.Internal
+    void initializeState(long id, @NotNull StateValue value);
+
+    /**
+     * Updates the value of an initialized state in this value host.
      *
      * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
      * this library. No compatibility guarantees are provided.</i></b>
@@ -29,9 +41,6 @@ public interface StateValueHost {
      * @param id    The state id.
      * @param value The new state value.
      */
-    @ApiStatus.Internal
-    void initState(long id, @NotNull StateValue value, Object initialValue);
-
     @ApiStatus.Internal
     void updateState(long id, Object value);
 

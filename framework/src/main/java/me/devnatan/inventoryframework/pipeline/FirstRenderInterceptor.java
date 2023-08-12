@@ -95,9 +95,6 @@ class SingleComponentStateWatcherUpdater implements StateWatcher {
     public void stateUnregistered(@NotNull State<?> state, Object caller) {}
 
     @Override
-    public void stateValueInitialized(@NotNull StateValueHost host, @NotNull StateValue value, Object initialValue) {}
-
-    @Override
     public void stateValueGet(
             @NotNull State<?> state,
             @NotNull StateValueHost host,

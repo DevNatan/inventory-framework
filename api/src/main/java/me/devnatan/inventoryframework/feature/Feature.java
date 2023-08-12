@@ -37,6 +37,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @param <C> The feature configuration type.
  * @param <R> The feature return value type.
+ * @param <F> The framework that will install/manage this feature.
  */
 public interface Feature<C, R, F> {
 

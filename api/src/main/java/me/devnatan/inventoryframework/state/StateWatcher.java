@@ -14,8 +14,6 @@ public interface StateWatcher {
 
     void stateUnregistered(@NotNull State<?> state, Object caller);
 
-    void stateValueInitialized(@NotNull StateValueHost host, @NotNull StateValue value, Object initialValue);
-
     /**
      * Called when the value of a state on a specific host is obtained.
      *
