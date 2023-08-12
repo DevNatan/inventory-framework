@@ -17,7 +17,6 @@ dependencies {
     api projects.api
     api projects.framework
     api projects.platform
-    runtimeOnly projects.featureEventbus
     compileOnly libs.spigot
     testCompileOnly libs.spigot
     testRuntimeOnly libs.spigot

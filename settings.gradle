@@ -6,5 +6,4 @@ include 'test',
         'bukkit',
         'platform',
         'framework',
-        'paper',
-        'feature-eventbus'
+        'paper'
