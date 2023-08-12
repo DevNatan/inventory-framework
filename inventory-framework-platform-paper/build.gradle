@@ -1,0 +1,24 @@
+plugins {
+    alias(libs.plugins.shadowjar)
+}
+
+apply from: '../library.gradle'
+apply from: '../publish.gradle'
+
+repositories {
+    maven { url = 'https://repo.papermc.io/repository/maven-public/' }
+}
+
+dependencies {
+    compileOnly libs.paperSpigot
+    implementation projects.inventoryFrameworkPlatformBukkit
+}
+
+java {
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
+shadowJar {
+    archiveBaseName.set('inventory-framework')
+    archiveAppendix.set('paper')
+}

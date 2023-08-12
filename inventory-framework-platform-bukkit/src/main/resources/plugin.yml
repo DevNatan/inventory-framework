@@ -1,0 +1,6 @@
+main: me.devnatan.inventoryframework.runtime.InventoryFramework
+name: InventoryFramework
+version: @version@
+authors: [SaiintBrisson, DevNatan, sasuked]
+website: https://github.com/DevNatan/inventory-framework
+description: Minecraft Inventory API framework

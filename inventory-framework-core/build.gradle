@@ -1,0 +1,8 @@
+apply from: '../library.gradle'
+apply from: '../publish.gradle'
+
+dependencies {
+    compileOnlyApi projects.inventoryFrameworkApi
+    testImplementation projects.inventoryFrameworkApi
+    testImplementation projects.inventoryFrameworkTest
+}
