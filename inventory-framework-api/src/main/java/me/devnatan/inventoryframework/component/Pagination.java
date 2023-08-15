@@ -126,10 +126,21 @@ public interface Pagination extends ComponentComposition {
      */
     char getLayoutTarget();
 
-	/**
-	 * <b><i> This is an internal inventory-framework API that should not be used from outside of
-	 * this library. No compatibility guarantees are provided. </i></b>
-	 */
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
     @ApiStatus.Internal
     boolean isDynamic();
+
+    /**
+     * If the pagination data is being loaded or not.
+     * <p>
+     * Only changes if {@link #isDynamic()} is true.
+     *
+     * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     */
+    @ApiStatus.Experimental
+    boolean isLoading();
 }
