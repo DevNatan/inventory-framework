@@ -250,6 +250,7 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
 
         final LayoutSlot layoutSlot = layoutSlotOptional.get();
         pageSize = layoutSlot.getPositions().length;
+        System.out.println("pageSize = " + pageSize);
 
         if (pageContents.isEmpty()) return;
 
@@ -261,6 +262,7 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
             final Component component = factory.create();
 
             getComponentsInternal().add(component);
+            System.out.println("added component at " + position + " internally");
 
             if (iterationIndex == elementsLen) break;
         }
@@ -295,9 +297,12 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
      * Loads the current page contents.
      *
      * @param context The render context.
+     * @return A CompletableFuture with the completion stage of the current page.
      */
-    private void loadCurrentPage(IFRenderContext context) {
-        loadSourceForTheCurrentPage().thenAccept(pageContents -> {
+    private CompletableFuture<?> loadCurrentPage(IFRenderContext context) {
+        System.out.println("loading current page");
+        return loadSourceForTheCurrentPage().thenAccept(pageContents -> {
+            System.out.println("loaded page " + currPageIndex + " with: " + pageContents);
             if (context.getConfig().getLayout() != null) loadComponentsForLayeredPagination(context, pageContents);
             else loadComponentsForUnconstrainedPagination(context, pageContents);
         });
@@ -334,10 +339,15 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
     @Override
     public void render(@NotNull IFSlotRenderContext context) {
         if (!initialized) {
-            loadCurrentPage((IFRenderContext) context.getParent());
+            loadCurrentPage((IFRenderContext) context.getParent()).thenRun(() -> renderChild(context));
             initialized = true;
+            return;
         }
 
+        renderChild(context);
+    }
+
+    private void renderChild(IFSlotRenderContext context) {
         getComponentsInternal().forEach(child -> child.render(context));
     }
 
@@ -347,10 +357,11 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
         if (pageWasChanged) {
             final IFRenderContext renderContext = (IFRenderContext) context.getParent();
             clearChild(renderContext, true);
-            loadCurrentPage(renderContext);
-            render(context);
-            simulateStateUpdate();
-            pageWasChanged = false;
+            loadCurrentPage(renderContext).thenRun(() -> {
+                render(context);
+                simulateStateUpdate();
+                pageWasChanged = false;
+            });
             return;
         }
 
