@@ -1,8 +1,17 @@
 # Changelog
 
-# 3.0.0-rc.2 (unreleased)
+# 3.0.0-rc.2 (08-15-2023)
 
+* New `openForPlayer()` and `openForEveryone()` with initial data parameter like in ViewFrame (#421)
+* Minecraft 1.19 and 1.20 support in dynamic title update (#423)
+* New `updateTitleForPlayer(title, player)` to update title for a specific player (#424)
 * Changed how updates and component rendering are handled fixing some issues with Pagination and other components (#425)
+* Asynchronous Pagination *(experimental)* (#432)
+* Internal state and component management related methods were marked as Internal API
+* Project module names changed now every module has "inventory-framework-" prefix
+* Removed kotlin-dsl and feature-event-bus modules
+* [Pagination on Wiki](https://github.com/DevNatan/inventory-framework/wiki/Pagination) had its structure reformulated to simplify the reading, go more straight to the point, add some missing topics to explain better about pagination with data source and dynamic items
+* Page "Inventory Title Programmatic Update" on Wiki reworked and renamed to [Dynamic Title Update](https://github.com/DevNatan/inventory-framework/wiki/dynamic-title-update)
 
 # 3.0.0-rc.1 (08-07-2023)
 
