@@ -6,6 +6,7 @@ import org.jetbrains.annotations.UnknownNullability;
 /**
  * Wrapper of the value of a {@link State} for a single {@link StateValueHost}.
  */
+// TODO Must be a interface to allow spread across "component as state" (like Pagination)
 public abstract class StateValue {
 
     private final State<?> state;
