@@ -1,6 +1,7 @@
 package me.devnatan.inventoryframework.component;
 
 import me.devnatan.inventoryframework.state.StateValueHost;
+import org.jetbrains.annotations.ApiStatus;
 
 /**
  * Pagination is a host to multiple components that can be paginated, essentially it is a {@link
@@ -125,6 +126,21 @@ public interface Pagination extends ComponentComposition {
      */
     char getLayoutTarget();
 
-    // TODO documentation
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
     boolean isDynamic();
+
+    /**
+     * If the pagination data is being loaded or not.
+     * <p>
+     * Only changes if {@link #isDynamic()} is true.
+     *
+     * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     */
+    @ApiStatus.Experimental
+    boolean isLoading();
 }

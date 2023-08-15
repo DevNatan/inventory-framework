@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -40,15 +41,26 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
 
     // --- Internal ---
     private int currPageIndex;
-    private int pageSize = -1;
     private final boolean dynamic;
     private boolean pageWasChanged;
     private boolean initialized;
+    private int pagesCount;
 
     /**
-     * Final source factory for dynamic pagination converted from {@link #sourceProvider}.
+     * The number of elements that each page can have. -1 means uninitialized.
      */
-    private Function<IFContext, List<?>> _srcFactory;
+    private int pageSize = -1;
+
+    // Changes when dynamic data source is used and being loaded
+    private boolean isLoading;
+
+    /**
+     * Final source factory for dynamic or asynchronous pagination converted from {@link #sourceProvider}.
+     * <p>
+     * The return parameter of this source factory can be either {@code List} in dynamic pagination
+     * or {@code CompletableFuture<List>} in asynchronous pagination.
+     */
+    private Function<IFContext, Object> _srcFactory;
 
     /**
      * Current page source. Only {@code null} before first pagination render.
@@ -70,6 +82,235 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
         this.pageSwitchHandler = pageSwitchHandler;
         this.currSource = convertSourceProvider();
         this.dynamic = !(sourceProvider instanceof Collection);
+    }
+
+    /**
+     * Tries to access and load the source to the current page.
+     * <p>
+     * If this pagination {@link #isDynamic() is dynamic} it tries to get the current data source
+     * dynamically or asynchronously and waits for its completion.
+     * <p>
+     * For static pagination it returns immediately with the source.
+     * <p>
+     * On asynchronous pagination the source update job will be inherited by the user provided one.
+     * <p>
+     * When job gets done the {@link #currSource} is updated with the result of the computation.
+     *
+     * @return A CompletableFuture with the current pagination source as result.
+     * @throws IllegalStateException In static pagination when the current source wasn't yet defined.
+     */
+    @SuppressWarnings("unchecked")
+    private CompletableFuture<List<?>> loadSourceForTheCurrentPage() {
+        // Static pagination we just get the current source here since it will be always the same
+        if (!isDynamic()) {
+            if (currSource == null) throw new IllegalStateException("User provided pagination source cannot be null");
+
+            if (!initialized) pagesCount = calculatePagesCount(currSource);
+
+            return CompletableFuture.completedFuture(splitSourceForPage(currPageIndex, currSource));
+        }
+
+        CompletableFuture<List<?>> job = new CompletableFuture<>();
+        isLoading = true;
+        simulateStateUpdate();
+
+        final Object source = _srcFactory.apply(host);
+        if (source instanceof CompletableFuture) {
+            job = (CompletableFuture<List<?>>) source;
+        } else {
+            // Here we are covering the dynamic rendering that's can be the usage of factories like
+            // `Supplier<List>` and Function<..., List> so we just cast the result here
+            job.complete((List<?>) source);
+        }
+
+        // TODO Do some error treatment here, even if we expect to the user to handle it
+        job.thenAccept(this::updateSource).whenComplete((result, exception) -> {
+            isLoading = false;
+            simulateStateUpdate();
+        });
+        return job;
+    }
+
+    /**
+     * Updates the current source and the number of availalbe pages count based on that source.
+     *
+     * @param newSource The new data source.
+     */
+    private void updateSource(@NotNull List<?> newSource) {
+        currSource = newSource;
+        pagesCount = calculatePagesCount(currSource);
+    }
+
+    /**
+     * The total number of pages available.
+     *
+     * @return The number of pages based on the current source.
+     */
+    private int getPagesCount() {
+        return pagesCount;
+    }
+
+    /**
+     * Calculates the number of pages available based on a given source.
+     *
+     * @param source The source to check.
+     * @return The number of pages that can have based on the specified source.
+     */
+    private int calculatePagesCount(@NotNull List<?> source) {
+        return (int) Math.ceil((double) source.size() / getPageSize());
+    }
+
+    /**
+     * The current page size.
+     *
+     * @return Number of available elements position for pagination in the current page.
+     */
+    public int getPageSize() {
+        if (pageSize == -1) throw new IllegalStateException("Page size need to be updated before try to get it");
+
+        return pageSize;
+    }
+
+    /**
+     * Gets all elements in a given page index based on the current data source.
+     *
+     * @param index The page index.
+     * @param src   The source to split.
+     * @return All elements in a page.
+     * @throws IndexOutOfBoundsException If the specified index is {@code < 0} or
+     *                                   exceeds the {@link #getPagesCount() pages count}.
+     */
+    private List<?> splitSourceForPage(int index, List<?> src) {
+        if (src.isEmpty()) return Collections.emptyList();
+
+        if (src.size() <= pageSize) return new ArrayList<>(src);
+        if (index < 0 || index > getPagesCount())
+            throw new IndexOutOfBoundsException(String.format(
+                    "Page index must be between the range of 0 and %d. Given: %d", getPagesCount() - 1, index));
+
+        final List<Object> contents = new LinkedList<>();
+        final int base = index * pageSize;
+        int until = base + pageSize;
+        if (until > src.size()) until = src.size();
+
+        for (int i = base; i < until; i++) contents.add(src.get(i));
+
+        return contents;
+    }
+
+    /**
+     * Loads pagination components using container boundaries, no constraints.
+     * <p>
+     * The position of the first paged item must be the first slot in the container, the last
+     * position must be the last slot in the container, and {@link #pageSize} on the current page
+     * must be the size of the container.
+     *
+     * @param context      The render context.
+     * @param pageContents Elements of the current page.
+     */
+    private void loadComponentsForUnconstrainedPagination(IFRenderContext context, List<?> pageContents) {
+        final ViewContainer container = context.getContainer();
+        pageSize = container.getSize();
+
+        final int lastSlot = container.getLastSlot();
+
+        for (int i = container.getFirstSlot(); i < Math.min(lastSlot + 1, pageContents.size()); i++) {
+            final Object value = pageContents.get(i);
+            final ComponentFactory factory = elementFactory.create(context, i, i, value);
+            getComponentsInternal().add(factory.create());
+        }
+    }
+
+    /**
+     * Renders the pagination using the layout positions defined from the {@link #getLayoutTarget() target layout character}.
+     * <p>
+     * The first position, last position and number of items on the page must be exactly the same as
+     * the layout.
+     *
+     * @param context      The render context.
+     * @param pageContents Elements of the current page.
+     */
+    private void loadComponentsForLayeredPagination(IFRenderContext context, List<?> pageContents) {
+        if (pageContents.isEmpty()) return;
+
+        final int elementsLen = pageContents.size();
+        int iterationIndex = 0;
+        for (final int position : getLayoutSlotForCurrentTarget(context).getPositions()) {
+            final Object value = pageContents.get(iterationIndex++);
+            final ComponentFactory factory = elementFactory.create(context, iterationIndex, position, value);
+            final Component component = factory.create();
+
+            getComponentsInternal().add(component);
+
+            if (iterationIndex == elementsLen) break;
+        }
+    }
+
+    /**
+     * Updates the current page size.
+     * <p>
+     * Page size is based on the type of pagination data source; on the possible usage of layout
+     * in context, if a layout is configured in the layout so this property must be the count of
+     * {@link #getLayoutTarget() layout target} characters in the layout configured layout.
+     * <p>
+     * When without a configured layout in the root, the page size is the entire size of {@link IFContext#getContainer() context's container}.
+     *
+     * @param context The render context.
+     */
+    private void updatePageSize(IFRenderContext context) {
+        if (context.getConfig().getLayout() != null)
+            pageSize = getLayoutSlotForCurrentTarget(context).getPositions().length;
+        else pageSize = context.getContainer().getSize();
+    }
+
+    private LayoutSlot getLayoutSlotForCurrentTarget(IFRenderContext context) {
+        final Optional<LayoutSlot> layoutSlotOptional = context.getLayoutSlots().stream()
+                .filter(layoutSlot -> layoutSlot.getCharacter() == getLayoutTarget())
+                .findFirst();
+
+        if (!layoutSlotOptional.isPresent())
+            // TODO more detailed error message
+            throw new IllegalArgumentException(String.format("Layout slot target not found: %c", getLayoutTarget()));
+
+        return layoutSlotOptional.get();
+    }
+
+    /**
+     * Converts the user provided source provider to a valid static source.
+     * <p>
+     * Also, assigns the {@link #_srcFactory} value if the provided source has dynamic capabilities.
+     *
+     * @return The current source.
+     * @throws IllegalArgumentException If the provided source is not supported.
+     */
+    @SuppressWarnings("unchecked")
+    private List<?> convertSourceProvider() {
+        if (sourceProvider instanceof Collection) {
+            currSource = new ArrayList<>((Collection<?>) sourceProvider);
+        } else if (sourceProvider instanceof Function) {
+            _srcFactory = (Function<IFContext, Object>) sourceProvider;
+        } else if (sourceProvider instanceof Supplier) {
+            _srcFactory = $ -> ((Supplier<List<?>>) sourceProvider).get();
+        } else {
+            throw new IllegalArgumentException(String.format(
+                    "Unsupported pagination source provider: %s",
+                    sourceProvider.getClass().getName()));
+        }
+
+        return currSource;
+    }
+
+    /**
+     * Loads the current page contents.
+     *
+     * @param context The render context.
+     * @return A CompletableFuture with the completion stage of the current page.
+     */
+    private CompletableFuture<?> loadCurrentPage(IFRenderContext context) {
+        return loadSourceForTheCurrentPage().thenAccept(pageContents -> {
+            if (context.getConfig().getLayout() != null) loadComponentsForLayeredPagination(context, pageContents);
+            else loadComponentsForUnconstrainedPagination(context, pageContents);
+        });
     }
 
     public @NotNull IFContext getHost() {
@@ -100,18 +341,20 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
         return last - first;
     }
 
-    private void setupComponentsForCurrentPage(IFRenderContext context) {
-        if (context.getConfig().getLayout() != null) registerComponentsForLayeredPagination(context);
-        else registerComponentsForUnconstrainedPagination(context);
-    }
-
     @Override
     public void render(@NotNull IFSlotRenderContext context) {
         if (!initialized) {
-            setupComponentsForCurrentPage((IFRenderContext) context.getParent());
+            final IFRenderContext root = (IFRenderContext) context.getParent();
+            updatePageSize(root);
+            loadCurrentPage(root).thenRun(() -> renderChild(context));
             initialized = true;
+            return;
         }
 
+        renderChild(context);
+    }
+
+    private void renderChild(IFSlotRenderContext context) {
         getComponentsInternal().forEach(child -> child.render(context));
     }
 
@@ -121,16 +364,25 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
         if (pageWasChanged) {
             final IFRenderContext renderContext = (IFRenderContext) context.getParent();
             clearChild(renderContext, true);
-            setupComponentsForCurrentPage(renderContext);
-            render(context);
-
-            // Simulate state update to call listeners thus calling watches in parent components
-            host.updateState(getState().internalId(), this);
-            pageWasChanged = false;
+            loadCurrentPage(renderContext).thenRun(() -> {
+                render(context);
+                simulateStateUpdate();
+                pageWasChanged = false;
+            });
             return;
         }
 
         getComponentsInternal().forEach(child -> child.updated(context));
+    }
+
+    /**
+     * Simulate state update to call listeners thus calling watches in parent components.
+     * <p>
+     * Used when something changes in pagination. It allows the end user and developers to "listen"
+     * for changes in {@link #isLoading()} and current page states.
+     */
+    private void simulateStateUpdate() {
+        host.updateState(getState().internalId(), this);
     }
 
     @Override
@@ -151,7 +403,7 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
 
     private void clearChild(IFContext context, boolean bulk) {
         if (bulk) {
-			getComponentsInternal().forEach(child -> child.clear(context));
+            getComponentsInternal().forEach(child -> child.clear(context));
             getComponentsInternal().clear();
             return;
         }
@@ -230,8 +482,6 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
     @Override
     public boolean hasPage(int pageIndex) {
         if (pageIndex < 0) return false;
-        if (pageIndex == 0) return true;
-
         return pageIndex < getPagesCount();
     }
 
@@ -241,6 +491,7 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
             throw new IndexOutOfBoundsException(
                     String.format("Page index not found (%d > %d)", pageIndex, getPagesCount()));
 
+        if (isLoading()) return;
         if (pageSwitchHandler != null) pageSwitchHandler.accept(host, this);
         currPageIndex = pageIndex;
         pageWasChanged = true;
@@ -279,161 +530,15 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
         return dynamic;
     }
 
+    @Override
+    public boolean isLoading() {
+        return isLoading;
+    }
+
     @NotNull
     @Override
     public Iterator<Component> iterator() {
         return getComponents().iterator();
-    }
-
-    /**
-     * The pagination source.
-     *
-     * @return The current pagination source.
-     * @throws IllegalStateException If the current source wasn't yet defined.
-     */
-    private List<?> getSourceOrThrow() {
-        if (currSource != null) return currSource;
-        if (isDynamic()) {
-            currSource = _srcFactory.apply(host);
-            if (currSource == null)
-                throw new IllegalStateException("Dynamic pagination must set current source before try to access it");
-            return currSource;
-        }
-
-        throw new IllegalStateException("Pagination source cannot be null for static pagination");
-    }
-
-    /**
-     * The number of pages.
-     *
-     * @return The number of pages based on the {@link #getSourceOrThrow() current source}.
-     */
-    // TODO needs caching
-    private int getPagesCount() {
-        List<?> source = getSourceOrThrow();
-        return (int) Math.ceil((double) source.size() / getPageSize());
-    }
-
-    /**
-     * The current page size.
-     *
-     * @return Number of available elements position for pagination in the current page.
-     */
-    public int getPageSize() {
-        if (pageSize == -1) throw new IllegalStateException("Page size need to be updated before try to get it");
-
-        return pageSize;
-    }
-
-    /**
-     * Get all elements in a given page index based on the {@link #getSourceOrThrow() current source}.
-     *
-     * @param index The page index.
-     * @return All elements in a page.
-     * @throws IndexOutOfBoundsException If the specified index is {@code < 0} or
-     *                                   exceeds the {@link #getPagesCount() pages count}.
-     */
-    private List<?> getPageContents(int index) {
-        final List<?> src = getSourceOrThrow();
-        if (src.isEmpty()) return Collections.emptyList();
-
-        if (src.size() <= pageSize) return new ArrayList<>(src);
-        if (index < 0 || index > getPagesCount())
-            throw new IndexOutOfBoundsException(String.format(
-                    "Page index must be between the range of 0 and %d. Given: %d", getPagesCount() - 1, index));
-
-        final List<Object> contents = new LinkedList<>();
-        final int base = index * pageSize;
-        int until = base + pageSize;
-        if (until > src.size()) until = src.size();
-
-        for (int i = base; i < until; i++) contents.add(src.get(i));
-
-        return contents;
-    }
-
-    /**
-     * Renders pagination using container boundaries, no constraints.
-     * <p>
-     * The position of the first paged item must be the first slot in the container, the last
-     * position must be the last slot in the container, and {@link #pageSize} on the current page
-     * must be the size of the container.
-     *
-     * @param context The render context.
-     */
-    private void registerComponentsForUnconstrainedPagination(@NotNull IFRenderContext context) {
-        final ViewContainer container = context.getContainer();
-        pageSize = container.getSize();
-
-        final List<?> elements = getPageContents(currPageIndex);
-        final int lastSlot = container.getLastSlot();
-
-        for (int i = container.getFirstSlot(); i < Math.min(lastSlot + 1, elements.size()); i++) {
-            final Object value = elements.get(i);
-            final ComponentFactory factory = elementFactory.create(context, i, i, value);
-            getComponentsInternal().add(factory.create());
-        }
-    }
-
-    /**
-     * Renders the pagination using the layout positions defined from the {@link #getLayoutTarget() target layout character}.
-     * <p>
-     * The first position, last position and number of items on the page must be exactly the same as
-     * the layout.
-     *
-     * @param context The render context.
-     */
-    private void registerComponentsForLayeredPagination(@NotNull IFRenderContext context) {
-        final Optional<LayoutSlot> layoutSlotOptional = context.getLayoutSlots().stream()
-                .filter(layoutSlot -> layoutSlot.getCharacter() == getLayoutTarget())
-                .findFirst();
-
-        if (!layoutSlotOptional.isPresent())
-            // TODO more detailed error message
-            throw new IllegalArgumentException(String.format("Layout slot target not found: %c", getLayoutTarget()));
-
-        final LayoutSlot layoutSlot = layoutSlotOptional.get();
-        pageSize = layoutSlot.getPositions().length;
-
-        final List<?> elements = getPageContents(currPageIndex);
-        if (elements.isEmpty()) return;
-
-        final int elementsLen = elements.size();
-        int iterationIndex = 0;
-        for (final int position : layoutSlot.getPositions()) {
-            final Object value = elements.get(iterationIndex++);
-            final ComponentFactory factory = elementFactory.create(context, iterationIndex, position, value);
-            final Component component = factory.create();
-
-            getComponentsInternal().add(component);
-
-            if (iterationIndex == elementsLen) break;
-        }
-    }
-
-    /**
-     * Converts the user provided source provider to a valid static source.
-     * <p>
-     * Also, assigns the {@link #_srcFactory} value if the provided source has dynamic capabilities.
-     *
-     * @return The current source.
-     * @throws IllegalArgumentException If the provided source is not supported.
-     */
-    @SuppressWarnings("unchecked")
-    private List<?> convertSourceProvider() {
-        if (sourceProvider instanceof Collection) {
-            currSource = new ArrayList<>((Collection<?>) sourceProvider);
-        } else if (sourceProvider instanceof Function) {
-            _srcFactory = (Function<IFContext, List<?>>) sourceProvider;
-        } else if (sourceProvider instanceof Supplier) {
-            _srcFactory = $ -> ((Supplier<List<?>>) sourceProvider).get();
-        } else {
-            throw new IllegalArgumentException(String.format(
-                    "Unsupported pagination source provider: %s",
-                    sourceProvider.getClass().getName()));
-        }
-
-        return currSource;
     }
 
     @Override

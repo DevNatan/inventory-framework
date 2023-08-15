@@ -1,6 +1,7 @@
 package me.devnatan.inventoryframework;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -32,7 +33,21 @@ import me.devnatan.inventoryframework.pipeline.ScheduledUpdateAfterCloseIntercep
 import me.devnatan.inventoryframework.pipeline.ScheduledUpdateAfterRenderInterceptor;
 import me.devnatan.inventoryframework.pipeline.StandardPipelinePhases;
 import me.devnatan.inventoryframework.pipeline.UpdateInterceptor;
-import me.devnatan.inventoryframework.state.*;
+import me.devnatan.inventoryframework.state.BaseMutableState;
+import me.devnatan.inventoryframework.state.BaseState;
+import me.devnatan.inventoryframework.state.ComputedValue;
+import me.devnatan.inventoryframework.state.ImmutableValue;
+import me.devnatan.inventoryframework.state.InitialDataStateValue;
+import me.devnatan.inventoryframework.state.LazyValue;
+import me.devnatan.inventoryframework.state.MutableGenericStateImpl;
+import me.devnatan.inventoryframework.state.MutableIntState;
+import me.devnatan.inventoryframework.state.MutableIntStateImpl;
+import me.devnatan.inventoryframework.state.MutableState;
+import me.devnatan.inventoryframework.state.MutableValue;
+import me.devnatan.inventoryframework.state.PaginationState;
+import me.devnatan.inventoryframework.state.State;
+import me.devnatan.inventoryframework.state.StateValueFactory;
+import me.devnatan.inventoryframework.state.StateValueHost;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -342,6 +357,27 @@ public abstract class PlatformView<
     }
 
     /**
+     * Creates a new unmodifiable asynchronous pagination state.
+     * <p>
+     * <b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     *
+     * @param sourceProvider The asynchronous data source for pagination.
+     * @param itemFactory    The function for creating pagination items, this function is called for
+     *                       each paged element (item) on a page.
+     * @param <T>            The pagination data type.
+     * @return A new immutable pagination state.
+     */
+    @ApiStatus.Experimental
+    protected final <T> State<Pagination> asyncPaginationState(
+            @NotNull Function<TContext, CompletableFuture<List<T>>> sourceProvider,
+            @NotNull BiConsumer<TItem, T> itemFactory) {
+        return this.buildAsyncPaginationState(sourceProvider)
+                .itemFactory(itemFactory)
+                .build();
+    }
+
+    /**
      * Creates a new unmodifiable static pagination state builder.
      *
      * @param sourceProvider The data source for pagination.
@@ -379,6 +415,24 @@ public abstract class PlatformView<
     @SuppressWarnings("unchecked")
     protected final <T> PaginationStateBuilder<TContext, TSlotClickContext, TItem, T> buildPaginationState(
             @NotNull Function<TContext, List<? super T>> sourceProvider) {
+        return new PaginationStateBuilder<>(
+                (PlatformView<TItem, TContext, ?, ?, ?, TSlotClickContext, ?>) this, sourceProvider);
+    }
+
+    /**
+     * Creates a new unmodifiable asynchronous pagination state builder.
+     * <p>
+     * <b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     *
+     * @param sourceProvider The data source for pagination.
+     * @param <T>            The pagination data type.
+     * @return A new pagination state builder.
+     */
+    @ApiStatus.Experimental
+    @SuppressWarnings("unchecked")
+    protected final <T> PaginationStateBuilder<TContext, TSlotClickContext, TItem, T> buildAsyncPaginationState(
+            @NotNull Function<TContext, CompletableFuture<List<T>>> sourceProvider) {
         return new PaginationStateBuilder<>(
                 (PlatformView<TItem, TContext, ?, ?, ?, TSlotClickContext, ?>) this, sourceProvider);
     }
