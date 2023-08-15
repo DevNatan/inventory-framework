@@ -325,7 +325,7 @@ public abstract class PlatformView<
     }
 
     /**
-     * Creates a new unmodifiable dynamic pagination state.
+     * Creates a new unmodifiable lazy pagination state.
      *
      * @param sourceProvider The data source for pagination.
      * @param itemFactory    The function for creating pagination items, this function is called for
@@ -333,15 +333,15 @@ public abstract class PlatformView<
      * @param <T>            The pagination data type.
      * @return A new immutable pagination state.
      */
-    protected final <T> State<Pagination> paginationState(
+    protected final <T> State<Pagination> lazyPaginationState(
             @NotNull Function<TContext, List<? super T>> sourceProvider, @NotNull BiConsumer<TItem, T> itemFactory) {
-        return this.buildPaginationState(sourceProvider)
+        return this.buildLazyPaginationState(sourceProvider)
                 .itemFactory(itemFactory)
                 .build();
     }
 
     /**
-     * Creates a new unmodifiable dynamic pagination state.
+     * Creates a new unmodifiable lazy pagination state.
      *
      * @param sourceProvider The data source for pagination.
      * @param itemFactory    The function for creating pagination items, this function is called for
@@ -349,9 +349,9 @@ public abstract class PlatformView<
      * @param <T>            The pagination data type.
      * @return A new immutable pagination state.
      */
-    protected final <T> State<Pagination> paginationState(
+    protected final <T> State<Pagination> lazyPaginationState(
             @NotNull Supplier<List<? super T>> sourceProvider, @NotNull BiConsumer<TItem, T> itemFactory) {
-        return this.buildPaginationState(sourceProvider)
+        return this.buildLazyPaginationState(sourceProvider)
                 .itemFactory(itemFactory)
                 .build();
     }
@@ -392,28 +392,28 @@ public abstract class PlatformView<
     }
 
     /**
-     * Creates a new unmodifiable dynamic pagination state builder.
+     * Creates a new unmodifiable lazy pagination state builder.
      *
      * @param sourceProvider The data source for pagination.
      * @param <T>            The pagination data type.
      * @return A new pagination state builder.
      */
     @SuppressWarnings("unchecked")
-    protected final <T> PaginationStateBuilder<TContext, TSlotClickContext, TItem, T> buildPaginationState(
+    protected final <T> PaginationStateBuilder<TContext, TSlotClickContext, TItem, T> buildLazyPaginationState(
             @NotNull Supplier<List<? super T>> sourceProvider) {
         return new PaginationStateBuilder<>(
                 (PlatformView<TItem, TContext, ?, ?, ?, TSlotClickContext, ?>) this, sourceProvider);
     }
 
     /**
-     * Creates a new unmodifiable dynamic pagination state builder.
+     * Creates a new unmodifiable lazy pagination state builder.
      *
      * @param sourceProvider The data source for pagination.
      * @param <T>            The pagination data type.
      * @return A new pagination state builder.
      */
     @SuppressWarnings("unchecked")
-    protected final <T> PaginationStateBuilder<TContext, TSlotClickContext, TItem, T> buildPaginationState(
+    protected final <T> PaginationStateBuilder<TContext, TSlotClickContext, TItem, T> buildLazyPaginationState(
             @NotNull Function<TContext, List<? super T>> sourceProvider) {
         return new PaginationStateBuilder<>(
                 (PlatformView<TItem, TContext, ?, ?, ?, TSlotClickContext, ?>) this, sourceProvider);
