@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import me.devnatan.inventoryframework.InventoryFrameworkException;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.IFContext;
@@ -45,13 +46,18 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
     private boolean initialized;
 
     /**
-     * The page size is based on: the type of pagination (static, dynamic/asynchronous).
+     * <code>true</code> when the {@link #sourceProvider}, due to its nature, doesn't provide the
+     * total number of items to be paginated, thus not being able to calculate the total number of
+     * available in the pagination.
+     */
+    private boolean isLazy;
+
+    /**
+     * The page size is based on the type of pagination data source; on the possible usage of layout
+     * in context, if a layout is configured in the layout so this property must be the count of
+     * {@link #getLayoutTarget() layout target} characters in the layout configured layout.
      * <p>
-     * Also based on possible usage of layout in context, if a layout is configured in the layout
-     * so this property must be the count of {@link #getLayoutTarget() layout target} characters
-     * in the layout configured layout.
-     * <p>
-     * Without a layout, the page size is the entire size of {@link IFContext#getContainer() context's container}.
+     * When without a configured layout in the root, the page size is the entire size of {@link IFContext#getContainer() context's container}.
      */
     private int pageSize = -1;
 
@@ -326,6 +332,11 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
      */
     // TODO needs caching
     private int getPagesCount() {
+        if (isLazy)
+            throw new InventoryFrameworkException(
+                    "Unable to get pages count for lazy pagination since it doesn't provide"
+                            + " necessary information to perform calculations for such");
+
         List<?> source = getCurrentSourceOrThrow();
         return (int) Math.ceil((double) source.size() / getPageSize());
     }
