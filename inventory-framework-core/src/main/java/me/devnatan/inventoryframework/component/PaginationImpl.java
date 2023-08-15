@@ -45,8 +45,11 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
     private boolean pageWasChanged;
     private boolean initialized;
 
+    // Changes when dynamic or asynchronous data source is used
+    private boolean isLoading;
+
     /**
-     * Final source factory for dynamic pagination converted from {@link #sourceProvider}.
+     * Final source factory for dynamic or asynchronous pagination converted from {@link #sourceProvider}.
      */
     private Function<IFContext, List<?>> _srcFactory;
 
@@ -151,7 +154,7 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
 
     private void clearChild(IFContext context, boolean bulk) {
         if (bulk) {
-			getComponentsInternal().forEach(child -> child.clear(context));
+            getComponentsInternal().forEach(child -> child.clear(context));
             getComponentsInternal().clear();
             return;
         }
