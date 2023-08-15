@@ -46,19 +46,8 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
     private boolean initialized;
     private int pagesCount;
 
-    //	/**
-    //	 * <code>true</code> when the {@link #sourceProvider}, due to its nature, doesn't provide the
-    //	 * total number of items to be paginated, thus not being able to calculate the total number of
-    //	 * available in the pagination.
-    //	 */
-    //	private boolean isLazy;
-
     /**
-     * The page size is based on the type of pagination data source; on the possible usage of layout
-     * in context, if a layout is configured in the layout so this property must be the count of
-     * {@link #getLayoutTarget() layout target} characters in the layout configured layout.
-     * <p>
-     * When without a configured layout in the root, the page size is the entire size of {@link IFContext#getContainer() context's container}.
+     * The number of elements that each page can have. -1 means uninitialized.
      */
     private int pageSize = -1;
 
@@ -116,6 +105,8 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
         if (!isDynamic()) {
             if (currSource == null) throw new IllegalStateException("User provided pagination source cannot be null");
 
+            if (!initialized) pagesCount = calculatePagesCount(currSource);
+
             return CompletableFuture.completedFuture(splitSourceForPage(currPageIndex, currSource));
         }
 
@@ -148,6 +139,7 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
     private void updateSource(@NotNull List<?> newSource) {
         currSource = newSource;
         pagesCount = calculatePagesCount(currSource);
+        System.out.println("Source updated for (" + currPageIndex + " of " + pagesCount + "): " + newSource);
     }
 
     /**
@@ -240,23 +232,11 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
      * @param pageContents Elements of the current page.
      */
     private void loadComponentsForLayeredPagination(IFRenderContext context, List<?> pageContents) {
-        final Optional<LayoutSlot> layoutSlotOptional = context.getLayoutSlots().stream()
-                .filter(layoutSlot -> layoutSlot.getCharacter() == getLayoutTarget())
-                .findFirst();
-
-        if (!layoutSlotOptional.isPresent())
-            // TODO more detailed error message
-            throw new IllegalArgumentException(String.format("Layout slot target not found: %c", getLayoutTarget()));
-
-        final LayoutSlot layoutSlot = layoutSlotOptional.get();
-        pageSize = layoutSlot.getPositions().length;
-        System.out.println("pageSize = " + pageSize);
-
         if (pageContents.isEmpty()) return;
 
         final int elementsLen = pageContents.size();
         int iterationIndex = 0;
-        for (final int position : layoutSlot.getPositions()) {
+        for (final int position : getLayoutSlotForCurrentTarget(context).getPositions()) {
             final Object value = pageContents.get(iterationIndex++);
             final ComponentFactory factory = elementFactory.create(context, iterationIndex, position, value);
             final Component component = factory.create();
@@ -266,6 +246,35 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
 
             if (iterationIndex == elementsLen) break;
         }
+    }
+
+    /**
+     * Updates the current page size.
+     * <p>
+     * Page size is based on the type of pagination data source; on the possible usage of layout
+     * in context, if a layout is configured in the layout so this property must be the count of
+     * {@link #getLayoutTarget() layout target} characters in the layout configured layout.
+     * <p>
+     * When without a configured layout in the root, the page size is the entire size of {@link IFContext#getContainer() context's container}.
+     *
+     * @param context The render context.
+     */
+    private void updatePageSize(IFRenderContext context) {
+        if (context.getConfig().getLayout() != null)
+            pageSize = getLayoutSlotForCurrentTarget(context).getPositions().length;
+        else pageSize = context.getContainer().getSize();
+    }
+
+    private LayoutSlot getLayoutSlotForCurrentTarget(IFRenderContext context) {
+        final Optional<LayoutSlot> layoutSlotOptional = context.getLayoutSlots().stream()
+                .filter(layoutSlot -> layoutSlot.getCharacter() == getLayoutTarget())
+                .findFirst();
+
+        if (!layoutSlotOptional.isPresent())
+            // TODO more detailed error message
+            throw new IllegalArgumentException(String.format("Layout slot target not found: %c", getLayoutTarget()));
+
+        return layoutSlotOptional.get();
     }
 
     /**
@@ -300,7 +309,7 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
      * @return A CompletableFuture with the completion stage of the current page.
      */
     private CompletableFuture<?> loadCurrentPage(IFRenderContext context) {
-        System.out.println("loading current page");
+        System.out.println("loading page " + currPageIndex + "...");
         return loadSourceForTheCurrentPage().thenAccept(pageContents -> {
             System.out.println("loaded page " + currPageIndex + " with: " + pageContents);
             if (context.getConfig().getLayout() != null) loadComponentsForLayeredPagination(context, pageContents);
@@ -339,7 +348,9 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
     @Override
     public void render(@NotNull IFSlotRenderContext context) {
         if (!initialized) {
-            loadCurrentPage((IFRenderContext) context.getParent()).thenRun(() -> renderChild(context));
+            final IFRenderContext root = (IFRenderContext) context.getParent();
+            updatePageSize(root);
+            loadCurrentPage(root).thenRun(() -> renderChild(context));
             initialized = true;
             return;
         }
@@ -475,8 +486,6 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
     @Override
     public boolean hasPage(int pageIndex) {
         if (pageIndex < 0) return false;
-        if (pageIndex == 0) return true;
-
         return pageIndex < getPagesCount();
     }
 
@@ -486,6 +495,7 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
             throw new IndexOutOfBoundsException(
                     String.format("Page index not found (%d > %d)", pageIndex, getPagesCount()));
 
+        if (isLoading()) return;
         if (pageSwitchHandler != null) pageSwitchHandler.accept(host, this);
         currPageIndex = pageIndex;
         pageWasChanged = true;
