@@ -40,12 +40,22 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
 
     // --- Internal ---
     private int currPageIndex;
-    private int pageSize = -1;
     private final boolean dynamic;
     private boolean pageWasChanged;
     private boolean initialized;
 
-    // Changes when dynamic or asynchronous data source is used
+    /**
+     * The page size is based on: the type of pagination (static, dynamic/asynchronous).
+     * <p>
+     * Also based on possible usage of layout in context, if a layout is configured in the layout
+     * so this property must be the count of {@link #getLayoutTarget() layout target} characters
+     * in the layout configured layout.
+     * <p>
+     * Without a layout, the page size is the entire size of {@link IFContext#getContainer() context's container}.
+     */
+    private int pageSize = -1;
+
+    // Changes when dynamic data source is used and being loaded
     private boolean isLoading;
 
     /**
@@ -103,15 +113,17 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
         return last - first;
     }
 
-    private void setupComponentsForCurrentPage(IFRenderContext context) {
-        if (context.getConfig().getLayout() != null) registerComponentsForLayeredPagination(context);
+    private void loadComponentsToTheCurrentPage(IFRenderContext context) {
+        if (context.getConfig().getLayout() != null) loadComponentsForLayeredPagination(context);
         else registerComponentsForUnconstrainedPagination(context);
     }
 
     @Override
     public void render(@NotNull IFSlotRenderContext context) {
         if (!initialized) {
-            setupComponentsForCurrentPage((IFRenderContext) context.getParent());
+            isLoading = true;
+            loadComponentsToTheCurrentPage((IFRenderContext) context.getParent());
+            isLoading = false;
             initialized = true;
         }
 
@@ -122,9 +134,10 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
     public void updated(@NotNull IFSlotRenderContext context) {
         // If page was changed all components will be removed, so don't trigger update on them
         if (pageWasChanged) {
+            isLoading = true;
             final IFRenderContext renderContext = (IFRenderContext) context.getParent();
             clearChild(renderContext, true);
-            setupComponentsForCurrentPage(renderContext);
+            loadComponentsToTheCurrentPage(renderContext);
             render(context);
 
             // Simulate state update to call listeners thus calling watches in parent components
@@ -289,12 +302,12 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
     }
 
     /**
-     * The pagination source.
+     * The currently loaded pagination source.
      *
      * @return The current pagination source.
      * @throws IllegalStateException If the current source wasn't yet defined.
      */
-    private List<?> getSourceOrThrow() {
+    private List<?> getCurrentSourceOrThrow() {
         if (currSource != null) return currSource;
         if (isDynamic()) {
             currSource = _srcFactory.apply(host);
@@ -309,11 +322,11 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
     /**
      * The number of pages.
      *
-     * @return The number of pages based on the {@link #getSourceOrThrow() current source}.
+     * @return The number of pages based on the {@link #getCurrentSourceOrThrow() current source}.
      */
     // TODO needs caching
     private int getPagesCount() {
-        List<?> source = getSourceOrThrow();
+        List<?> source = getCurrentSourceOrThrow();
         return (int) Math.ceil((double) source.size() / getPageSize());
     }
 
@@ -329,15 +342,15 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
     }
 
     /**
-     * Get all elements in a given page index based on the {@link #getSourceOrThrow() current source}.
+     * Get all elements in a given page index based on the {@link #getCurrentSourceOrThrow() current source}.
      *
      * @param index The page index.
      * @return All elements in a page.
      * @throws IndexOutOfBoundsException If the specified index is {@code < 0} or
      *                                   exceeds the {@link #getPagesCount() pages count}.
      */
-    private List<?> getPageContents(int index) {
-        final List<?> src = getSourceOrThrow();
+    private List<?> getLoadedPageContents(int index) {
+        final List<?> src = getCurrentSourceOrThrow();
         if (src.isEmpty()) return Collections.emptyList();
 
         if (src.size() <= pageSize) return new ArrayList<>(src);
@@ -368,7 +381,7 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
         final ViewContainer container = context.getContainer();
         pageSize = container.getSize();
 
-        final List<?> elements = getPageContents(currPageIndex);
+        final List<?> elements = getLoadedPageContents(currPageIndex);
         final int lastSlot = container.getLastSlot();
 
         for (int i = container.getFirstSlot(); i < Math.min(lastSlot + 1, elements.size()); i++) {
@@ -386,7 +399,7 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
      *
      * @param context The render context.
      */
-    private void registerComponentsForLayeredPagination(@NotNull IFRenderContext context) {
+    private void loadComponentsForLayeredPagination(@NotNull IFRenderContext context) {
         final Optional<LayoutSlot> layoutSlotOptional = context.getLayoutSlots().stream()
                 .filter(layoutSlot -> layoutSlot.getCharacter() == getLayoutTarget())
                 .findFirst();
@@ -398,7 +411,7 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
         final LayoutSlot layoutSlot = layoutSlotOptional.get();
         pageSize = layoutSlot.getPositions().length;
 
-        final List<?> elements = getPageContents(currPageIndex);
+        final List<?> elements = getLoadedPageContents(currPageIndex);
         if (elements.isEmpty()) return;
 
         final int elementsLen = elements.size();
