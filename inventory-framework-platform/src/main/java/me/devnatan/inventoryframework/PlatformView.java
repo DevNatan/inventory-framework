@@ -370,7 +370,7 @@ public abstract class PlatformView<
      */
     @ApiStatus.Experimental
     protected final <T> State<Pagination> asyncPaginationState(
-            @NotNull Function<TContext, CompletableFuture<List<? super T>>> sourceProvider,
+            @NotNull Function<TContext, CompletableFuture<List<T>>> sourceProvider,
             @NotNull BiConsumer<TItem, T> itemFactory) {
         return this.buildAsyncPaginationState(sourceProvider)
                 .itemFactory(itemFactory)
@@ -432,7 +432,7 @@ public abstract class PlatformView<
     @ApiStatus.Experimental
     @SuppressWarnings("unchecked")
     protected final <T> PaginationStateBuilder<TContext, TSlotClickContext, TItem, T> buildAsyncPaginationState(
-            @NotNull Function<TContext, CompletableFuture<List<? super T>>> sourceProvider) {
+            @NotNull Function<TContext, CompletableFuture<List<T>>> sourceProvider) {
         return new PaginationStateBuilder<>(
                 (PlatformView<TItem, TContext, ?, ?, ?, TSlotClickContext, ?>) this, sourceProvider);
     }
