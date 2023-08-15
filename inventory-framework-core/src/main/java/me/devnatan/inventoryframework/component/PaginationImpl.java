@@ -139,7 +139,6 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
     private void updateSource(@NotNull List<?> newSource) {
         currSource = newSource;
         pagesCount = calculatePagesCount(currSource);
-        System.out.println("Source updated for (" + currPageIndex + " of " + pagesCount + "): " + newSource);
     }
 
     /**
@@ -242,7 +241,6 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
             final Component component = factory.create();
 
             getComponentsInternal().add(component);
-            System.out.println("added component at " + position + " internally");
 
             if (iterationIndex == elementsLen) break;
         }
@@ -309,9 +307,7 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
      * @return A CompletableFuture with the completion stage of the current page.
      */
     private CompletableFuture<?> loadCurrentPage(IFRenderContext context) {
-        System.out.println("loading page " + currPageIndex + "...");
         return loadSourceForTheCurrentPage().thenAccept(pageContents -> {
-            System.out.println("loaded page " + currPageIndex + " with: " + pageContents);
             if (context.getConfig().getLayout() != null) loadComponentsForLayeredPagination(context, pageContents);
             else loadComponentsForUnconstrainedPagination(context, pageContents);
         });
