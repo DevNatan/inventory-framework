@@ -121,6 +121,7 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
 
         CompletableFuture<List<?>> job = new CompletableFuture<>();
         isLoading = true;
+        simulateStateUpdate();
 
         final Object source = _srcFactory.apply(host);
         if (source instanceof CompletableFuture) {
@@ -132,7 +133,10 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
         }
 
         // TODO Do some error treatment here, even if we expect to the user to handle it
-        job.thenAccept(this::updateSource).whenComplete((result, exception) -> isLoading = false);
+        job.thenAccept(this::updateSource).whenComplete((result, exception) -> {
+            isLoading = false;
+            simulateStateUpdate();
+        });
         return job;
     }
 
@@ -345,14 +349,22 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
             clearChild(renderContext, true);
             loadCurrentPage(renderContext);
             render(context);
-
-            // Simulate state update to call listeners thus calling watches in parent components
-            host.updateState(getState().internalId(), this);
+            simulateStateUpdate();
             pageWasChanged = false;
             return;
         }
 
         getComponentsInternal().forEach(child -> child.updated(context));
+    }
+
+    /**
+     * Simulate state update to call listeners thus calling watches in parent components.
+     * <p>
+     * Used when something changes in pagination. It allows the end user and developers to "listen"
+     * for changes in {@link #isLoading()} and current page states.
+     */
+    private void simulateStateUpdate() {
+        host.updateState(getState().internalId(), this);
     }
 
     @Override
