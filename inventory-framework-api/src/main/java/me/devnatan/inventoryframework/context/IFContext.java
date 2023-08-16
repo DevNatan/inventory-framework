@@ -207,12 +207,23 @@ public interface IFContext extends VirtualView, StateValueHost {
     void removeComponent(@NotNull Component component);
 
     /**
-     * Updates a single component in this context.
+     * Renders a component in this context.
      *
      * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
      * this library. No compatibility guarantees are provided.</i></b>
      *
-     * @param component To component to be updated.
+     * @param component The component to be rendered.
+     */
+    @ApiStatus.Internal
+    void renderComponent(@NotNull Component component);
+
+    /**
+     * Updates a component in this context.
+     *
+     * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided.</i></b>
+     *
+     * @param component The component to be updated.
      */
     @ApiStatus.Internal
     void updateComponent(@NotNull Component component);

@@ -23,13 +23,14 @@ public class ItemComponent implements Component, InteractionHandler {
     private final Object stack;
     private final boolean cancelOnClick;
     private final boolean closeOnClick;
-    private final BooleanSupplier shouldRender;
+    private final BooleanSupplier displayCondition;
     private final Consumer<? super IFSlotRenderContext> renderHandler;
     private final Consumer<? super IFSlotContext> updateHandler;
     private final Consumer<? super IFSlotClickContext> clickHandler;
     private final Set<State<?>> watching;
     private final boolean isManagedExternally;
     private final boolean updateOnClick;
+    private boolean isVisible;
 
     public ItemComponent(
             VirtualView root,
@@ -37,25 +38,27 @@ public class ItemComponent implements Component, InteractionHandler {
             Object stack,
             boolean cancelOnClick,
             boolean closeOnClick,
-            BooleanSupplier shouldRender,
+            BooleanSupplier displayCondition,
             Consumer<? super IFSlotRenderContext> renderHandler,
             Consumer<? super IFSlotContext> updateHandler,
             Consumer<? super IFSlotClickContext> clickHandler,
             Set<State<?>> watching,
             boolean isManagedExternally,
-            boolean updateOnClick) {
+            boolean updateOnClick,
+            boolean isVisible) {
         this.root = root;
         this.position = position;
         this.stack = stack;
         this.cancelOnClick = cancelOnClick;
         this.closeOnClick = closeOnClick;
-        this.shouldRender = shouldRender;
+        this.displayCondition = displayCondition;
         this.renderHandler = renderHandler;
         this.updateHandler = updateHandler;
         this.clickHandler = clickHandler;
         this.watching = watching;
         this.isManagedExternally = isManagedExternally;
         this.updateOnClick = updateOnClick;
+        this.isVisible = isVisible;
     }
 
     @NotNull
@@ -85,8 +88,9 @@ public class ItemComponent implements Component, InteractionHandler {
         return updateOnClick;
     }
 
-    public BooleanSupplier getShouldRender() {
-        return shouldRender;
+    @Override
+    public boolean shouldRender() {
+        return displayCondition == null || displayCondition.getAsBoolean();
     }
 
     public Consumer<? super IFSlotRenderContext> getRenderHandler() {
@@ -111,17 +115,17 @@ public class ItemComponent implements Component, InteractionHandler {
     }
 
     @Override
+    public boolean intersects(@NotNull Component other) {
+        return Component.intersects(this, other);
+    }
+
+    @Override
     public @NotNull InteractionHandler getInteractionHandler() {
         return this;
     }
 
     @Override
     public void render(@NotNull IFSlotRenderContext context) {
-        if (getShouldRender() != null && !getShouldRender().getAsBoolean()) {
-            context.getContainer().removeItem(getPosition());
-            return;
-        }
-
         if (getRenderHandler() != null) {
             final int initialSlot = getPosition();
             getRenderHandler().accept(context);
@@ -139,10 +143,12 @@ public class ItemComponent implements Component, InteractionHandler {
                 // TODO Misplaced - move this to overall item component misplacement check
                 if (initialSlot != -1 && initialSlot != updatedSlot) {
                     context.getContainer().removeItem(initialSlot);
+                    setVisible(false);
                 }
             }
 
             context.getContainer().renderItem(getPosition(), context.getResult());
+            setVisible(true);
             return;
         }
 
@@ -151,23 +157,28 @@ public class ItemComponent implements Component, InteractionHandler {
         }
 
         context.getContainer().renderItem(getPosition(), getStack());
+        setVisible(true);
     }
 
     @Override
     public void updated(@NotNull IFSlotRenderContext context) {
         if (context.isCancelled()) return;
-        if (!shouldBeUpdated()) return;
+
+        // Static item with no `displayIf` must not even reach the update handler
+        if (displayCondition == null && getRenderHandler() == null) return;
+
         if (getUpdateHandler() != null) {
             getUpdateHandler().accept(context);
             if (context.isCancelled()) return;
         }
 
-        render(context);
+        context.getParent().renderComponent(this);
     }
 
     @Override
     public void clear(@NotNull IFContext context) {
         context.getContainer().removeItem(getPosition());
+        setVisible(false);
     }
 
     @Override
@@ -182,14 +193,13 @@ public class ItemComponent implements Component, InteractionHandler {
     }
 
     @Override
-    public boolean shouldBeUpdated() {
-        if (getShouldRender() != null) return true;
-        return getRenderHandler() != null;
+    public boolean isVisible() {
+        return isVisible;
     }
 
     @Override
-    public boolean isVisible() {
-        return ((IFContext) getRoot()).getContainer().hasItem(getPosition());
+    public void setVisible(boolean visible) {
+        isVisible = visible;
     }
 
     @Override
@@ -217,8 +227,8 @@ public class ItemComponent implements Component, InteractionHandler {
                 + position + ", stack="
                 + stack + ", cancelOnClick="
                 + cancelOnClick + ", closeOnClick="
-                + closeOnClick + ", shouldRender="
-                + shouldRender + ", renderHandler="
+                + closeOnClick + ", displayCondition="
+                + displayCondition + ", renderHandler="
                 + renderHandler + ", updateHandler="
                 + updateHandler + ", clickHandler="
                 + clickHandler + ", watching="

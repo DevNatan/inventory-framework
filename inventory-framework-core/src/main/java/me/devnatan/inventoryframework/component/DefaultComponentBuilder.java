@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BooleanSupplier;
 import me.devnatan.inventoryframework.state.State;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,8 +15,28 @@ abstract class DefaultComponentBuilder<S extends ComponentBuilder<S>> implements
     protected String referenceKey;
     protected Map<String, Object> data;
     protected boolean cancelOnClick, closeOnClick, updateOnClick;
-    protected final Set<State<?>> watching = new LinkedHashSet<>();
+    protected Set<State<?>> watchingStates;
     protected boolean isManagedExternally;
+    protected BooleanSupplier displayCondition;
+
+    protected DefaultComponentBuilder(
+            String referenceKey,
+            Map<String, Object> data,
+            boolean cancelOnClick,
+            boolean closeOnClick,
+            boolean updateOnClick,
+            Set<State<?>> watchingStates,
+            boolean isManagedExternally,
+            BooleanSupplier displayCondition) {
+        this.referenceKey = referenceKey;
+        this.data = data;
+        this.cancelOnClick = cancelOnClick;
+        this.closeOnClick = closeOnClick;
+        this.updateOnClick = updateOnClick;
+        this.watchingStates = watchingStates;
+        this.isManagedExternally = isManagedExternally;
+        this.displayCondition = displayCondition;
+    }
 
     @Override
     public S referencedBy(@NotNull String key) {
@@ -50,13 +71,20 @@ abstract class DefaultComponentBuilder<S extends ComponentBuilder<S>> implements
 
     @Override
     public S watch(State<?>... states) {
-        watching.addAll(Arrays.asList(states));
+        if (watchingStates == null) watchingStates = new LinkedHashSet<>();
+        watchingStates.addAll(Arrays.asList(states));
         return (S) this;
     }
 
     @Override
     public S withExternallyManaged(boolean isExternallyManaged) {
         isManagedExternally = isExternallyManaged;
+        return (S) this;
+    }
+
+    @Override
+    public S displayIf(BooleanSupplier displayCondition) {
+        this.displayCondition = displayCondition;
         return (S) this;
     }
 }

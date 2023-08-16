@@ -41,6 +41,11 @@ public class FakeComponent implements Component, InteractionHandler {
     }
 
     @Override
+    public boolean intersects(@NotNull Component other) {
+        return false;
+    }
+
+    @Override
     public @NotNull InteractionHandler getInteractionHandler() {
         return this;
     }
@@ -52,11 +57,6 @@ public class FakeComponent implements Component, InteractionHandler {
 
     @Override
     public void updated(@NotNull IFSlotRenderContext context) {}
-
-    @Override
-    public boolean shouldBeUpdated() {
-        throw new UnsupportedOperationException("Not implemented");
-    }
 
     @Override
     public void clear(@NotNull IFContext context) {
@@ -74,7 +74,15 @@ public class FakeComponent implements Component, InteractionHandler {
     }
 
     @Override
+    public void setVisible(boolean visible) {}
+
+    @Override
     public boolean isManagedExternally() {
+        return false;
+    }
+
+    @Override
+    public boolean shouldRender() {
         return false;
     }
 

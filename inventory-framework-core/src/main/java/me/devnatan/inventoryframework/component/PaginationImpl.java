@@ -388,11 +388,6 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
     }
 
     @Override
-    public boolean shouldBeUpdated() {
-        return pageWasChanged;
-    }
-
-    @Override
     public void clear(@NotNull IFContext context) {
         // Only clear components if page was changed to not make the clear operation inconsistent
         if (!pageWasChanged) {
@@ -434,6 +429,11 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
             if (component.isContainedWithin(position)) return true;
         }
         return false;
+    }
+
+    @Override
+    public boolean intersects(@NotNull Component other) {
+        return Component.intersects(this, other);
     }
 
     @Override
@@ -545,7 +545,16 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
 
     @Override
     public boolean isVisible() {
-        return !getComponentsInternal().isEmpty();
+        for (final Component children : this) {
+            if (!children.isVisible()) return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public void setVisible(boolean visible) {
+        getComponentsInternal().forEach(component -> component.setVisible(visible));
     }
 
     @Override
@@ -571,6 +580,11 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
 
     @Override
     public boolean isManagedExternally() {
+        return true;
+    }
+
+    @Override
+    public boolean shouldRender() {
         return true;
     }
 

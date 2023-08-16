@@ -1,5 +1,9 @@
 # Changelog
 
+# 3.0.0-rc.3 (unreleased)
+
+* Overlapping components support (#433)
+
 # 3.0.0-rc.2 (08-15-2023)
 
 * New `openForPlayer()` and `openForEveryone()` with initial data parameter like in ViewFrame (#421)

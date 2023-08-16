@@ -1,5 +1,6 @@
 package me.devnatan.inventoryframework.component;
 
+import java.util.function.BooleanSupplier;
 import me.devnatan.inventoryframework.state.State;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -107,4 +108,12 @@ public interface ComponentBuilder<S extends ComponentBuilder<S>> {
      */
     @ApiStatus.Experimental
     S updateOnClick();
+
+    /**
+     * Only shows the component if a given condition is satisfied.
+     *
+     * @param displayCondition Component display condition.
+     * @return This component builder.
+     */
+    S displayIf(BooleanSupplier displayCondition);
 }

@@ -1,6 +1,16 @@
 package me.devnatan.inventoryframework.context;
 
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewContainer;
@@ -150,10 +160,10 @@ class BaseViewContext extends DefaultStateValueHost implements IFContext {
         }
     }
 
-    @Override
-    public void updateComponent(@NotNull Component component) {
+    private IFSlotRenderContext createRenderContext(@NotNull Component component) {
         final Viewer subject = this instanceof IFConfinedContext ? ((IFConfinedContext) this).getViewer() : null;
-        final IFSlotRenderContext context = getRoot()
+
+        return getRoot()
                 .getElementFactory()
                 .createSlotContext(
                         component.getPosition(),
@@ -163,8 +173,37 @@ class BaseViewContext extends DefaultStateValueHost implements IFContext {
                         getIndexedViewers(),
                         this,
                         IFSlotRenderContext.class);
+    }
 
-        component.updated(context);
+    @Override
+    public void renderComponent(@NotNull Component component) {
+        if (!component.shouldRender()) {
+            component.setVisible(false);
+
+            // TODO Support recursive overlapping (more than two components overlapping each other)
+            final Optional<Component> overlapOptional = getComponents().stream()
+                    // FIXME This is kinda false positive needs a better explanation
+                    .filter(Component::isVisible)
+                    .filter(other -> other.intersects(component))
+                    .findFirst();
+
+            if (overlapOptional.isPresent()) {
+                final Component overlap = overlapOptional.get();
+                renderComponent(overlap);
+
+                if (overlap.isVisible()) return;
+            }
+
+            component.clear(this);
+            return;
+        }
+
+        component.render(createRenderContext(component));
+    }
+
+    @Override
+    public void updateComponent(@NotNull Component component) {
+        component.updated(createRenderContext(component));
     }
 
     @Override

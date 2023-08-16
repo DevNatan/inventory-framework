@@ -1,5 +1,8 @@
 package me.devnatan.inventoryframework.component;
 
+import java.util.Map;
+import java.util.Set;
+import java.util.function.BooleanSupplier;
 import me.devnatan.inventoryframework.state.State;
 import org.jetbrains.annotations.NotNull;
 
@@ -7,6 +10,30 @@ public class TestItemComponentBuilder extends DefaultComponentBuilder<TestItemCo
         implements ItemComponentBuilder<TestItemComponentBuilder>, ComponentFactory {
 
     int slot;
+
+    public TestItemComponentBuilder() {
+        this(null, null, false, false, false, null, false, null);
+    }
+
+    protected TestItemComponentBuilder(
+            String referenceKey,
+            Map<String, Object> data,
+            boolean cancelOnClick,
+            boolean closeOnClick,
+            boolean updateOnClick,
+            Set<State<?>> watchingStates,
+            boolean isManagedExternally,
+            BooleanSupplier displayCondition) {
+        super(
+                referenceKey,
+                data,
+                cancelOnClick,
+                closeOnClick,
+                updateOnClick,
+                watchingStates,
+                isManagedExternally,
+                displayCondition);
+    }
 
     @Override
     public @NotNull Component create() {
