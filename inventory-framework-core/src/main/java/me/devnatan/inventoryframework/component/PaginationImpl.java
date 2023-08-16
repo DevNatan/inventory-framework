@@ -584,7 +584,7 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
     }
 
     @Override
-    public boolean shouldRender() {
+    public boolean shouldRender(IFContext context) {
         return true;
     }
 

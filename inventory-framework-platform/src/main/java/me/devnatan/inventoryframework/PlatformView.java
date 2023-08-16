@@ -52,7 +52,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class PlatformView<
-                TItem extends ItemComponentBuilder<TItem> & ComponentFactory,
+                TItem extends ItemComponentBuilder<TItem, TContext> & ComponentFactory,
                 TContext extends IFContext,
                 TOpenContext extends IFOpenContext,
                 TCloseContext extends IFCloseContext,
@@ -60,8 +60,6 @@ public abstract class PlatformView<
                 TSlotContext extends IFSlotContext,
                 TSlotClickContext extends IFSlotClickContext>
         extends DefaultRootView {
-
-    private static final String METADATA_EVENTBUS = "_evbus";
 
     private IFViewFrame<?> framework;
     private boolean initialized;

@@ -114,7 +114,7 @@ public final class AvailableSlotInterceptor implements PipelineInterceptor<Virtu
         // we need to check component factories since components don't have been yet rendered
         return context.getComponentFactories().stream()
                 .filter(componentFactory -> componentFactory instanceof ItemComponentBuilder)
-                .map(componentFactory -> (ItemComponentBuilder<?>) componentFactory)
+                .map(componentFactory -> (ItemComponentBuilder<?, ?>) componentFactory)
                 .noneMatch(itemBuilder -> itemBuilder.isContainedWithin(slot));
     }
 }

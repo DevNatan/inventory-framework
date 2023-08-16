@@ -2,12 +2,13 @@ package me.devnatan.inventoryframework.component;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.function.BooleanSupplier;
+import java.util.function.Predicate;
+import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.state.State;
 import org.jetbrains.annotations.NotNull;
 
-public class TestItemComponentBuilder extends DefaultComponentBuilder<TestItemComponentBuilder>
-        implements ItemComponentBuilder<TestItemComponentBuilder>, ComponentFactory {
+public class TestItemComponentBuilder extends DefaultComponentBuilder<TestItemComponentBuilder, IFContext>
+        implements ItemComponentBuilder<TestItemComponentBuilder, IFContext>, ComponentFactory {
 
     int slot;
 
@@ -23,7 +24,7 @@ public class TestItemComponentBuilder extends DefaultComponentBuilder<TestItemCo
             boolean updateOnClick,
             Set<State<?>> watchingStates,
             boolean isManagedExternally,
-            BooleanSupplier displayCondition) {
+            Predicate<IFContext> displayCondition) {
         super(
                 referenceKey,
                 data,

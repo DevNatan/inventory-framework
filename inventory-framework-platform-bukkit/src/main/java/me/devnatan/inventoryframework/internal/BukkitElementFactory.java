@@ -117,7 +117,7 @@ public class BukkitElementFactory extends ElementFactory {
     }
 
     @Override
-    public ComponentBuilder<?> createComponentBuilder(@NotNull VirtualView root) {
+    public ComponentBuilder<?, Context> createComponentBuilder(@NotNull VirtualView root) {
         return new BukkitItemComponentBuilder(root);
     }
 

@@ -29,7 +29,7 @@ public final class LayoutRenderInterceptor implements PipelineInterceptor<Virtua
             for (final int slot : layoutSlot.getPositions()) {
                 final ComponentFactory componentFactory = factory.apply(iterationIndex++);
                 if (componentFactory instanceof ItemComponentBuilder)
-                    ((ItemComponentBuilder<?>) componentFactory).withSlot(slot);
+                    ((ItemComponentBuilder<?, ?>) componentFactory).withSlot(slot);
 
                 final Component component = componentFactory.create();
                 renderContext.addComponent(component);

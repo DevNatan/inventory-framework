@@ -108,7 +108,7 @@ public interface Component extends VirtualView {
     boolean isManagedExternally();
 
     // TODO Needs documentation
-    boolean shouldRender();
+    boolean shouldRender(IFContext context);
 
     /**
      * Checks if two components area intersects with each other.

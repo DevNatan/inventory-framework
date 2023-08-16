@@ -6,18 +6,21 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BooleanSupplier;
+import java.util.function.Predicate;
+import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.state.State;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unchecked")
-abstract class DefaultComponentBuilder<S extends ComponentBuilder<S>> implements ComponentBuilder<S> {
+abstract class DefaultComponentBuilder<S extends ComponentBuilder<S, C>, C extends IFContext>
+        implements ComponentBuilder<S, C> {
 
     protected String referenceKey;
     protected Map<String, Object> data;
     protected boolean cancelOnClick, closeOnClick, updateOnClick;
     protected Set<State<?>> watchingStates;
     protected boolean isManagedExternally;
-    protected BooleanSupplier displayCondition;
+    protected Predicate<C> displayCondition;
 
     protected DefaultComponentBuilder(
             String referenceKey,
@@ -27,7 +30,7 @@ abstract class DefaultComponentBuilder<S extends ComponentBuilder<S>> implements
             boolean updateOnClick,
             Set<State<?>> watchingStates,
             boolean isManagedExternally,
-            BooleanSupplier displayCondition) {
+            Predicate<C> displayCondition) {
         this.referenceKey = referenceKey;
         this.data = data;
         this.cancelOnClick = cancelOnClick;
@@ -84,6 +87,12 @@ abstract class DefaultComponentBuilder<S extends ComponentBuilder<S>> implements
 
     @Override
     public S displayIf(BooleanSupplier displayCondition) {
+        this.displayCondition = displayCondition == null ? null : $ -> displayCondition.getAsBoolean();
+        return (S) this;
+    }
+
+    @Override
+    public S displayIf(Predicate<C> displayCondition) {
         this.displayCondition = displayCondition;
         return (S) this;
     }

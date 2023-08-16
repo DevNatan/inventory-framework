@@ -18,7 +18,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
 
-abstract class PlatformRenderContext<T extends ItemComponentBuilder<T>> extends ConfinedContext
+abstract class PlatformRenderContext<T extends ItemComponentBuilder<T, C>, C extends IFContext> extends ConfinedContext
         implements IFRenderContext {
 
     private final List<ComponentFactory> componentBuilders = new ArrayList<>();

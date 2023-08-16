@@ -82,7 +82,7 @@ public class FakeComponent implements Component, InteractionHandler {
     }
 
     @Override
-    public boolean shouldRender() {
+    public boolean shouldRender(IFContext context) {
         return false;
     }
 

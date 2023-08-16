@@ -12,7 +12,7 @@ import me.devnatan.inventoryframework.state.State;
 import org.jetbrains.annotations.NotNull;
 
 public final class PaginationStateBuilder<
-        C extends IFContext, SC extends IFSlotContext, B extends ItemComponentBuilder<B> & ComponentFactory, V> {
+        C extends IFContext, SC extends IFSlotContext, B extends ItemComponentBuilder<B, C> & ComponentFactory, V> {
 
     private final PlatformView<B, C, ?, ?, ?, SC, ?> root;
     private final Object sourceProvider;

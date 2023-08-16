@@ -177,7 +177,7 @@ class BaseViewContext extends DefaultStateValueHost implements IFContext {
 
     @Override
     public void renderComponent(@NotNull Component component) {
-        if (!component.shouldRender()) {
+        if (!component.shouldRender(this)) {
             component.setVisible(false);
 
             // TODO Support recursive overlapping (more than two components overlapping each other)
