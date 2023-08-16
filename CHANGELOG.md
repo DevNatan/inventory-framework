@@ -3,6 +3,8 @@
 # 3.0.0-rc.3 (unreleased)
 
 * Overlapping components support (#433)
+* StateValue from API is now an interface (#434)
+* New `displayIf(...)` with context as argument (#436)
 
 # 3.0.0-rc.2 (08-15-2023)
 
