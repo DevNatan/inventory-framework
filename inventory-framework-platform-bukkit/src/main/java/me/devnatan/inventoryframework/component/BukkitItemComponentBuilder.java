@@ -4,11 +4,12 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.VirtualView;
+import me.devnatan.inventoryframework.context.Context;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.context.IFSlotContext;
@@ -22,8 +23,8 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public final class BukkitItemComponentBuilder extends DefaultComponentBuilder<BukkitItemComponentBuilder>
-        implements ItemComponentBuilder<BukkitItemComponentBuilder>, ComponentFactory {
+public final class BukkitItemComponentBuilder extends DefaultComponentBuilder<BukkitItemComponentBuilder, Context>
+        implements ItemComponentBuilder<BukkitItemComponentBuilder, Context>, ComponentFactory {
 
     private final VirtualView root;
     private int slot;
@@ -64,7 +65,7 @@ public final class BukkitItemComponentBuilder extends DefaultComponentBuilder<Bu
             boolean updateOnClick,
             Set<State<?>> watchingStates,
             boolean isManagedExternally,
-            BooleanSupplier displayCondition) {
+            Predicate<Context> displayCondition) {
         super(
                 referenceKey,
                 data,

@@ -3,8 +3,8 @@ package me.devnatan.inventoryframework.component;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
-import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import me.devnatan.inventoryframework.InventoryFrameworkException;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.IFContext;
@@ -23,7 +23,7 @@ public class ItemComponent implements Component, InteractionHandler {
     private final Object stack;
     private final boolean cancelOnClick;
     private final boolean closeOnClick;
-    private final BooleanSupplier displayCondition;
+    private final Predicate<? extends IFContext> displayCondition;
     private final Consumer<? super IFSlotRenderContext> renderHandler;
     private final Consumer<? super IFSlotContext> updateHandler;
     private final Consumer<? super IFSlotClickContext> clickHandler;
@@ -38,7 +38,7 @@ public class ItemComponent implements Component, InteractionHandler {
             Object stack,
             boolean cancelOnClick,
             boolean closeOnClick,
-            BooleanSupplier displayCondition,
+            Predicate<? extends IFContext> displayCondition,
             Consumer<? super IFSlotRenderContext> renderHandler,
             Consumer<? super IFSlotContext> updateHandler,
             Consumer<? super IFSlotClickContext> clickHandler,
@@ -88,9 +88,10 @@ public class ItemComponent implements Component, InteractionHandler {
         return updateOnClick;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public boolean shouldRender() {
-        return displayCondition == null || displayCondition.getAsBoolean();
+    public boolean shouldRender(IFContext context) {
+        return displayCondition == null || ((Predicate<? super IFContext>) displayCondition).test(context);
     }
 
     public Consumer<? super IFSlotRenderContext> getRenderHandler() {

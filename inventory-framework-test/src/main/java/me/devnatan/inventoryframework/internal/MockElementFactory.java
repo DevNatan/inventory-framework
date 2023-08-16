@@ -92,7 +92,7 @@ public final class MockElementFactory extends ElementFactory {
     }
 
     @Override
-    public ComponentBuilder<?> createComponentBuilder(@NotNull VirtualView root) {
+    public ComponentBuilder<?, ?> createComponentBuilder(@NotNull VirtualView root) {
         return null;
     }
 

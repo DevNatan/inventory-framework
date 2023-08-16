@@ -1,6 +1,8 @@
 package me.devnatan.inventoryframework.component;
 
 import java.util.function.BooleanSupplier;
+import java.util.function.Predicate;
+import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.state.State;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -10,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @param <S> The reference of the component builder itself used as return type for method chaining.
  */
-public interface ComponentBuilder<S extends ComponentBuilder<S>> {
+public interface ComponentBuilder<S extends ComponentBuilder<S, C>, C extends IFContext> {
 
     /**
      * Defines the reference key for this component.
@@ -116,4 +118,12 @@ public interface ComponentBuilder<S extends ComponentBuilder<S>> {
      * @return This component builder.
      */
     S displayIf(BooleanSupplier displayCondition);
+
+    /**
+     * Only shows the component if a given condition is satisfied.
+     *
+     * @param displayCondition Component display condition.
+     * @return This component builder.
+     */
+    S displayIf(Predicate<C> displayCondition);
 }

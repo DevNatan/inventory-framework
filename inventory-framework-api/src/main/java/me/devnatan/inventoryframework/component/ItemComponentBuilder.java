@@ -1,8 +1,10 @@
 package me.devnatan.inventoryframework.component;
 
+import me.devnatan.inventoryframework.context.IFContext;
 import org.jetbrains.annotations.ApiStatus;
 
-public interface ItemComponentBuilder<S extends ItemComponentBuilder<S>> extends ComponentBuilder<S> {
+public interface ItemComponentBuilder<S extends ItemComponentBuilder<S, C>, C extends IFContext>
+        extends ComponentBuilder<S, C> {
 
     /**
      * Sets the slot that the item will be positioned.
