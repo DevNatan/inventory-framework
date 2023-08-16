@@ -8,12 +8,12 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Computed value whose value returned by the function to get the state value is always a new value
  * created by {@link ComputedValue#factory}.
- *
+ * <p>
  * <b><i> This is an internal inventory-framework API that should not be used from outside of
  * this library. No compatibility guarantees are provided. </i></b>
  */
 @ApiStatus.Internal
-public final class ComputedValue extends StateValue {
+public final class ComputedValue extends AbstractStateValue {
 
     private final Supplier<?> factory;
 

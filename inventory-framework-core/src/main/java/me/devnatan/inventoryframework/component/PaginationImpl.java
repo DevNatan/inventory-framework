@@ -20,15 +20,15 @@ import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.context.IFSlotRenderContext;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
+import me.devnatan.inventoryframework.state.AbstractStateValue;
 import me.devnatan.inventoryframework.state.State;
-import me.devnatan.inventoryframework.state.StateValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
 import org.jetbrains.annotations.VisibleForTesting;
 
 // TODO add "key" to child pagination components and check if it needs to be updated based on it
 @VisibleForTesting
-public class PaginationImpl extends StateValue implements Pagination, InteractionHandler {
+public class PaginationImpl extends AbstractStateValue implements Pagination, InteractionHandler {
 
     private final List<Component> components = new LinkedList<>();
     private final @NotNull IFContext host;
@@ -323,7 +323,9 @@ public class PaginationImpl extends StateValue implements Pagination, Interactio
     }
 
     @Override
-    protected void set(Object value) {}
+    public void set(Object value) {
+        // do nothing since Pagination is not immutable but unmodifiable directly
+    }
 
     @Override
     public @NotNull VirtualView getRoot() {

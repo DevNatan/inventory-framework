@@ -11,7 +11,7 @@ import org.jetbrains.annotations.UnknownNullability;
  * this library. No compatibility guarantees are provided. </i></b>
  */
 @ApiStatus.Internal
-public final class InitialDataStateValue extends StateValue {
+public final class InitialDataStateValue extends AbstractStateValue {
 
     private final StateValue backingValue;
 

@@ -10,19 +10,19 @@ import org.jetbrains.annotations.NotNull;
  * <p>
  * The initial state value is set by a {@link LazyValue#computation}, and this value remains the
  * {@link LazyValue#currValue current value} throughout the lifecycle of that value.
- *
+ * <p>
  * <b><i> This is an internal inventory-framework API that should not be used from outside of
  * this library. No compatibility guarantees are provided. </i></b>
  */
 @ApiStatus.Internal
-public final class LazyValue extends StateValue {
+public final class LazyValue extends AbstractStateValue {
 
     private static final Object UNINITIALIZED = new Object();
 
     private final Supplier<?> computation;
     private Object currValue = UNINITIALIZED;
 
-    public LazyValue(@NotNull State<?> state, @NotNull Supplier<?> computation) {
+    public LazyValue(State<?> state, @NotNull Supplier<?> computation) {
         super(state);
         this.computation = computation;
     }
@@ -30,7 +30,6 @@ public final class LazyValue extends StateValue {
     @Override
     public Object get() {
         if (currValue.equals(UNINITIALIZED)) currValue = computation.get();
-
         return currValue;
     }
 
