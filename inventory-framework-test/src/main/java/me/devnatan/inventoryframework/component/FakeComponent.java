@@ -40,12 +40,12 @@ public class FakeComponent implements Component, InteractionHandler {
         return this.position == position;
     }
 
-	@Override
-	public boolean intersects(@NotNull Component other) {
-		return false;
-	}
+    @Override
+    public boolean intersects(@NotNull Component other) {
+        return false;
+    }
 
-	@Override
+    @Override
     public @NotNull InteractionHandler getInteractionHandler() {
         return this;
     }
@@ -73,21 +73,19 @@ public class FakeComponent implements Component, InteractionHandler {
         return true;
     }
 
-	@Override
-	public void setVisible(boolean visible) {
+    @Override
+    public void setVisible(boolean visible) {}
 
-	}
-
-	@Override
+    @Override
     public boolean isManagedExternally() {
         return false;
     }
 
-	@Override
-	public boolean shouldRender() {
-		return false;
-	}
+    @Override
+    public boolean shouldRender() {
+        return false;
+    }
 
-	@Override
+    @Override
     public void clicked(@NotNull Component component, @NotNull IFSlotClickContext context) {}
 }
