@@ -1,5 +1,9 @@
 package me.devnatan.inventoryframework.component;
 
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -12,6 +16,7 @@ import me.devnatan.inventoryframework.context.IFSlotRenderContext;
 import me.devnatan.inventoryframework.context.SlotClickContext;
 import me.devnatan.inventoryframework.context.SlotContext;
 import me.devnatan.inventoryframework.context.SlotRenderContext;
+import me.devnatan.inventoryframework.state.State;
 import me.devnatan.inventoryframework.utils.SlotConverter;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -21,15 +26,28 @@ public final class BukkitItemComponentBuilder extends DefaultComponentBuilder<Bu
         implements ItemComponentBuilder<BukkitItemComponentBuilder>, ComponentFactory {
 
     private final VirtualView root;
-    private int slot = -1;
+    private int slot;
     private ItemStack item;
     private Consumer<? super IFSlotRenderContext> renderHandler;
     private Consumer<? super IFSlotClickContext> clickHandler;
     private Consumer<? super IFSlotContext> updateHandler;
-    private BooleanSupplier shouldRender;
 
     public BukkitItemComponentBuilder(VirtualView root) {
-        this.root = root;
+        this(
+                root,
+                -1,
+                null,
+                null,
+                null,
+                null,
+                null,
+                new HashMap<>(),
+                false,
+                false,
+                false,
+                new LinkedHashSet<>(),
+                false,
+                null);
     }
 
     private BukkitItemComponentBuilder(
@@ -39,26 +57,40 @@ public final class BukkitItemComponentBuilder extends DefaultComponentBuilder<Bu
             Consumer<? super IFSlotRenderContext> renderHandler,
             Consumer<? super IFSlotClickContext> clickHandler,
             Consumer<? super IFSlotContext> updateHandler,
-            BooleanSupplier shouldRender) {
-        this(root);
+            String referenceKey,
+            Map<String, Object> data,
+            boolean cancelOnClick,
+            boolean closeOnClick,
+            boolean updateOnClick,
+            Set<State<?>> watchingStates,
+            boolean isManagedExternally,
+            BooleanSupplier displayCondition) {
+        super(
+                referenceKey,
+                data,
+                cancelOnClick,
+                closeOnClick,
+                updateOnClick,
+                watchingStates,
+                isManagedExternally,
+                displayCondition);
+        this.root = root;
         this.slot = slot;
         this.item = item;
         this.renderHandler = renderHandler;
         this.clickHandler = clickHandler;
         this.updateHandler = updateHandler;
-        this.shouldRender = shouldRender;
     }
 
     @Override
     public String toString() {
-        return "BukkitItemComponentBuilder{" + "slot="
-                + slot + ", item="
-                + item + ", renderHandler="
-                + renderHandler + ", clickHandler="
-                + clickHandler + ", updateHandler="
-                + updateHandler + ", shouldRender="
-                + shouldRender + "} "
-                + super.toString();
+        return "BukkitItemComponentBuilder{"
+                + "slot=" + slot
+                + ", item=" + item
+                + ", renderHandler=" + renderHandler
+                + ", clickHandler=" + clickHandler
+                + ", updateHandler=" + updateHandler
+                + "} " + super.toString();
     }
 
     @Override
@@ -108,7 +140,7 @@ public final class BukkitItemComponentBuilder extends DefaultComponentBuilder<Bu
     }
 
     /**
-     * Dynamic renderization of a specific item.
+     * Dynamic rendering of a specific item.
      * <p>
      * This handler is called every time the item or the view that owns it is updated.
      *
@@ -117,28 +149,6 @@ public final class BukkitItemComponentBuilder extends DefaultComponentBuilder<Bu
      */
     public BukkitItemComponentBuilder renderWith(@NotNull Supplier<@Nullable ItemStack> renderFactory) {
         return onRender(render -> render.setItem(renderFactory.get()));
-    }
-
-    /**
-     * Only renders this item if the render condition is satisfied.
-     * <p>
-     * It's a help function to simplify the use with other things like {@link Pagination}.
-     * <pre>{@code
-     * // This example only renders the arrow if pagination can advance
-     * render.layoutSlot('>', new ItemStack(Material.ARROW))
-     *     .watch(paginationState)
-     *     .displayIf(pagination::canAdvance)
-     *     .onClick(pagination::advance)
-     * }</pre>
-     * <p>
-     * This method overwrites {@link #onRender(Consumer)} when the item set is null.
-     *
-     * @param renderCondition The renderization condition.
-     * @return This item builder.
-     */
-    public BukkitItemComponentBuilder displayIf(BooleanSupplier renderCondition) {
-        this.shouldRender = renderCondition;
-        return this;
     }
 
     /**
@@ -189,11 +199,11 @@ public final class BukkitItemComponentBuilder extends DefaultComponentBuilder<Bu
                 item,
                 cancelOnClick,
                 closeOnClick,
-                shouldRender,
+                displayCondition,
                 renderHandler,
                 updateHandler,
                 clickHandler,
-                watching,
+                watchingStates,
                 isManagedExternally,
                 updateOnClick);
     }
@@ -201,7 +211,19 @@ public final class BukkitItemComponentBuilder extends DefaultComponentBuilder<Bu
     @Override
     public BukkitItemComponentBuilder copy() {
         return new BukkitItemComponentBuilder(
-                        root, slot, item, renderHandler, clickHandler, updateHandler, shouldRender)
-                .withExternallyManaged(isManagedExternally);
+                root,
+                slot,
+                item,
+                renderHandler,
+                clickHandler,
+                updateHandler,
+                referenceKey,
+                data,
+                cancelOnClick,
+                closeOnClick,
+                updateOnClick,
+                watchingStates,
+                isManagedExternally,
+                displayCondition);
     }
 }
