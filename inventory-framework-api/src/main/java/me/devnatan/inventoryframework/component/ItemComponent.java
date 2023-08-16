@@ -30,6 +30,7 @@ public class ItemComponent implements Component, InteractionHandler {
     private final Set<State<?>> watching;
     private final boolean isManagedExternally;
     private final boolean updateOnClick;
+    private boolean isVisible;
 
     public ItemComponent(
             VirtualView root,
@@ -43,7 +44,8 @@ public class ItemComponent implements Component, InteractionHandler {
             Consumer<? super IFSlotClickContext> clickHandler,
             Set<State<?>> watching,
             boolean isManagedExternally,
-            boolean updateOnClick) {
+            boolean updateOnClick,
+            boolean isVisible) {
         this.root = root;
         this.position = position;
         this.stack = stack;
@@ -56,6 +58,7 @@ public class ItemComponent implements Component, InteractionHandler {
         this.watching = watching;
         this.isManagedExternally = isManagedExternally;
         this.updateOnClick = updateOnClick;
+        this.isVisible = isVisible;
     }
 
     @NotNull
@@ -119,6 +122,7 @@ public class ItemComponent implements Component, InteractionHandler {
     public void render(@NotNull IFSlotRenderContext context) {
         if (getShouldRender() != null && !getShouldRender().getAsBoolean()) {
             context.getContainer().removeItem(getPosition());
+            setVisible(false);
             return;
         }
 
@@ -139,10 +143,12 @@ public class ItemComponent implements Component, InteractionHandler {
                 // TODO Misplaced - move this to overall item component misplacement check
                 if (initialSlot != -1 && initialSlot != updatedSlot) {
                     context.getContainer().removeItem(initialSlot);
+                    setVisible(false);
                 }
             }
 
             context.getContainer().renderItem(getPosition(), context.getResult());
+            setVisible(true);
             return;
         }
 
@@ -151,6 +157,7 @@ public class ItemComponent implements Component, InteractionHandler {
         }
 
         context.getContainer().renderItem(getPosition(), getStack());
+        setVisible(true);
     }
 
     @Override
@@ -168,6 +175,7 @@ public class ItemComponent implements Component, InteractionHandler {
     @Override
     public void clear(@NotNull IFContext context) {
         context.getContainer().removeItem(getPosition());
+        setVisible(false);
     }
 
     @Override
@@ -189,7 +197,12 @@ public class ItemComponent implements Component, InteractionHandler {
 
     @Override
     public boolean isVisible() {
-        return ((IFContext) getRoot()).getContainer().hasItem(getPosition());
+        return isVisible;
+    }
+
+    @Override
+    public void setVisible(boolean visible) {
+        isVisible = visible;
     }
 
     @Override

@@ -92,6 +92,17 @@ public interface Component extends VirtualView {
     boolean isVisible();
 
     /**
+     * Sets the visibility state of this component.
+     * <p>
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     *
+     * @param visible If this component is visible.
+     */
+    @ApiStatus.Internal
+    void setVisible(boolean visible);
+
+    /**
      * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
      * this library. No compatibility guarantees are provided.</i></b>
      */
