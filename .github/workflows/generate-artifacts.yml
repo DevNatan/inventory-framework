@@ -28,12 +28,12 @@ jobs:
       - name: Generate artifacts
         uses: burrunan/gradle-cache-action@v1
         with:
-          arguments: ${{ steps.vars.outputs.lowercase }}:shadowJar
+          arguments: inventory-framework-platform-${{ steps.vars.outputs.lowercase }}:shadowJar
           gradle-version: wrapper
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: inventory-framework-${{ steps.vars.outputs.lowercase }}-${{ github.sha }}.jar
-          path: ${{ steps.vars.outputs.lowercase }}/build/libs/*.jar
+          name: inventory-framework-platform-${{ steps.vars.outputs.lowercase }}-${{ github.sha }}.jar
+          path: inventory-framework-platform-${{ steps.vars.outputs.lowercase }}/build/libs/*.jar
           retention-days: 3
           if-no-files-found: error
