@@ -545,10 +545,19 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
 
     @Override
     public boolean isVisible() {
-        return !getComponentsInternal().isEmpty();
+		for (final Component children : this) {
+			if (!children.isVisible()) return false;
+		}
+
+        return true;
     }
 
-    @Override
+	@Override
+	public void setVisible(boolean visible) {
+		getComponentsInternal().forEach(component -> component.setVisible(visible));
+	}
+
+	@Override
     public void clicked(@NotNull Component component, @NotNull IFSlotClickContext context) {
         final List<Component> components = getComponentsInternal();
         if (components.isEmpty()) return;
