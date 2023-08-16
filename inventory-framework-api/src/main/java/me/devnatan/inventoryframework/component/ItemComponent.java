@@ -23,7 +23,7 @@ public class ItemComponent implements Component, InteractionHandler {
     private final Object stack;
     private final boolean cancelOnClick;
     private final boolean closeOnClick;
-    private final BooleanSupplier shouldRender;
+    private final BooleanSupplier displayCondition;
     private final Consumer<? super IFSlotRenderContext> renderHandler;
     private final Consumer<? super IFSlotContext> updateHandler;
     private final Consumer<? super IFSlotClickContext> clickHandler;
@@ -38,7 +38,7 @@ public class ItemComponent implements Component, InteractionHandler {
             Object stack,
             boolean cancelOnClick,
             boolean closeOnClick,
-            BooleanSupplier shouldRender,
+            BooleanSupplier displayCondition,
             Consumer<? super IFSlotRenderContext> renderHandler,
             Consumer<? super IFSlotContext> updateHandler,
             Consumer<? super IFSlotClickContext> clickHandler,
@@ -51,7 +51,7 @@ public class ItemComponent implements Component, InteractionHandler {
         this.stack = stack;
         this.cancelOnClick = cancelOnClick;
         this.closeOnClick = closeOnClick;
-        this.shouldRender = shouldRender;
+        this.displayCondition = displayCondition;
         this.renderHandler = renderHandler;
         this.updateHandler = updateHandler;
         this.clickHandler = clickHandler;
@@ -88,8 +88,9 @@ public class ItemComponent implements Component, InteractionHandler {
         return updateOnClick;
     }
 
-    public BooleanSupplier getShouldRender() {
-        return shouldRender;
+    @Override
+    public boolean shouldRender() {
+        return displayCondition == null || displayCondition.getAsBoolean();
     }
 
     public Consumer<? super IFSlotRenderContext> getRenderHandler() {
@@ -114,18 +115,17 @@ public class ItemComponent implements Component, InteractionHandler {
     }
 
     @Override
+    public boolean intersects(@NotNull Component other) {
+        return Component.intersects(this, other);
+    }
+
+    @Override
     public @NotNull InteractionHandler getInteractionHandler() {
         return this;
     }
 
     @Override
     public void render(@NotNull IFSlotRenderContext context) {
-        if (getShouldRender() != null && !getShouldRender().getAsBoolean()) {
-            context.getContainer().removeItem(getPosition());
-            setVisible(false);
-            return;
-        }
-
         if (getRenderHandler() != null) {
             final int initialSlot = getPosition();
             getRenderHandler().accept(context);
@@ -163,13 +163,16 @@ public class ItemComponent implements Component, InteractionHandler {
     @Override
     public void updated(@NotNull IFSlotRenderContext context) {
         if (context.isCancelled()) return;
-        if (!shouldBeUpdated()) return;
+
+        // Static item with no `displayIf` must not even reach the update handler
+        if (displayCondition == null && getRenderHandler() == null) return;
+
         if (getUpdateHandler() != null) {
             getUpdateHandler().accept(context);
             if (context.isCancelled()) return;
         }
 
-        render(context);
+        context.getParent().renderComponent(this);
     }
 
     @Override
@@ -187,12 +190,6 @@ public class ItemComponent implements Component, InteractionHandler {
     public void clicked(@NotNull Component component, @NotNull IFSlotClickContext context) {
         if (getClickHandler() != null) getClickHandler().accept(context);
         if (isUpdateOnClick()) context.update();
-    }
-
-    @Override
-    public boolean shouldBeUpdated() {
-        if (getShouldRender() != null) return true;
-        return getRenderHandler() != null;
     }
 
     @Override
@@ -230,8 +227,8 @@ public class ItemComponent implements Component, InteractionHandler {
                 + position + ", stack="
                 + stack + ", cancelOnClick="
                 + cancelOnClick + ", closeOnClick="
-                + closeOnClick + ", shouldRender="
-                + shouldRender + ", renderHandler="
+                + closeOnClick + ", displayCondition="
+                + displayCondition + ", renderHandler="
                 + renderHandler + ", updateHandler="
                 + updateHandler + ", clickHandler="
                 + clickHandler + ", watching="

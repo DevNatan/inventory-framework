@@ -38,21 +38,19 @@ public interface Component extends VirtualView {
     boolean isContainedWithin(int position);
 
     /**
+     * If this component are intersects with other component.
+     *
+     * @param other The other component.
+     * @return If both this and other component intersects in area.
+     */
+    boolean intersects(@NotNull Component other);
+
+    /**
      * The interaction handler for this component.
      *
      * @return The interaction handler for this component.
      */
     InteractionHandler getInteractionHandler();
-
-    /**
-     * Determines if this component should be updated.
-     * <p>
-     * This is a simple precondition to make checking the need for component updates more efficient,
-     * checking your own conditions before going to more complex methods.
-     *
-     * @return {@code true} if this component should be updated or {@code false} otherwise.
-     */
-    boolean shouldBeUpdated();
 
     /**
      * Renders this component to the given context.
@@ -108,4 +106,24 @@ public interface Component extends VirtualView {
      */
     @ApiStatus.Internal
     boolean isManagedExternally();
+
+    // TODO Needs documentation
+    boolean shouldRender();
+
+    /**
+     * Checks if two components area intersects with each other.
+     *
+     * @param component The component A.
+     * @param other     The component B.
+     * @return If component B area conflicts with area of component A.
+     */
+    static boolean intersects(@NotNull Component component, @NotNull Component other) {
+        if (other instanceof ComponentComposition) {
+            for (final Component otherChildren : (ComponentComposition) other) {
+                if (otherChildren.intersects(component)) return true;
+            }
+        }
+
+        return other.isContainedWithin(component.getPosition());
+    }
 }
