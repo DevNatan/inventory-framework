@@ -11,6 +11,10 @@ public class TestItemComponentBuilder extends DefaultComponentBuilder<TestItemCo
 
     int slot;
 
+    public TestItemComponentBuilder() {
+        this(null, null, false, false, false, null, false, null);
+    }
+
     protected TestItemComponentBuilder(
             String referenceKey,
             Map<String, Object> data,
