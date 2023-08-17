@@ -33,8 +33,7 @@ public class View
                 CloseContext,
                 RenderContext,
                 SlotContext,
-                SlotClickContext>
-        implements InventoryHolder {
+                SlotClickContext> {
 
     @Override
     public final @NotNull ElementFactory getElementFactory() {
@@ -53,11 +52,5 @@ public class View
     @Override
     public final void nextTick(Runnable task) {
         Bukkit.getServer().getScheduler().runTask(getFramework().getOwner(), task);
-    }
-
-    @NotNull
-    @Override
-    public final Inventory getInventory() {
-        throw new UnsupportedOperationException("Cannot get inventory from RootView");
     }
 }
