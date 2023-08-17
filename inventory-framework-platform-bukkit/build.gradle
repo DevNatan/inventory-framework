@@ -17,6 +17,7 @@ dependencies {
     api projects.inventoryFrameworkApi
     api projects.inventoryFrameworkCore
     api projects.inventoryFrameworkPlatform
+    runtimeOnly projects.inventoryFrameworkKotlin
     compileOnly libs.spigot
     testCompileOnly libs.spigot
     testRuntimeOnly libs.spigot
