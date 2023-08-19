@@ -2,6 +2,7 @@ import org.apache.tools.ant.filters.ReplaceTokens
 
 plugins {
     alias(libs.plugins.shadowjar)
+    alias(libs.plugins.kotlin)
 }
 
 apply from: '../library.gradle'
@@ -17,7 +18,6 @@ dependencies {
     api projects.inventoryFrameworkApi
     api projects.inventoryFrameworkCore
     api projects.inventoryFrameworkPlatform
-    runtimeOnly projects.inventoryFrameworkKotlin
     compileOnly libs.spigot
     testCompileOnly libs.spigot
     testRuntimeOnly libs.spigot
@@ -35,4 +35,8 @@ processResources {
         duplicatesStrategy DuplicatesStrategy.INCLUDE
         filter ReplaceTokens, tokens: [version: version]
     }
+}
+
+kotlin {
+    explicitApi()
 }

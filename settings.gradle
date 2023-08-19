@@ -6,5 +6,4 @@ include 'inventory-framework-test',
         'inventory-framework-core',
         'inventory-framework-platform',
         'inventory-framework-platform-paper',
-        'inventory-framework-platform-bukkit',
-        'inventory-framework-kotlin'
+        'inventory-framework-platform-bukkit'
