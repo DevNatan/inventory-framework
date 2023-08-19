@@ -2,20 +2,28 @@ package me.devnatan.inventoryframework.internal;
 
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.function.BiFunction;
 import java.util.function.IntFunction;
 import me.devnatan.inventoryframework.component.ComponentFactory;
+import me.devnatan.inventoryframework.jdk.IndexSlotFunction;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * <b><i> This is an internal inventory-framework API that should not be used from outside of
+ * this library. No compatibility guarantees are provided. </i></b>
+ */
+@ApiStatus.Internal
 public final class LayoutSlot {
 
     // Retro compatibility
     public static final char FILLED_RESERVED_CHAR = 'O';
 
     private final char character;
-    private final IntFunction<ComponentFactory> factory;
+    private final IndexSlotFunction<ComponentFactory> factory;
     private final int[] positions;
 
-    public LayoutSlot(char character, @Nullable IntFunction<ComponentFactory> factory, int[] positions) {
+    public LayoutSlot(char character, @Nullable IndexSlotFunction<ComponentFactory> factory, int[] positions) {
         this.character = character;
         this.factory = factory;
         this.positions = positions;
@@ -25,11 +33,11 @@ public final class LayoutSlot {
         return character;
     }
 
-    public IntFunction<ComponentFactory> getFactory() {
+    public IndexSlotFunction<ComponentFactory> getFactory() {
         return factory;
     }
 
-    public LayoutSlot withFactory(@Nullable IntFunction<ComponentFactory> factory) {
+    public LayoutSlot withFactory(@Nullable IndexSlotFunction<ComponentFactory> factory) {
         return new LayoutSlot(character, factory, positions);
     }
 
