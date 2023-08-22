@@ -3,7 +3,11 @@ package me.devnatan.inventoryframework.context;
 import static java.lang.String.format;
 import static me.devnatan.inventoryframework.utils.SlotConverter.convertSlot;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import me.devnatan.inventoryframework.InventoryFrameworkException;
@@ -14,6 +18,7 @@ import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.component.ComponentFactory;
 import me.devnatan.inventoryframework.component.ItemComponentBuilder;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
+import me.devnatan.inventoryframework.jdk.IndexSlotConsumer;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
@@ -171,8 +176,11 @@ abstract class PlatformRenderContext<T extends ItemComponentBuilder<T, C>, C ext
     /**
      * Defines the item that will represent a character provided in the context layout.
      *
+     *
+     *
      * @param character The layout character target.
      * @return An item builder to configure the item.
+     * @see <a href="https://github.com/DevNatan/inventory-framework/wiki/layouts#layout-slot">Layout Slot on Wiki</a>
      */
     public @NotNull T layoutSlot(char character) {
         requireNonReservedLayoutCharacter(character);
@@ -184,8 +192,8 @@ abstract class PlatformRenderContext<T extends ItemComponentBuilder<T, C>, C ext
                 .orElseThrow(() -> new InventoryFrameworkException("Missing layout character: " + character));
 
         final T builder = createBuilder();
-        final int elIndex = getLayoutSlots().indexOf(layoutSlot);
-        getLayoutSlots().set(elIndex, layoutSlot.withFactory($ -> (ComponentFactory) builder));
+        getLayoutSlots().set(getLayoutSlots().indexOf(layoutSlot), layoutSlot.withFactory((index, slot) ->
+                (ComponentFactory) builder.withSlot(slot)));
         return builder;
     }
 
@@ -193,12 +201,12 @@ abstract class PlatformRenderContext<T extends ItemComponentBuilder<T, C>, C ext
      * Defines the item that will represent a character provided in the context layout.
      *
      * <pre>{@code
-     * layoutSlot('F', (index, builder) -> builder.withItem(...));
+     * layoutSlot('F', (index, slot, builder) -> builder.withItem(...));
      * }</pre>
      *
      * @param character The layout character target.
      */
-    public void layoutSlot(char character, @NotNull BiConsumer<Integer, T> factory) {
+    public void layoutSlot(char character, @NotNull IndexSlotConsumer<T> factory) {
         requireNonReservedLayoutCharacter(character);
 
         // TODO More detailed exception message
@@ -207,13 +215,42 @@ abstract class PlatformRenderContext<T extends ItemComponentBuilder<T, C>, C ext
                 .findFirst()
                 .orElseThrow(() -> new InventoryFrameworkException("Missing layout character: " + character));
 
-        final int elIndex = getLayoutSlots().indexOf(layoutSlot);
-        getLayoutSlots().set(elIndex, layoutSlot.withFactory(index -> {
+        getLayoutSlots().set(getLayoutSlots().indexOf(layoutSlot), layoutSlot.withFactory((index, slot) -> {
             final T builder = createBuilder();
-            factory.accept(index, builder);
+            builder.withSlot(slot);
+            factory.accept(index, slot, builder);
             return (ComponentFactory) builder;
         }));
     }
+
+    /**
+     * TODO
+     *
+     * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     *
+     * @param character The layout character target.
+     * @param items     The items to be iterated for each character present in the layout.
+     * @param factory   The function that'll be called for each iterated item.
+     */
+    //    @ApiStatus.Experimental
+    //    <V> layoutSlot(char character, @NotNull Iterable<V> items, @NotNull IndexSlotConsumer<T> factory) {
+    //        requireNonReservedLayoutCharacter(character);
+    //
+    //        // TODO More detailed exception message
+    //        final LayoutSlot layoutSlot = getLayoutSlots().stream()
+    //                .filter(value -> value.getCharacter() == character)
+    //                .findFirst()
+    //                .orElseThrow(() -> new InventoryFrameworkException("Missing layout character: " + character));
+    //
+    //        final Iterator<T> iterator = items.iterator();
+    //        getLayoutSlots().set(getLayoutSlots().indexOf(layoutSlot), layoutSlot.withFactory((index, slot) -> {
+    //            final T builder = createBuilder();
+    //            builder.withSlot(slot);
+    //            factory.accept(index, slot, builder);
+    //            return (ComponentFactory) builder;
+    //        }));
+    //    }
 
     /**
      * Creates a new platform builder instance.

@@ -2,8 +2,6 @@ package me.devnatan.inventoryframework.internal;
 
 import java.util.Arrays;
 import java.util.Objects;
-import java.util.function.BiFunction;
-import java.util.function.IntFunction;
 import me.devnatan.inventoryframework.component.ComponentFactory;
 import me.devnatan.inventoryframework.jdk.IndexSlotFunction;
 import org.jetbrains.annotations.ApiStatus;

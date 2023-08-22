@@ -1,13 +1,12 @@
 package me.devnatan.inventoryframework.pipeline;
 
-import java.util.function.IntFunction;
 import me.devnatan.inventoryframework.InventoryFrameworkException;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.ComponentFactory;
-import me.devnatan.inventoryframework.component.ItemComponentBuilder;
 import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
+import me.devnatan.inventoryframework.jdk.IndexSlotFunction;
 
 public final class LayoutRenderInterceptor implements PipelineInterceptor<VirtualView> {
 
@@ -17,8 +16,8 @@ public final class LayoutRenderInterceptor implements PipelineInterceptor<Virtua
 
         final IFRenderContext renderContext = (IFRenderContext) subject;
         for (final LayoutSlot layoutSlot : renderContext.getLayoutSlots()) {
-            final IntFunction<ComponentFactory> factory = layoutSlot.getFactory();
-            if (factory == null) {
+            final IndexSlotFunction<ComponentFactory> elementsFactory = layoutSlot.getFactory();
+            if (elementsFactory == null) {
                 if (layoutSlot.isDefinedByTheUser())
                     throw new InventoryFrameworkException(
                             "#layoutSlot(...) factory cannot be null when defined by the user");
@@ -27,11 +26,8 @@ public final class LayoutRenderInterceptor implements PipelineInterceptor<Virtua
 
             int iterationIndex = 0;
             for (final int slot : layoutSlot.getPositions()) {
-                final ComponentFactory componentFactory = factory.apply(iterationIndex++);
-                if (componentFactory instanceof ItemComponentBuilder)
-                    ((ItemComponentBuilder<?, ?>) componentFactory).withSlot(slot);
-
-                final Component component = componentFactory.create();
+                final ComponentFactory factory = elementsFactory.apply(iterationIndex++, slot);
+                final Component component = factory.create();
                 renderContext.addComponent(component);
             }
         }
