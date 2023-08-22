@@ -72,7 +72,7 @@ abstract class PlatformRenderContext<T extends ItemComponentBuilder<T, C>, C ext
     }
 
     @Override
-    public void component(@NotNull Component component) {
+    public void addComponent(@NotNull Component component) {
         synchronized (components) {
             components.add(component);
         }

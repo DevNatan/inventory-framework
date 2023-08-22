@@ -49,5 +49,5 @@ public interface IFRenderContext extends IFConfinedContext {
      * @param component The component.
      */
     @ApiStatus.Experimental
-    void component(@NotNull Component component);
+    void addComponent(@NotNull Component component);
 }
