@@ -29,7 +29,7 @@ class BaseViewContext extends DefaultStateValueHost implements IFContext {
     private final @NotNull RootView root;
     // Container can be null on pre-render/intermediate contexts
     private final @Nullable ViewContainer container;
-    private final List<Component> components = new LinkedList<>();
+    final List<Component> components = new LinkedList<>();
     private final Deque<Integer> markedForRemoval = new ArrayDeque<>();
     private final Object initialData;
     protected final Map<String, Viewer> viewers;

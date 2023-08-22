@@ -11,6 +11,7 @@ import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
+import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.ComponentFactory;
 import me.devnatan.inventoryframework.component.ItemComponentBuilder;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
@@ -68,6 +69,13 @@ abstract class PlatformRenderContext<T extends ItemComponentBuilder<T, C>, C ext
     @Override
     public BiFunction<Integer, Integer, ComponentFactory> getAvailableSlotFactory() {
         return availableSlotFactory;
+    }
+
+    @Override
+    public void component(@NotNull Component component) {
+        synchronized (components) {
+            components.add(component);
+        }
     }
 
     /**
