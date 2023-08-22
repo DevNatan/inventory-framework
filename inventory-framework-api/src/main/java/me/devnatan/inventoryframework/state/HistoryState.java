@@ -7,5 +7,4 @@ import org.jetbrains.annotations.ApiStatus;
  * such API may be changed or may be removed completely in any further release. </i></b>
  */
 @ApiStatus.Experimental
-public interface HistoryState extends State<History> {
-}
+public interface HistoryState extends State<History> {}

@@ -1,6 +1,5 @@
 package me.devnatan.inventoryframework.state;
 
-import me.devnatan.inventoryframework.RootView;
 import org.jetbrains.annotations.ApiStatus;
 
 /**
@@ -10,9 +9,7 @@ import org.jetbrains.annotations.ApiStatus;
 @ApiStatus.Experimental
 public interface History extends StateValue {
 
-	int getIndex();
+    void rewind();
 
-	void rewind();
-
-	void pop();
+    void pop();
 }
