@@ -1,5 +1,6 @@
 package me.devnatan.inventoryframework;
 
+import me.devnatan.inventoryframework.context.IFContext;
 import org.jetbrains.annotations.NotNull;
 
 public interface Viewer {
@@ -31,4 +32,7 @@ public interface Viewer {
      */
     @NotNull
     ViewContainer getSelfContainer();
+
+	@NotNull
+	IFContext getContext();
 }

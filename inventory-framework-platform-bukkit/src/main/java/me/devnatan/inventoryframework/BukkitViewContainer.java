@@ -71,14 +71,6 @@ public final class BukkitViewContainer implements ViewContainer {
     }
 
     @Override
-    public @NotNull @Unmodifiable List<Viewer> getViewers() {
-        return Collections.unmodifiableList(new ArrayList<>(inventory.getViewers().stream()
-                .filter(humanEntity -> humanEntity instanceof Player)
-                .map(humanEntity -> new BukkitViewer((Player) humanEntity))
-                .collect(Collectors.toList())));
-    }
-
-    @Override
     public void renderItem(int slot, Object item) {
         requireSupportedItem(item);
         inventory.setItem(slot, (ItemStack) item);
@@ -134,11 +126,6 @@ public final class BukkitViewContainer implements ViewContainer {
     @Override
     public int getLastSlot() {
         return getSlotsCount();
-    }
-
-    @Override
-    public void changeTitle(@Nullable final String title) {
-        for (final Viewer viewer : getViewers()) changeTitle(title, viewer);
     }
 
     @Override

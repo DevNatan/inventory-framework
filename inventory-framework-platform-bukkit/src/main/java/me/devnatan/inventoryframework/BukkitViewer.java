@@ -1,64 +1,70 @@
 package me.devnatan.inventoryframework;
 
-import java.util.Objects;
+import me.devnatan.inventoryframework.context.IFContext;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 public final class BukkitViewer implements Viewer {
 
-    private final Player player;
-    private ViewContainer container;
+	private final Player player;
+	private ViewContainer selfContainer;
+	private IFContext context;
 
-    public BukkitViewer(Player player) {
-        this.player = player;
-    }
+	public BukkitViewer(@NotNull Player player, @NotNull IFContext context) {
+		this.player = player;
+		this.context = context;
+	}
 
-    public Player getPlayer() {
-        return player;
-    }
+	public Player getPlayer() {
+		return player;
+	}
 
-    public ViewContainer getContainer() {
-        return container;
-    }
+	@NotNull
+	@Override
+	public IFContext getContext() {
+		return context;
+	}
 
-    @Override
-    public @NotNull String getId() {
-        return getPlayer().getUniqueId().toString();
-    }
+	@Override
+	public @NotNull String getId() {
+		return getPlayer().getUniqueId().toString();
+	}
 
-    @Override
-    public void open(@NotNull final ViewContainer container) {
-        getPlayer().openInventory(((BukkitViewContainer) container).getInventory());
-    }
+	@Override
+	public void open(@NotNull final ViewContainer container) {
+		getPlayer().openInventory(((BukkitViewContainer) container).getInventory());
+	}
 
-    @Override
-    public void close() {
-        getPlayer().closeInventory();
-    }
+	@Override
+	public void close() {
+		getPlayer().closeInventory();
+	}
 
-    @Override
-    public @NotNull ViewContainer getSelfContainer() {
-        if (getContainer() == null)
-            container = new BukkitViewContainer(getPlayer().getInventory(), false, null);
+	@Override
+	public @NotNull ViewContainer getSelfContainer() {
+		if (selfContainer == null)
+			selfContainer = new BukkitViewContainer(getPlayer().getInventory(), getContext().isShared(), ViewType.PLAYER);
 
-        return getContainer();
-    }
+		return selfContainer;
+	}
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        BukkitViewer that = (BukkitViewer) o;
-        return Objects.equals(getPlayer(), that.getPlayer());
-    }
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		BukkitViewer that = (BukkitViewer) o;
+		return Objects.equals(getPlayer(), that.getPlayer());
+	}
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(getPlayer());
-    }
+	@Override
+	public int hashCode() {
+		return Objects.hash(getPlayer());
+	}
 
-    @Override
-    public String toString() {
-        return "BukkitViewer{" + "player=" + player + ", container=" + container + '}';
-    }
+	@Override
+	public String toString() {
+		return "BukkitViewer{" + "player=" + player + ", selfContainer=" + selfContainer + '}';
+	}
 }

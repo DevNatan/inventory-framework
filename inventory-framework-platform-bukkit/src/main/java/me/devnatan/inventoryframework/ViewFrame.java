@@ -3,12 +3,15 @@ package me.devnatan.inventoryframework;
 import com.google.common.collect.Lists;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
+
+import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.feature.DefaultFeatureInstaller;
 import me.devnatan.inventoryframework.feature.Feature;
 import me.devnatan.inventoryframework.feature.FeatureInstaller;
@@ -36,6 +39,7 @@ public class ViewFrame extends IFViewFrame<ViewFrame> implements FeatureInstalle
 
     private final Plugin owner;
     private final FeatureInstaller<ViewFrame> featureInstaller = new DefaultFeatureInstaller<>(this);
+	private final Map<String, Viewer> viewerByPlayerUuid = new HashMap<>();
 
     static {
         PlatformUtils.setFactory(new BukkitElementFactory());
@@ -226,24 +230,14 @@ public class ViewFrame extends IFViewFrame<ViewFrame> implements FeatureInstalle
         }
     }
 
-    /**
-     * Returns the current {@link RootView} the player is viewing based on open inventory.
-     * <p>
-     * Only views registered in that view frame are returned.
-     *
-     * @param player The player.
-     * @return The current view the player is viewing or {@code null} if it was not found, or it was
-     * not possible to determine it.
-     */
-    public RootView getCurrentView(@NotNull Player player) {
-        final Inventory topInventory = player.getOpenInventory().getTopInventory();
-        if (!(topInventory.getHolder() instanceof View)) return null;
-
-        final View view = (View) topInventory.getHolder();
-        if (!getRegisteredViews().containsKey(view.getUniqueId())) return null;
-
-        return view;
-    }
+	/**
+	 * <b><i> This is an internal inventory-framework API that should not be used from outside of
+	 * this library. No compatibility guarantees are provided. </i></b>
+	 */
+	@ApiStatus.Internal
+	public Viewer getViewer(@NotNull Player player) {
+		return viewerByPlayerUuid.get(player.getUniqueId().toString());
+	}
 
     /**
      * Creates a new ViewFrame.

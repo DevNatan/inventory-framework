@@ -77,17 +77,11 @@ public interface ViewContainer {
      */
     int getColumnsCount();
 
-    @NotNull
-    @Unmodifiable
-    List<Viewer> getViewers();
-
     void open(@NotNull Viewer viewer);
 
     void close();
 
     void close(@NotNull Viewer viewer);
-
-    void changeTitle(@Nullable String title);
 
     void changeTitle(@Nullable String title, @NotNull Viewer target);
 

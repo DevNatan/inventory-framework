@@ -9,133 +9,122 @@ import me.devnatan.inventoryframework.internal.ElementFactory;
 import me.devnatan.inventoryframework.pipeline.StandardPipelinePhases;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.PlayerInventory;
 
 final class IFInventoryListener implements Listener {
 
-    private final ViewFrame viewFrame;
+	private final ViewFrame viewFrame;
 
-    public IFInventoryListener(ViewFrame viewFrame) {
-        this.viewFrame = viewFrame;
-    }
+	public IFInventoryListener(ViewFrame viewFrame) {
+		this.viewFrame = viewFrame;
+	}
 
-    @SuppressWarnings("unused")
-    @EventHandler(ignoreCancelled = true)
-    public void onInventoryClick(final InventoryClickEvent event) {
-        if (!(event.getWhoClicked() instanceof Player)) return;
+	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+	public void onInventoryClick(final InventoryClickEvent event) {
+		if (!(event.getWhoClicked() instanceof Player)) return;
 
-        final Player player = (Player) event.getWhoClicked();
-        final RootView root = viewFrame.getCurrentView(player);
-        if (root == null) return;
+		final Player player = (Player) event.getWhoClicked();
+		final Viewer viewer = viewFrame.getViewer(player);
+		if (viewer == null) return;
 
-        final ElementFactory elementFactory = root.getElementFactory();
-        final Viewer viewer = elementFactory.createViewer(player);
-        final IFContext mainContext;
-        try {
-            mainContext = root.getContext(viewer);
-        } catch (final IllegalArgumentException exception) {
-            event.setCancelled(true);
-            throw exception;
-        }
+		final IFContext context = viewer.getContext();
+		final RootView root = context.getRoot();
 
-        final ViewContainer container = event.getClickedInventory() instanceof PlayerInventory
-                ? viewer.getSelfContainer()
-                : mainContext.getContainer();
-        final Component component = mainContext.getComponent(event.getRawSlot());
-        if (component != null && !component.isVisible()) return;
+		final Component component = context.getComponent(event.getRawSlot());
+		if (component == null || !component.isVisible()) return;
 
-        final IFSlotClickContext slotContext = new SlotClickContext(
-                root,
-                container,
-                viewer,
-                mainContext.getIndexedViewers(),
-                event.getRawSlot(),
-                mainContext,
-                component,
-                event);
+		final ViewContainer container = event.getClickedInventory() instanceof PlayerInventory
+			? viewer.getSelfContainer()
+			: context.getContainer();
 
-        root.getPipeline().execute(StandardPipelinePhases.CLICK, slotContext);
-    }
+		final IFSlotClickContext slotContext = new SlotClickContext(
+			root,
+			container,
+			viewer,
+			context.getIndexedViewers(),
+			event.getRawSlot(),
+			context,
+			component,
+			event);
 
-    @SuppressWarnings("unused")
-    @EventHandler(ignoreCancelled = true)
-    public void onInventoryClose(final InventoryCloseEvent event) {
-        if (!(event.getPlayer() instanceof Player)) return;
+		root.getPipeline().execute(StandardPipelinePhases.CLICK, slotContext);
+	}
 
-        final Player player = (Player) event.getPlayer();
-        final RootView root = viewFrame.getCurrentView(player);
-        if (root == null) return;
+	@SuppressWarnings("unused")
+	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+	public void onInventoryClose(final InventoryCloseEvent event) {
+		if (!(event.getPlayer() instanceof Player)) return;
 
-        final ElementFactory elementFactory = root.getElementFactory();
-        final String viewerIdentifier = elementFactory.convertViewer(player);
-        final IFContext mainContext = root.getContext(viewerIdentifier);
+		final Player player = (Player) event.getPlayer();
+		final Viewer viewer = viewFrame.getViewer(player);
+		if (viewer == null) return;
 
-        final Viewer viewer = mainContext.getIndexedViewers().get(viewerIdentifier);
+		final IFContext context = viewer.getContext();
+		final RootView root = context.getRoot();
 
-        final IFCloseContext closeContext = elementFactory.createContext(
-                root,
-                mainContext.getContainer(),
-                viewer,
-                mainContext.getIndexedViewers(),
-                IFCloseContext.class,
-                mainContext,
-                mainContext.getInitialData());
+		final IFCloseContext closeContext = root.getElementFactory().createContext(
+			root,
+			context.getContainer(),
+			viewer,
+			context.getIndexedViewers(),
+			IFCloseContext.class,
+			context,
+			context.getInitialData());
 
-        root.getPipeline().execute(StandardPipelinePhases.CLOSE, closeContext);
-    }
+		root.getPipeline().execute(StandardPipelinePhases.CLOSE, closeContext);
+	}
 
-    @SuppressWarnings("deprecation")
-    @EventHandler(ignoreCancelled = true)
-    public void onItemPickup(PlayerPickupItemEvent event) {
-        final Player player = event.getPlayer();
-        final RootView root = viewFrame.getCurrentView(player);
-        if (root == null) return;
+	@SuppressWarnings("deprecation")
+	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+	public void onItemPickup(PlayerPickupItemEvent event) {
+		final Viewer viewer = viewFrame.getViewer(event.getPlayer());
+		if (viewer == null) return;
 
-        final IFContext context = root.getContext(root.getElementFactory().convertViewer(player));
+		final IFContext context = viewer.getContext();
+		if (!context.getConfig().isOptionSet(ViewConfig.CANCEL_ON_PICKUP))
+			return;
 
-        if (!context.getConfig().isOptionSet(ViewConfig.CANCEL_ON_PICKUP)) return;
+		event.setCancelled(context.getConfig().getOptionValue(ViewConfig.CANCEL_ON_PICKUP));
+	}
 
-        event.setCancelled(context.getConfig().getOptionValue(ViewConfig.CANCEL_ON_PICKUP));
-    }
+	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+	public void onItemDrop(PlayerDropItemEvent event) {
+		final Viewer viewer = viewFrame.getViewer(event.getPlayer());
+		if (viewer == null) return;
 
-    @EventHandler(ignoreCancelled = true)
-    public void onItemDrop(PlayerDropItemEvent event) {
-        final Player player = event.getPlayer();
-        final RootView root = viewFrame.getCurrentView(player);
-        if (root == null) return;
+		final IFContext context = viewer.getContext();
+		if (!context.getConfig().isOptionSet(ViewConfig.CANCEL_ON_DROP))
+			return;
 
-        final IFContext context = root.getContext(root.getElementFactory().convertViewer(player));
+		event.setCancelled(context.getConfig().getOptionValue(ViewConfig.CANCEL_ON_DROP));
+	}
 
-        if (!context.getConfig().isOptionSet(ViewConfig.CANCEL_ON_DROP)) return;
+	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+	public void onInventoryDrag(InventoryDragEvent event) {
+		if (!(event.getWhoClicked() instanceof Player)) return;
 
-        event.setCancelled(context.getConfig().getOptionValue(ViewConfig.CANCEL_ON_DROP));
-    }
+		final Viewer viewer = viewFrame.getViewer((Player) event.getWhoClicked());
+		if (viewer == null) return;
 
-    @EventHandler
-    public void onInventoryDrag(InventoryDragEvent event) {
-        if (!(event.getWhoClicked() instanceof Player)) return;
+		final IFContext context = viewer.getContext();
+		if (!context.getConfig().isOptionSet(ViewConfig.CANCEL_ON_DRAG))
+			return;
 
-        final Player player = (Player) event.getWhoClicked();
-        final RootView root = viewFrame.getCurrentView(player);
-        if (root == null) return;
+		final boolean configValue = context.getConfig().getOptionValue(ViewConfig.CANCEL_ON_DRAG);
+		final int size = event.getInventory().getSize();
+		for (final int rawSlot : event.getRawSlots()) {
+			if (!(rawSlot < size)) continue;
 
-        final IFContext context = root.getContext(root.getElementFactory().convertViewer(player));
-
-        if (!context.getConfig().isOptionSet(ViewConfig.CANCEL_ON_DRAG)) return;
-
-        final boolean configValue = context.getConfig().getOptionValue(ViewConfig.CANCEL_ON_DRAG);
-        final int size = event.getInventory().getSize();
-        for (final int rawSlot : event.getRawSlots()) {
-            if (!(rawSlot < size)) continue;
-
-            event.setCancelled(configValue);
-            break;
-        }
-    }
+			event.setCancelled(configValue);
+			break;
+		}
+	}
 }
