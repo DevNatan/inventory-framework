@@ -15,6 +15,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
+import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.inventory.PlayerInventory;
 
 final class IFInventoryListener implements Listener {
@@ -25,18 +26,24 @@ final class IFInventoryListener implements Listener {
         this.viewFrame = viewFrame;
     }
 
+	@EventHandler
+	public void onPluginDisable(final PluginDisableEvent event) {
+		if (!event.getPlugin().equals(viewFrame.getOwner()))
+			return;
+
+		viewFrame.unregister();
+	}
+
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onInventoryClick(final InventoryClickEvent event) {
         if (!(event.getWhoClicked() instanceof Player)) return;
 
         final Player player = (Player) event.getWhoClicked();
         final Viewer viewer = viewFrame.getViewer(player);
-        System.out.println("viewer = " + viewer);
         if (viewer == null) return;
 
         final IFRenderContext context = viewer.getContext();
         final Component clickedComponent = context.getComponent(event.getRawSlot());
-        System.out.println("clickedComponent = " + clickedComponent);
         if (clickedComponent == null || !clickedComponent.isVisible()) return;
 
         final ViewContainer clickedContainer = event.getClickedInventory() instanceof PlayerInventory

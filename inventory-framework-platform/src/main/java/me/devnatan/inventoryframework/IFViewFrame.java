@@ -10,7 +10,7 @@ import org.jetbrains.annotations.UnmodifiableView;
 abstract class IFViewFrame<S extends IFViewFrame<S, V>, V extends PlatformView<S, ?, ?, ?, ?, ?, ?, ?>> {
 
     private boolean registered;
-    private final Map<UUID, V> registeredViews = new HashMap<>();
+    protected final Map<UUID, V> registeredViews = new HashMap<>();
     protected final Map<String, Viewer> viewerById = new HashMap<>();
 
     protected IFViewFrame() {}
