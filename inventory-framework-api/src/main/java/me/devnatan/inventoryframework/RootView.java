@@ -127,11 +127,6 @@ public interface RootView extends VirtualView, Iterable<IFContext> {
     Pipeline<VirtualView> getPipeline();
 
     /**
-     * Closes all contexts that are currently active in this view.
-     */
-    void closeForEveryone();
-
-    /**
      * The ElementFactory for this view.
      * <p>
      * <b><i> This is an internal inventory-framework API that should not be used from outside of

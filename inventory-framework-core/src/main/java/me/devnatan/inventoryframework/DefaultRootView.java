@@ -106,11 +106,6 @@ public class DefaultRootView implements RootView {
     }
 
     @Override
-    public final void closeForEveryone() {
-        getContexts().forEach(IFContext::closeForEveryone);
-    }
-
-    @Override
     public void onInit(ViewConfigBuilder config) {}
 
     @NotNull
@@ -140,12 +135,12 @@ public class DefaultRootView implements RootView {
     }
 
     @Override
-    public Job getScheduledUpdateJob() {
+    public final Job getScheduledUpdateJob() {
         return scheduledUpdateJob;
     }
 
     @Override
-    public void setScheduledUpdateJob(@NotNull Job job) {
+    public final void setScheduledUpdateJob(@NotNull Job job) {
         this.scheduledUpdateJob = job;
     }
 

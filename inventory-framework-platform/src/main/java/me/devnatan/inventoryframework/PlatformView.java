@@ -1,5 +1,6 @@
 package me.devnatan.inventoryframework;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
@@ -16,6 +17,7 @@ import me.devnatan.inventoryframework.context.IFOpenContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.context.IFSlotContext;
+import me.devnatan.inventoryframework.context.PlatformContext;
 import me.devnatan.inventoryframework.internal.ElementFactory;
 import me.devnatan.inventoryframework.internal.PlatformUtils;
 import me.devnatan.inventoryframework.pipeline.AvailableSlotInterceptor;
@@ -103,6 +105,13 @@ public abstract class PlatformView<
     }
 
     /**
+     * Closes all contexts that are currently active in this view.
+     */
+    public final void closeForEveryone() {
+        getContexts().forEach(context -> ((PlatformContext) context).closeForEveryone());
+    }
+
+    /**
      * Opens this view to one or more viewers.
      * <p>
      * <b><i> This is an internal inventory-framework API that should not be used from outside of
@@ -119,6 +128,31 @@ public abstract class PlatformView<
         final IFOpenContext context = getElementFactory().createOpenContext(this, subject, viewers, initialData);
 
         getPipeline().execute(StandardPipelinePhases.OPEN, context);
+    }
+
+    /**
+     * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided.</i></b>
+     */
+    @SuppressWarnings("rawtypes")
+    @ApiStatus.Internal
+    public final void navigateTo(
+            @NotNull Class<? extends PlatformView> target, @NotNull IFContext context, Object initialData) {
+        getFramework().getRegisteredViewByType(target).open(context.getViewers(), initialData);
+    }
+
+    /**
+     * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided.</i></b>
+     */
+    @SuppressWarnings("rawtypes")
+    @ApiStatus.Internal
+    public final void navigateTo(
+            @NotNull Class<? extends PlatformView> target,
+            @NotNull IFContext context,
+            @NotNull Viewer viewer,
+            Object initialData) {
+        getFramework().getRegisteredViewByType(target).open(Collections.singletonList(viewer), initialData);
     }
 
     /**

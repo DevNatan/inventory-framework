@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import me.devnatan.inventoryframework.InventoryFrameworkException;
-import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.UnsupportedOperationInSharedContextException;
 import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.Viewer;
@@ -18,7 +17,6 @@ import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.pipeline.StandardPipelinePhases;
 import me.devnatan.inventoryframework.state.DefaultStateValueHost;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 import org.jetbrains.annotations.UnmodifiableView;
 
@@ -54,38 +52,8 @@ abstract class AbstractIFContext extends DefaultStateValueHost implements IFCont
     }
 
     @Override
-    public @NotNull String getTitle() {
-        return getUpdatedTitle() == null ? getInitialTitle() : getUpdatedTitle();
-    }
-
-    @Override
     public final @NotNull String getInitialTitle() {
         return getConfig().getTitle().toString();
-    }
-
-    @Override
-    public final @Nullable String getUpdatedTitle() {
-        return getContainer().getTitle();
-    }
-
-    @Override
-    public final void updateTitleForEveryone(@NotNull String title) {
-        for (final Viewer viewer : getViewers()) getContainer().changeTitle(title, viewer);
-    }
-
-    @Override
-    public final void resetTitleForEveryone() {
-        for (final Viewer viewer : getViewers()) getContainer().changeTitle(null, viewer);
-    }
-
-    @Override
-    public final void closeForEveryone() {
-        getContainer().close();
-    }
-
-    @Override
-    public final void openForEveryone(Class<? extends RootView> other) {
-        openForEveryone(other, null);
     }
 
     @Override

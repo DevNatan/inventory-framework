@@ -1,6 +1,5 @@
 package me.devnatan.inventoryframework.context;
 
-import java.util.Collections;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.Viewer;
 import org.jetbrains.annotations.NotNull;
@@ -23,10 +22,7 @@ abstract class PlatformConfinedContext extends PlatformContext implements IFConf
     @SuppressWarnings("unchecked")
     @Override
     public void openForPlayer(@NotNull Class<? extends RootView> other, Object initialData) {
-        getRoot()
-                .getFramework()
-                .getRegisteredViewByType(other)
-                .open(Collections.singletonList(getViewer()), initialData);
+        getRoot().navigateTo(other, this, getViewer(), initialData);
     }
 
     @Override
