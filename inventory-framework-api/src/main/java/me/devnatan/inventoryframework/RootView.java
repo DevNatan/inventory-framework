@@ -1,6 +1,5 @@
 package me.devnatan.inventoryframework;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -10,9 +9,8 @@ import me.devnatan.inventoryframework.internal.Job;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.UnmodifiableView;
 
-public interface RootView extends VirtualView, Iterable<IFContext> {
+public interface RootView extends VirtualView {
 
     /**
      * The unique identifier of this view.
@@ -24,72 +22,14 @@ public interface RootView extends VirtualView, Iterable<IFContext> {
 
     /**
      * All contexts linked to this view.
+     * <p>
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
      *
      * @return An unmodifiable set of all currently active contexts in this view.
      */
-    @NotNull
-    @UnmodifiableView
-    Set<IFContext> getContexts();
-
-    /**
-     * Returns the context that is linked to the specified viewer in this view.
-     * <p>
-     * <b><i> This is an internal inventory-framework API that should not be used from outside of
-     * this library. No compatibility guarantees are provided. </i></b>
-     *
-     * @param viewer The viewer.
-     * @return The context of the viewer in this context.
-     * @throws IllegalArgumentException If there's no context linked to the given viewer.
-     */
     @ApiStatus.Internal
-    @NotNull
-    IFContext getContext(@NotNull Viewer viewer);
-
-    /**
-     * Returns the context that is linked to the specified viewer in this view.
-     * <p>
-     * <b><i> This is an internal inventory-framework API that should not be used from outside of
-     * this library. No compatibility guarantees are provided. </i></b>
-     *
-     * @param viewerId The id of the viewer.
-     * @return The context of the viewer in this context.
-     * @throws IllegalArgumentException If there's no context linked to the given viewer.
-     */
-    @NotNull
-    IFContext getContext(@NotNull String viewerId);
-
-    /**
-     * Adds a context to this view.
-     * <p>
-     * <b><i> This is an internal inventory-framework API that should not be used from outside of
-     * this library. No compatibility guarantees are provided. </i></b>
-     *
-     * @param context The context to add.
-     */
-    @ApiStatus.Internal
-    void addContext(@NotNull IFContext context);
-
-    /**
-     * Removes a given context from this view if that context is linked to this view.
-     * <p>
-     * <b><i> This is an internal inventory-framework API that should not be used from outside of
-     * this library. No compatibility guarantees are provided. </i></b>
-     *
-     * @param context The context to remove.
-     */
-    @ApiStatus.Internal
-    void removeContext(@NotNull IFContext context);
-
-    /**
-     * Renders a given context in this view.
-     * <p>
-     * <b><i> This is an internal inventory-framework API that should not be used from outside of
-     * this library. No compatibility guarantees are provided. </i></b>
-     *
-     * @param context The context to render.
-     */
-    @ApiStatus.Internal
-    void renderContext(@NotNull IFContext context);
+    Set<IFContext> getInternalContexts();
 
     /**
      * Called when the view is about to be configured, the returned object will be the view's
@@ -128,23 +68,6 @@ public interface RootView extends VirtualView, Iterable<IFContext> {
     Pipeline<VirtualView> getPipeline();
 
     /**
-     * Opens this view to more than one viewer.
-     * <p>
-     * <b><i> This is an internal inventory-framework API that should not be used from outside of
-     * this library. No compatibility guarantees are provided. </i></b>
-     *
-     * @param viewers     The viewers that'll see this view.
-     * @param initialData The initial data.
-     */
-    @ApiStatus.Internal
-    void open(@NotNull List<Viewer> viewers, Object initialData);
-
-    /**
-     * Closes all contexts that are currently active in this view.
-     */
-    void closeForEveryone();
-
-    /**
      * The ElementFactory for this view.
      * <p>
      * <b><i> This is an internal inventory-framework API that should not be used from outside of
@@ -158,25 +81,26 @@ public interface RootView extends VirtualView, Iterable<IFContext> {
 
     /**
      * Runs a task in the next tick.
-     *
-     * @param task The task to run.
-     */
-    void nextTick(Runnable task);
-
-    /**
-     * The IFViewFrame for this view.
      * <p>
      * <b><i> This is an internal inventory-framework API that should not be used from outside of
      * this library. No compatibility guarantees are provided. </i></b>
      *
-     * @return The current framework that holds this view.
-     * @throws UnsupportedOperationException If this view doesn't support a framework.
+     * @param task The task to run.
      */
     @ApiStatus.Internal
-    IFViewFrame<?> getFramework();
+    void nextTick(Runnable task);
 
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
     Job getScheduledUpdateJob();
 
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
     @ApiStatus.Internal
     void setScheduledUpdateJob(@NotNull Job job);
 

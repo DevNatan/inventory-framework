@@ -12,16 +12,19 @@ import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.state.StateValueHost;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnmodifiableView;
 
 public interface IFContext extends VirtualView, StateValueHost {
 
     /**
      * An unique id for this context.
+     * <p>
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
      *
      * @return The unique identifier for this context.
      */
+    @ApiStatus.Internal
     @NotNull
     UUID getId();
 
@@ -45,26 +48,37 @@ public interface IFContext extends VirtualView, StateValueHost {
     List<Viewer> getViewers();
 
     /**
-     * An unmodifiable view of all viewers that are tied to this context.
+     * A Map containing all viewers in that context.
+     * <p>
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
      *
-     * @return All unmodifiable view of all viewers.
+     * @return A Map containing all viewers in that context.
      */
     @NotNull
-    @UnmodifiableView
+    @ApiStatus.Internal
     Map<String, Viewer> getIndexedViewers();
 
     /**
      * Adds a new viewer to this context.
+     * <p>
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
      *
      * @param viewer The viewer that'll be added.
      */
+    @ApiStatus.Internal
     void addViewer(@NotNull Viewer viewer);
 
     /**
      * Removes a new viewer to this context.
+     * <p>
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
      *
      * @param viewer The viewer that'll be removed.
      */
+    @ApiStatus.Internal
     void removeViewer(@NotNull Viewer viewer);
 
     /**
@@ -79,7 +93,6 @@ public interface IFContext extends VirtualView, StateValueHost {
      *
      * @return The container of this context.
      */
-    @NotNull
     ViewContainer getContainer();
 
     /**
@@ -91,17 +104,6 @@ public interface IFContext extends VirtualView, StateValueHost {
     RootView getRoot();
 
     /**
-     * The actual title of this context.
-     * <p>
-     * If the title has been dynamically changed, it will return the {@link #getUpdatedTitle() updated title}.
-     *
-     * @return The updated title, the current title of this view, if <code>null</code> will return
-     * the default title for this view type.
-     */
-    @NotNull
-    String getTitle();
-
-    /**
      * The initial title of this context, that is, even if it has been changed, it will return the
      * title that has been initially defined.
      *
@@ -109,59 +111,6 @@ public interface IFContext extends VirtualView, StateValueHost {
      */
     @NotNull
     String getInitialTitle();
-
-    /**
-     * Title that has been {@link #updateTitleForEveryone(String) dynamically changed} in this context.
-     *
-     * @return The updated title or null if it wasn't updated.
-     * @see #updateTitleForEveryone(String)
-     */
-    @Nullable
-    String getUpdatedTitle();
-
-    /**
-     * Updates the container title for everyone that's viewing it.
-     *
-     * <p>This should not be used before the container is opened, if you need to set the __initial
-     * title__ use {@link IFOpenContext#modifyConfig()} on open handler instead.
-     *
-     * <p>This method is version dependant, so it may be that your server version is not yet
-     * supported, if you try to use this method and fail (can fail silently), report it to the
-     * library developers to add support to your version.
-     *
-     * @param title The new container title.
-     */
-    void updateTitleForEveryone(@NotNull String title);
-
-    /**
-     * Updates the container title to all viewers in this context, to the initially defined title.
-     * Must be used after {@link #updateTitleForEveryone(String)} to take effect.
-     */
-    void resetTitleForEveryone();
-
-    /**
-     * Closes this context's container to all viewers who are viewing it.
-     */
-    void closeForEveryone();
-
-    /**
-     * Opens a new view for all viewers in that context.
-     * <p>
-     * This context will be immediately invalidated if there are no viewers left after opening.
-     *
-     * @param other The view to be opened.
-     */
-    void openForEveryone(Class<? extends RootView> other);
-
-    /**
-     * Opens a new view for all viewers in that context with an initially defined data.
-     * <p>
-     * This context will be immediately invalidated if there are no viewers left after opening.
-     *
-     * @param other       The view to be opened.
-     * @param initialData The initial data.
-     */
-    void openForEveryone(Class<? extends RootView> other, Object initialData);
 
     /**
      * All components in this context.

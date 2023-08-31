@@ -1,14 +1,21 @@
 package me.devnatan.inventoryframework.internal;
 
+import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import me.devnatan.inventoryframework.RootView;
+import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.ComponentBuilder;
+import me.devnatan.inventoryframework.context.IFCloseContext;
 import me.devnatan.inventoryframework.context.IFContext;
-import me.devnatan.inventoryframework.context.IFSlotContext;
+import me.devnatan.inventoryframework.context.IFOpenContext;
+import me.devnatan.inventoryframework.context.IFRenderContext;
+import me.devnatan.inventoryframework.context.IFSlotClickContext;
+import me.devnatan.inventoryframework.context.IFSlotRenderContext;
 import me.devnatan.inventoryframework.logging.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -38,30 +45,37 @@ public abstract class ElementFactory {
     public abstract ViewContainer createContainer(@NotNull IFContext context);
 
     @NotNull
-    public abstract Viewer createViewer(Object... parameters);
+    public abstract Viewer createViewer(@NotNull Object entity, IFRenderContext context);
 
-    @NotNull
-    public abstract String convertViewer(Object input);
+    public abstract IFOpenContext createOpenContext(
+            @NotNull RootView root, @Nullable Viewer subject, @NotNull List<Viewer> viewers, Object initialData);
 
-    @NotNull
-    public abstract <T extends IFContext> T createContext(
+    public abstract IFRenderContext createRenderContext(
+            @NotNull UUID id,
             @NotNull RootView root,
-            ViewContainer container,
-            Viewer subject,
+            @NotNull ViewConfig config,
+            @NotNull ViewContainer container,
             @NotNull Map<String, Viewer> viewers,
-            @NotNull Class<T> kind,
-            @Nullable IFContext parent,
+            Viewer subject,
             Object initialData);
 
-    @NotNull
-    public abstract <T extends IFSlotContext> T createSlotContext(
-            int slot,
-            Component component,
-            @NotNull ViewContainer container,
-            Viewer subject,
-            @NotNull Map<String, Viewer> viewers,
-            @NotNull IFContext parent,
-            @NotNull Class<?> kind);
+    public abstract IFSlotClickContext createSlotClickContext(
+            int slotClicked,
+            @NotNull Viewer whoClicked,
+            @NotNull ViewContainer interactionContainer,
+            @Nullable Component componentClicked,
+            @NotNull Object origin);
+
+    public abstract IFSlotRenderContext createSlotRenderContext(
+            int slot, @NotNull IFRenderContext parent, @Nullable Viewer viewer);
+
+    /**
+     * Creates a new close context for the current platform.
+     *
+     * @param viewer The viewer that is currently the subject of the event of close.
+     * @return A new close context instance.
+     */
+    public abstract IFCloseContext createCloseContext(@NotNull Viewer viewer, @NotNull IFRenderContext parent);
 
     /**
      * Creates a new platform builder instance.

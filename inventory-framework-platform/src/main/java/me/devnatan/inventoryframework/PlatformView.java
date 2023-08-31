@@ -1,11 +1,14 @@
 package me.devnatan.inventoryframework;
 
+import static java.lang.String.format;
+
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import me.devnatan.inventoryframework.component.ComponentFactory;
 import me.devnatan.inventoryframework.component.ItemComponentBuilder;
 import me.devnatan.inventoryframework.component.Pagination;
@@ -17,6 +20,7 @@ import me.devnatan.inventoryframework.context.IFOpenContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.context.IFSlotContext;
+import me.devnatan.inventoryframework.context.PlatformContext;
 import me.devnatan.inventoryframework.internal.ElementFactory;
 import me.devnatan.inventoryframework.internal.PlatformUtils;
 import me.devnatan.inventoryframework.pipeline.AvailableSlotInterceptor;
@@ -52,6 +56,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class PlatformView<
+                TFramework extends IFViewFrame<?, ?>,
                 TItem extends ItemComponentBuilder<TItem, TContext> & ComponentFactory,
                 TContext extends IFContext,
                 TOpenContext extends IFOpenContext,
@@ -59,19 +64,211 @@ public abstract class PlatformView<
                 TRenderContext extends IFRenderContext,
                 TSlotContext extends IFSlotContext,
                 TSlotClickContext extends IFSlotClickContext>
-        extends DefaultRootView {
+        extends DefaultRootView implements Iterable<TContext> {
 
-    private IFViewFrame<?> framework;
+    private TFramework framework;
     private boolean initialized;
 
     /**
-     * Creates a new configuration builder.
-     *
-     * @return A new {@link ViewConfigBuilder} instance.
+     * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided.</i></b>
      */
-    @NotNull
-    public final ViewConfigBuilder createConfig() {
+    @ApiStatus.Internal
+    public final TFramework getFramework() {
+        return framework;
+    }
+
+    /**
+     * The initialization state of this view.
+     *
+     * @return If this view was initialized.
+     */
+    final boolean isInitialized() {
+        return initialized;
+    }
+
+    /**
+     * Sets the initialization state of this view.
+     *
+     * @param initialized The new initialization state.
+     */
+    final void setInitialized(boolean initialized) {
+        this.initialized = initialized;
+    }
+
+    /**
+     * Throws an exception if this view is already initialized.
+     *
+     * @throws IllegalStateException if this view is already initialized.
+     */
+    private void requireNotInitialized() {
+        if (!isInitialized()) return;
+        throw new IllegalStateException(
+                "View is already initialized, please move this method call to class constructor or #onInit.");
+    }
+
+    /**
+     * Closes all contexts that are currently active in this view.
+     */
+    public final void closeForEveryone() {
+        getContexts().forEach(context -> ((PlatformContext) context).closeForEveryone());
+    }
+
+    /**
+     * Opens this view to one or more viewers.
+     * <p>
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     *
+     * @param viewers     The viewers that'll see this view.
+     * @param initialData The initial data.
+     */
+    @ApiStatus.Internal
+    public final void open(@NotNull List<Viewer> viewers, Object initialData) {
+        if (!isInitialized()) throw new IllegalStateException("Cannot open a uninitialized view");
+
+        final Viewer subject = viewers.size() == 1 ? viewers.get(0) : null;
+        final IFOpenContext context = getElementFactory().createOpenContext(this, subject, viewers, initialData);
+
+        getPipeline().execute(StandardPipelinePhases.OPEN, context);
+    }
+
+    /**
+     * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided.</i></b>
+     */
+    @SuppressWarnings("rawtypes")
+    @ApiStatus.Internal
+    public final void navigateTo(
+            @NotNull Class<? extends PlatformView> target, @NotNull IFContext context, Object initialData) {
+        getFramework().getRegisteredViewByType(target).open(context.getViewers(), initialData);
+    }
+
+    /**
+     * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided.</i></b>
+     */
+    @SuppressWarnings("rawtypes")
+    @ApiStatus.Internal
+    public final void navigateTo(
+            @NotNull Class<? extends PlatformView> target,
+            @NotNull IFContext context,
+            @NotNull Viewer viewer,
+            Object initialData) {
+        getFramework().getRegisteredViewByType(target).open(Collections.singletonList(viewer), initialData);
+    }
+
+    public final @NotNull ViewConfigBuilder createConfig() {
         return new ViewConfigBuilder().type(ViewType.CHEST);
+    }
+
+    /**
+     * Returns the context that is linked to the specified viewer in this view.
+     * <p>
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     *
+     * @param viewer The viewer.
+     * @return The context of the viewer in this context.
+     * @throws IllegalArgumentException If there's no context linked to the given viewer.
+     */
+    @ApiStatus.Internal
+    public final @NotNull IFContext getContext(@NotNull Viewer viewer) {
+        for (final IFContext context : getInternalContexts()) {
+            if (context.getIndexedViewers().containsKey(viewer.getId())) return context;
+        }
+
+        throw new IllegalArgumentException(format("Unable to get context for %s", viewer));
+    }
+
+    /**
+     * Returns the context that is linked to the specified viewer in this view.
+     * <p>
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     *
+     * @param viewerId The id of the viewer.
+     * @return The context of the viewer in this context.
+     * @throws IllegalArgumentException If there's no context linked to the given viewer.
+     */
+    public final @NotNull IFContext getContext(@NotNull String viewerId) {
+        for (final IFContext context : getInternalContexts()) {
+            if (context.getIndexedViewers().containsKey(viewerId)) return context;
+        }
+
+        throw new IllegalArgumentException(format("Unable to get context for %s", viewerId));
+    }
+
+    /**
+     * Adds a context to this view.
+     * <p>
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     *
+     * @param context The context to add.
+     */
+    @ApiStatus.Internal
+    public void addContext(@NotNull TContext context) {
+        synchronized (getInternalContexts()) {
+            getInternalContexts().add(context);
+        }
+    }
+
+    /**
+     * Removes a given context from this view if that context is linked to this view.
+     * <p>
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     *
+     * @param context The context to remove.
+     */
+    @ApiStatus.Internal
+    public void removeContext(@NotNull TContext context) {
+        synchronized (getInternalContexts()) {
+            getInternalContexts().removeIf(other -> other.getId() == context.getId());
+        }
+    }
+
+    /**
+     * Renders a given context in this view.
+     * <p>
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     *
+     * @param context The context to render.
+     */
+    @ApiStatus.Internal
+    public void renderContext(@NotNull TContext context) {
+        getPipeline().execute(context);
+
+        @SuppressWarnings("rawtypes")
+        final PlatformView view = (PlatformView) context.getRoot();
+        context.getViewers().forEach(viewer -> {
+            view.getFramework().addViewer(viewer);
+            context.getContainer().open(viewer);
+        });
+    }
+
+    @ApiStatus.Internal
+    public void removeAndTryInvalidateContext(@NotNull Viewer viewer, @NotNull TContext context) {
+        context.removeViewer(viewer);
+
+        @SuppressWarnings("rawtypes")
+        final PlatformView view = (PlatformView) context.getRoot();
+        view.getFramework().removeViewer(viewer);
+
+        final boolean canContextBeInvalidated = context.getViewers().isEmpty();
+        if (canContextBeInvalidated) {
+            // TODO invalidate context
+            removeContext(context);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    @NotNull
+    @Override
+    public final Iterator<TContext> iterator() {
+        return (Iterator<TContext>) getContexts().iterator();
     }
 
     /**
@@ -382,11 +579,9 @@ public abstract class PlatformView<
      * @param <T>            The pagination data type.
      * @return A new pagination state builder.
      */
-    @SuppressWarnings("unchecked")
     protected final <T> PaginationStateBuilder<TContext, TSlotClickContext, TItem, T> buildPaginationState(
             @NotNull List<? super T> sourceProvider) {
-        return new PaginationStateBuilder<>(
-                (PlatformView<TItem, TContext, ?, ?, ?, TSlotClickContext, ?>) this, sourceProvider);
+        return new PaginationStateBuilder<>(this, sourceProvider);
     }
 
     /**
@@ -396,11 +591,9 @@ public abstract class PlatformView<
      * @param <T>            The pagination data type.
      * @return A new pagination state builder.
      */
-    @SuppressWarnings("unchecked")
     protected final <T> PaginationStateBuilder<TContext, TSlotClickContext, TItem, T> buildPaginationState(
             @NotNull Supplier<List<? super T>> sourceProvider) {
-        return new PaginationStateBuilder<>(
-                (PlatformView<TItem, TContext, ?, ?, ?, TSlotClickContext, ?>) this, sourceProvider);
+        return new PaginationStateBuilder<>(this, sourceProvider);
     }
 
     /**
@@ -410,11 +603,9 @@ public abstract class PlatformView<
      * @param <T>            The pagination data type.
      * @return A new pagination state builder.
      */
-    @SuppressWarnings("unchecked")
     protected final <T> PaginationStateBuilder<TContext, TSlotClickContext, TItem, T> buildPaginationState(
             @NotNull Function<TContext, List<? super T>> sourceProvider) {
-        return new PaginationStateBuilder<>(
-                (PlatformView<TItem, TContext, ?, ?, ?, TSlotClickContext, ?>) this, sourceProvider);
+        return new PaginationStateBuilder<>(this, sourceProvider);
     }
 
     /**
@@ -428,11 +619,9 @@ public abstract class PlatformView<
      * @return A new pagination state builder.
      */
     @ApiStatus.Experimental
-    @SuppressWarnings("unchecked")
     protected final <T> PaginationStateBuilder<TContext, TSlotClickContext, TItem, T> buildAsyncPaginationState(
             @NotNull Function<TContext, CompletableFuture<List<T>>> sourceProvider) {
-        return new PaginationStateBuilder<>(
-                (PlatformView<TItem, TContext, ?, ?, ?, TSlotClickContext, ?>) this, sourceProvider);
+        return new PaginationStateBuilder<>(this, sourceProvider);
     }
 
     final <V> State<Pagination> buildPaginationState(
@@ -530,41 +719,18 @@ public abstract class PlatformView<
     public void onClick(TSlotClickContext click) {}
 
     /**
-     * Initialization state of this view.
-     *
-     * @return If this view was initialized.
-     */
-    final boolean isInitialized() {
-        return initialized;
-    }
-
-    /**
-     * Sets the initialization state of this view.
-     *
-     * @param initialized The new initialization state.
-     */
-    final void setInitialized(boolean initialized) {
-        this.initialized = initialized;
-    }
-
-    private void requireNotInitialized() {
-        if (!isInitialized()) return;
-        throw new IllegalStateException(
-                "View is already initialized, please move this method call to class construtor or #onInit.");
-    }
-
-    /**
      * Called internally before the first initialization.
      * <p>
      * Use it to register pipeline interceptors.
      *
      * @throws IllegalStateException If this platform view is already initialized.
      */
-    final void internalInitialization(IFViewFrame<?> framework) {
+    @SuppressWarnings("unchecked")
+    final void internalInitialization(IFViewFrame<?, ?> framework) {
         if (isInitialized())
             throw new IllegalStateException("Tried to call internal initialization but view is already initialized");
 
-        this.framework = framework;
+        this.framework = (TFramework) framework;
 
         final Pipeline<? super VirtualView> pipeline = getPipeline();
         pipeline.intercept(StandardPipelinePhases.INIT, new PlatformInitInterceptor());
@@ -588,32 +754,5 @@ public abstract class PlatformView<
     @ApiStatus.Internal
     public @NotNull ElementFactory getElementFactory() {
         return PlatformUtils.getFactory();
-    }
-
-    @Override
-    public final void open(@NotNull List<Viewer> viewers, Object initialData) {
-        if (!isInitialized()) throw new IllegalStateException("Cannot open a uninitialized view");
-
-        final Viewer subject = viewers.size() == 1 ? viewers.get(0) : null;
-        final IFOpenContext context = getElementFactory()
-                .createContext(
-                        this,
-                        null,
-                        subject,
-                        viewers.stream().collect(Collectors.toMap(Viewer::getId, Function.identity())),
-                        IFOpenContext.class,
-                        null,
-                        initialData);
-        viewers.forEach(context::addViewer);
-        getPipeline().execute(StandardPipelinePhases.OPEN, context);
-    }
-
-    /**
-     * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
-     * this library. No compatibility guarantees are provided.</i></b>
-     */
-    @ApiStatus.Internal
-    public final IFViewFrame<?> getFramework() {
-        return framework;
     }
 }

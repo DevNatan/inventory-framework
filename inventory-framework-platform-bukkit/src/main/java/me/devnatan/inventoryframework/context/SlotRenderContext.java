@@ -1,56 +1,92 @@
 package me.devnatan.inventoryframework.context;
 
-import java.util.Map;
 import me.devnatan.inventoryframework.RootView;
-import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
-import me.devnatan.inventoryframework.component.Component;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public final class SlotRenderContext extends SlotContext implements IFSlotRenderContext {
+public class SlotRenderContext extends SlotContext implements IFSlotRenderContext {
+
+    private final Viewer viewer;
 
     private ItemStack item;
     private boolean cancelled;
+    private boolean changed;
 
-    public SlotRenderContext(
-            @NotNull RootView root,
-            @NotNull ViewContainer container,
-            Viewer subject,
-            @NotNull Map<String, Viewer> viewers,
-            int slot,
-            @NotNull IFContext parent,
-            @Nullable Component component) {
-        super(root, container, subject, viewers, slot, parent, component);
+    @ApiStatus.Internal
+    public SlotRenderContext(int slot, @NotNull IFRenderContext parent, @Nullable Viewer viewer) {
+        super(slot, parent);
+        this.viewer = viewer;
     }
 
     @Override
-    public Object getResult() {
+    public final Object getResult() {
         return item;
     }
 
     @Override
-    public ItemStack getItem() {
+    public final ItemStack getItem() {
         return item;
     }
 
-    public void setItem(ItemStack item) {
+    public final void setItem(ItemStack item) {
         this.item = item;
     }
 
     @Override
-    public boolean isCancelled() {
+    public final boolean isCancelled() {
         return cancelled;
     }
 
     @Override
-    public void setCancelled(boolean cancelled) {
+    public final void setCancelled(boolean cancelled) {
         this.cancelled = cancelled;
     }
 
     @Override
-    public String toString() {
-        return "SlotRenderContext{" + "item=" + item + ", cancelled=" + cancelled + "} " + super.toString();
+    public final boolean hasChanged() {
+        return changed;
+    }
+
+    @Override
+    public final void setChanged(boolean changed) {
+        this.changed = changed;
+    }
+
+    @Override
+    public final boolean isOnEntityContainer() {
+        return getContainer().isEntityContainer();
+    }
+
+    @Override
+    public final Viewer getViewer() {
+        return viewer;
+    }
+
+    @Override
+    public final void closeForPlayer() {
+        getParent().closeForPlayer();
+    }
+
+    @Override
+    public final void openForPlayer(@NotNull Class<? extends RootView> other) {
+        getParent().openForPlayer(other);
+    }
+
+    @Override
+    public final void openForPlayer(@NotNull Class<? extends RootView> other, Object initialData) {
+        getParent().openForPlayer(other, initialData);
+    }
+
+    @Override
+    public final void updateTitleForPlayer(@NotNull String title) {
+        getParent().updateTitleForPlayer(title);
+    }
+
+    @Override
+    public final void resetTitleForPlayer() {
+        getParent().resetTitleForPlayer();
     }
 }

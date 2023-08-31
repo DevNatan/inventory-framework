@@ -1,10 +1,7 @@
 package me.devnatan.inventoryframework;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 import me.devnatan.inventoryframework.runtime.thirdparty.InventoryUpdate;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -14,7 +11,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.Unmodifiable;
 
 public final class BukkitViewContainer implements ViewContainer {
 
@@ -68,14 +64,6 @@ public final class BukkitViewContainer implements ViewContainer {
     @Override
     public int getColumnsCount() {
         return type.getColumns();
-    }
-
-    @Override
-    public @NotNull @Unmodifiable List<Viewer> getViewers() {
-        return Collections.unmodifiableList(new ArrayList<>(inventory.getViewers().stream()
-                .filter(humanEntity -> humanEntity instanceof Player)
-                .map(humanEntity -> new BukkitViewer((Player) humanEntity))
-                .collect(Collectors.toList())));
     }
 
     @Override
@@ -134,11 +122,6 @@ public final class BukkitViewContainer implements ViewContainer {
     @Override
     public int getLastSlot() {
         return getSlotsCount();
-    }
-
-    @Override
-    public void changeTitle(@Nullable final String title) {
-        for (final Viewer viewer : getViewers()) changeTitle(title, viewer);
     }
 
     @Override

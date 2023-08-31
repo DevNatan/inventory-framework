@@ -1,63 +1,33 @@
 package me.devnatan.inventoryframework.context;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import java.util.UUID;
-import java.util.stream.Collectors;
-import me.devnatan.inventoryframework.BukkitViewContainer;
 import me.devnatan.inventoryframework.BukkitViewer;
-import me.devnatan.inventoryframework.RootView;
+import me.devnatan.inventoryframework.View;
 import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.UnmodifiableView;
 
-public final class CloseContext extends ConfinedContext implements IFCloseContext, Context {
+public class CloseContext extends PlatformConfinedContext implements IFCloseContext {
 
-    private final IFContext parent;
+    private final Viewer subject;
     private final Player player;
+    private final IFRenderContext parent;
+
     private boolean cancelled;
 
-    public CloseContext(
-            @NotNull RootView root,
-            @NotNull ViewContainer container,
-            Viewer subject,
-            @NotNull Map<String, Viewer> viewers,
-            @NotNull IFContext parent) {
-        super(root, container, subject, viewers, parent.getInitialData());
+    @ApiStatus.Internal
+    public CloseContext(@NotNull Viewer subject, @NotNull IFRenderContext parent) {
+        this.subject = subject;
         this.player = ((BukkitViewer) subject).getPlayer();
         this.parent = parent;
     }
 
-    public IFContext getParent() {
-        return parent;
-    }
-
-    @NotNull
-    @Override
-    public Player getPlayer() {
+    // TODO Needs documentation
+    public final @NotNull Player getPlayer() {
         return player;
-    }
-
-    @Override
-    public @UnmodifiableView List<Player> getAllPlayers() {
-        return getViewers().stream()
-                .map(viewer -> (BukkitViewer) viewer)
-                .map(BukkitViewer::getPlayer)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public void updateTitleForPlayer(@NotNull String title, @NotNull Player player) {
-        ((BukkitViewContainer) getContainer()).changeTitle(title, player);
-    }
-
-    @Override
-    public void resetTitleForPlayer(@NotNull Player player) {
-        ((BukkitViewContainer) getContainer()).changeTitle(null, player);
     }
 
     @Override
@@ -71,43 +41,37 @@ public final class CloseContext extends ConfinedContext implements IFCloseContex
     }
 
     @Override
-    public @NotNull UUID getId() {
+    public final @NotNull Viewer getViewer() {
+        return subject;
+    }
+
+    @Override
+    public final RenderContext getParent() {
+        return (RenderContext) parent;
+    }
+
+    @Override
+    public final @NotNull UUID getId() {
         return getParent().getId();
     }
 
     @Override
-    public @NotNull ViewConfig getConfig() {
+    public final @NotNull ViewConfig getConfig() {
         return getParent().getConfig();
     }
 
     @Override
-    public void closeForEveryone() {}
-
-    @Override
-    public void closeForPlayer() {}
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-        CloseContext that = (CloseContext) o;
-        return isCancelled() == that.isCancelled()
-                && Objects.equals(getParent(), that.getParent())
-                && Objects.equals(getPlayer(), that.getPlayer());
+    public final ViewContainer getContainer() {
+        return getParent().getContainer();
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), getParent(), getPlayer(), isCancelled());
+    public final @NotNull View getRoot() {
+        return getParent().getRoot();
     }
 
     @Override
-    public String toString() {
-        return "CloseContext{" + "parent="
-                + parent + ", player="
-                + player + ", cancelled="
-                + cancelled + "} "
-                + super.toString();
+    public final Object getInitialData() {
+        return getParent().getInitialData();
     }
 }

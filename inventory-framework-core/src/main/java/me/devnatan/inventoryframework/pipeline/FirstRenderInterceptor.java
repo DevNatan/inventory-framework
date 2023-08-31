@@ -27,6 +27,8 @@ public final class FirstRenderInterceptor implements PipelineInterceptor<Virtual
 
         for (int i = componentList.size(); i > 0; i--) {
             final Component component = componentList.get(i - 1);
+            // TODO Setup watches on context initialization not on first render
+            setupWatchers(context, component);
             context.renderComponent(component);
         }
     }
@@ -38,11 +40,7 @@ public final class FirstRenderInterceptor implements PipelineInterceptor<Virtual
      * @param context The context.
      */
     private void registerComponents(IFRenderContext context) {
-        context.getComponentFactories().stream()
-                .map(ComponentFactory::create)
-                // TODO Setup watches on context initialization not on first render
-                .peek(component -> setupWatchers(context, component))
-                .forEach(context::addComponent);
+        context.getComponentFactories().stream().map(ComponentFactory::create).forEach(context::addComponent);
     }
 
     /**

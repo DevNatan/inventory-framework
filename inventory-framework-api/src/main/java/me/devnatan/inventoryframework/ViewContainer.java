@@ -1,9 +1,7 @@
 package me.devnatan.inventoryframework;
 
-import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.Unmodifiable;
 
 public interface ViewContainer {
 
@@ -77,17 +75,11 @@ public interface ViewContainer {
      */
     int getColumnsCount();
 
-    @NotNull
-    @Unmodifiable
-    List<Viewer> getViewers();
-
     void open(@NotNull Viewer viewer);
 
     void close();
 
     void close(@NotNull Viewer viewer);
-
-    void changeTitle(@Nullable String title);
 
     void changeTitle(@Nullable String title, @NotNull Viewer target);
 

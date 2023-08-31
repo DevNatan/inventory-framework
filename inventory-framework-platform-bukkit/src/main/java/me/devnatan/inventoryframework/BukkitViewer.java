@@ -1,24 +1,44 @@
 package me.devnatan.inventoryframework;
 
 import java.util.Objects;
+import me.devnatan.inventoryframework.context.IFRenderContext;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 public final class BukkitViewer implements Viewer {
 
     private final Player player;
-    private ViewContainer container;
+    private ViewContainer selfContainer;
+    private IFRenderContext context;
 
-    public BukkitViewer(Player player) {
+    public BukkitViewer(@NotNull Player player, IFRenderContext context) {
+        this(player, null, context);
+    }
+
+    private BukkitViewer(@NotNull Player player, @NotNull ViewContainer selfContainer, IFRenderContext context) {
         this.player = player;
+        this.selfContainer = selfContainer;
+        this.context = context;
     }
 
     public Player getPlayer() {
         return player;
     }
 
-    public ViewContainer getContainer() {
-        return container;
+    @NotNull
+    @Override
+    public IFRenderContext getContext() {
+        return context;
+    }
+
+    @Override
+    public void setContext(IFRenderContext context) {
+        this.context = context;
+    }
+
+    @Override
+    public Viewer withContext(IFRenderContext context) {
+        return new BukkitViewer(player, selfContainer, context);
     }
 
     @Override
@@ -38,10 +58,11 @@ public final class BukkitViewer implements Viewer {
 
     @Override
     public @NotNull ViewContainer getSelfContainer() {
-        if (getContainer() == null)
-            container = new BukkitViewContainer(getPlayer().getInventory(), false, null);
+        if (selfContainer == null)
+            selfContainer = new BukkitViewContainer(
+                    getPlayer().getInventory(), getContext().isShared(), ViewType.PLAYER);
 
-        return getContainer();
+        return selfContainer;
     }
 
     @Override
@@ -59,6 +80,6 @@ public final class BukkitViewer implements Viewer {
 
     @Override
     public String toString() {
-        return "BukkitViewer{" + "player=" + player + ", container=" + container + '}';
+        return "BukkitViewer{" + "player=" + player + ", selfContainer=" + selfContainer + '}';
     }
 }

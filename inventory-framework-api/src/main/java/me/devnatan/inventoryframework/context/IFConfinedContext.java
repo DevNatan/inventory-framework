@@ -17,7 +17,6 @@ public interface IFConfinedContext extends IFContext {
      *
      * @return The {@link Viewer} in the current scope of execution.
      */
-    @NotNull
     Viewer getViewer();
 
     /**

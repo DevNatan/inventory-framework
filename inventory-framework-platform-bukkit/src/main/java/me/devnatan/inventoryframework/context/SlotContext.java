@@ -3,10 +3,7 @@ package me.devnatan.inventoryframework.context;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
-import me.devnatan.inventoryframework.BukkitViewContainer;
-import me.devnatan.inventoryframework.BukkitViewer;
-import me.devnatan.inventoryframework.RootView;
+import me.devnatan.inventoryframework.View;
 import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
@@ -17,44 +14,107 @@ import me.devnatan.inventoryframework.state.StateWatcher;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnmodifiableView;
 
-public class SlotContext extends ConfinedContext implements IFSlotContext, Context {
+public abstract class SlotContext extends PlatformContext implements IFSlotContext, Context {
 
+    // --- Inherited ---
+    private final IFRenderContext parent;
+
+    // --- Properties ---
     private int slot;
-    private final Player player;
-    private final IFContext parent;
-    private final Component component;
 
-    public SlotContext(
-            @NotNull RootView root,
-            @NotNull ViewContainer container,
-            Viewer subject,
-            @NotNull Map<String, Viewer> viewers,
-            int slot,
-            @NotNull IFContext parent,
-            @Nullable Component component) {
-        super(root, container, subject, viewers, parent.getInitialData());
+    protected SlotContext(int slot, @NotNull IFRenderContext parent) {
         this.slot = slot;
-        this.player = subject == null ? null : ((BukkitViewer) subject).getPlayer();
         this.parent = parent;
-        this.component = component;
+    }
+
+    public abstract ItemStack getItem();
+
+    @Override
+    public final @NotNull RenderContext getParent() {
+        return (RenderContext) parent;
     }
 
     @Override
-    public void update() {
+    public final int getSlot() {
+        return slot;
+    }
+
+    @Override
+    public final void setSlot(int slot) {
+        this.slot = slot;
+    }
+
+    @Override
+    public final void clear() {
+        // TODO do something
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final @NotNull Map<String, Viewer> getIndexedViewers() {
+        return getParent().getIndexedViewers();
+    }
+
+    @Override
+    public final @NotNull String getTitle() {
+        return getParent().getTitle();
+    }
+
+    @Override
+    public final @UnmodifiableView @NotNull List<Component> getComponents() {
+        return getParent().getComponents();
+    }
+
+    @Override
+    public final Component getComponent(int position) {
+        return getParent().getComponent(position);
+    }
+
+    @Override
+    public final void addComponent(@NotNull Component component) {
+        getParent().addComponent(component);
+    }
+
+    @Override
+    public final void removeComponent(@NotNull Component component) {
+        getParent().removeComponent(component);
+    }
+
+    @Override
+    public final void renderComponent(@NotNull Component component) {
+        getParent().renderComponent(component);
+    }
+
+    @Override
+    public final void updateComponent(@NotNull Component component) {
+        getParent().updateComponent(component);
+    }
+
+    @Override
+    public final void update() {
         getParent().update();
     }
 
     @Override
-    public @NotNull ViewContainer getContainer() {
-        return getParent().getContainer();
+    public final Object getState(State<?> state) {
+        return getParent().getState(state);
     }
 
     @Override
-    public @NotNull @UnmodifiableView Map<String, Viewer> getIndexedViewers() {
-        return getParent().getIndexedViewers();
+    public final void initializeState(long id, @NotNull StateValue value) {
+        getParent().initializeState(id, value);
+    }
+
+    @Override
+    public final void updateState(long id, Object value) {
+        getParent().updateState(id, value);
+    }
+
+    @Override
+    public final void watchState(long id, StateWatcher listener) {
+        getParent().watchState(id, listener);
     }
 
     @Override
@@ -68,135 +128,32 @@ public class SlotContext extends ConfinedContext implements IFSlotContext, Conte
     }
 
     @Override
-    public final int getSlot() {
-        return slot;
+    public final ViewContainer getContainer() {
+        return getParent().getContainer();
     }
 
     @Override
-    public void setSlot(int slot) {
-        this.slot = slot;
+    public final @NotNull View getRoot() {
+        return getParent().getRoot();
     }
 
     @Override
-    public boolean isOnEntityContainer() {
-        return getContainer().isEntityContainer();
+    public final Object getInitialData() {
+        return getParent().getInitialData();
     }
 
     @Override
-    public boolean hasChanged() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setChanged(boolean changed) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean isRegistered() {
-        return false;
-    }
-
-    @Override
-    public final @NotNull IFContext getParent() {
-        return parent;
-    }
-
-    @Override
-    public void clear() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Nullable
-    @Override
-    public Component getComponent() {
-        return component;
-    }
-
-    @Override
-    public @NotNull Player getPlayer() {
-        return player;
-    }
-
-    @Override
-    public @UnmodifiableView List<Player> getAllPlayers() {
-        return getViewers().stream()
-                .map(viewer -> (BukkitViewer) viewer)
-                .map(BukkitViewer::getPlayer)
-                .collect(Collectors.toList());
+    public List<Player> getAllPlayers() {
+        return getParent().getAllPlayers();
     }
 
     @Override
     public void updateTitleForPlayer(@NotNull String title, @NotNull Player player) {
-        ((BukkitViewContainer) getContainer()).changeTitle(title, player);
+        getParent().updateTitleForPlayer(title, player);
     }
 
     @Override
     public void resetTitleForPlayer(@NotNull Player player) {
-        ((BukkitViewContainer) getContainer()).changeTitle(null, player);
-    }
-
-    public ItemStack getItem() {
-        return ((BukkitViewContainer) getContainer()).getInventory().getItem(getSlot());
-    }
-
-    @Override
-    public final @UnmodifiableView @NotNull List<Component> getComponents() {
-        return getParent().getComponents();
-    }
-
-    @Override
-    public final void addComponent(@NotNull Component component) {
-        throw new UnsupportedOperationException("Slot context do not have components");
-    }
-
-    @Override
-    public final void removeComponent(@NotNull Component component) {
-        throw new UnsupportedOperationException("Slot context do not have components");
-    }
-
-    @Override
-    public void renderComponent(@NotNull Component component) {
-        throw new UnsupportedOperationException("Slot context do not have components");
-    }
-
-    @Override
-    public void updateComponent(@NotNull Component component) {
-        throw new UnsupportedOperationException("Slot context do not have components");
-    }
-
-    @Override
-    public boolean isMarkedForRemoval(int componentIndex) {
-        return getParent().isMarkedForRemoval(componentIndex);
-    }
-
-    @Override
-    public Object getState(State<?> state) {
-        return getParent().getState(state);
-    }
-
-    @Override
-    public void initializeState(long id, @NotNull StateValue value) {
-        getParent().initializeState(id, value);
-    }
-
-    @Override
-    public void updateState(long id, Object value) {
-        getParent().updateState(id, value);
-    }
-
-    @Override
-    public void watchState(long id, StateWatcher listener) {
-        getParent().watchState(id, listener);
-    }
-
-    @Override
-    public String toString() {
-        return "SlotContext{" + "slot="
-                + slot + ", player="
-                + player + ", parent="
-                + parent + ", component="
-                + component + "} "
-                + super.toString();
+        getParent().resetTitleForPlayer(player);
     }
 }

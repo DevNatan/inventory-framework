@@ -7,7 +7,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import me.devnatan.inventoryframework.BukkitViewContainer;
 import me.devnatan.inventoryframework.BukkitViewer;
-import me.devnatan.inventoryframework.RootView;
+import me.devnatan.inventoryframework.View;
 import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
@@ -18,31 +18,40 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public final class RenderContext extends PlatformRenderContext<BukkitItemComponentBuilder, Context> implements Context {
+public class RenderContext extends PlatformRenderContext<BukkitItemComponentBuilder, Context> implements Context {
 
     private final Player player;
 
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
     @ApiStatus.Internal
     public RenderContext(
-            UUID id,
-            RootView root,
-            ViewContainer container,
+            @NotNull UUID id,
+            @NotNull View root,
+            @NotNull ViewConfig config,
+            @NotNull ViewContainer container,
+            @NotNull Map<String, Viewer> viewers,
             Viewer subject,
-            Map<String, Viewer> viewers,
-            ViewConfig config,
             Object initialData) {
-        super(id, root, container, subject, viewers, config, initialData);
+        super(id, root, config, container, viewers, subject, initialData);
         this.player = subject != null ? ((BukkitViewer) subject).getPlayer() : null;
     }
 
-    @NotNull
     @Override
-    public Player getPlayer() {
+    public final @NotNull View getRoot() {
+        return (View) root;
+    }
+
+    // TODO documentation
+    public final @NotNull Player getPlayer() {
+        tryThrowDoNotWorkWithSharedContext("getAllPlayers");
         return player;
     }
 
     @Override
-    public List<Player> getAllPlayers() {
+    public final List<Player> getAllPlayers() {
         return getViewers().stream()
                 .map(viewer -> (BukkitViewer) viewer)
                 .map(BukkitViewer::getPlayer)

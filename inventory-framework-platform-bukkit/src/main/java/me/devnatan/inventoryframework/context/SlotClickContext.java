@@ -1,6 +1,5 @@
 package me.devnatan.inventoryframework.context;
 
-import java.util.Map;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
@@ -11,40 +10,38 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public final class SlotClickContext extends SlotContext implements IFSlotClickContext {
+public class SlotClickContext extends SlotContext implements IFSlotClickContext {
 
+    private final Viewer whoClicked;
+    private final ViewContainer clickedContainer;
+    private final Component clickedComponent;
     private final InventoryClickEvent clickOrigin;
     private boolean cancelled;
 
+    @ApiStatus.Internal
     public SlotClickContext(
-            @NotNull RootView root,
-            @NotNull ViewContainer container,
-            Viewer subject,
-            @NotNull Map<String, Viewer> viewers,
             int slot,
-            @NotNull IFContext parent,
-            @Nullable Component component,
+            @NotNull IFRenderContext parent,
+            @NotNull Viewer whoClicked,
+            @NotNull ViewContainer clickedContainer,
+            @Nullable Component clickedComponent,
             @NotNull InventoryClickEvent clickOrigin) {
-        super(root, container, subject, viewers, slot, parent, component);
+        super(slot, parent);
+        this.whoClicked = whoClicked;
+        this.clickedContainer = clickedContainer;
+        this.clickedComponent = clickedComponent;
         this.clickOrigin = clickOrigin;
     }
 
-    @Override
-    public boolean isCancelled() {
-        return cancelled;
-    }
-
-    @Override
-    public void setCancelled(boolean cancelled) {
-        this.cancelled = cancelled;
-    }
-
-    @Override
-    public int getClickedSlot() {
-        return clickOrigin.getRawSlot();
+    /**
+     * The player who clicked on the slot.
+     */
+    public final @NotNull Player getPlayer() {
+        return (Player) clickOrigin.getWhoClicked();
     }
 
     /**
@@ -59,67 +56,106 @@ public final class SlotClickContext extends SlotContext implements IFSlotClickCo
     }
 
     /**
-     * The player who clicked on the slot.
-     */
-    @Override
-    public @NotNull Player getPlayer() {
-        return (Player) clickOrigin.getWhoClicked();
-    }
-
-    /**
      * The item that was clicked.
      */
     @Override
-    public ItemStack getItem() {
+    public final ItemStack getItem() {
         return clickOrigin.getCurrentItem();
     }
 
     @Override
-    public boolean isLeftClick() {
+    public final Component getComponent() {
+        return clickedComponent;
+    }
+
+    @Override
+    public final @NotNull ViewContainer getClickedContainer() {
+        return clickedContainer;
+    }
+
+    @Override
+    public final boolean isCancelled() {
+        return cancelled;
+    }
+
+    @Override
+    public final void setCancelled(boolean cancelled) {
+        this.cancelled = cancelled;
+    }
+
+    @Override
+    public final int getClickedSlot() {
+        return clickOrigin.getRawSlot();
+    }
+
+    @Override
+    public final boolean isLeftClick() {
         return getClickOrigin().isLeftClick();
     }
 
     @Override
-    public boolean isRightClick() {
+    public final boolean isRightClick() {
         return getClickOrigin().isRightClick();
     }
 
     @Override
-    public boolean isMiddleClick() {
+    public final boolean isMiddleClick() {
         return getClickOrigin().getClick() == ClickType.MIDDLE;
     }
 
     @Override
-    public boolean isShiftClick() {
+    public final boolean isShiftClick() {
         return getClickOrigin().isShiftClick();
     }
 
     @Override
-    public boolean isKeyboardClick() {
+    public final boolean isKeyboardClick() {
         return getClickOrigin().getClick().isKeyboardClick();
     }
 
     @Override
-    public boolean isOutsideClick() {
+    public final boolean isOutsideClick() {
         return getClickOrigin().getSlotType() == InventoryType.SlotType.OUTSIDE;
     }
 
     @Override
     @NotNull
-    public String getClickIdentifier() {
+    public final String getClickIdentifier() {
         return getClickOrigin().getClick().name();
     }
 
     @Override
-    public boolean isOnEntityContainer() {
+    public final boolean isOnEntityContainer() {
         return getClickOrigin().getClickedInventory() instanceof PlayerInventory;
     }
 
     @Override
-    public String toString() {
-        return "SlotClickContext{" + "clickOrigin="
-                + clickOrigin + ", cancelled="
-                + cancelled + "} "
-                + super.toString();
+    public final Viewer getViewer() {
+        return whoClicked;
+    }
+
+    @Override
+    public final void closeForPlayer() {
+        getParent().closeForPlayer();
+    }
+
+    @Override
+    public final void openForPlayer(@NotNull Class<? extends RootView> other) {
+        getParent().openForPlayer(other);
+    }
+
+    @Override
+    public final void openForPlayer(@NotNull Class<? extends RootView> other, Object initialData) {
+        getParent().openForPlayer(other, initialData);
+    }
+
+    @Override
+    public final void updateTitleForPlayer(@NotNull String title) {
+        getParent().updateTitleForPlayer(title);
+    }
+
+    @Override
+    public final void resetTitleForPlayer() {
+        getParent().resetTitleForPlayer();
     }
 }

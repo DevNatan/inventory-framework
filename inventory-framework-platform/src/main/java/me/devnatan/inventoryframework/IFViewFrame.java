@@ -1,13 +1,17 @@
 package me.devnatan.inventoryframework;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.UnmodifiableView;
 
-public abstract class IFViewFrame<S extends IFViewFrame<S>> {
+abstract class IFViewFrame<S extends IFViewFrame<S, V>, V extends PlatformView<S, ?, ?, ?, ?, ?, ?, ?>> {
 
     private boolean registered;
-    private final Map<UUID, RootView> registeredViews = new HashMap<>();
+    protected final Map<UUID, V> registeredViews = new HashMap<>();
+    protected final Map<String, Viewer> viewerById = new HashMap<>();
 
     protected IFViewFrame() {}
 
@@ -16,8 +20,8 @@ public abstract class IFViewFrame<S extends IFViewFrame<S>> {
      *
      * @return A Map containing all registered views in this view frame.
      */
-    protected final @NotNull Map<UUID, RootView> getRegisteredViews() {
-        return registeredViews;
+    protected final @NotNull @UnmodifiableView Map<UUID, V> getRegisteredViews() {
+        return Collections.unmodifiableMap(registeredViews);
     }
 
     /**
@@ -27,11 +31,12 @@ public abstract class IFViewFrame<S extends IFViewFrame<S>> {
      * @return An RootView instance of the given type.
      * @throws IllegalArgumentException If the given cannot be found.
      */
-    protected final @NotNull RootView getRegisteredViewByType(@NotNull Class<?> type) {
+    public final @NotNull V getRegisteredViewByType(@NotNull Class<?> type) {
         return getRegisteredViews().values().stream()
                 .filter(view -> view.getClass().equals(type))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException(String.format("Unknown view: %s", type)));
+                .orElseThrow(() ->
+                        new IllegalArgumentException(String.format("View not found or not registered: %s", type)));
     }
 
     /**
@@ -42,9 +47,9 @@ public abstract class IFViewFrame<S extends IFViewFrame<S>> {
      */
     @SuppressWarnings("unchecked")
     @Contract("_ -> this")
-    public final S with(RootView... views) {
+    public final S with(V... views) {
         synchronized (registeredViews) {
-            for (final RootView view : views) {
+            for (final V view : views) {
                 if (registeredViews.containsKey(view.getUniqueId()))
                     throw new IllegalStateException(String.format(
                             "View %s already registered. Maybe your are using #register() before #with(...).",
@@ -61,9 +66,9 @@ public abstract class IFViewFrame<S extends IFViewFrame<S>> {
      *
      * @param views The views that'll be removed.
      */
-    public final void remove(RootView... views) {
+    public final void remove(V... views) {
         synchronized (registeredViews) {
-            for (final RootView view : views) {
+            for (final V view : views) {
                 view.closeForEveryone();
                 registeredViews.remove(view.getUniqueId());
             }
@@ -84,17 +89,6 @@ public abstract class IFViewFrame<S extends IFViewFrame<S>> {
     public abstract void unregister();
 
     /**
-     * Opens a view to a {@link Viewer}.
-     *
-     * @param viewClass   The target view to be open.
-     * @param viewers     The viewers that the view will be open to. They will share the same context.
-     * @param initialData The initial data.
-     * @throws IllegalStateException If this view is not registered in this view frame.
-     */
-    public abstract void open(
-            @NotNull Class<? extends RootView> viewClass, @NotNull Iterable<Viewer> viewers, Object initialData);
-
-    /**
      * If this view frame is registered.
      *
      * @return {@code true} if it's registered or {@code false} otherwise.
@@ -113,16 +107,37 @@ public abstract class IFViewFrame<S extends IFViewFrame<S>> {
     }
 
     /**
-     * Throws an {@link IllegalStateException} if this framework is already registered when trying
-     * to install a feature.
+     * Opens a view to more than one player with initial data.
+     * <p>
+     * These players will see the same inventory and share the same context.
      *
-     * @param featureName       The feature name.
-     * @param featureAccessName The feature installation constant name.
+     * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     *
+     * @param viewClass   The target view to be opened.
+     * @param players     The players that the view will be open to.
+     * @param initialData The initial data.
      */
-    public final void checkNotRegisteredForFeatureInstall(String featureName, String featureAccessName) {
-        if (!isRegistered()) return;
-        throw new IllegalStateException(String.format(
-                "Framework must be unregistered to install %s feature. Call #install(%s) before #register().",
-                featureName, featureAccessName));
+    @ApiStatus.Experimental
+    protected final void internalOpen(
+            @NotNull Class<? extends V> viewClass, @NotNull Collection<?> players, Object initialData) {
+        final V view = getRegisteredViewByType(viewClass);
+        final List<Viewer> viewers = players.stream()
+                .map(player -> view.getElementFactory().createViewer(player, null))
+                .collect(Collectors.toList());
+
+        view.open(viewers, initialData);
+    }
+
+    void addViewer(@NotNull Viewer viewer) {
+        synchronized (viewerById) {
+            viewerById.put(viewer.getId(), viewer);
+        }
+    }
+
+    void removeViewer(@NotNull Viewer viewer) {
+        synchronized (viewerById) {
+            viewerById.remove(viewer.getId());
+        }
     }
 }
