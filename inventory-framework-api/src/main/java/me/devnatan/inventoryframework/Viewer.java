@@ -2,6 +2,7 @@ package me.devnatan.inventoryframework;
 
 import me.devnatan.inventoryframework.context.IFRenderContext;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 @ApiStatus.Internal
@@ -39,4 +40,7 @@ public interface Viewer {
     IFRenderContext getContext();
 
     void setContext(IFRenderContext context);
+
+    @Contract("_ -> this")
+    Viewer withContext(IFRenderContext context);
 }

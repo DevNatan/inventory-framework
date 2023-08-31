@@ -1,6 +1,9 @@
 package me.devnatan.inventoryframework;
 
+import static java.lang.String.format;
+
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
@@ -61,7 +64,7 @@ public abstract class PlatformView<
                 TRenderContext extends IFRenderContext,
                 TSlotContext extends IFSlotContext,
                 TSlotClickContext extends IFSlotClickContext>
-        extends DefaultRootView {
+        extends DefaultRootView implements Iterable<TContext> {
 
     private TFramework framework;
     private boolean initialized;
@@ -155,14 +158,117 @@ public abstract class PlatformView<
         getFramework().getRegisteredViewByType(target).open(Collections.singletonList(viewer), initialData);
     }
 
-    /**
-     * Creates a new configuration builder.
-     *
-     * @return A new {@link ViewConfigBuilder} instance.
-     */
-    @NotNull
-    public final ViewConfigBuilder createConfig() {
+    public final @NotNull ViewConfigBuilder createConfig() {
         return new ViewConfigBuilder().type(ViewType.CHEST);
+    }
+
+    /**
+     * Returns the context that is linked to the specified viewer in this view.
+     * <p>
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     *
+     * @param viewer The viewer.
+     * @return The context of the viewer in this context.
+     * @throws IllegalArgumentException If there's no context linked to the given viewer.
+     */
+    @ApiStatus.Internal
+    public final @NotNull IFContext getContext(@NotNull Viewer viewer) {
+        for (final IFContext context : getInternalContexts()) {
+            if (context.getIndexedViewers().containsKey(viewer.getId())) return context;
+        }
+
+        throw new IllegalArgumentException(format("Unable to get context for %s", viewer));
+    }
+
+    /**
+     * Returns the context that is linked to the specified viewer in this view.
+     * <p>
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     *
+     * @param viewerId The id of the viewer.
+     * @return The context of the viewer in this context.
+     * @throws IllegalArgumentException If there's no context linked to the given viewer.
+     */
+    public final @NotNull IFContext getContext(@NotNull String viewerId) {
+        for (final IFContext context : getInternalContexts()) {
+            if (context.getIndexedViewers().containsKey(viewerId)) return context;
+        }
+
+        throw new IllegalArgumentException(format("Unable to get context for %s", viewerId));
+    }
+
+    /**
+     * Adds a context to this view.
+     * <p>
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     *
+     * @param context The context to add.
+     */
+    @ApiStatus.Internal
+    public void addContext(@NotNull TContext context) {
+        synchronized (getInternalContexts()) {
+            getInternalContexts().add(context);
+        }
+    }
+
+    /**
+     * Removes a given context from this view if that context is linked to this view.
+     * <p>
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     *
+     * @param context The context to remove.
+     */
+    @ApiStatus.Internal
+    public void removeContext(@NotNull TContext context) {
+        synchronized (getInternalContexts()) {
+            getInternalContexts().removeIf(other -> other.getId() == context.getId());
+        }
+    }
+
+    /**
+     * Renders a given context in this view.
+     * <p>
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     *
+     * @param context The context to render.
+     */
+    @ApiStatus.Internal
+    public void renderContext(@NotNull TContext context) {
+        getPipeline().execute(context);
+
+        @SuppressWarnings("rawtypes")
+        final PlatformView view = (PlatformView) context.getRoot();
+        context.getViewers().forEach(viewer -> {
+            view.getFramework().addViewer(viewer);
+            context.getContainer().open(viewer);
+        });
+    }
+
+    @ApiStatus.Internal
+    public void removeAndTryInvalidateContext(@NotNull Viewer viewer, @NotNull TContext context) {
+        context.removeViewer(viewer);
+
+        @SuppressWarnings("rawtypes")
+        final PlatformView view = (PlatformView) context.getRoot();
+        view.getFramework().removeViewer(viewer);
+
+        final boolean canContextBeInvalidated = context.getViewers().isEmpty();
+        if (canContextBeInvalidated) {
+            // TODO invalidate context
+            removeContext(context);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    @NotNull
+    @Override
+    public final Iterator<TContext> iterator() {
+        return (Iterator<TContext>) getContexts().iterator();
     }
 
     /**

@@ -30,6 +30,6 @@ class Test extends View {
 
     @Override
     public void onFirstRender(RenderContext render) {
-        render.slot(3, new ItemStack(Material.GOLD_INGOT));
+        render.slot(3, new ItemStack(Material.GOLD_INGOT)).cancelOnClick();
     }
 }

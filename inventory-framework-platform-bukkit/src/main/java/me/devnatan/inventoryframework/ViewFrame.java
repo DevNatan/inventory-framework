@@ -2,7 +2,6 @@ package me.devnatan.inventoryframework;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
@@ -33,7 +32,6 @@ public class ViewFrame extends IFViewFrame<ViewFrame, View> implements FeatureIn
 
     private final Plugin owner;
     private final FeatureInstaller<ViewFrame> featureInstaller = new DefaultFeatureInstaller<>(this);
-    private final Map<String, Viewer> viewerByPlayerUuid = new HashMap<>();
 
     static {
         PlatformUtils.setFactory(new BukkitElementFactory());
@@ -44,7 +42,7 @@ public class ViewFrame extends IFViewFrame<ViewFrame, View> implements FeatureIn
     }
 
     @NotNull
-    public Plugin getOwner() {
+    public final Plugin getOwner() {
         return owner;
     }
 
@@ -54,7 +52,7 @@ public class ViewFrame extends IFViewFrame<ViewFrame, View> implements FeatureIn
      * @param viewClass The target view to be opened.
      * @param player    The player that the view will be open to.
      */
-    public void open(@NotNull Class<? extends View> viewClass, @NotNull Player player) {
+    public final void open(@NotNull Class<? extends View> viewClass, @NotNull Player player) {
         open(viewClass, player, null);
     }
 
@@ -65,7 +63,7 @@ public class ViewFrame extends IFViewFrame<ViewFrame, View> implements FeatureIn
      * @param player      The player that the view will be open to.
      * @param initialData The initial data.
      */
-    public void open(@NotNull Class<? extends View> viewClass, @NotNull Player player, Object initialData) {
+    public final void open(@NotNull Class<? extends View> viewClass, @NotNull Player player, Object initialData) {
         open(viewClass, Collections.singletonList(player), initialData);
     }
 
@@ -81,7 +79,7 @@ public class ViewFrame extends IFViewFrame<ViewFrame, View> implements FeatureIn
      * @param players   The players that the view will be open to.
      */
     @ApiStatus.Experimental
-    public void open(@NotNull Class<? extends View> viewClass, @NotNull Collection<? extends Player> players) {
+    public final void open(@NotNull Class<? extends View> viewClass, @NotNull Collection<? extends Player> players) {
         open(viewClass, players, null);
     }
 
@@ -98,7 +96,7 @@ public class ViewFrame extends IFViewFrame<ViewFrame, View> implements FeatureIn
      * @param initialData The initial data.
      */
     @ApiStatus.Experimental
-    public void open(
+    public final void open(
             @NotNull Class<? extends View> viewClass,
             @NotNull Collection<? extends Player> players,
             Object initialData) {
@@ -106,7 +104,7 @@ public class ViewFrame extends IFViewFrame<ViewFrame, View> implements FeatureIn
     }
 
     @Override
-    public ViewFrame register() {
+    public final ViewFrame register() {
         if (isRegistered()) throw new IllegalStateException("This view frame is already registered");
 
         tryEnableMetrics();
@@ -118,7 +116,7 @@ public class ViewFrame extends IFViewFrame<ViewFrame, View> implements FeatureIn
     }
 
     @Override
-    public void unregister() {
+    public final void unregister() {
         if (!isRegistered()) return;
 
         // Locks new operations while unregistering
@@ -202,8 +200,8 @@ public class ViewFrame extends IFViewFrame<ViewFrame, View> implements FeatureIn
      * this library. No compatibility guarantees are provided. </i></b>
      */
     @ApiStatus.Internal
-    public Viewer getViewer(@NotNull Player player) {
-        return viewerByPlayerUuid.get(player.getUniqueId().toString());
+    public final Viewer getViewer(@NotNull Player player) {
+        return viewerById.get(player.getUniqueId().toString());
     }
 
     /**
@@ -217,22 +215,23 @@ public class ViewFrame extends IFViewFrame<ViewFrame, View> implements FeatureIn
     }
 
     @Override
-    public @NotNull ViewFrame getPlatform() {
+    public final @NotNull ViewFrame getPlatform() {
         return this;
     }
 
     @Override
-    public Collection<Feature<?, ?, ViewFrame>> getInstalledFeatures() {
+    public final Collection<Feature<?, ?, ViewFrame>> getInstalledFeatures() {
         return featureInstaller.getInstalledFeatures();
     }
 
     @Override
-    public <C, R> @NotNull R install(@NotNull Feature<C, R, ViewFrame> feature, @NotNull UnaryOperator<C> configure) {
+    public final <C, R> @NotNull R install(
+            @NotNull Feature<C, R, ViewFrame> feature, @NotNull UnaryOperator<C> configure) {
         return featureInstaller.install(feature, configure);
     }
 
     @Override
-    public void uninstall(@NotNull Feature<?, ?, ViewFrame> feature) {
+    public final void uninstall(@NotNull Feature<?, ?, ViewFrame> feature) {
         featureInstaller.uninstall(feature);
     }
 }

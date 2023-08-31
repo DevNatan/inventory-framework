@@ -1,5 +1,6 @@
 package me.devnatan.inventoryframework.pipeline;
 
+import java.util.HashMap;
 import me.devnatan.inventoryframework.*;
 import me.devnatan.inventoryframework.context.IFOpenContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
@@ -39,6 +40,7 @@ public final class PlatformOpenInterceptor implements PipelineInterceptor<Virtua
                 });
     }
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
     private void finishOpen(@NotNull PipelineContext<VirtualView> pipeline, @NotNull IFOpenContext openContext) {
         if (openContext.isCancelled()) {
             pipeline.finish();
@@ -47,11 +49,10 @@ public final class PlatformOpenInterceptor implements PipelineInterceptor<Virtua
 
         if (skipOpen) return;
 
-        final RootView root = openContext.getRoot();
+        final PlatformView root = (PlatformView) openContext.getRoot();
         final IFRenderContext render = createRenderContext(openContext);
         root.addContext(render);
         root.renderContext(render);
-        render.getViewers().forEach(render.getContainer()::open);
     }
 
     IFRenderContext createRenderContext(IFOpenContext openContext) {
@@ -69,13 +70,19 @@ public final class PlatformOpenInterceptor implements PipelineInterceptor<Virtua
 
         final ElementFactory elementFactory = root.getElementFactory();
         final ViewContainer createdContainer = elementFactory.createContainer(openContext);
-        return elementFactory.createRenderContext(
+
+        final IFRenderContext context = elementFactory.createRenderContext(
                 openContext.getId(),
                 openContext.getRoot(),
                 openContext.getConfig(),
                 createdContainer,
-                openContext.getIndexedViewers(),
+                new HashMap<>(),
                 openContext.getSubject(),
                 openContext.getInitialData());
+
+        openContext.getIndexedViewers().values().forEach(viewer -> {
+            context.addViewer(viewer.withContext(context));
+        });
+        return context;
     }
 }

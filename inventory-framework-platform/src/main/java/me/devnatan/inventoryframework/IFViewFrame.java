@@ -11,6 +11,7 @@ abstract class IFViewFrame<S extends IFViewFrame<S, V>, V extends PlatformView<S
 
     private boolean registered;
     private final Map<UUID, V> registeredViews = new HashMap<>();
+    protected final Map<String, Viewer> viewerById = new HashMap<>();
 
     protected IFViewFrame() {}
 
@@ -126,5 +127,17 @@ abstract class IFViewFrame<S extends IFViewFrame<S, V>, V extends PlatformView<S
                 .collect(Collectors.toList());
 
         view.open(viewers, initialData);
+    }
+
+    void addViewer(@NotNull Viewer viewer) {
+        synchronized (viewerById) {
+            viewerById.put(viewer.getId(), viewer);
+        }
+    }
+
+    void removeViewer(@NotNull Viewer viewer) {
+        synchronized (viewerById) {
+            viewerById.remove(viewer.getId());
+        }
     }
 }

@@ -31,10 +31,12 @@ final class IFInventoryListener implements Listener {
 
         final Player player = (Player) event.getWhoClicked();
         final Viewer viewer = viewFrame.getViewer(player);
+        System.out.println("viewer = " + viewer);
         if (viewer == null) return;
 
         final IFRenderContext context = viewer.getContext();
         final Component clickedComponent = context.getComponent(event.getRawSlot());
+        System.out.println("clickedComponent = " + clickedComponent);
         if (clickedComponent == null || !clickedComponent.isVisible()) return;
 
         final ViewContainer clickedContainer = event.getClickedInventory() instanceof PlayerInventory

@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
 
 @SuppressWarnings("rawtypes")
-abstract class PlatformRenderContext<T extends ItemComponentBuilder<T, C>, C extends IFContext>
+public abstract class PlatformRenderContext<T extends ItemComponentBuilder<T, C>, C extends IFContext>
         extends PlatformConfinedContext implements IFRenderContext {
 
     // --- Must inherit from parent context ---

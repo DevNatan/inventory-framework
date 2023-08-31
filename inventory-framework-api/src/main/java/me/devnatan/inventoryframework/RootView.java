@@ -9,9 +9,8 @@ import me.devnatan.inventoryframework.internal.Job;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.UnmodifiableView;
 
-public interface RootView extends VirtualView, Iterable<IFContext> {
+public interface RootView extends VirtualView {
 
     /**
      * The unique identifier of this view.
@@ -23,72 +22,14 @@ public interface RootView extends VirtualView, Iterable<IFContext> {
 
     /**
      * All contexts linked to this view.
+     * <p>
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
      *
      * @return An unmodifiable set of all currently active contexts in this view.
      */
-    @NotNull
-    @UnmodifiableView
-    Set<IFContext> getContexts();
-
-    /**
-     * Returns the context that is linked to the specified viewer in this view.
-     * <p>
-     * <b><i> This is an internal inventory-framework API that should not be used from outside of
-     * this library. No compatibility guarantees are provided. </i></b>
-     *
-     * @param viewer The viewer.
-     * @return The context of the viewer in this context.
-     * @throws IllegalArgumentException If there's no context linked to the given viewer.
-     */
     @ApiStatus.Internal
-    @NotNull
-    IFContext getContext(@NotNull Viewer viewer);
-
-    /**
-     * Returns the context that is linked to the specified viewer in this view.
-     * <p>
-     * <b><i> This is an internal inventory-framework API that should not be used from outside of
-     * this library. No compatibility guarantees are provided. </i></b>
-     *
-     * @param viewerId The id of the viewer.
-     * @return The context of the viewer in this context.
-     * @throws IllegalArgumentException If there's no context linked to the given viewer.
-     */
-    @NotNull
-    IFContext getContext(@NotNull String viewerId);
-
-    /**
-     * Adds a context to this view.
-     * <p>
-     * <b><i> This is an internal inventory-framework API that should not be used from outside of
-     * this library. No compatibility guarantees are provided. </i></b>
-     *
-     * @param context The context to add.
-     */
-    @ApiStatus.Internal
-    void addContext(@NotNull IFContext context);
-
-    /**
-     * Removes a given context from this view if that context is linked to this view.
-     * <p>
-     * <b><i> This is an internal inventory-framework API that should not be used from outside of
-     * this library. No compatibility guarantees are provided. </i></b>
-     *
-     * @param context The context to remove.
-     */
-    @ApiStatus.Internal
-    void removeContext(@NotNull IFContext context);
-
-    /**
-     * Renders a given context in this view.
-     * <p>
-     * <b><i> This is an internal inventory-framework API that should not be used from outside of
-     * this library. No compatibility guarantees are provided. </i></b>
-     *
-     * @param context The context to render.
-     */
-    @ApiStatus.Internal
-    void renderContext(@NotNull IFContext context);
+    Set<IFContext> getInternalContexts();
 
     /**
      * Called when the view is about to be configured, the returned object will be the view's

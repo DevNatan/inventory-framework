@@ -12,7 +12,12 @@ public final class BukkitViewer implements Viewer {
     private IFRenderContext context;
 
     public BukkitViewer(@NotNull Player player, IFRenderContext context) {
+        this(player, null, context);
+    }
+
+    private BukkitViewer(@NotNull Player player, @NotNull ViewContainer selfContainer, IFRenderContext context) {
         this.player = player;
+        this.selfContainer = selfContainer;
         this.context = context;
     }
 
@@ -29,6 +34,11 @@ public final class BukkitViewer implements Viewer {
     @Override
     public void setContext(IFRenderContext context) {
         this.context = context;
+    }
+
+    @Override
+    public Viewer withContext(IFRenderContext context) {
+        return new BukkitViewer(player, selfContainer, context);
     }
 
     @Override
