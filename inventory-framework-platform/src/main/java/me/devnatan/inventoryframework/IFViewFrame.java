@@ -149,12 +149,13 @@ abstract class IFViewFrame<S extends IFViewFrame<S, V>, V extends PlatformView<S
     }
 
     /**
-     * Sets the default configuration that will be used for all views registered in this framework.
+     * Sets the default configuration that will be used for all views registered from this framework.
      * <p>
-     * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * <b><i> This API is experimental and is not subject to the general compatibility guarantees
      * such API may be changed or may be removed completely in any further release. </i></b>
      *
      * @return This framework instance.
+     * @see <a href="https://github.com/DevNatan/inventory-framework/wiki/basic-usage#default-configuration">Default Configuration on Wiki</a>
      */
     @SuppressWarnings("unchecked")
     @ApiStatus.Experimental
