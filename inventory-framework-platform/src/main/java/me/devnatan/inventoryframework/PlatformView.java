@@ -158,8 +158,17 @@ public abstract class PlatformView<
         getFramework().getRegisteredViewByType(target).open(Collections.singletonList(viewer), initialData);
     }
 
+    /**
+     * Creates a new ViewConfigBuilder instance with the default platform configuration.
+     * Configuration is inherited from the {@link #getFramework() framework} if available.
+     *
+     * @return A new ViewConfigBuilder instance.
+     */
     public final @NotNull ViewConfigBuilder createConfig() {
-        return new ViewConfigBuilder().type(ViewType.CHEST);
+        final ViewConfigBuilder configBuilder = new ViewConfigBuilder().type(ViewType.CHEST);
+        if (getFramework().getDefaultConfig() != null)
+            getFramework().getDefaultConfig().accept(configBuilder);
+        return configBuilder;
     }
 
     /**

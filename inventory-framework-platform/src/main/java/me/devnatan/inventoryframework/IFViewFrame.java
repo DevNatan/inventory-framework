@@ -1,6 +1,12 @@
 package me.devnatan.inventoryframework;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
@@ -12,6 +18,7 @@ abstract class IFViewFrame<S extends IFViewFrame<S, V>, V extends PlatformView<S
     private boolean registered;
     protected final Map<UUID, V> registeredViews = new HashMap<>();
     protected final Map<String, Viewer> viewerById = new HashMap<>();
+    protected Consumer<ViewConfigBuilder> defaultConfig;
 
     protected IFViewFrame() {}
 
@@ -139,5 +146,30 @@ abstract class IFViewFrame<S extends IFViewFrame<S, V>, V extends PlatformView<S
         synchronized (viewerById) {
             viewerById.remove(viewer.getId());
         }
+    }
+
+    /**
+     * Sets the default configuration that will be used for all views registered from this framework.
+     * <p>
+     * <b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     *
+     * @return This framework instance.
+     * @see <a href="https://github.com/DevNatan/inventory-framework/wiki/basic-usage#default-configuration">Default Configuration on Wiki</a>
+     */
+    @SuppressWarnings("unchecked")
+    @ApiStatus.Experimental
+    public final S defaultConfig(@NotNull Consumer<ViewConfigBuilder> defaultConfig) {
+        this.defaultConfig = defaultConfig;
+        return (S) this;
+    }
+
+    /**
+     * The default configuration applier of this framework.
+     *
+     * @return The default configuration applier of this framework.
+     */
+    final Consumer<ViewConfigBuilder> getDefaultConfig() {
+        return defaultConfig;
     }
 }
