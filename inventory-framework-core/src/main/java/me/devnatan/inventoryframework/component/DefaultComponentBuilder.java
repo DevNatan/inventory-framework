@@ -80,6 +80,20 @@ abstract class DefaultComponentBuilder<S extends ComponentBuilder<S, C>, C exten
     }
 
     @Override
+    public S updateOnStateChange(@NotNull State<?> state) {
+        if (watchingStates == null) watchingStates = new LinkedHashSet<>();
+        watchingStates.add(state);
+        return (S) this;
+    }
+
+    @Override
+    public S updateOnStateChange(State<?>... states) {
+        if (watchingStates == null) watchingStates = new LinkedHashSet<>();
+        watchingStates.addAll(Arrays.asList(states));
+        return (S) this;
+    }
+
+    @Override
     public S withExternallyManaged(boolean isExternallyManaged) {
         isManagedExternally = isExternallyManaged;
         return (S) this;
