@@ -26,13 +26,12 @@ final class IFInventoryListener implements Listener {
         this.viewFrame = viewFrame;
     }
 
-	@EventHandler
-	public void onPluginDisable(final PluginDisableEvent event) {
-		if (!event.getPlugin().equals(viewFrame.getOwner()))
-			return;
+    @EventHandler
+    public void onPluginDisable(final PluginDisableEvent event) {
+        if (!event.getPlugin().equals(viewFrame.getOwner())) return;
 
-		viewFrame.unregister();
-	}
+        viewFrame.unregister();
+    }
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onInventoryClick(final InventoryClickEvent event) {
