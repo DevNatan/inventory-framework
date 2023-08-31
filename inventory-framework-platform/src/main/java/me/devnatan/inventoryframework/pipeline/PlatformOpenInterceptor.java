@@ -49,35 +49,33 @@ public final class PlatformOpenInterceptor implements PipelineInterceptor<Virtua
 
         final RootView root = openContext.getRoot();
         final IFRenderContext render = createRenderContext(openContext);
-
+        root.addContext(render);
         root.renderContext(render);
         render.getViewers().forEach(render.getContainer()::open);
     }
 
     IFRenderContext createRenderContext(IFOpenContext openContext) {
-        final ElementFactory elementFactory = openContext.getRoot().getElementFactory();
+        final RootView root = openContext.getRoot();
 
         final ViewConfig contextConfig = openContext.getConfig();
         final String[] layout = contextConfig.getLayout();
         if (layout != null) {
             if (contextConfig.getSize() != 0 && contextConfig.getSize() != layout.length) {
+                // TODO Needs a more detailed error message
                 throw new InvalidLayoutException("The layout length differs from the set inventory size.");
             }
             openContext.modifyConfig().size(layout.length);
         }
 
-        final ViewContainer container = elementFactory.createContainer(openContext);
-        final IFRenderContext renderCtx = elementFactory.createContext(
+        final ElementFactory elementFactory = root.getElementFactory();
+        final ViewContainer createdContainer = elementFactory.createContainer(openContext);
+        return elementFactory.createRenderContext(
+                openContext.getId(),
                 openContext.getRoot(),
-                container,
-                openContext.getViewer(),
+                openContext.getConfig(),
+                createdContainer,
                 openContext.getIndexedViewers(),
-                IFRenderContext.class,
-                openContext,
+                openContext.getSubject(),
                 openContext.getInitialData());
-
-        openContext.getViewers().forEach(renderCtx::addViewer);
-        openContext.getRoot().addContext(renderCtx);
-        return renderCtx;
     }
 }

@@ -26,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
 @ApiStatus.OverrideOnly
 public class View
         extends PlatformView<
+                ViewFrame,
                 BukkitItemComponentBuilder,
                 Context,
                 OpenContext,
@@ -51,7 +52,7 @@ public class View
 
     @Override
     public final void nextTick(Runnable task) {
-        Bukkit.getServer().getScheduler().runTask(((ViewFrame) getFramework()).getOwner(), task);
+        Bukkit.getServer().getScheduler().runTask(getFramework().getOwner(), task);
     }
 
     @NotNull

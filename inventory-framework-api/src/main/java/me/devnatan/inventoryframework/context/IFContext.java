@@ -19,9 +19,13 @@ public interface IFContext extends VirtualView, StateValueHost {
 
     /**
      * An unique id for this context.
+     * <p>
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
      *
      * @return The unique identifier for this context.
      */
+    @ApiStatus.Internal
     @NotNull
     UUID getId();
 
@@ -45,26 +49,37 @@ public interface IFContext extends VirtualView, StateValueHost {
     List<Viewer> getViewers();
 
     /**
-     * An unmodifiable view of all viewers that are tied to this context.
+     * A Map containing all viewers in that context.
+     * <p>
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
      *
-     * @return All unmodifiable view of all viewers.
+     * @return A Map containing all viewers in that context.
      */
     @NotNull
-    @UnmodifiableView
+    @ApiStatus.Internal
     Map<String, Viewer> getIndexedViewers();
 
     /**
      * Adds a new viewer to this context.
+     * <p>
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
      *
      * @param viewer The viewer that'll be added.
      */
+    @ApiStatus.Internal
     void addViewer(@NotNull Viewer viewer);
 
     /**
      * Removes a new viewer to this context.
+     * <p>
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
      *
      * @param viewer The viewer that'll be removed.
      */
+    @ApiStatus.Internal
     void removeViewer(@NotNull Viewer viewer);
 
     /**
@@ -79,7 +94,6 @@ public interface IFContext extends VirtualView, StateValueHost {
      *
      * @return The container of this context.
      */
-    @NotNull
     ViewContainer getContainer();
 
     /**

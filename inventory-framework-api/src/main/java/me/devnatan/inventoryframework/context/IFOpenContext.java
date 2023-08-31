@@ -1,7 +1,9 @@
 package me.devnatan.inventoryframework.context;
 
 import java.util.concurrent.CompletableFuture;
+import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewConfigBuilder;
+import me.devnatan.inventoryframework.Viewer;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -9,11 +11,18 @@ import org.jetbrains.annotations.NotNull;
  * This context is created before the container is opened, it is used for cancellation by previously
  * defined data also can be used to change the title and size of the container before the rendering intent.
  */
-public interface IFOpenContext extends IFConfinedContext {
+public interface IFOpenContext extends IFContext {
+
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
+    Viewer getSubject();
 
     /**
      * The task that will run before this context transitions from opening to rendering context.
-     *
+     * <p>
      * <b><i> This is an internal inventory-framework API that should not be used from outside of
      * this library. No compatibility guarantees are provided. </i></b>
      *
@@ -56,4 +65,11 @@ public interface IFOpenContext extends IFConfinedContext {
      */
     @NotNull
     ViewConfigBuilder modifyConfig();
+
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
+    ViewConfig getModifiedConfig();
 }

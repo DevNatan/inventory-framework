@@ -1,7 +1,7 @@
 package me.devnatan.inventoryframework.component;
 
 @FunctionalInterface
-public interface PaginationElementFactory<T, V> {
+public interface PaginationElementFactory<Context, V> {
 
-    ComponentFactory create(T context, int index, int slot, V value);
+    ComponentFactory create(Context context, int index, int slot, V value);
 }

@@ -3,10 +3,15 @@ package me.devnatan.inventoryframework.context;
 import static java.lang.String.format;
 import static me.devnatan.inventoryframework.utils.SlotConverter.convertSlot;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import me.devnatan.inventoryframework.InventoryFrameworkException;
+import me.devnatan.inventoryframework.PlatformView;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewContainer;
@@ -18,57 +23,50 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
 
-abstract class PlatformRenderContext<T extends ItemComponentBuilder<T, C>, C extends IFContext> extends ConfinedContext
-        implements IFRenderContext {
+@SuppressWarnings("rawtypes")
+abstract class PlatformRenderContext<T extends ItemComponentBuilder<T, C>, C extends IFContext>
+        extends PlatformConfinedContext implements IFRenderContext {
 
+    // --- Must inherit from parent context ---
+    private final UUID id;
+    protected final PlatformView root;
+    private final ViewConfig config;
+    private final Map<String, Viewer> viewers;
+    private final Object initialData;
+    private final Viewer subject;
+
+    // --- Inherited ---
+    private final ViewContainer container;
+
+    // --- Properties ---
     private final List<ComponentFactory> componentBuilders = new ArrayList<>();
     private final List<LayoutSlot> layoutSlots = new ArrayList<>();
     private BiFunction<Integer, Integer, ComponentFactory> availableSlotFactory;
-    private final ViewConfig config;
-    private final UUID id;
 
     PlatformRenderContext(
-            UUID id,
-            RootView root,
-            ViewContainer container,
+            @NotNull UUID id,
+            @NotNull PlatformView root,
+            @NotNull ViewConfig config,
+            @NotNull ViewContainer container,
+            @NotNull Map<String, Viewer> viewers,
             Viewer subject,
-            Map<String, Viewer> viewers,
-            ViewConfig config,
             Object initialData) {
-        super(root, container, subject, viewers, initialData);
         this.id = id;
+        this.root = root;
         this.config = config;
+        this.container = container;
+        this.viewers = viewers;
+        this.subject = subject;
+        this.initialData = initialData;
     }
 
-    @Override
-    public @NotNull UUID getId() {
-        return id;
-    }
-
-    @Override
-    public @NotNull ViewConfig getConfig() {
-        return config;
-    }
-
-    @Override
-    public final @NotNull @UnmodifiableView List<ComponentFactory> getComponentFactories() {
-        return Collections.unmodifiableList(componentBuilders);
-    }
-
-    @Override
-    public final @NotNull List<LayoutSlot> getLayoutSlots() {
-        return layoutSlots;
-    }
-
-    @Override
-    public final void addLayoutSlot(@NotNull LayoutSlot layoutSlot) {
-        layoutSlots.add(layoutSlot);
-    }
-
-    @Override
-    public BiFunction<Integer, Integer, ComponentFactory> getAvailableSlotFactory() {
-        return availableSlotFactory;
-    }
+    /**
+     * Creates a new platform builder instance.
+     *
+     * @return A new platform builder instance.
+     */
+    // TODO use ElementFactory's `createBuilder` instead
+    protected abstract T createBuilder();
 
     /**
      * Creates a new item builder without a specified slot.
@@ -216,14 +214,6 @@ abstract class PlatformRenderContext<T extends ItemComponentBuilder<T, C>, C ext
     }
 
     /**
-     * Creates a new platform builder instance.
-     *
-     * @return A new platform builder instance.
-     */
-    // TODO use ElementFactory's `createBuilder` instead
-    protected abstract T createBuilder();
-
-    /**
      * Creates a new platform builder instance and registers it.
      *
      * @return A new registered platform builder instance.
@@ -255,5 +245,85 @@ abstract class PlatformRenderContext<T extends ItemComponentBuilder<T, C>, C ext
             throw new IllegalArgumentException(format(
                     "The '%c' character cannot be used because it is only available for backwards compatibility. Please use another character.",
                     character));
+    }
+
+    @Override
+    public final @NotNull UUID getId() {
+        return id;
+    }
+
+    @Override
+    public final @NotNull ViewContainer getContainer() {
+        return container;
+    }
+
+    @Override
+    public final @NotNull ViewConfig getConfig() {
+        return config;
+    }
+
+    @Override
+    public final @NotNull Map<String, Viewer> getIndexedViewers() {
+        return viewers;
+    }
+
+    @Override
+    public final Object getInitialData() {
+        return initialData;
+    }
+
+    @Override
+    public final Viewer getViewer() {
+        return subject;
+    }
+
+    @Override
+    public final @NotNull @UnmodifiableView List<ComponentFactory> getComponentFactories() {
+        return Collections.unmodifiableList(componentBuilders);
+    }
+
+    @Override
+    public final @NotNull List<LayoutSlot> getLayoutSlots() {
+        return layoutSlots;
+    }
+
+    @Override
+    public final void addLayoutSlot(@NotNull LayoutSlot layoutSlot) {
+        layoutSlots.add(layoutSlot);
+    }
+
+    @Override
+    public final BiFunction<Integer, Integer, ComponentFactory> getAvailableSlotFactory() {
+        return availableSlotFactory;
+    }
+
+    @Override
+    public final void closeForPlayer() {
+        tryThrowDoNotWorkWithSharedContext("closeForEveryone()");
+        super.closeForPlayer();
+    }
+
+    @Override
+    public final void openForPlayer(@NotNull Class<? extends RootView> other) {
+        tryThrowDoNotWorkWithSharedContext("openForEveryone(Class)");
+        super.openForPlayer(other);
+    }
+
+    @Override
+    public final void openForPlayer(@NotNull Class<? extends RootView> other, Object initialData) {
+        tryThrowDoNotWorkWithSharedContext("openForEveryone(Class, Object)");
+        super.openForPlayer(other, initialData);
+    }
+
+    @Override
+    public final void updateTitleForPlayer(@NotNull String title) {
+        tryThrowDoNotWorkWithSharedContext("updateTitleForEveryone(String)");
+        super.updateTitleForEveryone(title);
+    }
+
+    @Override
+    public final void resetTitleForPlayer() {
+        tryThrowDoNotWorkWithSharedContext("resetTitleForEveryone()");
+        super.resetTitleForPlayer();
     }
 }

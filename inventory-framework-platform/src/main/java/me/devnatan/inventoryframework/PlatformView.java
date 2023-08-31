@@ -5,7 +5,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import me.devnatan.inventoryframework.component.ComponentFactory;
 import me.devnatan.inventoryframework.component.ItemComponentBuilder;
 import me.devnatan.inventoryframework.component.Pagination;
@@ -52,6 +51,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class PlatformView<
+                TFramework extends IFViewFrame<?, ?>,
                 TItem extends ItemComponentBuilder<TItem, TContext> & ComponentFactory,
                 TContext extends IFContext,
                 TOpenContext extends IFOpenContext,
@@ -61,8 +61,65 @@ public abstract class PlatformView<
                 TSlotClickContext extends IFSlotClickContext>
         extends DefaultRootView {
 
-    private IFViewFrame<?> framework;
+    private TFramework framework;
     private boolean initialized;
+
+    /**
+     * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided.</i></b>
+     */
+    @ApiStatus.Internal
+    public final TFramework getFramework() {
+        return framework;
+    }
+
+    /**
+     * The initialization state of this view.
+     *
+     * @return If this view was initialized.
+     */
+    final boolean isInitialized() {
+        return initialized;
+    }
+
+    /**
+     * Sets the initialization state of this view.
+     *
+     * @param initialized The new initialization state.
+     */
+    final void setInitialized(boolean initialized) {
+        this.initialized = initialized;
+    }
+
+    /**
+     * Throws an exception if this view is already initialized.
+     *
+     * @throws IllegalStateException if this view is already initialized.
+     */
+    private void requireNotInitialized() {
+        if (!isInitialized()) return;
+        throw new IllegalStateException(
+                "View is already initialized, please move this method call to class constructor or #onInit.");
+    }
+
+    /**
+     * Opens this view to one or more viewers.
+     * <p>
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     *
+     * @param viewers     The viewers that'll see this view.
+     * @param initialData The initial data.
+     */
+    @ApiStatus.Internal
+    public final void open(@NotNull List<Viewer> viewers, Object initialData) {
+        if (!isInitialized()) throw new IllegalStateException("Cannot open a uninitialized view");
+
+        final Viewer subject = viewers.size() == 1 ? viewers.get(0) : null;
+        final IFOpenContext context = getElementFactory().createOpenContext(this, subject, viewers, initialData);
+
+        getPipeline().execute(StandardPipelinePhases.OPEN, context);
+    }
 
     /**
      * Creates a new configuration builder.
@@ -382,11 +439,9 @@ public abstract class PlatformView<
      * @param <T>            The pagination data type.
      * @return A new pagination state builder.
      */
-    @SuppressWarnings("unchecked")
     protected final <T> PaginationStateBuilder<TContext, TSlotClickContext, TItem, T> buildPaginationState(
             @NotNull List<? super T> sourceProvider) {
-        return new PaginationStateBuilder<>(
-                (PlatformView<TItem, TContext, ?, ?, ?, TSlotClickContext, ?>) this, sourceProvider);
+        return new PaginationStateBuilder<>(this, sourceProvider);
     }
 
     /**
@@ -396,11 +451,9 @@ public abstract class PlatformView<
      * @param <T>            The pagination data type.
      * @return A new pagination state builder.
      */
-    @SuppressWarnings("unchecked")
     protected final <T> PaginationStateBuilder<TContext, TSlotClickContext, TItem, T> buildPaginationState(
             @NotNull Supplier<List<? super T>> sourceProvider) {
-        return new PaginationStateBuilder<>(
-                (PlatformView<TItem, TContext, ?, ?, ?, TSlotClickContext, ?>) this, sourceProvider);
+        return new PaginationStateBuilder<>(this, sourceProvider);
     }
 
     /**
@@ -410,11 +463,9 @@ public abstract class PlatformView<
      * @param <T>            The pagination data type.
      * @return A new pagination state builder.
      */
-    @SuppressWarnings("unchecked")
     protected final <T> PaginationStateBuilder<TContext, TSlotClickContext, TItem, T> buildPaginationState(
             @NotNull Function<TContext, List<? super T>> sourceProvider) {
-        return new PaginationStateBuilder<>(
-                (PlatformView<TItem, TContext, ?, ?, ?, TSlotClickContext, ?>) this, sourceProvider);
+        return new PaginationStateBuilder<>(this, sourceProvider);
     }
 
     /**
@@ -428,11 +479,9 @@ public abstract class PlatformView<
      * @return A new pagination state builder.
      */
     @ApiStatus.Experimental
-    @SuppressWarnings("unchecked")
     protected final <T> PaginationStateBuilder<TContext, TSlotClickContext, TItem, T> buildAsyncPaginationState(
             @NotNull Function<TContext, CompletableFuture<List<T>>> sourceProvider) {
-        return new PaginationStateBuilder<>(
-                (PlatformView<TItem, TContext, ?, ?, ?, TSlotClickContext, ?>) this, sourceProvider);
+        return new PaginationStateBuilder<>(this, sourceProvider);
     }
 
     final <V> State<Pagination> buildPaginationState(
@@ -530,41 +579,18 @@ public abstract class PlatformView<
     public void onClick(TSlotClickContext click) {}
 
     /**
-     * Initialization state of this view.
-     *
-     * @return If this view was initialized.
-     */
-    final boolean isInitialized() {
-        return initialized;
-    }
-
-    /**
-     * Sets the initialization state of this view.
-     *
-     * @param initialized The new initialization state.
-     */
-    final void setInitialized(boolean initialized) {
-        this.initialized = initialized;
-    }
-
-    private void requireNotInitialized() {
-        if (!isInitialized()) return;
-        throw new IllegalStateException(
-                "View is already initialized, please move this method call to class construtor or #onInit.");
-    }
-
-    /**
      * Called internally before the first initialization.
      * <p>
      * Use it to register pipeline interceptors.
      *
      * @throws IllegalStateException If this platform view is already initialized.
      */
-    final void internalInitialization(IFViewFrame<?> framework) {
+    @SuppressWarnings("unchecked")
+    final void internalInitialization(IFViewFrame<?, ?> framework) {
         if (isInitialized())
             throw new IllegalStateException("Tried to call internal initialization but view is already initialized");
 
-        this.framework = framework;
+        this.framework = (TFramework) framework;
 
         final Pipeline<? super VirtualView> pipeline = getPipeline();
         pipeline.intercept(StandardPipelinePhases.INIT, new PlatformInitInterceptor());
@@ -588,32 +614,5 @@ public abstract class PlatformView<
     @ApiStatus.Internal
     public @NotNull ElementFactory getElementFactory() {
         return PlatformUtils.getFactory();
-    }
-
-    @Override
-    public final void open(@NotNull List<Viewer> viewers, Object initialData) {
-        if (!isInitialized()) throw new IllegalStateException("Cannot open a uninitialized view");
-
-        final Viewer subject = viewers.size() == 1 ? viewers.get(0) : null;
-        final IFOpenContext context = getElementFactory()
-                .createContext(
-                        this,
-                        null,
-                        subject,
-                        viewers.stream().collect(Collectors.toMap(Viewer::getId, Function.identity())),
-                        IFOpenContext.class,
-                        null,
-                        initialData);
-        viewers.forEach(context::addViewer);
-        getPipeline().execute(StandardPipelinePhases.OPEN, context);
-    }
-
-    /**
-     * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
-     * this library. No compatibility guarantees are provided.</i></b>
-     */
-    @ApiStatus.Internal
-    public final IFViewFrame<?> getFramework() {
-        return framework;
     }
 }

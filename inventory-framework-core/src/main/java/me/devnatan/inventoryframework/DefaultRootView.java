@@ -106,11 +106,6 @@ public class DefaultRootView implements RootView {
     }
 
     @Override
-    public void open(@NotNull List<Viewer> viewers, Object initialData) {
-        throw new UnsupportedOperationException("Missing #open(...) implementation");
-    }
-
-    @Override
     public final void closeForEveryone() {
         getContexts().forEach(IFContext::closeForEveryone);
     }
@@ -152,11 +147,6 @@ public class DefaultRootView implements RootView {
     @Override
     public void setScheduledUpdateJob(@NotNull Job job) {
         this.scheduledUpdateJob = job;
-    }
-
-    @Override
-    public IFViewFrame<?> getFramework() {
-        throw new UnsupportedOperationException("Missing #getFramework() implementation");
     }
 
     @NotNull

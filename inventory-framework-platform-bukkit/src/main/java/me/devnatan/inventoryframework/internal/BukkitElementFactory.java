@@ -1,11 +1,12 @@
 package me.devnatan.inventoryframework.internal;
 
-import static java.util.Objects.requireNonNull;
 import static me.devnatan.inventoryframework.runtime.util.InventoryUtils.checkInventoryTypeSupport;
-import static me.devnatan.inventoryframework.util.IsTypeOf.isTypeOf;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import me.devnatan.inventoryframework.*;
 import me.devnatan.inventoryframework.component.BukkitItemComponentBuilder;
 import me.devnatan.inventoryframework.component.Component;
@@ -13,8 +14,8 @@ import me.devnatan.inventoryframework.component.ComponentBuilder;
 import me.devnatan.inventoryframework.context.*;
 import me.devnatan.inventoryframework.logging.Logger;
 import me.devnatan.inventoryframework.logging.NoopLogger;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.jetbrains.annotations.NotNull;
@@ -57,63 +58,56 @@ public class BukkitElementFactory extends ElementFactory {
     }
 
     @Override
-    public @NotNull Viewer createViewer(Object... parameters) {
-        final Object playerObject = parameters[0];
-        if (!(playerObject instanceof Player))
+    public @NotNull Viewer createViewer(@NotNull Object entity, IFRenderContext context) {
+        if (!(entity instanceof Player))
             throw new IllegalArgumentException("createViewer(...) first parameter must be a Player");
 
-        return new BukkitViewer((Player) playerObject);
+        return new BukkitViewer((Player) entity, context);
     }
 
     @Override
-    public @NotNull String convertViewer(Object input) {
-        if (input instanceof String) return UUID.fromString((String) input).toString();
-        if (input instanceof UUID) return input.toString();
-        if (input instanceof Entity) return ((Entity) input).getUniqueId().toString();
-
-        throw new IllegalArgumentException("Inconvertible viewer id: " + input);
+    public IFOpenContext createOpenContext(
+            @NotNull RootView root, @Nullable Viewer subject, @NotNull List<Viewer> viewers, Object initialData) {
+        return new OpenContext(
+                (View) root,
+                subject,
+                viewers.stream().collect(Collectors.toMap(Viewer::getId, Function.identity())),
+                initialData);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public <T extends IFContext> @NotNull T createContext(
+    public IFRenderContext createRenderContext(
+            @NotNull UUID id,
             @NotNull RootView root,
-            ViewContainer container,
-            Viewer subject,
+            @NotNull ViewConfig config,
+            @NotNull ViewContainer container,
             @NotNull Map<String, Viewer> viewers,
-            @NotNull Class<T> kind,
-            @Nullable IFContext parent,
+            Viewer subject,
             Object initialData) {
-        if (isTypeOf(IFOpenContext.class, kind)) return (T) new OpenContext(root, subject, viewers, initialData);
-        if (isTypeOf(IFRenderContext.class, kind))
-            return (T) new me.devnatan.inventoryframework.context.RenderContext(
-                    requireNonNull(parent).getId(),
-                    root,
-                    container,
-                    subject,
-                    viewers,
-                    requireNonNull(parent).getConfig(),
-                    initialData);
-        if (isTypeOf(IFCloseContext.class, kind))
-            return (T) new CloseContext(root, container, subject, viewers, requireNonNull(parent));
-
-        throw new UnsupportedOperationException("Unsupported context kind: " + kind);
+        return new RenderContext(id, (View) root, config, container, viewers, subject, initialData);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public <T extends IFSlotContext> @NotNull T createSlotContext(
-            int slot,
-            Component component,
-            @NotNull ViewContainer container,
-            Viewer subject,
-            @NotNull Map<String, Viewer> viewers,
-            @NotNull IFContext parent,
-            @NotNull Class<?> kind) {
-        if (isTypeOf(IFSlotRenderContext.class, kind))
-            return (T) new SlotRenderContext(parent.getRoot(), container, subject, viewers, slot, parent, component);
+    public IFSlotClickContext createSlotClickContext(
+            int slotClicked,
+            @NotNull Viewer whoClicked,
+            @NotNull ViewContainer interactionContainer,
+            @Nullable Component componentClicked,
+            @NotNull Object origin) {
+        final IFRenderContext context = whoClicked.getContext();
+        return new SlotClickContext(
+                slotClicked, context, whoClicked, interactionContainer, componentClicked, (InventoryClickEvent) origin);
+    }
 
-        return (T) new SlotContext(parent.getRoot(), container, subject, viewers, slot, parent, component);
+    @Override
+    public IFSlotRenderContext createSlotRenderContext(
+            int slot, @NotNull IFRenderContext parent, @Nullable Viewer viewer) {
+        return new SlotRenderContext(slot, parent, viewer);
+    }
+
+    @Override
+    public IFCloseContext createCloseContext(@NotNull Viewer viewer, @NotNull IFRenderContext parent) {
+        return new CloseContext(viewer, parent);
     }
 
     @Override

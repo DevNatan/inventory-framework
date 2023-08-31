@@ -1,8 +1,10 @@
 package me.devnatan.inventoryframework;
 
-import me.devnatan.inventoryframework.context.IFContext;
+import me.devnatan.inventoryframework.context.IFRenderContext;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
+@ApiStatus.Internal
 public interface Viewer {
 
     /**
@@ -33,6 +35,8 @@ public interface Viewer {
     @NotNull
     ViewContainer getSelfContainer();
 
-	@NotNull
-	IFContext getContext();
+    @NotNull
+    IFRenderContext getContext();
+
+    void setContext(IFRenderContext context);
 }

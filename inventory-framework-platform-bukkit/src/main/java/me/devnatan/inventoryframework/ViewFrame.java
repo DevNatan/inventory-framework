@@ -1,17 +1,12 @@
 package me.devnatan.inventoryframework;
 
-import com.google.common.collect.Lists;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 import java.util.function.UnaryOperator;
-import java.util.stream.Collectors;
-
-import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.feature.DefaultFeatureInstaller;
 import me.devnatan.inventoryframework.feature.Feature;
 import me.devnatan.inventoryframework.feature.FeatureInstaller;
@@ -19,14 +14,13 @@ import me.devnatan.inventoryframework.internal.BukkitElementFactory;
 import me.devnatan.inventoryframework.internal.PlatformUtils;
 import me.devnatan.inventoryframework.runtime.thirdparty.Metrics;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.ServicesManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
-public class ViewFrame extends IFViewFrame<ViewFrame> implements FeatureInstaller<ViewFrame> {
+public class ViewFrame extends IFViewFrame<ViewFrame, View> implements FeatureInstaller<ViewFrame> {
 
     private static final String BSTATS_SYSTEM_PROP = "inventory-framework.enable-bstats";
     private static final int BSTATS_PROJECT_ID = 15518;
@@ -39,7 +33,7 @@ public class ViewFrame extends IFViewFrame<ViewFrame> implements FeatureInstalle
 
     private final Plugin owner;
     private final FeatureInstaller<ViewFrame> featureInstaller = new DefaultFeatureInstaller<>(this);
-	private final Map<String, Viewer> viewerByPlayerUuid = new HashMap<>();
+    private final Map<String, Viewer> viewerByPlayerUuid = new HashMap<>();
 
     static {
         PlatformUtils.setFactory(new BukkitElementFactory());
@@ -55,44 +49,23 @@ public class ViewFrame extends IFViewFrame<ViewFrame> implements FeatureInstalle
     }
 
     /**
-     * {@inheritDoc}
-     * <p>
-     * <b><i> This is an internal inventory-framework API that should not be used from outside of
-     * this library. No compatibility guarantees are provided. </i></b>
-     */
-    @ApiStatus.Internal
-    @Override
-    public void open(
-            @NotNull Class<? extends RootView> viewClass, @NotNull Iterable<Viewer> viewers, Object initialData) {
-        for (final Viewer viewer : viewers)
-            if (!(viewer instanceof BukkitViewer))
-                throw new IllegalArgumentException("Only BukkitViewer viewer impl is supported");
-
-        final RootView view = getRegisteredViewByType(viewClass);
-        if (!(view instanceof PlatformView))
-            throw new IllegalStateException("Only PlatformView can be opened through #open(...)");
-
-        view.open(Lists.newArrayList(viewers), initialData);
-    }
-
-    /**
      * Opens a view to a player.
      *
      * @param viewClass The target view to be opened.
      * @param player    The player that the view will be open to.
      */
-    public void open(@NotNull Class<? extends RootView> viewClass, @NotNull Player player) {
+    public void open(@NotNull Class<? extends View> viewClass, @NotNull Player player) {
         open(viewClass, player, null);
     }
 
     /**
      * Opens a view to a player with initial data.
      *
-     * @param viewClass The target view to be opened.
-     * @param player    The player that the view will be open to.
+     * @param viewClass   The target view to be opened.
+     * @param player      The player that the view will be open to.
      * @param initialData The initial data.
      */
-    public void open(@NotNull Class<? extends RootView> viewClass, @NotNull Player player, Object initialData) {
+    public void open(@NotNull Class<? extends View> viewClass, @NotNull Player player, Object initialData) {
         open(viewClass, Collections.singletonList(player), initialData);
     }
 
@@ -108,7 +81,7 @@ public class ViewFrame extends IFViewFrame<ViewFrame> implements FeatureInstalle
      * @param players   The players that the view will be open to.
      */
     @ApiStatus.Experimental
-    public void open(@NotNull Class<? extends RootView> viewClass, @NotNull Collection<? extends Player> players) {
+    public void open(@NotNull Class<? extends View> viewClass, @NotNull Collection<? extends Player> players) {
         open(viewClass, players, null);
     }
 
@@ -126,13 +99,10 @@ public class ViewFrame extends IFViewFrame<ViewFrame> implements FeatureInstalle
      */
     @ApiStatus.Experimental
     public void open(
-            @NotNull Class<? extends RootView> viewClass,
+            @NotNull Class<? extends View> viewClass,
             @NotNull Collection<? extends Player> players,
             Object initialData) {
-        final Set<Viewer> viewers = players.stream()
-                .map(player -> PlatformUtils.getFactory().createViewer(player))
-                .collect(Collectors.toSet());
-        open(viewClass, viewers, initialData);
+        internalOpen(viewClass, players, initialData);
     }
 
     @Override
@@ -154,9 +124,9 @@ public class ViewFrame extends IFViewFrame<ViewFrame> implements FeatureInstalle
         // Locks new operations while unregistering
         setRegistered(false);
 
-        final Iterator<RootView> iterator = getRegisteredViews().values().iterator();
+        final Iterator<View> iterator = getRegisteredViews().values().iterator();
         while (iterator.hasNext()) {
-            final RootView view = iterator.next();
+            final View view = iterator.next();
             try {
                 view.closeForEveryone();
             } catch (final RuntimeException ignored) {
@@ -188,24 +158,21 @@ public class ViewFrame extends IFViewFrame<ViewFrame> implements FeatureInstalle
         }
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked", "CallToPrintStackTrace"})
+    @SuppressWarnings("CallToPrintStackTrace")
     private void initializeViews() {
-        for (final Map.Entry<UUID, RootView> entry : getRegisteredViews().entrySet()) {
-            final RootView rootView = entry.getValue();
-            if (!(rootView instanceof PlatformView))
-                throw new IllegalStateException("Only PlatformView can be registered on this view frame");
+        for (final Map.Entry<UUID, View> entry : getRegisteredViews().entrySet()) {
+            final View view = entry.getValue();
 
-            final PlatformView platformView = (PlatformView) rootView;
             try {
-                platformView.internalInitialization(this);
-                platformView.setInitialized(true);
+                view.internalInitialization(this);
+                view.setInitialized(true);
             } catch (final RuntimeException exception) {
-                platformView.setInitialized(false);
+                view.setInitialized(false);
                 getOwner()
                         .getLogger()
                         .severe(String.format(
                                 "An error occurred while enabling view %s: %s",
-                                rootView.getClass().getName(), exception));
+                                view.getClass().getName(), exception));
                 exception.printStackTrace();
             }
         }
@@ -230,14 +197,14 @@ public class ViewFrame extends IFViewFrame<ViewFrame> implements FeatureInstalle
         }
     }
 
-	/**
-	 * <b><i> This is an internal inventory-framework API that should not be used from outside of
-	 * this library. No compatibility guarantees are provided. </i></b>
-	 */
-	@ApiStatus.Internal
-	public Viewer getViewer(@NotNull Player player) {
-		return viewerByPlayerUuid.get(player.getUniqueId().toString());
-	}
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
+    public Viewer getViewer(@NotNull Player player) {
+        return viewerByPlayerUuid.get(player.getUniqueId().toString());
+    }
 
     /**
      * Creates a new ViewFrame.

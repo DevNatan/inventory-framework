@@ -1,6 +1,5 @@
 package me.devnatan.inventoryframework;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -128,18 +127,6 @@ public interface RootView extends VirtualView, Iterable<IFContext> {
     Pipeline<VirtualView> getPipeline();
 
     /**
-     * Opens this view to more than one viewer.
-     * <p>
-     * <b><i> This is an internal inventory-framework API that should not be used from outside of
-     * this library. No compatibility guarantees are provided. </i></b>
-     *
-     * @param viewers     The viewers that'll see this view.
-     * @param initialData The initial data.
-     */
-    @ApiStatus.Internal
-    void open(@NotNull List<Viewer> viewers, Object initialData);
-
-    /**
      * Closes all contexts that are currently active in this view.
      */
     void closeForEveryone();
@@ -158,25 +145,26 @@ public interface RootView extends VirtualView, Iterable<IFContext> {
 
     /**
      * Runs a task in the next tick.
-     *
-     * @param task The task to run.
-     */
-    void nextTick(Runnable task);
-
-    /**
-     * The IFViewFrame for this view.
      * <p>
      * <b><i> This is an internal inventory-framework API that should not be used from outside of
      * this library. No compatibility guarantees are provided. </i></b>
      *
-     * @return The current framework that holds this view.
-     * @throws UnsupportedOperationException If this view doesn't support a framework.
+     * @param task The task to run.
      */
     @ApiStatus.Internal
-    IFViewFrame<?> getFramework();
+    void nextTick(Runnable task);
 
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
     Job getScheduledUpdateJob();
 
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
     @ApiStatus.Internal
     void setScheduledUpdateJob(@NotNull Job job);
 

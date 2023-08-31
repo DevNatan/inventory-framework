@@ -8,12 +8,11 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.UUID;
+import me.devnatan.inventoryframework.InventoryFrameworkException;
 import me.devnatan.inventoryframework.RootView;
+import me.devnatan.inventoryframework.UnsupportedOperationInSharedContextException;
 import me.devnatan.inventoryframework.ViewConfig;
-import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.pipeline.StandardPipelinePhases;
@@ -23,50 +22,16 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 import org.jetbrains.annotations.UnmodifiableView;
 
-class BaseViewContext extends DefaultStateValueHost implements IFContext {
+abstract class AbstractIFContext extends DefaultStateValueHost implements IFContext {
 
-    private final UUID id = UUID.randomUUID();
-    private final @NotNull RootView root;
-    // Container can be null on pre-render/intermediate contexts
-    private final @Nullable ViewContainer container;
     private final List<Component> components = new LinkedList<>();
     private final Deque<Integer> markedForRemoval = new ArrayDeque<>();
-    private final Object initialData;
-    protected final Map<String, Viewer> viewers;
+    private final Map<String, Viewer> indexedViewers = new HashMap<>();
     protected ViewConfig config;
 
-    public BaseViewContext(
-            @NotNull RootView root,
-            @Nullable ViewContainer container,
-            @NotNull Map<String, Viewer> viewers,
-            Object initialData) {
-        this.root = root;
-        this.container = container;
-        this.config = root.getConfig();
-        this.initialData = initialData;
-        this.viewers = new HashMap<>(viewers);
-    }
-
-    @NotNull
     @Override
-    public UUID getId() {
-        return id;
-    }
-
-    @Override
-    public @NotNull ViewConfig getConfig() {
-        return config;
-    }
-
-    @Override
-    public final @NotNull RootView getRoot() {
-        return root;
-    }
-
-    @Override
-    public @NotNull ViewContainer getContainer() {
-        if (container == null) throw new IllegalStateException("Unable to get null container");
-        return container;
+    public @NotNull Map<String, Viewer> getIndexedViewers() {
+        return indexedViewers;
     }
 
     @Override
@@ -75,21 +40,16 @@ class BaseViewContext extends DefaultStateValueHost implements IFContext {
     }
 
     @Override
-    public @NotNull @UnmodifiableView Map<String, Viewer> getIndexedViewers() {
-        return Collections.unmodifiableMap(viewers);
-    }
-
-    @Override
     public final void addViewer(@NotNull Viewer viewer) {
-        synchronized (viewers) {
-            viewers.put(viewer.getId(), viewer);
+        synchronized (getIndexedViewers()) {
+            getIndexedViewers().put(viewer.getId(), viewer);
         }
     }
 
     @Override
     public final void removeViewer(@NotNull Viewer viewer) {
-        synchronized (viewers) {
-            viewers.remove(viewer.getId());
+        synchronized (getIndexedViewers()) {
+            getIndexedViewers().remove(viewer.getId());
         }
     }
 
@@ -100,7 +60,7 @@ class BaseViewContext extends DefaultStateValueHost implements IFContext {
 
     @Override
     public final @NotNull String getInitialTitle() {
-        return container.getTitle();
+        return getConfig().getTitle().toString();
     }
 
     @Override
@@ -110,27 +70,22 @@ class BaseViewContext extends DefaultStateValueHost implements IFContext {
 
     @Override
     public final void updateTitleForEveryone(@NotNull String title) {
-        getContainer().changeTitle(title);
+        for (final Viewer viewer : getViewers()) getContainer().changeTitle(title, viewer);
     }
 
     @Override
     public final void resetTitleForEveryone() {
-        getContainer().changeTitle(null);
+        for (final Viewer viewer : getViewers()) getContainer().changeTitle(null, viewer);
     }
 
     @Override
-    public void closeForEveryone() {
+    public final void closeForEveryone() {
         getContainer().close();
     }
 
     @Override
     public final void openForEveryone(Class<? extends RootView> other) {
         openForEveryone(other, null);
-    }
-
-    @Override
-    public void openForEveryone(Class<? extends RootView> other, Object initialData) {
-        getRoot().getFramework().open(other, getViewers(), initialData);
     }
 
     @Override
@@ -161,18 +116,13 @@ class BaseViewContext extends DefaultStateValueHost implements IFContext {
     }
 
     private IFSlotRenderContext createRenderContext(@NotNull Component component) {
-        final Viewer subject = this instanceof IFConfinedContext ? ((IFConfinedContext) this).getViewer() : null;
+        if (!(this instanceof IFRenderContext))
+            throw new InventoryFrameworkException("Slot render context cannot be created from non-render parent");
 
+        final IFRenderContext renderContext = (IFRenderContext) this;
         return getRoot()
                 .getElementFactory()
-                .createSlotContext(
-                        component.getPosition(),
-                        component,
-                        getContainer(),
-                        subject,
-                        getIndexedViewers(),
-                        this,
-                        IFSlotRenderContext.class);
+                .createSlotRenderContext(component.getPosition(), renderContext, renderContext.getViewer());
     }
 
     @Override
@@ -212,42 +162,43 @@ class BaseViewContext extends DefaultStateValueHost implements IFContext {
     }
 
     @Override
-    public boolean isMarkedForRemoval(int componentIndex) {
+    public final boolean isMarkedForRemoval(int componentIndex) {
         return markedForRemoval.contains(componentIndex);
     }
 
     @Override
-    public Object getInitialData() {
-        return initialData instanceof Map ? Collections.unmodifiableMap((Map<?, ?>) initialData) : initialData;
+    public final boolean isShared() {
+        return getIndexedViewers().size() > 1;
     }
 
-    @Override
-    public boolean isShared() {
-        return getViewers().size() > 1;
+    /**
+     * Throws a {@link InventoryFrameworkException} saying that the method that's being executed is
+     * not supported if this context is a shared context.
+     */
+    final void tryThrowDoNotWorkWithSharedContext() {
+        if (!isShared()) return;
+        throw new UnsupportedOperationInSharedContextException();
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        BaseViewContext that = (BaseViewContext) o;
-        return Objects.equals(getId(), that.getId());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId());
+    /**
+     * Throws a {@link InventoryFrameworkException} saying that the method that's being executed is
+     * not supported if this context is a shared context, with a replacement message.
+     *
+     * @param replacement The alternative method to be used.
+     */
+    final void tryThrowDoNotWorkWithSharedContext(String replacement) {
+        if (!isShared()) return;
+        throw new UnsupportedOperationInSharedContextException(replacement);
     }
 
     @Override
     public String toString() {
-        return "BaseViewContext{" + "id="
-                + id + ", container="
-                + container + ", viewers="
-                + viewers + ", config="
-                + config + ", markedForRemoval="
-                + markedForRemoval + ", initialData="
-                + initialData + "} "
+        return "AbstractIFContext{" + "id="
+                + getId() + ", container="
+                + getContainer() + ", viewers="
+                + getIndexedViewers() + ", config="
+                + getConfig() + ", initialData="
+                + getInitialData() + "} "
                 + super.toString();
     }
 }
