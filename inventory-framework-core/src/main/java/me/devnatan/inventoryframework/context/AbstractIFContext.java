@@ -162,8 +162,7 @@ abstract class AbstractIFContext extends DefaultStateValueHost implements IFCont
     @Override
     public String toString() {
         return "AbstractIFContext{" + "id="
-                + getId() + ", container="
-                + getContainer() + ", viewers="
+                + getId() + ", viewers="
                 + getIndexedViewers() + ", config="
                 + getConfig() + ", initialData="
                 + getInitialData() + "} "
