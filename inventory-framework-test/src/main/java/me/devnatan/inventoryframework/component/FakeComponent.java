@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.Set;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.IFContext;
+import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.context.IFSlotRenderContext;
 import me.devnatan.inventoryframework.state.State;
@@ -60,7 +61,7 @@ public class FakeComponent implements Component, InteractionHandler {
 
     @Override
     public void clear(@NotNull IFContext context) {
-        context.getContainer().removeItem(position);
+        ((IFRenderContext) context).getContainer().removeItem(position);
     }
 
     @Override

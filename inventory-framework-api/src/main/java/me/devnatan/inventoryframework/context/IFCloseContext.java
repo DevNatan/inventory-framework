@@ -1,6 +1,8 @@
 package me.devnatan.inventoryframework.context;
 
+import me.devnatan.inventoryframework.ViewContainer;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 
 public interface IFCloseContext extends IFConfinedContext {
 
@@ -28,4 +30,12 @@ public interface IFCloseContext extends IFConfinedContext {
      * @param cancelled If this context should be cancelled.
      */
     void setCancelled(boolean cancelled);
+
+    /**
+     * The container of this context.
+     *
+     * @return The container of this context.
+     */
+    @NotNull
+    ViewContainer getContainer();
 }

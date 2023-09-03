@@ -33,6 +33,7 @@ public class SlotRenderContext extends SlotContext implements IFSlotRenderContex
 
     public final void setItem(ItemStack item) {
         this.item = item;
+        setChanged(true);
     }
 
     @Override
@@ -43,6 +44,11 @@ public class SlotRenderContext extends SlotContext implements IFSlotRenderContex
     @Override
     public final void setCancelled(boolean cancelled) {
         this.cancelled = cancelled;
+    }
+
+    @Override
+    public void clear() {
+        setItem(null);
     }
 
     @Override

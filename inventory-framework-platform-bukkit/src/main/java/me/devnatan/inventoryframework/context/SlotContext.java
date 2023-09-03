@@ -47,12 +47,6 @@ public abstract class SlotContext extends PlatformContext implements IFSlotConte
     }
 
     @Override
-    public final void clear() {
-        // TODO do something
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public final @NotNull Map<String, Viewer> getIndexedViewers() {
         return getParent().getIndexedViewers();
     }
@@ -128,7 +122,7 @@ public abstract class SlotContext extends PlatformContext implements IFSlotConte
     }
 
     @Override
-    public final ViewContainer getContainer() {
+    public final @NotNull ViewContainer getContainer() {
         return getParent().getContainer();
     }
 

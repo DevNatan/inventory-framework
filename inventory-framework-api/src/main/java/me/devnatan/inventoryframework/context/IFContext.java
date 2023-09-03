@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.UUID;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewConfig;
-import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.component.Component;
@@ -80,20 +79,6 @@ public interface IFContext extends VirtualView, StateValueHost {
      */
     @ApiStatus.Internal
     void removeViewer(@NotNull Viewer viewer);
-
-    /**
-     * The container of this context.
-     * <p>
-     * The container is where all the changes that are displayed to the user are applied.
-     * <p>
-     * Direct modifications to the container must launch an inventory modification error, which
-     * signals that that function will change the container for whoever is seeing what, which, if it
-     * is not possible at that moment or if the container is not sufficiently prepared for this,
-     * it must fail.
-     *
-     * @return The container of this context.
-     */
-    ViewContainer getContainer();
 
     /**
      * View root from which this context originated.

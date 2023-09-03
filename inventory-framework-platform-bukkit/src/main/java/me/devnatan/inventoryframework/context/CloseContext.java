@@ -61,7 +61,7 @@ public class CloseContext extends PlatformConfinedContext implements IFCloseCont
     }
 
     @Override
-    public final ViewContainer getContainer() {
+    public final @NotNull ViewContainer getContainer() {
         return getParent().getContainer();
     }
 

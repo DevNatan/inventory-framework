@@ -9,14 +9,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.VirtualView;
-import me.devnatan.inventoryframework.context.Context;
-import me.devnatan.inventoryframework.context.IFContext;
-import me.devnatan.inventoryframework.context.IFSlotClickContext;
-import me.devnatan.inventoryframework.context.IFSlotContext;
-import me.devnatan.inventoryframework.context.IFSlotRenderContext;
-import me.devnatan.inventoryframework.context.SlotClickContext;
-import me.devnatan.inventoryframework.context.SlotContext;
-import me.devnatan.inventoryframework.context.SlotRenderContext;
+import me.devnatan.inventoryframework.context.*;
 import me.devnatan.inventoryframework.state.State;
 import me.devnatan.inventoryframework.utils.SlotConverter;
 import org.bukkit.inventory.ItemStack;
@@ -110,7 +103,7 @@ public final class BukkitItemComponentBuilder extends DefaultComponentBuilder<Bu
 
     @Override
     public BukkitItemComponentBuilder withSlot(int row, int column) {
-        final ViewContainer container = ((IFContext) root).getContainer();
+        final ViewContainer container = ((IFRenderContext) root).getContainer();
         return withSlot(SlotConverter.convertSlot(row, column, container.getRowsCount(), container.getColumnsCount()));
     }
 
