@@ -31,11 +31,11 @@ public interface IFCloseContext extends IFConfinedContext {
      */
     void setCancelled(boolean cancelled);
 
-	/**
-	 * The container of this context.
-	 *
-	 * @return The container of this context.
-	 */
-	@NotNull
-	ViewContainer getContainer();
+    /**
+     * The container of this context.
+     *
+     * @return The container of this context.
+     */
+    @NotNull
+    ViewContainer getContainer();
 }

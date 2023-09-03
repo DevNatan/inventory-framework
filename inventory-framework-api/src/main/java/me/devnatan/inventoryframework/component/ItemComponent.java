@@ -7,10 +7,7 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 import me.devnatan.inventoryframework.InventoryFrameworkException;
 import me.devnatan.inventoryframework.VirtualView;
-import me.devnatan.inventoryframework.context.IFContext;
-import me.devnatan.inventoryframework.context.IFSlotClickContext;
-import me.devnatan.inventoryframework.context.IFSlotContext;
-import me.devnatan.inventoryframework.context.IFSlotRenderContext;
+import me.devnatan.inventoryframework.context.*;
 import me.devnatan.inventoryframework.state.State;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
@@ -178,7 +175,8 @@ public class ItemComponent implements Component, InteractionHandler {
 
     @Override
     public void clear(@NotNull IFContext context) {
-        context.getContainer().removeItem(getPosition());
+        ((IFRenderContext) context).getContainer().removeItem(getPosition());
+
         setVisible(false);
     }
 

@@ -45,18 +45,18 @@ public interface IFSlotContext extends IFContext {
      */
     boolean isOnEntityContainer();
 
-	/**
-	 * The container of this context.
-	 * <p>
-	 * The container is where all the changes that are displayed to the user are applied.
-	 * <p>
-	 * Direct modifications to the container must launch an inventory modification error, which
-	 * signals that that function will change the container for whoever is seeing what, which, if it
-	 * is not possible at that moment or if the container is not sufficiently prepared for this,
-	 * it must fail.
-	 *
-	 * @return The container of this context.
-	 */
-	@NotNull
-	ViewContainer getContainer();
+    /**
+     * The container of this context.
+     * <p>
+     * The container is where all the changes that are displayed to the user are applied.
+     * <p>
+     * Direct modifications to the container must launch an inventory modification error, which
+     * signals that that function will change the container for whoever is seeing what, which, if it
+     * is not possible at that moment or if the container is not sufficiently prepared for this,
+     * it must fail.
+     *
+     * @return The container of this context.
+     */
+    @NotNull
+    ViewContainer getContainer();
 }
