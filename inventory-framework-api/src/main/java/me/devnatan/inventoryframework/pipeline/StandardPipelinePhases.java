@@ -64,4 +64,9 @@ public final class StandardPipelinePhases {
      * In this pipeline phase the pipeline interceptor subject is a {@link IFRenderContext}.
      */
     //    public static final PipelinePhase LAYOUT_RESOLUTION = new PipelinePhase("layout-resolution");
+
+	/**
+	 * Called when a component is about to be rendered.
+	 */
+	public static final PipelinePhase COMPONENT_RENDER = new PipelinePhase("component-render");
 }
