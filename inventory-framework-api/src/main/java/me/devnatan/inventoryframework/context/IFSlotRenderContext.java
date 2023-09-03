@@ -11,6 +11,18 @@ public interface IFSlotRenderContext extends IFSlotContext, IFConfinedContext {
 
     void setCancelled(boolean cancelled);
 
+	/**
+	 * Clears this slot from the current context.
+	 * <p>
+	 * The slot will only be cleaned on the next update, so if you want it cleaned immediately
+	 * update the slot using {@link #update()}.
+	 *
+	 * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
+	 * such API may be changed or may be removed completely in any further release. </i></b>
+	 */
+	@ApiStatus.Experimental
+	void clear();
+
     /**
      * Checks if the item in this context has been changed.
      *

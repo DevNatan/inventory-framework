@@ -1,6 +1,8 @@
 package me.devnatan.inventoryframework.context;
 
+import me.devnatan.inventoryframework.ViewContainer;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Represents a context in which there is a specific slot related to it, the main context
@@ -26,18 +28,6 @@ public interface IFSlotContext extends IFContext {
     IFRenderContext getParent();
 
     /**
-     * Clears this slot from the current context.
-     * <p>
-     * The slot will only be cleaned on the next update, so if you want it cleaned immediately
-     * update the slot using {@link #update()}.
-     *
-     * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
-     * such API may be changed or may be removed completely in any further release. </i></b>
-     */
-    @ApiStatus.Experimental
-    void clear();
-
-    /**
      * Returns the slot position of this context in the current container.
      *
      * @return The slot position of this context.
@@ -48,42 +38,25 @@ public interface IFSlotContext extends IFContext {
     void setSlot(int slot);
 
     /**
-     * Returns the wrapper containing the item related to this context.
-     *
-     * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
-     * this library. No compatibility guarantees are provided.</i></b>
-     *
-     * @return The current item wrapper.
-     */
-    //    @ApiStatus.Internal
-    //    @NotNull
-    //    ItemWrapper getItemWrapper();
-
-    /**
-     * Returns the current item of this context.
-     * <p>
-     * The item returned is not necessarily the item positioned in the slot, there are cases, for
-     * example in {@link IFSlotMoveContext}, in which the current item may be the item the entity
-     * is interacting with and not a positioned item.
-     *
-     * @return The current item.
-     */
-    //    @NotNull
-    //    ItemWrapper getCurrentItem();
-
-    /**
-     * Sets the new item for this slot for this context.
-     *
-     * @param item The new item that'll be set.
-     * @throws InventoryModificationException When the container is changed.
-     */
-    //    void setItem(@Nullable Object item) throws InventoryModificationException;
-
-    /**
      * Whether this context originated from an interaction coming from the actor's container and not
      * from the view's container.
      *
      * @return If this context originated from the actor's container
      */
     boolean isOnEntityContainer();
+
+	/**
+	 * The container of this context.
+	 * <p>
+	 * The container is where all the changes that are displayed to the user are applied.
+	 * <p>
+	 * Direct modifications to the container must launch an inventory modification error, which
+	 * signals that that function will change the container for whoever is seeing what, which, if it
+	 * is not possible at that moment or if the container is not sufficiently prepared for this,
+	 * it must fail.
+	 *
+	 * @return The container of this context.
+	 */
+	@NotNull
+	ViewContainer getContainer();
 }

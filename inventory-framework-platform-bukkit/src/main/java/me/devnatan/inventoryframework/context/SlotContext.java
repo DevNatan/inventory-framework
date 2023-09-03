@@ -128,7 +128,7 @@ public abstract class SlotContext extends PlatformContext implements IFSlotConte
     }
 
     @Override
-    public final ViewContainer getContainer() {
+    public final @NotNull ViewContainer getContainer() {
         return getParent().getContainer();
     }
 
