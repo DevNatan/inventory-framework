@@ -11,7 +11,7 @@ abstract class PlatformConfinedContext extends PlatformContext implements IFConf
 
     @Override
     public void closeForPlayer() {
-        getContainer().close(getViewer());
+        getContainerOrThrow().close(getViewer());
     }
 
     @Override
@@ -27,11 +27,11 @@ abstract class PlatformConfinedContext extends PlatformContext implements IFConf
 
     @Override
     public void updateTitleForPlayer(@NotNull String title) {
-        getContainer().changeTitle(title, getViewer());
+        getContainerOrThrow().changeTitle(title, getViewer());
     }
 
     @Override
     public void resetTitleForPlayer() {
-        getContainer().changeTitle(null, getViewer());
+        getContainerOrThrow().changeTitle(null, getViewer());
     }
 }

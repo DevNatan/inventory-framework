@@ -5,12 +5,10 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import me.devnatan.inventoryframework.BukkitViewer;
-import me.devnatan.inventoryframework.InventoryFrameworkException;
 import me.devnatan.inventoryframework.UnsupportedOperationInSharedContextException;
 import me.devnatan.inventoryframework.View;
 import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewConfigBuilder;
-import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.ApiStatus;
@@ -107,11 +105,6 @@ public class OpenContext extends PlatformContext implements IFOpenContext {
     @Override
     public final Viewer getSubject() {
         return subject;
-    }
-
-    @Override
-    public final ViewContainer getContainer() {
-        throw new InventoryFrameworkException("Container is not available in open phase");
     }
 
     @Override

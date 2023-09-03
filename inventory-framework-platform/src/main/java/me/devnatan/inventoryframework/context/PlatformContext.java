@@ -1,8 +1,6 @@
 package me.devnatan.inventoryframework.context;
 
-import me.devnatan.inventoryframework.PlatformView;
-import me.devnatan.inventoryframework.RootView;
-import me.devnatan.inventoryframework.Viewer;
+import me.devnatan.inventoryframework.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,6 +11,21 @@ public abstract class PlatformContext extends AbstractIFContext {
     @SuppressWarnings("rawtypes")
     @Override
     public abstract @NotNull PlatformView getRoot();
+
+    /**
+     * Tries to get a container from the current context or throws an exception if not available.
+     * @return The container of this context.
+     * @throws InventoryFrameworkException If there's no container available in the current context.
+     */
+    protected final @NotNull ViewContainer getContainerOrThrow() {
+        if (this instanceof IFRenderContext) return ((IFRenderContext) this).getContainer();
+        if (this instanceof IFCloseContext) return ((IFCloseContext) this).getContainer();
+        if (this instanceof IFSlotContext) return ((IFSlotContext) this).getContainer();
+
+        throw new InventoryFrameworkException(String.format(
+                "Container is not available in the current context: %s",
+                getClass().getName()));
+    }
 
     /**
      * The actual title of this context.
@@ -35,7 +48,7 @@ public abstract class PlatformContext extends AbstractIFContext {
      */
     @Nullable
     public final String getUpdatedTitle() {
-        return getContainer().getTitle();
+        return getContainerOrThrow().getTitle();
     }
 
     /**
@@ -51,7 +64,7 @@ public abstract class PlatformContext extends AbstractIFContext {
      * @param title The new container title.
      */
     public final void updateTitleForEveryone(@NotNull String title) {
-        for (final Viewer viewer : getViewers()) getContainer().changeTitle(title, viewer);
+        for (final Viewer viewer : getViewers()) getContainerOrThrow().changeTitle(title, viewer);
     }
 
     /**
@@ -59,14 +72,14 @@ public abstract class PlatformContext extends AbstractIFContext {
      * Must be used after {@link #updateTitleForEveryone(String)} to take effect.
      */
     public final void resetTitleForEveryone() {
-        for (final Viewer viewer : getViewers()) getContainer().changeTitle(null, viewer);
+        for (final Viewer viewer : getViewers()) getContainerOrThrow().changeTitle(null, viewer);
     }
 
     /**
      * Closes this context's container to all viewers who are viewing it.
      */
     public final void closeForEveryone() {
-        getContainer().close();
+        getContainerOrThrow().close();
     }
 
     /**
