@@ -141,7 +141,13 @@ public abstract class PlatformView<
     @ApiStatus.Internal
     public final void navigateTo(
             @NotNull Class<? extends PlatformView> target, @NotNull IFContext context, Object initialData) {
-        getFramework().getRegisteredViewByType(target).open(context.getViewers(), initialData);
+        final List<Viewer> viewers = context.getViewers();
+
+        // Ensure that inventory transition via context's open() will work in newer versions
+        // In legacy versions inventory is closed automatically when open is called
+        viewers.forEach(Viewer::close);
+
+        getFramework().getRegisteredViewByType(target).open(viewers, initialData);
     }
 
     /**
