@@ -63,9 +63,6 @@ public class DefaultRootView implements RootView {
         return pipeline;
     }
 
-    @Override
-    public void onInit(ViewConfigBuilder config) {}
-
     @ApiStatus.Internal
     public @NotNull ElementFactory getElementFactory() {
         throw new UnsupportedOperationException("Element factory not provided");
