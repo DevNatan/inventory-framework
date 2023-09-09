@@ -38,7 +38,7 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
 
     // --- Internal ---
     private int currPageIndex;
-    private final boolean dynamic;
+    private final boolean lazy;
     private boolean pageWasChanged;
     private boolean initialized;
     private int pagesCount;
@@ -78,13 +78,13 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
         this.elementFactory = elementFactory;
         this.pageSwitchHandler = pageSwitchHandler;
         this.currSource = convertSourceProvider();
-        this.dynamic = !(sourceProvider instanceof Collection);
+        this.lazy = !(sourceProvider instanceof Collection);
     }
 
     /**
      * Tries to access and load the source to the current page.
      * <p>
-     * If this pagination {@link #isDynamic() is dynamic} it tries to get the current data source
+     * If this pagination {@link #isLazy() is dynamic} it tries to get the current data source
      * dynamically or asynchronously and waits for its completion.
      * <p>
      * For static pagination it returns immediately with the source.
@@ -103,7 +103,7 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
         // must use the current data source as source of truth to ensure that pagination switches do
         // not trigger pagination data factory since it will always return the source as a whole,
         // the original one, and not the source for the switched page.
-        if (!isDynamic() || !initialized) {
+        if (!isLazy() || !initialized) {
             if (initialized && currSource == null)
                 throw new IllegalStateException("User provided pagination source cannot be null");
             if (!initialized) pagesCount = calculatePagesCount(currSource);
@@ -529,8 +529,8 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
     }
 
     @Override
-    public boolean isDynamic() {
-        return dynamic;
+    public boolean isLazy() {
+        return lazy;
     }
 
     @Override
@@ -602,7 +602,7 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
         return getLayoutTarget() == that.getLayoutTarget()
                 && currPageIndex == that.currPageIndex
                 && getPageSize() == that.getPageSize()
-                && isDynamic() == that.isDynamic()
+                && isLazy() == that.isLazy()
                 && pageWasChanged == that.pageWasChanged
                 && Objects.equals(sourceProvider, that.sourceProvider)
                 && Objects.equals(pageSwitchHandler, that.pageSwitchHandler);
@@ -616,7 +616,7 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
                 pageSwitchHandler,
                 currPageIndex,
                 getPageSize(),
-                isDynamic(),
+                isLazy(),
                 pageWasChanged);
     }
 
@@ -630,7 +630,7 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
                 + pageSwitchHandler + ", currPageIndex="
                 + currPageIndex + ", pageSize="
                 + pageSize + ", dynamic="
-                + dynamic + ", pageWasChanged="
+                + lazy + ", pageWasChanged="
                 + pageWasChanged + ", _srcFactory="
                 + _srcFactory + ", currSource="
                 + currSource + "} "

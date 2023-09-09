@@ -132,12 +132,12 @@ public interface Pagination extends ComponentComposition, StateValue {
      * this library. No compatibility guarantees are provided. </i></b>
      */
     @ApiStatus.Internal
-    boolean isDynamic();
+    boolean isLazy();
 
     /**
      * If the pagination data is being loaded or not.
      * <p>
-     * Only changes if {@link #isDynamic()} is true.
+     * Only changes if {@link #isLazy()} is true.
      *
      * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
      * such API may be changed or may be removed completely in any further release. </i></b>
