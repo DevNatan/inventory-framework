@@ -1,10 +1,7 @@
 package me.devnatan.inventoryframework;
 
 import java.util.function.BiConsumer;
-import me.devnatan.inventoryframework.component.ComponentFactory;
-import me.devnatan.inventoryframework.component.ItemComponentBuilder;
-import me.devnatan.inventoryframework.component.Pagination;
-import me.devnatan.inventoryframework.component.PaginationElementFactory;
+import me.devnatan.inventoryframework.component.*;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFSlotContext;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
@@ -30,7 +27,7 @@ public final class PaginationStateBuilder<
     }
 
     /**
-     * Sets the element factory for pagination.
+     * Sets the item factory for pagination.
      * <p>
      * It consists of a function whose first parameter is a derivation of the
      * {@link ItemComponentBuilder} that must be used to configure the item, and the second
@@ -38,13 +35,12 @@ public final class PaginationStateBuilder<
      * <p>
      * This function is called for every single paginated element.
      *
-     * @param elementFactory The element factory.
+     * @param itemFactory The item factory.
      * @return This pagination state builder.
      */
-    public PaginationStateBuilder<Context, SlotContext, Builder, V> elementFactory(
-            @NotNull PaginationElementFactory<Context, V> elementFactory) {
-        this.elementFactory = elementFactory;
-        return this;
+    public PaginationStateBuilder<Context, SlotContext, Builder, V> itemFactory(
+            @NotNull BiConsumer<Builder, V> itemFactory) {
+        return itemFactory(((context, builder, index, value) -> itemFactory.accept(builder, value)));
     }
 
     /**
@@ -60,21 +56,22 @@ public final class PaginationStateBuilder<
      * @return This pagination state builder.
      */
     public PaginationStateBuilder<Context, SlotContext, Builder, V> itemFactory(
-            @NotNull BiConsumer<Builder, V> itemFactory) {
-        return elementFactory((context, index, slot, value) -> {
+            @NotNull PaginationElementConsumer<Context, Builder, V> itemFactory) {
+        this.elementFactory = (context, index, slot, value) -> {
             @SuppressWarnings("unchecked")
             Builder builder = (Builder) root.getElementFactory().createComponentBuilder(context);
             builder.withSlot(slot).withExternallyManaged(true);
-            itemFactory.accept(builder, value);
+            itemFactory.accept(context, builder, index, value);
             return builder;
-        });
+        };
+        return this;
     }
 
     /**
      * Defines a target character in the layout whose pagination will be rendered.
      * <p>
      * By default, if there is a layout available and a target character has not
-     * been explicitly  defined in the layout, the layout's renderization target
+     * been explicitly  defined in the layout, the layout's rendering target
      * character will be the {@link LayoutSlot#FILLED_RESERVED_CHAR reserved layout character}.
      * <p>
      * If there is no layout configured, pagination will be rendered throughout the view container.

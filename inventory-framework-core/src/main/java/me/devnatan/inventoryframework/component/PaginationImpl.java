@@ -15,10 +15,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.VirtualView;
-import me.devnatan.inventoryframework.context.IFContext;
-import me.devnatan.inventoryframework.context.IFRenderContext;
-import me.devnatan.inventoryframework.context.IFSlotClickContext;
-import me.devnatan.inventoryframework.context.IFSlotRenderContext;
+import me.devnatan.inventoryframework.context.*;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
 import me.devnatan.inventoryframework.state.AbstractStateValue;
 import me.devnatan.inventoryframework.state.State;
@@ -253,7 +250,7 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
      * in context, if a layout is configured in the layout so this property must be the count of
      * {@link #getLayoutTarget() layout target} characters in the layout configured layout.
      * <p>
-     * When without a configured layout in the root, the page size is the entire size of {@link IFContext#getContainer() context's container}.
+     * When without a configured layout in the root, the page size is the entire size of context's container.
      *
      * @param context The render context.
      */

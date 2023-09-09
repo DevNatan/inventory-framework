@@ -9,11 +9,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import me.devnatan.inventoryframework.component.ComponentFactory;
-import me.devnatan.inventoryframework.component.ItemComponentBuilder;
-import me.devnatan.inventoryframework.component.Pagination;
-import me.devnatan.inventoryframework.component.PaginationElementFactory;
-import me.devnatan.inventoryframework.component.PaginationImpl;
+import me.devnatan.inventoryframework.component.*;
 import me.devnatan.inventoryframework.context.IFCloseContext;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFOpenContext;
@@ -529,6 +525,23 @@ public abstract class PlatformView<
     }
 
     /**
+     * Creates a new unmodifiable static pagination state.
+     *
+     * @param sourceProvider The data source for pagination.
+     * @param itemFactory    The function for creating pagination items, this function is called for
+     *                       each paged element (item) on a page.
+     * @param <T>            The pagination data type.
+     * @return A new immutable pagination state.
+     */
+    protected final <T> State<Pagination> paginationState(
+            @NotNull List<? super T> sourceProvider,
+            @NotNull PaginationElementConsumer<TContext, TItem, T> itemFactory) {
+        return this.<T>buildPaginationState(sourceProvider)
+                .itemFactory(itemFactory)
+                .build();
+    }
+
+    /**
      * Creates a new unmodifiable dynamic pagination state.
      *
      * @param sourceProvider The data source for pagination.
@@ -554,7 +567,41 @@ public abstract class PlatformView<
      * @return A new immutable pagination state.
      */
     protected final <T> State<Pagination> paginationState(
+            @NotNull Function<TContext, List<? super T>> sourceProvider,
+            @NotNull PaginationElementConsumer<TContext, TItem, T> itemFactory) {
+        return this.buildPaginationState(sourceProvider)
+                .itemFactory(itemFactory)
+                .build();
+    }
+
+    /**
+     * Creates a new unmodifiable dynamic pagination state.
+     *
+     * @param sourceProvider The data source for pagination.
+     * @param itemFactory    The function for creating pagination items, this function is called for
+     *                       each paged element (item) on a page.
+     * @param <T>            The pagination data type.
+     * @return A new immutable pagination state.
+     */
+    protected final <T> State<Pagination> paginationState(
             @NotNull Supplier<List<? super T>> sourceProvider, @NotNull BiConsumer<TItem, T> itemFactory) {
+        return this.buildPaginationState(sourceProvider)
+                .itemFactory(itemFactory)
+                .build();
+    }
+
+    /**
+     * Creates a new unmodifiable dynamic pagination state.
+     *
+     * @param sourceProvider The data source for pagination.
+     * @param itemFactory    The function for creating pagination items, this function is called for
+     *                       each paged element (item) on a page.
+     * @param <T>            The pagination data type.
+     * @return A new immutable pagination state.
+     */
+    protected final <T> State<Pagination> paginationState(
+            @NotNull Supplier<List<? super T>> sourceProvider,
+            @NotNull PaginationElementConsumer<TContext, TItem, T> itemFactory) {
         return this.buildPaginationState(sourceProvider)
                 .itemFactory(itemFactory)
                 .build();
@@ -576,6 +623,27 @@ public abstract class PlatformView<
     protected final <T> State<Pagination> asyncPaginationState(
             @NotNull Function<TContext, CompletableFuture<List<T>>> sourceProvider,
             @NotNull BiConsumer<TItem, T> itemFactory) {
+        return this.buildAsyncPaginationState(sourceProvider)
+                .itemFactory(itemFactory)
+                .build();
+    }
+
+    /**
+     * Creates a new unmodifiable asynchronous pagination state.
+     * <p>
+     * <b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     *
+     * @param sourceProvider The asynchronous data source for pagination.
+     * @param itemFactory    The function for creating pagination items, this function is called for
+     *                       each paged element (item) on a page.
+     * @param <T>            The pagination data type.
+     * @return A new immutable pagination state.
+     */
+    @ApiStatus.Experimental
+    protected final <T> State<Pagination> asyncPaginationState(
+            @NotNull Function<TContext, CompletableFuture<List<T>>> sourceProvider,
+            @NotNull PaginationElementConsumer<TContext, TItem, T> itemFactory) {
         return this.buildAsyncPaginationState(sourceProvider)
                 .itemFactory(itemFactory)
                 .build();
