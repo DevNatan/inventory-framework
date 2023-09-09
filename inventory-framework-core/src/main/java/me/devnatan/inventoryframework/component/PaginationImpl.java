@@ -98,10 +98,14 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
      */
     @SuppressWarnings("unchecked")
     private CompletableFuture<List<?>> loadSourceForTheCurrentPage() {
-        // Static pagination we just get the current source here since it will be always the same
-        if (!isDynamic()) {
-            if (currSource == null) throw new IllegalStateException("User provided pagination source cannot be null");
-
+        // When using static pagination we just get the current source here since it will be always
+        // the same. When using dynamic pagination that was not initialized yet (page index is zero)
+        // must use the current data source as source of truth to ensure that pagination switches do
+        // not trigger pagination data factory since it will always return the source as a whole,
+        // the original one, and not the source for the switched page.
+        if (!isDynamic() || !initialized) {
+            if (initialized && currSource == null)
+                throw new IllegalStateException("User provided pagination source cannot be null");
             if (!initialized) pagesCount = calculatePagesCount(currSource);
 
             return CompletableFuture.completedFuture(splitSourceForPage(currPageIndex, currSource));
@@ -343,7 +347,7 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
     @Override
     public void render(@NotNull IFSlotRenderContext context) {
         if (!initialized) {
-            final IFRenderContext root = (IFRenderContext) context.getParent();
+            final IFRenderContext root = context.getParent();
             updatePageSize(root);
             loadCurrentPage(root).thenRun(() -> renderChild(context));
             initialized = true;
@@ -361,7 +365,7 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
     public void updated(@NotNull IFSlotRenderContext context) {
         // If page was changed all components will be removed, so don't trigger update on them
         if (pageWasChanged) {
-            final IFRenderContext renderContext = (IFRenderContext) context.getParent();
+            final IFRenderContext renderContext = context.getParent();
             clearChild(renderContext, true);
             loadCurrentPage(renderContext).thenRun(() -> {
                 render(context);
