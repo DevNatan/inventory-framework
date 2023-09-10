@@ -80,8 +80,8 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
         this.pageSwitchHandler = pageSwitchHandler;
         this.currSource = convertSourceProvider();
         this.isLazy = sourceProvider instanceof Supplier
-			|| sourceProvider instanceof Function
-			|| sourceProvider instanceof BiFunction;
+                || sourceProvider instanceof Function
+                || sourceProvider instanceof BiFunction;
         this.isStatic = sourceProvider instanceof Collection;
     }
 
@@ -221,13 +221,12 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
      * @param context      The render context.
      * @param pageContents Elements of the current page.
      */
-    private void loadComponentsForUnconstrainedPagination(IFRenderContext context, List<?> pageContents) {
+    private void addComponentsForUnconstrainedPagination(IFRenderContext context, List<?> pageContents) {
         final ViewContainer container = context.getContainer();
         pageSize = container.getSize();
 
-        final int lastSlot = container.getLastSlot();
-
-        for (int i = container.getFirstSlot(); i < Math.min(lastSlot + 1, pageContents.size()); i++) {
+        final int lastSlot = Math.min(container.getLastSlot() + 1 /* inclusive */, pageContents.size());
+        for (int i = container.getFirstSlot(); i < lastSlot; i++) {
             final Object value = pageContents.get(i);
             final ComponentFactory factory = elementFactory.create(context, i, i, value);
             getComponentsInternal().add(factory.create());
@@ -243,12 +242,13 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
      * @param context      The render context.
      * @param pageContents Elements of the current page.
      */
-    private void loadComponentsForLayeredPagination(IFRenderContext context, List<?> pageContents) {
+    private void addComponentsForLayeredPagination(IFRenderContext context, List<?> pageContents) {
         if (pageContents.isEmpty()) return;
 
+        final LayoutSlot targetLayoutSlot = getLayoutSlotForCurrentTarget(context);
         final int elementsLen = pageContents.size();
         int iterationIndex = 0;
-        for (final int position : getLayoutSlotForCurrentTarget(context).getPositions()) {
+        for (final int position : targetLayoutSlot.getPositions()) {
             final Object value = pageContents.get(iterationIndex++);
             final ComponentFactory factory = elementFactory.create(context, iterationIndex, position, value);
             final Component component = factory.create();
@@ -321,8 +321,8 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
      */
     private CompletableFuture<?> loadCurrentPage(IFRenderContext context) {
         return loadSourceForTheCurrentPage().thenAccept(pageContents -> {
-            if (context.getConfig().getLayout() != null) loadComponentsForLayeredPagination(context, pageContents);
-            else loadComponentsForUnconstrainedPagination(context, pageContents);
+            if (context.getConfig().getLayout() != null) addComponentsForLayeredPagination(context, pageContents);
+            else addComponentsForUnconstrainedPagination(context, pageContents);
         });
     }
 
@@ -378,12 +378,12 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
         // If page was changed all components will be removed, so don't trigger update on them
         if (pageWasChanged) {
             final IFRenderContext renderContext = context.getParent();
-			clearChild(renderContext, false);
+            clearChild(renderContext, false);
             loadCurrentPage(renderContext).thenRun(() -> {
                 render(context);
                 simulateStateUpdate();
             });
-			pageWasChanged = false;
+            pageWasChanged = false;
             return;
         }
 
