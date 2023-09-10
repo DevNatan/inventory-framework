@@ -79,7 +79,9 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
         this.elementFactory = elementFactory;
         this.pageSwitchHandler = pageSwitchHandler;
         this.currSource = convertSourceProvider();
-        this.isLazy = sourceProvider instanceof Supplier || sourceProvider instanceof BiFunction;
+        this.isLazy = sourceProvider instanceof Supplier
+			|| sourceProvider instanceof Function
+			|| sourceProvider instanceof BiFunction;
         this.isStatic = sourceProvider instanceof Collection;
     }
 
