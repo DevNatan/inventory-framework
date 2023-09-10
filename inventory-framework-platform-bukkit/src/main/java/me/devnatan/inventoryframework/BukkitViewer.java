@@ -79,7 +79,7 @@ public final class BukkitViewer implements Viewer {
     @Override
     public boolean isBlockedByInteractionDelay() {
         final long configuredDelay = context.getConfig().getInteractionDelayInMillis();
-        if (configuredDelay <= 0) return false;
+        if (configuredDelay <= 0 || getLastInteractionInMillis() <= 0) return false;
 
         final long now = System.currentTimeMillis();
         return getLastInteractionInMillis() + configuredDelay < now;
