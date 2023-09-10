@@ -29,12 +29,12 @@ import org.jetbrains.annotations.VisibleForTesting;
 public class PaginationImpl extends AbstractStateValue implements Pagination, InteractionHandler {
 
     private final List<Component> components = new LinkedList<>();
-    private final @NotNull IFContext host;
+    private final IFContext host;
 
     // --- User provided ---
     private final char layoutTarget;
-    private final @NotNull Object sourceProvider;
-    private final @NotNull PaginationElementFactory<IFContext, Object> elementFactory;
+    private final Object sourceProvider;
+    private final PaginationElementFactory<IFContext, Object> elementFactory;
     private final BiConsumer<IFContext, Pagination> pageSwitchHandler;
 
     // --- Internal ---
@@ -66,11 +66,11 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
     private List<?> currSource;
 
     public PaginationImpl(
-            @NotNull State<?> state,
-            @NotNull IFContext host,
+            State<?> state,
+            IFContext host,
             char layoutTarget,
-            @NotNull Object sourceProvider,
-            @NotNull PaginationElementFactory<IFContext, Object> elementFactory,
+            Object sourceProvider,
+            PaginationElementFactory<IFContext, Object> elementFactory,
             BiConsumer<IFContext, Pagination> pageSwitchHandler) {
         super(state);
         this.host = host;
