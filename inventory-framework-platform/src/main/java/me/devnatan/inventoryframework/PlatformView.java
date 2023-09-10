@@ -733,7 +733,7 @@ public abstract class PlatformView<
      * @param config A ViewConfigBuilder instance to configure this view.
      */
     @ApiStatus.OverrideOnly
-    public void onInit(ViewConfigBuilder config) {}
+    public void onInit(@NotNull ViewConfigBuilder config) {}
 
     /**
      * Called before the inventory is opened to the player.
@@ -748,7 +748,7 @@ public abstract class PlatformView<
      * @param open The player view context.
      */
     @ApiStatus.OverrideOnly
-    public void onOpen(TOpenContext open) {}
+    public void onOpen(@NotNull TOpenContext open) {}
 
     /**
      * Called only once before the container is displayed to a player.
@@ -761,7 +761,7 @@ public abstract class PlatformView<
      * @param render The renderization context.
      */
     @ApiStatus.OverrideOnly
-    public void onFirstRender(TRenderContext render) {}
+    public void onFirstRender(@NotNull TRenderContext render) {}
 
     /**
      * Called when the view is updated for a player.
@@ -771,7 +771,7 @@ public abstract class PlatformView<
      * @param update The player view context.
      */
     @ApiStatus.OverrideOnly
-    public void onUpdate(TContext update) {}
+    public void onUpdate(@NotNull TContext update) {}
 
     /**
      * Called when the player closes the view's inventory.
@@ -781,7 +781,7 @@ public abstract class PlatformView<
      * @param close The player view context.
      */
     @ApiStatus.OverrideOnly
-    public void onClose(TCloseContext close) {}
+    public void onClose(@NotNull TCloseContext close) {}
 
     /**
      * Called when an actor clicks on a container while it has a view open.
@@ -797,7 +797,7 @@ public abstract class PlatformView<
      * @param click The click context.
      */
     @ApiStatus.OverrideOnly
-    public void onClick(TSlotClickContext click) {}
+    public void onClick(@NotNull TSlotClickContext click) {}
 
     /**
      * Called internally before the first initialization.

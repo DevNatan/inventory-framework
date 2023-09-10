@@ -1,6 +1,15 @@
+plugins {
+    alias(libs.plugins.kotlin)
+}
+
 apply from: '../library.gradle'
 apply from: '../publish.gradle'
 
 dependencies {
     compileOnly libs.adventure.api
+}
+
+kotlin {
+    explicitApi()
+    jvmToolchain(8)
 }

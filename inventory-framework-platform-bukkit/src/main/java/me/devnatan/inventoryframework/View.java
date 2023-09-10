@@ -15,8 +15,6 @@ import me.devnatan.inventoryframework.pipeline.ItemCloseOnClickInterceptor;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
 import me.devnatan.inventoryframework.pipeline.StandardPipelinePhases;
 import org.bukkit.Bukkit;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -33,8 +31,7 @@ public class View
                 CloseContext,
                 RenderContext,
                 SlotContext,
-                SlotClickContext>
-        implements InventoryHolder {
+                SlotClickContext> {
 
     @Override
     public final @NotNull ElementFactory getElementFactory() {
@@ -53,11 +50,5 @@ public class View
     @Override
     public final void nextTick(Runnable task) {
         Bukkit.getServer().getScheduler().runTask(getFramework().getOwner(), task);
-    }
-
-    @NotNull
-    @Override
-    public final Inventory getInventory() {
-        throw new UnsupportedOperationException("Cannot get inventory from RootView");
     }
 }

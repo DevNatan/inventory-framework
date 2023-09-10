@@ -5,6 +5,7 @@ paperSpigot = "1.20.1-R0.1-SNAPSHOT"
 junit = "5.10.0"
 mockito = "4.11.0"
 adventure-api = "4.14.0"
+kotlin = "1.9.0"
 plugin-shadowjar = "8.1.1"
 plugin-spotless = "6.12.0"
 
@@ -43,3 +44,4 @@ version.ref = "adventure-api"
 [plugins]
 shadowjar = { id = "com.github.johnrengelman.shadow", version.ref = "plugin-shadowjar" }
 spotless = { id = "com.diffplug.spotless", version.ref = "plugin-spotless" }
+kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
