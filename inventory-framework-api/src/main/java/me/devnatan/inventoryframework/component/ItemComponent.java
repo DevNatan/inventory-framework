@@ -192,8 +192,7 @@ public class ItemComponent implements Component, InteractionHandler {
 
     @Override
     public boolean isVisible() {
-		if (root instanceof Component)
-			return ((Component) root).isVisible() && isVisible;
+        if (root instanceof Component) return ((Component) root).isVisible() && isVisible;
 
         return isVisible;
     }

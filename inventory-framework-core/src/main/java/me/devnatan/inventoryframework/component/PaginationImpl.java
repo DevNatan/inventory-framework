@@ -30,6 +30,7 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
 
     private final List<Component> components = new LinkedList<>();
     private final IFContext host;
+    private boolean visible;
 
     // --- User provided ---
     private final char layoutTarget;
@@ -44,9 +45,7 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
     private boolean initialized;
     private int pagesCount;
 
-    /**
-     * The number of elements that each page can have. -1 means uninitialized.
-     */
+    // Number of elements that each page can have. -1 means uninitialized.
     private int pageSize = -1;
 
     // Changes when dynamic data source is used and being loaded
@@ -60,9 +59,7 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
      */
     private Function<IFContext, Object> _srcFactory;
 
-    /**
-     * Current page source. Only {@code null} before first pagination render.
-     */
+    // Current page source, null before first pagination render.
     private List<?> currSource;
 
     public PaginationImpl(
@@ -553,16 +550,12 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
 
     @Override
     public boolean isVisible() {
-        for (final Component children : this) {
-            if (!children.isVisible()) return false;
-        }
-
-        return true;
+        return visible;
     }
 
     @Override
     public void setVisible(boolean visible) {
-        getComponentsInternal().forEach(component -> component.setVisible(visible));
+        this.visible = visible;
     }
 
     @Override
