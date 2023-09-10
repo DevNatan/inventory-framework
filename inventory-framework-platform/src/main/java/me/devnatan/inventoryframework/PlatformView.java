@@ -37,6 +37,7 @@ import me.devnatan.inventoryframework.pipeline.ScheduledUpdateAfterCloseIntercep
 import me.devnatan.inventoryframework.pipeline.ScheduledUpdateAfterRenderInterceptor;
 import me.devnatan.inventoryframework.pipeline.StandardPipelinePhases;
 import me.devnatan.inventoryframework.pipeline.UpdateInterceptor;
+import me.devnatan.inventoryframework.pipeline.ViewerLastInteractionTrackerInterceptor;
 import me.devnatan.inventoryframework.state.BaseMutableState;
 import me.devnatan.inventoryframework.state.BaseState;
 import me.devnatan.inventoryframework.state.ComputedValue;
@@ -751,6 +752,7 @@ public abstract class PlatformView<
         pipeline.intercept(StandardPipelinePhases.UPDATE, new UpdateInterceptor());
         pipeline.intercept(StandardPipelinePhases.CLOSE, new PlatformCloseInterceptor());
         pipeline.intercept(StandardPipelinePhases.CLOSE, new ScheduledUpdateAfterCloseInterceptor());
+        pipeline.intercept(StandardPipelinePhases.CLICK, new ViewerLastInteractionTrackerInterceptor());
         registerPlatformInterceptors();
         pipeline.execute(StandardPipelinePhases.INIT, this);
     }

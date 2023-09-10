@@ -27,7 +27,7 @@ public class ViewConfig {
     private final Map<Option<?>, Object> options;
     private final String[] layout;
     private final Set<Modifier> modifiers;
-    private final long updateIntervalInTicks;
+    private final long updateIntervalInTicks, interactionDelayInMillis;
 
     public ViewConfig(
             Object title,
@@ -36,7 +36,8 @@ public class ViewConfig {
             Map<Option<?>, Object> options,
             String[] layout,
             Set<Modifier> modifiers,
-            long updateIntervalInTicks) {
+            long updateIntervalInTicks,
+            long interactionDelayInMillis) {
         this.title = title;
         this.size = size;
         this.type = type;
@@ -44,6 +45,7 @@ public class ViewConfig {
         this.layout = layout;
         this.modifiers = modifiers;
         this.updateIntervalInTicks = updateIntervalInTicks;
+        this.interactionDelayInMillis = interactionDelayInMillis;
     }
 
     public Object getTitle() {
@@ -72,6 +74,10 @@ public class ViewConfig {
 
     public long getUpdateIntervalInTicks() {
         return updateIntervalInTicks;
+    }
+
+    public long getInteractionDelayInMillis() {
+        return interactionDelayInMillis;
     }
 
     @VisibleForTesting
@@ -130,7 +136,8 @@ public class ViewConfig {
                 merge(other, ViewConfig::getOptions, value -> value != null && !value.isEmpty()),
                 merge(other, ViewConfig::getLayout),
                 merge(other, ViewConfig::getModifiers, value -> value != null && !value.isEmpty()),
-                merge(other, ViewConfig::getUpdateIntervalInTicks, value -> value != 0));
+                merge(other, ViewConfig::getUpdateIntervalInTicks, value -> value != 0),
+                merge(other, ViewConfig::getInteractionDelayInMillis, value -> value != 0));
     }
 
     private <T> T merge(ViewConfig other, Function<ViewConfig, T> retriever) {
@@ -215,6 +222,7 @@ public class ViewConfig {
         ViewConfig that = (ViewConfig) o;
         return getSize() == that.getSize()
                 && getUpdateIntervalInTicks() == that.getUpdateIntervalInTicks()
+                && getInteractionDelayInMillis() == that.getInteractionDelayInMillis()
                 && Objects.equals(getTitle(), that.getTitle())
                 && Objects.equals(getType(), that.getType())
                 && Objects.equals(getOptions(), that.getOptions())
@@ -225,7 +233,13 @@ public class ViewConfig {
     @Override
     public int hashCode() {
         int result = Objects.hash(
-                getTitle(), getSize(), getType(), getOptions(), getModifiers(), getUpdateIntervalInTicks());
+                getTitle(),
+                getSize(),
+                getType(),
+                getOptions(),
+                getModifiers(),
+                getUpdateIntervalInTicks(),
+                getInteractionDelayInMillis());
         result = 31 * result + Arrays.hashCode(getLayout());
         return result;
     }
@@ -239,6 +253,7 @@ public class ViewConfig {
                 + options + ", layout="
                 + Arrays.toString(layout) + ", modifiers="
                 + modifiers + ", updateIntervalInTicks="
-                + updateIntervalInTicks + '}';
+                + updateIntervalInTicks + ", interactionDelayInMillis="
+                + interactionDelayInMillis + '}';
     }
 }

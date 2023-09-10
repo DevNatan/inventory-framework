@@ -43,4 +43,33 @@ public interface Viewer {
 
     @Contract("_ -> this")
     Viewer withContext(IFRenderContext context);
+
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
+    long getLastInteractionInMillis();
+
+    /**
+     * Updates the value that holds the timestamp of the last interaction of this viewer.
+     * <p>
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     *
+     * @param lastInteractionInMillis Timestamp of the last interaction.
+     */
+    @ApiStatus.Internal
+    void setLastInteractionInMillis(long lastInteractionInMillis);
+
+    /**
+     * If this viewer is waiting for view's {@link ViewConfig#getInteractionDelayInMillis() interaction delay} to be able to interact again.
+     * <p>
+     * <b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     *
+     * @return If this viewer cannot interact now.
+     */
+    @ApiStatus.Experimental
+    boolean isBlockedByInteractionDelay();
 }

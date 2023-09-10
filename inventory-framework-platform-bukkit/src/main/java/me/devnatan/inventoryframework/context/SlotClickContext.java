@@ -81,6 +81,7 @@ public class SlotClickContext extends SlotContext implements IFSlotClickContext 
     @Override
     public final void setCancelled(boolean cancelled) {
         this.cancelled = cancelled;
+        getClickOrigin().setCancelled(cancelled);
     }
 
     @Override
