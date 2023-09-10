@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -116,7 +115,8 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
 
             if (!initialized) pagesCount = calculatePagesCount(currSource);
 
-            return CompletableFuture.completedFuture(splitSourceForPage(currPageIndex, currSource));
+            return CompletableFuture.completedFuture(
+                    Pagination.splitSourceForPage(currPageIndex, getPageSize(), getPagesCount(), currSource));
         }
 
         // Lazy flow
@@ -179,33 +179,6 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
         if (pageSize == -1) throw new IllegalStateException("Page size need to be updated before try to get it");
 
         return pageSize;
-    }
-
-    /**
-     * Gets all elements in a given page index based on the current data source.
-     *
-     * @param index The page index.
-     * @param src   The source to split.
-     * @return All elements in a page.
-     * @throws IndexOutOfBoundsException If the specified index is {@code < 0} or
-     *                                   exceeds the {@link #getPagesCount() pages count}.
-     */
-    private List<?> splitSourceForPage(int index, List<?> src) {
-        if (src.isEmpty()) return Collections.emptyList();
-
-        if (src.size() <= pageSize) return new ArrayList<>(src);
-        if (index < 0 || index > getPagesCount())
-            throw new IndexOutOfBoundsException(String.format(
-                    "Page index must be between the range of 0 and %d. Given: %d", getPagesCount() - 1, index));
-
-        final List<Object> contents = new LinkedList<>();
-        final int base = index * pageSize;
-        int until = base + pageSize;
-        if (until > src.size()) until = src.size();
-
-        for (int i = base; i < until; i++) contents.add(src.get(i));
-
-        return contents;
     }
 
     /**
@@ -376,7 +349,7 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
         if (pageWasChanged) {
             final IFRenderContext renderContext = context.getParent();
             getComponentsInternal().forEach(child -> child.clear(context));
-			components = new ArrayList<>();
+            components = new ArrayList<>();
             getComponentsInternal().clear();
             loadCurrentPage(renderContext).thenRun(() -> {
                 render(context);

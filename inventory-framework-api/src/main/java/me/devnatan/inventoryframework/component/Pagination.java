@@ -1,5 +1,9 @@
 package me.devnatan.inventoryframework.component;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 import me.devnatan.inventoryframework.state.StateValue;
 import me.devnatan.inventoryframework.state.StateValueHost;
 import org.jetbrains.annotations.ApiStatus;
@@ -151,4 +155,33 @@ public interface Pagination extends ComponentComposition, StateValue {
      */
     @ApiStatus.Experimental
     boolean isLoading();
+
+    /**
+     * Gets all elements in a given page index based of the specified source.
+     *
+     * @param index The page index.
+     * @param pageSize Number of elements that each page can have.
+     * @param pagesCount Pre-calculated total number of pages available (set zero if not available).
+     * @param src   The source to split.
+     * @return All elements in a page.
+     * @throws IndexOutOfBoundsException If the specified index is {@code < 0} or
+     *                                   exceeds the pages count.
+     */
+    static List<?> splitSourceForPage(int index, int pageSize, int pagesCount, List<?> src) {
+        if (src.isEmpty()) return Collections.emptyList();
+
+        if (src.size() <= pageSize) return new ArrayList<>(src);
+        if (index < 0 || (pagesCount > 0 && index > pagesCount))
+            throw new IndexOutOfBoundsException(String.format(
+                    "Page index must be between the range of 0 and %d. Given: %d", pagesCount - 1, index));
+
+        final List<Object> contents = new LinkedList<>();
+        final int base = index * pageSize;
+        int until = base + pageSize;
+        if (until > src.size()) until = src.size();
+
+        for (int i = base; i < until; i++) contents.add(src.get(i));
+
+        return contents;
+    }
 }

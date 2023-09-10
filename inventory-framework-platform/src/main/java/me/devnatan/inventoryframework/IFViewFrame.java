@@ -42,8 +42,7 @@ abstract class IFViewFrame<S extends IFViewFrame<S, V>, V extends PlatformView<S
         return getRegisteredViews().values().stream()
                 .filter(view -> view.getClass().equals(type))
                 .findFirst()
-                .orElseThrow(() ->
-                        new IllegalArgumentException(String.format("View not found or not registered: %s", type)));
+                .orElseThrow(() -> new IllegalArgumentException(String.format("View not registered: %s", type)));
     }
 
     /**
