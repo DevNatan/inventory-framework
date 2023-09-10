@@ -135,6 +135,13 @@ public interface Pagination extends ComponentComposition, StateValue {
     boolean isLazy();
 
     /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
+    boolean isStatic();
+
+    /**
      * If the pagination data is being loaded or not.
      * <p>
      * Only changes if {@link #isLazy()} is true.

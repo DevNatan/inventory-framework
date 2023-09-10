@@ -11,6 +11,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import me.devnatan.inventoryframework.ViewContainer;
@@ -38,7 +39,7 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
 
     // --- Internal ---
     private int currPageIndex;
-    private final boolean lazy;
+    private final boolean isLazy, isStatic;
     private boolean pageWasChanged;
     private boolean initialized;
     private int pagesCount;
@@ -78,39 +79,48 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
         this.elementFactory = elementFactory;
         this.pageSwitchHandler = pageSwitchHandler;
         this.currSource = convertSourceProvider();
-        this.lazy = !(sourceProvider instanceof Collection);
+        this.isLazy = sourceProvider instanceof Supplier || sourceProvider instanceof BiFunction;
+        this.isStatic = sourceProvider instanceof Collection;
     }
 
     /**
      * Tries to access and load the source to the current page.
      * <p>
-     * If this pagination {@link #isLazy() is dynamic} it tries to get the current data source
-     * dynamically or asynchronously and waits for its completion.
+     * If this pagination {@link #isLazy() is lazy} it tries to get the current data source
+     * dynamically or asynchronously and waits for its completion. For static pagination it returns
+     * immediately with the source.
      * <p>
-     * For static pagination it returns immediately with the source.
-     * <p>
-     * On asynchronous pagination the source update job will be inherited by the user provided one.
-     * <p>
-     * When job gets done the {@link #currSource} is updated with the result of the computation.
+     * On asynchronous pagination the source update job will be inherited by the user provided one
+     * and when job gets done the {@link #currSource} is updated with the result of the computation.
      *
      * @return A CompletableFuture with the current pagination source as result.
      * @throws IllegalStateException In static pagination when the current source wasn't yet defined.
      */
     @SuppressWarnings("unchecked")
     private CompletableFuture<List<?>> loadSourceForTheCurrentPage() {
-        // When using static pagination we just get the current source here since it will be always
-        // the same. When using dynamic pagination that was not initialized yet (page index is zero)
-        // must use the current data source as source of truth to ensure that pagination switches do
-        // not trigger pagination data factory since it will always return the source as a whole,
-        // the original one, and not the source for the switched page.
-        if (!isLazy() || !initialized) {
+        // For non-lazy pagination (since it will be always the same) or first initialization
+        // just get the current source as a whole and use
+        final boolean reuseStaticOrInitialInitialization = isStatic() || !initialized;
+
+        /*
+         * In lazy pagination **that was already initialized (already rendered before)** we must
+         * use the current data source as source of truth to ensure that page switching do not
+         * re-trigger pagination data factory since it will always return the source as a whole,
+         * the original one, and not the source for the switched page.
+         */
+        final boolean reuseDynamic = isLazy() && initialized;
+
+        if (reuseStaticOrInitialInitialization || reuseDynamic) {
+            // For unknown reasons already initialized but source is null, external modification?
             if (initialized && currSource == null)
                 throw new IllegalStateException("User provided pagination source cannot be null");
+
             if (!initialized) pagesCount = calculatePagesCount(currSource);
 
             return CompletableFuture.completedFuture(splitSourceForPage(currPageIndex, currSource));
         }
 
+        // Lazy flow
         CompletableFuture<List<?>> job = new CompletableFuture<>();
         isLoading = true;
         simulateStateUpdate();
@@ -530,7 +540,12 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
 
     @Override
     public boolean isLazy() {
-        return lazy;
+        return isLazy;
+    }
+
+    @Override
+    public boolean isStatic() {
+        return isStatic;
     }
 
     @Override
@@ -630,7 +645,7 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
                 + pageSwitchHandler + ", currPageIndex="
                 + currPageIndex + ", pageSize="
                 + pageSize + ", dynamic="
-                + lazy + ", pageWasChanged="
+                + isLazy + ", pageWasChanged="
                 + pageWasChanged + ", _srcFactory="
                 + _srcFactory + ", currSource="
                 + currSource + "} "
