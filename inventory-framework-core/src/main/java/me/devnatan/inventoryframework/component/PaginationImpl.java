@@ -28,7 +28,7 @@ import org.jetbrains.annotations.VisibleForTesting;
 @VisibleForTesting
 public class PaginationImpl extends AbstractStateValue implements Pagination, InteractionHandler {
 
-    private final List<Component> components = new LinkedList<>();
+    private List<Component> components = new ArrayList<>();
     private final IFContext host;
     private boolean visible;
 
@@ -376,6 +376,7 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
         if (pageWasChanged) {
             final IFRenderContext renderContext = context.getParent();
             getComponentsInternal().forEach(child -> child.clear(context));
+			components = new ArrayList<>();
             getComponentsInternal().clear();
             loadCurrentPage(renderContext).thenRun(() -> {
                 render(context);
