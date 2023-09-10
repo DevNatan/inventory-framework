@@ -72,17 +72,17 @@ public final class BukkitViewer implements Viewer {
     }
 
     @Override
+    public void setLastInteractionInMillis(long lastInteractionInMillis) {
+        this.lastInteractionInMillis = lastInteractionInMillis;
+    }
+
+    @Override
     public boolean isBlockedByInteractionDelay() {
         final long configuredDelay = context.getConfig().getInteractionDelayInMillis();
         if (configuredDelay <= 0) return false;
 
         final long now = System.currentTimeMillis();
         return getLastInteractionInMillis() + configuredDelay < now;
-    }
-
-    @Override
-    public void setBlockedByInteractionDelay() {
-        lastInteractionInMillis = System.currentTimeMillis();
     }
 
     @Override

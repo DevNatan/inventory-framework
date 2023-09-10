@@ -52,6 +52,17 @@ public interface Viewer {
     long getLastInteractionInMillis();
 
     /**
+     * Updates the value that holds the timestamp of the last interaction of this viewer.
+     * <p>
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     *
+     * @param lastInteractionInMillis Timestamp of the last interaction.
+     */
+    @ApiStatus.Internal
+    void setLastInteractionInMillis(long lastInteractionInMillis);
+
+    /**
      * If this viewer is waiting for view's {@link ViewConfig#getInteractionDelayInMillis() interaction delay} to be able to interact again.
      * <p>
      * <b><i> This API is experimental and is not subject to the general compatibility guarantees
@@ -61,16 +72,4 @@ public interface Viewer {
      */
     @ApiStatus.Experimental
     boolean isBlockedByInteractionDelay();
-
-    /**
-     * Forces this viewer to not be able to interact by a fixed duration of view interaction delay.
-     * <p>
-     * <b><i> This API is experimental and is not subject to the general compatibility guarantees
-     * such API may be changed or may be removed completely in any further release. </i></b>
-     *
-     * @implNote Value that holds the last interaction by the viewer MUST be updated
-     * even if {@link #getContext() current context} haven`t a configured interaction delay.
-     */
-    @ApiStatus.Experimental
-    void setBlockedByInteractionDelay();
 }
