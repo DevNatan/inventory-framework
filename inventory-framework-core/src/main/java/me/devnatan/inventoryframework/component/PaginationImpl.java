@@ -376,12 +376,12 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
         // If page was changed all components will be removed, so don't trigger update on them
         if (pageWasChanged) {
             final IFRenderContext renderContext = context.getParent();
-            clearChild(renderContext, true);
+			clearChild(renderContext, false);
             loadCurrentPage(renderContext).thenRun(() -> {
                 render(context);
                 simulateStateUpdate();
-                pageWasChanged = false;
             });
+			pageWasChanged = false;
             return;
         }
 
@@ -406,11 +406,11 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
             return;
         }
 
-        clearChild(context, false);
+        clearChild(context, true);
     }
 
-    private void clearChild(IFContext context, boolean bulk) {
-        if (bulk) {
+    private void clearChild(IFContext context, boolean sync) {
+        if (!sync) {
             getComponentsInternal().forEach(child -> child.clear(context));
             getComponentsInternal().clear();
             return;
