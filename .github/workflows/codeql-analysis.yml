@@ -36,11 +36,11 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    # Use JDK 17 due to PaperSpigot version issues
+    # Use JDK 8 due to PaperSpigot version issues
     - name: Set up JDK
       uses: actions/setup-java@v3
       with:
-        java-version: '17'
+        java-version: '8'
         distribution: 'temurin'
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
