@@ -11,7 +11,14 @@ public final class ViewerLastInteractionUpdaterInterceptor implements PipelineIn
     public void intercept(@NotNull PipelineContext<VirtualView> pipeline, @NotNull VirtualView subject) {
         if (!(subject instanceof IFSlotClickContext)) return;
 
-        final Viewer viewer = ((IFSlotClickContext) subject).getViewer();
+        final IFSlotClickContext click = (IFSlotClickContext) subject;
+        final Viewer viewer = click.getViewer();
+        if (viewer.isBlockedByInteractionDelay()) {
+            click.setCancelled(true);
+            pipeline.finish();
+            return;
+        }
+
         viewer.setLastInteractionInMillis(System.currentTimeMillis());
     }
 }

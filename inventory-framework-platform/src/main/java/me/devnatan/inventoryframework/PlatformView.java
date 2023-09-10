@@ -752,7 +752,7 @@ public abstract class PlatformView<
         pipeline.intercept(StandardPipelinePhases.UPDATE, new UpdateInterceptor());
         pipeline.intercept(StandardPipelinePhases.CLOSE, new PlatformCloseInterceptor());
         pipeline.intercept(StandardPipelinePhases.CLOSE, new ScheduledUpdateAfterCloseInterceptor());
-		pipeline.intercept(StandardPipelinePhases.CLICK, new ViewerLastInteractionUpdaterInterceptor());
+        pipeline.intercept(StandardPipelinePhases.CLICK, new ViewerLastInteractionUpdaterInterceptor());
         registerPlatformInterceptors();
         pipeline.execute(StandardPipelinePhases.INIT, this);
     }
