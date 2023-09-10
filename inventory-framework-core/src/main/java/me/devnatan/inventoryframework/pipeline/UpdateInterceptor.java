@@ -17,9 +17,8 @@ public final class UpdateInterceptor implements PipelineInterceptor<VirtualView>
 
         final IFContext context = (IFContext) subject;
         final List<Component> componentList = context.getComponents();
-        for (int i = 0; i < componentList.size(); i++) {
-            final Component component = componentList.get(i);
-            if (context.isMarkedForRemoval(i)) {
+        for (final Component component : componentList) {
+            if (!component.isVisible()) {
                 component.clear(context);
                 continue;
             }

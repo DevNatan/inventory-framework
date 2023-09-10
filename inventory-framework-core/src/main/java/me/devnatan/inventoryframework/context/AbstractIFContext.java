@@ -1,9 +1,7 @@
 package me.devnatan.inventoryframework.context;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Deque;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -23,7 +21,6 @@ import org.jetbrains.annotations.UnmodifiableView;
 abstract class AbstractIFContext extends DefaultStateValueHost implements IFContext {
 
     private final List<Component> components = new LinkedList<>();
-    private final Deque<Integer> markedForRemoval = new ArrayDeque<>();
     private final Map<String, Viewer> indexedViewers = new HashMap<>();
     protected ViewConfig config;
 
@@ -127,11 +124,6 @@ abstract class AbstractIFContext extends DefaultStateValueHost implements IFCont
     @Override
     public void update() {
         getRoot().getPipeline().execute(StandardPipelinePhases.UPDATE, this);
-    }
-
-    @Override
-    public final boolean isMarkedForRemoval(int componentIndex) {
-        return markedForRemoval.contains(componentIndex);
     }
 
     @Override
