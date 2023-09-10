@@ -1,5 +1,6 @@
 package me.devnatan.inventoryframework;
 
+import java.time.Duration;
 import java.util.AbstractMap;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -7,7 +8,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import me.devnatan.inventoryframework.exception.InvalidLayoutException;
-import me.devnatan.inventoryframework.internal.LayoutSlot;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 public final class ViewConfigBuilder {
@@ -28,45 +29,8 @@ public final class ViewConfigBuilder {
     private ViewType type;
     private final Set<ViewConfig.Option<?>> options = new HashSet<>();
     private String[] layout = null;
-    private final Set<LayoutSlot> patterns = new HashSet<>();
     private final Set<ViewConfig.Modifier> modifiers = new HashSet<>();
-    private long updateIntervalInTicks;
-
-    public static boolean isTitleAsComponentSupported() {
-        return titleAsComponentSupported;
-    }
-
-    Object getTitle() {
-        return title;
-    }
-
-    int getSize() {
-        return size;
-    }
-
-    ViewType getType() {
-        return type;
-    }
-
-    Set<ViewConfig.Option<?>> getOptions() {
-        return options;
-    }
-
-    String[] getLayout() {
-        return layout;
-    }
-
-    Set<LayoutSlot> getPatterns() {
-        return patterns;
-    }
-
-    Set<ViewConfig.Modifier> getModifiers() {
-        return modifiers;
-    }
-
-    long getUpdateIntervalInTicks() {
-        return updateIntervalInTicks;
-    }
+    private long updateIntervalInTicks, interactionDelayInMillis;
 
     /**
      * Inherits all configuration from another {@link ViewConfigBuilder} value.
@@ -192,17 +156,85 @@ public final class ViewConfigBuilder {
         return addOption(ViewConfig.CANCEL_ON_DRAG);
     }
 
+    /**
+     * Schedules the view to update every fixed interval.
+     *
+     * @param intervalInTicks The interval in ticks.
+     * @return This configuration builder.
+     * @see <a href="https://github.com/DevNatan/inventory-framework/wiki/scheduled-updates">Scheduled Updates on Wiki</a>
+     */
     public ViewConfigBuilder scheduleUpdate(long intervalInTicks) {
         this.updateIntervalInTicks = intervalInTicks;
         return this;
     }
 
+    /**
+     * Waits a fixed delay before any player interaction.
+     * <p>
+     * Interactions called before delay completion are cancelled.
+     *
+     * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     *
+     * @param interactionDelay Duration of the interaction delay or <code>null</code> to reset.
+     * @return This configuration builder.
+     */
+    @ApiStatus.Experimental
+    public ViewConfigBuilder interactionDelay(Duration interactionDelay) {
+        this.interactionDelayInMillis = interactionDelay == null ? 0 : interactionDelay.toMillis();
+        return this;
+    }
+
     public ViewConfig build() {
-        final Map<ViewConfig.Option<?>, Object> optionsMap = options.stream()
+        final Map<ViewConfig.Option<?>, Object> optionsMap = getOptions().stream()
                 .map(option -> new AbstractMap.SimpleImmutableEntry<ViewConfig.Option<?>, Object>(
                         option, option.defaultValue()))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
-        return new ViewConfig(title, size, type, optionsMap, layout, modifiers, updateIntervalInTicks);
+        return new ViewConfig(
+                getTitle(),
+                getSize(),
+                getType(),
+                optionsMap,
+                getLayout(),
+                getModifiers(),
+                getUpdateIntervalInTicks(),
+                getInteractionDelayInMillis());
+    }
+
+    public static boolean isTitleAsComponentSupported() {
+        return titleAsComponentSupported;
+    }
+
+    Object getTitle() {
+        return title;
+    }
+
+    int getSize() {
+        return size;
+    }
+
+    ViewType getType() {
+        return type;
+    }
+
+    Set<ViewConfig.Option<?>> getOptions() {
+        return options;
+    }
+
+    String[] getLayout() {
+        return layout;
+    }
+
+    Set<ViewConfig.Modifier> getModifiers() {
+        return modifiers;
+    }
+
+    long getUpdateIntervalInTicks() {
+        return updateIntervalInTicks;
+    }
+
+    long getInteractionDelayInMillis() {
+        return interactionDelayInMillis;
     }
 }
