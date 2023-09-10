@@ -176,7 +176,6 @@ public class ItemComponent implements Component, InteractionHandler {
     @Override
     public void clear(@NotNull IFContext context) {
         ((IFRenderContext) context).getContainer().removeItem(getPosition());
-
         setVisible(false);
     }
 

@@ -378,7 +378,8 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
         // If page was changed all components will be removed, so don't trigger update on them
         if (pageWasChanged) {
             final IFRenderContext renderContext = context.getParent();
-            clearChild(renderContext, false);
+            getComponentsInternal().forEach(child -> child.clear(context));
+            getComponentsInternal().clear();
             loadCurrentPage(renderContext).thenRun(() -> {
                 render(context);
                 simulateStateUpdate();
@@ -402,19 +403,8 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
 
     @Override
     public void clear(@NotNull IFContext context) {
-        // Only clear components if page was changed to not make the clear operation inconsistent
         if (!pageWasChanged) {
             getComponentsInternal().forEach(child -> child.clear(context));
-            return;
-        }
-
-        clearChild(context, true);
-    }
-
-    private void clearChild(IFContext context, boolean sync) {
-        if (!sync) {
-            getComponentsInternal().forEach(child -> child.clear(context));
-            getComponentsInternal().clear();
             return;
         }
 
@@ -577,17 +567,10 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
 
     @Override
     public void clicked(@NotNull Component component, @NotNull IFSlotClickContext context) {
-        final List<Component> components = getComponentsInternal();
-        if (components.isEmpty()) return;
-        if (components.size() == 1) {
-            final Component child = components.get(0);
-            if (child.getInteractionHandler() != null && child.getInteractionHandler() != null) {
-                child.getInteractionHandler().clicked(component, context);
-            }
-            return;
-        }
+        // Lock child interactions while page is being updated
+        if (pageWasChanged) return;
 
-        for (final Component child : components) {
+        for (final Component child : getComponentsInternal()) {
             if (child.getInteractionHandler() == null) continue;
             if (child.isContainedWithin(context.getClickedSlot())) {
                 child.getInteractionHandler().clicked(component, context);
