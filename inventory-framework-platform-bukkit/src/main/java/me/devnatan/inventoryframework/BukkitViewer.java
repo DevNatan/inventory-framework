@@ -16,7 +16,7 @@ public final class BukkitViewer implements Viewer {
         this(player, null, context);
     }
 
-    private BukkitViewer(@NotNull Player player, @NotNull ViewContainer selfContainer, IFRenderContext context) {
+    private BukkitViewer(@NotNull Player player, ViewContainer selfContainer, IFRenderContext context) {
         this.player = player;
         this.selfContainer = selfContainer;
         this.context = context;
@@ -81,8 +81,7 @@ public final class BukkitViewer implements Viewer {
         final long configuredDelay = context.getConfig().getInteractionDelayInMillis();
         if (configuredDelay <= 0 || getLastInteractionInMillis() <= 0) return false;
 
-        final long now = System.currentTimeMillis();
-        return getLastInteractionInMillis() + configuredDelay < now;
+        return getLastInteractionInMillis() + configuredDelay >= System.currentTimeMillis();
     }
 
     @Override

@@ -2,7 +2,6 @@ package me.devnatan.inventoryframework.pipeline;
 
 import static me.devnatan.inventoryframework.ViewConfig.CANCEL_ON_CLICK;
 
-import me.devnatan.inventoryframework.PlatformView;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.SlotClickContext;
 import org.bukkit.event.inventory.InventoryClickEvent;
