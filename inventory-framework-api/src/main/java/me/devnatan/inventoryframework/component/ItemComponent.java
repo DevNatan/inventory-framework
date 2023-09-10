@@ -179,6 +179,15 @@ public class ItemComponent implements Component, InteractionHandler {
     }
 
     @Override
+    public void update() {
+        if (isManagedExternally())
+            throw new IllegalStateException(
+                    "This component is externally managed by another component and cannot be updated directly");
+
+        if (root instanceof IFContext) ((IFContext) root).updateComponent(this);
+    }
+
+    @Override
     public @UnmodifiableView Set<State<?>> getWatchingStates() {
         return Collections.unmodifiableSet(getWatching());
     }

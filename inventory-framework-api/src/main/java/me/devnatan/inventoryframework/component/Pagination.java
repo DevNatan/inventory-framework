@@ -132,6 +132,14 @@ public interface Pagination extends ComponentComposition, StateValue {
     char getLayoutTarget();
 
     /**
+     * Lazy pagination usually have a Function or Supplier as source provider and this provider
+     * is only called again to set the current internal source when an explicit update is called.
+     * <p>
+     * So, when this method returns <code>true</code> the only way to update the current source as a
+     * whole is triggering an update somehow e.g. by calling {@link #update()}.
+     * <p>
+     * Page switches will not trigger the source provider to re-apply the current internal source.
+     * <p>
      * <b><i> This is an internal inventory-framework API that should not be used from outside of
      * this library. No compatibility guarantees are provided. </i></b>
      */
@@ -139,6 +147,10 @@ public interface Pagination extends ComponentComposition, StateValue {
     boolean isLazy();
 
     /**
+     * Static pagination usually have a Collection or something else as source provider and this
+	 * source provider is called only on first render to set the current source as a whole,
+	 * and never called again on the entire Pagination lifecycle.
+     * <p>
      * <b><i> This is an internal inventory-framework API that should not be used from outside of
      * this library. No compatibility guarantees are provided. </i></b>
      */
