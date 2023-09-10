@@ -10,6 +10,7 @@ public final class BukkitViewer implements Viewer {
     private final Player player;
     private ViewContainer selfContainer;
     private IFRenderContext context;
+    private long lastInteractionInMillis;
 
     public BukkitViewer(@NotNull Player player, IFRenderContext context) {
         this(player, null, context);
@@ -66,6 +67,25 @@ public final class BukkitViewer implements Viewer {
     }
 
     @Override
+    public long getLastInteractionInMillis() {
+        return lastInteractionInMillis;
+    }
+
+    @Override
+    public boolean isBlockedByInteractionDelay() {
+        final long configuredDelay = context.getConfig().getInteractionDelayInMillis();
+        if (configuredDelay <= 0) return false;
+
+        final long now = System.currentTimeMillis();
+        return getLastInteractionInMillis() + configuredDelay < now;
+    }
+
+    @Override
+    public void setBlockedByInteractionDelay() {
+        lastInteractionInMillis = System.currentTimeMillis();
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -80,6 +100,7 @@ public final class BukkitViewer implements Viewer {
 
     @Override
     public String toString() {
-        return "BukkitViewer{" + "player=" + player + ", selfContainer=" + selfContainer + '}';
+        return "BukkitViewer{" + "player=" + player + ", selfContainer=" + selfContainer + ", lastInteractionInMillis="
+                + lastInteractionInMillis + "}";
     }
 }
