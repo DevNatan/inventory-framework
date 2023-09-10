@@ -43,11 +43,10 @@ final class IFInventoryListener implements Listener {
 
         final IFRenderContext context = viewer.getContext();
         final Component clickedComponent = context.getComponent(event.getRawSlot());
-        if (clickedComponent == null || !clickedComponent.isVisible()) return;
-
         final ViewContainer clickedContainer = event.getClickedInventory() instanceof PlayerInventory
                 ? viewer.getSelfContainer()
                 : context.getContainer();
+
         final RootView root = context.getRoot();
         final IFSlotClickContext clickContext = root.getElementFactory()
                 .createSlotClickContext(event.getRawSlot(), viewer, clickedContainer, clickedComponent, event);
