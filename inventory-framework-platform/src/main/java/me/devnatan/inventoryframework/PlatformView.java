@@ -654,12 +654,9 @@ public abstract class PlatformView<
     /**
      * Called when the view is about to be configured, the returned object will be the view's
      * configuration.
-     * <p>
-     * As a reference, the data defined here was defined in the constructor in previous versions.
      *
-     * @param config A mutable ViewConfigBuilder to configure this view.
+     * @param config A ViewConfigBuilder instance to configure this view.
      */
-    @Override
     @ApiStatus.OverrideOnly
     public void onInit(ViewConfigBuilder config) {}
 

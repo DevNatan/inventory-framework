@@ -32,17 +32,6 @@ public interface RootView extends VirtualView {
     Set<IFContext> getInternalContexts();
 
     /**
-     * Called when the view is about to be configured, the returned object will be the view's
-     * configuration.
-     * <p>
-     * As a reference, the data defined here was defined in the constructor in previous versions.
-     *
-     * @param config A mutable ViewConfigBuilder to configure this view.
-     */
-    @ApiStatus.OverrideOnly
-    void onInit(ViewConfigBuilder config);
-
-    /**
      * The configuration for this view.
      *
      * @return The configuration for this view.
