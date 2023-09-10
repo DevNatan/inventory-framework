@@ -22,7 +22,7 @@ public final class ItemClickInterceptor implements PipelineInterceptor<VirtualVi
         if (event.getSlotType() == InventoryType.SlotType.OUTSIDE) return;
 
         final Component component = context.getComponent();
-        if (component == null) return;
+        if (component == null || !component.isVisible()) return;
 
         if (component instanceof ItemComponent) {
             final ItemComponent item = (ItemComponent) component;
