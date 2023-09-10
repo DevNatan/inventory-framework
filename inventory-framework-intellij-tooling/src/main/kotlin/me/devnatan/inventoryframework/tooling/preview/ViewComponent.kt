@@ -21,25 +21,11 @@ class ViewComponent(private val declaration: IFDeclaration) : JPanel() {
         const val CHEST_WIDTH = 176
     }
 
-    private val image: Image
-
-    init {
-        layout = GridBagLayout()
-        image = ImageLoader.loadFromResource("/assets/sprites/chest-${declaration.lines}.png", this::class.java)!!
-        isVisible = true
-        minimumSize = calculateDimension()
-    }
+    private val image: Image = ImageLoader.loadFromResource("/assets/sprites/chest-${declaration.lines}.png", this::class.java)!!
 
     override fun paintComponent(g: Graphics) {
         super.paintComponent(g)
-
-        println("paint")
-        @Suppress("NAME_SHADOWING")
-        val g = g as Graphics2D
-        val oldTransform = g.transform
-        g.scale(CHEST_SCALE.toDouble(), CHEST_SCALE.toDouble())
         g.drawImage(image, 0, 0, this)
-        g.transform = oldTransform
     }
 
     private fun calculateDimension(): Dimension {

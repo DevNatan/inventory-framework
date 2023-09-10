@@ -10,15 +10,17 @@ import com.intellij.psi.PsiJavaCodeReferenceElement
 import com.intellij.ui.AncestorListenerAdapter
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.dsl.builder.panel
-import me.devnatan.inventoryframework.tooling.model.IFDeclaration
+import me.devnatan.inventoryframework.tooling.IJResourceLoader
 import me.devnatan.inventoryframework.tooling.preview.ViewComponent.Companion.CHEST_SCALE
 import me.devnatan.inventoryframework.tooling.preview.ViewComponent.Companion.CHEST_WIDTH
 import me.devnatan.inventoryframework.tooling.psi.IF_VIEW_NAME_EXPR
-import me.devnatan.inventoryframework.tooling.psi.elementToComponent
 import java.awt.BorderLayout
 import java.awt.Dimension
 import java.awt.GridBagLayout
+import javax.imageio.ImageIO
+import javax.swing.ImageIcon
 import javax.swing.JComponent
+import javax.swing.JLabel
 import javax.swing.JLayeredPane
 import javax.swing.JPanel
 import javax.swing.ScrollPaneConstants
@@ -81,7 +83,7 @@ class PreviewComponent(private val project: Project, file: VirtualFile) : JLayer
                         label("COnfia no pai q vai da bão")
                     }
                     row("Preview") {
-                        scrollCell(elementToComponent(el))
+                        cell(JLabel(ImageIcon(ImageIO.read(IJResourceLoader.getResource(this::class.java, "sprites/chest-5.png")))))
                     }
                 }
             },

@@ -18,15 +18,10 @@ version = properties("pluginVersion").get()
 
 repositories {
     mavenCentral()
-    maven("https://jitpack.io")
 }
 
 dependencies {
-    implementation("com.github.DevNatan.inventory-framework:inventory-framework-api:93dcfe4a3b")
-}
-
-kotlin {
-    jvmToolchain(11)
+    implementation(projects.inventoryFrameworkApi)
 }
 
 intellij {
@@ -59,10 +54,6 @@ kover.xmlReport {
 }
 
 tasks {
-    wrapper {
-        gradleVersion = properties("gradleVersion").get()
-    }
-
     patchPluginXml {
         version.set(properties("pluginVersion"))
         sinceBuild.set(properties("pluginSinceBuild"))
