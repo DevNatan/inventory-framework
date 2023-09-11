@@ -10,7 +10,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import me.devnatan.inventoryframework.ViewContainer;
@@ -39,7 +38,7 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
 
     // --- Internal ---
     private int currPageIndex;
-    private final boolean isLazy, isStatic;
+    private final boolean isLazy, isStatic, isComputed, isAsync;
     private boolean pageWasChanged;
     private boolean initialized;
     private int pagesCount;
@@ -67,7 +66,9 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
             char layoutTarget,
             Object sourceProvider,
             PaginationElementFactory<IFContext, Object> elementFactory,
-            BiConsumer<IFContext, Pagination> pageSwitchHandler) {
+            BiConsumer<IFContext, Pagination> pageSwitchHandler,
+            boolean isAsync,
+            boolean isComputed) {
         super(state);
         this.host = host;
         this.layoutTarget = layoutTarget;
@@ -75,10 +76,10 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
         this.elementFactory = elementFactory;
         this.pageSwitchHandler = pageSwitchHandler;
         this.currSource = convertSourceProvider();
-        this.isLazy = sourceProvider instanceof Supplier
-                || sourceProvider instanceof Function
-                || sourceProvider instanceof BiFunction;
-        this.isStatic = sourceProvider instanceof Collection;
+        this.isComputed = isComputed;
+        this.isAsync = isAsync;
+        this.isStatic = sourceProvider instanceof Collection || isAsync;
+        this.isLazy = !isStatic && isComputed;
     }
 
     /**
@@ -106,9 +107,9 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
          * re-trigger pagination data factory since it will always return the source as a whole,
          * the original one, and not the source for the switched page.
          */
-        final boolean reuseDynamic = isLazy() && initialized;
+        final boolean reuseLazy = isLazy() && initialized;
 
-        if (reuseStaticOrInitialInitialization || reuseDynamic) {
+        if (reuseStaticOrInitialInitialization || reuseLazy) {
             // For unknown reasons already initialized but source is null, external modification?
             if (initialized && currSource == null)
                 throw new IllegalStateException("User provided pagination source cannot be null");
@@ -512,6 +513,16 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
     }
 
     @Override
+    public boolean isComputed() {
+        return isComputed;
+    }
+
+    @Override
+    public boolean isAsync() {
+        return isAsync;
+    }
+
+    @Override
     public boolean isLoading() {
         return isLoading;
     }
@@ -554,6 +565,11 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
     @Override
     public boolean shouldRender(IFContext context) {
         return true;
+    }
+
+    @Override
+    public void update() {
+        ((IFContext) getRoot()).updateComponent(this);
     }
 
     @VisibleForTesting
