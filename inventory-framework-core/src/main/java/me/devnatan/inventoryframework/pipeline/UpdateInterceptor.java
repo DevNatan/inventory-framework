@@ -3,7 +3,6 @@ package me.devnatan.inventoryframework.pipeline;
 import java.util.List;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.component.Component;
-import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
 
 /**
@@ -15,7 +14,9 @@ public final class UpdateInterceptor implements PipelineInterceptor<VirtualView>
     public void intercept(PipelineContext<VirtualView> pipeline, VirtualView subject) {
         if (!(subject instanceof IFRenderContext)) return;
 
-        final IFContext context = (IFContext) subject;
+        final IFRenderContext context = (IFRenderContext) subject;
+        if (!context.isRendered()) return;
+
         final List<Component> componentList = context.getComponents();
         for (final Component component : componentList) {
             if (!component.isVisible()) {

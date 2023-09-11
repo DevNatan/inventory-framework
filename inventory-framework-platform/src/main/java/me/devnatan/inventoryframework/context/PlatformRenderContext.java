@@ -37,6 +37,7 @@ public abstract class PlatformRenderContext<T extends ItemComponentBuilder<T, C>
 
     // --- Inherited ---
     private final ViewContainer container;
+    private boolean rendered;
 
     // --- Properties ---
     private final List<ComponentFactory> componentBuilders = new ArrayList<>();
@@ -325,5 +326,19 @@ public abstract class PlatformRenderContext<T extends ItemComponentBuilder<T, C>
     public final void resetTitleForPlayer() {
         tryThrowDoNotWorkWithSharedContext("resetTitleForEveryone()");
         super.resetTitleForPlayer();
+    }
+
+    @Override
+    public final boolean isRendered() {
+        return rendered;
+    }
+
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
+    public final void setRendered() {
+        this.rendered = true;
     }
 }

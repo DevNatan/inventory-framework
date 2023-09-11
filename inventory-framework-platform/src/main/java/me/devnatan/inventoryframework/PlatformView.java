@@ -17,6 +17,7 @@ import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.context.IFSlotContext;
 import me.devnatan.inventoryframework.context.PlatformContext;
+import me.devnatan.inventoryframework.context.PlatformRenderContext;
 import me.devnatan.inventoryframework.internal.ElementFactory;
 import me.devnatan.inventoryframework.internal.PlatformUtils;
 import me.devnatan.inventoryframework.pipeline.AvailableSlotInterceptor;
@@ -252,6 +253,7 @@ public abstract class PlatformView<
     @ApiStatus.Internal
     public void renderContext(@NotNull TRenderContext context) {
         getPipeline().execute(context);
+        ((PlatformRenderContext<?, ?>) context).setRendered();
 
         @SuppressWarnings("rawtypes")
         final PlatformView view = (PlatformView) context.getRoot();

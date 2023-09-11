@@ -324,7 +324,6 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
 
     @Override
     public void render(@NotNull IFSlotRenderContext context) {
-        System.out.println("initialized = " + initialized);
         if (!initialized) {
             setVisible(true);
             final IFRenderContext root = context.getParent();
@@ -538,7 +537,7 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
     @Override
     public void setVisible(boolean visible) {
         this.visible = visible;
-		getComponentsInternal().forEach(component -> component.setVisible(visible));
+        getComponentsInternal().forEach(component -> component.setVisible(visible));
     }
 
     @Override

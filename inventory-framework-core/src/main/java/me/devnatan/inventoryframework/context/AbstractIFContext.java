@@ -80,7 +80,7 @@ abstract class AbstractIFContext extends DefaultStateValueHost implements IFCont
         }
     }
 
-    private IFSlotRenderContext createRenderContext(@NotNull Component component) {
+    private IFSlotRenderContext createSlotRenderContext(@NotNull Component component) {
         if (!(this instanceof IFRenderContext))
             throw new InventoryFrameworkException("Slot render context cannot be created from non-render parent");
 
@@ -113,12 +113,12 @@ abstract class AbstractIFContext extends DefaultStateValueHost implements IFCont
             return;
         }
 
-        component.render(createRenderContext(component));
+        component.render(createSlotRenderContext(component));
     }
 
     @Override
     public void updateComponent(@NotNull Component component) {
-        component.updated(createRenderContext(component));
+        component.updated(createSlotRenderContext(component));
     }
 
     @Override
