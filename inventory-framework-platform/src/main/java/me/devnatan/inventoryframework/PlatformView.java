@@ -584,7 +584,7 @@ public abstract class PlatformView<
     protected final <T> State<Pagination> computedPaginationState(
             @NotNull Function<TContext, List<? super T>> sourceProvider,
             @NotNull PaginationValueConsumer<TContext, TItem, T> valueConsumer) {
-        return this.buildPaginationState(sourceProvider)
+        return this.buildComputedPaginationState(sourceProvider)
                 .elementFactory(valueConsumer)
                 .build();
     }
@@ -601,7 +601,7 @@ public abstract class PlatformView<
     protected final <T> State<Pagination> computedPaginationState(
             @NotNull Supplier<List<? super T>> sourceProvider,
             @NotNull PaginationValueConsumer<TContext, TItem, T> valueConsumer) {
-        return this.buildPaginationState(sourceProvider)
+        return this.buildComputedPaginationState(sourceProvider)
                 .elementFactory(valueConsumer)
                 .build();
     }
