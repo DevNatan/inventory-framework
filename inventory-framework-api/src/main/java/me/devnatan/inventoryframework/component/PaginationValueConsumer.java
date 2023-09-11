@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
  * @param <V> The value that represents the current element being paginated
  */
 @FunctionalInterface
-public interface PaginationElementConsumer<Context, Builder, V> {
+public interface PaginationValueConsumer<Context, Builder, V> {
 
     /**
      * Performs this operation on the given arguments.
