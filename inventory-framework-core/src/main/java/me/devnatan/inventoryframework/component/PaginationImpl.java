@@ -342,10 +342,11 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
 
     @Override
     public void updated(@NotNull IFSlotRenderContext context) {
+		final IFRenderContext renderContext = context.getParent();
+
         // If page was changed all components will be removed, so don't trigger update on them
         if (pageWasChanged) {
-            final IFRenderContext renderContext = context.getParent();
-            getComponentsInternal().forEach(child -> child.clear(context));
+            getComponentsInternal().forEach(child -> child.clear(renderContext));
             components = new ArrayList<>();
             getComponentsInternal().clear();
             loadCurrentPage(renderContext).thenRun(() -> {
