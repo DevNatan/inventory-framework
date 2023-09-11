@@ -590,23 +590,6 @@ public abstract class PlatformView<
     }
 
     /**
-     * Creates a new unmodifiable computed pagination state.
-     *
-     * @param sourceProvider Data source for pagination.
-     * @param valueConsumer  Function for creating pagination items, this function is called for
-     *                       each paged element (item) on a page.
-     * @param <T>            The pagination data type.
-     * @return A new unmodifiable pagination state.
-     */
-    protected final <T> State<Pagination> computedPaginationState(
-            @NotNull Supplier<List<? super T>> sourceProvider,
-            @NotNull PaginationValueConsumer<TContext, TItem, T> valueConsumer) {
-        return this.buildComputedPaginationState(sourceProvider)
-                .elementFactory(valueConsumer)
-                .build();
-    }
-
-    /**
      * Creates a new unmodifiable computed pagination state with asynchronous data source.
      * <p>
      * <b><i> This API is experimental and is not subject to the general compatibility guarantees
@@ -623,6 +606,61 @@ public abstract class PlatformView<
             @NotNull Function<TContext, CompletableFuture<List<T>>> sourceProvider,
             @NotNull PaginationValueConsumer<TContext, TItem, T> valueConsumer) {
         return this.buildComputedAsyncPaginationState(sourceProvider)
+                .elementFactory(valueConsumer)
+                .build();
+    }
+
+    /**
+     * Creates a new unmodifiable lazy pagination state.
+     *
+     * @param sourceProvider Data source for pagination.
+     * @param valueConsumer  Function for creating pagination items, this function is called for
+     *                       each paged element (item) on a page.
+     * @param <T>            The pagination data type.
+     * @return A new unmodifiable pagination state.
+     */
+    protected final <T> State<Pagination> lazyPaginationState(
+            @NotNull Function<TContext, List<? super T>> sourceProvider,
+            @NotNull PaginationValueConsumer<TContext, TItem, T> valueConsumer) {
+        return this.buildLazyPaginationState(sourceProvider)
+                .elementFactory(valueConsumer)
+                .build();
+    }
+
+    /**
+     * Creates a new unmodifiable lazy pagination state.
+     *
+     * @param sourceProvider Data source for pagination.
+     * @param valueConsumer  Function for creating pagination items, this function is called for
+     *                       each paged element (item) on a page.
+     * @param <T>            The pagination data type.
+     * @return A new unmodifiable pagination state.
+     */
+    protected final <T> State<Pagination> lazyPaginationState(
+            @NotNull Supplier<List<? super T>> sourceProvider,
+            @NotNull PaginationValueConsumer<TContext, TItem, T> valueConsumer) {
+        return this.buildLazyPaginationState(sourceProvider)
+                .elementFactory(valueConsumer)
+                .build();
+    }
+
+    /**
+     * Creates a new unmodifiable lazy pagination state with asynchronous data source.
+     * <p>
+     * <b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     *
+     * @param sourceProvider The data source for pagination.
+     * @param valueConsumer    The function for creating pagination items, this function is called for
+     *                       each paged element (item) on a page.
+     * @param <T>            The pagination data type.
+     * @return A new unmodifiable pagination state.
+     */
+    @ApiStatus.Experimental
+    protected final <T> State<Pagination> lazyAsyncPaginationState(
+            @NotNull Function<TContext, CompletableFuture<List<T>>> sourceProvider,
+            @NotNull PaginationValueConsumer<TContext, TItem, T> valueConsumer) {
+        return this.buildLazyAsyncPaginationState(sourceProvider)
                 .elementFactory(valueConsumer)
                 .build();
     }
@@ -718,24 +756,12 @@ public abstract class PlatformView<
      * @return A new pagination state builder.
      */
     protected final <T> PaginationStateBuilder<TContext, TItem, T> buildComputedPaginationState(
-            @NotNull Supplier<List<? super T>> sourceProvider) {
-        return new PaginationStateBuilder<>(this, sourceProvider, false, true);
-    }
-
-    /**
-     * Creates a new unmodifiable dynamic pagination state builder.
-     *
-     * @param sourceProvider The data source for pagination.
-     * @param <T>            The pagination data type.
-     * @return A new pagination state builder.
-     */
-    protected final <T> PaginationStateBuilder<TContext, TItem, T> buildComputedPaginationState(
             @NotNull Function<TContext, List<? super T>> sourceProvider) {
         return new PaginationStateBuilder<>(this, sourceProvider, false, true);
     }
 
     /**
-     * Creates a new unmodifiable asynchronous pagination state builder.
+     * Creates a new unmodifiable computed pagination state builder with asynchronous data source.
      * <p>
      * <b><i> This API is experimental and is not subject to the general compatibility guarantees
      * such API may be changed or may be removed completely in any further release. </i></b>
@@ -746,6 +772,46 @@ public abstract class PlatformView<
      */
     @ApiStatus.Experimental
     protected final <T> PaginationStateBuilder<TContext, TItem, T> buildComputedAsyncPaginationState(
+            @NotNull Function<TContext, CompletableFuture<List<T>>> sourceProvider) {
+        return new PaginationStateBuilder<>(this, sourceProvider, true, true);
+    }
+
+    /**
+     * Creates a new unmodifiable lazy pagination state builder.
+     *
+     * @param sourceProvider The data source for pagination.
+     * @param <T>            The pagination data type.
+     * @return A new pagination state builder.
+     */
+    protected final <T> PaginationStateBuilder<TContext, TItem, T> buildLazyPaginationState(
+            @NotNull Supplier<List<? super T>> sourceProvider) {
+        return new PaginationStateBuilder<>(this, sourceProvider, false, false);
+    }
+
+    /**
+     * Creates a new unmodifiable lazy pagination state builder.
+     *
+     * @param sourceProvider The data source for pagination.
+     * @param <T>            The pagination data type.
+     * @return A new pagination state builder.
+     */
+    protected final <T> PaginationStateBuilder<TContext, TItem, T> buildLazyPaginationState(
+            @NotNull Function<TContext, List<? super T>> sourceProvider) {
+        return new PaginationStateBuilder<>(this, sourceProvider, false, false);
+    }
+
+    /**
+     * Creates a new unmodifiable lazy pagination state builder with asynchronous data source.
+     * <p>
+     * <b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     *
+     * @param sourceProvider The data source for pagination.
+     * @param <T>            The pagination data type.
+     * @return A new pagination state builder.
+     */
+    @ApiStatus.Experimental
+    protected final <T> PaginationStateBuilder<TContext, TItem, T> buildLazyAsyncPaginationState(
             @NotNull Function<TContext, CompletableFuture<List<T>>> sourceProvider) {
         return new PaginationStateBuilder<>(this, sourceProvider, true, false);
     }
