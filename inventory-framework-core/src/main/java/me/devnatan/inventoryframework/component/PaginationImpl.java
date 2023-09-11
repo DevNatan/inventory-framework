@@ -96,12 +96,7 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
      * @return A CompletableFuture with the current pagination source as result.
      * @throws IllegalStateException In static pagination when the current source wasn't yet defined.
      */
-    @SuppressWarnings("unchecked")
     private CompletableFuture<List<?>> loadSourceForTheCurrentPage() {
-        // For non-lazy pagination (since it will be always the same) or first initialization
-        // just get the current source as a whole and use
-        final boolean reuseStaticOrInitialInitialization = isStatic() || !initialized;
-
         /*
          * In lazy pagination **that was already initialized (already rendered before)** we must
          * use the current data source as source of truth to ensure that page switching do not
@@ -110,11 +105,14 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
          */
         final boolean reuseLazy = isLazy() && initialized;
 
-        if ((reuseStaticOrInitialInitialization || reuseLazy) && !isComputed()) {
+        if ((isStatic() || reuseLazy) && !isComputed()) {
             // For unknown reasons already initialized but source is null, external modification?
             if (initialized && currSource == null)
                 throw new IllegalStateException("User provided pagination source cannot be null");
-            else pagesCount = calculatePagesCount(currSource);
+            else {
+                // Lazy pagination have pages count calculated on first render as a computed flow
+                if (!isLazy()) pagesCount = calculatePagesCount(currSource);
+            }
 
             return CompletableFuture.completedFuture(
                     Pagination.splitSourceForPage(currPageIndex, getPageSize(), getPagesCount(), currSource));
@@ -351,7 +349,7 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
 
     @Override
     public void updated(@NotNull IFSlotRenderContext context) {
-		final IFRenderContext renderContext = context.getParent();
+        final IFRenderContext renderContext = context.getParent();
 
         // If page was changed all components will be removed, so don't trigger update on them
         if (pageWasChanged) {
@@ -464,6 +462,7 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
 
     @Override
     public boolean hasPage(int pageIndex) {
+        if (isComputed()) return true;
         if (pageIndex < 0) return false;
         return pageIndex < getPagesCount();
     }
