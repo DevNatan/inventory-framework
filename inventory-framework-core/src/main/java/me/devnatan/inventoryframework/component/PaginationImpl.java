@@ -109,41 +109,36 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
          */
         final boolean reuseLazy = isLazy() && initialized;
 
-        if (reuseStaticOrInitialInitialization || reuseLazy) {
+        if ((reuseStaticOrInitialInitialization || reuseLazy) && !isComputed()) {
             // For unknown reasons already initialized but source is null, external modification?
             if (initialized && currSource == null)
                 throw new IllegalStateException("User provided pagination source cannot be null");
-
-            if (!initialized) pagesCount = calculatePagesCount(currSource);
+            else pagesCount = calculatePagesCount(currSource);
 
             return CompletableFuture.completedFuture(
                     Pagination.splitSourceForPage(currPageIndex, getPageSize(), getPagesCount(), currSource));
         }
 
-        // Lazy flow
+        // Computed flow
         CompletableFuture<List<?>> job = new CompletableFuture<>();
         isLoading = true;
         simulateStateUpdate();
 
         final Object source = _srcFactory.apply(host);
-        if (source instanceof CompletableFuture) {
-            job = (CompletableFuture<List<?>>) source;
-        } else {
-            // Here we are covering the dynamic rendering that's can be the usage of factories like
-            // `Supplier<List>` and Function<..., List> so we just cast the result here
-            job.complete((List<?>) source);
-        }
+        if (isAsync()) job = (CompletableFuture<List<?>>) source;
+        else if (isComputed()) job.complete((List<?>) source);
+        else throw new IllegalArgumentException("Unhandled pagination source");
 
         // TODO Do some error treatment here, even if we expect to the user to handle it
-        job.thenAccept(this::updateSource).whenComplete((result, exception) -> {
+        return job.whenComplete((result, exception) -> {
+            updateSource(result);
             isLoading = false;
             simulateStateUpdate();
         });
-        return job;
     }
 
     /**
-     * Updates the current source and the number of availalbe pages count based on that source.
+     * Updates the current source and the number of available pages count based on that source.
      *
      * @param newSource The new data source.
      */
@@ -329,7 +324,9 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
 
     @Override
     public void render(@NotNull IFSlotRenderContext context) {
+        System.out.println("initialized = " + initialized);
         if (!initialized) {
+            setVisible(true);
             final IFRenderContext root = context.getParent();
             updatePageSize(root);
             loadCurrentPage(root).thenRun(() -> renderChild(context));
@@ -541,6 +538,7 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
     @Override
     public void setVisible(boolean visible) {
         this.visible = visible;
+		getComponentsInternal().forEach(component -> component.setVisible(visible));
     }
 
     @Override
