@@ -120,22 +120,30 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
                     Pagination.splitSourceForPage(currPageIndex, getPageSize(), getPagesCount(), currSource));
         }
 
-        // Computed flow
-        CompletableFuture<List<?>> job = new CompletableFuture<>();
         isLoading = true;
         simulateStateUpdate();
 
-        final Object source = _srcFactory.apply(host);
-        if (isAsync()) job = (CompletableFuture<List<?>>) source;
-        else if (isComputed()) job.complete((List<?>) source);
-        else throw new IllegalArgumentException("Unhandled pagination source");
-
         // TODO Do some error treatment here, even if we expect to the user to handle it
-        return job.whenComplete((result, exception) -> {
+        return createProvidedNewSource().handle((result, exception) -> {
             updateSource(result);
             isLoading = false;
             simulateStateUpdate();
+
+            if (isLazy()) return Pagination.splitSourceForPage(currPageIndex, getPageSize(), getPagesCount(), result);
+            else return result;
         });
+    }
+
+    @SuppressWarnings("unchecked")
+    private CompletableFuture<List<?>> createProvidedNewSource() {
+        CompletableFuture<List<?>> job = new CompletableFuture<>();
+
+        final Object source = _srcFactory.apply(host);
+        if (isAsync()) job = (CompletableFuture<List<?>>) source;
+        else if (isComputed() || isLazy()) job.complete((List<?>) source);
+        else throw new IllegalArgumentException("Unhandled pagination source");
+
+        return job;
     }
 
     /**
