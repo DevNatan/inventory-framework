@@ -518,25 +518,6 @@ public abstract class PlatformView<
     }
 
     /**
-     * Creates a new immutable state of static pagination.
-     *
-     * @param sourceProvider The data source for pagination.
-     * @param itemFactory    The function for creating pagination items, this function is called for
-     *                       each paged element (item) on a page.
-     * @param <T>            The pagination data type.
-     * @return A new immutable pagination state.
-     * @deprecated Use {@link #paginationState(List, PaginationValueConsumer)} instead.
-     */
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "3.0.0")
-    protected final <T> State<Pagination> paginationState(
-            @NotNull List<? super T> sourceProvider, @NotNull BiConsumer<TItem, T> itemFactory) {
-        return this.<T>buildPaginationState(sourceProvider)
-                .itemFactory(itemFactory)
-                .build();
-    }
-
-    /**
      * Creates a new immutable pagination with static data source.
      *
      * @param sourceProvider The data source for pagination.
@@ -550,25 +531,6 @@ public abstract class PlatformView<
             @NotNull PaginationValueConsumer<TContext, TItem, T> elementConsumer) {
         return this.<T>buildPaginationState(sourceProvider)
                 .elementFactory(elementConsumer)
-                .build();
-    }
-
-    /**
-     * Creates a new unmodifiable dynamic pagination state.
-     *
-     * @param sourceProvider The data source for pagination.
-     * @param itemFactory    The function for creating pagination items, this function is called for
-     *                       each paged element (item) on a page.
-     * @param <T>            The pagination data type.
-     * @return A new immutable pagination state.
-     * @deprecated Use {@link #computedPaginationState(Function, PaginationValueConsumer)} instead.
-     */
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "3.0.0")
-    protected final <T> State<Pagination> paginationState(
-            @NotNull Function<TContext, List<? super T>> sourceProvider, @NotNull BiConsumer<TItem, T> itemFactory) {
-        return this.buildPaginationState(sourceProvider)
-                .itemFactory(itemFactory)
                 .build();
     }
 
@@ -666,47 +628,6 @@ public abstract class PlatformView<
     }
 
     /**
-     * Creates a new unmodifiable dynamic pagination state.
-     *
-     * @param sourceProvider The data source for pagination.
-     * @param itemFactory    The function for creating pagination items, this function is called for
-     *                       each paged element (item) on a page.
-     * @param <T>            The pagination data type.
-     * @return A new immutable pagination state.
-     * @deprecated Use {@link #computedPaginationState(Function, PaginationValueConsumer)} instead.
-     */
-    @Deprecated
-    protected final <T> State<Pagination> paginationState(
-            @NotNull Supplier<List<? super T>> sourceProvider, @NotNull BiConsumer<TItem, T> itemFactory) {
-        return this.buildPaginationState(sourceProvider)
-                .itemFactory(itemFactory)
-                .build();
-    }
-
-    /**
-     * Creates a new unmodifiable asynchronous pagination state.
-     * <p>
-     * <b><i> This API is experimental and is not subject to the general compatibility guarantees
-     * such API may be changed or may be removed completely in any further release. </i></b>
-     *
-     * @param sourceProvider The asynchronous data source for pagination.
-     * @param itemFactory    The function for creating pagination items, this function is called for
-     *                       each paged element (item) on a page.
-     * @param <T>            The pagination data type.
-     * @return A new immutable pagination state.
-     * @deprecated
-     */
-    @Deprecated
-    @ApiStatus.Experimental
-    protected final <T> State<Pagination> asyncPaginationState(
-            @NotNull Function<TContext, CompletableFuture<List<T>>> sourceProvider,
-            @NotNull BiConsumer<TItem, T> itemFactory) {
-        return this.buildComputedAsyncPaginationState(sourceProvider)
-                .itemFactory(itemFactory)
-                .build();
-    }
-
-    /**
      * Creates a new unmodifiable static pagination state builder.
      *
      * @param sourceProvider The data source for pagination.
@@ -716,36 +637,6 @@ public abstract class PlatformView<
     protected final <T> PaginationStateBuilder<TContext, TItem, T> buildPaginationState(
             @NotNull List<? super T> sourceProvider) {
         return new PaginationStateBuilder<>(this, sourceProvider);
-    }
-
-    /**
-     * Creates a new unmodifiable dynamic pagination state builder.
-     *
-     * @param sourceProvider The data source for pagination.
-     * @param <T>            The pagination data type.
-     * @return A new pagination state builder.
-     * @deprecated Use {@link #buildComputedPaginationState(Supplier)} instead.
-     */
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "3.0.0")
-    protected final <T> PaginationStateBuilder<TContext, TItem, T> buildPaginationState(
-            @NotNull Supplier<List<? super T>> sourceProvider) {
-        return new PaginationStateBuilder<>(this, sourceProvider, false, true);
-    }
-
-    /**
-     * Creates a new unmodifiable dynamic pagination state builder.
-     *
-     * @param sourceProvider The data source for pagination.
-     * @param <T>            The pagination data type.
-     * @return A new pagination state builder.
-     * @deprecated Use {@link #buildComputedPaginationState(Function)} instead.
-     */
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "3.0.0")
-    protected final <T> PaginationStateBuilder<TContext, TItem, T> buildPaginationState(
-            @NotNull Function<TContext, List<? super T>> sourceProvider) {
-        return new PaginationStateBuilder<>(this, sourceProvider, false, true);
     }
 
     /**
