@@ -1,14 +1,18 @@
 package me.devnatan.inventoryframework.context;
 
+import me.devnatan.inventoryframework.BukkitViewer;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.Viewer;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.UnknownNullability;
 
 public class SlotRenderContext extends SlotContext implements IFSlotRenderContext {
 
+    private final Player player;
     private final Viewer viewer;
 
     private ItemStack item;
@@ -19,6 +23,12 @@ public class SlotRenderContext extends SlotContext implements IFSlotRenderContex
     public SlotRenderContext(int slot, @NotNull IFRenderContext parent, @Nullable Viewer viewer) {
         super(slot, parent);
         this.viewer = viewer;
+        this.player = viewer == null ? null : ((BukkitViewer) viewer).getPlayer();
+    }
+
+    @Override
+    public final @UnknownNullability Player getPlayer() {
+        return player;
     }
 
     @Override

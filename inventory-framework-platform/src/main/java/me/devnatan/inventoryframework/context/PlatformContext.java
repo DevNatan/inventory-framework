@@ -89,7 +89,7 @@ public abstract class PlatformContext extends AbstractIFContext {
      *
      * @param other The view to be opened.
      */
-    public final void openForEveryone(Class<? extends RootView> other) {
+    public final void openForEveryone(@NotNull Class<? extends RootView> other) {
         openForEveryone(other, null);
     }
 
@@ -102,7 +102,7 @@ public abstract class PlatformContext extends AbstractIFContext {
      * @param initialData The initial data.
      */
     @SuppressWarnings("unchecked")
-    public final void openForEveryone(Class<? extends RootView> other, Object initialData) {
+    public final void openForEveryone(@NotNull Class<? extends RootView> other, Object initialData) {
         getRoot().navigateTo(other, this, initialData);
     }
 }

@@ -4,8 +4,9 @@ import java.util.List;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.UnknownNullability;
 
-public interface Context extends IFContext {
+public interface Context extends IFConfinedContext {
 
     /**
      * The player for the current interaction context.
@@ -15,8 +16,8 @@ public interface Context extends IFContext {
      *
      * @return A player in this interaction context.
      */
-    //    @UnknownNullability
-    //    Player getPlayer();
+    @UnknownNullability
+    Player getPlayer();
 
     /**
      * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees

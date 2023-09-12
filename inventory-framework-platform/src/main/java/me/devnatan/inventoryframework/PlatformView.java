@@ -758,7 +758,7 @@ public abstract class PlatformView<
      * This function should only be used to render items, any external call is completely forbidden
      * as the function runs on the main thread.
      *
-     * @param render The renderization context.
+     * @param render The rendering context.
      */
     @ApiStatus.OverrideOnly
     public void onFirstRender(@NotNull TRenderContext render) {}
@@ -768,7 +768,7 @@ public abstract class PlatformView<
      *
      * <p>This is a rendering function and can modify the view's inventory.
      *
-     * @param update The player view context.
+     * @param update The update context.
      */
     @ApiStatus.OverrideOnly
     public void onUpdate(@NotNull TContext update) {}
