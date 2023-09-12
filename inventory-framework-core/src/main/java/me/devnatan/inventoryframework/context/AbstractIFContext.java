@@ -131,9 +131,6 @@ abstract class AbstractIFContext extends DefaultStateValueHost implements IFCont
         return getIndexedViewers().size() > 1;
     }
 
-    @Override
-    public void back() {}
-
     /**
      * Throws a {@link InventoryFrameworkException} saying that the method that's being executed is
      * not supported if this context is a shared context.

@@ -226,6 +226,24 @@ public interface IFContext extends VirtualView, StateValueHost {
      */
     void openForEveryone(@NotNull Class<? extends RootView> other, Object initialData);
 
+    /**
+     * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     */
     @ApiStatus.Experimental
     void back();
+
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
+    boolean isActive();
+
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
+    void setActive(boolean active);
 }

@@ -6,6 +6,8 @@ import org.jetbrains.annotations.Nullable;
 
 public abstract class PlatformContext extends AbstractIFContext {
 
+    private boolean active = true;
+
     PlatformContext() {}
 
     @SuppressWarnings("rawtypes")
@@ -104,5 +106,20 @@ public abstract class PlatformContext extends AbstractIFContext {
     @SuppressWarnings("unchecked")
     public final void openForEveryone(@NotNull Class<? extends RootView> other, Object initialData) {
         getRoot().navigateTo(other, this, initialData);
+    }
+
+    @Override
+    public void back() {
+        throw new UnsupportedOperationException("PIROCOPTERO");
+    }
+
+    @Override
+    public boolean isActive() {
+        return active;
+    }
+
+    @Override
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }

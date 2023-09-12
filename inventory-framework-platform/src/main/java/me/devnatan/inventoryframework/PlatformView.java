@@ -265,20 +265,16 @@ public abstract class PlatformView<
         });
     }
 
+    @SuppressWarnings("rawtypes")
     @ApiStatus.Internal
     public void removeAndTryInvalidateContext(@NotNull Viewer viewer, @NotNull TContext context) {
         context.removeViewer(viewer);
 
         if (!viewer.isTransitioning())
-            ((PlatformView<?, ?, ?, ?, ?, ?, ?, ?>) context.getRoot())
-                    .getFramework()
-                    .removeViewer(viewer);
+            ((PlatformView) context.getRoot()).getFramework().removeViewer(viewer);
 
-        final boolean canContextBeInvalidated = context.getViewers().isEmpty();
-        System.out.println("viewer.isTransitioning() = " + viewer.isTransitioning());
-        System.out.println("canContextBeInvalidated = " + canContextBeInvalidated);
-        if (canContextBeInvalidated) {
-            // TODO invalidate context
+        if (context.getViewers().isEmpty()) {
+            // TODO Disable context (setActive(false)) if viewer is transitioning
             removeContext(context);
         }
     }
