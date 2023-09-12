@@ -5,6 +5,7 @@ import static java.lang.String.format;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -164,18 +165,20 @@ public abstract class PlatformView<
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
     @ApiStatus.Internal
-    public final void navigateTo(
-            @NotNull IFRenderContext target,
-            @NotNull IFRenderContext origin,
-            @NotNull Viewer viewer,
-            Object initialData) {
-        setupNavigateTo(viewer, origin);
-
+    public final void back(@NotNull Viewer viewer) {
+        final IFRenderContext target = viewer.getPreviousContext();
+        viewer.unsetPreviousContext();
+        viewer.setTransitioning(true);
         viewer.setActiveContext(target);
         target.addViewer(viewer);
 
         if (target.getViewers().size() == 1) target.getContainer().open(viewer);
-        else ((PlatformView) target.getRoot()).renderContext(target);
+        else {
+            final PlatformView root = (PlatformView) target.getRoot();
+            if (!root.hasContext(target.getId())) root.addContext(target);
+
+            root.renderContext(target);
+        }
         viewer.setTransitioning(false);
     }
 
@@ -258,10 +261,22 @@ public abstract class PlatformView<
      * @param context The context to remove.
      */
     @ApiStatus.Internal
-    public void removeContext(@NotNull TContext context) {
+    public void removeContext(@NotNull IFContext context) {
         synchronized (getInternalContexts()) {
             getInternalContexts().removeIf(other -> other.getId() == context.getId());
         }
+    }
+
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
+    public boolean hasContext(@NotNull UUID id) {
+        for (final IFContext context : getInternalContexts()) {
+            if (context.getId().equals(id)) return true;
+        }
+        return false;
     }
 
     /**
@@ -292,13 +307,17 @@ public abstract class PlatformView<
     public void removeAndTryInvalidateContext(@NotNull Viewer viewer, @NotNull TContext context) {
         context.removeViewer(viewer);
 
-        System.out.println("viewer.isTransitioning() = " + viewer.isTransitioning());
         if (!viewer.isTransitioning())
             ((PlatformView) context.getRoot()).getFramework().removeViewer(viewer);
 
-        if (context.getViewers().isEmpty()) {
+        final IFRenderContext target =
+                viewer.isTransitioning() ? viewer.getPreviousContext() : viewer.getActiveContext();
+
+        if (target == null) return;
+
+        if (target.getViewers().isEmpty()) {
             // TODO Disable context (setActive(false)) if viewer is transitioning
-            removeContext(context);
+            removeContext(target);
         }
     }
 

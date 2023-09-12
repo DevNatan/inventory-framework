@@ -2,6 +2,7 @@ package me.devnatan.inventoryframework.context;
 
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.Viewer;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -63,4 +64,18 @@ public interface IFConfinedContext extends IFContext {
      * defined title. Must be used after {@link #updateTitleForPlayer(String)} to take effect.
      */
     void resetTitleForPlayer();
+
+    /**
+     * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     */
+    @ApiStatus.Experimental
+    void back();
+
+    /**
+     * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     */
+    @ApiStatus.Experimental
+    boolean canBack();
 }

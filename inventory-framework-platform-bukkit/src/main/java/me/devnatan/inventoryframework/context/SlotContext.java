@@ -165,4 +165,9 @@ public abstract class SlotContext extends PlatformContext implements IFSlotConte
     public void back() {
         getParent().back();
     }
+
+    @Override
+    public boolean canBack() {
+        return getParent().canBack();
+    }
 }

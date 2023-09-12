@@ -18,7 +18,6 @@ public final class PlatformOpenInterceptor implements PipelineInterceptor<Virtua
     @Override
     public void intercept(@NotNull PipelineContext<VirtualView> pipeline, VirtualView subject) {
         if (!(subject instanceof IFOpenContext)) return;
-
         final IFOpenContext openContext = (IFOpenContext) subject;
 
         if (openContext.getRoot() instanceof PlatformView) {

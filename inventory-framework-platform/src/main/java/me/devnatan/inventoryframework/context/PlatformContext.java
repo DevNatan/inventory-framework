@@ -80,14 +80,6 @@ public abstract class PlatformContext extends AbstractIFContext {
     }
 
     @Override
-    public void back() {
-        for (final Viewer viewer : getViewers()) {
-            if (viewer.getPreviousContext() == null) continue;
-            getRoot().navigateTo(viewer.getPreviousContext(), viewer.getActiveContext(), viewer, getInitialData());
-        }
-    }
-
-    @Override
     public boolean isActive() {
         return active;
     }

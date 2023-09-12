@@ -1,5 +1,7 @@
 package me.devnatan.inventoryframework;
 
+import java.util.Deque;
+import java.util.LinkedList;
 import java.util.Objects;
 import me.devnatan.inventoryframework.context.IFRenderContext;
 import org.bukkit.entity.Player;
@@ -9,7 +11,8 @@ public final class BukkitViewer implements Viewer {
 
     private final Player player;
     private ViewContainer selfContainer;
-    private IFRenderContext activeContext, previousContext;
+    private IFRenderContext activeContext;
+    private Deque<IFRenderContext> previousContexts = new LinkedList<>();
     private long lastInteractionInMillis;
     private boolean transitioning;
 
@@ -36,11 +39,6 @@ public final class BukkitViewer implements Viewer {
     @Override
     public void setActiveContext(@NotNull IFRenderContext context) {
         this.activeContext = context;
-    }
-
-    @Override
-    public Viewer withActiveContext(@NotNull IFRenderContext context) {
-        return new BukkitViewer(player, selfContainer, context);
     }
 
     @Override
@@ -97,12 +95,17 @@ public final class BukkitViewer implements Viewer {
 
     @Override
     public IFRenderContext getPreviousContext() {
-        return previousContext;
+        return previousContexts.peekLast();
     }
 
     @Override
     public void setPreviousContext(IFRenderContext previousContext) {
-        this.previousContext = previousContext;
+        previousContexts.add(previousContext);
+    }
+
+    @Override
+    public void unsetPreviousContext() {
+        previousContexts.pollLast();
     }
 
     @Override

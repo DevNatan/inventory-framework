@@ -34,4 +34,17 @@ abstract class PlatformConfinedContext extends PlatformContext implements IFConf
     public void resetTitleForPlayer() {
         getContainerOrThrow().changeTitle(null, getViewer());
     }
+
+    @Override
+    public void back() {
+        tryThrowDoNotWorkWithSharedContext();
+        if (!canBack()) return;
+        getRoot().back(getViewer());
+    }
+
+    @Override
+    public boolean canBack() {
+        tryThrowDoNotWorkWithSharedContext();
+        return getViewer().getPreviousContext() != null;
+    }
 }
