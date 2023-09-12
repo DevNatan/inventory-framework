@@ -15,8 +15,6 @@ repositories {
 }
 
 dependencies {
-    api projects.inventoryFrameworkApi
-    api projects.inventoryFrameworkCore
     api projects.inventoryFrameworkPlatform
     compileOnly libs.spigot
     testCompileOnly libs.spigot

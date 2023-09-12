@@ -2,7 +2,7 @@ apply from: '../library.gradle'
 apply from: '../publish.gradle'
 
 dependencies {
-    compileOnlyApi projects.inventoryFrameworkCore
+    api projects.inventoryFrameworkCore
     testImplementation projects.inventoryFrameworkApi
     testImplementation projects.inventoryFrameworkCore
     testImplementation projects.inventoryFrameworkTest

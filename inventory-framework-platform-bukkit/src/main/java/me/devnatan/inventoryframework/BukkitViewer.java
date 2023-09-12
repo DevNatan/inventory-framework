@@ -1,5 +1,7 @@
 package me.devnatan.inventoryframework;
 
+import java.util.Deque;
+import java.util.LinkedList;
 import java.util.Objects;
 import me.devnatan.inventoryframework.context.IFRenderContext;
 import org.bukkit.entity.Player;
@@ -9,17 +11,19 @@ public final class BukkitViewer implements Viewer {
 
     private final Player player;
     private ViewContainer selfContainer;
-    private IFRenderContext context;
+    private IFRenderContext activeContext;
+    private Deque<IFRenderContext> previousContexts = new LinkedList<>();
     private long lastInteractionInMillis;
+    private boolean transitioning;
 
-    public BukkitViewer(@NotNull Player player, IFRenderContext context) {
-        this(player, null, context);
+    public BukkitViewer(@NotNull Player player, IFRenderContext activeContext) {
+        this(player, null, activeContext);
     }
 
-    private BukkitViewer(@NotNull Player player, ViewContainer selfContainer, IFRenderContext context) {
+    private BukkitViewer(@NotNull Player player, ViewContainer selfContainer, IFRenderContext activeContext) {
         this.player = player;
         this.selfContainer = selfContainer;
-        this.context = context;
+        this.activeContext = activeContext;
     }
 
     public Player getPlayer() {
@@ -28,18 +32,13 @@ public final class BukkitViewer implements Viewer {
 
     @NotNull
     @Override
-    public IFRenderContext getContext() {
-        return context;
+    public IFRenderContext getActiveContext() {
+        return activeContext;
     }
 
     @Override
-    public void setContext(IFRenderContext context) {
-        this.context = context;
-    }
-
-    @Override
-    public Viewer withContext(IFRenderContext context) {
-        return new BukkitViewer(player, selfContainer, context);
+    public void setActiveContext(@NotNull IFRenderContext context) {
+        this.activeContext = context;
     }
 
     @Override
@@ -61,7 +60,7 @@ public final class BukkitViewer implements Viewer {
     public @NotNull ViewContainer getSelfContainer() {
         if (selfContainer == null)
             selfContainer = new BukkitViewContainer(
-                    getPlayer().getInventory(), getContext().isShared(), ViewType.PLAYER);
+                    getPlayer().getInventory(), getActiveContext().isShared(), ViewType.PLAYER);
 
         return selfContainer;
     }
@@ -78,10 +77,35 @@ public final class BukkitViewer implements Viewer {
 
     @Override
     public boolean isBlockedByInteractionDelay() {
-        final long configuredDelay = context.getConfig().getInteractionDelayInMillis();
+        final long configuredDelay = activeContext.getConfig().getInteractionDelayInMillis();
         if (configuredDelay <= 0 || getLastInteractionInMillis() <= 0) return false;
 
         return getLastInteractionInMillis() + configuredDelay >= System.currentTimeMillis();
+    }
+
+    @Override
+    public boolean isTransitioning() {
+        return transitioning;
+    }
+
+    @Override
+    public void setTransitioning(boolean transitioning) {
+        this.transitioning = transitioning;
+    }
+
+    @Override
+    public IFRenderContext getPreviousContext() {
+        return previousContexts.peekLast();
+    }
+
+    @Override
+    public void setPreviousContext(IFRenderContext previousContext) {
+        previousContexts.add(previousContext);
+    }
+
+    @Override
+    public void unsetPreviousContext() {
+        previousContexts.pollLast();
     }
 
     @Override
@@ -99,7 +123,11 @@ public final class BukkitViewer implements Viewer {
 
     @Override
     public String toString() {
-        return "BukkitViewer{" + "player=" + player + ", selfContainer=" + selfContainer + ", lastInteractionInMillis="
-                + lastInteractionInMillis + "}";
+        return "BukkitViewer{"
+                + "player=" + player
+                + ", selfContainer=" + selfContainer
+                + ", lastInteractionInMillis=" + lastInteractionInMillis
+                + ", isTransitioning=" + transitioning
+                + "}";
     }
 }

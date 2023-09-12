@@ -18,7 +18,6 @@ public final class PlatformOpenInterceptor implements PipelineInterceptor<Virtua
     @Override
     public void intercept(@NotNull PipelineContext<VirtualView> pipeline, VirtualView subject) {
         if (!(subject instanceof IFOpenContext)) return;
-
         final IFOpenContext openContext = (IFOpenContext) subject;
 
         if (openContext.getRoot() instanceof PlatformView) {
@@ -80,9 +79,11 @@ public final class PlatformOpenInterceptor implements PipelineInterceptor<Virtua
                 openContext.getSubject(),
                 openContext.getInitialData());
 
-        openContext.getIndexedViewers().values().forEach(viewer -> {
-            context.addViewer(viewer.withContext(context));
-        });
+        for (final Viewer viewer : openContext.getIndexedViewers().values()) {
+            if (!viewer.isTransitioning()) viewer.setActiveContext(context);
+            context.addViewer(viewer);
+        }
+
         return context;
     }
 }

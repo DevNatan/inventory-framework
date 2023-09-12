@@ -2,7 +2,6 @@ package me.devnatan.inventoryframework;
 
 import me.devnatan.inventoryframework.context.IFRenderContext;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 @ApiStatus.Internal
@@ -36,13 +35,20 @@ public interface Viewer {
     @NotNull
     ViewContainer getSelfContainer();
 
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
     @NotNull
-    IFRenderContext getContext();
+    IFRenderContext getActiveContext();
 
-    void setContext(IFRenderContext context);
-
-    @Contract("_ -> this")
-    Viewer withContext(IFRenderContext context);
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
+    void setActiveContext(@NotNull IFRenderContext context);
 
     /**
      * <b><i> This is an internal inventory-framework API that should not be used from outside of
@@ -72,4 +78,39 @@ public interface Viewer {
      */
     @ApiStatus.Experimental
     boolean isBlockedByInteractionDelay();
+
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
+    boolean isTransitioning();
+
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
+    void setTransitioning(boolean transitioning);
+
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
+    IFRenderContext getPreviousContext();
+
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
+    void setPreviousContext(IFRenderContext context);
+
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
+    void unsetPreviousContext();
 }

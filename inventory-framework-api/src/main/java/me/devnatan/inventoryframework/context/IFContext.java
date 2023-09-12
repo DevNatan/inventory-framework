@@ -225,4 +225,18 @@ public interface IFContext extends VirtualView, StateValueHost {
      * @param initialData The initial data.
      */
     void openForEveryone(@NotNull Class<? extends RootView> other, Object initialData);
+
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
+    boolean isActive();
+
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
+    void setActive(boolean active);
 }

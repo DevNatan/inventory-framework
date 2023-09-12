@@ -5,18 +5,19 @@ import static java.lang.String.format;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import me.devnatan.inventoryframework.component.*;
 import me.devnatan.inventoryframework.context.IFCloseContext;
+import me.devnatan.inventoryframework.context.IFConfinedContext;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFOpenContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.context.IFSlotContext;
-import me.devnatan.inventoryframework.context.PlatformContext;
 import me.devnatan.inventoryframework.context.PlatformRenderContext;
 import me.devnatan.inventoryframework.internal.ElementFactory;
 import me.devnatan.inventoryframework.internal.PlatformUtils;
@@ -109,7 +110,7 @@ public abstract class PlatformView<
      * Closes all contexts that are currently active in this view.
      */
     public final void closeForEveryone() {
-        getContexts().forEach(context -> ((PlatformContext) context).closeForEveryone());
+        getContexts().forEach(IFContext::closeForEveryone);
     }
 
     /**
@@ -138,13 +139,9 @@ public abstract class PlatformView<
     @SuppressWarnings("rawtypes")
     @ApiStatus.Internal
     public final void navigateTo(
-            @NotNull Class<? extends PlatformView> target, @NotNull IFContext context, Object initialData) {
-        final List<Viewer> viewers = context.getViewers();
-
-        // Ensure that inventory transition via context's open() will work in newer versions
-        // In legacy versions inventory is closed automatically when open is called
-        viewers.forEach(Viewer::close);
-
+            @NotNull Class<? extends PlatformView> target, @NotNull IFRenderContext origin, Object initialData) {
+        final List<Viewer> viewers = origin.getViewers();
+        viewers.forEach(viewer -> setupNavigateTo(viewer, origin));
         getFramework().getRegisteredViewByType(target).open(viewers, initialData);
     }
 
@@ -156,10 +153,39 @@ public abstract class PlatformView<
     @ApiStatus.Internal
     public final void navigateTo(
             @NotNull Class<? extends PlatformView> target,
-            @NotNull IFContext context,
+            @NotNull IFRenderContext origin,
             @NotNull Viewer viewer,
             Object initialData) {
+        setupNavigateTo(viewer, origin);
         getFramework().getRegisteredViewByType(target).open(Collections.singletonList(viewer), initialData);
+    }
+
+    /**
+     * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided.</i></b>
+     */
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    @ApiStatus.Internal
+    public final void back(@NotNull Viewer viewer) {
+        final IFRenderContext target = viewer.getPreviousContext();
+        viewer.unsetPreviousContext();
+        viewer.setTransitioning(true);
+        viewer.setActiveContext(target);
+        target.addViewer(viewer);
+
+        if (target.getViewers().size() == 1) target.getContainer().open(viewer);
+        else {
+            final PlatformView root = (PlatformView) target.getRoot();
+            if (!root.hasContext(target.getId())) root.addContext(target);
+
+            root.renderContext(target);
+        }
+        viewer.setTransitioning(false);
+    }
+
+    private void setupNavigateTo(@NotNull Viewer viewer, @NotNull IFRenderContext origin) {
+        viewer.setTransitioning(true);
+        viewer.setPreviousContext(origin);
     }
 
     /**
@@ -236,10 +262,22 @@ public abstract class PlatformView<
      * @param context The context to remove.
      */
     @ApiStatus.Internal
-    public void removeContext(@NotNull TContext context) {
+    public void removeContext(@NotNull IFContext context) {
         synchronized (getInternalContexts()) {
             getInternalContexts().removeIf(other -> other.getId() == context.getId());
         }
+    }
+
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
+    public boolean hasContext(@NotNull UUID id) {
+        for (final IFContext context : getInternalContexts()) {
+            if (context.getId().equals(id)) return true;
+        }
+        return false;
     }
 
     /**
@@ -258,23 +296,29 @@ public abstract class PlatformView<
         @SuppressWarnings("rawtypes")
         final PlatformView view = (PlatformView) context.getRoot();
         context.getViewers().forEach(viewer -> {
+            if (viewer.isTransitioning()) viewer.setActiveContext(context);
             view.getFramework().addViewer(viewer);
             context.getContainer().open(viewer);
+            viewer.setTransitioning(false);
         });
     }
 
+    @SuppressWarnings("rawtypes")
     @ApiStatus.Internal
     public void removeAndTryInvalidateContext(@NotNull Viewer viewer, @NotNull TContext context) {
         context.removeViewer(viewer);
 
-        @SuppressWarnings("rawtypes")
-        final PlatformView view = (PlatformView) context.getRoot();
-        view.getFramework().removeViewer(viewer);
+        if (!viewer.isTransitioning())
+            ((PlatformView) context.getRoot()).getFramework().removeViewer(viewer);
 
-        final boolean canContextBeInvalidated = context.getViewers().isEmpty();
-        if (canContextBeInvalidated) {
-            // TODO invalidate context
-            removeContext(context);
+        final IFRenderContext target =
+                viewer.isTransitioning() ? viewer.getPreviousContext() : viewer.getActiveContext();
+
+        if (target == null) return;
+
+        if (target.getViewers().isEmpty()) {
+            // TODO Disable context (setActive(false)) if viewer is transitioning
+            removeContext(target);
         }
     }
 
@@ -798,6 +842,19 @@ public abstract class PlatformView<
      */
     @ApiStatus.OverrideOnly
     public void onClick(@NotNull TSlotClickContext click) {}
+
+    /**
+     * Called when a context is resumed by {@link IFConfinedContext#back()}.
+     * <p>
+     * <b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     *
+     * @param origin Who called {@link IFConfinedContext#back() to back}.
+     * @param target The context that was back to.
+     */
+    @ApiStatus.OverrideOnly
+    @ApiStatus.Experimental
+    public void onResume(@NotNull TContext origin, @NotNull TContext target) {}
 
     /**
      * Called internally before the first initialization.

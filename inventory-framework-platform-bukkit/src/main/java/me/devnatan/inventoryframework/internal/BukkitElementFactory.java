@@ -94,7 +94,7 @@ public class BukkitElementFactory extends ElementFactory {
             @NotNull ViewContainer interactionContainer,
             @Nullable Component componentClicked,
             @NotNull Object origin) {
-        final IFRenderContext context = whoClicked.getContext();
+        final IFRenderContext context = whoClicked.getActiveContext();
         return new SlotClickContext(
                 slotClicked, context, whoClicked, interactionContainer, componentClicked, (InventoryClickEvent) origin);
     }
