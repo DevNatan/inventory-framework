@@ -150,4 +150,19 @@ public abstract class SlotContext extends PlatformContext implements IFSlotConte
     public void resetTitleForPlayer(@NotNull Player player) {
         getParent().resetTitleForPlayer(player);
     }
+
+    @Override
+    public final boolean isActive() {
+        return getParent().isActive();
+    }
+
+    @Override
+    public final void setActive(boolean active) {
+        getParent().setActive(active);
+    }
+
+    @Override
+    public void back() {
+        getParent().back();
+    }
 }

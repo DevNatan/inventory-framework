@@ -9,17 +9,18 @@ public final class BukkitViewer implements Viewer {
 
     private final Player player;
     private ViewContainer selfContainer;
-    private IFRenderContext context;
+    private IFRenderContext activeContext, previousContext;
     private long lastInteractionInMillis;
+    private boolean transitioning;
 
-    public BukkitViewer(@NotNull Player player, IFRenderContext context) {
-        this(player, null, context);
+    public BukkitViewer(@NotNull Player player, IFRenderContext activeContext) {
+        this(player, null, activeContext);
     }
 
-    private BukkitViewer(@NotNull Player player, ViewContainer selfContainer, IFRenderContext context) {
+    private BukkitViewer(@NotNull Player player, ViewContainer selfContainer, IFRenderContext activeContext) {
         this.player = player;
         this.selfContainer = selfContainer;
-        this.context = context;
+        this.activeContext = activeContext;
     }
 
     public Player getPlayer() {
@@ -28,17 +29,17 @@ public final class BukkitViewer implements Viewer {
 
     @NotNull
     @Override
-    public IFRenderContext getContext() {
-        return context;
+    public IFRenderContext getActiveContext() {
+        return activeContext;
     }
 
     @Override
-    public void setContext(IFRenderContext context) {
-        this.context = context;
+    public void setActiveContext(@NotNull IFRenderContext context) {
+        this.activeContext = context;
     }
 
     @Override
-    public Viewer withContext(IFRenderContext context) {
+    public Viewer withActiveContext(@NotNull IFRenderContext context) {
         return new BukkitViewer(player, selfContainer, context);
     }
 
@@ -61,7 +62,7 @@ public final class BukkitViewer implements Viewer {
     public @NotNull ViewContainer getSelfContainer() {
         if (selfContainer == null)
             selfContainer = new BukkitViewContainer(
-                    getPlayer().getInventory(), getContext().isShared(), ViewType.PLAYER);
+                    getPlayer().getInventory(), getActiveContext().isShared(), ViewType.PLAYER);
 
         return selfContainer;
     }
@@ -78,10 +79,30 @@ public final class BukkitViewer implements Viewer {
 
     @Override
     public boolean isBlockedByInteractionDelay() {
-        final long configuredDelay = context.getConfig().getInteractionDelayInMillis();
+        final long configuredDelay = activeContext.getConfig().getInteractionDelayInMillis();
         if (configuredDelay <= 0 || getLastInteractionInMillis() <= 0) return false;
 
         return getLastInteractionInMillis() + configuredDelay >= System.currentTimeMillis();
+    }
+
+    @Override
+    public boolean isTransitioning() {
+        return transitioning;
+    }
+
+    @Override
+    public void setTransitioning(boolean transitioning) {
+        this.transitioning = transitioning;
+    }
+
+    @Override
+    public IFRenderContext getPreviousContext() {
+        return previousContext;
+    }
+
+    @Override
+    public void setPreviousContext(IFRenderContext previousContext) {
+        this.previousContext = previousContext;
     }
 
     @Override
@@ -99,7 +120,11 @@ public final class BukkitViewer implements Viewer {
 
     @Override
     public String toString() {
-        return "BukkitViewer{" + "player=" + player + ", selfContainer=" + selfContainer + ", lastInteractionInMillis="
-                + lastInteractionInMillis + "}";
+        return "BukkitViewer{"
+                + "player=" + player
+                + ", selfContainer=" + selfContainer
+                + ", lastInteractionInMillis=" + lastInteractionInMillis
+                + ", isTransitioning=" + transitioning
+                + "}";
     }
 }

@@ -53,64 +53,38 @@ public abstract class PlatformContext extends AbstractIFContext {
         return getContainerOrThrow().getTitle();
     }
 
-    /**
-     * Updates the container title for everyone that's viewing it.
-     *
-     * <p>This should not be used before the container is opened, if you need to set the __initial
-     * title__ use {@link IFOpenContext#modifyConfig()} on open handler instead.
-     *
-     * <p>This method is version dependant, so it may be that your server version is not yet
-     * supported, if you try to use this method and fail (can fail silently), report it to the
-     * library developers to add support to your version.
-     *
-     * @param title The new container title.
-     */
+    @Override
     public final void updateTitleForEveryone(@NotNull String title) {
         for (final Viewer viewer : getViewers()) getContainerOrThrow().changeTitle(title, viewer);
     }
 
-    /**
-     * Updates the container title to all viewers in this context, to the initially defined title.
-     * Must be used after {@link #updateTitleForEveryone(String)} to take effect.
-     */
+    @Override
     public final void resetTitleForEveryone() {
         for (final Viewer viewer : getViewers()) getContainerOrThrow().changeTitle(null, viewer);
     }
 
-    /**
-     * Closes this context's container to all viewers who are viewing it.
-     */
+    @Override
     public final void closeForEveryone() {
         getContainerOrThrow().close();
     }
 
-    /**
-     * Opens a new view for all viewers in that context.
-     * <p>
-     * This context will be immediately invalidated if there are no viewers left after opening.
-     *
-     * @param other The view to be opened.
-     */
+    @Override
     public final void openForEveryone(@NotNull Class<? extends RootView> other) {
         openForEveryone(other, null);
     }
 
-    /**
-     * Opens a new view for all viewers in that context with an initially defined data.
-     * <p>
-     * This context will be immediately invalidated if there are no viewers left after opening.
-     *
-     * @param other       The view to be opened.
-     * @param initialData The initial data.
-     */
+    @Override
     @SuppressWarnings("unchecked")
     public final void openForEveryone(@NotNull Class<? extends RootView> other, Object initialData) {
-        getRoot().navigateTo(other, this, initialData);
+        getRoot().navigateTo(other, (IFRenderContext) this, initialData);
     }
 
     @Override
     public void back() {
-        throw new UnsupportedOperationException("PIROCOPTERO");
+        for (final Viewer viewer : getViewers()) {
+            if (viewer.getPreviousContext() == null) continue;
+            getRoot().navigateTo(viewer.getPreviousContext(), viewer.getActiveContext(), viewer, getInitialData());
+        }
     }
 
     @Override

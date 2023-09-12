@@ -28,7 +28,7 @@ final class IFInventoryListener implements Listener {
 
     @EventHandler
     public void onPluginDisable(final PluginDisableEvent event) {
-        if (!event.getPlugin().equals(viewFrame.getOwner())) return;
+        if (!event.getPlugin().getName().equals(viewFrame.getOwner().getName())) return;
 
         viewFrame.unregister();
     }
@@ -41,7 +41,7 @@ final class IFInventoryListener implements Listener {
         final Viewer viewer = viewFrame.getViewer(player);
         if (viewer == null) return;
 
-        final IFRenderContext context = viewer.getContext();
+        final IFRenderContext context = viewer.getActiveContext();
         final Component clickedComponent = context.getComponent(event.getRawSlot());
         final ViewContainer clickedContainer = event.getClickedInventory() instanceof PlayerInventory
                 ? viewer.getSelfContainer()
@@ -63,7 +63,7 @@ final class IFInventoryListener implements Listener {
         final Viewer viewer = viewFrame.getViewer(player);
         if (viewer == null) return;
 
-        final IFRenderContext context = viewer.getContext();
+        final IFRenderContext context = viewer.getActiveContext();
         final RootView root = context.getRoot();
         final IFCloseContext closeContext = root.getElementFactory().createCloseContext(viewer, context);
 
@@ -76,7 +76,7 @@ final class IFInventoryListener implements Listener {
         final Viewer viewer = viewFrame.getViewer(event.getPlayer());
         if (viewer == null) return;
 
-        final IFContext context = viewer.getContext();
+        final IFContext context = viewer.getActiveContext();
         if (!context.getConfig().isOptionSet(ViewConfig.CANCEL_ON_PICKUP)) return;
 
         event.setCancelled(context.getConfig().getOptionValue(ViewConfig.CANCEL_ON_PICKUP));
@@ -87,7 +87,7 @@ final class IFInventoryListener implements Listener {
         final Viewer viewer = viewFrame.getViewer(event.getPlayer());
         if (viewer == null) return;
 
-        final IFContext context = viewer.getContext();
+        final IFContext context = viewer.getActiveContext();
         if (!context.getConfig().isOptionSet(ViewConfig.CANCEL_ON_DROP)) return;
 
         event.setCancelled(context.getConfig().getOptionValue(ViewConfig.CANCEL_ON_DROP));
@@ -100,7 +100,7 @@ final class IFInventoryListener implements Listener {
         final Viewer viewer = viewFrame.getViewer((Player) event.getWhoClicked());
         if (viewer == null) return;
 
-        final IFContext context = viewer.getContext();
+        final IFContext context = viewer.getActiveContext();
         if (!context.getConfig().isOptionSet(ViewConfig.CANCEL_ON_DRAG)) return;
 
         final boolean configValue = context.getConfig().getOptionValue(ViewConfig.CANCEL_ON_DRAG);

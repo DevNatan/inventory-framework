@@ -137,13 +137,9 @@ public abstract class PlatformView<
     @SuppressWarnings("rawtypes")
     @ApiStatus.Internal
     public final void navigateTo(
-            @NotNull Class<? extends PlatformView> target, @NotNull IFContext context, Object initialData) {
-        final List<Viewer> viewers = context.getViewers();
-
-        // Ensure that inventory transition via context's open() will work in newer versions
-        // In legacy versions inventory is closed automatically when open is called
-        viewers.forEach(Viewer::close);
-
+            @NotNull Class<? extends PlatformView> target, @NotNull IFRenderContext origin, Object initialData) {
+        final List<Viewer> viewers = origin.getViewers();
+        viewers.forEach(viewer -> setupNavigateTo(viewer, origin));
         getFramework().getRegisteredViewByType(target).open(viewers, initialData);
     }
 
@@ -155,11 +151,37 @@ public abstract class PlatformView<
     @ApiStatus.Internal
     public final void navigateTo(
             @NotNull Class<? extends PlatformView> target,
-            @NotNull IFContext origin,
+            @NotNull IFRenderContext origin,
             @NotNull Viewer viewer,
             Object initialData) {
-        viewer.setTransitioning(true);
+        setupNavigateTo(viewer, origin);
         getFramework().getRegisteredViewByType(target).open(Collections.singletonList(viewer), initialData);
+    }
+
+    /**
+     * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided.</i></b>
+     */
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    @ApiStatus.Internal
+    public final void navigateTo(
+            @NotNull IFRenderContext target,
+            @NotNull IFRenderContext origin,
+            @NotNull Viewer viewer,
+            Object initialData) {
+        setupNavigateTo(viewer, origin);
+
+        viewer.setActiveContext(target);
+        target.addViewer(viewer);
+
+        if (target.getViewers().size() == 1) target.getContainer().open(viewer);
+        else ((PlatformView) target.getRoot()).renderContext(target);
+        viewer.setTransitioning(false);
+    }
+
+    private void setupNavigateTo(@NotNull Viewer viewer, @NotNull IFRenderContext origin) {
+        viewer.setTransitioning(true);
+        viewer.setPreviousContext(origin);
     }
 
     /**
@@ -258,8 +280,8 @@ public abstract class PlatformView<
         @SuppressWarnings("rawtypes")
         final PlatformView view = (PlatformView) context.getRoot();
         context.getViewers().forEach(viewer -> {
-            if (!viewer.isTransitioning()) view.getFramework().addViewer(viewer);
-            else viewer.setContext(context);
+            if (viewer.isTransitioning()) viewer.setActiveContext(context);
+            view.getFramework().addViewer(viewer);
             context.getContainer().open(viewer);
             viewer.setTransitioning(false);
         });
@@ -270,6 +292,7 @@ public abstract class PlatformView<
     public void removeAndTryInvalidateContext(@NotNull Viewer viewer, @NotNull TContext context) {
         context.removeViewer(viewer);
 
+        System.out.println("viewer.isTransitioning() = " + viewer.isTransitioning());
         if (!viewer.isTransitioning())
             ((PlatformView) context.getRoot()).getFramework().removeViewer(viewer);
 

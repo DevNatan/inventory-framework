@@ -22,7 +22,7 @@ abstract class PlatformConfinedContext extends PlatformContext implements IFConf
     @SuppressWarnings("unchecked")
     @Override
     public void openForPlayer(@NotNull Class<? extends RootView> other, Object initialData) {
-        getRoot().navigateTo(other, this, getViewer(), initialData);
+        getRoot().navigateTo(other, (IFRenderContext) this, getViewer(), initialData);
     }
 
     @Override
