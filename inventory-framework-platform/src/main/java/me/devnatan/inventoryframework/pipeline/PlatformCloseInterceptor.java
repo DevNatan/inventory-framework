@@ -4,7 +4,7 @@ import me.devnatan.inventoryframework.PlatformView;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.IFCloseContext;
-import me.devnatan.inventoryframework.context.PlatformRenderContext;
+import me.devnatan.inventoryframework.context.IFRenderContext;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unchecked")
@@ -16,8 +16,8 @@ public final class PlatformCloseInterceptor implements PipelineInterceptor<Virtu
         if (!(subject instanceof IFCloseContext)) return;
 
         final IFCloseContext context = (IFCloseContext) subject;
-        final PlatformRenderContext parent = (PlatformRenderContext) context.getParent();
-        final PlatformView root = parent.getRoot();
+        final IFRenderContext parent = context.getParent();
+        final RootView root = parent.getRoot();
         tryCallPlatformRootCloseHandler(root, context);
 
         if (context.isCancelled()) {
@@ -25,7 +25,7 @@ public final class PlatformCloseInterceptor implements PipelineInterceptor<Virtu
             return;
         }
 
-        root.removeAndTryInvalidateContext(context.getViewer(), context);
+        ((PlatformView) root).removeAndTryInvalidateContext(context.getViewer(), context);
     }
 
     /**
