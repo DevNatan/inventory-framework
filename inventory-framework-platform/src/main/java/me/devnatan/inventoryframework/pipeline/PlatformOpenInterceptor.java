@@ -81,7 +81,7 @@ public final class PlatformOpenInterceptor implements PipelineInterceptor<Virtua
                 openContext.getInitialData());
 
         for (final Viewer viewer : openContext.getIndexedViewers().values()) {
-            context.addViewer(viewer.isTransitioning() ? viewer : viewer.withContext(context));
+            context.addViewer(viewer.isTransitioning() ? viewer : viewer.withActiveContext(context));
         }
         ;
         return context;
