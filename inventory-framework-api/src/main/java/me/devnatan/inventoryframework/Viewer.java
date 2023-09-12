@@ -55,13 +55,6 @@ public interface Viewer {
      * this library. No compatibility guarantees are provided. </i></b>
      */
     @ApiStatus.Internal
-    Viewer withActiveContext(@NotNull IFRenderContext context);
-
-    /**
-     * <b><i> This is an internal inventory-framework API that should not be used from outside of
-     * this library. No compatibility guarantees are provided. </i></b>
-     */
-    @ApiStatus.Internal
     long getLastInteractionInMillis();
 
     /**
