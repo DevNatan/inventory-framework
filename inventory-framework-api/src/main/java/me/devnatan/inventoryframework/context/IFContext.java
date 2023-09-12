@@ -8,7 +8,6 @@ import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.component.Component;
-import me.devnatan.inventoryframework.state.History;
 import me.devnatan.inventoryframework.state.StateValueHost;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -226,4 +225,7 @@ public interface IFContext extends VirtualView, StateValueHost {
      * @param initialData The initial data.
      */
     void openForEveryone(@NotNull Class<? extends RootView> other, Object initialData);
+
+    @ApiStatus.Experimental
+    void back();
 }

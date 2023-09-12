@@ -16,7 +16,6 @@ import me.devnatan.inventoryframework.context.IFOpenContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.context.IFSlotContext;
-import me.devnatan.inventoryframework.context.PlatformContext;
 import me.devnatan.inventoryframework.context.PlatformRenderContext;
 import me.devnatan.inventoryframework.internal.ElementFactory;
 import me.devnatan.inventoryframework.internal.PlatformUtils;
@@ -109,7 +108,7 @@ public abstract class PlatformView<
      * Closes all contexts that are currently active in this view.
      */
     public final void closeForEveryone() {
-        getContexts().forEach(context -> ((PlatformContext) context).closeForEveryone());
+        getContexts().forEach(IFContext::closeForEveryone);
     }
 
     /**
@@ -156,9 +155,10 @@ public abstract class PlatformView<
     @ApiStatus.Internal
     public final void navigateTo(
             @NotNull Class<? extends PlatformView> target,
-            @NotNull IFContext context,
+            @NotNull IFContext origin,
             @NotNull Viewer viewer,
             Object initialData) {
+        viewer.setTransitioning(true);
         getFramework().getRegisteredViewByType(target).open(Collections.singletonList(viewer), initialData);
     }
 
@@ -258,8 +258,10 @@ public abstract class PlatformView<
         @SuppressWarnings("rawtypes")
         final PlatformView view = (PlatformView) context.getRoot();
         context.getViewers().forEach(viewer -> {
-            view.getFramework().addViewer(viewer);
+            if (!viewer.isTransitioning()) view.getFramework().addViewer(viewer);
+            else viewer.setContext(context);
             context.getContainer().open(viewer);
+            viewer.setTransitioning(false);
         });
     }
 
@@ -267,11 +269,14 @@ public abstract class PlatformView<
     public void removeAndTryInvalidateContext(@NotNull Viewer viewer, @NotNull TContext context) {
         context.removeViewer(viewer);
 
-        @SuppressWarnings("rawtypes")
-        final PlatformView view = (PlatformView) context.getRoot();
-        view.getFramework().removeViewer(viewer);
+        if (!viewer.isTransitioning())
+            ((PlatformView<?, ?, ?, ?, ?, ?, ?, ?>) context.getRoot())
+                    .getFramework()
+                    .removeViewer(viewer);
 
         final boolean canContextBeInvalidated = context.getViewers().isEmpty();
+        System.out.println("viewer.isTransitioning() = " + viewer.isTransitioning());
+        System.out.println("canContextBeInvalidated = " + canContextBeInvalidated);
         if (canContextBeInvalidated) {
             // TODO invalidate context
             removeContext(context);
