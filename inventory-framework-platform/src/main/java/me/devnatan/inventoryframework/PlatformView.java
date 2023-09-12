@@ -12,6 +12,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import me.devnatan.inventoryframework.component.*;
 import me.devnatan.inventoryframework.context.IFCloseContext;
+import me.devnatan.inventoryframework.context.IFConfinedContext;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFOpenContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
@@ -841,6 +842,19 @@ public abstract class PlatformView<
      */
     @ApiStatus.OverrideOnly
     public void onClick(@NotNull TSlotClickContext click) {}
+
+    /**
+     * Called when a context is resumed by {@link IFConfinedContext#back()}.
+     * <p>
+     * <b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     *
+     * @param origin Who called {@link IFConfinedContext#back() to back}.
+     * @param target The context that was back to.
+     */
+    @ApiStatus.OverrideOnly
+    @ApiStatus.Experimental
+    public void onResume(@NotNull TContext origin, @NotNull TContext target) {}
 
     /**
      * Called internally before the first initialization.
