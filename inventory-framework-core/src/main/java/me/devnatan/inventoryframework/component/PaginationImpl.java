@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -27,25 +26,24 @@ import org.jetbrains.annotations.VisibleForTesting;
 @VisibleForTesting
 public class PaginationImpl extends AbstractStateValue implements Pagination, InteractionHandler {
 
-    private final List<Component> components = new LinkedList<>();
-    private final @NotNull IFContext host;
+    private List<Component> components = new ArrayList<>();
+    private final IFContext host;
+    private boolean visible;
 
     // --- User provided ---
     private final char layoutTarget;
-    private final @NotNull Object sourceProvider;
-    private final @NotNull PaginationElementFactory<IFContext, Object> elementFactory;
+    private final Object sourceProvider;
+    private final PaginationElementFactory<IFContext, Object> elementFactory;
     private final BiConsumer<IFContext, Pagination> pageSwitchHandler;
 
     // --- Internal ---
     private int currPageIndex;
-    private final boolean dynamic;
+    private final boolean isLazy, isStatic, isComputed, isAsync;
     private boolean pageWasChanged;
     private boolean initialized;
     private int pagesCount;
 
-    /**
-     * The number of elements that each page can have. -1 means uninitialized.
-     */
+    // Number of elements that each page can have. -1 means uninitialized.
     private int pageSize = -1;
 
     // Changes when dynamic data source is used and being loaded
@@ -59,18 +57,18 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
      */
     private Function<IFContext, Object> _srcFactory;
 
-    /**
-     * Current page source. Only {@code null} before first pagination render.
-     */
+    // Current page source, null before first pagination render.
     private List<?> currSource;
 
     public PaginationImpl(
-            @NotNull State<?> state,
-            @NotNull IFContext host,
+            State<?> state,
+            IFContext host,
             char layoutTarget,
-            @NotNull Object sourceProvider,
-            @NotNull PaginationElementFactory<IFContext, Object> elementFactory,
-            BiConsumer<IFContext, Pagination> pageSwitchHandler) {
+            Object sourceProvider,
+            PaginationElementFactory<IFContext, Object> elementFactory,
+            BiConsumer<IFContext, Pagination> pageSwitchHandler,
+            boolean isAsync,
+            boolean isComputed) {
         super(state);
         this.host = host;
         this.layoutTarget = layoutTarget;
@@ -78,58 +76,76 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
         this.elementFactory = elementFactory;
         this.pageSwitchHandler = pageSwitchHandler;
         this.currSource = convertSourceProvider();
-        this.dynamic = !(sourceProvider instanceof Collection);
+        this.isComputed = isComputed;
+        this.isAsync = isAsync;
+        this.isStatic = sourceProvider instanceof Collection || isAsync;
+        this.isLazy =
+                !isStatic && !isComputed && (sourceProvider instanceof Function || sourceProvider instanceof Supplier);
     }
 
     /**
      * Tries to access and load the source to the current page.
      * <p>
-     * If this pagination {@link #isDynamic() is dynamic} it tries to get the current data source
-     * dynamically or asynchronously and waits for its completion.
+     * If this pagination {@link #isLazy() is lazy} it tries to get the current data source
+     * dynamically or asynchronously and waits for its completion. For static pagination it returns
+     * immediately with the source.
      * <p>
-     * For static pagination it returns immediately with the source.
-     * <p>
-     * On asynchronous pagination the source update job will be inherited by the user provided one.
-     * <p>
-     * When job gets done the {@link #currSource} is updated with the result of the computation.
+     * On asynchronous pagination the source update job will be inherited by the user provided one
+     * and when job gets done the {@link #currSource} is updated with the result of the computation.
      *
      * @return A CompletableFuture with the current pagination source as result.
      * @throws IllegalStateException In static pagination when the current source wasn't yet defined.
      */
-    @SuppressWarnings("unchecked")
     private CompletableFuture<List<?>> loadSourceForTheCurrentPage() {
-        // Static pagination we just get the current source here since it will be always the same
-        if (!isDynamic()) {
-            if (currSource == null) throw new IllegalStateException("User provided pagination source cannot be null");
+        /*
+         * In lazy pagination **that was already initialized (already rendered before)** we must
+         * use the current data source as source of truth to ensure that page switching do not
+         * re-trigger pagination data factory since it will always return the source as a whole,
+         * the original one, and not the source for the switched page.
+         */
+        final boolean reuseLazy = isLazy() && initialized;
 
-            if (!initialized) pagesCount = calculatePagesCount(currSource);
+        if ((isStatic() || reuseLazy) && !isComputed()) {
+            // For unknown reasons already initialized but source is null, external modification?
+            if (initialized && currSource == null)
+                throw new IllegalStateException("User provided pagination source cannot be null");
+            else {
+                // Lazy pagination have pages count calculated on first render as a computed flow
+                if (!isLazy()) pagesCount = calculatePagesCount(currSource);
+            }
 
-            return CompletableFuture.completedFuture(splitSourceForPage(currPageIndex, currSource));
+            return CompletableFuture.completedFuture(
+                    Pagination.splitSourceForPage(currPageIndex, getPageSize(), getPagesCount(), currSource));
         }
 
-        CompletableFuture<List<?>> job = new CompletableFuture<>();
         isLoading = true;
         simulateStateUpdate();
 
-        final Object source = _srcFactory.apply(host);
-        if (source instanceof CompletableFuture) {
-            job = (CompletableFuture<List<?>>) source;
-        } else {
-            // Here we are covering the dynamic rendering that's can be the usage of factories like
-            // `Supplier<List>` and Function<..., List> so we just cast the result here
-            job.complete((List<?>) source);
-        }
-
         // TODO Do some error treatment here, even if we expect to the user to handle it
-        job.thenAccept(this::updateSource).whenComplete((result, exception) -> {
+        return createProvidedNewSource().handle((result, exception) -> {
+            updateSource(result);
             isLoading = false;
             simulateStateUpdate();
+
+            if (isLazy()) return Pagination.splitSourceForPage(currPageIndex, getPageSize(), getPagesCount(), result);
+            else return result;
         });
+    }
+
+    @SuppressWarnings("unchecked")
+    private CompletableFuture<List<?>> createProvidedNewSource() {
+        CompletableFuture<List<?>> job = new CompletableFuture<>();
+
+        final Object source = _srcFactory.apply(host);
+        if (isAsync()) job = (CompletableFuture<List<?>>) source;
+        else if (isComputed() || isLazy()) job.complete((List<?>) source);
+        else throw new IllegalArgumentException("Unhandled pagination source");
+
         return job;
     }
 
     /**
-     * Updates the current source and the number of availalbe pages count based on that source.
+     * Updates the current source and the number of available pages count based on that source.
      *
      * @param newSource The new data source.
      */
@@ -169,33 +185,6 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
     }
 
     /**
-     * Gets all elements in a given page index based on the current data source.
-     *
-     * @param index The page index.
-     * @param src   The source to split.
-     * @return All elements in a page.
-     * @throws IndexOutOfBoundsException If the specified index is {@code < 0} or
-     *                                   exceeds the {@link #getPagesCount() pages count}.
-     */
-    private List<?> splitSourceForPage(int index, List<?> src) {
-        if (src.isEmpty()) return Collections.emptyList();
-
-        if (src.size() <= pageSize) return new ArrayList<>(src);
-        if (index < 0 || index > getPagesCount())
-            throw new IndexOutOfBoundsException(String.format(
-                    "Page index must be between the range of 0 and %d. Given: %d", getPagesCount() - 1, index));
-
-        final List<Object> contents = new LinkedList<>();
-        final int base = index * pageSize;
-        int until = base + pageSize;
-        if (until > src.size()) until = src.size();
-
-        for (int i = base; i < until; i++) contents.add(src.get(i));
-
-        return contents;
-    }
-
-    /**
      * Loads pagination components using container boundaries, no constraints.
      * <p>
      * The position of the first paged item must be the first slot in the container, the last
@@ -205,13 +194,12 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
      * @param context      The render context.
      * @param pageContents Elements of the current page.
      */
-    private void loadComponentsForUnconstrainedPagination(IFRenderContext context, List<?> pageContents) {
+    private void addComponentsForUnconstrainedPagination(IFRenderContext context, List<?> pageContents) {
         final ViewContainer container = context.getContainer();
         pageSize = container.getSize();
 
-        final int lastSlot = container.getLastSlot();
-
-        for (int i = container.getFirstSlot(); i < Math.min(lastSlot + 1, pageContents.size()); i++) {
+        final int lastSlot = Math.min(container.getLastSlot() + 1 /* inclusive */, pageContents.size());
+        for (int i = container.getFirstSlot(); i < lastSlot; i++) {
             final Object value = pageContents.get(i);
             final ComponentFactory factory = elementFactory.create(context, i, i, value);
             getComponentsInternal().add(factory.create());
@@ -227,12 +215,13 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
      * @param context      The render context.
      * @param pageContents Elements of the current page.
      */
-    private void loadComponentsForLayeredPagination(IFRenderContext context, List<?> pageContents) {
+    private void addComponentsForLayeredPagination(IFRenderContext context, List<?> pageContents) {
         if (pageContents.isEmpty()) return;
 
+        final LayoutSlot targetLayoutSlot = getLayoutSlotForCurrentTarget(context);
         final int elementsLen = pageContents.size();
         int iterationIndex = 0;
-        for (final int position : getLayoutSlotForCurrentTarget(context).getPositions()) {
+        for (final int position : targetLayoutSlot.getPositions()) {
             final Object value = pageContents.get(iterationIndex++);
             final ComponentFactory factory = elementFactory.create(context, iterationIndex, position, value);
             final Component component = factory.create();
@@ -305,8 +294,8 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
      */
     private CompletableFuture<?> loadCurrentPage(IFRenderContext context) {
         return loadSourceForTheCurrentPage().thenAccept(pageContents -> {
-            if (context.getConfig().getLayout() != null) loadComponentsForLayeredPagination(context, pageContents);
-            else loadComponentsForUnconstrainedPagination(context, pageContents);
+            if (context.getConfig().getLayout() != null) addComponentsForLayeredPagination(context, pageContents);
+            else addComponentsForUnconstrainedPagination(context, pageContents);
         });
     }
 
@@ -343,7 +332,8 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
     @Override
     public void render(@NotNull IFSlotRenderContext context) {
         if (!initialized) {
-            final IFRenderContext root = (IFRenderContext) context.getParent();
+            setVisible(true);
+            final IFRenderContext root = context.getParent();
             updatePageSize(root);
             loadCurrentPage(root).thenRun(() -> renderChild(context));
             initialized = true;
@@ -359,15 +349,18 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
 
     @Override
     public void updated(@NotNull IFSlotRenderContext context) {
+        final IFRenderContext renderContext = context.getParent();
+
         // If page was changed all components will be removed, so don't trigger update on them
         if (pageWasChanged) {
-            final IFRenderContext renderContext = (IFRenderContext) context.getParent();
-            clearChild(renderContext, true);
+            getComponentsInternal().forEach(child -> child.clear(renderContext));
+            components = new ArrayList<>();
+            getComponentsInternal().clear();
             loadCurrentPage(renderContext).thenRun(() -> {
                 render(context);
                 simulateStateUpdate();
-                pageWasChanged = false;
             });
+            pageWasChanged = false;
             return;
         }
 
@@ -386,19 +379,8 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
 
     @Override
     public void clear(@NotNull IFContext context) {
-        // Only clear components if page was changed to not make the clear operation inconsistent
         if (!pageWasChanged) {
             getComponentsInternal().forEach(child -> child.clear(context));
-            return;
-        }
-
-        clearChild(context, false);
-    }
-
-    private void clearChild(IFContext context, boolean bulk) {
-        if (bulk) {
-            getComponentsInternal().forEach(child -> child.clear(context));
-            getComponentsInternal().clear();
             return;
         }
 
@@ -480,6 +462,7 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
 
     @Override
     public boolean hasPage(int pageIndex) {
+        if (isComputed()) return true;
         if (pageIndex < 0) return false;
         return pageIndex < getPagesCount();
     }
@@ -525,8 +508,23 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
     }
 
     @Override
-    public boolean isDynamic() {
-        return dynamic;
+    public boolean isLazy() {
+        return isLazy;
+    }
+
+    @Override
+    public boolean isStatic() {
+        return isStatic;
+    }
+
+    @Override
+    public boolean isComputed() {
+        return isComputed;
+    }
+
+    @Override
+    public boolean isAsync() {
+        return isAsync;
     }
 
     @Override
@@ -542,31 +540,21 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
 
     @Override
     public boolean isVisible() {
-        for (final Component children : this) {
-            if (!children.isVisible()) return false;
-        }
-
-        return true;
+        return visible;
     }
 
     @Override
     public void setVisible(boolean visible) {
+        this.visible = visible;
         getComponentsInternal().forEach(component -> component.setVisible(visible));
     }
 
     @Override
     public void clicked(@NotNull Component component, @NotNull IFSlotClickContext context) {
-        final List<Component> components = getComponentsInternal();
-        if (components.isEmpty()) return;
-        if (components.size() == 1) {
-            final Component child = components.get(0);
-            if (child.getInteractionHandler() != null && child.getInteractionHandler() != null) {
-                child.getInteractionHandler().clicked(component, context);
-            }
-            return;
-        }
+        // Lock child interactions while page is being updated
+        if (pageWasChanged) return;
 
-        for (final Component child : components) {
+        for (final Component child : getComponentsInternal()) {
             if (child.getInteractionHandler() == null) continue;
             if (child.isContainedWithin(context.getClickedSlot())) {
                 child.getInteractionHandler().clicked(component, context);
@@ -585,6 +573,11 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
         return true;
     }
 
+    @Override
+    public void update() {
+        ((IFContext) getRoot()).updateComponent(this);
+    }
+
     @VisibleForTesting
     List<Component> getComponentsInternal() {
         return components;
@@ -598,7 +591,7 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
         return getLayoutTarget() == that.getLayoutTarget()
                 && currPageIndex == that.currPageIndex
                 && getPageSize() == that.getPageSize()
-                && isDynamic() == that.isDynamic()
+                && isLazy() == that.isLazy()
                 && pageWasChanged == that.pageWasChanged
                 && Objects.equals(sourceProvider, that.sourceProvider)
                 && Objects.equals(pageSwitchHandler, that.pageSwitchHandler);
@@ -612,7 +605,7 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
                 pageSwitchHandler,
                 currPageIndex,
                 getPageSize(),
-                isDynamic(),
+                isLazy(),
                 pageWasChanged);
     }
 
@@ -626,7 +619,7 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
                 + pageSwitchHandler + ", currPageIndex="
                 + currPageIndex + ", pageSize="
                 + pageSize + ", dynamic="
-                + dynamic + ", pageWasChanged="
+                + isLazy + ", pageWasChanged="
                 + pageWasChanged + ", _srcFactory="
                 + _srcFactory + ", currSource="
                 + currSource + "} "

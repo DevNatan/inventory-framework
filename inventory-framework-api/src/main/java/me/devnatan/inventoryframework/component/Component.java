@@ -111,6 +111,11 @@ public interface Component extends VirtualView {
     boolean shouldRender(IFContext context);
 
     /**
+     * Updates this component.
+     */
+    void update();
+
+    /**
      * Checks if two components area intersects with each other.
      *
      * @param component The component A.

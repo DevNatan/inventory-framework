@@ -88,5 +88,8 @@ public class FakeComponent implements Component, InteractionHandler {
     }
 
     @Override
+    public void update() {}
+
+    @Override
     public void clicked(@NotNull Component component, @NotNull IFSlotClickContext context) {}
 }

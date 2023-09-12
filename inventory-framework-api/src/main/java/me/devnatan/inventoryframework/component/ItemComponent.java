@@ -176,8 +176,15 @@ public class ItemComponent implements Component, InteractionHandler {
     @Override
     public void clear(@NotNull IFContext context) {
         ((IFRenderContext) context).getContainer().removeItem(getPosition());
+    }
 
-        setVisible(false);
+    @Override
+    public void update() {
+        if (isManagedExternally())
+            throw new IllegalStateException(
+                    "This component is externally managed by another component and cannot be updated directly");
+
+        if (root instanceof IFContext) ((IFContext) root).updateComponent(this);
     }
 
     @Override
@@ -193,6 +200,8 @@ public class ItemComponent implements Component, InteractionHandler {
 
     @Override
     public boolean isVisible() {
+        if (root instanceof Component) return ((Component) root).isVisible() && isVisible;
+
         return isVisible;
     }
 

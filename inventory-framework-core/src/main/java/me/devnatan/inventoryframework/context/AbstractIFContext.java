@@ -1,9 +1,7 @@
 package me.devnatan.inventoryframework.context;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Deque;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -23,7 +21,6 @@ import org.jetbrains.annotations.UnmodifiableView;
 abstract class AbstractIFContext extends DefaultStateValueHost implements IFContext {
 
     private final List<Component> components = new LinkedList<>();
-    private final Deque<Integer> markedForRemoval = new ArrayDeque<>();
     private final Map<String, Viewer> indexedViewers = new HashMap<>();
     protected ViewConfig config;
 
@@ -83,7 +80,7 @@ abstract class AbstractIFContext extends DefaultStateValueHost implements IFCont
         }
     }
 
-    private IFSlotRenderContext createRenderContext(@NotNull Component component) {
+    private IFSlotRenderContext createSlotRenderContext(@NotNull Component component) {
         if (!(this instanceof IFRenderContext))
             throw new InventoryFrameworkException("Slot render context cannot be created from non-render parent");
 
@@ -116,22 +113,17 @@ abstract class AbstractIFContext extends DefaultStateValueHost implements IFCont
             return;
         }
 
-        component.render(createRenderContext(component));
+        component.render(createSlotRenderContext(component));
     }
 
     @Override
     public void updateComponent(@NotNull Component component) {
-        component.updated(createRenderContext(component));
+        component.updated(createSlotRenderContext(component));
     }
 
     @Override
     public void update() {
         getRoot().getPipeline().execute(StandardPipelinePhases.UPDATE, this);
-    }
-
-    @Override
-    public final boolean isMarkedForRemoval(int componentIndex) {
-        return markedForRemoval.contains(componentIndex);
     }
 
     @Override
