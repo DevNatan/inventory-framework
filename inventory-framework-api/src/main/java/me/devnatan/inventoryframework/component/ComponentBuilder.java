@@ -139,7 +139,7 @@ public interface ComponentBuilder<S extends ComponentBuilder<S, C>, C extends IF
      *
      * @param displayCondition Component display condition.
      * @return This component builder.
-     * @see #notDisplayIf(BooleanSupplier)
+     * @see #hideIf(BooleanSupplier)
      */
     S displayIf(BooleanSupplier displayCondition);
 
@@ -148,7 +148,7 @@ public interface ComponentBuilder<S extends ComponentBuilder<S, C>, C extends IF
      *
      * @param displayCondition Component display condition.
      * @return This component builder.
-     * @see #notDisplayIf(Predicate)
+     * @see #hideIf(Predicate)
      */
     S displayIf(Predicate<C> displayCondition);
 
@@ -159,7 +159,7 @@ public interface ComponentBuilder<S extends ComponentBuilder<S, C>, C extends IF
      * @return This component builder.
      * @see #displayIf(BooleanSupplier)
      */
-    S notDisplayIf(BooleanSupplier condition);
+    S hideIf(BooleanSupplier condition);
 
     /**
      * Hides the component if a given condition is satisfied.
@@ -168,5 +168,5 @@ public interface ComponentBuilder<S extends ComponentBuilder<S, C>, C extends IF
      * @return This component builder.
      * @see #displayIf(Predicate)
      */
-    S notDisplayIf(Predicate<C> condition);
+    S hideIf(Predicate<C> condition);
 }
