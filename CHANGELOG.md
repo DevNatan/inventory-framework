@@ -1,10 +1,8 @@
 # Changelog
 
-# 3.0.0-rc.3 (unreleased)
+# 3.0.0-rc.3 (09-13-2023)
 
-* Overlapping components support (#433)
-* StateValue from API is now an interface (#434)
-* New `displayIf(...)` with context as argument (#436)
+Please see [release notes](https://github.com/DevNatan/inventory-framework/releases/tag/v3.0.0-rc.3) to detailed changelog.
 
 # 3.0.0-rc.2 (08-15-2023)
 
