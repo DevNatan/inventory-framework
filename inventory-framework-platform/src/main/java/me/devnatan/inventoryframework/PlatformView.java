@@ -168,7 +168,6 @@ public abstract class PlatformView<
     @ApiStatus.Internal
     public final void back(@NotNull Viewer viewer) {
         final IFRenderContext active = viewer.getActiveContext();
-        System.out.println("active = " + active);
         final IFRenderContext target = viewer.getPreviousContext();
         viewer.unsetPreviousContext();
         viewer.setTransitioning(true);
@@ -180,7 +179,6 @@ public abstract class PlatformView<
             final PlatformView root = (PlatformView) target.getRoot();
             if (!root.hasContext(target.getId())) root.addContext(target);
 
-            System.out.println("target = " + target);
             root.renderContext(target);
         }
         viewer.setTransitioning(false);
