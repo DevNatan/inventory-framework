@@ -110,4 +110,14 @@ abstract class DefaultComponentBuilder<S extends ComponentBuilder<S, C>, C exten
         this.displayCondition = displayCondition;
         return (S) this;
     }
+
+    @Override
+    public S hideIf(Predicate<C> condition) {
+        return displayIf(condition == null ? null : arg -> !condition.test(arg));
+    }
+
+    @Override
+    public S hideIf(BooleanSupplier condition) {
+        return displayIf(condition == null ? null : () -> !condition.getAsBoolean());
+    }
 }
