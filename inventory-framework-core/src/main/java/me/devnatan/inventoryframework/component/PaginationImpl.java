@@ -80,7 +80,7 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
         this.currSource = convertSourceProvider();
         this.isComputed = isComputed;
         this.isAsync = isAsync;
-        this.isStatic = sourceProvider instanceof Collection || isAsync;
+        this.isStatic = sourceProvider instanceof Collection;
         this.isLazy =
                 !isStatic && !isComputed && (sourceProvider instanceof Function || sourceProvider instanceof Supplier);
     }
@@ -106,6 +106,10 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
          * the original one, and not the source for the switched page.
          */
         final boolean reuseLazy = isLazy() && initialized;
+
+        System.out.println("isAsync() = " + isAsync());
+        System.out.println("isLazy() = " + isLazy());
+        System.out.println("isComputed() = " + isComputed());
 
         if ((isStatic() || reuseLazy) && !isComputed()) {
             // For unknown reasons already initialized but source is null, external modification?

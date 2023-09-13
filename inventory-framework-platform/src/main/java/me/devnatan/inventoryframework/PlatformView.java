@@ -565,7 +565,7 @@ public abstract class PlatformView<
      * Creates a new immutable pagination with static data source.
      *
      * @param sourceProvider The data source for pagination.
-     * @param elementConsumer    The function for creating pagination items, this function is called for
+     * @param elementConsumer The function for creating pagination items, this function is called for
      *                       each paged element (item) on a page.
      * @param <T>            The pagination data type.
      * @return A new immutable pagination state.
@@ -602,7 +602,7 @@ public abstract class PlatformView<
      * such API may be changed or may be removed completely in any further release. </i></b>
      *
      * @param sourceProvider The data source for pagination.
-     * @param valueConsumer    The function for creating pagination items, this function is called for
+     * @param valueConsumer   The function for creating pagination items, this function is called for
      *                       each paged element (item) on a page.
      * @param <T>            The pagination data type.
      * @return A new unmodifiable pagination state.
