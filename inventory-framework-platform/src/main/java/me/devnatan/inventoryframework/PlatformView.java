@@ -167,6 +167,7 @@ public abstract class PlatformView<
     @SuppressWarnings({"rawtypes", "unchecked"})
     @ApiStatus.Internal
     public final void back(@NotNull Viewer viewer) {
+        final IFRenderContext active = viewer.getActiveContext();
         final IFRenderContext target = viewer.getPreviousContext();
         viewer.unsetPreviousContext();
         viewer.setTransitioning(true);
@@ -181,6 +182,7 @@ public abstract class PlatformView<
             root.renderContext(target);
         }
         viewer.setTransitioning(false);
+        ((PlatformView) target.getRoot()).onResume(active, target);
     }
 
     private void setupNavigateTo(@NotNull Viewer viewer, @NotNull IFRenderContext origin) {

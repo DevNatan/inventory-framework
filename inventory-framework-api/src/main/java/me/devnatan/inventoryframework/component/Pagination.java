@@ -204,6 +204,16 @@ public interface Pagination extends ComponentComposition, StateValue {
     boolean isLoading();
 
     /**
+     * Forces the pagination to update everything internally ignoring everything, including
+     * {@link #isLazy() lazy} data source to be computed again.
+     *
+     * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     */
+    @ApiStatus.Experimental
+    void forceUpdate();
+
+    /**
      * Gets all elements in a given page index based of the specified source.
      *
      * @param index The page index.
