@@ -61,6 +61,9 @@ abstract class IFViewFrame<S extends IFViewFrame<S, V>, V extends PlatformView<S
                             "View %s already registered. Maybe your are using #register() before #with(...).",
                             view.getClass().getName()));
 
+                IFDebug.debug(
+                        "Registered view \"%s\" identified as %s",
+                        view.getUniqueId(), view.getClass().getSimpleName());
                 registeredViews.put(view.getUniqueId(), view);
             }
         }
@@ -77,6 +80,7 @@ abstract class IFViewFrame<S extends IFViewFrame<S, V>, V extends PlatformView<S
             for (final V view : views) {
                 view.closeForEveryone();
                 registeredViews.remove(view.getUniqueId());
+                IFDebug.debug("Removed view %s", view.getUniqueId());
             }
         }
     }
@@ -170,5 +174,20 @@ abstract class IFViewFrame<S extends IFViewFrame<S, V>, V extends PlatformView<S
      */
     final Consumer<ViewConfigBuilder> getDefaultConfig() {
         return defaultConfig;
+    }
+
+    /**
+     * Enables internal code debugs.
+     * <p>
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     *
+     * @return Enable InventoryFramework debugs.
+     */
+    @SuppressWarnings("unchecked")
+    @ApiStatus.Internal
+    public final S enableDebug() {
+        IFDebug.setEnabled(true);
+        return (S) this;
     }
 }

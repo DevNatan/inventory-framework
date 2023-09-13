@@ -1,5 +1,7 @@
 package me.devnatan.inventoryframework.component;
 
+import static me.devnatan.inventoryframework.IFDebug.debug;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -107,6 +109,9 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
          * the original one, and not the source for the switched page.
          */
         final boolean reuseLazy = isLazy() && initialized;
+        debug(
+                "[Pagination] Loading current page (reuseLazy = %b, isStatic = %b, isComputed = %b, forceUpdated = %b)",
+                reuseLazy, isStatic(), isComputed(), forceUpdated);
 
         if ((isStatic() || reuseLazy) && !isComputed() && !forceUpdated) {
             // For unknown reasons already initialized but source is null, external modification?
@@ -155,6 +160,7 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
     private void updateSource(@NotNull List<?> newSource) {
         currSource = newSource;
         pagesCount = calculatePagesCount(currSource);
+        debug("[Pagination] Source updated with %d elements and pages count set to %d", newSource.size(), pagesCount);
     }
 
     /**
@@ -199,7 +205,9 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
      */
     private void addComponentsForUnconstrainedPagination(IFRenderContext context, List<?> pageContents) {
         final ViewContainer container = context.getContainer();
-        pageSize = container.getSize();
+
+        // TODO Investigate why page size is being updated here
+        if (pageSize == -1) updatePageSize(context);
 
         final int lastSlot = Math.min(container.getLastSlot() + 1 /* inclusive */, pageContents.size());
         for (int i = container.getFirstSlot(); i < lastSlot; i++) {
@@ -219,16 +227,22 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
      * @param pageContents Elements of the current page.
      */
     private void addComponentsForLayeredPagination(IFRenderContext context, List<?> pageContents) {
-        if (pageContents.isEmpty()) return;
-
         final LayoutSlot targetLayoutSlot = getLayoutSlotForCurrentTarget(context);
         final int elementsLen = pageContents.size();
+        debug("[Pagination] Elements count: %d elements", elementsLen);
+        debug("[Pagination] Iterating over '%c' layout target", targetLayoutSlot.getCharacter());
+
         int iterationIndex = 0;
         for (final int position : targetLayoutSlot.getPositions()) {
             final Object value = pageContents.get(iterationIndex++);
             final ComponentFactory factory = elementFactory.create(this, iterationIndex, position, value);
             final Component component = factory.create();
 
+            debug(
+                    () -> "  @ %d (index %d) = %s",
+                    position,
+                    iterationIndex,
+                    component.getClass().getSimpleName());
             getInternalComponents().add(component);
 
             if (iterationIndex == elementsLen) break;
@@ -247,9 +261,13 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
      * @param context The render context.
      */
     private void updatePageSize(IFRenderContext context) {
-        if (context.getConfig().getLayout() != null)
-            pageSize = getLayoutSlotForCurrentTarget(context).getPositions().length;
+        final boolean useLayout = context.getConfig().getLayout() != null;
+        if (useLayout) pageSize = getLayoutSlotForCurrentTarget(context).getPositions().length;
         else pageSize = context.getContainer().getSize();
+
+        debug(
+                "[Pagination] Page size updated to %d (page = %d, useLayout = %b)",
+                pageSize, currentPageIndex(), useLayout);
     }
 
     private LayoutSlot getLayoutSlotForCurrentTarget(IFRenderContext context) {
@@ -297,7 +315,15 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
      */
     private CompletableFuture<?> loadCurrentPage(IFRenderContext context) {
         return loadSourceForTheCurrentPage().thenAccept(pageContents -> {
-            if (context.getConfig().getLayout() != null) addComponentsForLayeredPagination(context, pageContents);
+            if (pageContents.isEmpty()) {
+                debug("[Pagination] Empty page contents (page %d of %d)", currentPageIndex(), getPagesCount());
+                return;
+            }
+
+            final boolean useLayout = context.getConfig().getLayout() != null;
+            debug("[Pagination] Adding components.. (useLayout = %b)", useLayout);
+
+            if (useLayout) addComponentsForLayeredPagination(context, pageContents);
             else addComponentsForUnconstrainedPagination(context, pageContents);
         });
     }
@@ -359,6 +385,10 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
     public void updated(@NotNull IFSlotRenderContext context) {
         final IFRenderContext renderContext = context.getParent();
 
+        debug(
+                "[Pagination] #updated(IFSlotRenderContext) called (forceUpdated = %b, pageWasChanged = %b)",
+                forceUpdated, pageWasChanged);
+
         // If page was changed all components will be removed, so don't trigger update on them
         if (forceUpdated || pageWasChanged) {
             getInternalComponents().forEach(child -> child.clear(renderContext));
@@ -382,11 +412,13 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
      * for changes in {@link #isLoading()} and current page states.
      */
     private void simulateStateUpdate() {
+        debug("[Pagination] State update simulation triggered on %d", getState().internalId());
         host.updateState(getState().internalId(), this);
     }
 
     @Override
     public void clear(@NotNull IFContext context) {
+        debug("[Pagination] #clear(IFContext) called (pageWasChanged = %b)", pageWasChanged);
         if (!pageWasChanged) {
             getInternalComponents().forEach(child -> child.clear(context));
             return;
@@ -482,12 +514,14 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
 
     @Override
     public void switchTo(int pageIndex) {
+        debug("[Pagination] #switchTo(int) called (pageIndex = %d, isLoading = %b)", pageIndex, isLoading());
         if (!hasPage(pageIndex))
             throw new IndexOutOfBoundsException(
                     String.format("Page index not found (%d > %d)", pageIndex, getPagesCount()));
 
         if (isLoading()) return;
         if (pageSwitchHandler != null) pageSwitchHandler.accept(host, this);
+
         currPageIndex = pageIndex;
         pageWasChanged = true;
         host.updateComponent(this);
