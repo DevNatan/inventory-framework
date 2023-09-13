@@ -80,7 +80,7 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
         this.currSource = convertSourceProvider();
         this.isComputed = isComputed;
         this.isAsync = isAsync;
-        this.isStatic = sourceProvider instanceof Collection || isAsync;
+        this.isStatic = sourceProvider instanceof Collection;
         this.isLazy =
                 !isStatic && !isComputed && (sourceProvider instanceof Function || sourceProvider instanceof Supplier);
     }
