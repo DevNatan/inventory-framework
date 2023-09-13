@@ -27,6 +27,11 @@ public class FakeComponent implements Component, InteractionHandler {
     }
 
     @Override
+    public String getKey() {
+        return null;
+    }
+
+    @Override
     public @NotNull VirtualView getRoot() {
         return root;
     }

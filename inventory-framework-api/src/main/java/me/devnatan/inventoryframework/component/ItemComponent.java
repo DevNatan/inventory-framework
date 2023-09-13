@@ -3,6 +3,7 @@ package me.devnatan.inventoryframework.component;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import me.devnatan.inventoryframework.InventoryFrameworkException;
@@ -15,6 +16,7 @@ import org.jetbrains.annotations.UnmodifiableView;
 // TODO Make this render abstract and remove `getResult` (Object) from IFSlotRenderContext
 public class ItemComponent implements Component, InteractionHandler {
 
+    private final String key = UUID.randomUUID().toString();
     private final VirtualView root;
     private int position;
     private final Object stack;
@@ -56,6 +58,11 @@ public class ItemComponent implements Component, InteractionHandler {
         this.isManagedExternally = isManagedExternally;
         this.updateOnClick = updateOnClick;
         this.isVisible = isVisible;
+    }
+
+    @Override
+    public String getKey() {
+        return key;
     }
 
     @NotNull
@@ -230,8 +237,7 @@ public class ItemComponent implements Component, InteractionHandler {
 
     @Override
     public String toString() {
-        return "ItemComponent{" + "root="
-                + root + ", position="
+        return "ItemComponent{" + ", position="
                 + position + ", stack="
                 + stack + ", cancelOnClick="
                 + cancelOnClick + ", closeOnClick="
@@ -240,7 +246,8 @@ public class ItemComponent implements Component, InteractionHandler {
                 + renderHandler + ", updateHandler="
                 + updateHandler + ", clickHandler="
                 + clickHandler + ", watching="
-                + watching + ", isManagedExternally="
+                + watching + ", isVisible="
+                + isVisible + ", isManagedExternally="
                 + isManagedExternally + '}';
     }
 }

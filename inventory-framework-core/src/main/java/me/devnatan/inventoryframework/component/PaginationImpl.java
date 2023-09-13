@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -26,6 +27,7 @@ import org.jetbrains.annotations.VisibleForTesting;
 @VisibleForTesting
 public class PaginationImpl extends AbstractStateValue implements Pagination, InteractionHandler {
 
+    private final String key = UUID.randomUUID().toString();
     private List<Component> components = new ArrayList<>();
     private final IFContext host;
     private boolean visible;
@@ -33,7 +35,7 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
     // --- User provided ---
     private final char layoutTarget;
     private final Object sourceProvider;
-    private final PaginationElementFactory<IFContext, Object> elementFactory;
+    private final PaginationElementFactory<Object> elementFactory;
     private final BiConsumer<IFContext, Pagination> pageSwitchHandler;
 
     // --- Internal ---
@@ -65,7 +67,7 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
             IFContext host,
             char layoutTarget,
             Object sourceProvider,
-            PaginationElementFactory<IFContext, Object> elementFactory,
+            PaginationElementFactory<Object> elementFactory,
             BiConsumer<IFContext, Pagination> pageSwitchHandler,
             boolean isAsync,
             boolean isComputed) {
@@ -201,8 +203,8 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
         final int lastSlot = Math.min(container.getLastSlot() + 1 /* inclusive */, pageContents.size());
         for (int i = container.getFirstSlot(); i < lastSlot; i++) {
             final Object value = pageContents.get(i);
-            final ComponentFactory factory = elementFactory.create(context, i, i, value);
-            getComponentsInternal().add(factory.create());
+            final ComponentFactory factory = elementFactory.create(this, i, i, value);
+            getInternalComponents().add(factory.create());
         }
     }
 
@@ -223,10 +225,10 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
         int iterationIndex = 0;
         for (final int position : targetLayoutSlot.getPositions()) {
             final Object value = pageContents.get(iterationIndex++);
-            final ComponentFactory factory = elementFactory.create(context, iterationIndex, position, value);
+            final ComponentFactory factory = elementFactory.create(this, iterationIndex, position, value);
             final Component component = factory.create();
 
-            getComponentsInternal().add(component);
+            getInternalComponents().add(component);
 
             if (iterationIndex == elementsLen) break;
         }
@@ -314,13 +316,18 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
     }
 
     @Override
+    public String getKey() {
+        return key;
+    }
+
+    @Override
     public @NotNull VirtualView getRoot() {
         return host;
     }
 
     @Override
     public int getPosition() {
-        final List<Component> components = getComponentsInternal();
+        final List<Component> components = getInternalComponents();
         if (components.isEmpty()) return 0;
 
         final int first = components.get(0).getPosition();
@@ -344,7 +351,7 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
     }
 
     private void renderChild(IFSlotRenderContext context) {
-        getComponentsInternal().forEach(child -> child.render(context));
+        getInternalComponents().forEach(context::renderComponent);
     }
 
     @Override
@@ -353,9 +360,9 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
 
         // If page was changed all components will be removed, so don't trigger update on them
         if (pageWasChanged) {
-            getComponentsInternal().forEach(child -> child.clear(renderContext));
+            getInternalComponents().forEach(child -> child.clear(renderContext));
             components = new ArrayList<>();
-            getComponentsInternal().clear();
+            getInternalComponents().clear();
             loadCurrentPage(renderContext).thenRun(() -> {
                 render(context);
                 simulateStateUpdate();
@@ -364,7 +371,7 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
             return;
         }
 
-        getComponentsInternal().forEach(child -> child.updated(context));
+        getInternalComponents().forEach(child -> child.updated(context));
     }
 
     /**
@@ -380,11 +387,11 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
     @Override
     public void clear(@NotNull IFContext context) {
         if (!pageWasChanged) {
-            getComponentsInternal().forEach(child -> child.clear(context));
+            getInternalComponents().forEach(child -> child.clear(context));
             return;
         }
 
-        final Iterator<Component> childIterator = getComponentsInternal().iterator();
+        final Iterator<Component> childIterator = getInternalComponents().iterator();
         while (childIterator.hasNext()) {
             Component child = childIterator.next();
             child.clear(context);
@@ -399,12 +406,17 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
 
     @Override
     public @UnmodifiableView List<Component> getComponents() {
-        return Collections.unmodifiableList(components);
+        return Collections.unmodifiableList(getInternalComponents());
+    }
+
+    @Override
+    public List<Component> getInternalComponents() {
+        return components;
     }
 
     @Override
     public boolean isContainedWithin(int position) {
-        for (final Component component : getComponentsInternal()) {
+        for (final Component component : getInternalComponents()) {
             if (component.isContainedWithin(position)) return true;
         }
         return false;
@@ -546,7 +558,7 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
     @Override
     public void setVisible(boolean visible) {
         this.visible = visible;
-        getComponentsInternal().forEach(component -> component.setVisible(visible));
+        getInternalComponents().forEach(component -> component.setVisible(visible));
     }
 
     @Override
@@ -554,8 +566,11 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
         // Lock child interactions while page is being updated
         if (pageWasChanged) return;
 
-        for (final Component child : getComponentsInternal()) {
-            if (child.getInteractionHandler() == null) continue;
+        for (final Component child : getInternalComponents()) {
+            if (child.getInteractionHandler() == null || !child.isVisible()) {
+                continue;
+            }
+            ;
             if (child.isContainedWithin(context.getClickedSlot())) {
                 child.getInteractionHandler().clicked(component, context);
                 break;
@@ -576,11 +591,6 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
     @Override
     public void update() {
         ((IFContext) getRoot()).updateComponent(this);
-    }
-
-    @VisibleForTesting
-    List<Component> getComponentsInternal() {
-        return components;
     }
 
     @Override

@@ -3,6 +3,7 @@ package me.devnatan.inventoryframework.pipeline;
 import java.util.List;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.component.Component;
+import me.devnatan.inventoryframework.component.ComponentComposition;
 import me.devnatan.inventoryframework.component.ComponentFactory;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
@@ -30,6 +31,12 @@ public final class FirstRenderInterceptor implements PipelineInterceptor<Virtual
             // TODO Setup watches on context initialization not on first render
             setupWatchers(context, component);
             context.renderComponent(component);
+
+            if (component instanceof ComponentComposition) {
+                for (final Component child : (ComponentComposition) component) {
+                    setupWatchers(context, child);
+                }
+            }
         }
     }
 

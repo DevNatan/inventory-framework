@@ -99,15 +99,6 @@ public interface IFContext extends VirtualView, StateValueHost, ComponentContain
     String getInitialTitle();
 
     /**
-     * All components in this context.
-     *
-     * @return An unmodifiable List view of all components in this context.
-     */
-    @NotNull
-    @UnmodifiableView
-    List<Component> getComponents();
-
-    /**
      * Gets the component that is at a certain position.
      *
      * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
@@ -117,7 +108,7 @@ public interface IFContext extends VirtualView, StateValueHost, ComponentContain
      * @return The component in the given position or {@code null}.
      */
     @ApiStatus.Internal
-    Component getComponent(int position);
+    List<Component> getComponentsAt(int position);
 
     /**
      * Adds a new component to this context.
