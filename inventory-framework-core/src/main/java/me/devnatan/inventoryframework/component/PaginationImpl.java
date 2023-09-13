@@ -44,6 +44,7 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
     private boolean pageWasChanged;
     private boolean initialized;
     private int pagesCount;
+    private boolean forceUpdated;
 
     // Number of elements that each page can have. -1 means uninitialized.
     private int pageSize = -1;
@@ -107,7 +108,7 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
          */
         final boolean reuseLazy = isLazy() && initialized;
 
-        if ((isStatic() || reuseLazy) && !isComputed()) {
+        if ((isStatic() || reuseLazy) && !isComputed() && !forceUpdated) {
             // For unknown reasons already initialized but source is null, external modification?
             if (initialized && currSource == null)
                 throw new IllegalStateException("User provided pagination source cannot be null");
@@ -359,7 +360,7 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
         final IFRenderContext renderContext = context.getParent();
 
         // If page was changed all components will be removed, so don't trigger update on them
-        if (pageWasChanged) {
+        if (forceUpdated || pageWasChanged) {
             getInternalComponents().forEach(child -> child.clear(renderContext));
             components = new ArrayList<>();
             getInternalComponents().clear();
@@ -570,7 +571,7 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
             if (child.getInteractionHandler() == null || !child.isVisible()) {
                 continue;
             }
-            ;
+
             if (child.isContainedWithin(context.getClickedSlot())) {
                 child.getInteractionHandler().clicked(component, context);
                 break;
@@ -591,6 +592,13 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
     @Override
     public void update() {
         ((IFContext) getRoot()).updateComponent(this);
+    }
+
+    @Override
+    public void forceUpdate() {
+        forceUpdated = true;
+        update();
+        forceUpdated = false;
     }
 
     @Override
