@@ -109,6 +109,9 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
          * the original one, and not the source for the switched page.
          */
         final boolean reuseLazy = isLazy() && initialized;
+        debug(
+                "[Pagination] Loading current page (reuseLazy = %b, isStatic = %b, isComputed = %b, forceUpdated = %b)",
+                reuseLazy, isStatic(), isComputed(), forceUpdated);
 
         if ((isStatic() || reuseLazy) && !isComputed() && !forceUpdated) {
             // For unknown reasons already initialized but source is null, external modification?
@@ -157,6 +160,7 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
     private void updateSource(@NotNull List<?> newSource) {
         currSource = newSource;
         pagesCount = calculatePagesCount(currSource);
+        debug("[Pagination] Source updated with %d elements and pages count set to %d", newSource.size(), pagesCount);
     }
 
     /**
@@ -381,6 +385,10 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
     public void updated(@NotNull IFSlotRenderContext context) {
         final IFRenderContext renderContext = context.getParent();
 
+        debug(
+                "[Pagination] #updated(IFSlotRenderContext) called (forceUpdated = %b, pageWasChanged = %b)",
+                forceUpdated, pageWasChanged);
+
         // If page was changed all components will be removed, so don't trigger update on them
         if (forceUpdated || pageWasChanged) {
             getInternalComponents().forEach(child -> child.clear(renderContext));
@@ -404,11 +412,13 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
      * for changes in {@link #isLoading()} and current page states.
      */
     private void simulateStateUpdate() {
+        debug("[Pagination] State update simulation triggered on %d", getState().internalId());
         host.updateState(getState().internalId(), this);
     }
 
     @Override
     public void clear(@NotNull IFContext context) {
+        debug("[Pagination] #clear(IFContext) called (pageWasChanged = %b)", pageWasChanged);
         if (!pageWasChanged) {
             getInternalComponents().forEach(child -> child.clear(context));
             return;
@@ -504,12 +514,14 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
 
     @Override
     public void switchTo(int pageIndex) {
+        debug("[Pagination] #switchTo(int) called (pageIndex = %d, isLoading = %b)", pageIndex, isLoading());
         if (!hasPage(pageIndex))
             throw new IndexOutOfBoundsException(
                     String.format("Page index not found (%d > %d)", pageIndex, getPagesCount()));
 
         if (isLoading()) return;
         if (pageSwitchHandler != null) pageSwitchHandler.accept(host, this);
+
         currPageIndex = pageIndex;
         pageWasChanged = true;
         host.updateComponent(this);
