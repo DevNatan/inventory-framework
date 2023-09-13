@@ -107,10 +107,6 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
          */
         final boolean reuseLazy = isLazy() && initialized;
 
-        System.out.println("isAsync() = " + isAsync());
-        System.out.println("isLazy() = " + isLazy());
-        System.out.println("isComputed() = " + isComputed());
-
         if ((isStatic() || reuseLazy) && !isComputed()) {
             // For unknown reasons already initialized but source is null, external modification?
             if (initialized && currSource == null)
