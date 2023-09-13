@@ -110,8 +110,8 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
          */
         final boolean reuseLazy = isLazy() && initialized;
         debug(
-                "[Pagination] Loading current page (reuseLazy = %b, isStatic = %b, isComputed = %b, forceUpdated = %b)",
-                reuseLazy, isStatic(), isComputed(), forceUpdated);
+                "[Pagination] Loading page %d (reuseLazy = %b, isStatic = %b, isComputed = %b, forceUpdated = %b)",
+                currentPageIndex(), reuseLazy, isStatic(), isComputed(), forceUpdated);
 
         if ((isStatic() || reuseLazy) && !isComputed() && !forceUpdated) {
             // For unknown reasons already initialized but source is null, external modification?
@@ -122,8 +122,17 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
                 if (!isLazy()) pagesCount = calculatePagesCount(currSource);
             }
 
-            return CompletableFuture.completedFuture(
-                    Pagination.splitSourceForPage(currPageIndex, getPageSize(), getPagesCount(), currSource));
+            final List<?> result =
+                    Pagination.splitSourceForPage(currentPageIndex(), getPageSize(), getPagesCount(), currSource);
+            debug(
+                    "[Pagination] Split source of %d elements (page = %d, pageSize = %d, pagesCount = %d)",
+                    result.size(), currentPageIndex(), getPageSize(), getPagesCount());
+            int index = 0;
+            for (final Object el : result) {
+                debug("  | (%d): %s", index++, el);
+            }
+
+            return CompletableFuture.completedFuture(result);
         }
 
         isLoading = true;
@@ -131,11 +140,18 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
 
         // TODO Do some error treatment here, even if we expect to the user to handle it
         return createProvidedNewSource().handle((result, exception) -> {
+            if (exception != null) {
+                debug("[Pagination] An error occurred on data source computation: %s", exception.getMessage());
+                exception.printStackTrace();
+                return Collections.emptyList();
+            }
+
             updateSource(result);
             isLoading = false;
             simulateStateUpdate();
 
-            if (isLazy()) return Pagination.splitSourceForPage(currPageIndex, getPageSize(), getPagesCount(), result);
+            if (isLazy())
+                return Pagination.splitSourceForPage(currentPageIndex(), getPageSize(), getPagesCount(), result);
             else return result;
         });
     }
@@ -235,15 +251,21 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
         int iterationIndex = 0;
         for (final int position : targetLayoutSlot.getPositions()) {
             final Object value = pageContents.get(iterationIndex++);
-            final ComponentFactory factory = elementFactory.create(this, iterationIndex, position, value);
-            final Component component = factory.create();
 
-            debug(
-                    () -> "  @ %d (index %d) = %s",
-                    position,
-                    iterationIndex,
-                    component.getClass().getSimpleName());
-            getInternalComponents().add(component);
+            try {
+                final ComponentFactory factory = elementFactory.create(this, iterationIndex, position, value);
+                final Component component = factory.create();
+
+                debug(
+                        () -> "  @ added %d (index %d) = %s",
+                        position,
+                        iterationIndex,
+                        component.getClass().getSimpleName());
+                getInternalComponents().add(component);
+            } catch (final Exception exception) {
+                debug(() -> "  @ failed to add %d (index %d) = %s", position, iterationIndex, exception.getMessage());
+                exception.printStackTrace();
+            }
 
             if (iterationIndex == elementsLen) break;
         }
@@ -391,9 +413,11 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
 
         // If page was changed all components will be removed, so don't trigger update on them
         if (forceUpdated || pageWasChanged) {
-            getInternalComponents().forEach(child -> child.clear(renderContext));
+            getInternalComponents().forEach(child -> {
+                debug("[Pagination] Child removed: %s", child.getClass().getSimpleName());
+                child.clear(renderContext);
+            });
             components = new ArrayList<>();
-            getInternalComponents().clear();
             loadCurrentPage(renderContext).thenRun(() -> {
                 render(context);
                 simulateStateUpdate();
