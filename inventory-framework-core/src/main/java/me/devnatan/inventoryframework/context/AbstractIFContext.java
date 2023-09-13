@@ -58,28 +58,36 @@ abstract class AbstractIFContext extends DefaultStateValueHost implements IFCont
 
     @Override
     public @UnmodifiableView @NotNull List<Component> getComponents() {
-        return Collections.unmodifiableList(components);
+        return Collections.unmodifiableList(getInternalComponents());
     }
 
     @Override
-    public Component getComponent(int position) {
-        for (final Component component : getComponents()) {
-            if (component.isContainedWithin(position)) return component;
+    public List<Component> getInternalComponents() {
+        return components;
+    }
+
+    @Override
+    public List<Component> getComponentsAt(int position) {
+        final List<Component> componentList = new ArrayList<>();
+        for (final Component component : getInternalComponents()) {
+            if (component.isContainedWithin(position)) {
+                componentList.add(component);
+            }
         }
-        return null;
+        return componentList;
     }
 
     @Override
     public void addComponent(@NotNull Component component) {
-        synchronized (components) {
-            components.add(0, component);
+        synchronized (getInternalComponents()) {
+            getInternalComponents().add(0, component);
         }
     }
 
     @Override
     public void removeComponent(@NotNull Component component) {
-        synchronized (components) {
-            components.remove(component);
+        synchronized (getInternalComponents()) {
+            getInternalComponents().remove(component);
         }
     }
 
@@ -93,22 +101,24 @@ abstract class AbstractIFContext extends DefaultStateValueHost implements IFCont
                 .createSlotRenderContext(component.getPosition(), renderContext, renderContext.getViewer());
     }
 
+    int modCount = 0;
+
     @Override
     public void renderComponent(@NotNull Component component) {
         if (!component.shouldRender(this)) {
             component.setVisible(false);
 
-            final Optional<Component> overlapOptional = getOverlappingComponent(this, component);
+            final Optional<Component> overlapOptional = getOverlappingComponentToRender(this, component);
             if (overlapOptional.isPresent()) {
                 Component overlap = overlapOptional.get();
 
                 // ComponentComposition can have a single child overlapping this component so,
                 // to prevent re-render of the entire component we just seek for this single child
                 // and render it individually
-                while (overlap instanceof ComponentComposition) {
-                    final ComponentComposition composition = (ComponentComposition) overlap;
-                    overlap = getOverlappingComponent(composition, overlap).orElse(overlap);
-                }
+                //				while (overlap instanceof ComponentComposition) {
+                //					final ComponentComposition composition = (ComponentComposition) overlap;
+                //					overlap = getOverlappingComponent(composition, overlap).orElse(overlap);
+                //				}
 
                 renderComponent(overlap);
 
@@ -118,17 +128,39 @@ abstract class AbstractIFContext extends DefaultStateValueHost implements IFCont
             component.clear(this);
             return;
         }
-
         component.render(createSlotRenderContext(component));
     }
 
-    private Optional<Component> getOverlappingComponent(ComponentContainer container, Component subject) {
+    private Optional<Component> getOverlappingComponentToRender(ComponentContainer container, Component subject) {
         // TODO Support recursive overlapping (more than two components overlapping each other)
-        return container.getComponents().stream()
-                // FIXME This is kinda false positive needs a better explanation
-                .filter(Component::isVisible)
-                .filter(other -> other.intersects(subject))
-                .findFirst();
+        for (final Component child : container.getInternalComponents()) {
+            if (!child.isVisible()) continue;
+            if (child.getKey().equals(subject.getKey())) continue;
+            if (child instanceof ComponentComposition) {
+                // This prevents from child being compared with its own root that would cause an
+                // infinite rendering loop causing the root being re-rendered entirely, thus the
+                // child, because child always intersects with its root since it is inside it
+                if (subject.getRoot() instanceof Component
+                        && child.getKey().equals(((Component) subject.getRoot()).getKey())) {
+                    continue;
+                }
+
+                // We skip ComponentComposition here because is expected to ComponentComposition,
+                // on its render handler use #renderComponent to render its children so each
+                // child will have its own overlapping checks
+                for (final Component deepChild : ((ComponentComposition) child).getInternalComponents()) {
+                    if (!deepChild.isVisible()) continue;
+                    if (deepChild.intersects(subject)) return Optional.of(deepChild);
+                }
+
+                // Ignore ComponentComposition, we want to check intersections only with children
+                continue;
+            }
+
+            if (child.intersects(subject)) return Optional.of(child);
+        }
+
+        return Optional.empty();
     }
 
     @Override

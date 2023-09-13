@@ -754,14 +754,14 @@ public abstract class PlatformView<
     final <V> State<Pagination> createPaginationState(@NotNull PaginationStateBuilder<TContext, TItem, V> builder) {
         requireNotInitialized();
         final long id = State.next();
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings({"unchecked", "rawtypes"})
         final StateValueFactory factory = (host, state) -> new PaginationImpl(
                 state,
                 (IFContext) host,
                 builder.getLayoutTarget(),
                 builder.getSourceProvider(),
-                (PaginationElementFactory<IFContext, Object>) builder.getElementFactory(),
-                (BiConsumer<IFContext, Pagination>) builder.getPageSwitchHandler(),
+                (PaginationElementFactory) builder.getElementFactory(),
+                (BiConsumer) builder.getPageSwitchHandler(),
                 builder.isAsync(),
                 builder.isComputed());
         final State<Pagination> state = new PaginationState(id, factory);

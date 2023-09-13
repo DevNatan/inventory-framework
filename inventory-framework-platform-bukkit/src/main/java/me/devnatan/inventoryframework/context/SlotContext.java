@@ -62,8 +62,13 @@ public abstract class SlotContext extends PlatformContext implements IFSlotConte
     }
 
     @Override
-    public final Component getComponent(int position) {
-        return getParent().getComponent(position);
+    public List<Component> getInternalComponents() {
+        return getParent().getInternalComponents();
+    }
+
+    @Override
+    public final List<Component> getComponentsAt(int position) {
+        return getParent().getComponentsAt(position);
     }
 
     @Override

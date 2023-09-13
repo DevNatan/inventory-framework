@@ -27,7 +27,7 @@ import org.jetbrains.annotations.VisibleForTesting;
 @VisibleForTesting
 public class PaginationImpl extends AbstractStateValue implements Pagination, InteractionHandler {
 
-	private final String key = UUID.randomUUID().toString();
+    private final String key = UUID.randomUUID().toString();
     private List<Component> components = new ArrayList<>();
     private final IFContext host;
     private boolean visible;
@@ -305,7 +305,7 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
         return host;
     }
 
-	@Override
+    @Override
     public Object get() {
         return this;
     }
@@ -315,12 +315,12 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
         // do nothing since Pagination is not immutable but unmodifiable directly
     }
 
-	@Override
-	public String getKey() {
-		return key;
-	}
+    @Override
+    public String getKey() {
+        return key;
+    }
 
-	@Override
+    @Override
     public @NotNull VirtualView getRoot() {
         return host;
     }
@@ -409,12 +409,12 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
         return Collections.unmodifiableList(getInternalComponents());
     }
 
-	@Override
-	public List<Component> getInternalComponents() {
-		return components;
-	}
+    @Override
+    public List<Component> getInternalComponents() {
+        return components;
+    }
 
-	@Override
+    @Override
     public boolean isContainedWithin(int position) {
         for (final Component component : getInternalComponents()) {
             if (component.isContainedWithin(position)) return true;
@@ -567,7 +567,10 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
         if (pageWasChanged) return;
 
         for (final Component child : getInternalComponents()) {
-            if (child.getInteractionHandler() == null || !child.isVisible()) continue;
+            if (child.getInteractionHandler() == null || !child.isVisible()) {
+                continue;
+            }
+            ;
             if (child.isContainedWithin(context.getClickedSlot())) {
                 child.getInteractionHandler().clicked(component, context);
                 break;

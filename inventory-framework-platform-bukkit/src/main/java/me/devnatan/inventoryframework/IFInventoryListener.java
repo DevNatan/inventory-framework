@@ -42,7 +42,10 @@ final class IFInventoryListener implements Listener {
         if (viewer == null) return;
 
         final IFRenderContext context = viewer.getActiveContext();
-        final Component clickedComponent = context.getComponent(event.getRawSlot());
+        final Component clickedComponent = context.getComponentsAt(event.getRawSlot()).stream()
+                .filter(Component::isVisible)
+                .findFirst()
+                .orElse(null);
         final ViewContainer clickedContainer = event.getClickedInventory() instanceof PlayerInventory
                 ? viewer.getSelfContainer()
                 : context.getContainer();

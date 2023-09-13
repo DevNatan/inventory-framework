@@ -15,6 +15,13 @@ import org.jetbrains.annotations.UnmodifiableView;
 public interface Component extends VirtualView {
 
     /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
+    String getKey();
+
+    /**
      * The root of this component.
      *
      * @return The root of this component.

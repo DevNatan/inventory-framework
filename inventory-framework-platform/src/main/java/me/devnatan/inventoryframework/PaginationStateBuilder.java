@@ -14,7 +14,7 @@ public final class PaginationStateBuilder<
     private final PlatformView root;
     private final Object sourceProvider;
     private char layoutTarget = LayoutSlot.FILLED_RESERVED_CHAR;
-    private PaginationElementFactory<Context, V> elementFactory;
+    private PaginationElementFactory<V> elementFactory;
     private BiConsumer<Context, Pagination> pageSwitchHandler;
     private final boolean async, computed;
 
@@ -57,11 +57,12 @@ public final class PaginationStateBuilder<
      * @param elementConsumer The element consumer.
      * @return This pagination state builder.
      */
+    @SuppressWarnings("unchecked")
     public PaginationStateBuilder<Context, Builder, V> elementFactory(
             @NotNull PaginationValueConsumer<Context, Builder, V> elementConsumer) {
-        this.elementFactory = (context, index, slot, value) -> {
-            @SuppressWarnings("unchecked")
-            Builder builder = (Builder) root.getElementFactory().createComponentBuilder(context);
+        this.elementFactory = (pagination, index, slot, value) -> {
+            Context context = (Context) pagination.getRoot();
+            Builder builder = (Builder) root.getElementFactory().createComponentBuilder(pagination);
             builder.withSlot(slot).withExternallyManaged(true);
             elementConsumer.accept(context, builder, index, value);
             return builder;
@@ -107,6 +108,7 @@ public final class PaginationStateBuilder<
      * @return A new {@link Pagination} state.
      * @throws IllegalStateException If the element factory wasn't set.
      */
+    @SuppressWarnings("unchecked")
     public State<Pagination> build() {
         if (elementFactory == null)
             throw new IllegalStateException(String.format(
@@ -128,7 +130,7 @@ public final class PaginationStateBuilder<
         return layoutTarget;
     }
 
-    PaginationElementFactory<Context, V> getElementFactory() {
+    PaginationElementFactory<V> getElementFactory() {
         return elementFactory;
     }
 
