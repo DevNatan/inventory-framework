@@ -113,11 +113,11 @@ abstract class DefaultComponentBuilder<S extends ComponentBuilder<S, C>, C exten
 
     @Override
     public S notDisplayIf(Predicate<C> condition) {
-        return displayIf(arg -> !condition.test(arg));
+        return displayIf(condition == null ? null : arg -> !condition.test(arg));
     }
 
     @Override
     public S notDisplayIf(BooleanSupplier condition) {
-        return displayIf(() -> !condition.getAsBoolean());
+        return displayIf(condition == null ? null : () -> !condition.getAsBoolean());
     }
 }
