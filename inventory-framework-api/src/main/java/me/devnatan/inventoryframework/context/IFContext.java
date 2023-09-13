@@ -8,12 +8,13 @@ import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.component.Component;
+import me.devnatan.inventoryframework.component.ComponentContainer;
 import me.devnatan.inventoryframework.state.StateValueHost;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
 
-public interface IFContext extends VirtualView, StateValueHost {
+public interface IFContext extends VirtualView, StateValueHost, ComponentContainer {
 
     /**
      * An unique id for this context.

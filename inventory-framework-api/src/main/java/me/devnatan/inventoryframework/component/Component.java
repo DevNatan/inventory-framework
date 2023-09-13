@@ -123,6 +123,8 @@ public interface Component extends VirtualView {
      * @return If component B area conflicts with area of component A.
      */
     static boolean intersects(@NotNull Component component, @NotNull Component other) {
+        if (component instanceof ComponentComposition) return intersects(other, component);
+
         if (other instanceof ComponentComposition) {
             for (final Component otherChildren : (ComponentComposition) other) {
                 if (otherChildren.intersects(component)) return true;

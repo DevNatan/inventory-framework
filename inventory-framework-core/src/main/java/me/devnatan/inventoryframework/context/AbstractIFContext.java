@@ -3,6 +3,7 @@ package me.devnatan.inventoryframework.context;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +13,8 @@ import me.devnatan.inventoryframework.UnsupportedOperationInSharedContextExcepti
 import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.component.Component;
+import me.devnatan.inventoryframework.component.ComponentComposition;
+import me.devnatan.inventoryframework.component.ComponentContainer;
 import me.devnatan.inventoryframework.pipeline.StandardPipelinePhases;
 import me.devnatan.inventoryframework.state.DefaultStateValueHost;
 import org.jetbrains.annotations.NotNull;
@@ -95,15 +98,18 @@ abstract class AbstractIFContext extends DefaultStateValueHost implements IFCont
         if (!component.shouldRender(this)) {
             component.setVisible(false);
 
-            // TODO Support recursive overlapping (more than two components overlapping each other)
-            final Optional<Component> overlapOptional = getComponents().stream()
-                    // FIXME This is kinda false positive needs a better explanation
-                    .filter(Component::isVisible)
-                    .filter(other -> other.intersects(component))
-                    .findFirst();
-
+            final Optional<Component> overlapOptional = getOverlappingComponent(this, component);
             if (overlapOptional.isPresent()) {
-                final Component overlap = overlapOptional.get();
+                Component overlap = overlapOptional.get();
+
+                // ComponentComposition can have a single child overlapping this component so,
+                // to prevent re-render of the entire component we just seek for this single child
+                // and render it individually
+                while (overlap instanceof ComponentComposition) {
+                    final ComponentComposition composition = (ComponentComposition) overlap;
+                    overlap = getOverlappingComponent(composition, overlap).orElse(overlap);
+                }
+
                 renderComponent(overlap);
 
                 if (overlap.isVisible()) return;
@@ -114,6 +120,15 @@ abstract class AbstractIFContext extends DefaultStateValueHost implements IFCont
         }
 
         component.render(createSlotRenderContext(component));
+    }
+
+    private Optional<Component> getOverlappingComponent(ComponentContainer container, Component subject) {
+        // TODO Support recursive overlapping (more than two components overlapping each other)
+        return container.getComponents().stream()
+                // FIXME This is kinda false positive needs a better explanation
+                .filter(Component::isVisible)
+                .filter(other -> other.intersects(subject))
+                .findFirst();
     }
 
     @Override
@@ -129,6 +144,12 @@ abstract class AbstractIFContext extends DefaultStateValueHost implements IFCont
     @Override
     public final boolean isShared() {
         return getIndexedViewers().size() > 1;
+    }
+
+    @NotNull
+    @Override
+    public final Iterator<Component> iterator() {
+        return getComponents().iterator();
     }
 
     /**
