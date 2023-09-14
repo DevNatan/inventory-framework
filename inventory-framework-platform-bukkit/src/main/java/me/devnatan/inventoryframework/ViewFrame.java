@@ -112,6 +112,7 @@ public class ViewFrame extends IFViewFrame<ViewFrame, View> implements FeatureIn
         initializeViews();
         getOwner().getServer().getPluginManager().registerEvents(new IFInventoryListener(this), getOwner());
         setRegistered(true);
+        getPipeline().execute(IFViewFrame.FRAME_REGISTERED, this);
         return this;
     }
 
@@ -131,6 +132,7 @@ public class ViewFrame extends IFViewFrame<ViewFrame, View> implements FeatureIn
             }
             iterator.remove();
         }
+        getPipeline().execute(IFViewFrame.FRAME_UNREGISTERED, this);
     }
 
     private void tryEnableMetrics() {
