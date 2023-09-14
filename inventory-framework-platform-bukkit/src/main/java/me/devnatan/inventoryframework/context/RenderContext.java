@@ -131,6 +131,15 @@ public class RenderContext extends PlatformRenderContext<BukkitItemComponentBuil
         return layoutSlot(character).withItem(item);
     }
 
+    /**
+     * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     */
+    @ApiStatus.Experimental
+    public @NotNull BukkitItemComponentBuilder resultSlot(@Nullable ItemStack item) {
+        return resultSlot().withItem(item);
+    }
+
     @Override
     protected BukkitItemComponentBuilder createBuilder() {
         return new BukkitItemComponentBuilder(this);
