@@ -229,11 +229,14 @@ public class ViewFrame extends IFViewFrame<ViewFrame, View> implements FeatureIn
     @Override
     public final <C, R> @NotNull R install(
             @NotNull Feature<C, R, ViewFrame> feature, @NotNull UnaryOperator<C> configure) {
-        return featureInstaller.install(feature, configure);
+        final R value = featureInstaller.install(feature, configure);
+        IFDebug.debug("Feature %s installed", feature.name());
+        return value;
     }
 
     @Override
     public final void uninstall(@NotNull Feature<?, ?, ViewFrame> feature) {
         featureInstaller.uninstall(feature);
+        IFDebug.debug("Feature %s uninstalled", feature.name());
     }
 }

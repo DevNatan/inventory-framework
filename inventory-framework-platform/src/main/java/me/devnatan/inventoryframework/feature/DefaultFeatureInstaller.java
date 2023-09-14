@@ -36,8 +36,7 @@ public class DefaultFeatureInstaller<P> implements FeatureInstaller<P> {
     @Override
     public <C, R> @NotNull R install(@NotNull Feature<C, R, P> feature, @NotNull UnaryOperator<C> configure) {
         final Class<?> type = feature.getClass();
-        if (featureList.containsKey(type))
-            throw new IllegalStateException("Feature already installed, cannot install feature multiple times");
+        if (featureList.containsKey(type)) throw new IllegalStateException("Feature already installed: " + type);
 
         @SuppressWarnings("unchecked")
         final Feature<C, R, P> value = (Feature<C, R, P>) feature.install(platform, configure);
