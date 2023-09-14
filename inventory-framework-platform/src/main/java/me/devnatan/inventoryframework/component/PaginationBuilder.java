@@ -26,7 +26,8 @@ public final class PaginationBuilder<
     }
 
     PaginationBuilder(PlatformView root, Object sourceProvider, boolean async, boolean computed) {
-        this.root = root;
+		super();
+		this.root = root;
         this.sourceProvider = sourceProvider;
         this.async = async;
         this.computed = computed;
