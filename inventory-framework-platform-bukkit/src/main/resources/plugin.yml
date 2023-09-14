@@ -4,3 +4,4 @@ version: @version@
 authors: [SaiintBrisson, DevNatan, sasuked]
 website: https://github.com/DevNatan/inventory-framework
 description: Minecraft Inventory API framework
+api-version: 1.20
