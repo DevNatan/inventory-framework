@@ -121,7 +121,15 @@ public final class BukkitViewContainer implements ViewContainer {
 
     @Override
     public int getLastSlot() {
-        return getSlotsCount();
+        final int[] resultSlots = getType().getResultSlots();
+        int lastSlot = getSlotsCount();
+        if (resultSlots != null) {
+            for (final int resultSlot : resultSlots) {
+                if (resultSlot == lastSlot) lastSlot--;
+            }
+        }
+
+        return lastSlot;
     }
 
     @Override
