@@ -1,0 +1,15 @@
+plugins {
+    alias(libs.plugins.shadowjar)
+    alias(libs.plugins.kotlin)
+}
+
+apply from: '../library.gradle'
+apply from: '../publish.gradle'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    api(projects.inventoryFrameworkPlatform)
+}

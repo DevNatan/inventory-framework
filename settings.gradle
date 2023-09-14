@@ -10,4 +10,5 @@ include 'inventory-framework-test',
         'inventory-framework-core',
         'inventory-framework-platform',
         'inventory-framework-platform-paper',
-        'inventory-framework-platform-bukkit'
+        'inventory-framework-platform-bukkit',
+        'inventory-framework-anvil-input'
