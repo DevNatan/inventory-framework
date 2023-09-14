@@ -1,7 +1,8 @@
-package me.devnatan.inventoryframework;
+package me.devnatan.inventoryframework.component;
 
 import java.util.function.BiConsumer;
-import me.devnatan.inventoryframework.component.*;
+
+import me.devnatan.inventoryframework.PlatformView;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
 import me.devnatan.inventoryframework.state.State;
@@ -9,7 +10,9 @@ import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("rawtypes")
 public final class PaginationBuilder<
-        Context extends IFContext, Builder extends ItemComponentBuilder<Builder, Context> & ComponentFactory, V> {
+	Context extends IFContext,
+	Builder extends ItemComponentBuilder<Builder, Context> & ComponentFactory,
+	V> extends DefaultComponentBuilder<PaginationBuilder<Context, Builder, V>, Context> {
 
     private final PlatformView root;
     private final Object sourceProvider;
