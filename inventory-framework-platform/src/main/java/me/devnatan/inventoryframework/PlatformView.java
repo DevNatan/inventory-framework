@@ -680,9 +680,9 @@ public abstract class PlatformView<
      * @param <T>            The pagination data type.
      * @return A new pagination state builder.
      */
-    protected final <T> PaginationStateBuilder<TContext, TItem, T> buildPaginationState(
+    protected final <T> PaginationBuilder<TContext, TItem, T> buildPaginationState(
             @NotNull List<? super T> sourceProvider) {
-        return new PaginationStateBuilder<>(this, sourceProvider);
+        return new PaginationBuilder<>(this, sourceProvider);
     }
 
     /**
@@ -692,9 +692,9 @@ public abstract class PlatformView<
      * @param <T>            The pagination data type.
      * @return A new pagination state builder.
      */
-    protected final <T> PaginationStateBuilder<TContext, TItem, T> buildComputedPaginationState(
+    protected final <T> PaginationBuilder<TContext, TItem, T> buildComputedPaginationState(
             @NotNull Function<TContext, List<? super T>> sourceProvider) {
-        return new PaginationStateBuilder<>(this, sourceProvider, false, true);
+        return new PaginationBuilder<>(this, sourceProvider, false, true);
     }
 
     /**
@@ -708,9 +708,9 @@ public abstract class PlatformView<
      * @return A new pagination state builder.
      */
     @ApiStatus.Experimental
-    protected final <T> PaginationStateBuilder<TContext, TItem, T> buildComputedAsyncPaginationState(
+    protected final <T> PaginationBuilder<TContext, TItem, T> buildComputedAsyncPaginationState(
             @NotNull Function<TContext, CompletableFuture<List<T>>> sourceProvider) {
-        return new PaginationStateBuilder<>(this, sourceProvider, true, true);
+        return new PaginationBuilder<>(this, sourceProvider, true, true);
     }
 
     /**
@@ -720,9 +720,9 @@ public abstract class PlatformView<
      * @param <T>            The pagination data type.
      * @return A new pagination state builder.
      */
-    protected final <T> PaginationStateBuilder<TContext, TItem, T> buildLazyPaginationState(
+    protected final <T> PaginationBuilder<TContext, TItem, T> buildLazyPaginationState(
             @NotNull Supplier<List<? super T>> sourceProvider) {
-        return new PaginationStateBuilder<>(this, sourceProvider, false, false);
+        return new PaginationBuilder<>(this, sourceProvider, false, false);
     }
 
     /**
@@ -732,9 +732,9 @@ public abstract class PlatformView<
      * @param <T>            The pagination data type.
      * @return A new pagination state builder.
      */
-    protected final <T> PaginationStateBuilder<TContext, TItem, T> buildLazyPaginationState(
+    protected final <T> PaginationBuilder<TContext, TItem, T> buildLazyPaginationState(
             @NotNull Function<TContext, List<? super T>> sourceProvider) {
-        return new PaginationStateBuilder<>(this, sourceProvider, false, false);
+        return new PaginationBuilder<>(this, sourceProvider, false, false);
     }
 
     /**
@@ -748,12 +748,12 @@ public abstract class PlatformView<
      * @return A new pagination state builder.
      */
     @ApiStatus.Experimental
-    protected final <T> PaginationStateBuilder<TContext, TItem, T> buildLazyAsyncPaginationState(
+    protected final <T> PaginationBuilder<TContext, TItem, T> buildLazyAsyncPaginationState(
             @NotNull Function<TContext, CompletableFuture<List<T>>> sourceProvider) {
-        return new PaginationStateBuilder<>(this, sourceProvider, true, false);
+        return new PaginationBuilder<>(this, sourceProvider, true, false);
     }
 
-    final <V> State<Pagination> createPaginationState(@NotNull PaginationStateBuilder<TContext, TItem, V> builder) {
+    final <V> State<Pagination> createPaginationState(@NotNull PaginationBuilder<TContext, TItem, V> builder) {
         requireNotInitialized();
         final long id = State.next();
         @SuppressWarnings({"unchecked", "rawtypes"})

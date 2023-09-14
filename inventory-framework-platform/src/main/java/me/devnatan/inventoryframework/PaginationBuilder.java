@@ -8,7 +8,7 @@ import me.devnatan.inventoryframework.state.State;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("rawtypes")
-public final class PaginationStateBuilder<
+public final class PaginationBuilder<
         Context extends IFContext, Builder extends ItemComponentBuilder<Builder, Context> & ComponentFactory, V> {
 
     private final PlatformView root;
@@ -18,11 +18,11 @@ public final class PaginationStateBuilder<
     private BiConsumer<Context, Pagination> pageSwitchHandler;
     private final boolean async, computed;
 
-    PaginationStateBuilder(PlatformView root, Object sourceProvider) {
+    PaginationBuilder(PlatformView root, Object sourceProvider) {
         this(root, sourceProvider, false, false);
     }
 
-    PaginationStateBuilder(PlatformView root, Object sourceProvider, boolean async, boolean computed) {
+    PaginationBuilder(PlatformView root, Object sourceProvider, boolean async, boolean computed) {
         this.root = root;
         this.sourceProvider = sourceProvider;
         this.async = async;
@@ -41,7 +41,7 @@ public final class PaginationStateBuilder<
      * @param itemFactory The item factory.
      * @return This pagination state builder.
      */
-    public PaginationStateBuilder<Context, Builder, V> itemFactory(@NotNull BiConsumer<Builder, V> itemFactory) {
+    public PaginationBuilder<Context, Builder, V> itemFactory(@NotNull BiConsumer<Builder, V> itemFactory) {
         return elementFactory(((context, builder, index, value) -> itemFactory.accept(builder, value)));
     }
 
@@ -58,7 +58,7 @@ public final class PaginationStateBuilder<
      * @return This pagination state builder.
      */
     @SuppressWarnings("unchecked")
-    public PaginationStateBuilder<Context, Builder, V> elementFactory(
+    public PaginationBuilder<Context, Builder, V> elementFactory(
             @NotNull PaginationValueConsumer<Context, Builder, V> elementConsumer) {
         this.elementFactory = (pagination, index, slot, value) -> {
             Context context = (Context) pagination.getRoot();
@@ -82,7 +82,7 @@ public final class PaginationStateBuilder<
      * @param layoutTarget The target layout character.
      * @return This pagination state builder.
      */
-    public PaginationStateBuilder<Context, Builder, V> layoutTarget(char layoutTarget) {
+    public PaginationBuilder<Context, Builder, V> layoutTarget(char layoutTarget) {
         this.layoutTarget = layoutTarget;
         return this;
     }
@@ -96,7 +96,7 @@ public final class PaginationStateBuilder<
      * @param pageSwitchHandler The page switch handler.
      * @return This pagination state builder.
      */
-    public PaginationStateBuilder<Context, Builder, V> onPageSwitch(
+    public PaginationBuilder<Context, Builder, V> onPageSwitch(
             @NotNull BiConsumer<Context, Pagination> pageSwitchHandler) {
         this.pageSwitchHandler = pageSwitchHandler;
         return this;
