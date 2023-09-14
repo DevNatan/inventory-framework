@@ -352,6 +352,21 @@ public abstract class PlatformView<
         return (Iterator<TContext>) getContexts().iterator();
     }
 
+	/**
+	 * Creates a new unassigned reference instance.
+	 * <p>
+	 * <b><i> This API is experimental and is not subject to the general compatibility guarantees
+	 * such API may be changed or may be removed completely in any further release. </i></b>
+	 *
+	 * @return A new unassigned {@link Ref} instance.
+	 * @param <E> Type of the element hold by this reference.
+	 * @see <a href="https://github.com/DevNatan/inventory-framework/wiki/refs-api">Refs API on Wiki</a>
+	 */
+	@ApiStatus.Experimental
+	protected final <E> Ref<E> ref() {
+		throw new UnsupportedOperationException("Not implemented yet");
+	}
+
     /**
      * Creates an immutable state with an initial value.
      *
