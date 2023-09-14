@@ -7,7 +7,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import me.devnatan.inventoryframework.component.*;
@@ -753,19 +752,15 @@ public abstract class PlatformView<
         return new PaginationBuilder<>(this, sourceProvider, true, false);
     }
 
-    final <V> State<Pagination> createPaginationState(@NotNull PaginationBuilder<TContext, TItem, V> builder) {
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
+    public final <V> State<Pagination> createPaginationState(@NotNull PaginationBuilder<TContext, TItem, V> builder) {
         requireNotInitialized();
         final long id = State.next();
-        @SuppressWarnings({"unchecked", "rawtypes"})
-        final StateValueFactory factory = (host, state) -> new PaginationImpl(
-                state,
-                (IFContext) host,
-                builder.getLayoutTarget(),
-                builder.getSourceProvider(),
-                (PaginationElementFactory) builder.getElementFactory(),
-                (BiConsumer) builder.getPageSwitchHandler(),
-                builder.isAsync(),
-                builder.isComputed());
+        final StateValueFactory factory = builder::toPagination;
         final State<Pagination> state = new PaginationState(id, factory);
         stateRegistry.registerState(state, this);
 

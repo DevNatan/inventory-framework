@@ -1,18 +1,18 @@
 package me.devnatan.inventoryframework.component;
 
 import java.util.function.BiConsumer;
-
 import me.devnatan.inventoryframework.PlatformView;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
 import me.devnatan.inventoryframework.state.State;
+import me.devnatan.inventoryframework.state.StateValueHost;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("rawtypes")
 public final class PaginationBuilder<
-	Context extends IFContext,
-	Builder extends ItemComponentBuilder<Builder, Context> & ComponentFactory,
-	V> extends DefaultComponentBuilder<PaginationBuilder<Context, Builder, V>, Context> {
+                Context extends IFContext, Builder extends ItemComponentBuilder<Builder, Context> & ComponentFactory, V>
+        extends DefaultComponentBuilder<PaginationBuilder<Context, Builder, V>, Context> {
 
     private final PlatformView root;
     private final Object sourceProvider;
@@ -21,13 +21,23 @@ public final class PaginationBuilder<
     private BiConsumer<Context, Pagination> pageSwitchHandler;
     private final boolean async, computed;
 
-    PaginationBuilder(PlatformView root, Object sourceProvider) {
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
+    public PaginationBuilder(PlatformView root, Object sourceProvider) {
         this(root, sourceProvider, false, false);
     }
 
-    PaginationBuilder(PlatformView root, Object sourceProvider, boolean async, boolean computed) {
-		super();
-		this.root = root;
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
+    public PaginationBuilder(PlatformView root, Object sourceProvider, boolean async, boolean computed) {
+        super();
+        this.root = root;
         this.sourceProvider = sourceProvider;
         this.async = async;
         this.computed = computed;
@@ -122,31 +132,21 @@ public final class PaginationBuilder<
         return root.createPaginationState(this);
     }
 
-    PlatformView getRoot() {
-        return root;
-    }
-
-    Object getSourceProvider() {
-        return sourceProvider;
-    }
-
-    char getLayoutTarget() {
-        return layoutTarget;
-    }
-
-    PaginationElementFactory<V> getElementFactory() {
-        return elementFactory;
-    }
-
-    BiConsumer<Context, Pagination> getPageSwitchHandler() {
-        return pageSwitchHandler;
-    }
-
-    boolean isAsync() {
-        return async;
-    }
-
-    boolean isComputed() {
-        return computed;
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
+    @SuppressWarnings("unchecked")
+    public Pagination toPagination(StateValueHost host, State<?> state) {
+        return new PaginationImpl(
+                state,
+                (IFContext) host,
+                layoutTarget,
+                sourceProvider,
+                (PaginationElementFactory) elementFactory,
+                (BiConsumer) pageSwitchHandler,
+                async,
+                computed);
     }
 }
