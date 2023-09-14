@@ -31,6 +31,8 @@ abstract class IFViewFrame<S extends IFViewFrame<S, V>, V extends PlatformView<S
     protected final Map<UUID, V> registeredViews = new HashMap<>();
     protected final Map<String, Viewer> viewerById = new HashMap<>();
     protected Consumer<ViewConfigBuilder> defaultConfig;
+
+    @SuppressWarnings("rawtypes")
     private final Pipeline<IFViewFrame> pipeline = new Pipeline<>(FRAME_REGISTERED, FRAME_UNREGISTERED);
 
     protected IFViewFrame() {}
@@ -40,7 +42,8 @@ abstract class IFViewFrame<S extends IFViewFrame<S, V>, V extends PlatformView<S
      * this library. No compatibility guarantees are provided. </i></b>
      */
     @ApiStatus.Internal
-    public @NotNull Pipeline<IFViewFrame> getPipeline() {
+    @SuppressWarnings("rawtypes")
+    public final @NotNull Pipeline<IFViewFrame> getPipeline() {
         return pipeline;
     }
 
