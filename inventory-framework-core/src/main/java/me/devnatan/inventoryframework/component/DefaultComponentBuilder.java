@@ -12,8 +12,7 @@ import me.devnatan.inventoryframework.state.State;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unchecked")
-abstract class DefaultComponentBuilder<S extends ComponentBuilder<S, C>, C extends IFContext>
-        implements ComponentBuilder<S, C> {
+class DefaultComponentBuilder<S extends ComponentBuilder<S, C>, C extends IFContext> implements ComponentBuilder<S, C> {
 
     protected String referenceKey;
     protected Map<String, Object> data;
@@ -21,6 +20,8 @@ abstract class DefaultComponentBuilder<S extends ComponentBuilder<S, C>, C exten
     protected Set<State<?>> watchingStates;
     protected boolean isManagedExternally;
     protected Predicate<C> displayCondition;
+
+    protected DefaultComponentBuilder() {}
 
     protected DefaultComponentBuilder(
             String referenceKey,
@@ -31,6 +32,7 @@ abstract class DefaultComponentBuilder<S extends ComponentBuilder<S, C>, C exten
             Set<State<?>> watchingStates,
             boolean isManagedExternally,
             Predicate<C> displayCondition) {
+        this();
         this.referenceKey = referenceKey;
         this.data = data;
         this.cancelOnClick = cancelOnClick;
@@ -119,5 +121,10 @@ abstract class DefaultComponentBuilder<S extends ComponentBuilder<S, C>, C exten
     @Override
     public S hideIf(BooleanSupplier condition) {
         return displayIf(condition == null ? null : () -> !condition.getAsBoolean());
+    }
+
+    @Override
+    public S copy() {
+        throw new UnsupportedOperationException("Copy is not supported in this component builder.");
     }
 }
