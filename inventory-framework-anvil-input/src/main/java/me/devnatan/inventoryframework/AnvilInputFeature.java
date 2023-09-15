@@ -1,5 +1,7 @@
 package me.devnatan.inventoryframework;
 
+import java.util.Map;
+import java.util.UUID;
 import java.util.function.UnaryOperator;
 import me.devnatan.inventoryframework.feature.Feature;
 import me.devnatan.inventoryframework.pipeline.PipelineContext;
@@ -40,5 +42,9 @@ public final class AnvilInputFeature<F extends IFViewFrame<?, ?>> implements Fea
 class FrameInterceptor implements PipelineInterceptor<IFViewFrame> {
 
     @Override
-    public void intercept(PipelineContext<IFViewFrame> pipeline, IFViewFrame subject) {}
+    public void intercept(PipelineContext<IFViewFrame> pipeline, IFViewFrame subject) {
+        final Map<UUID, PlatformView> views = subject.getRegisteredViews();
+
+        // Iterate over
+    }
 }
