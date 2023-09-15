@@ -40,7 +40,7 @@ import org.bukkit.inventory.InventoryView;
 @SuppressWarnings({"ConstantConditions", "CallToPrintStackTrace"})
 public final class InventoryUpdate {
 
-    // Classes.
+    // Classes
     private static final Class<?> CRAFT_PLAYER;
     private static final Class<?> CHAT_MESSAGE;
     private static final Class<?> PACKET_PLAY_OUT_OPEN_WINDOW;
@@ -50,20 +50,20 @@ public final class InventoryUpdate {
     private static final Class<?> ENTITY_PLAYER;
     private static final Class<?> I_CHAT_MUTABLE_COMPONENT;
 
-    // Methods.
+    // Methods
     private static final MethodHandle getHandle;
     private static final MethodHandle getBukkitView;
     private static final MethodHandle literal;
 
-    // Constructors.
+    // Constructors
     private static final MethodHandle chatMessage;
-    private static final MethodHandle packetPlayOutOpenWindow;
+    public static final MethodHandle packetPlayOutOpenWindow;
 
-    // Fields.
-    private static final MethodHandle activeContainer;
-    private static final MethodHandle windowId;
+    // Fields
+    public static final MethodHandle activeContainer;
+	public static final MethodHandle windowId;
 
-    // Methods factory.
+    // Methods factory
     private static final MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
 
     private static final Set<String> UNOPENABLES = Sets.newHashSet("CRAFTING", "CREATIVE", "PLAYER");
