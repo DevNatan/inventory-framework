@@ -1,9 +1,8 @@
-package me.devnatan.inventoryframework.runtime;
+package me.devnatan.inventoryframework;
 
 import static me.devnatan.inventoryframework.IFDebug.debug;
 import static me.devnatan.inventoryframework.runtime.thirdparty.InventoryUpdate.CONTAINER;
 import static me.devnatan.inventoryframework.runtime.thirdparty.InventoryUpdate.ENTITY_PLAYER;
-import static me.devnatan.inventoryframework.runtime.thirdparty.InventoryUpdate.createTitleComponent;
 import static me.devnatan.inventoryframework.runtime.thirdparty.InventoryUpdate.getConstructor;
 import static me.devnatan.inventoryframework.runtime.thirdparty.InventoryUpdate.getContainerOrName;
 import static me.devnatan.inventoryframework.runtime.thirdparty.InventoryUpdate.getField;
@@ -74,7 +73,7 @@ public class AnvilInputNMS {
 
     private AnvilInputNMS() {}
 
-    public static void open(Player player) {
+    public static Inventory open(Player player, Object title) {
         try {
             final Object entityPlayer = ReflectionUtils.getEntityPlayer(player);
             final Object defaultContainer = PLAYER_DEFAULT_CONTAINER.invoke(entityPlayer);
@@ -88,7 +87,6 @@ public class AnvilInputNMS {
                     ((InventoryView) InventoryUpdate.getBukkitView.invoke(anvilContainer)).getTopInventory();
             inventory.setItem(0, new ItemStack(Material.PAPER));
 
-            final Object title = createTitleComponent("abc");
             Object nmsContainers = getContainerOrName(InventoryUpdate.Containers.ANVIL, InventoryType.ANVIL);
             Object openWindowPacket = useContainers()
                     ? packetPlayOutOpenWindow.invoke(windowId, nmsContainers, title)
@@ -104,6 +102,7 @@ public class AnvilInputNMS {
             } else {
                 ADD_CONTAINER_SLOT_LISTENER.invoke(anvilContainer, player);
             }
+            return inventory;
         } catch (Throwable e) {
             throw new RuntimeException(e);
         }
