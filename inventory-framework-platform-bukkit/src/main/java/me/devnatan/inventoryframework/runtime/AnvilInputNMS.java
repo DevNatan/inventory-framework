@@ -27,9 +27,6 @@ import org.bukkit.inventory.ItemStack;
 
 public class AnvilInputNMS {
 
-    private static final Object ANVIL_CONTAINER;
-    private static final Class<?> BLOCK_POSITION;
-
     // CONSTRUCTORS
     private static final MethodHandle ANVIL_CONSTRUCTOR;
 
@@ -47,40 +44,23 @@ public class AnvilInputNMS {
         try {
             final InventoryUpdate.Containers anvil = InventoryUpdate.Containers.ANVIL;
 
-            ANVIL_CONTAINER = anvil.getObject();
             debug(
                     "Detected anvil container as %s at %s",
-                    anvil.getMinecraftName(), ANVIL_CONTAINER.getClass().getName());
+                    anvil.getMinecraftName(),
+                    InventoryUpdate.Containers.ANVIL.getObject().getClass().getName());
 
-            BLOCK_POSITION = getNMSClass("core", "BlockPosition");
-
-            final Class<?> containerAnvilClass = getNMSClass("world.inventory", "ContainerAnvil");
             final Class<?> playerInventoryClass = getNMSClass("world.entity.player", "PlayerInventory");
-
-            //			final Class<?> worldClass = ReflectionUtils.MINOR_NUMBER >= 20
-            //				? getNMSClass("world.level.World")
-            //				: getNMSClass("World");
-            //
-            //			final Class<?> entityHumanClass = ReflectionUtils.MINOR_NUMBER >= 20
-            //				? getNMSClass("world.entity.player.EntityHuman")
-            //				: getNMSClass("EntityHuman");
-
-            ANVIL_CONSTRUCTOR = getConstructor(containerAnvilClass, int.class, playerInventoryClass);
-
+            ANVIL_CONSTRUCTOR =
+                    getConstructor(getNMSClass("world.inventory", "ContainerAnvil"), int.class, playerInventoryClass);
             CONTAINER_CHECK_REACHABLE = setFieldHandle(CONTAINER, boolean.class, "checkReachable");
 
             final Class<?> containerPlayer = getNMSClass("world.inventory", "ContainerPlayer");
             PLAYER_DEFAULT_CONTAINER = getField(ENTITY_PLAYER, containerPlayer, "inventoryMenu", "bQ");
-
             SET_PLAYER_ACTIVE_CONTAINER =
                     setField(ENTITY_PLAYER, containerPlayer, "activeContainer", "bR", "containerMenu");
-
             GET_PLAYER_NEXT_CONTAINER_COUNTER =
                     getMethod(ENTITY_PLAYER, "nextContainerCounter", MethodType.methodType(int.class));
-
-            final Class<?> playerInventory = getNMSClass("world.entity.player", "PlayerInventory");
-            GET_PLAYER_INVENTORY = getMethod(ENTITY_PLAYER, "fN", MethodType.methodType(playerInventory));
-
+            GET_PLAYER_INVENTORY = getMethod(ENTITY_PLAYER, "fN", MethodType.methodType(playerInventoryClass));
             CONTAINER_WINDOW_ID = setField(CONTAINER, int.class, "windowId", "containerId", "j");
         } catch (Exception exception) {
             throw new RuntimeException(
