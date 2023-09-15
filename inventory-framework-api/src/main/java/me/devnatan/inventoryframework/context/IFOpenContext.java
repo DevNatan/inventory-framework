@@ -3,6 +3,7 @@ package me.devnatan.inventoryframework.context;
 import java.util.concurrent.CompletableFuture;
 import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewConfigBuilder;
+import me.devnatan.inventoryframework.ViewContainer;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -64,4 +65,18 @@ public interface IFOpenContext extends IFConfinedContext {
      */
     @ApiStatus.Internal
     ViewConfig getModifiedConfig();
+
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
+    ViewContainer getContainer();
+
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
+    void setContainer(ViewContainer container);
 }

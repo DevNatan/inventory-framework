@@ -6,6 +6,7 @@ import java.util.UUID;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewContainer;
+import me.devnatan.inventoryframework.ViewType;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.component.Component;
@@ -43,6 +44,8 @@ public abstract class ElementFactory {
      */
     @NotNull
     public abstract ViewContainer createContainer(@NotNull IFContext context);
+
+    public abstract ViewContainer reuseContainer(Object container, ViewType type);
 
     @NotNull
     public abstract Viewer createViewer(@NotNull Object entity, IFRenderContext context);
