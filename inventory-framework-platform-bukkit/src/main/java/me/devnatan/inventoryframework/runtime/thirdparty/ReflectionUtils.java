@@ -261,6 +261,10 @@ public final class ReflectionUtils {
         }
     }
 
+    public static Object getEntityPlayer(Object craftPlayer) throws Throwable {
+        return GET_HANDLE.invoke(craftPlayer);
+    }
+
     /**
      * Sends a packet to the player synchronously if they're online.
      *
@@ -268,17 +272,13 @@ public final class ReflectionUtils {
      * @param packets the packets to send.
      * @since 2.0.0
      */
-    public static void sendPacketSync(Player player, Object... packets) {
-        try {
-            Object handle = GET_HANDLE.invoke(player);
-            Object connection = PLAYER_CONNECTION.invoke(handle);
+    public static void sendPacketSync(Player player, Object... packets) throws Throwable {
+        Object entityPlayer = getEntityPlayer(player);
+        Object connection = PLAYER_CONNECTION.invoke(entityPlayer);
 
-            // Checking if the connection is not null is enough. There is no need to check if the player is online.
-            if (connection != null) {
-                for (Object packet : packets) SEND_PACKET.invoke(connection, packet);
-            }
-        } catch (Throwable throwable) {
-            throwable.printStackTrace();
+        // Checking if the connection is not null is enough. There is no need to check if the player is online.
+        if (connection != null) {
+            for (Object packet : packets) SEND_PACKET.invoke(connection, packet);
         }
     }
 

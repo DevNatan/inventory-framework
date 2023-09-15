@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+import me.devnatan.inventoryframework.pipeline.Pipeline;
+import me.devnatan.inventoryframework.pipeline.PipelinePhase;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -15,12 +17,35 @@ import org.jetbrains.annotations.UnmodifiableView;
 
 abstract class IFViewFrame<S extends IFViewFrame<S, V>, V extends PlatformView<S, ?, ?, ?, ?, ?, ?, ?>> {
 
+    /**
+     * Called when a {@link IFViewFrame} is registered.
+     */
+    public static final PipelinePhase FRAME_REGISTERED = new PipelinePhase("frame-registered");
+
+    /**
+     * Called when a {@link IFViewFrame} is unregistered.
+     */
+    public static final PipelinePhase FRAME_UNREGISTERED = new PipelinePhase("frame-unregistered");
+
     private boolean registered;
     protected final Map<UUID, V> registeredViews = new HashMap<>();
     protected final Map<String, Viewer> viewerById = new HashMap<>();
     protected Consumer<ViewConfigBuilder> defaultConfig;
 
+    @SuppressWarnings("rawtypes")
+    private final Pipeline<IFViewFrame> pipeline = new Pipeline<>(FRAME_REGISTERED, FRAME_UNREGISTERED);
+
     protected IFViewFrame() {}
+
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
+    @SuppressWarnings("rawtypes")
+    public final @NotNull Pipeline<IFViewFrame> getPipeline() {
+        return pipeline;
+    }
 
     /**
      * All registered views.

@@ -15,6 +15,7 @@ import me.devnatan.inventoryframework.PlatformView;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewContainer;
+import me.devnatan.inventoryframework.ViewType;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.component.ComponentFactory;
 import me.devnatan.inventoryframework.component.ItemComponentBuilder;
@@ -212,6 +213,22 @@ public abstract class PlatformRenderContext<T extends ItemComponentBuilder<T, C>
             factory.accept(index, builder);
             return (ComponentFactory) builder;
         }));
+    }
+
+    /**
+     * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     */
+    @ApiStatus.Experimental
+    public @NotNull T resultSlot() {
+        final ViewType containerType = getContainer().getType();
+        final int[] resultSlots = containerType.getResultSlots();
+        if (resultSlots == null) throw new InventoryFrameworkException("No result slots available: " + containerType);
+
+        if (resultSlots.length > 1)
+            throw new InventoryFrameworkException("#resultSlot() do not support types with more than one result slot.");
+
+        return slot(resultSlots[0]);
     }
 
     /**

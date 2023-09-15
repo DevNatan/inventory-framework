@@ -40,30 +40,30 @@ import org.bukkit.inventory.InventoryView;
 @SuppressWarnings({"ConstantConditions", "CallToPrintStackTrace"})
 public final class InventoryUpdate {
 
-    // Classes.
+    // Classes
     private static final Class<?> CRAFT_PLAYER;
     private static final Class<?> CHAT_MESSAGE;
     private static final Class<?> PACKET_PLAY_OUT_OPEN_WINDOW;
     private static final Class<?> I_CHAT_BASE_COMPONENT;
-    private static final Class<?> CONTAINER;
+    public static final Class<?> CONTAINER;
     private static final Class<?> CONTAINERS;
-    private static final Class<?> ENTITY_PLAYER;
+    public static final Class<?> ENTITY_PLAYER;
     private static final Class<?> I_CHAT_MUTABLE_COMPONENT;
 
-    // Methods.
+    // Methods
     private static final MethodHandle getHandle;
-    private static final MethodHandle getBukkitView;
+    public static final MethodHandle getBukkitView;
     private static final MethodHandle literal;
 
-    // Constructors.
+    // Constructors
     private static final MethodHandle chatMessage;
-    private static final MethodHandle packetPlayOutOpenWindow;
+    public static final MethodHandle packetPlayOutOpenWindow;
 
-    // Fields.
-    private static final MethodHandle activeContainer;
-    private static final MethodHandle windowId;
+    // Fields
+    public static final MethodHandle activeContainer;
+    public static final MethodHandle windowId;
 
-    // Methods factory.
+    // Methods factory
     private static final MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
 
     private static final Set<String> UNOPENABLES = Sets.newHashSet("CRAFTING", "CREATIVE", "PLAYER");
@@ -101,7 +101,7 @@ public final class InventoryUpdate {
 
         // Initialize fields.
         activeContainer =
-                getField(ENTITY_PLAYER, CONTAINER, "activeContainer", "bV", "bW", "bU", "bP", "containerMenu");
+                getField(ENTITY_PLAYER, CONTAINER, "activeContainer", "bR", "bV", "bW", "bU", "bP", "containerMenu");
         windowId = getField(CONTAINER, int.class, "windowId", "j", "containerId");
     }
 
@@ -133,15 +133,10 @@ public final class InventoryUpdate {
             Object entityPlayer = getHandle.invoke(craftPlayer);
 
             // Create new title.
-            Object title;
-            if (ReflectionUtils.supports(19)) {
-                title = literal.invoke(newTitle);
-            } else {
-                title = chatMessage.invoke(newTitle, DUMMY_COLOR_MODIFIERS);
-            }
+            Object title = createTitleComponent(newTitle);
 
             // Get activeContainer from EntityPlayer.
-            Object activeContainer = InventoryUpdate.activeContainer.invoke(entityPlayer);
+            Object activeContainer = getActiveContainer(entityPlayer);
 
             // Get windowId from activeContainer.
             Integer windowId = (Integer) InventoryUpdate.windowId.invoke(activeContainer);
@@ -171,13 +166,7 @@ public final class InventoryUpdate {
                 return;
             }
 
-            Object object;
-            // Dispensers and droppers use the same container, but in previous versions, use a diferrent minecraft name.
-            if (!useContainers() && container == Containers.GENERIC_3X3) {
-                object = "minecraft:" + type.name().toLowerCase();
-            } else {
-                object = container.getObject();
-            }
+            Object object = getContainerOrName(container, type);
 
             // Create packet.
             Object packet = useContainers()
@@ -194,13 +183,46 @@ public final class InventoryUpdate {
         }
     }
 
-    private static MethodHandle getField(Class<?> refc, Class<?> instc, String name, String... extraNames) {
+    public static Object getContainerOrName(Containers container, InventoryType type) {
+        // Dispensers and droppers use the same container, but in previous versions, use a diferrent minecraft name.
+        if (!useContainers() && container == Containers.GENERIC_3X3) {
+            return "minecraft:" + type.name().toLowerCase();
+        } else {
+            return container.getObject();
+        }
+    }
+
+    public static Object createTitleComponent(String text) throws Throwable {
+        if (ReflectionUtils.supports(19)) {
+            return literal.invoke(text);
+        } else {
+            return chatMessage.invoke(text, DUMMY_COLOR_MODIFIERS);
+        }
+    }
+
+    public static Object getActiveContainer(Object entityPlayer) throws Throwable {
+        return InventoryUpdate.activeContainer.invoke(entityPlayer);
+    }
+
+    public static MethodHandle getField(Class<?> refc, Class<?> instc, String name, String... extraNames) {
         MethodHandle handle = getFieldHandle(refc, instc, name);
         if (handle != null) return handle;
 
         if (extraNames != null && extraNames.length > 0) {
             if (extraNames.length == 1) return getField(refc, instc, extraNames[0]);
             return getField(refc, instc, extraNames[0], removeFirst(extraNames));
+        }
+
+        return null;
+    }
+
+    public static MethodHandle setField(Class<?> refc, Class<?> instc, String name, String... extraNames) {
+        MethodHandle handle = setFieldHandle(refc, instc, name);
+        if (handle != null) return handle;
+
+        if (extraNames != null && extraNames.length > 0) {
+            if (extraNames.length == 1) return setField(refc, instc, extraNames[0]);
+            return setField(refc, instc, extraNames[0], removeFirst(extraNames));
         }
 
         return null;
@@ -215,7 +237,7 @@ public final class InventoryUpdate {
         return result;
     }
 
-    private static MethodHandle getFieldHandle(Class<?> refc, Class<?> inscofc, String name) {
+    public static MethodHandle getFieldHandle(Class<?> refc, Class<?> inscofc, String name) {
         try {
             for (Field field : refc.getFields()) {
                 field.setAccessible(true);
@@ -232,7 +254,24 @@ public final class InventoryUpdate {
         }
     }
 
-    private static MethodHandle getConstructor(Class<?> refc, Class<?>... types) {
+    public static MethodHandle setFieldHandle(Class<?> refc, Class<?> inscofc, String name) {
+        try {
+            for (Field field : refc.getFields()) {
+                field.setAccessible(true);
+
+                if (!field.getName().equalsIgnoreCase(name)) continue;
+
+                if (field.getType().isInstance(inscofc) || field.getType().isAssignableFrom(inscofc)) {
+                    return LOOKUP.unreflectSetter(field);
+                }
+            }
+            return null;
+        } catch (ReflectiveOperationException ignored) {
+            return null;
+        }
+    }
+
+    public static MethodHandle getConstructor(Class<?> refc, Class<?>... types) {
         try {
             Constructor<?> constructor = refc.getDeclaredConstructor(types);
             constructor.setAccessible(true);
@@ -243,11 +282,11 @@ public final class InventoryUpdate {
         }
     }
 
-    private static MethodHandle getMethod(Class<?> refc, String name, MethodType type) {
+    public static MethodHandle getMethod(Class<?> refc, String name, MethodType type) {
         return getMethod(refc, name, type, false);
     }
 
-    private static MethodHandle getMethod(Class<?> refc, String name, MethodType type, boolean isStatic) {
+    public static MethodHandle getMethod(Class<?> refc, String name, MethodType type, boolean isStatic) {
         try {
             if (isStatic) return LOOKUP.findStatic(refc, name, type);
             return LOOKUP.findVirtual(refc, name, type);
@@ -262,14 +301,14 @@ public final class InventoryUpdate {
      *
      * @return whether to use containers.
      */
-    private static boolean useContainers() {
+    public static boolean useContainers() {
         return ReflectionUtils.MINOR_NUMBER > 13;
     }
 
     /**
      * An enum class for the necessaries containers.
      */
-    private enum Containers {
+    public enum Containers {
         GENERIC_9X1(14, "minecraft:chest", "CHEST"),
         GENERIC_9X2(14, "minecraft:chest", "CHEST"),
         GENERIC_9X3(14, "minecraft:chest", "CHEST", "ENDER_CHEST", "BARREL"),

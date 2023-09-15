@@ -1,0 +1,20 @@
+plugins {
+    alias(libs.plugins.shadowjar)
+    alias(libs.plugins.kotlin)
+}
+
+apply from: '../library.gradle'
+apply from: '../publish.gradle'
+
+repositories {
+    mavenCentral()
+    maven { url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+
+}
+
+dependencies {
+    api projects.inventoryFrameworkPlatform
+    compileOnly projects.inventoryFrameworkPlatformBukkit
+    compileOnly libs.spigot
+}

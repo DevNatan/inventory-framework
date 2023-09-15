@@ -16,7 +16,7 @@ public final class ViewType {
     public static final ViewType BREWING_STAND =
             new ViewType("brewing-stand", 4, 1, 1, false, new int[] {0, 1, 2}, false);
     public static final ViewType BEACON = new ViewType("beacon", 1, 1, 1);
-    public static final ViewType ANVIL = new ViewType("anvil", 3, 1, 3);
+    public static final ViewType ANVIL = new ViewType("anvil", 3, 1, 3, false, new int[] {2});
     public static final ViewType SHULKER_BOX = new ViewType("shulker-box", 27, 3, 9);
     public static final ViewType SMOKER = new ViewType("smoker", 3, 2, 2, false, new int[] {2});
     public static final ViewType VILLAGER_TRADING = new ViewType("villager-trading", 3, 1, 3, false, new int[] {2});
