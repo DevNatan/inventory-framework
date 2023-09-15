@@ -261,8 +261,8 @@ public final class ReflectionUtils {
         }
     }
 
-    public static Object getHandle(Player player) throws Throwable {
-        return GET_HANDLE.invoke(player);
+    public static Object getEntityPlayer(Object craftPlayer) throws Throwable {
+        return GET_HANDLE.invoke(craftPlayer);
     }
 
     /**
@@ -273,8 +273,8 @@ public final class ReflectionUtils {
      * @since 2.0.0
      */
     public static void sendPacketSync(Player player, Object... packets) throws Throwable {
-        Object handle = getHandle(player);
-        Object connection = PLAYER_CONNECTION.invoke(handle);
+        Object entityPlayer = getEntityPlayer(player);
+        Object connection = PLAYER_CONNECTION.invoke(entityPlayer);
 
         // Checking if the connection is not null is enough. There is no need to check if the player is online.
         if (connection != null) {
