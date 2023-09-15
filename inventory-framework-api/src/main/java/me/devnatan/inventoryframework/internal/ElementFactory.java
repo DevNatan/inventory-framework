@@ -45,8 +45,6 @@ public abstract class ElementFactory {
     @NotNull
     public abstract ViewContainer createContainer(@NotNull IFContext context);
 
-    public abstract ViewContainer reuseContainer(Object container, ViewType type);
-
     @NotNull
     public abstract Viewer createViewer(@NotNull Object entity, IFRenderContext context);
 
