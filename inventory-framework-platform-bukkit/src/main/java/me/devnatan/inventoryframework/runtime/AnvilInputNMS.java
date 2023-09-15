@@ -45,11 +45,9 @@ public class AnvilInputNMS {
     static {
         try {
             final InventoryUpdate.Containers anvil = InventoryUpdate.Containers.ANVIL;
-
             debug(
-                    "Detected anvil container as %s at %s",
-                    anvil.getMinecraftName(),
-                    InventoryUpdate.Containers.ANVIL.getObject().getClass().getName());
+                    "Detected anvil container as \"%s\" @ %s",
+                    anvil.getMinecraftName(), anvil.getObject().getClass().getName());
 
             final Class<?> playerInventoryClass = getNMSClass("world.entity.player", "PlayerInventory");
             ANVIL_CONSTRUCTOR =
@@ -88,7 +86,7 @@ public class AnvilInputNMS {
 
             final Inventory inventory =
                     ((InventoryView) InventoryUpdate.getBukkitView.invoke(anvilContainer)).getTopInventory();
-            inventory.setItem(0, new ItemStack(Material.DIAMOND));
+            inventory.setItem(0, new ItemStack(Material.PAPER));
 
             final Object title = createTitleComponent("abc");
             Object nmsContainers = getContainerOrName(InventoryUpdate.Containers.ANVIL, InventoryType.ANVIL);
