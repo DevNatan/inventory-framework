@@ -34,6 +34,8 @@ public class AnvilInputNMS {
     private static final MethodHandle GET_PLAYER_NEXT_CONTAINER_COUNTER;
     private static final MethodHandle GET_PLAYER_INVENTORY;
     private static final MethodHandle SET_PLAYER_ACTIVE_CONTAINER;
+    private static final MethodHandle ADD_CONTAINER_SLOT_LISTENER;
+    private static final MethodHandle INIT_MENU;
 
     // FIELDS
     private static final MethodHandle CONTAINER_CHECK_REACHABLE;
@@ -62,6 +64,9 @@ public class AnvilInputNMS {
                     getMethod(ENTITY_PLAYER, "nextContainerCounter", MethodType.methodType(int.class));
             GET_PLAYER_INVENTORY = getMethod(ENTITY_PLAYER, "fN", MethodType.methodType(playerInventoryClass));
             CONTAINER_WINDOW_ID = setField(CONTAINER, int.class, "windowId", "containerId", "j");
+            ADD_CONTAINER_SLOT_LISTENER = getMethod(
+                    CONTAINER, "a", MethodType.methodType(void.class, getNMSClass("world.inventory.ICrafting")));
+            INIT_MENU = getMethod(ENTITY_PLAYER, "a", MethodType.methodType(void.class, CONTAINER));
         } catch (Exception exception) {
             throw new RuntimeException(
                     "Unsupported version for Anvil Input feature: " + ReflectionUtils.getVersionInformation(),
@@ -73,12 +78,12 @@ public class AnvilInputNMS {
 
     public static void open(Player player) {
         try {
-            resetActiveContainer(player);
-
             final Object entityPlayer = ReflectionUtils.getEntityPlayer(player);
+            final Object defaultContainer = PLAYER_DEFAULT_CONTAINER.invoke(entityPlayer);
+            SET_PLAYER_ACTIVE_CONTAINER.invoke(entityPlayer, defaultContainer);
+
             final int windowId = (int) GET_PLAYER_NEXT_CONTAINER_COUNTER.invoke(entityPlayer);
             final Object anvilContainer = ANVIL_CONSTRUCTOR.invoke(windowId, GET_PLAYER_INVENTORY.invoke(entityPlayer));
-
             CONTAINER_CHECK_REACHABLE.invoke(anvilContainer, false);
 
             final Inventory inventory =
@@ -89,20 +94,20 @@ public class AnvilInputNMS {
             Object nmsContainers = getContainerOrName(InventoryUpdate.Containers.ANVIL, InventoryType.ANVIL);
             Object openWindowPacket = useContainers()
                     ? packetPlayOutOpenWindow.invoke(windowId, nmsContainers, title)
-                    : packetPlayOutOpenWindow.invoke(windowId, nmsContainers, title, 0);
+                    : packetPlayOutOpenWindow.invoke(
+                            windowId, nmsContainers, title, InventoryType.ANVIL.getDefaultSize());
 
             ReflectionUtils.sendPacketSync(player, openWindowPacket);
             SET_PLAYER_ACTIVE_CONTAINER.invoke(entityPlayer, anvilContainer);
             CONTAINER_WINDOW_ID.invoke(anvilContainer, windowId);
+
+            if (ReflectionUtils.supports(19)) {
+                INIT_MENU.invoke(entityPlayer, anvilContainer);
+            } else {
+                ADD_CONTAINER_SLOT_LISTENER.invoke(anvilContainer, player);
+            }
         } catch (Throwable e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private static void resetActiveContainer(Player player) throws Throwable {
-        final Object entityPlayer = ReflectionUtils.getEntityPlayer(player);
-        final Object defaultContainer = PLAYER_DEFAULT_CONTAINER.invoke(entityPlayer);
-
-        SET_PLAYER_ACTIVE_CONTAINER.invoke(entityPlayer, defaultContainer);
     }
 }
