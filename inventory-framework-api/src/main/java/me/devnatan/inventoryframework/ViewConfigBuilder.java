@@ -91,13 +91,24 @@ public final class ViewConfigBuilder {
     }
 
     /**
-     * Add a modifier to this setting.
+     * Adds a modifier to this config.
      *
      * @param modifier The modifier that'll be added.
      * @return This configuration builder.
      */
     public ViewConfigBuilder with(@NotNull ViewConfig.Modifier modifier) {
         this.modifiers.add(modifier);
+        return this;
+    }
+
+    /**
+     * Adds a modifier to this config.
+     *
+     * @param modifiers Modifiers to add.
+     * @return This configuration builder.
+     */
+    public ViewConfigBuilder with(ViewConfig.Modifier... modifiers) {
+        this.modifiers.addAll(Arrays.asList(modifiers));
         return this;
     }
 
