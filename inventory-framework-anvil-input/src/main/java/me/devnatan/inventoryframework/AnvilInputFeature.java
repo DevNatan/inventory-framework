@@ -67,8 +67,10 @@ public final class AnvilInputFeature implements Feature<Void, Void, ViewFrame> {
 
             final Inventory inventory =
                     AnvilInputNMS.open(context.getPlayer(), context.getConfig().getTitle());
-            final ViewContainer container = new BukkitViewContainer(inventory, context.isShared(), ViewType.ANVIL);
+            final ViewContainer container =
+                    new BukkitViewContainer(inventory, context.isShared(), ViewType.ANVIL, true);
 
+            System.out.println("container = " + container);
             context.setContainer(container);
         });
     }

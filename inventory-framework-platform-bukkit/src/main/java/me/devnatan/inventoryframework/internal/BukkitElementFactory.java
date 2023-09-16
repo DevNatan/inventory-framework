@@ -54,7 +54,7 @@ public class BukkitElementFactory extends ElementFactory {
         final Inventory inventory =
                 InventoryFactory.current().createInventory(holder, finalType, size, config.getTitle());
 
-        return new BukkitViewContainer(inventory, false, finalType);
+        return new BukkitViewContainer(inventory, false, finalType, false);
     }
 
     @Override

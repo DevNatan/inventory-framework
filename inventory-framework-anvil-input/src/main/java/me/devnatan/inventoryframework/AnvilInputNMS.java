@@ -89,7 +89,7 @@ class AnvilInputNMS {
             inventory.setItem(0, new ItemStack(Material.PAPER));
 
             Object nmsContainers = getContainerOrName(InventoryUpdate.Containers.ANVIL, InventoryType.ANVIL);
-            Object updatedTitle = createTitleComponent(title == null ? "" : title);
+            Object updatedTitle = createTitleComponent((String) title);
             Object openWindowPacket = useContainers()
                     ? packetPlayOutOpenWindow.invoke(windowId, nmsContainers, updatedTitle)
                     : packetPlayOutOpenWindow.invoke(
