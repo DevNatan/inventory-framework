@@ -1,24 +1,29 @@
 package me.devnatan.inventoryframework;
 
+import static me.devnatan.inventoryframework.IFViewFrame.FRAME_REGISTERED;
+
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.UnaryOperator;
+import me.devnatan.inventoryframework.context.IFOpenContext;
+import me.devnatan.inventoryframework.context.OpenContext;
 import me.devnatan.inventoryframework.feature.Feature;
-import me.devnatan.inventoryframework.pipeline.PipelineContext;
 import me.devnatan.inventoryframework.pipeline.PipelineInterceptor;
+import me.devnatan.inventoryframework.pipeline.StandardPipelinePhases;
+import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
-public final class AnvilInputFeature<F extends IFViewFrame<?, ?>> implements Feature<Void, Void, F> {
+public final class AnvilInputFeature implements Feature<Void, Void, ViewFrame> {
 
     /**
      * Instance of the Anvil Input feature.
      *
      * @see <a href="https://github.com/DevNatan/inventory-framework/wiki/anvil-input">Anvil Input on Wiki</a>
      */
-    public static final AnvilInputFeature<?> AnvilInput = new AnvilInputFeature<>();
+    public static final Feature<Void, Void, ViewFrame> AnvilInput = new AnvilInputFeature();
 
-    private final PipelineInterceptor frameInterceptor = new FrameInterceptor();
+    private PipelineInterceptor frameInterceptor;
 
     private AnvilInputFeature() {}
 
@@ -28,23 +33,43 @@ public final class AnvilInputFeature<F extends IFViewFrame<?, ?>> implements Fea
     }
 
     @Override
-    public @NotNull Void install(F framework, UnaryOperator<Void> configure) {
+    public @NotNull Void install(ViewFrame framework, UnaryOperator<Void> configure) {
+        framework.getPipeline().intercept(FRAME_REGISTERED, (frameInterceptor = createFrameworkInterceptor()));
         return null;
     }
 
     @Override
-    public void uninstall(F framework) {
-        framework.getPipeline().removeInterceptor(IFViewFrame.FRAME_REGISTERED, frameInterceptor);
+    public void uninstall(ViewFrame framework) {
+        framework.getPipeline().removeInterceptor(FRAME_REGISTERED, frameInterceptor);
     }
-}
 
-@SuppressWarnings("rawtypes")
-class FrameInterceptor implements PipelineInterceptor<IFViewFrame> {
+    private PipelineInterceptor createFrameworkInterceptor() {
+        return (PipelineInterceptor<IFViewFrame>) (pipeline, subject) -> {
+            final Map<UUID, PlatformView> views = subject.getRegisteredViews();
 
-    @Override
-    public void intercept(PipelineContext<IFViewFrame> pipeline, IFViewFrame subject) {
-        final Map<UUID, PlatformView> views = subject.getRegisteredViews();
+            for (final PlatformView view : views.values()) {
+                handleOpen(view);
+            }
+        };
+    }
 
-        // Iterate over
+    private void handleOpen(PlatformView view) {
+        view.getPipeline().intercept(StandardPipelinePhases.OPEN, (pipeline, subject) -> {
+            if (!(subject instanceof IFOpenContext)) return;
+
+            final OpenContext context = (OpenContext) subject;
+            if (context.getConfig().getType() != ViewType.ANVIL) return;
+
+            final boolean hasAnvilInput =
+                    context.getConfig().getModifiers().stream().anyMatch(modifier -> modifier instanceof AnvilInput);
+
+            if (!hasAnvilInput) return;
+
+            final Inventory inventory =
+                    AnvilInputNMS.open(context.getPlayer(), context.getConfig().getTitle());
+            final ViewContainer container = new BukkitViewContainer(inventory, false, ViewType.ANVIL);
+
+            context.setContainer(container);
+        });
     }
 }

@@ -3,6 +3,7 @@ package me.devnatan.inventoryframework;
 import static me.devnatan.inventoryframework.IFDebug.debug;
 import static me.devnatan.inventoryframework.runtime.thirdparty.InventoryUpdate.CONTAINER;
 import static me.devnatan.inventoryframework.runtime.thirdparty.InventoryUpdate.ENTITY_PLAYER;
+import static me.devnatan.inventoryframework.runtime.thirdparty.InventoryUpdate.createTitleComponent;
 import static me.devnatan.inventoryframework.runtime.thirdparty.InventoryUpdate.getConstructor;
 import static me.devnatan.inventoryframework.runtime.thirdparty.InventoryUpdate.getContainerOrName;
 import static me.devnatan.inventoryframework.runtime.thirdparty.InventoryUpdate.getField;
@@ -24,7 +25,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 
-public class AnvilInputNMS {
+class AnvilInputNMS {
 
     // CONSTRUCTORS
     private static final MethodHandle ANVIL_CONSTRUCTOR;
@@ -88,10 +89,11 @@ public class AnvilInputNMS {
             inventory.setItem(0, new ItemStack(Material.PAPER));
 
             Object nmsContainers = getContainerOrName(InventoryUpdate.Containers.ANVIL, InventoryType.ANVIL);
+            Object updatedTitle = createTitleComponent(title == null ? "" : title);
             Object openWindowPacket = useContainers()
-                    ? packetPlayOutOpenWindow.invoke(windowId, nmsContainers, title)
+                    ? packetPlayOutOpenWindow.invoke(windowId, nmsContainers, updatedTitle)
                     : packetPlayOutOpenWindow.invoke(
-                            windowId, nmsContainers, title, InventoryType.ANVIL.getDefaultSize());
+                            windowId, nmsContainers, updatedTitle, InventoryType.ANVIL.getDefaultSize());
 
             ReflectionUtils.sendPacketSync(player, openWindowPacket);
             SET_PLAYER_ACTIVE_CONTAINER.invoke(entityPlayer, anvilContainer);
