@@ -1,5 +1,6 @@
 package me.devnatan.inventoryframework.context;
 
+import java.util.List;
 import java.util.UUID;
 import me.devnatan.inventoryframework.BukkitViewer;
 import me.devnatan.inventoryframework.View;
@@ -10,7 +11,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
-public class CloseContext extends PlatformConfinedContext implements IFCloseContext {
+public class CloseContext extends PlatformConfinedContext implements IFCloseContext, Context {
 
     private final Viewer subject;
     private final Player player;
@@ -28,6 +29,21 @@ public class CloseContext extends PlatformConfinedContext implements IFCloseCont
     // TODO Needs documentation
     public final @NotNull Player getPlayer() {
         return player;
+    }
+
+    @Override
+    public List<Player> getAllPlayers() {
+        return getParent().getAllPlayers();
+    }
+
+    @Override
+    public void updateTitleForPlayer(@NotNull String title, @NotNull Player player) {
+        getParent().updateTitleForPlayer(title, player);
+    }
+
+    @Override
+    public void resetTitleForPlayer(@NotNull Player player) {
+        getParent().resetTitleForPlayer(player);
     }
 
     @Override

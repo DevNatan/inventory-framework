@@ -76,7 +76,7 @@ public final class PlatformOpenInterceptor implements PipelineInterceptor<Virtua
                 openContext.getConfig(),
                 createdContainer,
                 new HashMap<>(),
-                openContext.getSubject(),
+                openContext.getViewer(),
                 openContext.getInitialData());
 
         for (final Viewer viewer : openContext.getIndexedViewers().values()) {
