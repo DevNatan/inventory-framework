@@ -544,10 +544,12 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
                     String.format("Page index not found (%d > %d)", pageIndex, getPagesCount()));
 
         if (isLoading()) return;
-        if (pageSwitchHandler != null) pageSwitchHandler.accept(host, this);
 
-        currPageIndex = pageIndex;
-        pageWasChanged = true;
+		currPageIndex = pageIndex;
+		pageWasChanged = true;
+
+		if (pageSwitchHandler != null) pageSwitchHandler.accept(host, this);
+
         host.updateComponent(this);
     }
 
