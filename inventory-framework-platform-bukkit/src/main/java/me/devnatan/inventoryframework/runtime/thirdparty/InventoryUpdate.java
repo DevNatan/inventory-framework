@@ -114,7 +114,8 @@ public final class InventoryUpdate {
     @SuppressWarnings("UnstableApiUsage")
     public static void updateInventory(Player player, String newTitle) {
         Preconditions.checkArgument(player != null, "Cannot update inventory to null player.");
-        Preconditions.checkArgument(newTitle != null, "The new title can't be null.");
+
+        if (newTitle == null) newTitle = "";
 
         try {
             if (newTitle.length() > 32) {
@@ -192,7 +193,7 @@ public final class InventoryUpdate {
         }
     }
 
-    public static Object createTitleComponent(String text) throws Throwable {
+    public static Object createTitleComponent(Object text) throws Throwable {
         if (ReflectionUtils.supports(19)) {
             return literal.invoke(text);
         } else {
