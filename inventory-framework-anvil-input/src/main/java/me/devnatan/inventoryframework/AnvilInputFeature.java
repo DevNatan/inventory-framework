@@ -54,7 +54,7 @@ public final class AnvilInputFeature implements Feature<Void, Void, ViewFrame> {
     }
 
     private void handleOpen(PlatformView view) {
-        view.getPipeline().intercept(StandardPipelinePhases.OPEN, (pipeline, subject) -> {
+        view.getPipeline().intercept(StandardPipelinePhases.BEFORE_OPEN, (pipeline, subject) -> {
             if (!(subject instanceof IFOpenContext)) return;
 
             final OpenContext context = (OpenContext) subject;

@@ -24,7 +24,7 @@ public final class StandardPipelinePhases {
      * Called when a context is about to open.
      * In this pipeline phase the pipeline interceptor subject is a {@link IFOpenContext}.
      */
-    public static final PipelinePhase OPEN = new PipelinePhase("open");
+    public static final PipelinePhase BEFORE_OPEN = new PipelinePhase("before-open");
 
     /**
      * Called when a {@link IFContext context} is going to be rendered.
