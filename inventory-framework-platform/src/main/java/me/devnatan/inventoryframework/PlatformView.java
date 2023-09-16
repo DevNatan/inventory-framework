@@ -129,7 +129,7 @@ public abstract class PlatformView<
         final Viewer subject = viewers.size() == 1 ? viewers.get(0) : null;
         final IFOpenContext context = getElementFactory().createOpenContext(this, subject, viewers, initialData);
 
-        getPipeline().execute(StandardPipelinePhases.BEFORE_OPEN, context);
+        getPipeline().execute(StandardPipelinePhases.OPEN, context);
     }
 
     /**
@@ -874,7 +874,7 @@ public abstract class PlatformView<
 
         final Pipeline<? super VirtualView> pipeline = getPipeline();
         pipeline.intercept(StandardPipelinePhases.INIT, new PlatformInitInterceptor());
-        pipeline.intercept(StandardPipelinePhases.BEFORE_OPEN, new PlatformOpenInterceptor());
+        pipeline.intercept(StandardPipelinePhases.OPEN, new PlatformOpenInterceptor());
         pipeline.intercept(StandardPipelinePhases.LAYOUT_RESOLUTION, new LayoutResolutionInterceptor());
         pipeline.intercept(StandardPipelinePhases.FIRST_RENDER, new PlatformRenderInterceptor());
         pipeline.intercept(StandardPipelinePhases.FIRST_RENDER, new LayoutRenderInterceptor());

@@ -8,7 +8,7 @@ import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.FIR
 import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.INIT;
 import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.INVALIDATION;
 import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.LAYOUT_RESOLUTION;
-import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.BEFORE_OPEN;
+import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.OPEN;
 import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.UPDATE;
 
 import java.util.*;
@@ -26,7 +26,7 @@ public class DefaultRootView implements RootView {
     private final UUID id = UUID.randomUUID();
     private ViewConfig config;
     private final Pipeline<VirtualView> pipeline =
-            new Pipeline<>(INIT, BEFORE_OPEN, LAYOUT_RESOLUTION, FIRST_RENDER, UPDATE, CLICK, CLOSE, INVALIDATION);
+            new Pipeline<>(INIT, OPEN, LAYOUT_RESOLUTION, FIRST_RENDER, UPDATE, CLICK, CLOSE, INVALIDATION);
     private final Set<IFContext> contexts = newSetFromMap(synchronizedMap(new HashMap<>()));
     final StateRegistry stateRegistry = new StateRegistry();
     private Job scheduledUpdateJob;

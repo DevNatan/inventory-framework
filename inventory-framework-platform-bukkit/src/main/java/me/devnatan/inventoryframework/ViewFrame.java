@@ -109,10 +109,10 @@ public class ViewFrame extends IFViewFrame<ViewFrame, View> implements FeatureIn
 
         tryEnableMetrics();
         checkRelocationIssues();
-        initializeViews();
-        getOwner().getServer().getPluginManager().registerEvents(new IFInventoryListener(this), getOwner());
         setRegistered(true);
         getPipeline().execute(IFViewFrame.FRAME_REGISTERED, this);
+        initializeViews();
+        getOwner().getServer().getPluginManager().registerEvents(new IFInventoryListener(this), getOwner());
         return this;
     }
 

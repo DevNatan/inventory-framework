@@ -54,8 +54,10 @@ public final class AnvilInputFeature implements Feature<Void, Void, ViewFrame> {
     }
 
     private void handleOpen(PlatformView view) {
-        view.getPipeline().intercept(StandardPipelinePhases.BEFORE_OPEN, (pipeline, subject) -> {
+        view.getPipeline().intercept(StandardPipelinePhases.OPEN, (pipeline, subject) -> {
             if (!(subject instanceof IFOpenContext)) return;
+
+            System.out.println("after open");
 
             final OpenContext context = (OpenContext) subject;
             if (context.getConfig().getType() != ViewType.ANVIL) return;
@@ -69,6 +71,7 @@ public final class AnvilInputFeature implements Feature<Void, Void, ViewFrame> {
                     AnvilInputNMS.open(context.getPlayer(), context.getConfig().getTitle());
             final ViewContainer container = new BukkitViewContainer(inventory, false, ViewType.ANVIL);
 
+            System.out.println("setContainer");
             context.setContainer(container);
         });
     }
