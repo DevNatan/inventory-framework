@@ -1,9 +1,11 @@
 package me.devnatan.inventoryframework.context;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 import me.devnatan.inventoryframework.BukkitViewer;
 import me.devnatan.inventoryframework.UnsupportedOperationInSharedContextException;
 import me.devnatan.inventoryframework.View;
@@ -15,7 +17,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class OpenContext extends PlatformContext implements IFOpenContext {
+public class OpenContext extends PlatformConfinedContext implements IFOpenContext, Context {
 
     // --- Inherited ---
     private final UUID id;
@@ -68,6 +70,28 @@ public class OpenContext extends PlatformContext implements IFOpenContext {
     }
 
     @Override
+    public List<Player> getAllPlayers() {
+        return getViewers().stream()
+                .map(viewer -> (BukkitViewer) viewer)
+                .map(BukkitViewer::getPlayer)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public void updateTitleForPlayer(@NotNull String title, @NotNull Player player) {
+        tryThrowDoNotWorkWithSharedContext();
+        modifyConfig().title(title);
+    }
+
+    @Override
+    public void resetTitleForPlayer(@NotNull Player player) {
+        tryThrowDoNotWorkWithSharedContext();
+        if (getModifiedConfig() == null) return;
+
+        modifyConfig().title(null);
+    }
+
+    @Override
     public final boolean isCancelled() {
         return cancelled;
     }
@@ -103,11 +127,6 @@ public class OpenContext extends PlatformContext implements IFOpenContext {
     }
 
     @Override
-    public final Viewer getSubject() {
-        return subject;
-    }
-
-    @Override
     public final void waitUntil(@NotNull CompletableFuture<Void> task) {
         this.waitTask = task;
     }
@@ -131,5 +150,11 @@ public class OpenContext extends PlatformContext implements IFOpenContext {
         if (inheritedConfigBuilder == null) inheritedConfigBuilder = new ViewConfigBuilder();
 
         return inheritedConfigBuilder;
+    }
+
+    @Override
+    public Viewer getViewer() {
+        tryThrowDoNotWorkWithSharedContext("getViewers()");
+        return subject;
     }
 }
