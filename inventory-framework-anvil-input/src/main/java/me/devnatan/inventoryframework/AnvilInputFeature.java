@@ -57,8 +57,6 @@ public final class AnvilInputFeature implements Feature<Void, Void, ViewFrame> {
         view.getPipeline().intercept(StandardPipelinePhases.OPEN, (pipeline, subject) -> {
             if (!(subject instanceof IFOpenContext)) return;
 
-            System.out.println("after open");
-
             final OpenContext context = (OpenContext) subject;
             if (context.getConfig().getType() != ViewType.ANVIL) return;
 
@@ -69,9 +67,8 @@ public final class AnvilInputFeature implements Feature<Void, Void, ViewFrame> {
 
             final Inventory inventory =
                     AnvilInputNMS.open(context.getPlayer(), context.getConfig().getTitle());
-            final ViewContainer container = new BukkitViewContainer(inventory, false, ViewType.ANVIL);
+            final ViewContainer container = new BukkitViewContainer(inventory, context.isShared(), ViewType.ANVIL);
 
-            System.out.println("setContainer");
             context.setContainer(container);
         });
     }
