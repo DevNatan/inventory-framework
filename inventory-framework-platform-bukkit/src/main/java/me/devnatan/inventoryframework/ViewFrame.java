@@ -180,8 +180,8 @@ public class ViewFrame extends IFViewFrame<ViewFrame, View> implements FeatureIn
 
     private void checkRelocationIssues() {
         final Plugin plugin = getOwner();
-        final boolean isLibraryAsPluginEnabled =
-                getOwner().getServer().getPluginManager().isPluginEnabled("InventoryFramework");
+        final boolean isLibraryAsPluginAvailable =
+                getOwner().getServer().getPluginManager().getPlugin("InventoryFramework") != null;
         boolean isLibraryPresent = false;
         try {
             Class.forName(PLUGIN_FQN);
@@ -189,12 +189,8 @@ public class ViewFrame extends IFViewFrame<ViewFrame, View> implements FeatureIn
         } catch (ClassNotFoundException ignored) {
         }
 
-        if (!isLibraryAsPluginEnabled && isLibraryPresent) {
+        if (!isLibraryAsPluginAvailable && isLibraryPresent)
             plugin.getLogger().warning(RELOCATION_MESSAGE);
-            plugin.getServer()
-                    .getPluginManager()
-                    .registerEvents(new IFLibraryConflictWarningListener(RELOCATION_MESSAGE), plugin);
-        }
     }
 
     /**
