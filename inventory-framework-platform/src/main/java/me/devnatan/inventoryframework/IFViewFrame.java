@@ -161,6 +161,7 @@ abstract class IFViewFrame<S extends IFViewFrame<S, V>, V extends PlatformView<S
                 .map(player -> view.getElementFactory().createViewer(player, null))
                 .collect(Collectors.toList());
 
+        viewers.forEach(Viewer::close);
         view.open(viewers, initialData);
     }
 
