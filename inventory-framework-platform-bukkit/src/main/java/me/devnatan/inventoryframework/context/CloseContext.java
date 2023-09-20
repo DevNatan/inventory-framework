@@ -1,15 +1,20 @@
 package me.devnatan.inventoryframework.context;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import me.devnatan.inventoryframework.BukkitViewer;
 import me.devnatan.inventoryframework.View;
 import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
+import me.devnatan.inventoryframework.state.State;
+import me.devnatan.inventoryframework.state.StateValue;
+import me.devnatan.inventoryframework.state.StateWatcher;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.UnmodifiableView;
 
 public class CloseContext extends PlatformConfinedContext implements IFCloseContext, Context {
 
@@ -24,6 +29,7 @@ public class CloseContext extends PlatformConfinedContext implements IFCloseCont
         this.subject = subject;
         this.player = ((BukkitViewer) subject).getPlayer();
         this.parent = parent;
+
     }
 
     // TODO Needs documentation
@@ -90,4 +96,39 @@ public class CloseContext extends PlatformConfinedContext implements IFCloseCont
     public final Object getInitialData() {
         return getParent().getInitialData();
     }
+
+	@Override
+	public final @UnmodifiableView Map<Long, StateValue> getStateValues() {
+		return getParent().getStateValues();
+	}
+
+	@Override
+	public final void initializeState(long id, @NotNull StateValue value) {
+		getParent().initializeState(id, value);
+	}
+
+	@Override
+	public final void watchState(long id, StateWatcher listener) {
+		getParent().watchState(id, listener);
+	}
+
+	@Override
+	public final Object getRawStateValue(State<?> state) {
+		return getParent().getRawStateValue(state);
+	}
+
+	@Override
+	public final StateValue getInternalStateValue(State<?> state) {
+		return getParent().getInternalStateValue(state);
+	}
+
+	@Override
+	public final StateValue getUninitializedStateValue(long stateId) {
+		return getParent().getUninitializedStateValue(stateId);
+	}
+
+	@Override
+	public final void updateState(long id, Object value) {
+		getParent().updateState(id, value);
+	}
 }
