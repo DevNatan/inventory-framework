@@ -16,7 +16,6 @@ import static me.devnatan.inventoryframework.runtime.thirdparty.ReflectionUtils.
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodType;
 import java.util.Objects;
-
 import me.devnatan.inventoryframework.runtime.thirdparty.InventoryUpdate;
 import me.devnatan.inventoryframework.runtime.thirdparty.ReflectionUtils;
 import org.bukkit.Material;
@@ -25,6 +24,7 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 class AnvilInputNMS {
 
@@ -47,10 +47,11 @@ class AnvilInputNMS {
         try {
             final Class<?> playerInventoryClass = getNMSClass("world.entity.player", "PlayerInventory");
 
-            ANVIL_CONSTRUCTOR = getConstructor(Objects.requireNonNull(
-				getNMSClass("world.inventory", "ContainerAnvil"), "ContainerAnvil NMS class not found"),
-				int.class, playerInventoryClass
-			);
+            ANVIL_CONSTRUCTOR = getConstructor(
+                    Objects.requireNonNull(
+                            getNMSClass("world.inventory", "ContainerAnvil"), "ContainerAnvil NMS class not found"),
+                    int.class,
+                    playerInventoryClass);
             CONTAINER_CHECK_REACHABLE = setFieldHandle(CONTAINER, boolean.class, "checkReachable");
 
             final Class<?> containerPlayer = getNMSClass("world.inventory", "ContainerPlayer");
@@ -73,7 +74,7 @@ class AnvilInputNMS {
 
     private AnvilInputNMS() {}
 
-    public static Inventory open(Player player, Object title) {
+    public static Inventory open(Player player, Object title, String initialInput) {
         try {
             final Object entityPlayer = ReflectionUtils.getEntityPlayer(player);
             final Object defaultContainer = PLAYER_DEFAULT_CONTAINER.invoke(entityPlayer);
@@ -85,10 +86,14 @@ class AnvilInputNMS {
 
             final Inventory inventory =
                     ((InventoryView) InventoryUpdate.getBukkitView.invoke(anvilContainer)).getTopInventory();
-            inventory.setItem(0, new ItemStack(Material.PAPER));
+            final ItemStack item = new ItemStack(Material.PAPER);
+            final ItemMeta meta = item.getItemMeta();
+            meta.setDisplayName(initialInput);
+            item.setItemMeta(meta);
+            inventory.setItem(0, item);
 
             Object nmsContainers = getContainerOrName(InventoryUpdate.Containers.ANVIL, InventoryType.ANVIL);
-            Object updatedTitle = createTitleComponent((String) title);
+            Object updatedTitle = createTitleComponent(title);
             Object openWindowPacket = useContainers()
                     ? packetPlayOutOpenWindow.invoke(windowId, nmsContainers, updatedTitle)
                     : packetPlayOutOpenWindow.invoke(

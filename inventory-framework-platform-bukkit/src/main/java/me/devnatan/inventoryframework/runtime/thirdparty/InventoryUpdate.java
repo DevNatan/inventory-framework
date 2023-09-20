@@ -193,7 +193,7 @@ public final class InventoryUpdate {
         }
     }
 
-    public static Object createTitleComponent(String text) throws Throwable {
+    public static Object createTitleComponent(Object text) throws Throwable {
         if (ReflectionUtils.supports(19)) {
             return literal.invoke(text);
         } else {
