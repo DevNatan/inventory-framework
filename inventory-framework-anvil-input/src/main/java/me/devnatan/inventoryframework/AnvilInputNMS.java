@@ -1,6 +1,5 @@
 package me.devnatan.inventoryframework;
 
-import static me.devnatan.inventoryframework.IFDebug.debug;
 import static me.devnatan.inventoryframework.runtime.thirdparty.InventoryUpdate.CONTAINER;
 import static me.devnatan.inventoryframework.runtime.thirdparty.InventoryUpdate.ENTITY_PLAYER;
 import static me.devnatan.inventoryframework.runtime.thirdparty.InventoryUpdate.createTitleComponent;
@@ -16,6 +15,8 @@ import static me.devnatan.inventoryframework.runtime.thirdparty.ReflectionUtils.
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodType;
+import java.util.Objects;
+
 import me.devnatan.inventoryframework.runtime.thirdparty.InventoryUpdate;
 import me.devnatan.inventoryframework.runtime.thirdparty.ReflectionUtils;
 import org.bukkit.Material;
@@ -44,14 +45,12 @@ class AnvilInputNMS {
 
     static {
         try {
-            final InventoryUpdate.Containers anvil = InventoryUpdate.Containers.ANVIL;
-            debug(
-                    "Detected anvil container as \"%s\" @ %s",
-                    anvil.getMinecraftName(), anvil.getObject().getClass().getName());
-
             final Class<?> playerInventoryClass = getNMSClass("world.entity.player", "PlayerInventory");
-            ANVIL_CONSTRUCTOR =
-                    getConstructor(getNMSClass("world.inventory", "ContainerAnvil"), int.class, playerInventoryClass);
+
+            ANVIL_CONSTRUCTOR = getConstructor(Objects.requireNonNull(
+				getNMSClass("world.inventory", "ContainerAnvil"), "ContainerAnvil NMS class not found"),
+				int.class, playerInventoryClass
+			);
             CONTAINER_CHECK_REACHABLE = setFieldHandle(CONTAINER, boolean.class, "checkReachable");
 
             final Class<?> containerPlayer = getNMSClass("world.inventory", "ContainerPlayer");
