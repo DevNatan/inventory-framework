@@ -40,6 +40,15 @@ public final class AnvilInput extends BaseMutableState<String> implements ViewCo
      * such API may be changed or may be removed completely in any further release. </i></b>
      */
     @ApiStatus.Experimental
+    public static AnvilInput createAnvilInput(@NotNull UnaryOperator<String> onInputChange) {
+        return createAnvilInput("", onInputChange);
+    }
+
+    /**
+     * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     */
+    @ApiStatus.Experimental
     public static AnvilInput createAnvilInput(
             @NotNull String initialInput, @NotNull UnaryOperator<String> onInputChange) {
         final long id = State.next();
