@@ -545,10 +545,10 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
 
         if (isLoading()) return;
 
-		currPageIndex = pageIndex;
-		pageWasChanged = true;
+        currPageIndex = pageIndex;
+        pageWasChanged = true;
 
-		if (pageSwitchHandler != null) pageSwitchHandler.accept(host, this);
+        if (pageSwitchHandler != null) pageSwitchHandler.accept(host, this);
 
         host.updateComponent(this);
     }

@@ -234,6 +234,18 @@ public class ViewFrame extends IFViewFrame<ViewFrame, View> implements FeatureIn
         return value;
     }
 
+    /**
+     * Installs a feature with no specific configuration.
+     *
+     * @param feature The feature to be installed.
+     * @return This view frame.
+     */
+    @NotNull
+    public final ViewFrame install(@NotNull Feature<?, ?, ViewFrame> feature) {
+        install(feature, $ -> $);
+        return this;
+    }
+
     @Override
     public final void uninstall(@NotNull Feature<?, ?, ViewFrame> feature) {
         featureInstaller.uninstall(feature);
