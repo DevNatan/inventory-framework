@@ -142,9 +142,11 @@ public final class AnvilInputFeature implements Feature<Void, Void, ViewFrame> {
 
             final BukkitViewContainer container = (BukkitViewContainer) context.getContainer();
             final int slot = container.getType().getResultSlots()[0];
-            final ItemStack item = requireNonNull(container.getInventory().getItem(slot));
-            final String input = requireNonNull(item.getItemMeta()).getDisplayName();
+            final ItemStack item = container.getInventory().getItem(slot);
+			if (item == null || item.getType() == Material.AIR)
+				return;
 
+            final String input = requireNonNull(item.getItemMeta()).getDisplayName();
             context.updateState(anvilInput.internalId(), input);
         });
     }
