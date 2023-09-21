@@ -106,4 +106,10 @@ public class FakeComponent implements Component, InteractionHandler {
 
     @Override
     public void forceUpdate() {}
+
+    @Override
+    public void show() {}
+
+    @Override
+    public void hide() {}
 }
