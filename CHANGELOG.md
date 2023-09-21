@@ -9,6 +9,8 @@
 * OpenContext and CloseContext now implements Bukkit platform Context (#479)
 * Fix MC 1.8 inventory close handling exploit with F6 (Start Streaming) key (#480)
 * New experimental Component hide() and show() also forceUpdate() was moved from Pagination API to Component API (#476)
+* IN-GAME library conflict warning removed (#484)
+* Added an option to disable bStats metrics (#485)
 
 # 3.0.0-rc.3 (09-13-2023)
 
