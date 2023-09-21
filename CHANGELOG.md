@@ -2,10 +2,10 @@
 
 # 3.0.0 (unreleased)
 
-* Refs API feature (#476)
-* Anvil Input feature (see docs) (#481)
+* Refs API feature to create a direct component instance reference (#476)
+* Anvil Input feature that allows to get the text field value from a anvil (#481)
 * Context back with initialData parameter (#482)
-* Fix iconsistent page index in pagination page switch handler (#478)
+* Fix inconsistent page index in pagination page switch handler (#478)
 * OpenContext and CloseContext now implements Bukkit platform Context (#479)
 * Fix MC 1.8 inventory close handling exploit with F6 (Start Streaming) key (#480)
 * New experimental Component hide() and show() also forceUpdate() was moved from Pagination API to Component API (#476)
