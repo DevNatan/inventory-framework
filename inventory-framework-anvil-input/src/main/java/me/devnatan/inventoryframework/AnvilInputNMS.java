@@ -15,12 +15,12 @@ import static me.devnatan.inventoryframework.runtime.thirdparty.ReflectionUtils.
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodType;
-import java.util.Objects;
 import me.devnatan.inventoryframework.runtime.thirdparty.InventoryUpdate;
 import me.devnatan.inventoryframework.runtime.thirdparty.ReflectionUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.inventory.AnvilInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
@@ -30,6 +30,7 @@ class AnvilInputNMS {
 
     // CONSTRUCTORS
     private static final MethodHandle ANVIL_CONSTRUCTOR;
+    private static final Class<?> ANVIL;
 
     // METHODS
     private static final MethodHandle GET_PLAYER_NEXT_CONTAINER_COUNTER;
@@ -45,13 +46,11 @@ class AnvilInputNMS {
 
     static {
         try {
+            ANVIL = getNMSClass("world.inventory", "ContainerAnvil");
+
             final Class<?> playerInventoryClass = getNMSClass("world.entity.player", "PlayerInventory");
 
-            ANVIL_CONSTRUCTOR = getConstructor(
-                    Objects.requireNonNull(
-                            getNMSClass("world.inventory", "ContainerAnvil"), "ContainerAnvil NMS class not found"),
-                    int.class,
-                    playerInventoryClass);
+            ANVIL_CONSTRUCTOR = getConstructor(ANVIL, int.class, playerInventoryClass);
             CONTAINER_CHECK_REACHABLE = setFieldHandle(CONTAINER, boolean.class, "checkReachable");
 
             final Class<?> containerPlayer = getNMSClass("world.inventory", "ContainerPlayer");
@@ -84,9 +83,12 @@ class AnvilInputNMS {
             final Object anvilContainer = ANVIL_CONSTRUCTOR.invoke(windowId, GET_PLAYER_INVENTORY.invoke(entityPlayer));
             CONTAINER_CHECK_REACHABLE.invoke(anvilContainer, false);
 
-            final Inventory inventory =
+            final AnvilInventory inventory = (AnvilInventory)
                     ((InventoryView) InventoryUpdate.getBukkitView.invoke(anvilContainer)).getTopInventory();
-            final ItemStack item = new ItemStack(Material.PAPER);
+
+            inventory.setMaximumRepairCost(0);
+
+            final ItemStack item = new ItemStack(Material.PAPER, 1, (short) 0);
             final ItemMeta meta = item.getItemMeta();
             meta.setDisplayName(initialInput);
             item.setItemMeta(meta);
