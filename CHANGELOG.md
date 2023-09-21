@@ -1,5 +1,15 @@
 # Changelog
 
+# 3.0.0 (unreleased)
+
+* Refs API feature (#476)
+* Anvil Input feature (see docs) (#481)
+* Context back with initialData parameter (#482)
+* Fix iconsistent page index in pagination page switch handler (#478)
+* OpenContext and CloseContext now implements Bukkit platform Context (#479)
+* Fix MC 1.8 inventory close handling exploit with F6 (Start Streaming) key (#480)
+* New experimental Component hide() and show() also forceUpdate() was moved from Pagination API to Component API (#476)
+
 # 3.0.0-rc.3 (09-13-2023)
 
 Please see [release notes](https://github.com/DevNatan/inventory-framework/releases/tag/v3.0.0-rc.3) to detailed changelog.
