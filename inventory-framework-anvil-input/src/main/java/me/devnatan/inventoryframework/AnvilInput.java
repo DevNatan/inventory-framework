@@ -10,6 +10,8 @@ import org.jetbrains.annotations.NotNull;
 
 public final class AnvilInput extends BaseMutableState<String> implements ViewConfig.Modifier {
 
+    private static final AnvilInputConfig DEFAULT_CONFIG = new AnvilInputConfig();
+
     AnvilInput(long id, StateValueFactory valueFactory) {
         super(id, valueFactory);
     }
@@ -25,7 +27,7 @@ public final class AnvilInput extends BaseMutableState<String> implements ViewCo
      * @return Default configuration of the anvil input feature.
      */
     public static AnvilInputConfig defaultConfig() {
-        return AnvilInputFeature.DEFAULT_CONFIG;
+        return DEFAULT_CONFIG;
     }
 
     /**

@@ -1,6 +1,7 @@
 package me.devnatan.inventoryframework;
 
 import static java.util.Objects.requireNonNull;
+import static me.devnatan.inventoryframework.AnvilInput.defaultConfig;
 import static me.devnatan.inventoryframework.IFViewFrame.FRAME_REGISTERED;
 
 import java.util.Map;
@@ -28,8 +29,6 @@ public final class AnvilInputFeature implements Feature<AnvilInputConfig, Void, 
 
     private static final int INGREDIENT_SLOT = 0;
 
-    static final AnvilInputConfig DEFAULT_CONFIG = new AnvilInputConfig();
-
     /**
      * Instance of the Anvil Input feature.
      *
@@ -37,7 +36,7 @@ public final class AnvilInputFeature implements Feature<AnvilInputConfig, Void, 
      */
     public static final Feature<AnvilInputConfig, Void, ViewFrame> AnvilInput = new AnvilInputFeature();
 
-    private AnvilInputConfig config = DEFAULT_CONFIG;
+    private AnvilInputConfig config;
     private PipelineInterceptor frameInterceptor;
 
     private AnvilInputFeature() {}
@@ -49,7 +48,7 @@ public final class AnvilInputFeature implements Feature<AnvilInputConfig, Void, 
 
     @Override
     public @NotNull Void install(ViewFrame framework, UnaryOperator<AnvilInputConfig> configure) {
-        config = configure.apply(config);
+        config = configure.apply(defaultConfig());
         framework.getPipeline().intercept(FRAME_REGISTERED, (frameInterceptor = createFrameworkInterceptor()));
         return null;
     }
