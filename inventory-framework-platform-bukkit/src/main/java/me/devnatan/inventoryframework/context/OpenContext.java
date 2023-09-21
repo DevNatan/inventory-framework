@@ -26,7 +26,7 @@ public class OpenContext extends PlatformConfinedContext implements IFOpenContex
     private final UUID id;
     private final View root;
     private final Viewer subject;
-    private final Object initialData;
+    private Object initialData;
     private final Map<String, Viewer> viewers;
 
     // --- User Provided ---
@@ -127,6 +127,11 @@ public class OpenContext extends PlatformConfinedContext implements IFOpenContex
     @Override
     public final Object getInitialData() {
         return initialData;
+    }
+
+    @Override
+    public void setInitialData(Object initialData) {
+        this.initialData = initialData;
     }
 
     @Override

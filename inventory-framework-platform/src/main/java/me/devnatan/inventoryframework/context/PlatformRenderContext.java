@@ -33,7 +33,7 @@ public abstract class PlatformRenderContext<T extends ItemComponentBuilder<T, C>
     protected final PlatformView root;
     private final ViewConfig config;
     private final Map<String, Viewer> viewers;
-    private final Object initialData;
+    private Object initialData;
     private final Viewer subject;
 
     // --- Inherited ---
@@ -288,6 +288,11 @@ public abstract class PlatformRenderContext<T extends ItemComponentBuilder<T, C>
     @Override
     public final Object getInitialData() {
         return initialData;
+    }
+
+    @Override
+    public void setInitialData(Object initialData) {
+        this.initialData = initialData;
     }
 
     @Override

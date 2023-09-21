@@ -168,6 +168,13 @@ public interface IFContext extends VirtualView, StateValueHost, ComponentContain
     Object getInitialData();
 
     /**
+     * <b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     */
+    @ApiStatus.Internal
+    void setInitialData(Object initialData);
+
+    /**
      * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
      * such API may be changed or may be removed completely in any further release. </i></b>
      */

@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 @ApiStatus.Internal
 public final class LazyValue extends AbstractStateValue {
 
-    private static final Object UNINITIALIZED = new Object();
+    static final Object UNINITIALIZED = new Object();
 
     private final Supplier<?> computation;
     private Object currValue = UNINITIALIZED;

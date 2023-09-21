@@ -152,6 +152,11 @@ public abstract class SlotContext extends PlatformContext implements IFSlotConte
     }
 
     @Override
+    public void setInitialData(Object initialData) {
+        getParent().setInitialData(initialData);
+    }
+
+    @Override
     public List<Player> getAllPlayers() {
         return getParent().getAllPlayers();
     }
@@ -176,10 +181,14 @@ public abstract class SlotContext extends PlatformContext implements IFSlotConte
         getParent().setActive(active);
     }
 
-    // TODO Add initialState parameters to back
     @Override
     public void back() {
         getParent().back();
+    }
+
+    @Override
+    public void back(Object initialData) {
+        getParent().back(initialData);
     }
 
     @Override

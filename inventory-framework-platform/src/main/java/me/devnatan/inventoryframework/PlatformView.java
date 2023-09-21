@@ -5,6 +5,7 @@ import static java.lang.String.format;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
@@ -49,6 +50,7 @@ import me.devnatan.inventoryframework.state.MutableState;
 import me.devnatan.inventoryframework.state.MutableValue;
 import me.devnatan.inventoryframework.state.PaginationState;
 import me.devnatan.inventoryframework.state.State;
+import me.devnatan.inventoryframework.state.StateValue;
 import me.devnatan.inventoryframework.state.StateValueFactory;
 import me.devnatan.inventoryframework.state.StateValueHost;
 import org.jetbrains.annotations.ApiStatus;
@@ -164,15 +166,33 @@ public abstract class PlatformView<
      * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
      * this library. No compatibility guarantees are provided.</i></b>
      */
-    @SuppressWarnings({"rawtypes", "unchecked"})
     @ApiStatus.Internal
     public final void back(@NotNull Viewer viewer) {
+        back(viewer, null);
+    }
+
+    /**
+     * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided.</i></b>
+     */
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    @ApiStatus.Internal
+    public final void back(@NotNull Viewer viewer, Object initialData) {
         final IFRenderContext active = viewer.getActiveContext();
         final IFRenderContext target = viewer.getPreviousContext();
         viewer.unsetPreviousContext();
         viewer.setTransitioning(true);
         viewer.setActiveContext(target);
         target.addViewer(viewer);
+
+        for (final Map.Entry<Long, StateValue> entry : target.getStateValues().entrySet()) {
+            final StateValue value = entry.getValue();
+            if (!(value instanceof InitialDataStateValue)) continue;
+
+            ((InitialDataStateValue) value).reset();
+        }
+
+        target.setInitialData(initialData);
 
         if (target.getViewers().size() == 1) target.getContainer().open(viewer);
         else {
@@ -181,8 +201,9 @@ public abstract class PlatformView<
 
             root.renderContext(target);
         }
-        viewer.setTransitioning(false);
+
         ((PlatformView) target.getRoot()).onResume(active, target);
+        viewer.setTransitioning(false);
     }
 
     private void setupNavigateTo(@NotNull Viewer viewer, @NotNull IFRenderContext origin) {

@@ -97,6 +97,11 @@ public class CloseContext extends PlatformConfinedContext implements IFCloseCont
     }
 
     @Override
+    public void setInitialData(Object initialData) {
+        getParent().setInitialData(initialData);
+    }
+
+    @Override
     public final @UnmodifiableView Map<Long, StateValue> getStateValues() {
         return getParent().getStateValues();
     }

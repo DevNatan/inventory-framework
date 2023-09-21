@@ -37,9 +37,14 @@ abstract class PlatformConfinedContext extends PlatformContext implements IFConf
 
     @Override
     public void back() {
+        back(null);
+    }
+
+    @Override
+    public void back(Object initialData) {
         tryThrowDoNotWorkWithSharedContext();
         if (!canBack()) return;
-        getRoot().back(getViewer());
+        getRoot().back(getViewer(), initialData);
     }
 
     @Override
