@@ -19,7 +19,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
-public class ViewFrame extends IFViewFrame<ViewFrame, View> implements FeatureInstaller<ViewFrame> {
+public class ViewFrame extends IFViewFrame<ViewFrame, View> {
 
     private static final String BSTATS_SYSTEM_PROP = "inventory-framework.enable-bstats";
     private static final int BSTATS_PROJECT_ID = 15518;
@@ -216,22 +216,20 @@ public class ViewFrame extends IFViewFrame<ViewFrame, View> implements FeatureIn
         return new ViewFrame(owner);
     }
 
-    @Override
-    public final @NotNull ViewFrame getPlatform() {
-        return this;
-    }
-
-    @Override
-    public final Collection<Feature<?, ?, ViewFrame>> getInstalledFeatures() {
-        return featureInstaller.getInstalledFeatures();
-    }
-
-    @Override
-    public final <C, R> @NotNull R install(
+    /**
+     * Installs a feature.
+     *
+     * @param feature   The feature to be installed.
+     * @param configure The feature configuration.
+     * @param <C>       The feature configuration type.
+     * @param <R>       The feature value instance type.
+     * @return An instance of the installed feature.
+     */
+    public final <C, R> ViewFrame install(
             @NotNull Feature<C, R, ViewFrame> feature, @NotNull UnaryOperator<C> configure) {
-        final R value = featureInstaller.install(feature, configure);
+        featureInstaller.install(feature, configure);
         IFDebug.debug("Feature %s installed", feature.name());
-        return value;
+        return this;
     }
 
     /**
@@ -242,13 +240,7 @@ public class ViewFrame extends IFViewFrame<ViewFrame, View> implements FeatureIn
      */
     @NotNull
     public final ViewFrame install(@NotNull Feature<?, ?, ViewFrame> feature) {
-        install(feature, $ -> $);
+        install(feature, UnaryOperator.identity());
         return this;
-    }
-
-    @Override
-    public final void uninstall(@NotNull Feature<?, ?, ViewFrame> feature) {
-        featureInstaller.uninstall(feature);
-        IFDebug.debug("Feature %s uninstalled", feature.name());
     }
 }

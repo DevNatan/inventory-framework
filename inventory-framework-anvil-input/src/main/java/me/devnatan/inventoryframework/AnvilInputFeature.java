@@ -1,6 +1,7 @@
 package me.devnatan.inventoryframework;
 
 import static java.util.Objects.requireNonNull;
+import static me.devnatan.inventoryframework.AnvilInput.defaultConfig;
 import static me.devnatan.inventoryframework.IFViewFrame.FRAME_REGISTERED;
 
 import java.util.Map;
@@ -24,7 +25,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
-public final class AnvilInputFeature implements Feature<Void, Void, ViewFrame> {
+public final class AnvilInputFeature implements Feature<AnvilInputConfig, Void, ViewFrame> {
 
     private static final int INGREDIENT_SLOT = 0;
 
@@ -33,8 +34,9 @@ public final class AnvilInputFeature implements Feature<Void, Void, ViewFrame> {
      *
      * @see <a href="https://github.com/DevNatan/inventory-framework/wiki/anvil-input">Anvil Input on Wiki</a>
      */
-    public static final Feature<Void, Void, ViewFrame> AnvilInput = new AnvilInputFeature();
+    public static final Feature<AnvilInputConfig, Void, ViewFrame> AnvilInput = new AnvilInputFeature();
 
+    private AnvilInputConfig config;
     private PipelineInterceptor frameInterceptor;
 
     private AnvilInputFeature() {}
@@ -45,7 +47,8 @@ public final class AnvilInputFeature implements Feature<Void, Void, ViewFrame> {
     }
 
     @Override
-    public @NotNull Void install(ViewFrame framework, UnaryOperator<Void> configure) {
+    public @NotNull Void install(ViewFrame framework, UnaryOperator<AnvilInputConfig> configure) {
+        config = configure.apply(defaultConfig());
         framework.getPipeline().intercept(FRAME_REGISTERED, (frameInterceptor = createFrameworkInterceptor()));
         return null;
     }
@@ -101,9 +104,12 @@ public final class AnvilInputFeature implements Feature<Void, Void, ViewFrame> {
             final ItemStack ingredientItem = requireNonNull(clickedInventory.getItem(INGREDIENT_SLOT));
             final ItemMeta ingredientMeta = requireNonNull(ingredientItem.getItemMeta());
             ingredientMeta.setDisplayName(text);
-
             context.updateState(anvilInput.internalId(), text);
             ingredientItem.setItemMeta(ingredientMeta);
+
+            if (config.closeOnSelect) {
+                context.closeForPlayer();
+            }
         });
     }
 
@@ -118,8 +124,13 @@ public final class AnvilInputFeature implements Feature<Void, Void, ViewFrame> {
             // Forces internal state initialization
             context.getInternalStateValue(anvilInput);
 
-            final Inventory inventory =
-                    AnvilInputNMS.open(context.getPlayer(), context.getConfig().getTitle(), anvilInput.get(context));
+            final String globalInitialInput = config.initialInput;
+            final String scopedInitialInput = anvilInput.get(context);
+
+            final Inventory inventory = AnvilInputNMS.open(
+                    context.getPlayer(),
+                    context.getConfig().getTitle(),
+                    scopedInitialInput.isEmpty() ? globalInitialInput : scopedInitialInput);
             final ViewContainer container =
                     new BukkitViewContainer(inventory, context.isShared(), ViewType.ANVIL, true);
 

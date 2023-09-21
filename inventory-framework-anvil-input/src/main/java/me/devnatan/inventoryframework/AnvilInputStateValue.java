@@ -1,20 +1,23 @@
 package me.devnatan.inventoryframework;
 
-import java.util.function.UnaryOperator;
 import me.devnatan.inventoryframework.state.MutableValue;
 import me.devnatan.inventoryframework.state.State;
 
 class AnvilInputStateValue extends MutableValue {
 
-    private final UnaryOperator<String> onInputChange;
+    private final AnvilInputConfig config;
 
-    public AnvilInputStateValue(State<?> state, Object currValue, UnaryOperator<String> onInputChange) {
-        super(state, currValue);
-        this.onInputChange = onInputChange;
+    public AnvilInputStateValue(State<?> state, AnvilInputConfig config) {
+        super(state, config.initialInput);
+        this.config = config;
     }
 
     @Override
     public void set(Object value) {
-        super.set(onInputChange.apply((String) value));
+        final Object newValue;
+        if (config.inputChangeHandler == null) newValue = value;
+        else newValue = config.inputChangeHandler.apply((String) value);
+
+        super.set(newValue);
     }
 }

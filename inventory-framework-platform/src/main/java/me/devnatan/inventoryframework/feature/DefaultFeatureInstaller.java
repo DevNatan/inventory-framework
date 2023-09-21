@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class DefaultFeatureInstaller<P> implements FeatureInstaller<P> {
 
-    private final Map<Class<?>, Feature<?, ?, P>> featureList = new HashMap<>();
+    protected final Map<Class<?>, Feature<?, ?, P>> featureList = new HashMap<>();
     private final P platform;
 
     public DefaultFeatureInstaller(@NotNull P platform) {
