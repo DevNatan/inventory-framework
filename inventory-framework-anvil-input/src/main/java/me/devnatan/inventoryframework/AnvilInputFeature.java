@@ -28,7 +28,7 @@ public final class AnvilInputFeature implements Feature<AnvilInputConfig, Void, 
 
     private static final int INGREDIENT_SLOT = 0;
 
-    public static final AnvilInputConfig DEFAULT_CONFIG = new AnvilInputConfig();
+    static final AnvilInputConfig DEFAULT_CONFIG = new AnvilInputConfig();
 
     /**
      * Instance of the Anvil Input feature.

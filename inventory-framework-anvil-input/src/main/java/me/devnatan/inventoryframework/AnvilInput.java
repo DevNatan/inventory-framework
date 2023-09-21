@@ -16,8 +16,17 @@ public final class AnvilInput extends BaseMutableState<String> implements ViewCo
 
     @Override
     public void apply(@NotNull ViewConfigBuilder config, @NotNull IFContext context) {
-		// do nothing - config modifier is only used for reference here
-	}
+        // do nothing - config modifier is only used for reference here
+    }
+
+    /**
+     * Returns the default configuration of the anvil input feature.
+     *
+     * @return Default configuration of the anvil input feature.
+     */
+    public static AnvilInputConfig defaultConfig() {
+        return AnvilInputFeature.DEFAULT_CONFIG;
+    }
 
     /**
      * Creates a new AnvilInput instance.
@@ -80,8 +89,22 @@ public final class AnvilInput extends BaseMutableState<String> implements ViewCo
     @ApiStatus.Experimental
     public static AnvilInput createAnvilInput(
             @NotNull String initialInput, @NotNull UnaryOperator<String> onInputChange) {
+        return createAnvilInput(defaultConfig().initialInput(initialInput).onInputChange(onInputChange));
+    }
+
+    /**
+     * Creates a new AnvilInput instance.
+     * <p>
+     * <b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     *
+     * @param config Anvil input feature configuration.
+     * @see <a href="https://github.com/DevNatan/inventory-framework/wiki/anvil-input">Anvil Input on Wiki</a>
+     */
+    @ApiStatus.Experimental
+    public static AnvilInput createAnvilInput(@NotNull AnvilInputConfig config) {
         final long id = State.next();
-        final StateValueFactory factory = (host, state) -> new AnvilInputStateValue(state, initialInput, onInputChange);
+        final StateValueFactory factory = (host, state) -> new AnvilInputStateValue(state, config);
 
         return new AnvilInput(id, factory);
     }
