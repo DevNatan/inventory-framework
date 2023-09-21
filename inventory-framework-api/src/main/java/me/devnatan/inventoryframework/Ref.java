@@ -15,12 +15,12 @@ import org.jetbrains.annotations.NotNull;
 @ApiStatus.Experimental
 public interface Ref<E> {
 
-	/**
-	 * Returns the value hold by this reference.
-	 *
-	 * @throws UnassignedReferenceException If reference wasn't assigned to any element.
-	 * @return The value that this reference holds.
-	 */
-	@NotNull
-	E value(@NotNull IFContext context);
+    /**
+     * Returns the value hold by this reference.
+     *
+     * @throws UnassignedReferenceException If reference wasn't assigned to any element.
+     * @return The value that this reference holds.
+     */
+    @NotNull
+    E value(@NotNull IFContext context);
 }

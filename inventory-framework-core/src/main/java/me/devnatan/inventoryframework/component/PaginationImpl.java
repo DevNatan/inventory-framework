@@ -15,6 +15,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import me.devnatan.inventoryframework.Ref;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.*;
@@ -659,6 +660,11 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
         forceUpdated = true;
         update();
         forceUpdated = false;
+    }
+
+    @Override
+    public Ref<Component> getReference() {
+        return null;
     }
 
     @Override

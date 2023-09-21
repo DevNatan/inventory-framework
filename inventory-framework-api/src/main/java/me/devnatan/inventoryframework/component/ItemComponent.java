@@ -7,6 +7,7 @@ import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import me.devnatan.inventoryframework.InventoryFrameworkException;
+import me.devnatan.inventoryframework.Ref;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.*;
 import me.devnatan.inventoryframework.state.State;
@@ -30,6 +31,7 @@ public class ItemComponent implements Component, InteractionHandler {
     private final boolean isManagedExternally;
     private final boolean updateOnClick;
     private boolean isVisible;
+    private final Ref<Component> reference;
 
     public ItemComponent(
             VirtualView root,
@@ -44,7 +46,8 @@ public class ItemComponent implements Component, InteractionHandler {
             Set<State<?>> watching,
             boolean isManagedExternally,
             boolean updateOnClick,
-            boolean isVisible) {
+            boolean isVisible,
+            Ref<Component> reference) {
         this.root = root;
         this.position = position;
         this.stack = stack;
@@ -58,6 +61,7 @@ public class ItemComponent implements Component, InteractionHandler {
         this.isManagedExternally = isManagedExternally;
         this.updateOnClick = updateOnClick;
         this.isVisible = isVisible;
+        this.reference = reference;
     }
 
     @Override
@@ -224,6 +228,16 @@ public class ItemComponent implements Component, InteractionHandler {
     @Override
     public boolean isManagedExternally() {
         return isManagedExternally;
+    }
+
+    @Override
+    public Ref<Component> getReference() {
+        return reference;
+    }
+
+    @Override
+    public void forceUpdate() {
+        update();
     }
 
     @Override

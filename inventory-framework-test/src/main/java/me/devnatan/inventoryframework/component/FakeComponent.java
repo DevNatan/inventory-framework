@@ -2,6 +2,7 @@ package me.devnatan.inventoryframework.component;
 
 import java.util.Collections;
 import java.util.Set;
+import me.devnatan.inventoryframework.Ref;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
@@ -97,4 +98,12 @@ public class FakeComponent implements Component, InteractionHandler {
 
     @Override
     public void clicked(@NotNull Component component, @NotNull IFSlotClickContext context) {}
+
+    @Override
+    public Ref<Component> getReference() {
+        return null;
+    }
+
+    @Override
+    public void forceUpdate() {}
 }

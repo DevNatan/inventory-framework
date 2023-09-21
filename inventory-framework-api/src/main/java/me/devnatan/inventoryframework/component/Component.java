@@ -1,6 +1,7 @@
 package me.devnatan.inventoryframework.component;
 
 import java.util.Set;
+import me.devnatan.inventoryframework.Ref;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFSlotRenderContext;
@@ -140,4 +141,22 @@ public interface Component extends VirtualView {
 
         return other.isContainedWithin(component.getPosition());
     }
+
+    /**
+     * Returns the reference assigned to this component.
+     * <p>
+     * <b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     */
+    @ApiStatus.Experimental
+    Ref<Component> getReference();
+
+    /**
+     * Forces this component to be updated.
+     *
+     * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     */
+    @ApiStatus.Experimental
+    void forceUpdate();
 }
