@@ -14,7 +14,6 @@ repositories {
 }
 
 dependencies {
-    api projects.inventoryFrameworkPlatform
     compileOnly libs.spigot
-    compileOnly projects.inventoryFrameworkPlatformBukkit
+    compileOnlyApi projects.inventoryFrameworkPlatformBukkit
 }
