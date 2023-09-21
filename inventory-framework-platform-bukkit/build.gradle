@@ -16,6 +16,7 @@ repositories {
 
 dependencies {
     api projects.inventoryFrameworkPlatform
+    runtimeOnly projects.inventoryFrameworkAnvilInput
     compileOnly libs.spigot
     testCompileOnly libs.spigot
     testRuntimeOnly libs.spigot
