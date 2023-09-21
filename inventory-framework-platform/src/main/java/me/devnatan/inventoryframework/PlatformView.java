@@ -185,14 +185,16 @@ public abstract class PlatformView<
         viewer.setActiveContext(target);
         target.addViewer(viewer);
 
-        for (final Map.Entry<Long, StateValue> entry : target.getStateValues().entrySet()) {
-            final StateValue value = entry.getValue();
-            if (!(value instanceof InitialDataStateValue)) continue;
+        if (initialData != null) {
+            for (final Map.Entry<Long, StateValue> entry :
+                    target.getStateValues().entrySet()) {
+                final StateValue value = entry.getValue();
+                if (!(value instanceof InitialDataStateValue)) continue;
 
-            ((InitialDataStateValue) value).reset();
+                ((InitialDataStateValue) value).reset();
+            }
+            target.setInitialData(initialData);
         }
-
-        target.setInitialData(initialData);
 
         if (target.getViewers().size() == 1) target.getContainer().open(viewer);
         else {

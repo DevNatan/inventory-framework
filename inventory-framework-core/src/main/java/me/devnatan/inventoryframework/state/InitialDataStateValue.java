@@ -13,16 +13,23 @@ import org.jetbrains.annotations.UnknownNullability;
 @ApiStatus.Internal
 public final class InitialDataStateValue extends AbstractStateValue {
 
-    private final StateValue backingValue;
+    private final IFContext context;
+    private final String key;
+    private StateValue backingValue;
 
-    @SuppressWarnings("unchecked")
     public InitialDataStateValue(@NotNull State<?> state, @NotNull StateValueHost host, String key) {
         super(state);
+        this.key = key;
         if (!(host instanceof IFContext))
             throw new IllegalArgumentException("State host for initial data must be a IFContext");
 
-        final IFContext context = (IFContext) host;
-        this.backingValue = new LazyValue(
+        this.context = (IFContext) host;
+        this.backingValue = createBackingValue(state, (IFContext) host, key);
+    }
+
+    @SuppressWarnings("unchecked")
+    private StateValue createBackingValue(State<?> state, IFContext context, String key) {
+        return new LazyValue(
                 state,
                 () -> key != null && context.getInitialData() instanceof Map
                         ? ((Map<String, ?>) context.getInitialData()).get(key)
@@ -41,6 +48,6 @@ public final class InitialDataStateValue extends AbstractStateValue {
     }
 
     public void reset() {
-        backingValue.set(LazyValue.UNINITIALIZED);
+        backingValue = createBackingValue(getState(), context, key);
     }
 }
