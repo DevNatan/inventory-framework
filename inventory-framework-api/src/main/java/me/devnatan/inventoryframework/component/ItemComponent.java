@@ -158,10 +158,10 @@ public class ItemComponent implements Component, InteractionHandler {
         }
 
         if (getStack() == null) {
-			if (context.getContainer().getType().isResultSlot(getPosition())) {
-				setVisible(true);
-				return;
-			}
+            if (context.getContainer().getType().isResultSlot(getPosition())) {
+                setVisible(true);
+                return;
+            }
             throw new IllegalStateException("At least one fallback item or render handler must be provided");
         }
 

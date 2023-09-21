@@ -83,13 +83,13 @@ public final class ViewType {
         return resultSlots;
     }
 
-	public boolean isResultSlot(int slot) {
-		if (resultSlots == null) return false;
-		for (final int resultSlot : resultSlots) {
-			if (resultSlot == slot) return true;
-		}
-		return false;
-	}
+    public boolean isResultSlot(int slot) {
+        if (resultSlots == null) return false;
+        for (final int resultSlot : resultSlots) {
+            if (resultSlot == slot) return true;
+        }
+        return false;
+    }
 
     public boolean isAligned() {
         return aligned;
