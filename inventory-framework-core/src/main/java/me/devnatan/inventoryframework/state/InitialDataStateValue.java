@@ -39,4 +39,8 @@ public final class InitialDataStateValue extends AbstractStateValue {
     public void set(Object value) {
         backingValue.set(value);
     }
+
+    public void reset() {
+        backingValue.set(LazyValue.UNINITIALIZED);
+    }
 }

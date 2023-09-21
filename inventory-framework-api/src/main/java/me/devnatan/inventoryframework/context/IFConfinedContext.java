@@ -81,6 +81,21 @@ public interface IFConfinedContext extends IFContext {
     void back();
 
     /**
+     * Goes back to the previous view, does nothing if there's no views to back to.
+     * <p>
+     * Only works if, from the previous view, the current view was opened using
+     * {@link IFContext#openForEveryone(Class) openForEveryone}
+     * or {@link IFConfinedContext#openForPlayer(Class) openForPlayer}.
+     *
+     * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     *
+     * @see <a href="https://github.com/DevNatan/inventory-framework/wiki/navigating-between-views">Navigating between Views on Wiki</a>
+     */
+    @ApiStatus.Experimental
+    void back(Object initialData);
+
+    /**
      * Verifies if there's any view to {@link #back() back} to.
      * <p>
      * <b><i> This API is experimental and is not subject to the general compatibility guarantees
