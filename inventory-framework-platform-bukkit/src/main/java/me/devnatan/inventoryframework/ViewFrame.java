@@ -140,9 +140,12 @@ public class ViewFrame extends IFViewFrame<ViewFrame, View> {
         if (servicesManager.isProvidedFor(IFViewFrame.class)) return;
 
         final boolean metricsEnabled =
-                Boolean.parseBoolean(System.getProperty(BSTATS_SYSTEM_PROP, Boolean.TRUE.toString()));
+                Boolean.parseBoolean(System.getProperty(BSTATS_SYSTEM_PROP, String.valueOf(Boolean.TRUE)));
 
-        if (!metricsEnabled) return;
+        if (!metricsEnabled) {
+            IFDebug.debug("Metrics disabled");
+            return;
+        }
 
         if (!(getOwner() instanceof JavaPlugin)) {
             getOwner()
@@ -154,7 +157,8 @@ public class ViewFrame extends IFViewFrame<ViewFrame, View> {
 
         try {
             new Metrics((JavaPlugin) getOwner(), BSTATS_PROJECT_ID);
-        } catch (final Exception ignored) {
+        } catch (final Exception exception) {
+            IFDebug.debug("Unable to enable metrics: %s", exception.getMessage());
         }
     }
 
@@ -236,6 +240,21 @@ public class ViewFrame extends IFViewFrame<ViewFrame, View> {
     @NotNull
     public final ViewFrame install(@NotNull Feature<?, ?, ViewFrame> feature) {
         install(feature, UnaryOperator.identity());
+        return this;
+    }
+
+    /**
+     * Disables bStats metrics tracking.
+     * <p>
+     * InventoryFramework use bStats metrics to obtain some information from servers that use it as
+     * a library, such as: number of players, version, software, etc.
+     * <p>
+     * **No sensitive information is tracked.**
+     *
+     * @return This view frame.
+     */
+    public final ViewFrame disableMetrics() {
+        System.setProperty(BSTATS_SYSTEM_PROP, String.valueOf(Boolean.FALSE));
         return this;
     }
 }
