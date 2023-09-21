@@ -551,7 +551,7 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
 
         if (pageSwitchHandler != null) pageSwitchHandler.accept(host, this);
 
-        host.updateComponent(this);
+        host.updateComponent(this, false);
     }
 
     @Override
@@ -652,7 +652,7 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
 
     @Override
     public void update() {
-        ((IFContext) getRoot()).updateComponent(this);
+        ((IFContext) getRoot()).updateComponent(this, false);
     }
 
     @Override
@@ -660,6 +660,18 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
         forceUpdated = true;
         update();
         forceUpdated = false;
+    }
+
+    @Override
+    public void show() {
+        setVisible(true);
+        update();
+    }
+
+    @Override
+    public void hide() {
+        setVisible(false);
+        update();
     }
 
     @Override

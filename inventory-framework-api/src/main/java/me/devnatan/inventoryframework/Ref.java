@@ -23,4 +23,11 @@ public interface Ref<E> {
      */
     @NotNull
     E value(@NotNull IFContext context);
+
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
+    void assign(E value);
 }

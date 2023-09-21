@@ -364,7 +364,7 @@ public abstract class PlatformView<
      */
     @ApiStatus.Experimental
     protected final <E> Ref<E> ref() {
-        throw new UnsupportedOperationException("Not implemented yet");
+        return new RefImpl<>();
     }
 
     /**

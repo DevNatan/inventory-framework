@@ -150,9 +150,10 @@ public interface IFContext extends VirtualView, StateValueHost, ComponentContain
      * this library. No compatibility guarantees are provided.</i></b>
      *
      * @param component The component to be updated.
+     * @param force If update should be forced.
      */
     @ApiStatus.Internal
-    void updateComponent(@NotNull Component component);
+    void updateComponent(@NotNull Component component, boolean force);
 
     /**
      * Updates all components for all viewers in this context.

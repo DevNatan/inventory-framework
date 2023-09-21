@@ -14,10 +14,10 @@ public class SlotRenderContext extends SlotContext implements IFSlotRenderContex
 
     private final Player player;
     private final Viewer viewer;
-
     private ItemStack item;
     private boolean cancelled;
     private boolean changed;
+    private boolean forceUpdate;
 
     @ApiStatus.Internal
     public SlotRenderContext(int slot, @NotNull IFRenderContext parent, @Nullable Viewer viewer) {
@@ -69,6 +69,16 @@ public class SlotRenderContext extends SlotContext implements IFSlotRenderContex
     @Override
     public final void setChanged(boolean changed) {
         this.changed = changed;
+    }
+
+    @Override
+    public boolean isForceUpdate() {
+        return forceUpdate;
+    }
+
+    @Override
+    public void setForceUpdate(boolean forceUpdate) {
+        this.forceUpdate = forceUpdate;
     }
 
     @Override
