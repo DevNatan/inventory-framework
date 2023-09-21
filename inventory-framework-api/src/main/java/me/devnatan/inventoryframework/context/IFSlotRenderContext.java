@@ -46,4 +46,18 @@ public interface IFSlotRenderContext extends IFSlotContext, IFConfinedContext {
      */
     @ApiStatus.Internal
     void setChanged(boolean changed);
+
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
+    boolean isForceUpdate();
+
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
+    void setForceUpdate(boolean forceUpdate);
 }

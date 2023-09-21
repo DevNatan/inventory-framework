@@ -91,17 +91,17 @@ abstract class AbstractIFContext extends DefaultStateValueHost implements IFCont
         }
     }
 
-    private IFSlotRenderContext createSlotRenderContext(@NotNull Component component) {
+    private IFSlotRenderContext createSlotRenderContext(@NotNull Component component, boolean force) {
         if (!(this instanceof IFRenderContext))
             throw new InventoryFrameworkException("Slot render context cannot be created from non-render parent");
 
         final IFRenderContext renderContext = (IFRenderContext) this;
-        return getRoot()
+        final IFSlotRenderContext slotRender = getRoot()
                 .getElementFactory()
                 .createSlotRenderContext(component.getPosition(), renderContext, renderContext.getViewer());
+        slotRender.setForceUpdate(force);
+        return slotRender;
     }
-
-    int modCount = 0;
 
     @Override
     public void renderComponent(@NotNull Component component) {
@@ -111,15 +111,6 @@ abstract class AbstractIFContext extends DefaultStateValueHost implements IFCont
             final Optional<Component> overlapOptional = getOverlappingComponentToRender(this, component);
             if (overlapOptional.isPresent()) {
                 Component overlap = overlapOptional.get();
-
-                // ComponentComposition can have a single child overlapping this component so,
-                // to prevent re-render of the entire component we just seek for this single child
-                // and render it individually
-                //				while (overlap instanceof ComponentComposition) {
-                //					final ComponentComposition composition = (ComponentComposition) overlap;
-                //					overlap = getOverlappingComponent(composition, overlap).orElse(overlap);
-                //				}
-
                 renderComponent(overlap);
 
                 if (overlap.isVisible()) return;
@@ -128,7 +119,7 @@ abstract class AbstractIFContext extends DefaultStateValueHost implements IFCont
             component.clear(this);
             return;
         }
-        component.render(createSlotRenderContext(component));
+        component.render(createSlotRenderContext(component, false));
     }
 
     private Optional<Component> getOverlappingComponentToRender(ComponentContainer container, Component subject) {
@@ -164,8 +155,8 @@ abstract class AbstractIFContext extends DefaultStateValueHost implements IFCont
     }
 
     @Override
-    public void updateComponent(@NotNull Component component) {
-        component.updated(createSlotRenderContext(component));
+    public void updateComponent(@NotNull Component component, boolean force) {
+        component.updated(createSlotRenderContext(component, force));
     }
 
     @Override

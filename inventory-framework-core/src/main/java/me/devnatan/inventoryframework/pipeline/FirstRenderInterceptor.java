@@ -1,6 +1,9 @@
 package me.devnatan.inventoryframework.pipeline;
 
+import static me.devnatan.inventoryframework.IFDebug.debug;
+
 import java.util.List;
+import me.devnatan.inventoryframework.Ref;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.ComponentComposition;
@@ -24,6 +27,7 @@ public final class FirstRenderInterceptor implements PipelineInterceptor<Virtual
 
         final IFRenderContext context = (IFRenderContext) subject;
         registerComponents(context);
+
         final List<Component> componentList = context.getComponents();
 
         for (int i = componentList.size(); i > 0; i--) {
@@ -47,7 +51,23 @@ public final class FirstRenderInterceptor implements PipelineInterceptor<Virtual
      * @param context The context.
      */
     private void registerComponents(IFRenderContext context) {
-        context.getComponentFactories().stream().map(ComponentFactory::create).forEach(context::addComponent);
+        context.getComponentFactories().stream()
+                .map(ComponentFactory::create)
+                .peek(this::assignReference)
+                .forEach(context::addComponent);
+    }
+
+    /**
+     * Assigns the component reference
+     *
+     * @param component The component to assign the reference.
+     */
+    private void assignReference(Component component) {
+        final Ref<Component> ref = component.getReference();
+        if (ref == null) return;
+
+        ref.assign(component);
+        debug("Reference assigned to %s", component.getClass().getSimpleName());
     }
 
     /**
@@ -96,7 +116,7 @@ class SingleComponentStateWatcherUpdater implements StateWatcher {
     @Override
     public void stateValueSet(
             @NotNull StateValueHost host, @NotNull StateValue value, Object rawOldValue, Object rawNewValue) {
-        root.updateComponent(componentToUpdate);
+        root.updateComponent(componentToUpdate, false);
     }
 
     @Override

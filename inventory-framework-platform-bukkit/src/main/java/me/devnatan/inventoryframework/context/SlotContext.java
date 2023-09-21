@@ -87,8 +87,8 @@ public abstract class SlotContext extends PlatformContext implements IFSlotConte
     }
 
     @Override
-    public final void updateComponent(@NotNull Component component) {
-        getParent().updateComponent(component);
+    public final void updateComponent(@NotNull Component component, boolean force) {
+        getParent().updateComponent(component, force);
     }
 
     @Override

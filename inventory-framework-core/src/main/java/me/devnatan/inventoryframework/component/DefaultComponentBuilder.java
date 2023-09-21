@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.BooleanSupplier;
 import java.util.function.Predicate;
+import me.devnatan.inventoryframework.Ref;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.state.State;
 import org.jetbrains.annotations.NotNull;
@@ -15,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 abstract class DefaultComponentBuilder<S extends ComponentBuilder<S, C>, C extends IFContext>
         implements ComponentBuilder<S, C> {
 
-    protected String referenceKey;
+    protected Ref<Component> reference;
     protected Map<String, Object> data;
     protected boolean cancelOnClick, closeOnClick, updateOnClick;
     protected Set<State<?>> watchingStates;
@@ -23,7 +24,7 @@ abstract class DefaultComponentBuilder<S extends ComponentBuilder<S, C>, C exten
     protected Predicate<C> displayCondition;
 
     protected DefaultComponentBuilder(
-            String referenceKey,
+            Ref<Component> reference,
             Map<String, Object> data,
             boolean cancelOnClick,
             boolean closeOnClick,
@@ -31,7 +32,7 @@ abstract class DefaultComponentBuilder<S extends ComponentBuilder<S, C>, C exten
             Set<State<?>> watchingStates,
             boolean isManagedExternally,
             Predicate<C> displayCondition) {
-        this.referenceKey = referenceKey;
+        this.reference = reference;
         this.data = data;
         this.cancelOnClick = cancelOnClick;
         this.closeOnClick = closeOnClick;
@@ -42,8 +43,8 @@ abstract class DefaultComponentBuilder<S extends ComponentBuilder<S, C>, C exten
     }
 
     @Override
-    public S referencedBy(@NotNull String key) {
-        this.referenceKey = key;
+    public S referencedBy(@NotNull Ref<Component> reference) {
+        this.reference = reference;
         return (S) this;
     }
 

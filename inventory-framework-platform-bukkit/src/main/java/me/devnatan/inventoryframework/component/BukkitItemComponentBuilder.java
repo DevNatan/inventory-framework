@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import me.devnatan.inventoryframework.Ref;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.*;
@@ -51,7 +52,7 @@ public final class BukkitItemComponentBuilder extends DefaultComponentBuilder<Bu
             Consumer<? super IFSlotRenderContext> renderHandler,
             Consumer<? super IFSlotClickContext> clickHandler,
             Consumer<? super IFSlotContext> updateHandler,
-            String referenceKey,
+            Ref<Component> reference,
             Map<String, Object> data,
             boolean cancelOnClick,
             boolean closeOnClick,
@@ -60,7 +61,7 @@ public final class BukkitItemComponentBuilder extends DefaultComponentBuilder<Bu
             boolean isManagedExternally,
             Predicate<Context> displayCondition) {
         super(
-                referenceKey,
+                reference,
                 data,
                 cancelOnClick,
                 closeOnClick,
@@ -200,7 +201,8 @@ public final class BukkitItemComponentBuilder extends DefaultComponentBuilder<Bu
                 watchingStates,
                 isManagedExternally,
                 updateOnClick,
-                false);
+                false,
+                reference);
     }
 
     @Override
@@ -212,7 +214,7 @@ public final class BukkitItemComponentBuilder extends DefaultComponentBuilder<Bu
                 renderHandler,
                 clickHandler,
                 updateHandler,
-                referenceKey,
+                reference,
                 data,
                 cancelOnClick,
                 closeOnClick,

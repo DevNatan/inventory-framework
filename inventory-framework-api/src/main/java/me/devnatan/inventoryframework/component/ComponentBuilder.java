@@ -2,6 +2,7 @@ package me.devnatan.inventoryframework.component;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.Predicate;
+import me.devnatan.inventoryframework.Ref;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.state.State;
 import org.jetbrains.annotations.ApiStatus;
@@ -15,19 +16,13 @@ import org.jetbrains.annotations.NotNull;
 public interface ComponentBuilder<S extends ComponentBuilder<S, C>, C extends IFContext> {
 
     /**
-     * Defines the reference key for this component.
-     * <p>
-     * Reference keys can be used to get an instance of a component that you can later reference
-     * this component in an unknown handler in your code and update this component manually, for
-     * example, if necessary.
-     * <pre>{@code
-     * IFSlotContext context = context.ref("my-component");
-     * }</pre>
+     * Assigns {@link Ref a reference} to this component.
      *
-     * @param key The component reference key.
+     * @param reference Component reference key.
      * @return This component builder.
+     * @see <a href="https://github.com/DevNatan/inventory-framework/wiki/refs-api">Refs API on Wiki</a>
      */
-    S referencedBy(@NotNull String key);
+    S referencedBy(@NotNull Ref<Component> reference);
 
     /**
      * Adds a new user-defined property to this component.
