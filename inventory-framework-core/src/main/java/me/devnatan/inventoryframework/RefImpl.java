@@ -18,7 +18,7 @@ final class RefImpl<E> implements Ref<E> {
     }
 
     @Override
-    public void assign(E value) {
+    public void assign(Object value) {
         if (assignment != UNASSIGNED_VALUE) throw new IllegalStateException("Reference cannot be reassigned");
 
         this.assignment = value;

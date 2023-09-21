@@ -368,7 +368,7 @@ public abstract class PlatformView<
     }
 
     /**
-     * Creates a new empty reference instance that can hold multiple elements.
+     * Creates a new empty reference instance that can hold multiple elements of the same type.
      * <p>
      * <b><i> This API is experimental and is not subject to the general compatibility guarantees
      * such API may be changed or may be removed completely in any further release. </i></b>
@@ -379,7 +379,7 @@ public abstract class PlatformView<
      */
     @ApiStatus.Experimental
     protected final <E> Ref<List<E>> multiRefs() {
-        throw new UnsupportedOperationException("Not implemented yet");
+        return new MultiRefsImpl<>();
     }
 
     /**

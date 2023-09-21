@@ -29,5 +29,5 @@ public interface Ref<E> {
      * this library. No compatibility guarantees are provided. </i></b>
      */
     @ApiStatus.Internal
-    void assign(E value);
+    void assign(Object value);
 }
