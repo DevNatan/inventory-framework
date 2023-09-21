@@ -189,12 +189,7 @@ public class ViewFrame extends IFViewFrame<ViewFrame, View> {
         } catch (ClassNotFoundException ignored) {
         }
 
-        if (!isLibraryAsPluginEnabled && isLibraryPresent) {
-            plugin.getLogger().warning(RELOCATION_MESSAGE);
-            plugin.getServer()
-                    .getPluginManager()
-                    .registerEvents(new IFLibraryConflictWarningListener(RELOCATION_MESSAGE), plugin);
-        }
+        if (!isLibraryAsPluginEnabled && isLibraryPresent) plugin.getLogger().warning(RELOCATION_MESSAGE);
     }
 
     /**
