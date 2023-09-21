@@ -68,7 +68,9 @@ public final class PlatformOpenInterceptor implements PipelineInterceptor<Virtua
         }
 
         final ElementFactory elementFactory = root.getElementFactory();
-        final ViewContainer createdContainer = elementFactory.createContainer(openContext);
+
+        ViewContainer createdContainer = openContext.getContainer();
+        if (createdContainer == null) createdContainer = elementFactory.createContainer(openContext);
 
         final IFRenderContext context = elementFactory.createRenderContext(
                 openContext.getId(),
@@ -78,6 +80,8 @@ public final class PlatformOpenInterceptor implements PipelineInterceptor<Virtua
                 new HashMap<>(),
                 openContext.getViewer(),
                 openContext.getInitialData());
+
+        openContext.getStateValues().forEach(context::initializeState);
 
         for (final Viewer viewer : openContext.getIndexedViewers().values()) {
             if (!viewer.isTransitioning()) viewer.setActiveContext(context);

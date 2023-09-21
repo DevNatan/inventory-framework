@@ -60,7 +60,7 @@ public final class BukkitViewer implements Viewer {
     public @NotNull ViewContainer getSelfContainer() {
         if (selfContainer == null)
             selfContainer = new BukkitViewContainer(
-                    getPlayer().getInventory(), getActiveContext().isShared(), ViewType.PLAYER);
+                    getPlayer().getInventory(), getActiveContext().isShared(), ViewType.PLAYER, false);
 
         return selfContainer;
     }

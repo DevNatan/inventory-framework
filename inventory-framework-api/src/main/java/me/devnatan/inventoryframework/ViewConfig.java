@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
+import me.devnatan.inventoryframework.context.IFContext;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -160,7 +161,7 @@ public class ViewConfig {
          *
          * @param config The target configuration.
          */
-        void apply(@NotNull ViewConfigBuilder config);
+        void apply(@NotNull ViewConfigBuilder config, @NotNull IFContext context);
     }
 
     public interface Option<T> {

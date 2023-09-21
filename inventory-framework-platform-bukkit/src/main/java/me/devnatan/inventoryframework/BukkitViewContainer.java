@@ -17,11 +17,13 @@ public final class BukkitViewContainer implements ViewContainer {
     private final Inventory inventory;
     private final boolean shared;
     private final ViewType type;
+    private final boolean proxied;
 
-    public BukkitViewContainer(@NotNull Inventory inventory, boolean shared, ViewType type) {
+    public BukkitViewContainer(@NotNull Inventory inventory, boolean shared, ViewType type, boolean proxied) {
         this.inventory = inventory;
         this.shared = shared;
         this.type = type;
+        this.proxied = proxied;
     }
 
     public Inventory getInventory() {
@@ -30,6 +32,11 @@ public final class BukkitViewContainer implements ViewContainer {
 
     public boolean isShared() {
         return shared;
+    }
+
+    @Override
+    public boolean isProxied() {
+        return proxied;
     }
 
     @Override

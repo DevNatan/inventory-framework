@@ -77,7 +77,7 @@ public final class PaginationState extends BaseState<Pagination> implements Stat
             if (!(subject instanceof IFRenderContext)) return;
 
             final IFContext context = (IFContext) subject;
-            final Pagination pagination = (Pagination) context.getState(state);
+            final Pagination pagination = (Pagination) context.getRawStateValue(state);
 
             context.addComponent(pagination);
         }

@@ -11,6 +11,7 @@ import me.devnatan.inventoryframework.UnsupportedOperationInSharedContextExcepti
 import me.devnatan.inventoryframework.View;
 import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewConfigBuilder;
+import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.ApiStatus;
@@ -18,6 +19,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class OpenContext extends PlatformConfinedContext implements IFOpenContext, Context {
+
+    private ViewContainer container;
 
     // --- Inherited ---
     private final UUID id;
@@ -156,5 +159,15 @@ public class OpenContext extends PlatformConfinedContext implements IFOpenContex
     public Viewer getViewer() {
         tryThrowDoNotWorkWithSharedContext("getViewers()");
         return subject;
+    }
+
+    @Override
+    public ViewContainer getContainer() {
+        return container;
+    }
+
+    @Override
+    public void setContainer(ViewContainer container) {
+        this.container = container;
     }
 }

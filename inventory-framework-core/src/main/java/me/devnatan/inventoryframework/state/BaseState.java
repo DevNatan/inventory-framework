@@ -22,7 +22,7 @@ public class BaseState<T> implements State<T> {
     @SuppressWarnings("unchecked")
     @Override
     public T get(@NotNull StateValueHost host) {
-        return (T) host.getState(this);
+        return (T) host.getRawStateValue(this);
     }
 
     @Override

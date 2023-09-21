@@ -30,19 +30,6 @@ public interface FeatureInstaller<P> {
     Collection<Feature<?, ?, P>> getInstalledFeatures();
 
     /**
-     * Installs a feature with no specific configuration.
-     *
-     * @param feature The feature to be installed.
-     * @param <C>     The feature configuration type.
-     * @param <R>     The feature value instance type.
-     * @return An instance of the installed feature.
-     */
-    @NotNull
-    default <C, R> R install(@NotNull Feature<C, R, P> feature) {
-        return install(feature, $ -> $);
-    }
-
-    /**
      * Installs a feature.
      *
      * @param feature   The feature to be installed.

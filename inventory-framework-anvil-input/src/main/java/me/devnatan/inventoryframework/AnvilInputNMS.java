@@ -1,8 +1,8 @@
 package me.devnatan.inventoryframework;
 
-import static me.devnatan.inventoryframework.IFDebug.debug;
 import static me.devnatan.inventoryframework.runtime.thirdparty.InventoryUpdate.CONTAINER;
 import static me.devnatan.inventoryframework.runtime.thirdparty.InventoryUpdate.ENTITY_PLAYER;
+import static me.devnatan.inventoryframework.runtime.thirdparty.InventoryUpdate.createTitleComponent;
 import static me.devnatan.inventoryframework.runtime.thirdparty.InventoryUpdate.getConstructor;
 import static me.devnatan.inventoryframework.runtime.thirdparty.InventoryUpdate.getContainerOrName;
 import static me.devnatan.inventoryframework.runtime.thirdparty.InventoryUpdate.getField;
@@ -20,14 +20,17 @@ import me.devnatan.inventoryframework.runtime.thirdparty.ReflectionUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.inventory.AnvilInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
-public class AnvilInputNMS {
+class AnvilInputNMS {
 
     // CONSTRUCTORS
     private static final MethodHandle ANVIL_CONSTRUCTOR;
+    private static final Class<?> ANVIL;
 
     // METHODS
     private static final MethodHandle GET_PLAYER_NEXT_CONTAINER_COUNTER;
@@ -43,14 +46,11 @@ public class AnvilInputNMS {
 
     static {
         try {
-            final InventoryUpdate.Containers anvil = InventoryUpdate.Containers.ANVIL;
-            debug(
-                    "Detected anvil container as \"%s\" @ %s",
-                    anvil.getMinecraftName(), anvil.getObject().getClass().getName());
+            ANVIL = getNMSClass("world.inventory", "ContainerAnvil");
 
             final Class<?> playerInventoryClass = getNMSClass("world.entity.player", "PlayerInventory");
-            ANVIL_CONSTRUCTOR =
-                    getConstructor(getNMSClass("world.inventory", "ContainerAnvil"), int.class, playerInventoryClass);
+
+            ANVIL_CONSTRUCTOR = getConstructor(ANVIL, int.class, playerInventoryClass);
             CONTAINER_CHECK_REACHABLE = setFieldHandle(CONTAINER, boolean.class, "checkReachable");
 
             final Class<?> containerPlayer = getNMSClass("world.inventory", "ContainerPlayer");
@@ -73,7 +73,7 @@ public class AnvilInputNMS {
 
     private AnvilInputNMS() {}
 
-    public static Inventory open(Player player, Object title) {
+    public static Inventory open(Player player, Object title, String initialInput) {
         try {
             final Object entityPlayer = ReflectionUtils.getEntityPlayer(player);
             final Object defaultContainer = PLAYER_DEFAULT_CONTAINER.invoke(entityPlayer);
@@ -83,15 +83,23 @@ public class AnvilInputNMS {
             final Object anvilContainer = ANVIL_CONSTRUCTOR.invoke(windowId, GET_PLAYER_INVENTORY.invoke(entityPlayer));
             CONTAINER_CHECK_REACHABLE.invoke(anvilContainer, false);
 
-            final Inventory inventory =
+            final AnvilInventory inventory = (AnvilInventory)
                     ((InventoryView) InventoryUpdate.getBukkitView.invoke(anvilContainer)).getTopInventory();
-            inventory.setItem(0, new ItemStack(Material.PAPER));
+
+            inventory.setMaximumRepairCost(0);
+
+            final ItemStack item = new ItemStack(Material.PAPER, 1, (short) 0);
+            final ItemMeta meta = item.getItemMeta();
+            meta.setDisplayName(initialInput);
+            item.setItemMeta(meta);
+            inventory.setItem(0, item);
 
             Object nmsContainers = getContainerOrName(InventoryUpdate.Containers.ANVIL, InventoryType.ANVIL);
+            Object updatedTitle = createTitleComponent(title);
             Object openWindowPacket = useContainers()
-                    ? packetPlayOutOpenWindow.invoke(windowId, nmsContainers, title)
+                    ? packetPlayOutOpenWindow.invoke(windowId, nmsContainers, updatedTitle)
                     : packetPlayOutOpenWindow.invoke(
-                            windowId, nmsContainers, title, InventoryType.ANVIL.getDefaultSize());
+                            windowId, nmsContainers, updatedTitle, InventoryType.ANVIL.getDefaultSize());
 
             ReflectionUtils.sendPacketSync(player, openWindowPacket);
             SET_PLAYER_ACTIVE_CONTAINER.invoke(entityPlayer, anvilContainer);

@@ -300,7 +300,7 @@ public abstract class PlatformView<
         context.getViewers().forEach(viewer -> {
             if (viewer.isTransitioning()) viewer.setActiveContext(context);
             view.getFramework().addViewer(viewer);
-            context.getContainer().open(viewer);
+            if (!context.getContainer().isProxied()) context.getContainer().open(viewer);
             viewer.setTransitioning(false);
         });
     }

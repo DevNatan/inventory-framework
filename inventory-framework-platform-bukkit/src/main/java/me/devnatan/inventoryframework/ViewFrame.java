@@ -109,10 +109,10 @@ public class ViewFrame extends IFViewFrame<ViewFrame, View> implements FeatureIn
 
         tryEnableMetrics();
         checkRelocationIssues();
-        initializeViews();
-        getOwner().getServer().getPluginManager().registerEvents(new IFInventoryListener(this), getOwner());
         setRegistered(true);
         getPipeline().execute(IFViewFrame.FRAME_REGISTERED, this);
+        initializeViews();
+        getOwner().getServer().getPluginManager().registerEvents(new IFInventoryListener(this), getOwner());
         return this;
     }
 
@@ -232,6 +232,18 @@ public class ViewFrame extends IFViewFrame<ViewFrame, View> implements FeatureIn
         final R value = featureInstaller.install(feature, configure);
         IFDebug.debug("Feature %s installed", feature.name());
         return value;
+    }
+
+    /**
+     * Installs a feature with no specific configuration.
+     *
+     * @param feature The feature to be installed.
+     * @return This view frame.
+     */
+    @NotNull
+    public final ViewFrame install(@NotNull Feature<?, ?, ViewFrame> feature) {
+        install(feature, $ -> $);
+        return this;
     }
 
     @Override

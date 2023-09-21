@@ -84,4 +84,6 @@ public interface ViewContainer {
     void changeTitle(@Nullable String title, @NotNull Viewer target);
 
     boolean isEntityContainer();
+
+    boolean isProxied();
 }

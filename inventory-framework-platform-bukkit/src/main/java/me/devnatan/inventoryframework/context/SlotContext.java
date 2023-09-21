@@ -97,8 +97,18 @@ public abstract class SlotContext extends PlatformContext implements IFSlotConte
     }
 
     @Override
-    public final Object getState(State<?> state) {
-        return getParent().getState(state);
+    public final Object getRawStateValue(State<?> state) {
+        return getParent().getRawStateValue(state);
+    }
+
+    @Override
+    public StateValue getInternalStateValue(State<?> state) {
+        return getParent().getInternalStateValue(state);
+    }
+
+    @Override
+    public StateValue getUninitializedStateValue(long stateId) {
+        return getParent().getUninitializedStateValue(stateId);
     }
 
     @Override
