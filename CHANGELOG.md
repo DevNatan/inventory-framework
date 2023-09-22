@@ -1,6 +1,6 @@
 # Changelog
 
-# 3.0.0 (unreleased)
+# 3.0.0 (09-21-2023)
 
 * Refs API feature to create a direct component instance reference (#476)
 * Anvil Input feature that allows to get the text field value from a anvil (#481)
