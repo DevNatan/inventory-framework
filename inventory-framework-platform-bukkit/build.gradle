@@ -2,7 +2,6 @@ import org.apache.tools.ant.filters.ReplaceTokens
 
 plugins {
     alias(libs.plugins.shadowjar)
-    alias(libs.plugins.kotlin)
 }
 
 apply from: '../library.gradle'
@@ -27,6 +26,12 @@ dependencies {
 shadowJar {
     archiveBaseName.set('inventory-framework')
     archiveAppendix.set('bukkit')
+
+    dependencies {
+        exclude(dependency {
+            it.moduleGroup == "org.jetbrains.kotlin"
+        })
+    }
 }
 
 processResources {
@@ -34,8 +39,4 @@ processResources {
         duplicatesStrategy DuplicatesStrategy.INCLUDE
         filter ReplaceTokens, tokens: [version: version]
     }
-}
-
-kotlin {
-    explicitApi()
 }
