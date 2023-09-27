@@ -44,7 +44,7 @@ public class AvailableSlotInterceptorTest {
         when(context.getConfig()).thenReturn(createLayoutConfig(defaultLayout));
         when(context.getLayoutSlots())
                 .thenReturn(Collections.singletonList(
-                        new LayoutSlot(LayoutSlot.FILLED_RESERVED_CHAR, $ -> mock(ComponentFactory.class), null)));
+                        new LayoutSlot(LayoutSlot.FILLED_RESERVED_CHAR, $ -> mock(ComponentFactory.class), null, true)));
 
         assertTrue(new AvailableSlotInterceptor().resolveFromLayoutSlot(context).isEmpty());
     }
@@ -56,7 +56,7 @@ public class AvailableSlotInterceptorTest {
         when(context.getConfig()).thenReturn(createLayoutConfig(defaultLayout));
 
         LayoutSlot layoutSlot =
-                new LayoutSlot(LayoutSlot.FILLED_RESERVED_CHAR, $ -> mock(ComponentFactory.class), new int[0]);
+                new LayoutSlot(LayoutSlot.FILLED_RESERVED_CHAR, $ -> mock(ComponentFactory.class), new int[0], true);
 
         when(context.getLayoutSlots()).thenReturn(Collections.singletonList(layoutSlot));
 
@@ -83,7 +83,7 @@ public class AvailableSlotInterceptorTest {
         when(context.getAvailableSlotFactory()).thenReturn(availableSlotFactory);
 
         LayoutSlot layoutSlot =
-                new LayoutSlot(LayoutSlot.FILLED_RESERVED_CHAR, $ -> componentFactory, defaultLayoutSlotRange);
+                new LayoutSlot(LayoutSlot.FILLED_RESERVED_CHAR, $ -> componentFactory, defaultLayoutSlotRange, true);
         when(context.getLayoutSlots()).thenReturn(Collections.singletonList(layoutSlot));
 
         List<ComponentFactory> resolved = new AvailableSlotInterceptor().resolveFromLayoutSlot(context);
@@ -111,7 +111,7 @@ public class AvailableSlotInterceptorTest {
         when(context.getAvailableSlotFactory()).thenReturn(availableSlotFactory);
 
         LayoutSlot layoutSlot =
-                new LayoutSlot(LayoutSlot.FILLED_RESERVED_CHAR, $ -> componentFactory, defaultLayoutSlotRange);
+                new LayoutSlot(LayoutSlot.FILLED_RESERVED_CHAR, $ -> componentFactory, defaultLayoutSlotRange, true);
         when(context.getLayoutSlots()).thenReturn(Collections.singletonList(layoutSlot));
 
         new AvailableSlotInterceptor().intercept(mock(PipelineContext.class), context);

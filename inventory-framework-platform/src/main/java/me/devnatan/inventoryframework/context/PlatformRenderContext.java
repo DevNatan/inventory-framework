@@ -215,6 +215,25 @@ public abstract class PlatformRenderContext<T extends ItemComponentBuilder<T, C>
         }));
     }
 
+	/**
+	 * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
+	 * such API may be changed or may be removed completely in any further release. </i></b>
+	 */
+	@ApiStatus.Experimental
+	public @NotNull T singleLayoutSlot(char character) {
+		requireNonReservedLayoutCharacter(character);
+
+		// TODO More detailed exception message
+		final LayoutSlot layoutSlot = getLayoutSlots().stream()
+			.filter(value -> value.getCharacter() == character)
+			.findFirst()
+			.orElseThrow(() -> new InventoryFrameworkException("Missing layout character: " + character));
+
+		final T builder = createBuilder();
+		getLayoutSlots().add(layoutSlot.withFactory($ -> (ComponentFactory) builder).withFill(false));
+		return builder;
+	}
+
     /**
      * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
      * such API may be changed or may be removed completely in any further release. </i></b>
