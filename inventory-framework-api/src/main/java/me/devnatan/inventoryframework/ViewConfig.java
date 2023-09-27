@@ -29,6 +29,7 @@ public class ViewConfig {
     private final String[] layout;
     private final Set<Modifier> modifiers;
     private final long updateIntervalInTicks, interactionDelayInMillis;
+    private final boolean transitiveInitialData;
 
     public ViewConfig(
             Object title,
@@ -38,7 +39,8 @@ public class ViewConfig {
             String[] layout,
             Set<Modifier> modifiers,
             long updateIntervalInTicks,
-            long interactionDelayInMillis) {
+            long interactionDelayInMillis,
+            boolean transitiveInitialData) {
         this.title = title;
         this.size = size;
         this.type = type;
@@ -47,6 +49,7 @@ public class ViewConfig {
         this.modifiers = modifiers;
         this.updateIntervalInTicks = updateIntervalInTicks;
         this.interactionDelayInMillis = interactionDelayInMillis;
+        this.transitiveInitialData = transitiveInitialData;
     }
 
     public Object getTitle() {
@@ -79,6 +82,10 @@ public class ViewConfig {
 
     public long getInteractionDelayInMillis() {
         return interactionDelayInMillis;
+    }
+
+    public boolean isTransitiveInitialData() {
+        return transitiveInitialData;
     }
 
     @VisibleForTesting
@@ -138,7 +145,8 @@ public class ViewConfig {
                 merge(other, ViewConfig::getLayout),
                 merge(other, ViewConfig::getModifiers, value -> value != null && !value.isEmpty()),
                 merge(other, ViewConfig::getUpdateIntervalInTicks, value -> value != 0),
-                merge(other, ViewConfig::getInteractionDelayInMillis, value -> value != 0));
+                merge(other, ViewConfig::getInteractionDelayInMillis, value -> value != 0),
+                merge(other, ViewConfig::isTransitiveInitialData));
     }
 
     private <T> T merge(ViewConfig other, Function<ViewConfig, T> retriever) {
@@ -228,7 +236,8 @@ public class ViewConfig {
                 && Objects.equals(getType(), that.getType())
                 && Objects.equals(getOptions(), that.getOptions())
                 && Arrays.equals(getLayout(), that.getLayout())
-                && Objects.equals(getModifiers(), that.getModifiers());
+                && Objects.equals(getModifiers(), that.getModifiers())
+                && isTransitiveInitialData() == that.isTransitiveInitialData();
     }
 
     @Override
@@ -240,7 +249,8 @@ public class ViewConfig {
                 getOptions(),
                 getModifiers(),
                 getUpdateIntervalInTicks(),
-                getInteractionDelayInMillis());
+                getInteractionDelayInMillis(),
+                isTransitiveInitialData());
         result = 31 * result + Arrays.hashCode(getLayout());
         return result;
     }
@@ -255,6 +265,7 @@ public class ViewConfig {
                 + Arrays.toString(layout) + ", modifiers="
                 + modifiers + ", updateIntervalInTicks="
                 + updateIntervalInTicks + ", interactionDelayInMillis="
-                + interactionDelayInMillis + '}';
+                + interactionDelayInMillis + ", transitiveInitialData="
+                + transitiveInitialData + "}";
     }
 }
