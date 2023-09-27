@@ -21,18 +21,19 @@ abstract class PlatformConfinedContext extends PlatformContext implements IFConf
 
     @Override
     public void openForPlayer(@NotNull Class<? extends RootView> other) {
-        openForPlayer(other, getConfig().isTransitiveInitialData() ? getInitialData() : null);
+        openForPlayer(other, getConfig().isTransitiveInitialData() ? getInitialData() : null, false);
+    }
+
+    @Override
+    public void openForPlayer(@NotNull Class<? extends RootView> other, Object initialData) {
+        openForPlayer(other, initialData, true);
     }
 
     @SuppressWarnings("unchecked")
-    @Override
-    public void openForPlayer(@NotNull Class<? extends RootView> other, Object initialData) {
-        getRoot()
-                .navigateTo(
-                        other,
-                        (IFRenderContext) this,
-                        getViewer(),
-                        getConfig().isTransitiveInitialData() ? mergeInitialData(initialData) : initialData);
+    private void openForPlayer(@NotNull Class<? extends RootView> other, Object initialData, boolean mergeInitialData) {
+        final Object data =
+                getConfig().isTransitiveInitialData() && mergeInitialData ? mergeInitialData(initialData) : initialData;
+        getRoot().navigateTo(other, (IFRenderContext) this, getViewer(), data);
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
