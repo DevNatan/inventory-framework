@@ -227,7 +227,7 @@ public final class ViewConfigBuilder {
                 getModifiers(),
                 getUpdateIntervalInTicks(),
                 getInteractionDelayInMillis(),
-			transitiveInitialData);
+                transitiveInitialData);
     }
 
     public static boolean isTitleAsComponentSupported() {
@@ -266,7 +266,7 @@ public final class ViewConfigBuilder {
         return interactionDelayInMillis;
     }
 
-	public boolean isTransitiveInitialData() {
-		return transitiveInitialData;
-	}
+    public boolean isTransitiveInitialData() {
+        return transitiveInitialData;
+    }
 }

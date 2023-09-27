@@ -1,5 +1,10 @@
 package me.devnatan.inventoryframework.context;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.Viewer;
 import org.jetbrains.annotations.NotNull;
@@ -16,13 +21,49 @@ abstract class PlatformConfinedContext extends PlatformContext implements IFConf
 
     @Override
     public void openForPlayer(@NotNull Class<? extends RootView> other) {
-        openForPlayer(other, null);
+        openForPlayer(other, getConfig().isTransitiveInitialData() ? getInitialData() : null);
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public void openForPlayer(@NotNull Class<? extends RootView> other, Object initialData) {
-        getRoot().navigateTo(other, (IFRenderContext) this, getViewer(), initialData);
+        getRoot()
+                .navigateTo(
+                        other,
+                        (IFRenderContext) this,
+                        getViewer(),
+                        getConfig().isTransitiveInitialData() ? mergeInitialData(initialData) : initialData);
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private Object mergeInitialData(Object otherData) {
+        final Object initialData = getInitialData();
+        if (initialData == null || otherData == null) return otherData == null ? initialData : otherData;
+
+        if (!(initialData.getClass().equals(otherData.getClass())))
+            throw new IllegalArgumentException(String.format(
+                    "Failed to merge initial data, supplied data and current initial data must have the same type."
+                            + " Initial data type is \"%s\" and supplied data type is \"%s\". Try changing type of both to a similar type like Map in order to merge be executed.",
+                    initialData.getClass().getName(), otherData.getClass().getName()));
+
+        final Object resultData;
+        if (initialData instanceof List && otherData instanceof List) {
+            final List<?> newData = new ArrayList<>();
+            newData.addAll((List) initialData);
+            newData.addAll((List) otherData);
+            resultData = Collections.unmodifiableList(newData);
+        } else if (initialData instanceof Map && otherData instanceof Map) {
+            final Map<?, ?> newData = new HashMap<>();
+            newData.putAll((Map) initialData);
+            newData.putAll((Map) otherData);
+            resultData = Collections.unmodifiableMap(newData);
+        } else {
+            throw new IllegalArgumentException(String.format(
+                    "Unable to merge initial data (initial data type = %s, supplied data type = %s)",
+                    initialData.getClass().getName(), otherData.getClass().getName()));
+        }
+
+        return resultData;
     }
 
     @Override
