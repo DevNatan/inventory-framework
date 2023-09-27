@@ -243,15 +243,13 @@ public class ItemComponent implements Component, InteractionHandler {
     @Override
     public void hide() {
         setVisible(false);
-
-        // TODO Change update mechanism to allow in-ComponentComposition child to be hidden
-        clear((IFContext) getRoot());
+		update();
     }
 
     @Override
     public void show() {
         setVisible(true);
-        forceUpdate();
+        update();
     }
 
     @Override
