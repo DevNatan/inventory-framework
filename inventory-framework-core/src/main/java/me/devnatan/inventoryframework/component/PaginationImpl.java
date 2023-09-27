@@ -48,7 +48,7 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
     private boolean initialized;
     private int pagesCount;
     private boolean forceUpdated;
-	private LayoutSlot currentLayoutSlot;
+    private LayoutSlot currentLayoutSlot;
 
     // Number of elements that each page can have. -1 means uninitialized.
     private int pageSize = -1;
@@ -295,8 +295,7 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
     }
 
     private LayoutSlot getLayoutSlotForCurrentTarget(IFRenderContext context) {
-		if (currentLayoutSlot != null)
-			return currentLayoutSlot;
+        if (currentLayoutSlot != null) return currentLayoutSlot;
 
         final Optional<LayoutSlot> layoutSlotOptional = context.getLayoutSlots().stream()
                 .filter(layoutSlot -> layoutSlot.getCharacter() == getLayoutTarget())
@@ -397,7 +396,7 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
             final IFRenderContext root = context.getParent();
             updatePageSize(root);
             loadCurrentPage(root).thenRun(() -> renderChild(context));
-			initialized = true;
+            initialized = true;
             return;
         }
 
@@ -418,13 +417,13 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
 
         // If page was changed all components will be removed, so don't trigger update on them
         if (forceUpdated || pageWasChanged) {
-			clear(renderContext);
+            clear(renderContext);
             components = new ArrayList<>();
             loadCurrentPage(renderContext).thenRun(() -> {
                 render(context);
                 simulateStateUpdate();
             });
-			pageWasChanged = false;
+            pageWasChanged = false;
             return;
         }
 
@@ -475,12 +474,12 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
 
     @Override
     public boolean isContainedWithin(int position) {
-		if (currentLayoutSlot != null) {
-			for (int slot : currentLayoutSlot.getPositions()) {
-				if (slot == position) return true;
-			}
-			return false;
-		}
+        if (currentLayoutSlot != null) {
+            for (int slot : currentLayoutSlot.getPositions()) {
+                if (slot == position) return true;
+            }
+            return false;
+        }
 
         for (final Component component : getInternalComponents()) {
             if (component.isContainedWithin(position)) return true;
@@ -635,9 +634,9 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
     public void clicked(@NotNull Component component, @NotNull IFSlotClickContext context) {
         // Lock child interactions while page is changing (specially for async pagination cases)
         if (pageWasChanged) {
-			context.setCancelled(true);
-			return;
-		}
+            context.setCancelled(true);
+            return;
+        }
 
         for (final Component child : getInternalComponents()) {
             if (child.getInteractionHandler() == null || !child.isVisible()) {
