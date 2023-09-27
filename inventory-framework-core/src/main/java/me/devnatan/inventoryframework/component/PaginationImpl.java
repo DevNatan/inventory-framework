@@ -633,7 +633,7 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
 
     @Override
     public void clicked(@NotNull Component component, @NotNull IFSlotClickContext context) {
-        // Lock child interactions while page is being changed
+        // Lock child interactions while page is changing (specially for async pagination cases)
         if (pageWasChanged) {
 			context.setCancelled(true);
 			return;
