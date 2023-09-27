@@ -393,7 +393,7 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
             final IFRenderContext root = context.getParent();
             updatePageSize(root);
             loadCurrentPage(root).thenRun(() -> renderChild(context));
-            initialized = true;
+			initialized = true;
             return;
         }
 
@@ -414,16 +414,13 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
 
         // If page was changed all components will be removed, so don't trigger update on them
         if (forceUpdated || pageWasChanged) {
-            getInternalComponents().forEach(child -> {
-                debug("[Pagination] Child removed: %s", child.getClass().getSimpleName());
-                child.clear(renderContext);
-            });
+			clear(renderContext);
             components = new ArrayList<>();
             loadCurrentPage(renderContext).thenRun(() -> {
                 render(context);
                 simulateStateUpdate();
             });
-            pageWasChanged = false;
+			pageWasChanged = false;
             return;
         }
 
@@ -625,7 +622,7 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
 
     @Override
     public void clicked(@NotNull Component component, @NotNull IFSlotClickContext context) {
-        // Lock child interactions while page is being updated
+        // Ignore child interactions while page is being changed
         if (pageWasChanged) return;
 
         for (final Component child : getInternalComponents()) {
