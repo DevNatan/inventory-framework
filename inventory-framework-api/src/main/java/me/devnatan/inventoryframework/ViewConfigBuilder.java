@@ -31,7 +31,7 @@ public final class ViewConfigBuilder {
     private String[] layout = null;
     private final Set<ViewConfig.Modifier> modifiers = new HashSet<>();
     private long updateIntervalInTicks, interactionDelayInMillis;
-    private boolean transitiveData;
+    private boolean transitiveInitialData;
 
     /**
      * Inherits all configuration from another {@link ViewConfigBuilder} value.
@@ -208,7 +208,7 @@ public final class ViewConfigBuilder {
      * @see <a href="https://github.com/DevNatan/inventory-framework/wiki/navigating-between-views">Navigating Between Views on Wiki</a>
      */
     public ViewConfigBuilder transitiveInitialData(boolean transitiveInitialData) {
-        this.transitiveData = transitiveInitialData;
+        this.transitiveInitialData = transitiveInitialData;
         return this;
     }
 
@@ -226,7 +226,8 @@ public final class ViewConfigBuilder {
                 getLayout(),
                 getModifiers(),
                 getUpdateIntervalInTicks(),
-                getInteractionDelayInMillis());
+                getInteractionDelayInMillis(),
+			transitiveInitialData);
     }
 
     public static boolean isTitleAsComponentSupported() {
@@ -264,4 +265,8 @@ public final class ViewConfigBuilder {
     long getInteractionDelayInMillis() {
         return interactionDelayInMillis;
     }
+
+	public boolean isTransitiveInitialData() {
+		return transitiveInitialData;
+	}
 }
