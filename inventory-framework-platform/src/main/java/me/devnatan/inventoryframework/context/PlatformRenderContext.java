@@ -184,8 +184,7 @@ public abstract class PlatformRenderContext<T extends ItemComponentBuilder<T, C>
                 .orElseThrow(() -> new InventoryFrameworkException("Missing layout character: " + character));
 
         final T builder = createBuilder();
-        final int elIndex = getLayoutSlots().indexOf(layoutSlot);
-        getLayoutSlots().set(elIndex, layoutSlot.withFactory($ -> (ComponentFactory) builder));
+        getLayoutSlots().add(layoutSlot.withFactory($ -> (ComponentFactory) builder));
         return builder;
     }
 
@@ -207,8 +206,7 @@ public abstract class PlatformRenderContext<T extends ItemComponentBuilder<T, C>
                 .findFirst()
                 .orElseThrow(() -> new InventoryFrameworkException("Missing layout character: " + character));
 
-        final int elIndex = getLayoutSlots().indexOf(layoutSlot);
-        getLayoutSlots().set(elIndex, layoutSlot.withFactory(index -> {
+        getLayoutSlots().add(layoutSlot.withFactory(index -> {
             final T builder = createBuilder();
             factory.accept(index, builder);
             return (ComponentFactory) builder;
