@@ -48,6 +48,7 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
     private boolean initialized;
     private int pagesCount;
     private boolean forceUpdated;
+	private LayoutSlot currentLayoutSlot;
 
     // Number of elements that each page can have. -1 means uninitialized.
     private int pageSize = -1;
@@ -294,6 +295,9 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
     }
 
     private LayoutSlot getLayoutSlotForCurrentTarget(IFRenderContext context) {
+		if (currentLayoutSlot != null)
+			return currentLayoutSlot;
+
         final Optional<LayoutSlot> layoutSlotOptional = context.getLayoutSlots().stream()
                 .filter(layoutSlot -> layoutSlot.getCharacter() == getLayoutTarget())
                 .findFirst();
@@ -302,7 +306,7 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
             // TODO more detailed error message
             throw new IllegalArgumentException(String.format("Layout slot target not found: %c", getLayoutTarget()));
 
-        return layoutSlotOptional.get();
+        return (currentLayoutSlot = layoutSlotOptional.get());
     }
 
     /**
@@ -471,6 +475,13 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
 
     @Override
     public boolean isContainedWithin(int position) {
+		if (currentLayoutSlot != null) {
+			for (int slot : currentLayoutSlot.getPositions()) {
+				if (slot == position) return true;
+			}
+			return false;
+		}
+
         for (final Component component : getInternalComponents()) {
             if (component.isContainedWithin(position)) return true;
         }
@@ -623,7 +634,10 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
     @Override
     public void clicked(@NotNull Component component, @NotNull IFSlotClickContext context) {
         // Ignore child interactions while page is being changed
-        if (pageWasChanged) return;
+        if (pageWasChanged) {
+			context.setCancelled(true);
+			return;
+		}
 
         for (final Component child : getInternalComponents()) {
             if (child.getInteractionHandler() == null || !child.isVisible()) {
