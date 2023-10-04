@@ -31,6 +31,7 @@ public final class ViewConfigBuilder {
     private String[] layout = null;
     private final Set<ViewConfig.Modifier> modifiers = new HashSet<>();
     private long updateIntervalInTicks, interactionDelayInMillis;
+    private boolean transitiveInitialData;
 
     /**
      * Inherits all configuration from another {@link ViewConfigBuilder} value.
@@ -196,6 +197,21 @@ public final class ViewConfigBuilder {
         return this;
     }
 
+    /**
+     * When navigating between views data from "A" to "B" is not carried so trying to access
+     * some data from "A" in "B" will throw a {@link NullPointerException}.
+     * <p>
+     * This behavior can be changed by enabling this option, once enabled, on every navigation
+     * between views data will be carried from the view where came from to the view where are going.
+     *
+     * @return This configuration builder.
+     * @see <a href="https://github.com/DevNatan/inventory-framework/wiki/navigating-between-views">Navigating Between Views on Wiki</a>
+     */
+    public ViewConfigBuilder transitiveInitialData(boolean transitiveInitialData) {
+        this.transitiveInitialData = transitiveInitialData;
+        return this;
+    }
+
     public ViewConfig build() {
         final Map<ViewConfig.Option<?>, Object> optionsMap = getOptions().stream()
                 .map(option -> new AbstractMap.SimpleImmutableEntry<ViewConfig.Option<?>, Object>(
@@ -210,7 +226,8 @@ public final class ViewConfigBuilder {
                 getLayout(),
                 getModifiers(),
                 getUpdateIntervalInTicks(),
-                getInteractionDelayInMillis());
+                getInteractionDelayInMillis(),
+                transitiveInitialData);
     }
 
     public static boolean isTitleAsComponentSupported() {
@@ -247,5 +264,9 @@ public final class ViewConfigBuilder {
 
     long getInteractionDelayInMillis() {
         return interactionDelayInMillis;
+    }
+
+    public boolean isTransitiveInitialData() {
+        return transitiveInitialData;
     }
 }
