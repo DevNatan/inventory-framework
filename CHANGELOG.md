@@ -1,5 +1,11 @@
 # Changelog
 
+# 3.0.1 (10-04-2023)
+
+* Lock child interactions while pagination page is changing to prevent items be removed while asynchronous pagination is reloading (#488)
+* Option to enable data transitivity from one view to another automatically (#493)
+* Remove multiple layoutSlot with same character restriction, now multiple `layoutSlot` with the same character can be used (#489)
+
 # 3.0.0 (09-21-2023)
 
 * Refs API feature to create a direct component instance reference (#476)
