@@ -21,4 +21,10 @@ java {
 shadowJar {
     archiveBaseName.set('inventory-framework')
     archiveAppendix.set('paper')
+
+    dependencies {
+        exclude(dependency {
+            it.moduleGroup == "org.jetbrains.kotlin"
+        })
+    }
 }
