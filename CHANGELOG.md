@@ -1,5 +1,10 @@
 # Changelog
 
+# 3.0.2 (10-05-2023)
+
+* Kotlin stdlib from inventory-framework-platform-paper module runtime dependencies (#495)
+* Fix scheduled update start interceptor trying to restart on context close and throwing an exception (#497)
+
 # 3.0.1 (10-04-2023)
 
 * Lock child interactions while pagination page is changing to prevent items be removed while asynchronous pagination is reloading (#488)
