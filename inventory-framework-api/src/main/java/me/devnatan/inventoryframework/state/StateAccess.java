@@ -1,4 +1,4 @@
-package me.devnatan.inventoryframework;
+package me.devnatan.inventoryframework.state;
 
 import me.devnatan.inventoryframework.component.ComponentFactory;
 import me.devnatan.inventoryframework.component.ItemComponentBuilder;
