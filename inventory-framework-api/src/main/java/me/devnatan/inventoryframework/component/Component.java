@@ -31,13 +31,6 @@ public interface Component extends VirtualView {
     VirtualView getRoot();
 
     /**
-     * The current position of this component relative to its root view.
-     *
-     * @return The current position of this component.
-     */
-    int getPosition();
-
-    /**
      * Checks if this component is in a specific position.
      *
      * @param position The position.
@@ -80,6 +73,8 @@ public interface Component extends VirtualView {
      * @param context The context that this component will be cleared from.
      */
     void clear(@NotNull IFContext context);
+
+	void clicked(@NotNull IFContext context);
 
     /**
      * An unmodifiable set of all states that this component is watching.
