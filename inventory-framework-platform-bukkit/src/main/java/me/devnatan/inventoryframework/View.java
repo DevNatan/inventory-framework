@@ -49,6 +49,4 @@ public class View
     public final void nextTick(Runnable task) {
         Bukkit.getServer().getScheduler().runTask(getFramework().getOwner(), task);
     }
-
-
 }
