@@ -32,20 +32,14 @@ public final class PaginationState extends BaseState<Pagination> implements Stat
 
     @Override
     public void stateRegistered(@NotNull State<?> state, Object caller) {
-        if (!(caller instanceof RootView))
-            throw new IllegalArgumentException("Pagination state can only be registered by RootView");
-
-        final Pipeline<VirtualView> pipeline = ((RootView) caller).getPipeline();
+        final Pipeline<VirtualView> pipeline = RootView.of(caller).getPipeline();
         pipeline.insertPhaseAfter(LAYOUT_RESOLUTION, PAGINATION_RENDER);
         pipeline.intercept(PAGINATION_RENDER, pipelineInterceptor);
     }
 
     @Override
     public void stateUnregistered(@NotNull State<?> state, Object caller) {
-        if (!(caller instanceof RootView))
-            throw new IllegalArgumentException("Pagination state can only be unregistered by RootView");
-
-        (((RootView) caller)).getPipeline().removeInterceptor(PAGINATION_RENDER, pipelineInterceptor);
+        RootView.of(caller).getPipeline().removeInterceptor(PAGINATION_RENDER, pipelineInterceptor);
     }
 
     @Override

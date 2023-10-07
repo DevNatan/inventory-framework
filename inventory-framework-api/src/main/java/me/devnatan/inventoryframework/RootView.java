@@ -3,6 +3,7 @@ package me.devnatan.inventoryframework;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.internal.ElementFactory;
 import me.devnatan.inventoryframework.internal.Job;
@@ -95,4 +96,16 @@ public interface RootView extends VirtualView {
 
     @NotNull
     Map<String, Object> getMetadata();
+
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
+    static RootView of(Object value) {
+        if (value instanceof Component) return of(((Component) value).getRoot());
+        if (value instanceof IFContext) return of(((IFContext) value).getRoot());
+
+        return (RootView) value;
+    }
 }
