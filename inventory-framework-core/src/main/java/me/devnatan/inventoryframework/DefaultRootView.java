@@ -2,20 +2,17 @@ package me.devnatan.inventoryframework;
 
 import static java.util.Collections.newSetFromMap;
 import static java.util.Collections.synchronizedMap;
-import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.CLICK;
-import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.CLOSE;
-import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.FIRST_RENDER;
-import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.INIT;
-import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.INVALIDATION;
-import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.LAYOUT_RESOLUTION;
-import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.OPEN;
-import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.UPDATE;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.internal.ElementFactory;
 import me.devnatan.inventoryframework.internal.Job;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
+import me.devnatan.inventoryframework.pipeline.PipelinePhase;
 import me.devnatan.inventoryframework.state.StateRegistry;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -25,8 +22,15 @@ public class DefaultRootView implements RootView {
 
     private final UUID id = UUID.randomUUID();
     private ViewConfig config;
-    private final Pipeline<VirtualView> pipeline =
-            new Pipeline<>(INIT, OPEN, LAYOUT_RESOLUTION, FIRST_RENDER, UPDATE, CLICK, CLOSE, INVALIDATION);
+    private final Pipeline<VirtualView> pipeline = new Pipeline<>(
+            PipelinePhase.VIEW_INIT,
+            PipelinePhase.CONTEXT_OPEN,
+            PipelinePhase.CONTEXT_LAYOUT_RESOLUTION,
+            PipelinePhase.CONTEXT_RENDER,
+            PipelinePhase.CONTEXT_UPDATE,
+            PipelinePhase.CONTEXT_CLICK,
+            PipelinePhase.CONTEXT_CLOSE,
+            PipelinePhase.CONTEXT_INVALIDATED);
     private final Set<IFContext> contexts = newSetFromMap(synchronizedMap(new HashMap<>()));
     final StateRegistry stateRegistry = new StateRegistry();
     private Job scheduledUpdateJob;

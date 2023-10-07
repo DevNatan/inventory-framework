@@ -14,7 +14,6 @@ import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.component.ItemComponent;
-import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
 import org.junit.jupiter.api.Test;
 
@@ -22,11 +21,11 @@ public class UpdateInterceptorTest {
 
     @Test
     void neverRenderIfItemDoNotHaveRenderHandler() {
-        Pipeline<VirtualView> pipeline = new Pipeline<>(StandardPipelinePhases.UPDATE);
-        pipeline.intercept(StandardPipelinePhases.UPDATE, new UpdateInterceptor());
+        Pipeline<VirtualView> pipeline = new Pipeline<>(PipelinePhase.CONTEXT_UPDATE);
+        pipeline.intercept(PipelinePhase.CONTEXT_UPDATE, new UpdateInterceptor());
 
         RootView root = createRootMock();
-        IFContext context = createContextMock(root, IFRenderContext.class);
+        IFRenderContext context = createContextMock(root, IFRenderContext.class);
         when(context.isShared()).thenReturn(true);
         ViewContainer container = mock(ViewContainer.class);
         when(context.getContainer()).thenReturn(container);
@@ -37,7 +36,7 @@ public class UpdateInterceptorTest {
         when(context.getComponents()).thenReturn(Collections.singletonList(component));
         when(root.getContexts()).thenReturn(Collections.singleton(context));
 
-        pipeline.execute(StandardPipelinePhases.UPDATE, context);
+        pipeline.execute(PipelinePhase.CONTEXT_UPDATE, context);
 
         verify(component, never()).clear(eq(context));
         verify(component, never()).updated(any());

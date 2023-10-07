@@ -5,7 +5,7 @@ import me.devnatan.inventoryframework.context.IFCloseContext;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.context.IFSlotClickContext;
-import me.devnatan.inventoryframework.pipeline.StandardPipelinePhases;
+import me.devnatan.inventoryframework.pipeline.PipelinePhase;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -54,7 +54,7 @@ final class IFInventoryListener implements Listener {
         final IFSlotClickContext clickContext = root.getElementFactory()
                 .createSlotClickContext(event.getRawSlot(), viewer, clickedContainer, clickedComponent, event);
 
-        root.getPipeline().execute(StandardPipelinePhases.CLICK, clickContext);
+        root.getPipeline().execute(PipelinePhase.CONTEXT_CLICK, clickContext);
     }
 
     @SuppressWarnings("unused")
@@ -70,7 +70,7 @@ final class IFInventoryListener implements Listener {
         final RootView root = context.getRoot();
         final IFCloseContext closeContext = root.getElementFactory().createCloseContext(viewer, context);
 
-        root.getPipeline().execute(StandardPipelinePhases.CLOSE, closeContext);
+        root.getPipeline().execute(PipelinePhase.CONTEXT_CLOSE, closeContext);
     }
 
     @SuppressWarnings("deprecation")

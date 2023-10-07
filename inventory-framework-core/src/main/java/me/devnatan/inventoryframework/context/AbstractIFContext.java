@@ -15,7 +15,7 @@ import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.ComponentComposition;
 import me.devnatan.inventoryframework.component.ComponentContainer;
-import me.devnatan.inventoryframework.pipeline.StandardPipelinePhases;
+import me.devnatan.inventoryframework.pipeline.PipelinePhase;
 import me.devnatan.inventoryframework.state.DefaultStateValueHost;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
@@ -161,7 +161,7 @@ abstract class AbstractIFContext extends DefaultStateValueHost implements IFCont
 
     @Override
     public void update() {
-        getRoot().getPipeline().execute(StandardPipelinePhases.UPDATE, this);
+        getRoot().getPipeline().execute(PipelinePhase.CONTEXT_UPDATE, this);
     }
 
     @Override

@@ -9,7 +9,7 @@ public final class PlatformUpdateHandlerInterceptor implements PipelineIntercept
     @SuppressWarnings("unchecked")
     @Override
     public void intercept(PipelineContext<VirtualView> pipeline, VirtualView subject) {
-        if (!(subject instanceof IFContext) || pipeline.getPhase() != StandardPipelinePhases.UPDATE) return;
+        if (!(subject instanceof IFContext) || pipeline.getPhase() != PipelinePhase.CONTEXT_UPDATE) return;
 
         @SuppressWarnings("rawtypes")
         final PlatformView root = (PlatformView) ((IFContext) subject).getRoot();

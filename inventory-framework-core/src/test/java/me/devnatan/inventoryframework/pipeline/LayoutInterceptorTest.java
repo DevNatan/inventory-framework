@@ -17,8 +17,8 @@ public class LayoutInterceptorTest {
 
     @Test
     void invalidLayoutLengthForContainer() {
-        Pipeline<VirtualView> pipeline = new Pipeline<>(StandardPipelinePhases.LAYOUT_RESOLUTION);
-        pipeline.intercept(StandardPipelinePhases.LAYOUT_RESOLUTION, new LayoutResolutionInterceptor());
+        Pipeline<VirtualView> pipeline = new Pipeline<>(PipelinePhase.CONTEXT_LAYOUT_RESOLUTION);
+        pipeline.intercept(PipelinePhase.CONTEXT_LAYOUT_RESOLUTION, new LayoutResolutionInterceptor());
 
         ViewConfig config = mock(ViewConfig.class);
         String[] layout = new String[] {"XXXXXXX" /* rows count = 1 */};
@@ -32,8 +32,7 @@ public class LayoutInterceptorTest {
         when(context.getContainer()).thenReturn(container);
 
         Throwable throwable = assertThrows(
-                InvalidLayoutException.class,
-                () -> pipeline.execute(StandardPipelinePhases.LAYOUT_RESOLUTION, context));
+                InvalidLayoutException.class, () -> pipeline.execute(PipelinePhase.CONTEXT_LAYOUT_RESOLUTION, context));
 
         assertEquals(
                 format(
@@ -44,8 +43,8 @@ public class LayoutInterceptorTest {
 
     @Test
     void invalidLayoutLengthForLayer() {
-        Pipeline<VirtualView> pipeline = new Pipeline<>(StandardPipelinePhases.LAYOUT_RESOLUTION);
-        pipeline.intercept(StandardPipelinePhases.LAYOUT_RESOLUTION, new LayoutResolutionInterceptor());
+        Pipeline<VirtualView> pipeline = new Pipeline<>(PipelinePhase.CONTEXT_LAYOUT_RESOLUTION);
+        pipeline.intercept(PipelinePhase.CONTEXT_LAYOUT_RESOLUTION, new LayoutResolutionInterceptor());
 
         ViewConfig config = mock(ViewConfig.class);
 
@@ -61,8 +60,7 @@ public class LayoutInterceptorTest {
         when(context.getContainer()).thenReturn(container);
 
         Throwable throwable = assertThrows(
-                InvalidLayoutException.class,
-                () -> pipeline.execute(StandardPipelinePhases.LAYOUT_RESOLUTION, context));
+                InvalidLayoutException.class, () -> pipeline.execute(PipelinePhase.CONTEXT_LAYOUT_RESOLUTION, context));
 
         assertEquals(
                 format(

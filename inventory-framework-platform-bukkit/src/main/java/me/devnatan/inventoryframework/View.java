@@ -12,7 +12,7 @@ import me.devnatan.inventoryframework.pipeline.GlobalClickInterceptor;
 import me.devnatan.inventoryframework.pipeline.ItemClickInterceptor;
 import me.devnatan.inventoryframework.pipeline.ItemCloseOnClickInterceptor;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
-import me.devnatan.inventoryframework.pipeline.StandardPipelinePhases;
+import me.devnatan.inventoryframework.pipeline.PipelinePhase;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -39,10 +39,10 @@ public class View
     @Override
     public final void registerPlatformInterceptors() {
         final Pipeline<? super VirtualView> pipeline = getPipeline();
-        pipeline.intercept(StandardPipelinePhases.CLICK, new ItemClickInterceptor());
-        pipeline.intercept(StandardPipelinePhases.CLICK, new GlobalClickInterceptor());
-        pipeline.intercept(StandardPipelinePhases.CLICK, new ItemCloseOnClickInterceptor());
-        pipeline.intercept(StandardPipelinePhases.CLOSE, new CancelledCloseInterceptor());
+        pipeline.intercept(PipelinePhase.CONTEXT_CLICK, new ItemClickInterceptor());
+        pipeline.intercept(PipelinePhase.CONTEXT_CLICK, new GlobalClickInterceptor());
+        pipeline.intercept(PipelinePhase.CONTEXT_CLICK, new ItemCloseOnClickInterceptor());
+        pipeline.intercept(PipelinePhase.CONTEXT_CLOSE, new CancelledCloseInterceptor());
     }
 
     @Override

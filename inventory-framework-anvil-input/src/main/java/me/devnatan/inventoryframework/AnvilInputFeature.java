@@ -17,7 +17,7 @@ import me.devnatan.inventoryframework.context.OpenContext;
 import me.devnatan.inventoryframework.context.SlotClickContext;
 import me.devnatan.inventoryframework.feature.Feature;
 import me.devnatan.inventoryframework.pipeline.PipelineInterceptor;
-import me.devnatan.inventoryframework.pipeline.StandardPipelinePhases;
+import me.devnatan.inventoryframework.pipeline.PipelinePhase;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -84,7 +84,7 @@ public final class AnvilInputFeature implements Feature<AnvilInputConfig, Void, 
     }
 
     private void handleClick(PlatformView view) {
-        view.getPipeline().intercept(StandardPipelinePhases.CLICK, (pipeline, subject) -> {
+        view.getPipeline().intercept(PipelinePhase.CONTEXT_CLICK, (pipeline, subject) -> {
             if (!(subject instanceof IFSlotClickContext)) return;
 
             final SlotClickContext context = (SlotClickContext) subject;
@@ -114,7 +114,7 @@ public final class AnvilInputFeature implements Feature<AnvilInputConfig, Void, 
     }
 
     private void handleOpen(PlatformView view) {
-        view.getPipeline().intercept(StandardPipelinePhases.OPEN, (pipeline, subject) -> {
+        view.getPipeline().intercept(PipelinePhase.CONTEXT_OPEN, (pipeline, subject) -> {
             if (!(subject instanceof IFOpenContext)) return;
 
             final OpenContext context = (OpenContext) subject;
@@ -139,7 +139,7 @@ public final class AnvilInputFeature implements Feature<AnvilInputConfig, Void, 
     }
 
     private void handleClose(PlatformView view) {
-        view.getPipeline().intercept(StandardPipelinePhases.CLOSE, (pipeline, subject) -> {
+        view.getPipeline().intercept(PipelinePhase.CONTEXT_CLOSE, (pipeline, subject) -> {
             if (!(subject instanceof IFCloseContext)) return;
 
             final CloseContext context = (CloseContext) subject;

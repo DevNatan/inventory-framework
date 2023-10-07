@@ -26,6 +26,7 @@ import me.devnatan.inventoryframework.pipeline.FirstRenderInterceptor;
 import me.devnatan.inventoryframework.pipeline.LayoutRenderInterceptor;
 import me.devnatan.inventoryframework.pipeline.LayoutResolutionInterceptor;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
+import me.devnatan.inventoryframework.pipeline.PipelinePhase;
 import me.devnatan.inventoryframework.pipeline.PlatformCloseInterceptor;
 import me.devnatan.inventoryframework.pipeline.PlatformInitInterceptor;
 import me.devnatan.inventoryframework.pipeline.PlatformOpenInterceptor;
@@ -33,7 +34,6 @@ import me.devnatan.inventoryframework.pipeline.PlatformRenderInterceptor;
 import me.devnatan.inventoryframework.pipeline.PlatformUpdateHandlerInterceptor;
 import me.devnatan.inventoryframework.pipeline.ScheduledUpdateAfterCloseInterceptor;
 import me.devnatan.inventoryframework.pipeline.ScheduledUpdateAfterRenderInterceptor;
-import me.devnatan.inventoryframework.pipeline.StandardPipelinePhases;
 import me.devnatan.inventoryframework.pipeline.UpdateInterceptor;
 import me.devnatan.inventoryframework.pipeline.ViewerLastInteractionTrackerInterceptor;
 import me.devnatan.inventoryframework.state.InitialDataStateValue;
@@ -121,7 +121,7 @@ public abstract class PlatformView<
         final Viewer subject = viewers.size() == 1 ? viewers.get(0) : null;
         final IFOpenContext context = getElementFactory().createOpenContext(this, subject, viewers, initialData);
 
-        getPipeline().execute(StandardPipelinePhases.OPEN, context);
+        getPipeline().execute(PipelinePhase.CONTEXT_OPEN, context);
     }
 
     /**
@@ -475,21 +475,21 @@ public abstract class PlatformView<
         this.framework = (TFramework) framework;
 
         final Pipeline<? super VirtualView> pipeline = getPipeline();
-        pipeline.intercept(StandardPipelinePhases.INIT, new PlatformInitInterceptor());
-        pipeline.intercept(StandardPipelinePhases.OPEN, new PlatformOpenInterceptor());
-        pipeline.intercept(StandardPipelinePhases.LAYOUT_RESOLUTION, new LayoutResolutionInterceptor());
-        pipeline.intercept(StandardPipelinePhases.FIRST_RENDER, new PlatformRenderInterceptor());
-        pipeline.intercept(StandardPipelinePhases.FIRST_RENDER, new LayoutRenderInterceptor());
-        pipeline.intercept(StandardPipelinePhases.FIRST_RENDER, new AvailableSlotInterceptor());
-        pipeline.intercept(StandardPipelinePhases.FIRST_RENDER, new FirstRenderInterceptor());
-        pipeline.intercept(StandardPipelinePhases.FIRST_RENDER, new ScheduledUpdateAfterRenderInterceptor());
-        pipeline.intercept(StandardPipelinePhases.UPDATE, new PlatformUpdateHandlerInterceptor());
-        pipeline.intercept(StandardPipelinePhases.UPDATE, new UpdateInterceptor());
-        pipeline.intercept(StandardPipelinePhases.CLOSE, new PlatformCloseInterceptor());
-        pipeline.intercept(StandardPipelinePhases.CLOSE, new ScheduledUpdateAfterCloseInterceptor());
-        pipeline.intercept(StandardPipelinePhases.CLICK, new ViewerLastInteractionTrackerInterceptor());
+        pipeline.intercept(PipelinePhase.VIEW_INIT, new PlatformInitInterceptor());
+        pipeline.intercept(PipelinePhase.CONTEXT_OPEN, new PlatformOpenInterceptor());
+        pipeline.intercept(PipelinePhase.CONTEXT_LAYOUT_RESOLUTION, new LayoutResolutionInterceptor());
+        pipeline.intercept(PipelinePhase.CONTEXT_RENDER, new PlatformRenderInterceptor());
+        pipeline.intercept(PipelinePhase.CONTEXT_RENDER, new LayoutRenderInterceptor());
+        pipeline.intercept(PipelinePhase.CONTEXT_RENDER, new AvailableSlotInterceptor());
+        pipeline.intercept(PipelinePhase.CONTEXT_RENDER, new FirstRenderInterceptor());
+        pipeline.intercept(PipelinePhase.CONTEXT_RENDER, new ScheduledUpdateAfterRenderInterceptor());
+        pipeline.intercept(PipelinePhase.CONTEXT_UPDATE, new PlatformUpdateHandlerInterceptor());
+        pipeline.intercept(PipelinePhase.CONTEXT_UPDATE, new UpdateInterceptor());
+        pipeline.intercept(PipelinePhase.CONTEXT_CLOSE, new PlatformCloseInterceptor());
+        pipeline.intercept(PipelinePhase.CONTEXT_CLOSE, new ScheduledUpdateAfterCloseInterceptor());
+        pipeline.intercept(PipelinePhase.CONTEXT_CLICK, new ViewerLastInteractionTrackerInterceptor());
         registerPlatformInterceptors();
-        pipeline.execute(StandardPipelinePhases.INIT, this);
+        pipeline.execute(PipelinePhase.VIEW_INIT, this);
     }
 
     public abstract void registerPlatformInterceptors();
