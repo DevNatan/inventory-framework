@@ -1,29 +1,32 @@
-package me.devnatan.inventoryframework;
+package me.devnatan.inventoryframework.component;
 
 import java.util.function.BiConsumer;
-import me.devnatan.inventoryframework.component.*;
+import java.util.function.Function;
 import me.devnatan.inventoryframework.context.IFContext;
+import me.devnatan.inventoryframework.internal.ElementFactory;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
 import me.devnatan.inventoryframework.state.State;
 import org.jetbrains.annotations.NotNull;
 
-@SuppressWarnings("rawtypes")
 public final class PaginationStateBuilder<
         Context extends IFContext, Builder extends ItemComponentBuilder<Builder, Context> & ComponentFactory, V> {
 
-    private final PlatformView root;
+    private final ElementFactory internalElementFactory;
     private final Object sourceProvider;
+    private final Function<PaginationStateBuilder<Context, Builder, V>, State<Pagination>> internalStateFactory;
     private char layoutTarget = LayoutSlot.FILLED_RESERVED_CHAR;
-    private PaginationElementFactory<V> elementFactory;
+    private PaginationElementFactory<V> paginationElementFactory;
     private BiConsumer<Context, Pagination> pageSwitchHandler;
     private final boolean async, computed;
 
-    PaginationStateBuilder(PlatformView root, Object sourceProvider) {
-        this(root, sourceProvider, false, false);
-    }
-
-    PaginationStateBuilder(PlatformView root, Object sourceProvider, boolean async, boolean computed) {
-        this.root = root;
+    public PaginationStateBuilder(
+            ElementFactory internalElementFactory,
+            Object sourceProvider,
+            Function<PaginationStateBuilder<Context, Builder, V>, State<Pagination>> internalStateFactory,
+            boolean async,
+            boolean computed) {
+        this.internalElementFactory = internalElementFactory;
+        this.internalStateFactory = internalStateFactory;
         this.sourceProvider = sourceProvider;
         this.async = async;
         this.computed = computed;
@@ -60,9 +63,9 @@ public final class PaginationStateBuilder<
     @SuppressWarnings("unchecked")
     public PaginationStateBuilder<Context, Builder, V> elementFactory(
             @NotNull PaginationValueConsumer<Context, Builder, V> elementConsumer) {
-        this.elementFactory = (pagination, index, slot, value) -> {
+        this.paginationElementFactory = (pagination, index, slot, value) -> {
             Context context = (Context) pagination.getRoot();
-            Builder builder = (Builder) root.getElementFactory().createComponentBuilder(pagination);
+            Builder builder = (Builder) internalElementFactory.createComponentBuilder(pagination);
             builder.withSlot(slot).withExternallyManaged(true);
             elementConsumer.accept(context, builder, index, value);
             return builder;
@@ -108,41 +111,36 @@ public final class PaginationStateBuilder<
      * @return A new {@link Pagination} state.
      * @throws IllegalStateException If the element factory wasn't set.
      */
-    @SuppressWarnings("unchecked")
     public State<Pagination> build() {
-        if (elementFactory == null)
+        if (paginationElementFactory == null)
             throw new IllegalStateException(String.format(
                     "Element factory from #buildPaginationState(...) cannot be null. Set it using %s or %s.",
                     "#elementFactory(PaginationElementFactory)", "#itemFactory(BiConsumer)"));
 
-        return root.createPaginationState(this);
+        return internalStateFactory.apply(this);
     }
 
-    PlatformView getRoot() {
-        return root;
-    }
-
-    Object getSourceProvider() {
-        return sourceProvider;
-    }
-
-    char getLayoutTarget() {
+    public char getLayoutTarget() {
         return layoutTarget;
     }
 
-    PaginationElementFactory<V> getElementFactory() {
-        return elementFactory;
+    public Object getSourceProvider() {
+        return sourceProvider;
     }
 
-    BiConsumer<Context, Pagination> getPageSwitchHandler() {
-        return pageSwitchHandler;
-    }
-
-    boolean isAsync() {
+    public boolean isAsync() {
         return async;
     }
 
-    boolean isComputed() {
+    public boolean isComputed() {
         return computed;
+    }
+
+    public BiConsumer<Context, Pagination> getPageSwitchHandler() {
+        return pageSwitchHandler;
+    }
+
+    public PaginationElementFactory<V> getPaginationElementFactory() {
+        return paginationElementFactory;
     }
 }

@@ -6,7 +6,6 @@ import me.devnatan.inventoryframework.context.Context;
 import me.devnatan.inventoryframework.context.OpenContext;
 import me.devnatan.inventoryframework.context.RenderContext;
 import me.devnatan.inventoryframework.context.SlotClickContext;
-import me.devnatan.inventoryframework.context.SlotContext;
 import me.devnatan.inventoryframework.internal.ElementFactory;
 import me.devnatan.inventoryframework.pipeline.CancelledCloseInterceptor;
 import me.devnatan.inventoryframework.pipeline.GlobalClickInterceptor;
@@ -30,7 +29,6 @@ public class View
                 OpenContext,
                 CloseContext,
                 RenderContext,
-                SlotContext,
                 SlotClickContext> {
 
     @Override
