@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import me.devnatan.inventoryframework.pipeline.PipelinePhase;
 import me.devnatan.inventoryframework.state.StateValue;
 import me.devnatan.inventoryframework.state.StateValueHost;
 import org.jetbrains.annotations.ApiStatus;
@@ -22,6 +23,11 @@ import org.jetbrains.annotations.ApiStatus;
  * index}.
  */
 public interface Pagination extends ComponentComposition, StateValue {
+
+    /**
+     * Called when a Pagination component is rendered.
+     */
+    PipelinePhase PAGINATION_RENDER = new PipelinePhase("pagination-render");
 
     /**
      * The current page number.

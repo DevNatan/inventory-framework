@@ -1,7 +1,5 @@
 package me.devnatan.inventoryframework.state;
 
-import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.LAYOUT_RESOLUTION;
-
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.component.Pagination;
@@ -21,9 +19,6 @@ import org.jetbrains.annotations.NotNull;
 @ApiStatus.Internal
 public final class PaginationState extends BaseState<Pagination> implements StateWatcher {
 
-    @ApiStatus.Internal
-    public static final PipelinePhase PAGINATION_RENDER = new PipelinePhase("pagination-render");
-
     private final PipelineInterceptor<VirtualView> pipelineInterceptor = new Interceptor(this);
 
     public PaginationState(long id, @NotNull StateValueFactory valueFactory) {
@@ -33,13 +28,13 @@ public final class PaginationState extends BaseState<Pagination> implements Stat
     @Override
     public void stateRegistered(@NotNull State<?> state, Object caller) {
         final Pipeline<VirtualView> pipeline = RootView.of(caller).getPipeline();
-        pipeline.insertPhaseAfter(LAYOUT_RESOLUTION, PAGINATION_RENDER);
-        pipeline.intercept(PAGINATION_RENDER, pipelineInterceptor);
+        pipeline.insertPhaseAfter(PipelinePhase.CONTEXT_LAYOUT_RESOLUTION, Pagination.PAGINATION_RENDER);
+        pipeline.intercept(Pagination.PAGINATION_RENDER, pipelineInterceptor);
     }
 
     @Override
     public void stateUnregistered(@NotNull State<?> state, Object caller) {
-        RootView.of(caller).getPipeline().removeInterceptor(PAGINATION_RENDER, pipelineInterceptor);
+        RootView.of(caller).getPipeline().removeInterceptor(Pagination.PAGINATION_RENDER, pipelineInterceptor);
     }
 
     @Override
