@@ -2,7 +2,6 @@ package me.devnatan.inventoryframework.component;
 
 import java.util.function.BiConsumer;
 import java.util.function.Function;
-
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.internal.ElementFactory;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
@@ -14,15 +13,20 @@ public final class PaginationStateBuilder<
 
     private final ElementFactory internalElementFactory;
     private final Object sourceProvider;
-	private final Function<PaginationStateBuilder<?, ?, ?>, State<Pagination>> internalStateFactory;
+    private final Function<PaginationStateBuilder<Context, Builder, V>, State<Pagination>> internalStateFactory;
     private char layoutTarget = LayoutSlot.FILLED_RESERVED_CHAR;
     private PaginationElementFactory<V> paginationElementFactory;
     private BiConsumer<Context, Pagination> pageSwitchHandler;
     private final boolean async, computed;
 
-    PaginationStateBuilder(ElementFactory internalElementFactory, Object sourceProvider, Function<PaginationStateBuilder<?, ?, ?>, State<Pagination>> internalStateFactory, boolean async, boolean computed) {
+    public PaginationStateBuilder(
+            ElementFactory internalElementFactory,
+            Object sourceProvider,
+            Function<PaginationStateBuilder<Context, Builder, V>, State<Pagination>> internalStateFactory,
+            boolean async,
+            boolean computed) {
         this.internalElementFactory = internalElementFactory;
-		this.internalStateFactory = internalStateFactory;
+        this.internalStateFactory = internalStateFactory;
         this.sourceProvider = sourceProvider;
         this.async = async;
         this.computed = computed;
@@ -114,5 +118,29 @@ public final class PaginationStateBuilder<
                     "#elementFactory(PaginationElementFactory)", "#itemFactory(BiConsumer)"));
 
         return internalStateFactory.apply(this);
+    }
+
+    public char getLayoutTarget() {
+        return layoutTarget;
+    }
+
+    public Object getSourceProvider() {
+        return sourceProvider;
+    }
+
+    public boolean isAsync() {
+        return async;
+    }
+
+    public boolean isComputed() {
+        return computed;
+    }
+
+    public BiConsumer<Context, Pagination> getPageSwitchHandler() {
+        return pageSwitchHandler;
+    }
+
+    public PaginationElementFactory<V> getPaginationElementFactory() {
+        return paginationElementFactory;
     }
 }

@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import me.devnatan.inventoryframework.component.*;
@@ -37,22 +36,13 @@ import me.devnatan.inventoryframework.pipeline.ScheduledUpdateAfterRenderInterce
 import me.devnatan.inventoryframework.pipeline.StandardPipelinePhases;
 import me.devnatan.inventoryframework.pipeline.UpdateInterceptor;
 import me.devnatan.inventoryframework.pipeline.ViewerLastInteractionTrackerInterceptor;
-import me.devnatan.inventoryframework.state.BaseMutableState;
-import me.devnatan.inventoryframework.state.BaseState;
-import me.devnatan.inventoryframework.state.ComputedValue;
-import me.devnatan.inventoryframework.state.ImmutableValue;
 import me.devnatan.inventoryframework.state.InitialDataStateValue;
-import me.devnatan.inventoryframework.state.LazyValue;
-import me.devnatan.inventoryframework.state.MutableGenericStateImpl;
 import me.devnatan.inventoryframework.state.MutableIntState;
-import me.devnatan.inventoryframework.state.MutableIntStateImpl;
 import me.devnatan.inventoryframework.state.MutableState;
-import me.devnatan.inventoryframework.state.MutableValue;
-import me.devnatan.inventoryframework.state.PaginationState;
 import me.devnatan.inventoryframework.state.State;
+import me.devnatan.inventoryframework.state.StateAccess;
+import me.devnatan.inventoryframework.state.StateAccessImpl;
 import me.devnatan.inventoryframework.state.StateValue;
-import me.devnatan.inventoryframework.state.StateValueFactory;
-import me.devnatan.inventoryframework.state.StateValueHost;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -63,12 +53,12 @@ public abstract class PlatformView<
                 TOpenContext extends IFOpenContext,
                 TCloseContext extends IFCloseContext,
                 TRenderContext extends IFRenderContext,
-                TSlotContext extends IFSlotContext,
                 TSlotClickContext extends IFSlotClickContext>
-        extends DefaultRootView implements Iterable<TContext> {
+        extends DefaultRootView implements Iterable<TContext>, StateAccess<TContext, TItem> {
 
     private TFramework framework;
     private boolean initialized;
+    private final StateAccess<TContext, TItem> stateAccess = new StateAccessImpl<>(getElementFactory(), stateRegistry);
 
     /**
      * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
@@ -385,447 +375,6 @@ public abstract class PlatformView<
     }
 
     /**
-     * Creates an immutable state with an initial value.
-     *
-     * <pre>{@code
-     * State<String> textState = state("test");
-     *
-     * intState.get(...); // "test"
-     * }</pre>
-     *
-     * @param initialValue The initial value of the state.
-     * @param <T>          The state value type.
-     * @return A state with an initial value.
-     */
-    protected final <T> State<T> state(T initialValue) {
-        requireNotInitialized();
-        final long id = State.next();
-        final StateValueFactory factory = (host, state) -> new ImmutableValue(state, initialValue);
-        final State<T> state = new BaseState<>(id, factory);
-        stateRegistry.registerState(state, this);
-
-        return state;
-    }
-
-    /**
-     * Creates a {@link MutableState mutable state} with an initial value.
-     *
-     * <pre>{@code
-     * MutableState<String> textState = mutableState("");
-     *
-     * textState.get(...); // ""
-     * textState.set("abc", ...);
-     * textState.get(...); // "abc"
-     * }</pre>
-     *
-     * @param initialValue The initial value of the state.
-     * @param <T>          The state value type.
-     * @return A mutable state with an initial value.
-     */
-    protected final <T> MutableState<T> mutableState(T initialValue) {
-        requireNotInitialized();
-        final long id = State.next();
-        final StateValueFactory factory = (host, state) -> new MutableValue(state, initialValue);
-        final MutableState<T> state = new MutableGenericStateImpl<>(id, factory);
-        stateRegistry.registerState(state, this);
-
-        return state;
-    }
-
-    /**
-     * Creates a {@link MutableState mutable state} with an initial value.
-     *
-     * <pre>{@code
-     * MutableIntState intState = mutableIntState(0);
-     *
-     * intState.get(...); // 0
-     * intState.set(4, ...);
-     * intState.get(...); // 4
-     * }</pre>
-     *
-     * @param initialValue The initial value of the state.
-     * @return A mutable state with an initial value.
-     */
-    protected final MutableIntState mutableState(int initialValue) {
-        requireNotInitialized();
-        final long id = State.next();
-        final StateValueFactory factory = (host, state) -> new MutableValue(state, initialValue);
-        final MutableIntState state = new MutableIntStateImpl(id, factory);
-        stateRegistry.registerState(state, this);
-
-        return state;
-    }
-
-    /**
-     * Creates an immutable computed state.
-     * <p>
-     * A computed state is a state that every time an attempt is made to obtain the value of that
-     * state, the obtained value is computed again by the {@code computation} function.
-     * <pre>{@code
-     * State<Integer> intState = computedState($ -> ThreadLocalRandom.current().nextInt());
-     *
-     * intState.get(...); // some random number
-     * intState.get(...); // another random number
-     * }</pre>
-     *
-     * @param computation The function to compute the value.
-     * @param <T>         The state value type.
-     * @return An immutable computed state.
-     */
-    protected final <T> State<T> computedState(@NotNull Function<TContext, T> computation) {
-        requireNotInitialized();
-        final long id = State.next();
-        @SuppressWarnings("unchecked")
-        final StateValueFactory factory =
-                (host, state) -> new ComputedValue(state, () -> computation.apply((TContext) host));
-        final State<T> state = new BaseState<>(id, factory);
-        stateRegistry.registerState(state, this);
-
-        return state;
-    }
-
-    /**
-     * Creates an immutable computed state.
-     * <p>
-     * A computed state is a state that every time an attempt is made to obtain the value of that
-     * state, the obtained value is computed again by the {@code computation} function.
-     * <pre>{@code
-     * State<Integer> randomIntState = computedState(ThreadLocalRandom.current()::nextInt);
-     *
-     * randomIntState.get(...); // some random number
-     * randomIntState.get(...); // another random number
-     * }</pre>
-     *
-     * @param computation The function to compute the value.
-     * @param <T>         The state holder type.
-     * @return An immutable computed state.
-     */
-    protected final <T> State<T> computedState(@NotNull Supplier<T> computation) {
-        requireNotInitialized();
-        final long id = State.next();
-        final StateValueFactory factory = (host, state) -> new ComputedValue(state, computation);
-        final State<T> state = new BaseState<>(id, factory);
-        stateRegistry.registerState(state, this);
-
-        return state;
-    }
-
-    /**
-     * Creates an immutable lazy state.
-     * <p>
-     * {@code factory} defines what the value will be, a holder try to get the value, and the value
-     * obtained from there will be the value that will be obtained in subsequent calls to get the
-     * value of the state.
-     * <pre>{@code
-     * State<Integer> intState = lazyState($ -> ThreadLocalRandom.current().nextInt());
-     *
-     * intState.get(...); // 54 - from initial computation of random integer ^^
-     * intState.get(...); // 54 - previously defined by the initial computation
-     * }</pre>
-     *
-     * @param computation The value factory.
-     * @param <T>         The state value type.
-     * @return A lazy state.
-     */
-    protected final <T> State<T> lazyState(@NotNull Function<TContext, T> computation) {
-        requireNotInitialized();
-        final long id = State.next();
-        @SuppressWarnings("unchecked")
-        final StateValueFactory factory =
-                (host, state) -> new LazyValue(state, () -> computation.apply((TContext) host));
-        final State<T> state = new BaseState<>(id, factory);
-        stateRegistry.registerState(state, this);
-
-        return state;
-    }
-
-    /**
-     * Creates an immutable lazy state.
-     * <p>
-     * {@code factory} defines what the value will be, a holder try to get the value, and the value
-     * obtained from there will be the value that will be obtained in subsequent calls to get the
-     * value of the state.
-     * <pre>{@code
-     * State<Integer> intState = lazyState(ThreadLocalRandom.current()::nextInt);
-     *
-     * intState.get(...); // 54 - from initial computation of random integer ^^
-     * intState.get(...); // 54 - previously defined by the initial computation
-     * }</pre>
-     *
-     * @param computation The value factory.
-     * @param <T>         The state holder type.
-     * @return A lazy state.
-     */
-    protected final <T> State<T> lazyState(@NotNull Supplier<T> computation) {
-        requireNotInitialized();
-        final long id = State.next();
-        final StateValueFactory factory = (host, state) -> new LazyValue(state, computation);
-        final State<T> state = new BaseState<>(id, factory);
-        stateRegistry.registerState(state, this);
-
-        return state;
-    }
-
-    /**
-     * Creates an mutable {@link #lazyState(Function) lazy state} whose value is always computed
-     * from the initial data set by its {@link StateValueHost}.
-     * <p>
-     * When the holder is a {@link IFOpenContext}, the initial value will be the value defined
-     * in the initial opening data of the container. This state is specifically set for backwards
-     * compatibility with the old way of applying data to a context before or during container open.
-     * <p>
-     * As to open a view it is necessary to pass a {@link java.util.Map}, the {@code key} is used to
-     * get the value from that map.
-     *
-     * @param key The initial data identifier.
-     * @param <T> The initial data value type.
-     * @return A state computed with an initial opening data value.
-     */
-    protected final <T> MutableState<T> initialState(@NotNull String key) {
-        requireNotInitialized();
-        final long id = State.next();
-        final MutableState<T> state =
-                new BaseMutableState<>(id, (host, valueState) -> new InitialDataStateValue(valueState, host, key));
-        stateRegistry.registerState(state, this);
-
-        return state;
-    }
-
-    /**
-     * Creates an mutable {@link #lazyState(Function) lazy state} whose value is always computed
-     * from the initial data set by its {@link StateValueHost}.
-     * <p>
-     * When the holder is a {@code OpenViewContext}, the initial value will be the value defined
-     * in the initial opening data of the container. This state is specifically set for backwards
-     * compatibility with the old way of applying data to a context before or during container open.
-     * <p>
-     * The class parameter is used to convert all initial state into a value. Note that support for
-     * obtaining a specific value from the initial data is only available from version 2.5.4 of the
-     * library.
-     *
-     * @param <T> The initial data type.
-     * @return A state computed with an initial opening data value.
-     */
-    protected final <T> State<T> initialState() {
-        requireNotInitialized();
-        final long id = State.next();
-        final State<T> state =
-                new BaseState<>(id, (host, valueState) -> new InitialDataStateValue(valueState, host, null));
-        stateRegistry.registerState(state, this);
-
-        return state;
-    }
-
-    /**
-     * Creates a new immutable pagination with static data source.
-     *
-     * @param sourceProvider The data source for pagination.
-     * @param elementConsumer The function for creating pagination items, this function is called for
-     *                       each paged element (item) on a page.
-     * @param <T>            The pagination data type.
-     * @return A new immutable pagination state.
-     */
-    protected final <T> State<Pagination> paginationState(
-            @NotNull List<? super T> sourceProvider,
-            @NotNull PaginationValueConsumer<TContext, TItem, T> elementConsumer) {
-        return this.<T>buildPaginationState(sourceProvider)
-                .elementFactory(elementConsumer)
-                .build();
-    }
-
-    /**
-     * Creates a new unmodifiable computed pagination state.
-     *
-     * @param sourceProvider Data source for pagination.
-     * @param valueConsumer  Function for creating pagination items, this function is called for
-     *                       each paged element (item) on a page.
-     * @param <T>            The pagination data type.
-     * @return A new unmodifiable pagination state.
-     */
-    protected final <T> State<Pagination> computedPaginationState(
-            @NotNull Function<TContext, List<? super T>> sourceProvider,
-            @NotNull PaginationValueConsumer<TContext, TItem, T> valueConsumer) {
-        return this.buildComputedPaginationState(sourceProvider)
-                .elementFactory(valueConsumer)
-                .build();
-    }
-
-    /**
-     * Creates a new unmodifiable computed pagination state with asynchronous data source.
-     * <p>
-     * <b><i> This API is experimental and is not subject to the general compatibility guarantees
-     * such API may be changed or may be removed completely in any further release. </i></b>
-     *
-     * @param sourceProvider The data source for pagination.
-     * @param valueConsumer   The function for creating pagination items, this function is called for
-     *                       each paged element (item) on a page.
-     * @param <T>            The pagination data type.
-     * @return A new unmodifiable pagination state.
-     */
-    @ApiStatus.Experimental
-    protected final <T> State<Pagination> computedAsyncPaginationState(
-            @NotNull Function<TContext, CompletableFuture<List<T>>> sourceProvider,
-            @NotNull PaginationValueConsumer<TContext, TItem, T> valueConsumer) {
-        return this.buildComputedAsyncPaginationState(sourceProvider)
-                .elementFactory(valueConsumer)
-                .build();
-    }
-
-    /**
-     * Creates a new unmodifiable lazy pagination state.
-     *
-     * @param sourceProvider Data source for pagination.
-     * @param valueConsumer  Function for creating pagination items, this function is called for
-     *                       each paged element (item) on a page.
-     * @param <T>            The pagination data type.
-     * @return A new unmodifiable pagination state.
-     */
-    protected final <T> State<Pagination> lazyPaginationState(
-            @NotNull Function<TContext, List<? super T>> sourceProvider,
-            @NotNull PaginationValueConsumer<TContext, TItem, T> valueConsumer) {
-        return this.buildLazyPaginationState(sourceProvider)
-                .elementFactory(valueConsumer)
-                .build();
-    }
-
-    /**
-     * Creates a new unmodifiable lazy pagination state.
-     *
-     * @param sourceProvider Data source for pagination.
-     * @param valueConsumer  Function for creating pagination items, this function is called for
-     *                       each paged element (item) on a page.
-     * @param <T>            The pagination data type.
-     * @return A new unmodifiable pagination state.
-     */
-    protected final <T> State<Pagination> lazyPaginationState(
-            @NotNull Supplier<List<? super T>> sourceProvider,
-            @NotNull PaginationValueConsumer<TContext, TItem, T> valueConsumer) {
-        return this.buildLazyPaginationState(sourceProvider)
-                .elementFactory(valueConsumer)
-                .build();
-    }
-
-    /**
-     * Creates a new unmodifiable lazy pagination state with asynchronous data source.
-     * <p>
-     * <b><i> This API is experimental and is not subject to the general compatibility guarantees
-     * such API may be changed or may be removed completely in any further release. </i></b>
-     *
-     * @param sourceProvider The data source for pagination.
-     * @param valueConsumer    The function for creating pagination items, this function is called for
-     *                       each paged element (item) on a page.
-     * @param <T>            The pagination data type.
-     * @return A new unmodifiable pagination state.
-     */
-    @ApiStatus.Experimental
-    protected final <T> State<Pagination> lazyAsyncPaginationState(
-            @NotNull Function<TContext, CompletableFuture<List<T>>> sourceProvider,
-            @NotNull PaginationValueConsumer<TContext, TItem, T> valueConsumer) {
-        return this.buildLazyAsyncPaginationState(sourceProvider)
-                .elementFactory(valueConsumer)
-                .build();
-    }
-
-    /**
-     * Creates a new unmodifiable static pagination state builder.
-     *
-     * @param sourceProvider The data source for pagination.
-     * @param <T>            The pagination data type.
-     * @return A new pagination state builder.
-     */
-    protected final <T> PaginationStateBuilder<TContext, TItem, T> buildPaginationState(
-            @NotNull List<? super T> sourceProvider) {
-        return new PaginationStateBuilder<>(this, sourceProvider);
-    }
-
-    /**
-     * Creates a new unmodifiable dynamic pagination state builder.
-     *
-     * @param sourceProvider The data source for pagination.
-     * @param <T>            The pagination data type.
-     * @return A new pagination state builder.
-     */
-    protected final <T> PaginationStateBuilder<TContext, TItem, T> buildComputedPaginationState(
-            @NotNull Function<TContext, List<? super T>> sourceProvider) {
-        return new PaginationStateBuilder<>(this, sourceProvider, false, true);
-    }
-
-    /**
-     * Creates a new unmodifiable computed pagination state builder with asynchronous data source.
-     * <p>
-     * <b><i> This API is experimental and is not subject to the general compatibility guarantees
-     * such API may be changed or may be removed completely in any further release. </i></b>
-     *
-     * @param sourceProvider The data source for pagination.
-     * @param <T>            The pagination data type.
-     * @return A new pagination state builder.
-     */
-    @ApiStatus.Experimental
-    protected final <T> PaginationStateBuilder<TContext, TItem, T> buildComputedAsyncPaginationState(
-            @NotNull Function<TContext, CompletableFuture<List<T>>> sourceProvider) {
-        return new PaginationStateBuilder<>(this, sourceProvider, true, true);
-    }
-
-    /**
-     * Creates a new unmodifiable lazy pagination state builder.
-     *
-     * @param sourceProvider The data source for pagination.
-     * @param <T>            The pagination data type.
-     * @return A new pagination state builder.
-     */
-    protected final <T> PaginationStateBuilder<TContext, TItem, T> buildLazyPaginationState(
-            @NotNull Supplier<List<? super T>> sourceProvider) {
-        return new PaginationStateBuilder<>(this, sourceProvider, false, false);
-    }
-
-    /**
-     * Creates a new unmodifiable lazy pagination state builder.
-     *
-     * @param sourceProvider The data source for pagination.
-     * @param <T>            The pagination data type.
-     * @return A new pagination state builder.
-     */
-    protected final <T> PaginationStateBuilder<TContext, TItem, T> buildLazyPaginationState(
-            @NotNull Function<TContext, List<? super T>> sourceProvider) {
-        return new PaginationStateBuilder<>(this, sourceProvider, false, false);
-    }
-
-    /**
-     * Creates a new unmodifiable lazy pagination state builder with asynchronous data source.
-     * <p>
-     * <b><i> This API is experimental and is not subject to the general compatibility guarantees
-     * such API may be changed or may be removed completely in any further release. </i></b>
-     *
-     * @param sourceProvider The data source for pagination.
-     * @param <T>            The pagination data type.
-     * @return A new pagination state builder.
-     */
-    @ApiStatus.Experimental
-    protected final <T> PaginationStateBuilder<TContext, TItem, T> buildLazyAsyncPaginationState(
-            @NotNull Function<TContext, CompletableFuture<List<T>>> sourceProvider) {
-        return new PaginationStateBuilder<>(this, sourceProvider, true, false);
-    }
-
-    final <V> State<Pagination> createPaginationState(@NotNull PaginationStateBuilder<TContext, TItem, V> builder) {
-        requireNotInitialized();
-        final long id = State.next();
-        @SuppressWarnings({"unchecked", "rawtypes"})
-        final StateValueFactory factory = (host, state) -> new PaginationImpl(
-                state,
-                (IFContext) host,
-                builder.getLayoutTarget(),
-                builder.getSourceProvider(),
-                (PaginationElementFactory) builder.getElementFactory(),
-                (BiConsumer) builder.getPageSwitchHandler(),
-                builder.isAsync(),
-                builder.isComputed());
-        final State<Pagination> state = new PaginationState(id, factory);
-        stateRegistry.registerState(state, this);
-
-        return state;
-    }
-
-    /**
      * Called when the view is about to be configured, the returned object will be the view's
      * configuration.
      *
@@ -948,5 +497,149 @@ public abstract class PlatformView<
     @ApiStatus.Internal
     public @NotNull ElementFactory getElementFactory() {
         return PlatformUtils.getFactory();
+    }
+
+    @Override
+    public final <T> State<T> state(T initialValue) {
+        requireNotInitialized();
+        return stateAccess.state(initialValue);
+    }
+
+    @Override
+    public final <T> MutableState<T> mutableState(T initialValue) {
+        requireNotInitialized();
+        return stateAccess.mutableState(initialValue);
+    }
+
+    @Override
+    public final MutableIntState mutableState(int initialValue) {
+        requireNotInitialized();
+        return stateAccess.mutableState(initialValue);
+    }
+
+    @Override
+    public final <T> State<T> computedState(@NotNull Function<TContext, T> computation) {
+        requireNotInitialized();
+        return stateAccess.computedState(computation);
+    }
+
+    @Override
+    public final <T> State<T> computedState(@NotNull Supplier<T> computation) {
+        requireNotInitialized();
+        return stateAccess.computedState(computation);
+    }
+
+    @Override
+    public final <T> State<T> lazyState(@NotNull Function<TContext, T> computation) {
+        requireNotInitialized();
+        return stateAccess.lazyState(computation);
+    }
+
+    @Override
+    public final <T> State<T> lazyState(@NotNull Supplier<T> computation) {
+        requireNotInitialized();
+        return stateAccess.lazyState(computation);
+    }
+
+    @Override
+    public final <T> MutableState<T> initialState() {
+        requireNotInitialized();
+        return stateAccess.initialState();
+    }
+
+    @Override
+    public final <T> MutableState<T> initialState(@NotNull String key) {
+        requireNotInitialized();
+        return stateAccess.initialState(key);
+    }
+
+    @Override
+    public final <T> State<Pagination> paginationState(
+            @NotNull List<? super T> sourceProvider,
+            @NotNull PaginationValueConsumer<TContext, TItem, T> elementConsumer) {
+        requireNotInitialized();
+        return stateAccess.paginationState(sourceProvider, elementConsumer);
+    }
+
+    @Override
+    public final <T> State<Pagination> computedPaginationState(
+            @NotNull Function<TContext, List<? super T>> sourceProvider,
+            @NotNull PaginationValueConsumer<TContext, TItem, T> valueConsumer) {
+        requireNotInitialized();
+        return stateAccess.computedPaginationState(sourceProvider, valueConsumer);
+    }
+
+    @Override
+    public final <T> State<Pagination> computedAsyncPaginationState(
+            @NotNull Function<TContext, CompletableFuture<List<T>>> sourceProvider,
+            @NotNull PaginationValueConsumer<TContext, TItem, T> valueConsumer) {
+        requireNotInitialized();
+        return stateAccess.computedAsyncPaginationState(sourceProvider, valueConsumer);
+    }
+
+    @Override
+    public final <T> State<Pagination> lazyPaginationState(
+            @NotNull Function<TContext, List<? super T>> sourceProvider,
+            @NotNull PaginationValueConsumer<TContext, TItem, T> valueConsumer) {
+        requireNotInitialized();
+        return stateAccess.lazyPaginationState(sourceProvider, valueConsumer);
+    }
+
+    @Override
+    public final <T> State<Pagination> lazyPaginationState(
+            @NotNull Supplier<List<? super T>> sourceProvider,
+            @NotNull PaginationValueConsumer<TContext, TItem, T> valueConsumer) {
+        requireNotInitialized();
+        return stateAccess.lazyPaginationState(sourceProvider, valueConsumer);
+    }
+
+    @Override
+    public final <T> State<Pagination> lazyAsyncPaginationState(
+            @NotNull Function<TContext, CompletableFuture<List<T>>> sourceProvider,
+            @NotNull PaginationValueConsumer<TContext, TItem, T> valueConsumer) {
+        requireNotInitialized();
+        return stateAccess.lazyAsyncPaginationState(sourceProvider, valueConsumer);
+    }
+
+    @Override
+    public final <T> PaginationStateBuilder<TContext, TItem, T> buildPaginationState(
+            @NotNull List<? super T> sourceProvider) {
+        requireNotInitialized();
+        return stateAccess.buildPaginationState(sourceProvider);
+    }
+
+    @Override
+    public final <T> PaginationStateBuilder<TContext, TItem, T> buildComputedPaginationState(
+            @NotNull Function<TContext, List<? super T>> sourceProvider) {
+        requireNotInitialized();
+        return stateAccess.buildComputedPaginationState(sourceProvider);
+    }
+
+    @Override
+    public final <T> PaginationStateBuilder<TContext, TItem, T> buildComputedAsyncPaginationState(
+            @NotNull Function<TContext, CompletableFuture<List<T>>> sourceProvider) {
+        requireNotInitialized();
+        return stateAccess.buildComputedAsyncPaginationState(sourceProvider);
+    }
+
+    @Override
+    public final <T> PaginationStateBuilder<TContext, TItem, T> buildLazyPaginationState(
+            @NotNull Supplier<List<? super T>> sourceProvider) {
+        requireNotInitialized();
+        return stateAccess.buildLazyPaginationState(sourceProvider);
+    }
+
+    @Override
+    public final <T> PaginationStateBuilder<TContext, TItem, T> buildLazyPaginationState(
+            @NotNull Function<TContext, List<? super T>> sourceProvider) {
+        requireNotInitialized();
+        return stateAccess.buildLazyPaginationState(sourceProvider);
+    }
+
+    @Override
+    public final <T> PaginationStateBuilder<TContext, TItem, T> buildLazyAsyncPaginationState(
+            @NotNull Function<TContext, CompletableFuture<List<T>>> sourceProvider) {
+        requireNotInitialized();
+        return stateAccess.buildLazyAsyncPaginationState(sourceProvider);
     }
 }
