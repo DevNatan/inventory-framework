@@ -15,7 +15,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.Predicate;
 
-public class AbstractComponent implements Component {
+public abstract class AbstractComponent implements Component {
 
 	private final String defaultKey = UUID.randomUUID().toString();
 	private final VirtualView root;
@@ -42,29 +42,13 @@ public class AbstractComponent implements Component {
 	}
 
 	@Override
-	public boolean intersects(@NotNull Component other) {
+	public final boolean intersects(@NotNull Component other) {
 		return Component.intersects(this, other);
 	}
 
 	@Override
-	public InteractionHandler getInteractionHandler() {
+	public final InteractionHandler getInteractionHandler() {
 		return null;
-	}
-
-	@Override
-	public void render(@NotNull IFSlotRenderContext context) {
-	}
-
-	@Override
-	public void updated(@NotNull IFSlotRenderContext context) {
-	}
-
-	@Override
-	public void clear(@NotNull IFContext context) {
-	}
-
-	@Override
-	public void clicked(@NotNull IFContext context) {
 	}
 
 	@Override
@@ -83,18 +67,18 @@ public class AbstractComponent implements Component {
 	}
 
 	@Override
-	public boolean isManagedExternally() {
+	public final boolean isManagedExternally() {
 		// TODO remove this from API
 		return false;
 	}
 
 	@Override
-	public boolean shouldRender(IFContext context) {
+	public final boolean shouldRender(IFContext context) {
 		throw new UnsupportedOperationInSharedContextException();
 	}
 
 	@Override
-	public void update() {
+	public final void update() {
 		if (isManagedExternally())
 			throw new IllegalStateException(
 				"This component is externally managed by another component and cannot be updated directly");
