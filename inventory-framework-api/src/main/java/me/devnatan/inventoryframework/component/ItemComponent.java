@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
 
 // TODO Make this render abstract and remove `getResult` (Object) from IFSlotRenderContext
-public class ItemComponent implements Component, InteractionHandler {
+public class ItemComponent implements Component {
 
     private final String key = UUID.randomUUID().toString();
     private final VirtualView root;
@@ -76,7 +76,6 @@ public class ItemComponent implements Component, InteractionHandler {
         return root;
     }
 
-    @Override
     public int getPosition() {
         return position;
     }
@@ -127,11 +126,6 @@ public class ItemComponent implements Component, InteractionHandler {
     @Override
     public boolean intersects(@NotNull Component other) {
         return Component.intersects(this, other);
-    }
-
-    @Override
-    public @NotNull InteractionHandler getInteractionHandler() {
-        return this;
     }
 
     @Override
@@ -194,7 +188,14 @@ public class ItemComponent implements Component, InteractionHandler {
         ((IFRenderContext) context).getContainer().removeItem(getPosition());
     }
 
-    @Override
+	@Override
+	public void clicked(@NotNull IFContext context) {
+		if (getClickHandler() != null)
+			getClickHandler().accept((IFSlotClickContext) context);
+		if (isUpdateOnClick()) context.update();
+	}
+
+	@Override
     public void update() {
         if (isManagedExternally())
             throw new IllegalStateException(
@@ -206,12 +207,6 @@ public class ItemComponent implements Component, InteractionHandler {
     @Override
     public @UnmodifiableView Set<State<?>> getWatchingStates() {
         return Collections.unmodifiableSet(getWatching());
-    }
-
-    @Override
-    public void clicked(@NotNull Component component, @NotNull IFSlotClickContext context) {
-        if (getClickHandler() != null) getClickHandler().accept(context);
-        if (isUpdateOnClick()) context.update();
     }
 
     @Override

@@ -47,13 +47,6 @@ public interface Component extends VirtualView {
     boolean intersects(@NotNull Component other);
 
     /**
-     * The interaction handler for this component.
-     *
-     * @return The interaction handler for this component.
-     */
-    InteractionHandler getInteractionHandler();
-
-    /**
      * Renders this component to the given context.
      *
      * @param context The context that this component will be rendered on.
