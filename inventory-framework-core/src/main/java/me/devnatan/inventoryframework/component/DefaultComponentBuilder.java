@@ -2,6 +2,7 @@ package me.devnatan.inventoryframework.component;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -10,10 +11,11 @@ import java.util.function.Predicate;
 import me.devnatan.inventoryframework.Ref;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.state.State;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unchecked")
-abstract class DefaultComponentBuilder<S extends ComponentBuilder<S, C>, C extends IFContext>
+public abstract class DefaultComponentBuilder<S extends ComponentBuilder<S, C>, C extends IFContext>
         implements ComponentBuilder<S, C> {
 
     protected Ref<Component> reference;
@@ -22,6 +24,10 @@ abstract class DefaultComponentBuilder<S extends ComponentBuilder<S, C>, C exten
     protected Set<State<?>> watchingStates;
     protected boolean isManagedExternally;
     protected Predicate<C> displayCondition;
+
+	protected DefaultComponentBuilder() {
+		this(null, new HashMap<>(), false, false, false, new HashSet<>(), false, null);
+	}
 
     protected DefaultComponentBuilder(
             Ref<Component> reference,
@@ -122,4 +128,9 @@ abstract class DefaultComponentBuilder<S extends ComponentBuilder<S, C>, C exten
     public S hideIf(BooleanSupplier condition) {
         return displayIf(condition == null ? null : () -> !condition.getAsBoolean());
     }
+
+	@Override
+	public S copy() {
+		throw new UnsupportedOperationException("Component builder not copyable");
+	}
 }
