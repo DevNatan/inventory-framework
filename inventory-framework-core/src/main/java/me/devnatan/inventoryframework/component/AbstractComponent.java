@@ -7,13 +7,13 @@ import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFSlotRenderContext;
 import me.devnatan.inventoryframework.state.State;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
 
 import java.util.Collections;
 import java.util.Set;
 import java.util.UUID;
-import java.util.function.Predicate;
 
 public abstract class AbstractComponent implements Component {
 
@@ -23,7 +23,11 @@ public abstract class AbstractComponent implements Component {
 	private final Set<State<?>> watchingStates;
 	private boolean isVisible;
 
-	AbstractComponent(VirtualView root,
+	protected AbstractComponent() {
+		this(null, null, null);
+	}
+
+	protected AbstractComponent(VirtualView root,
 					  Ref<Component> reference,
 					  Set<State<?>> watchingStates) {
 		this.root = root;
