@@ -11,9 +11,9 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Builder base for any {@link Component} implementation.
  *
- * @param <S> The reference of the component builder itself used as return type for method chaining.
+ * @param <SELF> The reference of the component builder itself used as return type for method chaining.
  */
-public interface ComponentBuilder<S extends ComponentBuilder<S, C>, C extends IFContext> {
+public interface ComponentBuilder<SELF extends ComponentBuilder<SELF, CONTEXT>, CONTEXT extends IFContext> {
 
     /**
      * Assigns {@link Ref a reference} to this component.
@@ -22,7 +22,7 @@ public interface ComponentBuilder<S extends ComponentBuilder<S, C>, C extends IF
      * @return This component builder.
      * @see <a href="https://github.com/DevNatan/inventory-framework/wiki/refs-api">Refs API on Wiki</a>
      */
-    S referencedBy(@NotNull Ref<Component> reference);
+    SELF referencedBy(@NotNull Ref<Component> reference);
 
     /**
      * Adds a new user-defined property to this component.
@@ -38,7 +38,7 @@ public interface ComponentBuilder<S extends ComponentBuilder<S, C>, C extends IF
      * @param value The property value.
      * @return This component builder.
      */
-    S withData(@NotNull String key, Object value);
+    SELF withData(@NotNull String key, Object value);
 
     /**
      * Determines whether an actor's click interaction event under this component should be canceled.
@@ -50,7 +50,7 @@ public interface ComponentBuilder<S extends ComponentBuilder<S, C>, C extends IF
      *
      * @return This component builder.
      */
-    S cancelOnClick();
+    SELF cancelOnClick();
 
     /**
      * Closes the current container when an actor interacts with this component.
@@ -68,7 +68,7 @@ public interface ComponentBuilder<S extends ComponentBuilder<S, C>, C extends IF
      *
      * @return This component builder.
      */
-    S closeOnClick();
+    SELF closeOnClick();
 
     /**
      * Watches one or more states.
@@ -82,7 +82,7 @@ public interface ComponentBuilder<S extends ComponentBuilder<S, C>, C extends IF
      */
     @Deprecated
     @ApiStatus.ScheduledForRemoval(inVersion = "3.2.0")
-    S watch(State<?>... states);
+	SELF watch(State<?>... states);
 
     /**
      * Listens for value updates in the specified state.
@@ -92,7 +92,7 @@ public interface ComponentBuilder<S extends ComponentBuilder<S, C>, C extends IF
      * @param state The state to listen changes to.
      * @return This component builder.
      */
-    S updateOnStateChange(@NotNull State<?> state);
+    SELF updateOnStateChange(@NotNull State<?> state);
 
     /**
      * Listens for value updates in any of the specified states.
@@ -103,21 +103,21 @@ public interface ComponentBuilder<S extends ComponentBuilder<S, C>, C extends IF
      * @param states Other states to listen changes to.
      * @return This component builder.
      */
-    S updateOnStateChange(@NotNull State<?> state, State<?>... states);
+    SELF updateOnStateChange(@NotNull State<?> state, State<?>... states);
 
     /**
      * Returns a copy of this component builder.
      *
      * @return A copy of this component builder.
      */
-    S copy();
+    SELF copy();
 
     /**
      * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
      * this library. No compatibility guarantees are provided.</i></b>
      */
     @ApiStatus.Internal
-    S withExternallyManaged(boolean isExternallyManaged);
+	SELF withExternallyManaged(boolean isExternallyManaged);
 
     /**
      * Updates the current context when a player clicks on this component.
@@ -128,7 +128,7 @@ public interface ComponentBuilder<S extends ComponentBuilder<S, C>, C extends IF
      * @return This component builder.
      */
     @ApiStatus.Experimental
-    S updateOnClick();
+	SELF updateOnClick();
 
     /**
      * Only shows the component if a given condition is satisfied.
@@ -137,7 +137,7 @@ public interface ComponentBuilder<S extends ComponentBuilder<S, C>, C extends IF
      * @return This component builder.
      * @see #hideIf(BooleanSupplier)
      */
-    S displayIf(BooleanSupplier displayCondition);
+    SELF displayIf(BooleanSupplier displayCondition);
 
     /**
      * Only shows the component if a given condition is satisfied.
@@ -146,7 +146,7 @@ public interface ComponentBuilder<S extends ComponentBuilder<S, C>, C extends IF
      * @return This component builder.
      * @see #hideIf(Predicate)
      */
-    S displayIf(Predicate<C> displayCondition);
+    SELF displayIf(Predicate<CONTEXT> displayCondition);
 
     /**
      * Hides the component if a given condition is satisfied.
@@ -155,7 +155,7 @@ public interface ComponentBuilder<S extends ComponentBuilder<S, C>, C extends IF
      * @return This component builder.
      * @see #displayIf(BooleanSupplier)
      */
-    S hideIf(BooleanSupplier condition);
+    SELF hideIf(BooleanSupplier condition);
 
     /**
      * Hides the component if a given condition is satisfied.
@@ -164,5 +164,12 @@ public interface ComponentBuilder<S extends ComponentBuilder<S, C>, C extends IF
      * @return This component builder.
      * @see #displayIf(Predicate)
      */
-    S hideIf(Predicate<C> condition);
+    SELF hideIf(Predicate<CONTEXT> condition);
+
+	/**
+	 * Builds a component from this component builder.
+	 *
+	 * @return A new component instance built from this component builder.
+	 */
+	Component build();
 }
