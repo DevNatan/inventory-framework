@@ -121,6 +121,8 @@ public final class AvailableSlotInterceptor implements PipelineInterceptor<Virtu
         if (context.getContainer().hasItem(slot)) return true;
 
         // we need to check component factories since components don't have been yet rendered
+		// TODO Find a better way to check this "noneMatch" to remove isContainedWithin from builder
+		//      since slot can be re-defined on render and this interceptor runs before it
         return context.getComponentFactories().stream()
                 .filter(componentFactory -> componentFactory instanceof ItemComponentBuilder)
                 .map(componentFactory -> (ItemComponentBuilder<?, ?>) componentFactory)
