@@ -8,48 +8,38 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 import me.devnatan.inventoryframework.InventoryFrameworkException;
 import me.devnatan.inventoryframework.Ref;
-import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.VirtualView;
-import me.devnatan.inventoryframework.context.*;
+import me.devnatan.inventoryframework.context.IFComponentRenderContext;
+import me.devnatan.inventoryframework.context.IFComponentUpdateContext;
+import me.devnatan.inventoryframework.context.IFContext;
+import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.state.State;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
 
 // TODO Make this render abstract and remove `getResult` (Object) from IFSlotRenderContext
-public class ItemComponent implements Component {
+public class ItemComponent extends AbstractComponent implements Component {
 
-    private final String key = UUID.randomUUID().toString();
-    private final VirtualView root;
     private int position;
     private final Object stack;
     private final boolean cancelOnClick;
     private final boolean closeOnClick;
     private final Predicate<? extends IFContext> displayCondition;
-    private final Consumer<? super IFSlotRenderContext> renderHandler;
-    private final Consumer<? super IFSlotContext> updateHandler;
+    private final Consumer<? super IFComponentRenderContext> renderHandler;
+    private final Consumer<? super IFComponentUpdateContext> updateHandler;
     private final Consumer<? super IFSlotClickContext> clickHandler;
-    private final Set<State<?>> watching;
-    private final boolean isManagedExternally;
     private final boolean updateOnClick;
-    private boolean isVisible;
-    private final Ref<Component> reference;
 
     public ItemComponent(
-            VirtualView root,
             int position,
             Object stack,
             boolean cancelOnClick,
             boolean closeOnClick,
             Predicate<? extends IFContext> displayCondition,
-            Consumer<? super IFSlotRenderContext> renderHandler,
-            Consumer<? super IFSlotContext> updateHandler,
+            Consumer<? super IFComponentRenderContext> renderHandler,
+            Consumer<? super IFComponentUpdateContext> updateHandler,
             Consumer<? super IFSlotClickContext> clickHandler,
-            Set<State<?>> watching,
-            boolean isManagedExternally,
-            boolean updateOnClick,
-            boolean isVisible,
-            Ref<Component> reference) {
-        this.root = root;
+            boolean updateOnClick) {
         this.position = position;
         this.stack = stack;
         this.cancelOnClick = cancelOnClick;
@@ -58,22 +48,7 @@ public class ItemComponent implements Component {
         this.renderHandler = renderHandler;
         this.updateHandler = updateHandler;
         this.clickHandler = clickHandler;
-        this.watching = watching;
-        this.isManagedExternally = isManagedExternally;
         this.updateOnClick = updateOnClick;
-        this.isVisible = isVisible;
-        this.reference = reference;
-    }
-
-    @Override
-    public String getKey() {
-        return key;
-    }
-
-    @NotNull
-    @Override
-    public VirtualView getRoot() {
-        return root;
     }
 
     public int getPosition() {
@@ -102,20 +77,16 @@ public class ItemComponent implements Component {
         return displayCondition == null || ((Predicate<? super IFContext>) displayCondition).test(context);
     }
 
-    public Consumer<? super IFSlotRenderContext> getRenderHandler() {
+    public Consumer<? super IFComponentRenderContext> getRenderHandler() {
         return renderHandler;
     }
 
-    public Consumer<? super IFSlotContext> getUpdateHandler() {
+    public Consumer<? super IFComponentUpdateContext> getUpdateHandler() {
         return updateHandler;
     }
 
     public Consumer<? super IFSlotClickContext> getClickHandler() {
         return clickHandler;
-    }
-
-    public Set<State<?>> getWatching() {
-        return watching;
     }
 
     @Override
@@ -124,32 +95,28 @@ public class ItemComponent implements Component {
     }
 
     @Override
-    public boolean intersects(@NotNull Component other) {
-        return Component.intersects(this, other);
-    }
-
-    @Override
-    public void render(@NotNull IFSlotRenderContext context) {
+    public void rendered(@NotNull IFComponentRenderContext context) {
         if (getRenderHandler() != null) {
             final int initialSlot = getPosition();
             getRenderHandler().accept(context);
 
             // Externally managed components have its own displacement measures
-            if (!isManagedExternally()) {
-                final int updatedSlot = context.getSlot();
-                position = updatedSlot;
-
-                if (updatedSlot == -1 && initialSlot == -1) {
-                    // TODO needs more user-friendly "do something"-like message
-                    throw new InventoryFrameworkException("Missing position (unset slot) for item component");
-                }
-
-                // TODO Misplaced - move this to overall item component misplacement check
-                if (initialSlot != -1 && initialSlot != updatedSlot) {
-                    context.getContainer().removeItem(initialSlot);
-                    setVisible(false);
-                }
-            }
+			// TODO Component-based context do not need displacement measures?
+//            if (!isManagedExternally()) {
+//                final int updatedSlot = context.getComponent().getPosition();
+//                position = updatedSlot;
+//
+//                if (updatedSlot == -1 && initialSlot == -1) {
+//                    // TODO needs more user-friendly "do something"-like message
+//                    throw new InventoryFrameworkException("Missing position (unset slot) for item component");
+//                }
+//
+//                // TODO Misplaced - move this to overall item component misplacement check
+//                if (initialSlot != -1 && initialSlot != updatedSlot) {
+//                    context.getContainer().removeItem(initialSlot);
+//                    setVisible(false);
+//                }
+//            }
 
             context.getContainer().renderItem(getPosition(), context.getResult());
             setVisible(true);
@@ -169,7 +136,7 @@ public class ItemComponent implements Component {
     }
 
     @Override
-    public void updated(@NotNull IFSlotRenderContext context) {
+    public void updated(@NotNull IFComponentUpdateContext context) {
         if (context.isCancelled()) return;
 
         // Static item with no `displayIf` must not even reach the update handler
@@ -180,72 +147,18 @@ public class ItemComponent implements Component {
             if (context.isCancelled()) return;
         }
 
-        context.getParent().renderComponent(this);
+        context.getRoot().renderComponent(this);
     }
 
     @Override
-    public void clear(@NotNull IFContext context) {
+    public void cleared(@NotNull IFContext context) {
         ((IFRenderContext) context).getContainer().removeItem(getPosition());
     }
 
-	@Override
-	public void clicked(@NotNull IFContext context) {
-		if (getClickHandler() != null)
-			getClickHandler().accept((IFSlotClickContext) context);
-		if (isUpdateOnClick()) context.update();
-	}
-
-	@Override
-    public void update() {
-        if (isManagedExternally())
-            throw new IllegalStateException(
-                    "This component is externally managed by another component and cannot be updated directly");
-
-        if (root instanceof IFContext) ((IFContext) root).updateComponent(this, false);
-    }
-
     @Override
-    public @UnmodifiableView Set<State<?>> getWatchingStates() {
-        return Collections.unmodifiableSet(getWatching());
-    }
-
-    @Override
-    public boolean isVisible() {
-        if (root instanceof Component) return ((Component) root).isVisible() && isVisible;
-
-        return isVisible;
-    }
-
-    @Override
-    public void setVisible(boolean visible) {
-        isVisible = visible;
-    }
-
-    @Override
-    public boolean isManagedExternally() {
-        return isManagedExternally;
-    }
-
-    @Override
-    public Ref<Component> getReference() {
-        return reference;
-    }
-
-    @Override
-    public void forceUpdate() {
-        if (root instanceof IFContext) ((IFContext) root).updateComponent(this, true);
-    }
-
-    @Override
-    public void hide() {
-        setVisible(false);
-        update();
-    }
-
-    @Override
-    public void show() {
-        setVisible(true);
-        update();
+    public void clicked(@NotNull IFSlotClickContext context) {
+        if (getClickHandler() != null) getClickHandler().accept(context);
+        if (isUpdateOnClick()) context.update();
     }
 
     @Override
@@ -271,9 +184,6 @@ public class ItemComponent implements Component {
                 + displayCondition + ", renderHandler="
                 + renderHandler + ", updateHandler="
                 + updateHandler + ", clickHandler="
-                + clickHandler + ", watching="
-                + watching + ", isVisible="
-                + isVisible + ", isManagedExternally="
-                + isManagedExternally + '}';
+                + clickHandler + "}";
     }
 }

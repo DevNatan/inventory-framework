@@ -3,8 +3,9 @@ package me.devnatan.inventoryframework.component;
 import java.util.Set;
 import me.devnatan.inventoryframework.Ref;
 import me.devnatan.inventoryframework.VirtualView;
+import me.devnatan.inventoryframework.context.IFComponentRenderContext;
+import me.devnatan.inventoryframework.context.IFComponentUpdateContext;
 import me.devnatan.inventoryframework.context.IFContext;
-import me.devnatan.inventoryframework.context.IFSlotRenderContext;
 import me.devnatan.inventoryframework.state.State;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -45,29 +46,6 @@ public interface Component extends VirtualView {
      * @return If both this and other component intersects in area.
      */
     boolean intersects(@NotNull Component other);
-
-    /**
-     * Renders this component to the given context.
-     *
-     * @param context The context that this component will be rendered on.
-     */
-    void render(@NotNull IFSlotRenderContext context);
-
-    /**
-     * Called when this component is updated in the given context.
-     *
-     * @param context The update context.
-     */
-    void updated(@NotNull IFSlotRenderContext context);
-
-    /**
-     * Clears this component from the given context.
-     *
-     * @param context The context that this component will be cleared from.
-     */
-    void clear(@NotNull IFContext context);
-
-	void clicked(@NotNull IFContext context);
 
     /**
      * An unmodifiable set of all states that this component is watching.
@@ -165,4 +143,25 @@ public interface Component extends VirtualView {
      */
     @ApiStatus.Experimental
     void hide();
+
+	/**
+	 * Renders this component to the given context.
+	 *
+	 * @param context The context that this component will be rendered on.
+	 */
+	void rendered(@NotNull IFComponentRenderContext context);
+
+	/**
+	 * Called when this component is updated in the given context.
+	 *
+	 * @param context The update context.
+	 */
+	void updated(@NotNull IFComponentUpdateContext context);
+
+	/**
+	 * Clears this component from the given context.
+	 *
+	 * @param context The context that this component will be cleared from.
+	 */
+	void cleared(@NotNull IFContext context);
 }
