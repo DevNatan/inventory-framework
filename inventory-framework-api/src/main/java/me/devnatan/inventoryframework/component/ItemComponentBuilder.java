@@ -1,22 +1,28 @@
 package me.devnatan.inventoryframework.component;
 
-import me.devnatan.inventoryframework.context.IFContext;
 import org.jetbrains.annotations.ApiStatus;
 
-public interface ItemComponentBuilder<Self extends ItemComponentBuilder<Self, Context>, Context extends IFContext>
-        extends ComponentBuilder<Self, Context> {
+public interface ItemComponentBuilder<SELF extends ItemComponentBuilder<SELF>> extends ComponentBuilder<SELF> {
 
     /**
      * Sets the slot that the item will be positioned.
      *
      * @param slot The item slot.
-     * @return This item builder.
+     * @return This component builder.
      */
-    Self withSlot(int slot);
+    SELF withSlot(int slot);
 
-    // TODO needs documentation
-    @ApiStatus.Experimental
-    Self withSlot(int row, int column);
+	/**
+	 * Sets the row and column that the item will be positioned.
+	 *
+	 * @param row The row (X)
+	 * @param column The column (Y)
+	 * @return This component builder.
+	 */
+    SELF withSlot(int row, int column);
+
+	// TODO Missing withItem
+//	SELF withItem(ITEM item);
 
     @ApiStatus.Internal
     boolean isContainedWithin(int position);
