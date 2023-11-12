@@ -1,9 +1,8 @@
 package me.devnatan.inventoryframework.component;
 
 import java.util.function.BooleanSupplier;
-import java.util.function.Predicate;
 import me.devnatan.inventoryframework.Ref;
-import me.devnatan.inventoryframework.context.IFContext;
+import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.state.State;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -13,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @param <SELF> The reference of the component builder itself used as return type for method chaining.
  */
-public interface ComponentBuilder<SELF extends ComponentBuilder<SELF, CONTEXT>, CONTEXT extends IFContext> {
+public interface ComponentBuilder<SELF extends ComponentBuilder<SELF>> {
 
     /**
      * Assigns {@link Ref a reference} to this component.
@@ -82,7 +81,7 @@ public interface ComponentBuilder<SELF extends ComponentBuilder<SELF, CONTEXT>, 
      */
     @Deprecated
     @ApiStatus.ScheduledForRemoval(inVersion = "3.2.0")
-	SELF watch(State<?>... states);
+    SELF watch(State<?>... states);
 
     /**
      * Listens for value updates in the specified state.
@@ -117,7 +116,7 @@ public interface ComponentBuilder<SELF extends ComponentBuilder<SELF, CONTEXT>, 
      * this library. No compatibility guarantees are provided.</i></b>
      */
     @ApiStatus.Internal
-	SELF withExternallyManaged(boolean isExternallyManaged);
+    SELF withExternallyManaged(boolean isExternallyManaged);
 
     /**
      * Updates the current context when a player clicks on this component.
@@ -128,7 +127,7 @@ public interface ComponentBuilder<SELF extends ComponentBuilder<SELF, CONTEXT>, 
      * @return This component builder.
      */
     @ApiStatus.Experimental
-	SELF updateOnClick();
+    SELF updateOnClick();
 
     /**
      * Only shows the component if a given condition is satisfied.
@@ -140,15 +139,6 @@ public interface ComponentBuilder<SELF extends ComponentBuilder<SELF, CONTEXT>, 
     SELF displayIf(BooleanSupplier displayCondition);
 
     /**
-     * Only shows the component if a given condition is satisfied.
-     *
-     * @param displayCondition Component display condition.
-     * @return This component builder.
-     * @see #hideIf(Predicate)
-     */
-    SELF displayIf(Predicate<CONTEXT> displayCondition);
-
-    /**
      * Hides the component if a given condition is satisfied.
      *
      * @param condition Condition to hide the component.
@@ -158,18 +148,9 @@ public interface ComponentBuilder<SELF extends ComponentBuilder<SELF, CONTEXT>, 
     SELF hideIf(BooleanSupplier condition);
 
     /**
-     * Hides the component if a given condition is satisfied.
+     * Builds a component from this component builder.
      *
-     * @param condition Condition to hide the component.
-     * @return This component builder.
-     * @see #displayIf(Predicate)
+     * @return A new component instance built from this component builder.
      */
-    SELF hideIf(Predicate<CONTEXT> condition);
-
-	/**
-	 * Builds a component from this component builder.
-	 *
-	 * @return A new component instance built from this component builder.
-	 */
-	Component build();
+    Component build(VirtualView root);
 }

@@ -11,25 +11,23 @@ import java.util.function.Predicate;
 import me.devnatan.inventoryframework.Ref;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.state.State;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unchecked")
-public abstract class DefaultComponentBuilder<S extends ComponentBuilder<S, C>, C extends IFContext>
-        implements ComponentBuilder<S, C> {
+public abstract class AbstractComponentBuilder<SELF extends ComponentBuilder<SELF>> implements ComponentBuilder<SELF> {
 
     protected Ref<Component> reference;
     protected Map<String, Object> data;
     protected boolean cancelOnClick, closeOnClick, updateOnClick;
     protected Set<State<?>> watchingStates;
     protected boolean isManagedExternally;
-    protected Predicate<C> displayCondition;
+    protected Predicate<? extends IFContext> displayCondition;
 
-	protected DefaultComponentBuilder() {
+	protected AbstractComponentBuilder() {
 		this(null, new HashMap<>(), false, false, false, new HashSet<>(), false, null);
 	}
 
-    protected DefaultComponentBuilder(
+    protected AbstractComponentBuilder(
             Ref<Component> reference,
             Map<String, Object> data,
             boolean cancelOnClick,
@@ -37,7 +35,7 @@ public abstract class DefaultComponentBuilder<S extends ComponentBuilder<S, C>, 
             boolean updateOnClick,
             Set<State<?>> watchingStates,
             boolean isManagedExternally,
-            Predicate<C> displayCondition) {
+			Predicate<? extends IFContext> displayCondition) {
         this.reference = reference;
         this.data = data;
         this.cancelOnClick = cancelOnClick;
@@ -45,92 +43,81 @@ public abstract class DefaultComponentBuilder<S extends ComponentBuilder<S, C>, 
         this.updateOnClick = updateOnClick;
         this.watchingStates = watchingStates;
         this.isManagedExternally = isManagedExternally;
-        this.displayCondition = displayCondition;
+		this.displayCondition = displayCondition;
     }
 
     @Override
-    public S referencedBy(@NotNull Ref<Component> reference) {
+    public SELF referencedBy(@NotNull Ref<Component> reference) {
         this.reference = reference;
-        return (S) this;
+        return (SELF) this;
     }
 
     @Override
-    public S withData(@NotNull String key, Object value) {
+    public SELF withData(@NotNull String key, Object value) {
         if (data == null) data = new HashMap<>();
         data.put(key, value);
-        return (S) this;
+        return (SELF) this;
     }
 
     @Override
-    public S cancelOnClick() {
+    public SELF cancelOnClick() {
         cancelOnClick = !cancelOnClick;
-        return (S) this;
+        return (SELF) this;
     }
 
     @Override
-    public S closeOnClick() {
+    public SELF closeOnClick() {
         closeOnClick = !closeOnClick;
-        return (S) this;
+        return (SELF) this;
     }
 
     @Override
-    public S updateOnClick() {
+    public SELF updateOnClick() {
         updateOnClick = !updateOnClick;
-        return (S) this;
+        return (SELF) this;
     }
 
     @Override
-    public S watch(State<?>... states) {
+    public SELF watch(State<?>... states) {
         if (watchingStates == null) watchingStates = new LinkedHashSet<>();
         watchingStates.addAll(Arrays.asList(states));
-        return (S) this;
+        return (SELF) this;
     }
 
     @Override
-    public S updateOnStateChange(@NotNull State<?> state) {
+    public SELF updateOnStateChange(@NotNull State<?> state) {
         if (watchingStates == null) watchingStates = new LinkedHashSet<>();
         watchingStates.add(state);
-        return (S) this;
+        return (SELF) this;
     }
 
     @Override
-    public S updateOnStateChange(@NotNull State<?> state, State<?>... states) {
+    public SELF updateOnStateChange(@NotNull State<?> state, State<?>... states) {
         if (watchingStates == null) watchingStates = new LinkedHashSet<>();
         watchingStates.add(state);
         watchingStates.addAll(Arrays.asList(states));
-        return (S) this;
+        return (SELF) this;
     }
 
     @Override
-    public S withExternallyManaged(boolean isExternallyManaged) {
+    public SELF withExternallyManaged(boolean isExternallyManaged) {
         isManagedExternally = isExternallyManaged;
-        return (S) this;
+        return (SELF) this;
     }
 
     @Override
-    public S displayIf(BooleanSupplier displayCondition) {
+    public SELF displayIf(BooleanSupplier displayCondition) {
         this.displayCondition = displayCondition == null ? null : $ -> displayCondition.getAsBoolean();
-        return (S) this;
+        return (SELF) this;
     }
 
     @Override
-    public S displayIf(Predicate<C> displayCondition) {
-        this.displayCondition = displayCondition;
-        return (S) this;
-    }
-
-    @Override
-    public S hideIf(Predicate<C> condition) {
-        return displayIf(condition == null ? null : arg -> !condition.test(arg));
-    }
-
-    @Override
-    public S hideIf(BooleanSupplier condition) {
+    public SELF hideIf(BooleanSupplier condition) {
         return displayIf(condition == null ? null : () -> !condition.getAsBoolean());
     }
 
 	@Override
-	public S copy() {
-		throw new UnsupportedOperationException("Component builder not copyable");
+	public SELF copy() {
+		throw new UnsupportedOperationException("Component builder not copyable - missing #copy() impl");
 	}
 }
