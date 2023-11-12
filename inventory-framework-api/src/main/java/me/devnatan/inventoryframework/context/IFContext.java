@@ -10,6 +10,7 @@ import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.ComponentContainer;
+import me.devnatan.inventoryframework.state.State;
 import me.devnatan.inventoryframework.state.StateValueHost;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -88,7 +89,7 @@ public interface IFContext extends VirtualView, StateValueHost, ComponentContain
      * @return The root of this context.
      */
     @NotNull
-    RootView getRoot();
+    VirtualView getRoot();
 
     /**
      * The initial title of this context, that is, even if it has been changed, it will return the
@@ -155,6 +156,15 @@ public interface IFContext extends VirtualView, StateValueHost, ComponentContain
      */
     @ApiStatus.Internal
     void updateComponent(@NotNull Component component, boolean force);
+
+	/**
+	 * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
+	 * this library. No compatibility guarantees are provided.</i></b>
+	 *
+	 * @param component The component to be cleared.
+	 */
+	@ApiStatus.Internal
+	void clearComponent(@NotNull Component component);
 
     /**
      * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
