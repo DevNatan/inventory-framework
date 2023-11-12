@@ -12,19 +12,12 @@ import org.jetbrains.annotations.UnknownNullability;
 @ApiStatus.Internal
 public interface StateValue {
 
-    /**
-     * The id of this state on its current host.
-     *
-     * @return The state id.
-     */
-    long getId();
-
-    /**
-     * The state who holds this value.
-     *
-     * @return The state who holds this value.
-     */
-    State<?> getState();
+	/**
+	 * <b><i> This is an internal inventory-framework API that should not be used from outside of
+	 * this library. No compatibility guarantees are provided. </i></b>
+	 */
+	@ApiStatus.Internal
+    long internalId();
 
     /**
      * The current state value.
