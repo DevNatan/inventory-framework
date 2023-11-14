@@ -144,24 +144,24 @@ public interface Component extends VirtualView {
     @ApiStatus.Experimental
     void hide();
 
-	/**
-	 * Renders this component to the given context.
-	 *
-	 * @param context The context that this component will be rendered on.
-	 */
-	void rendered(@NotNull IFComponentRenderContext context);
+    /**
+     * Renders this component to the given context.
+     *
+     * @param context The context that this component will be rendered on.
+     */
+    void rendered(@NotNull IFComponentRenderContext context);
 
-	/**
-	 * Called when this component is updated in the given context.
-	 *
-	 * @param context The update context.
-	 */
-	void updated(@NotNull IFComponentUpdateContext context);
+    /**
+     * Called when this component is updated in the given context.
+     *
+     * @param context The update context.
+     */
+    void updated(@NotNull IFComponentUpdateContext context);
 
-	/**
-	 * Clears this component from the given context.
-	 *
-	 * @param context The context that this component will be cleared from.
-	 */
-	void cleared(@NotNull IFContext context);
+    /**
+     * Clears this component from the given context.
+     *
+     * @param context The context that this component will be cleared from.
+     */
+    void cleared(@NotNull IFContext context);
 }

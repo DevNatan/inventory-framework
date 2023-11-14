@@ -15,7 +15,6 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
-
 import me.devnatan.inventoryframework.Ref;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.VirtualView;
@@ -41,7 +40,7 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
     private final BiConsumer<VirtualView, Pagination> pageSwitchHandler;
 
     // --- Internal ---
-	private final long internalStateId;
+    private final long internalStateId;
     private int currPageIndex;
     private final boolean isLazy, isStatic, isComputed, isAsync;
     private boolean pageWasChanged;
@@ -69,17 +68,16 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
     public PaginationImpl(
             long internalStateId,
             VirtualView root,
-			Ref<Component> reference,
-			Set<State<?>> watchingStates,
+            Ref<Component> reference,
+            Set<State<?>> watchingStates,
             char layoutTarget,
             Object sourceProvider,
             PaginationElementFactory<Object> elementFactory,
             BiConsumer<VirtualView, Pagination> pageSwitchHandler,
             boolean isAsync,
-            boolean isComputed
-	) {
+            boolean isComputed) {
         super(root, reference, watchingStates);
-		this.internalStateId = internalStateId;
+        this.internalStateId = internalStateId;
         this.layoutTarget = layoutTarget;
         this.sourceProvider = sourceProvider;
         this.elementFactory = elementFactory;
@@ -356,12 +354,12 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
         });
     }
 
-	@Override
-	public long internalId() {
-		return internalStateId;
-	}
+    @Override
+    public long internalId() {
+        return internalStateId;
+    }
 
-	@Override
+    @Override
     public Object get() {
         return this;
     }
@@ -371,21 +369,21 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
         // do nothing since Pagination is not immutable but unmodifiable directly
     }
 
-	private void accessStateHost(Consumer<StateValueHost> consumer) {
-		if (!(getRoot() instanceof StateValueHost)) return;
-		consumer.accept((StateValueHost) getRoot());
-	}
+    private void accessStateHost(Consumer<StateValueHost> consumer) {
+        if (!(getRoot() instanceof StateValueHost)) return;
+        consumer.accept((StateValueHost) getRoot());
+    }
 
-	@Override
+    @Override
     public void rendered(@NotNull IFComponentRenderContext context) {
-		final IFRenderContext root = context.getRoot();
+        final IFRenderContext root = context.getRoot();
         if (!initialized || pageWasChanged) {
             if (!initialized) updatePageSize(root);
             loadCurrentPage(root).thenRun(() -> {
-				renderChild(root);
-				simulateStateUpdate();
-			});
-			setVisible(true);
+                renderChild(root);
+                simulateStateUpdate();
+            });
+            setVisible(true);
             initialized = true;
             return;
         }
@@ -403,13 +401,13 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
 
         debug(
                 "[Pagination] #updated(IFSlotRenderContext) called (forceUpdated = %b, pageWasChanged = %b)",
-			wasForceUpdated(), pageWasChanged);
+                wasForceUpdated(), pageWasChanged);
 
         // If page was changed all components will be removed, so don't trigger update on them
         if (wasForceUpdated() || pageWasChanged) {
             cleared(root);
             components = new ArrayList<>();
-			root.renderComponent(this);
+            root.renderComponent(this);
             pageWasChanged = false;
             return;
         }
@@ -426,21 +424,21 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
      */
     private void simulateStateUpdate() {
         debug("[Pagination] State update simulation triggered on %d", internalStateId);
-		accessStateHost(host -> host.updateState(internalStateId, this));
+        accessStateHost(host -> host.updateState(internalStateId, this));
     }
 
     @Override
     public void cleared(@NotNull IFContext context) {
         debug("[Pagination] #clear(IFContext) called (pageWasChanged = %b)", pageWasChanged);
         if (!pageWasChanged) {
-			getInternalComponents().forEach(context::clearComponent);
+            getInternalComponents().forEach(context::clearComponent);
             return;
         }
 
         final Iterator<Component> childIterator = getInternalComponents().iterator();
         while (childIterator.hasNext()) {
             Component child = childIterator.next();
-			context.clearComponent(child);
+            context.clearComponent(child);
             childIterator.remove();
         }
     }
@@ -530,10 +528,10 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
         pageWasChanged = true;
 
         if (pageSwitchHandler != null) {
-			pageSwitchHandler.accept(getRoot(), this);
-		}
+            pageSwitchHandler.accept(getRoot(), this);
+        }
 
-		update();
+        update();
     }
 
     @Override
@@ -600,18 +598,18 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
         getInternalComponents().forEach(component -> component.setVisible(isVisible()));
     }
 
-	@Override
-	public void clicked(@NotNull IFSlotClickContext context) {
-		// Lock child interactions while page is changing (specially for async pagination cases)
-		if (pageWasChanged) {
-			context.setCancelled(true);
-			return;
-		}
+    @Override
+    public void clicked(@NotNull IFSlotClickContext context) {
+        // Lock child interactions while page is changing (specially for async pagination cases)
+        if (pageWasChanged) {
+            context.setCancelled(true);
+            return;
+        }
 
-		for (final Component child : getInternalComponents()) {
-			if (!child.isVisible()) {
-				continue;
-			}
+        for (final Component child : getInternalComponents()) {
+            if (!child.isVisible()) {
+                continue;
+            }
 
 			if (child.isContainedWithin(context.getClickedSlot())) {
 				context.getParent()

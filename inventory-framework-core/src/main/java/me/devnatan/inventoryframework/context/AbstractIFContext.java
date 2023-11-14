@@ -116,39 +116,36 @@ abstract class AbstractIFContext extends DefaultStateValueHost implements IFCont
             }
 
             component.cleared(this);
-			clearComponent(component);
+            clearComponent(component);
             return;
         }
-
 
         component.rendered(createSlotRenderContext(component, false));
     }
 
-	@Override
-	public void clearComponent(@NotNull Component component) {
+    @Override
+    public void clearComponent(@NotNull Component component) {}
 
-	}
+    private IFComponentRenderContext createComponentRenderContext(Component component, boolean force) {
+        if (!(this instanceof IFRenderContext))
+            throw new InventoryFrameworkException("Slot render context cannot be created from non-render parent");
 
-	private IFComponentRenderContext createComponentRenderContext(Component component, boolean force) {
-		if (!(this instanceof IFRenderContext))
-			throw new InventoryFrameworkException("Slot render context cannot be created from non-render parent");
+        final IFRenderContext rootRenderContext = (IFRenderContext) this;
+        final IFComponentRenderContext componentRenderContext = null;
+        return componentRenderContext;
+    }
 
-		final IFRenderContext rootRenderContext = (IFRenderContext) this;
-		final IFComponentRenderContext componentRenderContext = null;
-		return componentRenderContext;
-	}
+    private IFSlotRenderContext createSlotRenderContext(@NotNull Component component, boolean force) {
+        if (!(this instanceof IFRenderContext))
+            throw new InventoryFrameworkException("Slot render context cannot be created from non-render parent");
 
-	private IFSlotRenderContext createSlotRenderContext(@NotNull Component component, boolean force) {
-		if (!(this instanceof IFRenderContext))
-			throw new InventoryFrameworkException("Slot render context cannot be created from non-render parent");
-
-		final IFRenderContext renderContext = (IFRenderContext) this;
-		final IFSlotRenderContext slotRender = ((RootView) getRoot())
-			.getElementFactory()
-			.createSlotRenderContext(component.getPosition(), renderContext, renderContext.getViewer());
-		slotRender.setForceUpdate(force);
-		return slotRender;
-	}
+        final IFRenderContext renderContext = (IFRenderContext) this;
+        final IFSlotRenderContext slotRender = ((RootView) getRoot())
+                .getElementFactory()
+                .createSlotRenderContext(component.getPosition(), renderContext, renderContext.getViewer());
+        slotRender.setForceUpdate(force);
+        return slotRender;
+    }
 
     private Optional<Component> getOverlappingComponentToRender(ComponentContainer container, Component subject) {
         // TODO Support recursive overlapping (more than two components overlapping each other)

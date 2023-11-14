@@ -15,12 +15,12 @@ public abstract class AbstractStateValue implements StateValue {
         this.state = state;
     }
 
-	@Override
-	public long internalId() {
-		return state.internalId();
-	}
+    @Override
+    public long internalId() {
+        return state.internalId();
+    }
 
-	@Override
+    @Override
     public abstract Object get();
 
     @Override

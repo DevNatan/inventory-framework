@@ -78,8 +78,8 @@ public class DefaultStateValueHost implements StateValueHost {
     private void callListeners(@NotNull StateValue value, Consumer<StateWatcher> call) {
         if (value instanceof StateWatcher) call.accept((StateWatcher) value);
 
-		// TODO Put it back to work with PaginationState as StateWatcher
-//        if (value.getState() instanceof StateWatcher) call.accept((StateWatcher) value.getState());
+        // TODO Put it back to work with PaginationState as StateWatcher
+        //        if (value.getState() instanceof StateWatcher) call.accept((StateWatcher) value.getState());
 
         if (!listeners.containsKey(value.internalId())) return;
 

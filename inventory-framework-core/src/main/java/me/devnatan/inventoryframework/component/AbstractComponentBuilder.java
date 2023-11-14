@@ -23,9 +23,9 @@ public abstract class AbstractComponentBuilder<SELF extends ComponentBuilder<SEL
     protected boolean isManagedExternally;
     protected Predicate<? extends IFContext> displayCondition;
 
-	protected AbstractComponentBuilder() {
-		this(null, new HashMap<>(), false, false, false, new HashSet<>(), false, null);
-	}
+    protected AbstractComponentBuilder() {
+        this(null, new HashMap<>(), false, false, false, new HashSet<>(), false, null);
+    }
 
     protected AbstractComponentBuilder(
             Ref<Component> reference,
@@ -35,7 +35,7 @@ public abstract class AbstractComponentBuilder<SELF extends ComponentBuilder<SEL
             boolean updateOnClick,
             Set<State<?>> watchingStates,
             boolean isManagedExternally,
-			Predicate<? extends IFContext> displayCondition) {
+            Predicate<? extends IFContext> displayCondition) {
         this.reference = reference;
         this.data = data;
         this.cancelOnClick = cancelOnClick;
@@ -43,7 +43,7 @@ public abstract class AbstractComponentBuilder<SELF extends ComponentBuilder<SEL
         this.updateOnClick = updateOnClick;
         this.watchingStates = watchingStates;
         this.isManagedExternally = isManagedExternally;
-		this.displayCondition = displayCondition;
+        this.displayCondition = displayCondition;
     }
 
     @Override
@@ -116,8 +116,8 @@ public abstract class AbstractComponentBuilder<SELF extends ComponentBuilder<SEL
         return displayIf(condition == null ? null : () -> !condition.getAsBoolean());
     }
 
-	@Override
-	public SELF copy() {
-		throw new UnsupportedOperationException("Component builder not copyable - missing #copy() impl");
-	}
+    @Override
+    public SELF copy() {
+        throw new UnsupportedOperationException("Component builder not copyable - missing #copy() impl");
+    }
 }
