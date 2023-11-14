@@ -17,6 +17,9 @@ import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.ViewType;
 import me.devnatan.inventoryframework.Viewer;
+import me.devnatan.inventoryframework.component.PlatformComponent;
+import me.devnatan.inventoryframework.component.Component;
+import me.devnatan.inventoryframework.component.ComponentBuilder;
 import me.devnatan.inventoryframework.component.ComponentFactory;
 import me.devnatan.inventoryframework.component.ItemComponentBuilder;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
@@ -25,7 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
 
 @SuppressWarnings("rawtypes")
-public abstract class PlatformRenderContext<T extends ItemComponentBuilder<T, C>, C extends IFContext>
+public abstract class PlatformRenderContext<ITEM_BUILDER extends ItemComponentBuilder<ITEM_BUILDER>, CONTEXT extends IFContext>
         extends PlatformConfinedContext implements IFRenderContext {
 
     // --- Must inherit from parent context ---
@@ -80,7 +83,7 @@ public abstract class PlatformRenderContext<T extends ItemComponentBuilder<T, C>
      * @return An item builder to configure the item.
      */
     @ApiStatus.Experimental
-    public final T unsetSlot() {
+    public final ITEM_BUILDER unsetSlot() {
         return createRegisteredBuilder();
     }
 
@@ -90,7 +93,7 @@ public abstract class PlatformRenderContext<T extends ItemComponentBuilder<T, C>
      * @param slot The slot in which the item will be positioned.
      * @return An item builder to configure the item.
      */
-    public final @NotNull T slot(int slot) {
+    public final @NotNull ITEM_BUILDER slot(int slot) {
         return createRegisteredBuilder().withSlot(slot);
     }
 
@@ -102,7 +105,7 @@ public abstract class PlatformRenderContext<T extends ItemComponentBuilder<T, C>
      * @return An item builder to configure the item.
      */
     @NotNull
-    public final T slot(int row, int column) {
+    public final ITEM_BUILDER slot(int row, int column) {
         checkAlignedContainerTypeForSlotAssignment();
         return createRegisteredBuilder()
                 .withSlot(convertSlot(
@@ -117,7 +120,7 @@ public abstract class PlatformRenderContext<T extends ItemComponentBuilder<T, C>
      *
      * @return An item builder to configure the item.
      */
-    public final @NotNull T firstSlot() {
+    public final @NotNull ITEM_BUILDER firstSlot() {
         return createRegisteredBuilder().withSlot(getContainer().getFirstSlot());
     }
 
@@ -126,7 +129,7 @@ public abstract class PlatformRenderContext<T extends ItemComponentBuilder<T, C>
      *
      * @return An item builder to configure the item.
      */
-    public final @NotNull T lastSlot() {
+    public final @NotNull ITEM_BUILDER lastSlot() {
         return createRegisteredBuilder().withSlot(getContainer().getLastSlot());
     }
 
@@ -135,9 +138,9 @@ public abstract class PlatformRenderContext<T extends ItemComponentBuilder<T, C>
      *
      * @return An item builder to configure the item.
      */
-    public final @NotNull T availableSlot() {
-        final T builder = createBuilder();
-        availableSlotFactories.add(
+    public final @NotNull ITEM_BUILDER availableSlot() {
+        final ITEM_BUILDER builder = createBuilder();
+		availableSlotFactories.add(
                 (index, slot) -> (ComponentFactory) builder.copy().withSlot(slot));
         return builder;
     }
@@ -152,9 +155,9 @@ public abstract class PlatformRenderContext<T extends ItemComponentBuilder<T, C>
      * @param factory A factory to create the item builder to configure the item.
      *                The first parameter is the iteration index of the available slot.
      */
-    public final void availableSlot(@NotNull BiConsumer<Integer, T> factory) {
+    public final void availableSlot(@NotNull BiConsumer<Integer, ITEM_BUILDER> factory) {
         availableSlotFactories.add((index, slot) -> {
-            final T builder = createBuilder();
+            final ITEM_BUILDER builder = createBuilder();
             builder.withSlot(slot);
             factory.accept(index, builder);
             return (ComponentFactory) builder;
@@ -167,7 +170,7 @@ public abstract class PlatformRenderContext<T extends ItemComponentBuilder<T, C>
      * @param character The layout character target.
      * @return An item builder to configure the item.
      */
-    public final @NotNull T layoutSlot(char character) {
+    public final @NotNull ITEM_BUILDER layoutSlot(char character) {
         requireNonReservedLayoutCharacter(character);
 
         // TODO More detailed exception message
@@ -176,7 +179,7 @@ public abstract class PlatformRenderContext<T extends ItemComponentBuilder<T, C>
                 .findFirst()
                 .orElseThrow(() -> new InventoryFrameworkException("Missing layout character: " + character));
 
-        final T builder = createBuilder();
+        final ITEM_BUILDER builder = createBuilder();
         getLayoutSlots().add(layoutSlot.withFactory($ -> (ComponentFactory) builder));
         return builder;
     }
@@ -190,7 +193,7 @@ public abstract class PlatformRenderContext<T extends ItemComponentBuilder<T, C>
      *
      * @param character The layout character target.
      */
-    public final void layoutSlot(char character, @NotNull BiConsumer<Integer, T> factory) {
+    public final void layoutSlot(char character, @NotNull BiConsumer<Integer, ITEM_BUILDER> factory) {
         requireNonReservedLayoutCharacter(character);
 
         // TODO More detailed exception message
@@ -200,18 +203,38 @@ public abstract class PlatformRenderContext<T extends ItemComponentBuilder<T, C>
                 .orElseThrow(() -> new InventoryFrameworkException("Missing layout character: " + character));
 
         getLayoutSlots().add(layoutSlot.withFactory(index -> {
-            final T builder = createBuilder();
+            final ITEM_BUILDER builder = createBuilder();
             factory.accept(index, builder);
             return (ComponentFactory) builder;
         }));
     }
+
+	/**
+	 * Defines the item that will represent a character provided in the context layout.
+	 *
+	 * @param character The layout character target.
+	 * @return An item builder to configure the item.
+	 */
+	public @NotNull <BUILDER extends ComponentBuilder<BUILDER>, COMPONENT extends PlatformComponent<CONTEXT, BUILDER, ITEM_BUILDER>> BUILDER layoutComponent(char character, COMPONENT component) {
+		requireNonReservedLayoutCharacter(character);
+
+		// TODO More detailed exception message
+		final LayoutSlot layoutSlot = getLayoutSlots().stream()
+			.filter(value -> value.getCharacter() == character)
+			.findFirst()
+			.orElseThrow(() -> new InventoryFrameworkException("Missing layout character: " + character));
+
+		final BUILDER builder = component.createBuilder();
+		getLayoutSlots().add(layoutSlot.withFactory($ -> (ComponentFactory) builder));
+		return builder;
+	}
 
     /**
      * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
      * such API may be changed or may be removed completely in any further release. </i></b>
      */
     @ApiStatus.Experimental
-    public final @NotNull T resultSlot() {
+    public final @NotNull ITEM_BUILDER resultSlot() {
         final ViewType containerType = getContainer().getType();
         final int[] resultSlots = containerType.getResultSlots();
         if (resultSlots == null) throw new InventoryFrameworkException("No result slots available: " + containerType);
@@ -221,7 +244,18 @@ public abstract class PlatformRenderContext<T extends ItemComponentBuilder<T, C>
 
         return slot(resultSlots[0]);
     }
-    // endregion
+
+	/**
+	 * Renders a new component in that context.
+	 * <p>
+	 * <b><i> This API is experimental and is not subject to the general compatibility guarantees
+	 * such API may be changed or may be removed completely in any further release. </i></b>
+	 *
+	 * @param component The component to be rendered.
+	 */
+	@ApiStatus.Experimental
+	public void component(@NotNull Component component) {}
+	// endregion
 
     @Override
     public final @NotNull UUID getId() {
@@ -323,20 +357,21 @@ public abstract class PlatformRenderContext<T extends ItemComponentBuilder<T, C>
         this.rendered = true;
     }
 
-    /**
-     * Creates a new {@link T} instance for the current platform.
-     *
-     * @return A new platform builder instance.
-     */
-    protected abstract T createBuilder();
+	/**
+	 * Creates a new platform builder instance.
+	 *
+	 * @return A new platform builder instance.
+	 */
+	// TODO use ElementFactory's `createBuilder` instead
+	protected abstract ITEM_BUILDER createBuilder();
 
     /**
      * Creates a new platform builder instance and registers it.
      *
      * @return A new registered platform builder instance.
      */
-    protected final T createRegisteredBuilder() {
-        final T builder = createBuilder();
+    protected final ITEM_BUILDER createRegisteredBuilder() {
+        final ITEM_BUILDER builder = createBuilder();
         componentBuilders.add((ComponentFactory) builder);
         return builder;
     }
