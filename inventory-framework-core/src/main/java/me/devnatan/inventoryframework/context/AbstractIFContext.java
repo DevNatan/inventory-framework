@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Optional;
 import me.devnatan.inventoryframework.IFDebug;
 import me.devnatan.inventoryframework.InventoryFrameworkException;
+import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.UnsupportedOperationInSharedContextException;
 import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewContainer;
@@ -101,18 +102,6 @@ abstract class AbstractIFContext extends DefaultStateValueHost implements IFCont
         }
     }
 
-    private IFSlotRenderContext createSlotRenderContext(@NotNull Component component, boolean force) {
-        if (!(this instanceof IFRenderContext))
-            throw new InventoryFrameworkException("Slot render context cannot be created from non-render parent");
-
-        final IFRenderContext renderContext = (IFRenderContext) this;
-        final IFSlotRenderContext slotRender = getRoot()
-                .getElementFactory()
-                .createSlotRenderContext(component.getPosition(), renderContext, renderContext.getViewer());
-        slotRender.setForceUpdate(force);
-        return slotRender;
-    }
-
     @Override
     public void renderComponent(@NotNull Component component) {
         if (!component.shouldRender(this)) {
@@ -126,11 +115,40 @@ abstract class AbstractIFContext extends DefaultStateValueHost implements IFCont
                 if (overlap.isVisible()) return;
             }
 
-            component.clear(this);
+            component.cleared(this);
+			clearComponent(component);
             return;
         }
-        component.render(createSlotRenderContext(component, false));
+
+
+        component.rendered(createSlotRenderContext(component, false));
     }
+
+	@Override
+	public void clearComponent(@NotNull Component component) {
+
+	}
+
+	private IFComponentRenderContext createComponentRenderContext(Component component, boolean force) {
+		if (!(this instanceof IFRenderContext))
+			throw new InventoryFrameworkException("Slot render context cannot be created from non-render parent");
+
+		final IFRenderContext rootRenderContext = (IFRenderContext) this;
+		final IFComponentRenderContext componentRenderContext = null;
+		return componentRenderContext;
+	}
+
+	private IFSlotRenderContext createSlotRenderContext(@NotNull Component component, boolean force) {
+		if (!(this instanceof IFRenderContext))
+			throw new InventoryFrameworkException("Slot render context cannot be created from non-render parent");
+
+		final IFRenderContext renderContext = (IFRenderContext) this;
+		final IFSlotRenderContext slotRender = ((RootView) getRoot())
+			.getElementFactory()
+			.createSlotRenderContext(component.getPosition(), renderContext, renderContext.getViewer());
+		slotRender.setForceUpdate(force);
+		return slotRender;
+	}
 
     private Optional<Component> getOverlappingComponentToRender(ComponentContainer container, Component subject) {
         // TODO Support recursive overlapping (more than two components overlapping each other)

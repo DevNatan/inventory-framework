@@ -17,7 +17,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public final class BukkitItemComponentBuilder extends DefaultComponentBuilder<BukkitItemComponentBuilder, Context>
+public final class BukkitItemComponentBuilder extends AbstractComponentBuilder<BukkitItemComponentBuilder, Context>
         implements ItemComponentBuilder<BukkitItemComponentBuilder, Context>, ComponentFactory {
 
     private final VirtualView root;

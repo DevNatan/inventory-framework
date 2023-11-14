@@ -83,7 +83,7 @@ public abstract class ElementFactory {
      *
      * @return A new platform builder instance.
      */
-    public abstract ComponentBuilder<?, ?> createComponentBuilder(@NotNull VirtualView root);
+    public abstract ComponentBuilder<?> createComponentBuilder(@NotNull VirtualView root);
 
     public abstract boolean worksInCurrentPlatform();
 

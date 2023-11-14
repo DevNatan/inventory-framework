@@ -7,7 +7,7 @@ import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.state.State;
 import org.jetbrains.annotations.NotNull;
 
-public class TestItemComponentBuilder extends DefaultComponentBuilder<TestItemComponentBuilder, IFContext>
+public class TestItemComponentBuilder extends AbstractComponentBuilder<TestItemComponentBuilder, IFContext>
         implements ItemComponentBuilder<TestItemComponentBuilder, IFContext>, ComponentFactory {
 
     int slot;

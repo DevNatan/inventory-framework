@@ -4,10 +4,11 @@ import me.devnatan.inventoryframework.Ref;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.UnsupportedOperationInSharedContextException;
 import me.devnatan.inventoryframework.VirtualView;
+import me.devnatan.inventoryframework.context.IFComponentRenderContext;
+import me.devnatan.inventoryframework.context.IFComponentUpdateContext;
 import me.devnatan.inventoryframework.context.IFContext;
-import me.devnatan.inventoryframework.context.IFSlotRenderContext;
+import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.state.State;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
 
@@ -22,14 +23,17 @@ public abstract class AbstractComponent implements Component {
 	private final Ref<Component> reference;
 	private final Set<State<?>> watchingStates;
 	private boolean isVisible;
+	private boolean wasForceUpdated;
 
 	protected AbstractComponent() {
 		this(null, null, null);
 	}
 
-	protected AbstractComponent(VirtualView root,
-					  Ref<Component> reference,
-					  Set<State<?>> watchingStates) {
+	protected AbstractComponent(
+		VirtualView root,
+		Ref<Component> reference,
+		Set<State<?>> watchingStates
+	) {
 		this.root = root;
 		this.reference = reference;
 		this.watchingStates = watchingStates;
@@ -51,22 +55,20 @@ public abstract class AbstractComponent implements Component {
 	}
 
 	@Override
-	public final InteractionHandler getInteractionHandler() {
-		return null;
-	}
-
-	@Override
 	public final @UnmodifiableView Set<State<?>> getWatchingStates() {
 		return Collections.unmodifiableSet(watchingStates);
 	}
 
 	@Override
 	public final boolean isVisible() {
+		if (getRoot() instanceof Component)
+			return ((Component) getRoot()).isVisible() && isVisible;
+
 		return isVisible;
 	}
 
 	@Override
-	public final void setVisible(boolean visible) {
+	public void setVisible(boolean visible) {
 		this.isVisible = visible;
 	}
 
@@ -77,7 +79,7 @@ public abstract class AbstractComponent implements Component {
 	}
 
 	@Override
-	public final boolean shouldRender(IFContext context) {
+	public boolean shouldRender(IFContext context) {
 		throw new UnsupportedOperationInSharedContextException();
 	}
 
@@ -97,7 +99,9 @@ public abstract class AbstractComponent implements Component {
 
 	@Override
 	public final void forceUpdate() {
+		wasForceUpdated = true;
 		getRootAsContext().updateComponent(this, true);
+		wasForceUpdated = false;
 	}
 
 	@Override
@@ -121,4 +125,15 @@ public abstract class AbstractComponent implements Component {
 
 		return (IFContext) getRoot();
  	}
+
+	 protected final boolean wasForceUpdated() {
+		return wasForceUpdated;
+	 }
+
+	/**
+	 * Called when a viewer clicks on this component.
+	 *
+	 * @param context The click context.
+	 */
+	void clicked(@NotNull IFSlotClickContext context) {}
 }
