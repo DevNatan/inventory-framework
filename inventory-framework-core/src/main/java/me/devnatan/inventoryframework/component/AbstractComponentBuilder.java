@@ -118,6 +118,6 @@ public abstract class AbstractComponentBuilder<SELF extends ComponentBuilder<SEL
 
     @Override
     public SELF copy() {
-        throw new UnsupportedOperationException("Component builder not copyable - missing #copy() impl");
+        throw new UnsupportedOperationException("Component builder not copyable, missing #copy() impl");
     }
 }

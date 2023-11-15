@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @param <SELF> The reference of the component builder itself used as return type for method chaining.
  */
-public interface ComponentBuilder<SELF extends ComponentBuilder<SELF>> {
+public interface ComponentBuilder<SELF> {
 
     /**
      * Assigns {@link Ref a reference} to this component.

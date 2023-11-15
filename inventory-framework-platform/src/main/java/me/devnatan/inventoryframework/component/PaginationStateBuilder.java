@@ -3,7 +3,6 @@ package me.devnatan.inventoryframework.component;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
-import java.util.function.Function;
 import java.util.function.Predicate;
 
 import me.devnatan.inventoryframework.Ref;
@@ -11,12 +10,11 @@ import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.internal.ElementFactory;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
-import me.devnatan.inventoryframework.state.PaginationState;
 import me.devnatan.inventoryframework.state.State;
-import me.devnatan.inventoryframework.state.StateValueFactory;
 import org.jetbrains.annotations.NotNull;
 
-public final class PaginationStateBuilder<CONTEXT extends IFContext, ITEM_BUILDER extends ItemComponentBuilder<ITEM_BUILDER>, V> extends PlatformComponentBuilder<PaginationStateBuilder<CONTEXT, ITEM_BUILDER, V>, CONTEXT> {
+public final class PaginationStateBuilder<CONTEXT extends IFContext, COMPONENT_BUILDER extends ComponentBuilder<COMPONENT_BUILDER>, V>
+	extends PlatformComponentBuilder<PaginationStateBuilder<CONTEXT, COMPONENT_BUILDER, V>, CONTEXT> {
 
     private final ElementFactory internalElementFactory;
     private final Object sourceProvider;
@@ -58,7 +56,7 @@ public final class PaginationStateBuilder<CONTEXT extends IFContext, ITEM_BUILDE
      * @param itemFactory The item factory.
      * @return This pagination state builder.
      */
-    public PaginationStateBuilder<CONTEXT, ITEM_BUILDER, V> itemFactory(@NotNull BiConsumer<ITEM_BUILDER, V> itemFactory) {
+    public PaginationStateBuilder<CONTEXT, COMPONENT_BUILDER, V> itemFactory(@NotNull BiConsumer<COMPONENT_BUILDER, V> itemFactory) {
         return elementFactory(((context, builder, index, value) -> itemFactory.accept(builder, value)));
     }
 
@@ -75,20 +73,29 @@ public final class PaginationStateBuilder<CONTEXT extends IFContext, ITEM_BUILDE
      * @return This pagination state builder.
      */
     @SuppressWarnings("unchecked")
-    public PaginationStateBuilder<CONTEXT, ITEM_BUILDER, V> elementFactory(
-            @NotNull PaginationValueConsumer<CONTEXT, ITEM_BUILDER, V> elementConsumer) {
+    public PaginationStateBuilder<CONTEXT, COMPONENT_BUILDER, V> elementFactory(
+            @NotNull PaginationValueConsumer<CONTEXT, COMPONENT_BUILDER, V> elementConsumer) {
         this.paginationElementFactory = (pagination, index, slot, value) -> {
             CONTEXT context = (CONTEXT) pagination.getRoot();
-            ITEM_BUILDER builder = (ITEM_BUILDER) internalElementFactory.createComponentBuilder(pagination);
-            builder.withSlot(slot).withExternallyManaged(true);
+            COMPONENT_BUILDER builder = (COMPONENT_BUILDER) internalElementFactory.createComponentBuilder(pagination);
+			builder = builder.withExternallyManaged(true);
+			if (builder instanceof ItemComponentBuilder)
+				builder = (COMPONENT_BUILDER) ((ItemComponentBuilder<?, ?>) builder).withSlot(slot);
+
             elementConsumer.accept(context, builder, index, value);
 
-			return new ComponentFactory() {
-				@Override
-				public @NotNull Component create() {
-					return builder.build(context);
-				}
-			};
+			final COMPONENT_BUILDER finalBuilder = builder;
+
+			// TODO Drop ComponentFactory usage
+			if (builder instanceof ComponentFactory)
+				return (ComponentFactory) finalBuilder;
+			else
+				return new ComponentFactory() {
+					@Override
+					public @NotNull Component create() {
+						return finalBuilder.build(context);
+					}
+				};
         };
         return this;
     }
@@ -105,7 +112,7 @@ public final class PaginationStateBuilder<CONTEXT extends IFContext, ITEM_BUILDE
      * @param layoutTarget The target layout character.
      * @return This pagination state builder.
      */
-    public PaginationStateBuilder<CONTEXT, ITEM_BUILDER, V> layoutTarget(char layoutTarget) {
+    public PaginationStateBuilder<CONTEXT, COMPONENT_BUILDER, V> layoutTarget(char layoutTarget) {
         this.layoutTarget = layoutTarget;
         return this;
     }
@@ -119,7 +126,7 @@ public final class PaginationStateBuilder<CONTEXT extends IFContext, ITEM_BUILDE
      * @param pageSwitchHandler The page switch handler.
      * @return This pagination state builder.
      */
-    public PaginationStateBuilder<CONTEXT, ITEM_BUILDER, V> onPageSwitch(
+    public PaginationStateBuilder<CONTEXT, COMPONENT_BUILDER, V> onPageSwitch(
             @NotNull BiConsumer<CONTEXT, Pagination> pageSwitchHandler) {
         this.pageSwitchHandler = pageSwitchHandler;
         return this;

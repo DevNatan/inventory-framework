@@ -17,15 +17,19 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public final class BukkitItemComponentBuilder extends AbstractComponentBuilder<BukkitItemComponentBuilder, Context>
-        implements ItemComponentBuilder<BukkitItemComponentBuilder, Context>, ComponentFactory {
+public final class BukkitItemComponentBuilder
+		extends AbstractComponentBuilder<BukkitItemComponentBuilder>
+        implements ItemComponentBuilder<BukkitItemComponentBuilder, ItemStack> {
 
     private final VirtualView root;
+
+	// region User-Provided Properties
     private int slot;
     private ItemStack item;
     private Consumer<? super IFSlotRenderContext> renderHandler;
     private Consumer<? super IFSlotClickContext> clickHandler;
     private Consumer<? super IFSlotContext> updateHandler;
+	// endregion
 
     public BukkitItemComponentBuilder(VirtualView root) {
         this(
@@ -188,7 +192,7 @@ public final class BukkitItemComponentBuilder extends AbstractComponentBuilder<B
 
     @Override
     public @NotNull Component create() {
-        return new ItemComponent(
+        return new BukkitItemComponentImpl(
                 root,
                 slot,
                 item,
@@ -223,4 +227,9 @@ public final class BukkitItemComponentBuilder extends AbstractComponentBuilder<B
                 isManagedExternally,
                 displayCondition);
     }
+
+	@Override
+	public Component build(VirtualView root) {
+		return null;
+	}
 }

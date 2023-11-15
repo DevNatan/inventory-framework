@@ -2,7 +2,7 @@ package me.devnatan.inventoryframework.component;
 
 import org.jetbrains.annotations.ApiStatus;
 
-public interface ItemComponentBuilder<SELF extends ItemComponentBuilder<SELF>> extends ComponentBuilder<SELF> {
+public interface ItemComponentBuilder<SELF, ITEM> extends ComponentBuilder<SELF> {
 
     /**
      * Sets the slot that the item will be positioned.
@@ -21,8 +21,14 @@ public interface ItemComponentBuilder<SELF extends ItemComponentBuilder<SELF>> e
      */
     SELF withSlot(int row, int column);
 
-    // TODO Missing withItem
-    //	SELF withItem(ITEM item);
+	/**
+	 * Sets the item that will be rendered in where this component is placed on.
+	 * The rendered item is always static. For dynamic rendering use
+	 *
+	 * @param item The item.
+	 * @return This component builder.
+	 */
+	SELF withItem(ITEM item);
 
     @ApiStatus.Internal
     boolean isContainedWithin(int position);
