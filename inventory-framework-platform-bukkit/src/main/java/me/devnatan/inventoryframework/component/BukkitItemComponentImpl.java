@@ -1,24 +1,17 @@
 package me.devnatan.inventoryframework.component;
 
-import java.util.Collections;
 import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
-import me.devnatan.inventoryframework.InventoryFrameworkException;
-import me.devnatan.inventoryframework.Ref;
-import me.devnatan.inventoryframework.VirtualView;
+
 import me.devnatan.inventoryframework.context.IFComponentRenderContext;
 import me.devnatan.inventoryframework.context.IFComponentUpdateContext;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFSlotClickContext;
-import me.devnatan.inventoryframework.state.State;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.UnmodifiableView;
 
 // TODO Make this render abstract and remove `getResult` (Object) from IFSlotRenderContext
-public class ItemComponent extends AbstractComponent implements Component {
+public final class BukkitItemComponentImpl extends AbstractComponent implements Component {
 
     private int position;
     private final Object stack;
@@ -30,7 +23,7 @@ public class ItemComponent extends AbstractComponent implements Component {
     private final Consumer<? super IFSlotClickContext> clickHandler;
     private final boolean updateOnClick;
 
-    public ItemComponent(
+    public BukkitItemComponentImpl(
             int position,
             Object stack,
             boolean cancelOnClick,
@@ -165,7 +158,7 @@ public class ItemComponent extends AbstractComponent implements Component {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ItemComponent that = (ItemComponent) o;
+        BukkitItemComponentImpl that = (BukkitItemComponentImpl) o;
         return getPosition() == that.getPosition() && Objects.equals(getStack(), that.getStack());
     }
 
