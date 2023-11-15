@@ -119,11 +119,4 @@ public abstract class AbstractComponent implements Component {
     protected final boolean wasForceUpdated() {
         return wasForceUpdated;
     }
-
-    /**
-     * Called when a viewer clicks on this component.
-     *
-     * @param context The click context.
-     */
-    void clicked(@NotNull IFSlotClickContext context) {}
 }
