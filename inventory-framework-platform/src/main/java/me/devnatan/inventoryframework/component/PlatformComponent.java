@@ -19,22 +19,61 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-@SuppressWarnings("rawtypes")
-public abstract class PlatformComponent<CONTEXT extends IFContext, BUILDER extends ComponentBuilder<BUILDER>, ITEM_BUILDER extends ItemComponentBuilder<ITEM_BUILDER>>
+@SuppressWarnings({"rawtypes", "unchecked"})
+public abstract class PlatformComponent<CONTEXT extends IFContext, BUILDER extends ComponentBuilder<BUILDER>>
 	extends AbstractComponent
-	implements Component, StateAccess<CONTEXT, ITEM_BUILDER> {
+	implements Component, StateAccess<CONTEXT, BUILDER> {
 
-	private final StateAccess<CONTEXT, ITEM_BUILDER> stateAccess;
+	private final StateAccessImpl stateAccess;
 
-	// User Provided
-	private final Consumer<? super IFComponentRenderContext> renderHandler;
-	private final Consumer<? super IFComponentUpdateContext> updateHandler;
-	private final Consumer<? super IFSlotClickContext> clickHandler;
+	// region Public Builder Properties
+	private Consumer<? super IFComponentRenderContext> renderHandler = null;
+	private Consumer<? super IFComponentUpdateContext> updateHandler = null;
+	private Consumer<? super IFSlotClickContext> clickHandler = null;
+	private boolean cancelOnClick;
+	private boolean closeOnClick;
+	private boolean updateOnClick;
+	// endregion
 
 	{
 		final RootView root = (RootView) getRootAsContext().getRoot();
-		stateAccess = new StateAccessImpl<>(root.getElementFactory(), ((PlatformView) root).getStateRegistry());
+		stateAccess = new StateAccessImpl(root.getElementFactory(), ((PlatformView) root).getStateRegistry());
 	}
+
+	// region Public Builder Methods
+	public final boolean isCancelOnClick() {
+		return cancelOnClick;
+	}
+
+	public final boolean isCloseOnClick() {
+		return closeOnClick;
+	}
+
+	public final boolean isUpdateOnClick() {
+		return updateOnClick;
+	}
+	// endregion
+	
+	// region Internal Components API
+	protected final void setRenderHandler(Consumer<? super IFComponentRenderContext> renderHandler) {
+		this.renderHandler = renderHandler;
+	}
+	
+	protected final void setUpdateHandler(Consumer<? super IFComponentUpdateContext> updateHandler) {
+		this.updateHandler = updateHandler;
+	}
+	
+	protected final void setClickHandler(Consumer<? super IFSlotClickContext> clickHandler) {
+		this.clickHandler = clickHandler;
+	}
+	// endregion
+
+	/**
+	 * Called when a viewer clicks on this component.
+	 *
+	 * @param context The click context.
+	 */
+	public abstract void clicked(@NotNull IFSlotClickContext context);
 
     /**
      * Creates a new ComponentBuilder instance to configure this component.
@@ -89,62 +128,62 @@ public abstract class PlatformComponent<CONTEXT extends IFContext, BUILDER exten
 	}
 
 	@Override
-	public final <T> State<Pagination> paginationState(@NotNull List<? super T> sourceProvider, @NotNull PaginationValueConsumer<CONTEXT, ITEM_BUILDER, T> elementConsumer) {
+	public final <T> State<Pagination> paginationState(@NotNull List<? super T> sourceProvider, @NotNull PaginationValueConsumer<CONTEXT, BUILDER, T> elementConsumer) {
 		return stateAccess.paginationState(sourceProvider, elementConsumer);
 	}
 
 	@Override
-	public final <T> State<Pagination> computedPaginationState(@NotNull Function<CONTEXT, List<? super T>> sourceProvider, @NotNull PaginationValueConsumer<CONTEXT, ITEM_BUILDER, T> valueConsumer) {
+	public final <T> State<Pagination> computedPaginationState(@NotNull Function<CONTEXT, List<? super T>> sourceProvider, @NotNull PaginationValueConsumer<CONTEXT, BUILDER, T> valueConsumer) {
 		return stateAccess.computedPaginationState(sourceProvider, valueConsumer);
 	}
 
 	@Override
-	public final <T> State<Pagination> computedAsyncPaginationState(@NotNull Function<CONTEXT, CompletableFuture<List<T>>> sourceProvider, @NotNull PaginationValueConsumer<CONTEXT, ITEM_BUILDER, T> valueConsumer) {
+	public final <T> State<Pagination> computedAsyncPaginationState(@NotNull Function<CONTEXT, CompletableFuture<List<T>>> sourceProvider, @NotNull PaginationValueConsumer<CONTEXT, BUILDER, T> valueConsumer) {
 		return stateAccess.computedAsyncPaginationState(sourceProvider, valueConsumer);
 	}
 
 	@Override
-	public final <T> State<Pagination> lazyPaginationState(@NotNull Function<CONTEXT, List<? super T>> sourceProvider, @NotNull PaginationValueConsumer<CONTEXT, ITEM_BUILDER, T> valueConsumer) {
+	public final <T> State<Pagination> lazyPaginationState(@NotNull Function<CONTEXT, List<? super T>> sourceProvider, @NotNull PaginationValueConsumer<CONTEXT, BUILDER, T> valueConsumer) {
 		return stateAccess.lazyPaginationState(sourceProvider, valueConsumer);
 	}
 
 	@Override
-	public final <T> State<Pagination> lazyPaginationState(@NotNull Supplier<List<? super T>> sourceProvider, @NotNull PaginationValueConsumer<CONTEXT, ITEM_BUILDER, T> valueConsumer) {
+	public final <T> State<Pagination> lazyPaginationState(@NotNull Supplier<List<? super T>> sourceProvider, @NotNull PaginationValueConsumer<CONTEXT, BUILDER, T> valueConsumer) {
 		return stateAccess.lazyPaginationState(sourceProvider, valueConsumer);
 	}
 
 	@Override
-	public final <T> State<Pagination> lazyAsyncPaginationState(@NotNull Function<CONTEXT, CompletableFuture<List<T>>> sourceProvider, @NotNull PaginationValueConsumer<CONTEXT, ITEM_BUILDER, T> valueConsumer) {
+	public final <T> State<Pagination> lazyAsyncPaginationState(@NotNull Function<CONTEXT, CompletableFuture<List<T>>> sourceProvider, @NotNull PaginationValueConsumer<CONTEXT, BUILDER, T> valueConsumer) {
 		return stateAccess.lazyAsyncPaginationState(sourceProvider, valueConsumer);
 	}
 
 	@Override
-	public final <T> PaginationStateBuilder<CONTEXT, ITEM_BUILDER, T> buildPaginationState(@NotNull List<? super T> sourceProvider) {
+	public final <T> PaginationStateBuilder<CONTEXT, BUILDER, T> buildPaginationState(@NotNull List<? super T> sourceProvider) {
 		return stateAccess.buildPaginationState(sourceProvider);
 	}
 
 	@Override
-	public final <T> PaginationStateBuilder<CONTEXT, ITEM_BUILDER, T> buildComputedPaginationState(@NotNull Function<CONTEXT, List<? super T>> sourceProvider) {
+	public final <T> PaginationStateBuilder<CONTEXT, BUILDER, T> buildComputedPaginationState(@NotNull Function<CONTEXT, List<? super T>> sourceProvider) {
 		return stateAccess.buildComputedPaginationState(sourceProvider);
 	}
 
 	@Override
-	public final <T> PaginationStateBuilder<CONTEXT, ITEM_BUILDER, T> buildComputedAsyncPaginationState(@NotNull Function<CONTEXT, CompletableFuture<List<T>>> sourceProvider) {
+	public final <T> PaginationStateBuilder<CONTEXT, BUILDER, T> buildComputedAsyncPaginationState(@NotNull Function<CONTEXT, CompletableFuture<List<T>>> sourceProvider) {
 		return stateAccess.buildComputedAsyncPaginationState(sourceProvider);
 	}
 
 	@Override
-	public final <T> PaginationStateBuilder<CONTEXT, ITEM_BUILDER, T> buildLazyPaginationState(@NotNull Supplier<List<? super T>> sourceProvider) {
+	public final <T> PaginationStateBuilder<CONTEXT, BUILDER, T> buildLazyPaginationState(@NotNull Supplier<List<? super T>> sourceProvider) {
 		return stateAccess.buildLazyPaginationState(sourceProvider);
 	}
 
 	@Override
-	public final <T> PaginationStateBuilder<CONTEXT, ITEM_BUILDER, T> buildLazyPaginationState(@NotNull Function<CONTEXT, List<? super T>> sourceProvider) {
+	public final <T> PaginationStateBuilder<CONTEXT, BUILDER, T> buildLazyPaginationState(@NotNull Function<CONTEXT, List<? super T>> sourceProvider) {
 		return stateAccess.buildLazyPaginationState(sourceProvider);
 	}
 
 	@Override
-	public final <T> PaginationStateBuilder<CONTEXT, ITEM_BUILDER, T> buildLazyAsyncPaginationState(@NotNull Function<CONTEXT, CompletableFuture<List<T>>> sourceProvider) {
+	public final <T> PaginationStateBuilder<CONTEXT, BUILDER, T> buildLazyAsyncPaginationState(@NotNull Function<CONTEXT, CompletableFuture<List<T>>> sourceProvider) {
 		return stateAccess.buildLazyAsyncPaginationState(sourceProvider);
 	}
 }
