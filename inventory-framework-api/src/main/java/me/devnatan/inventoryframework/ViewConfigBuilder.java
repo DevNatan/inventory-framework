@@ -98,8 +98,7 @@ public final class ViewConfigBuilder {
      * @return This configuration builder.
      */
     public ViewConfigBuilder with(@NotNull ViewConfig.Modifier modifier) {
-        this.modifiers.add(modifier);
-        return this;
+        return use(modifier);
     }
 
     /**
@@ -109,6 +108,27 @@ public final class ViewConfigBuilder {
      * @return This configuration builder.
      */
     public ViewConfigBuilder with(ViewConfig.Modifier... modifiers) {
+        return use(modifiers);
+    }
+
+    /**
+     * Uses a modifier in this config.
+     *
+     * @param modifier The modifiers to use.
+     * @return This configuration builder.
+     */
+    public ViewConfigBuilder use(@NotNull ViewConfig.Modifier modifier) {
+        this.modifiers.add(modifier);
+        return this;
+    }
+
+    /**
+     * Uses a modifier in this config.
+     *
+     * @param modifiers Modifiers to  use.
+     * @return This configuration builder.
+     */
+    public ViewConfigBuilder use(ViewConfig.Modifier... modifiers) {
         this.modifiers.addAll(Arrays.asList(modifiers));
         return this;
     }
