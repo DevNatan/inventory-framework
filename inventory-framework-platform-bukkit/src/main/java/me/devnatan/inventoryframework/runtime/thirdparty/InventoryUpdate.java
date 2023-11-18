@@ -292,9 +292,21 @@ public final class InventoryUpdate {
             if (isStatic) return LOOKUP.findStatic(refc, name, type);
             return LOOKUP.findVirtual(refc, name, type);
         } catch (ReflectiveOperationException exception) {
-            exception.printStackTrace();
             return null;
         }
+    }
+
+    public static MethodHandle getMethod(
+            Class<?> refc, String name, MethodType type, boolean isStatic, String... extraNames) {
+        MethodHandle handle = getMethod(refc, name, type, isStatic);
+        if (handle != null) return handle;
+
+        if (extraNames != null && extraNames.length > 0) {
+            if (extraNames.length == 1) return getMethod(refc, extraNames[0], type, isStatic);
+            return getMethod(refc, extraNames[0], type, isStatic, removeFirst(extraNames));
+        }
+
+        return null;
     }
 
     /**

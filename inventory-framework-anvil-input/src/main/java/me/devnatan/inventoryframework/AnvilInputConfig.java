@@ -29,6 +29,7 @@ public class AnvilInputConfig {
      *
      * @return This anvil input feature config.
      */
+    @Contract("-> this")
     public AnvilInputConfig closeOnSelect() {
         this.closeOnSelect = !this.closeOnSelect;
         return this;

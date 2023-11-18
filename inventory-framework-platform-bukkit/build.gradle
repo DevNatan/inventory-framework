@@ -2,6 +2,7 @@ import org.apache.tools.ant.filters.ReplaceTokens
 
 plugins {
     alias(libs.plugins.shadowjar)
+    alias(libs.plugins.bukkit)
 }
 
 apply from: '../library.gradle'
@@ -34,9 +35,12 @@ shadowJar {
     }
 }
 
-processResources {
-    from(sourceSets.main.resources.srcDirs) {
-        duplicatesStrategy DuplicatesStrategy.INCLUDE
-        filter ReplaceTokens, tokens: [version: version]
-    }
+bukkit {
+    main = "me.devnatan.inventoryframework.runtime.InventoryFramework"
+    name = "InventoryFramework"
+    version = project.version
+    description = "Minecraft Inventory API framework"
+    website = "https://github.com/DevNatan/inventory-framework"
+    apiVersion = "1.20"
+    authors = ['SaiintBrisson', 'DevNatan', 'sasuked']
 }

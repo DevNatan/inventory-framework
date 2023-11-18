@@ -15,6 +15,7 @@ import static me.devnatan.inventoryframework.runtime.thirdparty.ReflectionUtils.
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodType;
+import java.util.Objects;
 import me.devnatan.inventoryframework.runtime.thirdparty.InventoryUpdate;
 import me.devnatan.inventoryframework.runtime.thirdparty.ReflectionUtils;
 import org.bukkit.Material;
@@ -46,7 +47,8 @@ class AnvilInputNMS {
 
     static {
         try {
-            ANVIL = getNMSClass("world.inventory", "ContainerAnvil");
+            ANVIL = Objects.requireNonNull(
+                    getNMSClass("world.inventory", "ContainerAnvil"), "ContainerAnvil NMS class not found");
 
             final Class<?> playerInventoryClass = getNMSClass("world.entity.player", "PlayerInventory");
 
@@ -54,12 +56,18 @@ class AnvilInputNMS {
             CONTAINER_CHECK_REACHABLE = setFieldHandle(CONTAINER, boolean.class, "checkReachable");
 
             final Class<?> containerPlayer = getNMSClass("world.inventory", "ContainerPlayer");
-            PLAYER_DEFAULT_CONTAINER = getField(ENTITY_PLAYER, containerPlayer, "inventoryMenu", "bQ");
-            SET_PLAYER_ACTIVE_CONTAINER =
-                    setField(ENTITY_PLAYER, containerPlayer, "activeContainer", "bR", "containerMenu");
+            PLAYER_DEFAULT_CONTAINER = getField(ENTITY_PLAYER, containerPlayer, "inventoryMenu", "bQ", "bR");
+
+            final String activeContainerObfuscatedName = ReflectionUtils.supportsMC1202() ? "bS" : "bR";
+            SET_PLAYER_ACTIVE_CONTAINER = setField(
+                    ENTITY_PLAYER, containerPlayer, "activeContainer", "containerMenu", activeContainerObfuscatedName);
+
             GET_PLAYER_NEXT_CONTAINER_COUNTER =
                     getMethod(ENTITY_PLAYER, "nextContainerCounter", MethodType.methodType(int.class));
-            GET_PLAYER_INVENTORY = getMethod(ENTITY_PLAYER, "fN", MethodType.methodType(playerInventoryClass));
+
+            GET_PLAYER_INVENTORY =
+                    getMethod(ENTITY_PLAYER, "fN", MethodType.methodType(playerInventoryClass), false, "fR");
+
             CONTAINER_WINDOW_ID = setField(CONTAINER, int.class, "windowId", "containerId", "j");
             ADD_CONTAINER_SLOT_LISTENER = getMethod(
                     CONTAINER, "a", MethodType.methodType(void.class, getNMSClass("world.inventory.ICrafting")));
@@ -88,14 +96,15 @@ class AnvilInputNMS {
 
             inventory.setMaximumRepairCost(0);
 
+            @SuppressWarnings("deprecation")
             final ItemStack item = new ItemStack(Material.PAPER, 1, (short) 0);
-            final ItemMeta meta = item.getItemMeta();
+            final ItemMeta meta = Objects.requireNonNull(item.getItemMeta());
             meta.setDisplayName(initialInput);
             item.setItemMeta(meta);
             inventory.setItem(0, item);
 
             Object nmsContainers = getContainerOrName(InventoryUpdate.Containers.ANVIL, InventoryType.ANVIL);
-            Object updatedTitle = createTitleComponent(title);
+            Object updatedTitle = createTitleComponent(title == null ? "" : title);
             Object openWindowPacket = useContainers()
                     ? packetPlayOutOpenWindow.invoke(windowId, nmsContainers, updatedTitle)
                     : packetPlayOutOpenWindow.invoke(
@@ -111,8 +120,8 @@ class AnvilInputNMS {
                 ADD_CONTAINER_SLOT_LISTENER.invoke(anvilContainer, player);
             }
             return inventory;
-        } catch (Throwable e) {
-            throw new RuntimeException(e);
+        } catch (Throwable throwable) {
+            throw new RuntimeException("Something went wrong while opening Anvil Input NMS inventory.", throwable);
         }
     }
 }
