@@ -55,12 +55,24 @@ public abstract class PlatformComponent<CONTEXT extends IFContext, BUILDER exten
 	// endregion
 	
 	// region Internal Components API
+	public final Consumer<? super IFComponentRenderContext> getRenderHandler() {
+		return renderHandler;
+	}
+
 	protected final void setRenderHandler(Consumer<? super IFComponentRenderContext> renderHandler) {
 		this.renderHandler = renderHandler;
 	}
-	
+
+	public final Consumer<? super IFComponentUpdateContext> getUpdateHandler() {
+		return updateHandler;
+	}
+
 	protected final void setUpdateHandler(Consumer<? super IFComponentUpdateContext> updateHandler) {
 		this.updateHandler = updateHandler;
+	}
+
+	public final Consumer<? super IFSlotClickContext> getClickHandler() {
+		return clickHandler;
 	}
 	
 	protected final void setClickHandler(Consumer<? super IFSlotClickContext> clickHandler) {

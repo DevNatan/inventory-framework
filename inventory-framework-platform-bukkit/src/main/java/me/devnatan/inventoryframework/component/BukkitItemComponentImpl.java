@@ -7,21 +7,16 @@ import java.util.function.Predicate;
 import me.devnatan.inventoryframework.context.IFComponentRenderContext;
 import me.devnatan.inventoryframework.context.IFComponentUpdateContext;
 import me.devnatan.inventoryframework.context.IFContext;
+import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import org.jetbrains.annotations.NotNull;
 
 // TODO Make this render abstract and remove `getResult` (Object) from IFSlotRenderContext
-public final class BukkitItemComponentImpl extends AbstractComponent implements Component {
+public final class BukkitItemComponentImpl extends BukkitPlatformComponent<BukkitItemComponentBuilder> {
 
     private int position;
     private final Object stack;
-    private final boolean cancelOnClick;
-    private final boolean closeOnClick;
     private final Predicate<? extends IFContext> displayCondition;
-    private final Consumer<? super IFComponentRenderContext> renderHandler;
-    private final Consumer<? super IFComponentUpdateContext> updateHandler;
-    private final Consumer<? super IFSlotClickContext> clickHandler;
-    private final boolean updateOnClick;
 
     public BukkitItemComponentImpl(
             int position,
@@ -52,35 +47,13 @@ public final class BukkitItemComponentImpl extends AbstractComponent implements 
         return stack;
     }
 
-    public boolean isCancelOnClick() {
-        return cancelOnClick;
-    }
-
-    public boolean isCloseOnClick() {
-        return closeOnClick;
-    }
-
-    public boolean isUpdateOnClick() {
-        return updateOnClick;
-    }
-
     @SuppressWarnings("unchecked")
     @Override
     public boolean shouldRender(IFContext context) {
         return displayCondition == null || ((Predicate<? super IFContext>) displayCondition).test(context);
     }
 
-    public Consumer<? super IFComponentRenderContext> getRenderHandler() {
-        return renderHandler;
-    }
 
-    public Consumer<? super IFComponentUpdateContext> getUpdateHandler() {
-        return updateHandler;
-    }
-
-    public Consumer<? super IFSlotClickContext> getClickHandler() {
-        return clickHandler;
-    }
 
     @Override
     public boolean isContainedWithin(int position) {
@@ -169,7 +142,7 @@ public final class BukkitItemComponentImpl extends AbstractComponent implements 
 
     @Override
     public String toString() {
-        return "ItemComponent{" + ", position="
+        return "BukkitItemComponentImpl{" + ", position="
                 + position + ", stack="
                 + stack + ", cancelOnClick="
                 + cancelOnClick + ", closeOnClick="

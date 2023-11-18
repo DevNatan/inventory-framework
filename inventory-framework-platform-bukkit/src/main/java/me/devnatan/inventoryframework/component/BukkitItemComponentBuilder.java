@@ -17,7 +17,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public final class BukkitItemComponentBuilder
+public class BukkitItemComponentBuilder
 		extends AbstractComponentBuilder<BukkitItemComponentBuilder>
         implements ItemComponentBuilder<BukkitItemComponentBuilder, ItemStack> {
 
