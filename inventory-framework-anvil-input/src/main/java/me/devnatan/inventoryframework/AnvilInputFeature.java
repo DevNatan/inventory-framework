@@ -24,7 +24,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
-@SuppressWarnings({"rawtypes", "unchecked"})
+@SuppressWarnings({"rawtypes", "unchecked", "unused"})
 public final class AnvilInputFeature implements Feature<AnvilInputConfig, Void, ViewFrame> {
 
     private static final int INGREDIENT_SLOT = 0;

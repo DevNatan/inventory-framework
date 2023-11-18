@@ -16,7 +16,6 @@ import static me.devnatan.inventoryframework.runtime.thirdparty.ReflectionUtils.
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodType;
 import java.util.Objects;
-
 import me.devnatan.inventoryframework.runtime.thirdparty.InventoryUpdate;
 import me.devnatan.inventoryframework.runtime.thirdparty.ReflectionUtils;
 import org.bukkit.Material;
@@ -49,9 +48,7 @@ class AnvilInputNMS {
     static {
         try {
             ANVIL = Objects.requireNonNull(
-				getNMSClass("world.inventory", "ContainerAnvil"),
-				"ContainerAnvil NMS class not found"
-			);
+                    getNMSClass("world.inventory", "ContainerAnvil"), "ContainerAnvil NMS class not found");
 
             final Class<?> playerInventoryClass = getNMSClass("world.entity.player", "PlayerInventory");
 
@@ -72,8 +69,7 @@ class AnvilInputNMS {
         } catch (Exception exception) {
             throw new RuntimeException(
                     "Unsupported version for Anvil Input feature: " + ReflectionUtils.getVersionInformation(),
-                    exception
-			);
+                    exception);
         }
     }
 
@@ -95,7 +91,7 @@ class AnvilInputNMS {
             inventory.setMaximumRepairCost(0);
 
             @SuppressWarnings("deprecation")
-			final ItemStack item = new ItemStack(Material.PAPER, 1, (short) 0);
+            final ItemStack item = new ItemStack(Material.PAPER, 1, (short) 0);
             final ItemMeta meta = Objects.requireNonNull(item.getItemMeta());
             meta.setDisplayName(initialInput);
             item.setItemMeta(meta);
