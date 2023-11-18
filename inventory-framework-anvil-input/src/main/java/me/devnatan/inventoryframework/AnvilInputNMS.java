@@ -15,6 +15,8 @@ import static me.devnatan.inventoryframework.runtime.thirdparty.ReflectionUtils.
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodType;
+import java.util.Objects;
+
 import me.devnatan.inventoryframework.runtime.thirdparty.InventoryUpdate;
 import me.devnatan.inventoryframework.runtime.thirdparty.ReflectionUtils;
 import org.bukkit.Material;
@@ -46,7 +48,10 @@ class AnvilInputNMS {
 
     static {
         try {
-            ANVIL = getNMSClass("world.inventory", "ContainerAnvil");
+            ANVIL = Objects.requireNonNull(
+				getNMSClass("world.inventory", "ContainerAnvil"),
+				"ContainerAnvil NMS class not found"
+			);
 
             final Class<?> playerInventoryClass = getNMSClass("world.entity.player", "PlayerInventory");
 
@@ -67,7 +72,8 @@ class AnvilInputNMS {
         } catch (Exception exception) {
             throw new RuntimeException(
                     "Unsupported version for Anvil Input feature: " + ReflectionUtils.getVersionInformation(),
-                    exception);
+                    exception
+			);
         }
     }
 
@@ -88,8 +94,9 @@ class AnvilInputNMS {
 
             inventory.setMaximumRepairCost(0);
 
-            final ItemStack item = new ItemStack(Material.PAPER, 1, (short) 0);
-            final ItemMeta meta = item.getItemMeta();
+            @SuppressWarnings("deprecation")
+			final ItemStack item = new ItemStack(Material.PAPER, 1, (short) 0);
+            final ItemMeta meta = Objects.requireNonNull(item.getItemMeta());
             meta.setDisplayName(initialInput);
             item.setItemMeta(meta);
             inventory.setItem(0, item);
@@ -111,8 +118,8 @@ class AnvilInputNMS {
                 ADD_CONTAINER_SLOT_LISTENER.invoke(anvilContainer, player);
             }
             return inventory;
-        } catch (Throwable e) {
-            throw new RuntimeException(e);
+        } catch (Throwable throwable) {
+            throw new RuntimeException("Something went wrong while opening Anvil Input NMS inventory.", throwable);
         }
     }
 }
