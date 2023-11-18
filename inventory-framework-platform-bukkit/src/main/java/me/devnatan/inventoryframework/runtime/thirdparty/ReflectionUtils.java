@@ -193,11 +193,20 @@ public final class ReflectionUtils {
             connection =
                     lookup.findGetter(entityPlayer, v(20, "c").v(17, "b").orElse("playerConnection"), playerConnection);
             getHandle = lookup.findVirtual(craftPlayer, "getHandle", MethodType.methodType(entityPlayer));
-            sendPacket = lookup.findVirtual(
+
+			final VersionHandler<String> methodVersion;
+
+			// MC 1.20.2 obfuscated sendPacket is "b"
+			if (supportsMC1202())
+				methodVersion = v(20, "b");
+			else
+				methodVersion = v(18, "a");
+
+			sendPacket = lookup.findVirtual(
                     playerConnection,
-                    v(18, "a").orElse("sendPacket"),
+					methodVersion.orElse("sendPacket"),
                     MethodType.methodType(void.class, getNMSClass("network.protocol", "Packet")));
-        } catch (NoSuchMethodException | NoSuchFieldException | IllegalAccessException ex) {
+		} catch (NoSuchMethodException | NoSuchFieldException | IllegalAccessException ex) {
             ex.printStackTrace();
         }
 
@@ -205,6 +214,10 @@ public final class ReflectionUtils {
         SEND_PACKET = sendPacket;
         GET_HANDLE = getHandle;
     }
+
+	public static boolean supportsMC1202() {
+		return supports(20) && PATCH_NUMBER >= 2;
+	}
 
     private ReflectionUtils() {}
 
