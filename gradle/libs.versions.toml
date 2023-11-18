@@ -8,6 +8,7 @@ adventure-api = "4.14.0"
 kotlin = "1.9.10"
 plugin-shadowjar = "8.1.1"
 plugin-spotless = "6.12.0"
+plugin-bukkit = "0.6.0"
 
 [libraries.spigot]
 module = "org.spigotmc:spigot-api"
@@ -45,3 +46,4 @@ version.ref = "adventure-api"
 shadowjar = { id = "com.github.johnrengelman.shadow", version.ref = "plugin-shadowjar" }
 spotless = { id = "com.diffplug.spotless", version.ref = "plugin-spotless" }
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+bukkit = { id = "net.minecrell.plugin-yml.bukkit", version.ref = "plugin-bukkit" }
