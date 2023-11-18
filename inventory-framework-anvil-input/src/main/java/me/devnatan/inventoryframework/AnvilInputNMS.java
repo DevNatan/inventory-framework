@@ -61,7 +61,10 @@ class AnvilInputNMS {
                     setField(ENTITY_PLAYER, containerPlayer, "activeContainer", "bR", "containerMenu");
             GET_PLAYER_NEXT_CONTAINER_COUNTER =
                     getMethod(ENTITY_PLAYER, "nextContainerCounter", MethodType.methodType(int.class));
-            GET_PLAYER_INVENTORY = getMethod(ENTITY_PLAYER, "fN", MethodType.methodType(playerInventoryClass));
+
+            GET_PLAYER_INVENTORY =
+                    getMethod(ENTITY_PLAYER, "fN", MethodType.methodType(playerInventoryClass), false, "fR");
+
             CONTAINER_WINDOW_ID = setField(CONTAINER, int.class, "windowId", "containerId", "j");
             ADD_CONTAINER_SLOT_LISTENER = getMethod(
                     CONTAINER, "a", MethodType.methodType(void.class, getNMSClass("world.inventory.ICrafting")));
