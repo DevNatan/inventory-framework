@@ -35,13 +35,6 @@ shadowJar {
     }
 }
 
-processResources {
-    from(sourceSets.main.resources.srcDirs) {
-        duplicatesStrategy DuplicatesStrategy.INCLUDE
-        filter ReplaceTokens, tokens: [version: version]
-    }
-}
-
 bukkit {
     main = "me.devnatan.inventoryframework.runtime.InventoryFramework"
     name = "InventoryFramework"
