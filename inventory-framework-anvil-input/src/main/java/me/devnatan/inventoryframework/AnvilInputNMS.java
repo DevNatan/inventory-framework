@@ -56,9 +56,12 @@ class AnvilInputNMS {
             CONTAINER_CHECK_REACHABLE = setFieldHandle(CONTAINER, boolean.class, "checkReachable");
 
             final Class<?> containerPlayer = getNMSClass("world.inventory", "ContainerPlayer");
-            PLAYER_DEFAULT_CONTAINER = getField(ENTITY_PLAYER, containerPlayer, "inventoryMenu", "bQ");
-            SET_PLAYER_ACTIVE_CONTAINER =
-                    setField(ENTITY_PLAYER, containerPlayer, "activeContainer", "bR", "containerMenu");
+            PLAYER_DEFAULT_CONTAINER = getField(ENTITY_PLAYER, containerPlayer, "inventoryMenu", "bQ", "bR");
+
+            final String activeContainerObfuscatedName = ReflectionUtils.supportsMC1202() ? "bS" : "bR";
+            SET_PLAYER_ACTIVE_CONTAINER = setField(
+                    ENTITY_PLAYER, containerPlayer, "activeContainer", "containerMenu", activeContainerObfuscatedName);
+
             GET_PLAYER_NEXT_CONTAINER_COUNTER =
                     getMethod(ENTITY_PLAYER, "nextContainerCounter", MethodType.methodType(int.class));
 
