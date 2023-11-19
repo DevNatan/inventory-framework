@@ -135,4 +135,14 @@ public class CloseContext extends PlatformConfinedContext implements IFCloseCont
     public final void updateState(long id, Object value) {
         getParent().updateState(id, value);
     }
+
+    @Override
+    public String toString() {
+        return "CloseContext{" + "subject="
+                + subject + ", player="
+                + player + ", parent="
+                + parent + ", cancelled="
+                + cancelled + "} "
+                + super.toString();
+    }
 }
