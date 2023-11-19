@@ -463,6 +463,26 @@ public abstract class PlatformView<
     public void onResume(@NotNull TContext origin, @NotNull TContext target) {}
 
     /**
+     * Called when a {@link Viewer viewer} is added to a context.
+     * <p>
+     * <b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     * @param context The context.
+     */
+    @ApiStatus.Experimental
+    public void onViewerAdded(@NotNull TContext context) {}
+
+    /**
+     * Called when a {@link Viewer viewer} is removed from a context.
+     * <p>
+     * <b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     * @param context The context.
+     */
+    @ApiStatus.Experimental
+    public void onViewerRemoved(@NotNull TContext context) {}
+
+    /**
      * Called internally before the first initialization.
      * <p>
      * Use it to register pipeline interceptors.
