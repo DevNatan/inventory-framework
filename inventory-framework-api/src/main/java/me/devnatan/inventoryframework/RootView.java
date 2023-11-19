@@ -9,6 +9,7 @@ import me.devnatan.inventoryframework.internal.Job;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.UnmodifiableView;
 
 public interface RootView extends VirtualView {
 
@@ -29,6 +30,7 @@ public interface RootView extends VirtualView {
      * @return An unmodifiable set of all currently active contexts in this view.
      */
     @ApiStatus.Internal
+    @UnmodifiableView
     Set<IFContext> getInternalContexts();
 
     /**

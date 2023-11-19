@@ -333,7 +333,7 @@ public abstract class PlatformView<
         if (target == null) return;
 
         if (target.getViewers().isEmpty()) {
-			target.setActive(false);
+            target.setActive(false);
             removeContext(target);
         }
     }
