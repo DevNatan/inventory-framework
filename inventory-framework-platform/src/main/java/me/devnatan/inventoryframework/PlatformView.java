@@ -22,6 +22,7 @@ import me.devnatan.inventoryframework.context.PlatformRenderContext;
 import me.devnatan.inventoryframework.internal.ElementFactory;
 import me.devnatan.inventoryframework.internal.PlatformUtils;
 import me.devnatan.inventoryframework.pipeline.AvailableSlotInterceptor;
+import me.devnatan.inventoryframework.pipeline.ContextInvalidationOnCloseInterceptor;
 import me.devnatan.inventoryframework.pipeline.FirstRenderInterceptor;
 import me.devnatan.inventoryframework.pipeline.LayoutRenderInterceptor;
 import me.devnatan.inventoryframework.pipeline.LayoutResolutionInterceptor;
@@ -487,6 +488,7 @@ public abstract class PlatformView<
         pipeline.intercept(StandardPipelinePhases.UPDATE, new UpdateInterceptor());
         pipeline.intercept(StandardPipelinePhases.CLOSE, new PlatformCloseInterceptor());
         pipeline.intercept(StandardPipelinePhases.CLOSE, new ScheduledUpdateAfterCloseInterceptor());
+        pipeline.intercept(StandardPipelinePhases.CLOSE, new ContextInvalidationOnCloseInterceptor());
         pipeline.intercept(StandardPipelinePhases.CLICK, new ViewerLastInteractionTrackerInterceptor());
         registerPlatformInterceptors();
         pipeline.execute(StandardPipelinePhases.INIT, this);
