@@ -394,6 +394,9 @@ public abstract class PlatformView<
      *
      * <p>It is not possible to manipulate the inventory in this handler, if it happens an exception
      * will be thrown.
+	 * <p>
+	 * <b>This method is called once in Shared Contexts. To know when a viewer is added/removed from
+	 * this kind of context use {@link #onViewerAdded(IFContext, Object)}/{@link #onViewerRemoved(IFContext)}</b>.
      *
      * @param open The player view context.
      */
