@@ -21,7 +21,10 @@ public final class ScheduledUpdateAfterRenderInterceptor implements PipelineInte
 
         final Job updateJob = root.getElementFactory()
                 .scheduleJobInterval(root, updateIntervalInTicks, () -> root.getInternalContexts()
-                        .forEach(IFContext::update));
+					.stream()
+					.filter(IFContext::isActive)
+					.forEach(IFContext::update)
+				);
         updateJob.start();
         root.setScheduledUpdateJob(updateJob);
     }
