@@ -1,5 +1,14 @@
 # Changelog
 
+# 3.0.3 (11-19-2023)
+
+* Minecraft 1.20.2 support (#514)
+* Close context cancellation not working (#515)
+* Decouple state access from PlatformView to allow State Management API usage anywhere (#496)
+* ViewConfig `with(Modifier)` is now `use(Modifier)` (#513)
+* Bump junit from 5.10.0 to 5.10.1 (#502)
+* Bump org.jetbrains:annotations from 24.0.1 to 24.1.0 (#512)
+
 # 3.0.2 (10-05-2023)
 
 * Kotlin stdlib from inventory-framework-platform-paper module runtime dependencies (#495)
