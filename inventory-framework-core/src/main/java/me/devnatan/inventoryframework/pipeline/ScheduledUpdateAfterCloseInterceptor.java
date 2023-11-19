@@ -15,10 +15,7 @@ public final class ScheduledUpdateAfterCloseInterceptor implements PipelineInter
         final RootView root = context.getRoot();
         if (root.getScheduledUpdateJob() == null
                 || !root.getScheduledUpdateJob().isStarted()) return;
-
-        // context is cancelled, invalidated or all
         if (context.isCancelled() || !context.isActive()) return;
-
         if (root.getInternalContexts().stream().noneMatch(IFContext::isActive)) return;
 
         root.getScheduledUpdateJob().cancel();
