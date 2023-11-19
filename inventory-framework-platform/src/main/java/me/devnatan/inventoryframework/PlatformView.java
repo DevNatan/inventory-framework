@@ -386,7 +386,7 @@ public abstract class PlatformView<
     public void onInit(@NotNull ViewConfigBuilder config) {}
 
     /**
-     * Called before the inventory is opened to the player.
+     * Called before a context is rendered, used to set up it.
      *
      * <p>This handler is often called "pre-rendering" because it is possible to set the title and
      * size of the inventory and also cancel the opening of the View without even doing any handling
@@ -398,7 +398,7 @@ public abstract class PlatformView<
 	 * <b>This method is called once in Shared Contexts. To know when a viewer is added/removed from
 	 * this kind of context use {@link #onViewerAdded(IFContext, Object)}/{@link #onViewerRemoved(IFContext)}</b>.
      *
-     * @param open The player view context.
+     * @param open The open context.
      */
     @ApiStatus.OverrideOnly
     public void onOpen(@NotNull TOpenContext open) {}
