@@ -470,7 +470,7 @@ public abstract class PlatformView<
      * @param context The context.
      */
     @ApiStatus.Experimental
-    public void onViewerAdded(@NotNull TContext context) {}
+    public void onViewerAdded(@NotNull TContext context, Object initialData) {}
 
     /**
      * Called when a {@link Viewer viewer} is removed from a context.
