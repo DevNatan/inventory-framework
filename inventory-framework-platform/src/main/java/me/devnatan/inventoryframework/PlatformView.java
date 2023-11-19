@@ -333,7 +333,7 @@ public abstract class PlatformView<
         if (target == null) return;
 
         if (target.getViewers().isEmpty()) {
-            // TODO Disable context (setActive(false)) if viewer is transitioning
+			target.setActive(false);
             removeContext(target);
         }
     }
