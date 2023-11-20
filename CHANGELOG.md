@@ -1,5 +1,12 @@
 # Changelog
 
+# 3.0.4 (11-20-2023)
+
+* Scheduled update now checks if a context is active before updating it (#517)
+* Now Anvil Input feature ingredient display name is updated when state value changes (#494)
+* Modify ComponentBuilder's `updateOnStateChange` to prohibit no-parameter usage (#520)
+* Components now use unified update mechanism in `show()` and `hide()` to ensure consistency and behavior in relation to other components (#491)
+
 # 3.0.3 (11-19-2023)
 
 * Minecraft 1.20.2 support (#514)
