@@ -102,6 +102,7 @@ public interface ComponentBuilder<S extends ComponentBuilder<S, C>, C extends IF
      * @param states The state to listen changes to.
      * @return This component builder.
      */
+	// TODO Add first parameter to this overload to not allow updateOnStateChange() (no parameters)
     S updateOnStateChange(State<?>... states);
 
     /**
