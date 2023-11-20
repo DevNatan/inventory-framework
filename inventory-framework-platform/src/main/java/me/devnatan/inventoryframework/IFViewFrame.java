@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+
+import kotlin.NotImplementedError;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
 import me.devnatan.inventoryframework.pipeline.PipelinePhase;
 import org.jetbrains.annotations.ApiStatus;
@@ -164,6 +166,20 @@ abstract class IFViewFrame<S extends IFViewFrame<S, V>, V extends PlatformView<S
         viewers.forEach(Viewer::close);
         view.open(viewers, initialData);
     }
+
+	/**
+	 * Creates a shared context for later use.
+	 * <p>
+	 * TODO Needs a very descriptive documentation about how this really works
+	 *      also explain that the context created by this method never invalidates.
+	 *
+	 * @param viewClass The target view to be later opened.
+	 * @see <a href="https://github.com/DevNatan/inventory-framework/wiki/Shared-Contexts">Shared Contexts on Wiki</a>
+	 */
+	@ApiStatus.Experimental
+	public final UUID createIndefiniteContext(@NotNull Class<? extends V> viewClass) {
+		throw new NotImplementedError();
+	}
 
     void addViewer(@NotNull Viewer viewer) {
         synchronized (viewerById) {
