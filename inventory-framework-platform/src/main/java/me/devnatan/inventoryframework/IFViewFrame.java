@@ -148,14 +148,10 @@ abstract class IFViewFrame<S extends IFViewFrame<S, V>, V extends PlatformView<S
      * <p>
      * These players will see the same inventory and share the same context.
      *
-     * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
-     * such API may be changed or may be removed completely in any further release. </i></b>
-     *
      * @param viewClass   The target view to be opened.
      * @param players     The players that the view will be open to.
      * @param initialData The initial data.
      */
-    @ApiStatus.Experimental
     protected final void internalOpen(
             @NotNull Class<? extends V> viewClass, @NotNull Collection<?> players, Object initialData) {
         final V view = getRegisteredViewByType(viewClass);
