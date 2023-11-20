@@ -27,7 +27,7 @@ public final class ItemCloseOnClickInterceptor implements PipelineInterceptor<Vi
 
         final ItemComponent item = (ItemComponent) component;
         if (item.isCloseOnClick()) {
-            context.closeForEveryone();
+            context.closeForPlayer();
             pipeline.finish();
         }
     }
