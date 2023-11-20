@@ -99,11 +99,11 @@ public interface ComponentBuilder<S extends ComponentBuilder<S, C>, C extends IF
      * <p>
      * Everytime the value ANY of the given state updates, this component will be updated as well.
      *
-     * @param states The state to listen changes to.
+     * @param state The state to listen changes to.
+     * @param states Other states to listen changes to.
      * @return This component builder.
      */
-    // TODO Add first parameter to this overload to not allow updateOnStateChange() (no parameters)
-    S updateOnStateChange(State<?>... states);
+    S updateOnStateChange(@NotNull State<?> state, State<?>... states);
 
     /**
      * Returns a copy of this component builder.

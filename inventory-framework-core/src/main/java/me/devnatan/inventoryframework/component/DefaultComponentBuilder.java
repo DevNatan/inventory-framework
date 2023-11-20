@@ -88,8 +88,9 @@ abstract class DefaultComponentBuilder<S extends ComponentBuilder<S, C>, C exten
     }
 
     @Override
-    public S updateOnStateChange(State<?>... states) {
+    public S updateOnStateChange(@NotNull State<?> state, State<?>... states) {
         if (watchingStates == null) watchingStates = new LinkedHashSet<>();
+        watchingStates.add(state);
         watchingStates.addAll(Arrays.asList(states));
         return (S) this;
     }
