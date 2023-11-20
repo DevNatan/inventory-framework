@@ -243,7 +243,7 @@ public class ItemComponent implements Component, InteractionHandler {
     @Override
     public void hide() {
         setVisible(false);
-		update();
+        update();
     }
 
     @Override
