@@ -88,13 +88,13 @@ public final class AnvilInputFeature implements Feature<AnvilInputConfig, Void, 
         return (AnvilInput) optional.get();
     }
 
-	private void updatePhysicalResult(String newText, ViewContainer container) {
-		final Inventory inventory = ((BukkitViewContainer) container).getInventory();
-		final ItemStack ingredientItem = requireNonNull(inventory.getItem(INGREDIENT_SLOT));
-		final ItemMeta ingredientMeta = requireNonNull(ingredientItem.getItemMeta());
-		ingredientMeta.setDisplayName(newText);
-		ingredientItem.setItemMeta(ingredientMeta);
-	}
+    private void updatePhysicalResult(String newText, ViewContainer container) {
+        final Inventory inventory = ((BukkitViewContainer) container).getInventory();
+        final ItemStack ingredientItem = requireNonNull(inventory.getItem(INGREDIENT_SLOT));
+        final ItemMeta ingredientMeta = requireNonNull(ingredientItem.getItemMeta());
+        ingredientMeta.setDisplayName(newText);
+        ingredientItem.setItemMeta(ingredientMeta);
+    }
 
     private void handleClick(PlatformView view) {
         view.getPipeline().intercept(StandardPipelinePhases.CLICK, (pipeline, subject) -> {
@@ -136,24 +136,29 @@ public final class AnvilInputFeature implements Feature<AnvilInputConfig, Void, 
 
             // Forces internal state initialization
             context.getInternalStateValue(anvilInput);
-			context.watchState(anvilInput.internalId(), new StateWatcher() {
-				@Override
-				public void stateRegistered(@NotNull State<?> state, Object caller) {
-				}
+            context.watchState(anvilInput.internalId(), new StateWatcher() {
+                @Override
+                public void stateRegistered(@NotNull State<?> state, Object caller) {}
 
-				@Override
-				public void stateUnregistered(@NotNull State<?> state, Object caller) {
-				}
+                @Override
+                public void stateUnregistered(@NotNull State<?> state, Object caller) {}
 
-				@Override
-				public void stateValueGet(@NotNull State<?> state, @NotNull StateValueHost host, @NotNull StateValue internalValue, Object rawValue) {
-				}
+                @Override
+                public void stateValueGet(
+                        @NotNull State<?> state,
+                        @NotNull StateValueHost host,
+                        @NotNull StateValue internalValue,
+                        Object rawValue) {}
 
-				@Override
-				public void stateValueSet(@NotNull StateValueHost host, @NotNull StateValue value, Object rawOldValue, Object rawNewValue) {
-					updatePhysicalResult((String) rawNewValue, ((IFRenderContext) host).getContainer());
-				}
-			});
+                @Override
+                public void stateValueSet(
+                        @NotNull StateValueHost host,
+                        @NotNull StateValue value,
+                        Object rawOldValue,
+                        Object rawNewValue) {
+                    updatePhysicalResult((String) rawNewValue, ((IFRenderContext) host).getContainer());
+                }
+            });
 
             final String globalInitialInput = config.initialInput;
             final String scopedInitialInput = anvilInput.get(context);
