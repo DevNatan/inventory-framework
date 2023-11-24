@@ -18,7 +18,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class RenderContext extends PlatformRenderContext<BukkitItemComponentBuilder, Context> implements Context {
+public final class RenderContext extends PlatformRenderContext<BukkitItemComponentBuilder, Context> implements Context {
 
     private final Player player;
 
@@ -40,18 +40,18 @@ public class RenderContext extends PlatformRenderContext<BukkitItemComponentBuil
     }
 
     @Override
-    public final @NotNull View getRoot() {
+    public @NotNull View getRoot() {
         return (View) root;
     }
 
     // TODO documentation
-    public final @NotNull Player getPlayer() {
+    public @NotNull Player getPlayer() {
         tryThrowDoNotWorkWithSharedContext("getAllPlayers");
         return player;
     }
 
     @Override
-    public final List<Player> getAllPlayers() {
+    public List<Player> getAllPlayers() {
         return getViewers().stream()
                 .map(viewer -> (BukkitViewer) viewer)
                 .map(BukkitViewer::getPlayer)
