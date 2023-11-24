@@ -90,25 +90,6 @@ public interface Component extends VirtualView {
     void update();
 
     /**
-     * Checks if two components area intersects with each other.
-     *
-     * @param component The component A.
-     * @param other     The component B.
-     * @return If component B area conflicts with area of component A.
-     */
-    static boolean intersects(@NotNull Component component, @NotNull Component other) {
-        if (component instanceof ComponentComposition) return intersects(other, component);
-
-        if (other instanceof ComponentComposition) {
-            for (final Component otherChildren : (ComponentComposition) other) {
-                if (otherChildren.intersects(component)) return true;
-            }
-        }
-
-        return other.isContainedWithin(component.getPosition());
-    }
-
-    /**
      * Returns the reference assigned to this component.
      * <p>
      * <b><i> This API is experimental and is not subject to the general compatibility guarantees
