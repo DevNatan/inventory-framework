@@ -40,12 +40,11 @@ public interface IFContext extends VirtualView, StateValueHost, ComponentContain
     ViewConfig getConfig();
 
     /**
-     * An unmodifiable copy of all viewers that are tied to this context.
+     * An copy of all viewers that are tied to this context.
      *
      * @return All view of all viewers.
      */
     @NotNull
-    @UnmodifiableView
     List<Viewer> getViewers();
 
     /**
