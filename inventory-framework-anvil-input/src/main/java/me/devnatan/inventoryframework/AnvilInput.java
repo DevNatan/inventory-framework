@@ -18,7 +18,7 @@ public final class AnvilInput extends BaseMutableState<String> implements ViewCo
 
     @Override
     public void apply(@NotNull ViewConfigBuilder config, @NotNull IFContext context) {
-        // do nothing - config modifier is only used for reference here
+        config.type(ViewType.ANVIL);
     }
 
     /**
