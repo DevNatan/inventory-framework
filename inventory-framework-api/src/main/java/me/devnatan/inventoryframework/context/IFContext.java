@@ -132,52 +132,20 @@ public interface IFContext extends VirtualView, StateValueHost, ComponentContain
     @ApiStatus.Internal
     void removeComponent(@NotNull Component component);
 
-    /**
-     * Renders a component in this context.
-     *
-     * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
-     * this library. No compatibility guarantees are provided.</i></b>
-     *
-     * @param component The component to be rendered.
-     */
-    @ApiStatus.Internal
-    void renderComponent(@NotNull Component component);
-
-    /**
-     * Updates a component in this context.
-     *
-     * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
-     * this library. No compatibility guarantees are provided.</i></b>
-     *
-     * @param component The component to be updated.
-     * @param force If update should be forced.
-     */
-    @ApiStatus.Internal
-    void updateComponent(@NotNull Component component, boolean force);
-
-    /**
-     * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
-     * this library. No compatibility guarantees are provided.</i></b>
-     *
-     * @param component The component to be cleared.
-     */
-    @ApiStatus.Internal
-    void clearComponent(@NotNull Component component);
-
-    /**
-     * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
-     * this library. No compatibility guarantees are provided.</i></b>
-     *
-     * @param component The clicked component.
-     */
-    @ApiStatus.Internal
-    void performClickInComponent(
-            @NotNull Component component,
-            @NotNull Viewer viewer,
-            @NotNull ViewContainer clickedContainer,
-            Object platformEvent,
-            int clickedSlot,
-            boolean combined);
+	/**
+	 * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
+	 * this library. No compatibility guarantees are provided.</i></b>
+	 *
+	 * @param component The clicked component.
+	 */
+	@ApiStatus.Internal
+	void performClickInComponent(
+		@NotNull Component component,
+		@NotNull Viewer viewer,
+		@NotNull ViewContainer clickedContainer,
+		Object platformEvent,
+		int clickedSlot,
+		boolean combined);
 
     /**
      * Updates all components for all viewers in this context.
