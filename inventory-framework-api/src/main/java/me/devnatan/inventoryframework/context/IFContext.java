@@ -13,7 +13,6 @@ import me.devnatan.inventoryframework.component.ComponentContainer;
 import me.devnatan.inventoryframework.state.StateValueHost;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.UnmodifiableView;
 
 public interface IFContext extends VirtualView, StateValueHost, ComponentContainer {
 

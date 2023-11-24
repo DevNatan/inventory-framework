@@ -21,14 +21,14 @@ public interface ItemComponentBuilder<SELF, ITEM> extends ComponentBuilder<SELF>
      */
     SELF withSlot(int row, int column);
 
-	/**
-	 * Sets the item that will be rendered in where this component is placed on.
-	 * The rendered item is always static. For dynamic rendering use
-	 *
-	 * @param item The item.
-	 * @return This component builder.
-	 */
-	SELF withItem(ITEM item);
+    /**
+     * Sets the item that will be rendered in where this component is placed on.
+     * The rendered item is always static. For dynamic rendering use
+     *
+     * @param item The item.
+     * @return This component builder.
+     */
+    SELF withItem(ITEM item);
 
     @ApiStatus.Internal
     boolean isContainedWithin(int position);

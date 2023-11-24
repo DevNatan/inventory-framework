@@ -2,11 +2,19 @@ package me.devnatan.inventoryframework.context;
 
 import me.devnatan.inventoryframework.*;
 import me.devnatan.inventoryframework.component.Component;
+import me.devnatan.inventoryframework.component.ComponentComposition;
+import me.devnatan.inventoryframework.component.ComponentContainer;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.UnmodifiableView;
 
-public abstract class PlatformContext extends AbstractIFContext {
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
+
+public abstract class PlatformContext extends AbstractIFContext implements ComponentContainer {
 
     private boolean endless;
     private boolean active = true;
@@ -108,7 +116,7 @@ public abstract class PlatformContext extends AbstractIFContext {
 	}
 	// endregion
 
-	// region Components Rendering
+	// region Internal Components Rendering
 	/**
 	 * Renders a component in this context.
 	 *
@@ -118,7 +126,25 @@ public abstract class PlatformContext extends AbstractIFContext {
 	 * @param component The component to be rendered.
 	 */
 	@ApiStatus.Internal
-	public final void renderComponent(@NotNull Component component) {}
+	public final void renderComponent(@NotNull Component component) {
+		if (!component.shouldRender(this)) {
+			component.setVisible(false);
+
+			final Optional<Component> overlapOptional = getOverlappingComponentToRender(this, component);
+			if (overlapOptional.isPresent()) {
+				Component overlap = overlapOptional.get();
+				renderComponent(overlap);
+
+				if (overlap.isVisible()) return;
+			}
+
+			component.cleared(this);
+			clearComponent(component);
+			return;
+		}
+
+		component.render(createComponentRenderContext(component, false));
+	}
 
 	/**
 	 * Updates a component in this context.
@@ -128,9 +154,12 @@ public abstract class PlatformContext extends AbstractIFContext {
 	 *
 	 * @param component The component to be updated.
 	 * @param force If update should be forced.
+	 * @param reason Reason why the component was updated.
 	 */
 	@ApiStatus.Internal
-	public final void updateComponent(@NotNull Component component, boolean force) {}
+	public final void updateComponent(Component component, boolean force, UpdateReason reason) {
+		component.updated(createComponentUpdateContext(component, force, reason));
+	}
 
 	/**
 	 * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
@@ -140,6 +169,66 @@ public abstract class PlatformContext extends AbstractIFContext {
 	 */
 	@ApiStatus.Internal
 	public final void clearComponent(@NotNull Component component) {}
+
+	/**
+	 * Creates a IFComponentRenderContext for the current platform.
+	 *
+	 * @param component The component.
+	 * @param force If the context was created due to usage of forceRender().
+	 * @return A new IFComponentRenderContext instance.
+	 */
+	@ApiStatus.Internal
+	protected abstract IFComponentRenderContext createComponentRenderContext(
+		Component component,
+		boolean force
+	);
+
+	/**
+	 * Creates a IFComponentUpdateContext for the current platform.
+	 *
+	 * @param component The component.
+	 * @param force If the context was created due to usage of forceUpdate().
+	 * @param reason Reason why this component was updated.
+	 * @return A new IFComponentUpdateContext instance.
+	 */
+	@ApiStatus.Internal
+	protected abstract IFComponentUpdateContext createComponentUpdateContext(
+		Component component,
+		boolean force,
+		UpdateReason reason
+	);
+
+	private Optional<Component> getOverlappingComponentToRender(ComponentContainer container, Component subject) {
+		// TODO Support recursive overlapping (more than two components overlapping each other)
+		for (final Component child : container.getInternalComponents()) {
+			if (!child.isVisible()) continue;
+			if (child.getKey().equals(subject.getKey())) continue;
+			if (child instanceof ComponentComposition) {
+				// This prevents from child being compared with its own root that would cause an
+				// infinite rendering loop causing the root being re-rendered entirely, thus the
+				// child, because child always intersects with its root since it is inside it
+				if (subject.getRoot() instanceof Component
+					&& child.getKey().equals(((Component) subject.getRoot()).getKey())) {
+					continue;
+				}
+
+				// We skip ComponentComposition here because is expected to ComponentComposition,
+				// on its render handler use #renderComponent to render its children so each
+				// child will have its own overlapping checks
+				for (final Component deepChild : ((ComponentComposition) child).getInternalComponents()) {
+					if (!deepChild.isVisible()) continue;
+					if (deepChild.intersects(subject)) return Optional.of(deepChild);
+				}
+
+				// Ignore ComponentComposition, we want to check intersections only with children
+				continue;
+			}
+
+			if (child.intersects(subject)) return Optional.of(child);
+		}
+
+		return Optional.empty();
+	}
 	// endregion
 
 	@Override

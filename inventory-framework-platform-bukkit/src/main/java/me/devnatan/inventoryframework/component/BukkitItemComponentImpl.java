@@ -9,6 +9,7 @@ import me.devnatan.inventoryframework.context.IFComponentUpdateContext;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.context.IFSlotClickContext;
+import me.devnatan.inventoryframework.context.PlatformContext;
 import org.jetbrains.annotations.NotNull;
 
 // TODO Make this render abstract and remove `getResult` (Object) from IFSlotRenderContext
@@ -113,7 +114,7 @@ public final class BukkitItemComponentImpl extends BukkitPlatformComponent<Bukki
             if (context.isCancelled()) return;
         }
 
-        context.getRoot().renderComponent(this);
+		((PlatformContext) context.getRoot()).renderComponent(this);
     }
 
     @Override

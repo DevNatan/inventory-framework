@@ -8,7 +8,6 @@ import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.UnsupportedOperationInSharedContextException;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.IFContext;
-import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.state.State;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
