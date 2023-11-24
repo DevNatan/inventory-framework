@@ -52,6 +52,7 @@ import org.jetbrains.annotations.NotNull;
 public abstract class PlatformView<
                 FRAMEWORK extends IFViewFrame<?, ?>,
 				VIEWER,
+				ITEM,
                 ITEM_BUILDER extends ItemComponentBuilder<ITEM_BUILDER>,
                 PLATFORM_CONTEXT extends IFContext,
                 OPEN_CONTEXT extends IFOpenContext,
