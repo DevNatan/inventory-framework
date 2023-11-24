@@ -164,6 +164,17 @@ abstract class IFViewFrame<S extends IFViewFrame<S, V>, V extends PlatformView<S
     }
 
 	/**
+	 * Attaches a viewer to an already active context.
+	 *
+	 * @param contextId Context id to attach into.
+	 * @param viewer The viewer to attach into the specified context.
+	 */
+	@ApiStatus.Experimental
+	protected final void internalEnterInContext(UUID contextId, Viewer viewer) {
+		throw new NotImplementedError();
+	}
+
+	/**
 	 * Creates a shared context for later use.
 	 * <p>
 	 * TODO Needs a very descriptive documentation about how this really works
