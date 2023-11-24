@@ -36,8 +36,8 @@ abstract class AbstractIFContext extends DefaultStateValueHost implements IFCont
     }
 
     @Override
-    public final @NotNull @Unmodifiable List<Viewer> getViewers() {
-        return Collections.unmodifiableList(new ArrayList<>(getIndexedViewers().values()));
+    public final @NotNull List<Viewer> getViewers() {
+        return new ArrayList<>(getIndexedViewers().values());
     }
 
     @Override
@@ -126,12 +126,15 @@ abstract class AbstractIFContext extends DefaultStateValueHost implements IFCont
     @Override
     public void clearComponent(@NotNull Component component) {}
 
+	// region Components Rendering
     private IFComponentRenderContext createComponentRenderContext(Component component, boolean force) {
         if (!(this instanceof IFRenderContext))
             throw new InventoryFrameworkException("Slot render context cannot be created from non-render parent");
 
         final IFRenderContext rootRenderContext = (IFRenderContext) this;
-        final IFComponentRenderContext componentRenderContext = null;
+        final IFComponentRenderContext componentRenderContext = ((RootView) getRoot())
+			.getElementFactory()
+			.createSlotRenderContext()
         return componentRenderContext;
     }
 
@@ -178,6 +181,7 @@ abstract class AbstractIFContext extends DefaultStateValueHost implements IFCont
 
         return Optional.empty();
     }
+	// endregion
 
     @Override
     public void updateComponent(@NotNull Component component, boolean force) {
