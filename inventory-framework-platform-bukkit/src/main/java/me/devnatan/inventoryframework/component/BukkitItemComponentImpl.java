@@ -61,7 +61,7 @@ public final class BukkitItemComponentImpl extends BukkitPlatformComponent<Bukki
     }
 
     @Override
-    public void rendered(@NotNull IFComponentRenderContext context) {
+    public void render(@NotNull IFComponentRenderContext context) {
         if (getRenderHandler() != null) {
             final int initialSlot = getPosition();
             getRenderHandler().accept(context);

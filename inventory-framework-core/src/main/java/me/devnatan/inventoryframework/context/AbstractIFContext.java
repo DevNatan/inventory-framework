@@ -120,7 +120,7 @@ abstract class AbstractIFContext extends DefaultStateValueHost implements IFCont
             return;
         }
 
-        component.rendered(createSlotRenderContext(component, false));
+        component.render(createSlotRenderContext(component, false));
     }
 
     @Override

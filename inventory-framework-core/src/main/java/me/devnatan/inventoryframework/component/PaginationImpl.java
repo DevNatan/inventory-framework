@@ -375,7 +375,7 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
     }
 
     @Override
-    public void rendered(@NotNull IFComponentRenderContext context) {
+    public void render(@NotNull IFComponentRenderContext context) {
         final IFRenderContext root = context.getRoot();
         if (!initialized || pageWasChanged) {
             if (!initialized) updatePageSize(root);

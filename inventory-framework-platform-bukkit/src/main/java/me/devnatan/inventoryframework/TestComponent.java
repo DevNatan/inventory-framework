@@ -21,7 +21,7 @@ public class TestComponent extends BukkitPlatformComponent<TestComponent.Builder
 	}
 
 	@Override
-	public void rendered(@NotNull IFComponentRenderContext context) {
+	public void render(@NotNull IFComponentRenderContext context) {
 
 	}
 

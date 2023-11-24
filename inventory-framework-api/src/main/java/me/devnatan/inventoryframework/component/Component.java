@@ -130,7 +130,7 @@ public interface Component extends VirtualView {
      *
      * @param context The context that this component will be rendered on.
      */
-    void rendered(@NotNull IFComponentRenderContext context);
+    void render(@NotNull IFComponentRenderContext context);
 
     /**
      * Called when this component is updated in the given context.
