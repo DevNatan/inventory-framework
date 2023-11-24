@@ -114,11 +114,11 @@ public final class BukkitItemComponentImpl extends BukkitPlatformComponent<Bukki
             if (context.isCancelled()) return;
         }
 
-		((PlatformContext) context.getRoot()).renderComponent(this);
+		context.getRoot().renderComponent(this);
     }
 
     @Override
-    public void cleared(@NotNull IFContext context) {
+    public void cleared(@NotNull IFRenderContext context) {
         ((IFRenderContext) context).getContainer().removeItem(getPosition());
     }
 

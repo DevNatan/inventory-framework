@@ -6,6 +6,8 @@ import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.IFComponentRenderContext;
 import me.devnatan.inventoryframework.context.IFComponentUpdateContext;
 import me.devnatan.inventoryframework.context.IFContext;
+import me.devnatan.inventoryframework.context.IFRenderContext;
+import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.state.State;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -144,5 +146,12 @@ public interface Component extends VirtualView {
      *
      * @param context The context that this component will be cleared from.
      */
-    void cleared(@NotNull IFContext context);
+    void cleared(@NotNull IFRenderContext context);
+
+    /**
+     * Called when a viewer clicks in that component.
+     *
+     * @param context The click context.
+     */
+    void clicked(@NotNull IFSlotClickContext context);
 }

@@ -7,12 +7,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import me.devnatan.inventoryframework.InventoryFrameworkException;
 import me.devnatan.inventoryframework.PlatformView;
 import me.devnatan.inventoryframework.RootView;
+import me.devnatan.inventoryframework.UpdateReason;
 import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.ViewType;
@@ -65,7 +67,7 @@ public abstract class PlatformRenderContext<ITEM_BUILDER extends ItemComponentBu
         this.initialData = initialData;
     }
 
-    // region Slot Assignment Methods
+	// region Slot Assignment Methods
     /**
      * Creates a new item builder without a specified slot.
      * <p>
@@ -356,6 +358,64 @@ public abstract class PlatformRenderContext<ITEM_BUILDER extends ItemComponentBu
     public final void setRendered() {
         this.rendered = true;
     }
+
+	@Override
+	public final void renderComponent(@NotNull Component component) {
+		if (!component.shouldRender(this)) {
+			component.setVisible(false);
+
+			final Optional<Component> overlapOptional = getOverlappingComponentToRender(this, component);
+			if (overlapOptional.isPresent()) {
+				Component overlap = overlapOptional.get();
+				renderComponent(overlap);
+
+				if (overlap.isVisible()) return;
+			}
+
+			component.cleared(this);
+			clearComponent(component);
+			return;
+		}
+
+		component.render(createComponentRenderContext(component, false));
+	}
+
+	@Override
+	public final void updateComponent(Component component, boolean force, UpdateReason reason) {
+		component.updated(createComponentUpdateContext(component, force, reason));
+	}
+
+	@Override
+	public final void clearComponent(@NotNull Component component) {}
+
+	/**
+	 * Creates a IFComponentRenderContext for the current platform.
+	 *
+	 * @param component The component.
+	 * @param force If the context was created due to usage of forceRender().
+	 * @return A new IFComponentRenderContext instance.
+	 */
+	@ApiStatus.Internal
+	abstract IFComponentRenderContext createComponentRenderContext(
+		Component component,
+		boolean force
+	);
+
+	/**
+	 * Creates a IFComponentUpdateContext for the current platform.
+	 *
+	 * @param component The component.
+	 * @param force If the context was created due to usage of forceUpdate().
+	 * @param reason Reason why this component was updated.
+	 * @return A new IFComponentUpdateContext instance.
+	 */
+	@ApiStatus.Internal
+	abstract IFComponentUpdateContext createComponentUpdateContext(
+		Component component,
+		boolean force,
+		UpdateReason reason
+	);
+	// endregion
 
 	/**
 	 * Creates a new platform builder instance.

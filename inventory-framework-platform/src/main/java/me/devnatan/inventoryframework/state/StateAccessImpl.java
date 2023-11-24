@@ -40,7 +40,7 @@ public final class StateAccessImpl<
     @Override
     public <T> State<T> state(T initialValue) {
         final long id = State.next();
-        final StateValueFactory factory = (host, state) -> new ImmutableValue(state, initialValue);
+        final StateValueFactory factory = (host, state) -> new ImmutableValue(id, initialValue);
         final State<T> state = new BaseState<>(id, factory);
         stateRegistry.registerState(state, this);
 
@@ -50,7 +50,7 @@ public final class StateAccessImpl<
     @Override
     public final <T> MutableState<T> mutableState(T initialValue) {
         final long id = State.next();
-        final StateValueFactory factory = (host, state) -> new MutableValue(state, initialValue);
+        final StateValueFactory factory = (host, state) -> new MutableValue(id, initialValue);
         final MutableState<T> state = new MutableGenericStateImpl<>(id, factory);
         this.stateRegistry.registerState(state, this);
 
@@ -60,7 +60,7 @@ public final class StateAccessImpl<
     @Override
     public final MutableIntState mutableState(int initialValue) {
         final long id = State.next();
-        final StateValueFactory factory = (host, state) -> new MutableValue(state, initialValue);
+        final StateValueFactory factory = (host, state) -> new MutableValue(id, initialValue);
         final MutableIntState state = new MutableIntStateImpl(id, factory);
         this.stateRegistry.registerState(state, this);
 
@@ -72,7 +72,7 @@ public final class StateAccessImpl<
         final long id = State.next();
         @SuppressWarnings("unchecked")
         final StateValueFactory factory =
-                (host, state) -> new ComputedValue(state, () -> computation.apply((CONTEXT) host));
+                (host, state) -> new ComputedValue(id, () -> computation.apply((CONTEXT) host));
         final State<T> state = new BaseState<>(id, factory);
         this.stateRegistry.registerState(state, this);
 
@@ -82,7 +82,7 @@ public final class StateAccessImpl<
     @Override
     public final <T> State<T> computedState(@NotNull Supplier<T> computation) {
         final long id = State.next();
-        final StateValueFactory factory = (host, state) -> new ComputedValue(state, computation);
+        final StateValueFactory factory = (host, state) -> new ComputedValue(id, computation);
         final State<T> state = new BaseState<>(id, factory);
         this.stateRegistry.registerState(state, this);
 
@@ -94,7 +94,7 @@ public final class StateAccessImpl<
         final long id = State.next();
         @SuppressWarnings("unchecked")
         final StateValueFactory factory =
-                (host, state) -> new LazyValue(state, () -> computation.apply((CONTEXT) host));
+                (host, state) -> new LazyValue(id, () -> computation.apply((CONTEXT) host));
         final State<T> state = new BaseState<>(id, factory);
         this.stateRegistry.registerState(state, this);
 
@@ -104,7 +104,7 @@ public final class StateAccessImpl<
     @Override
     public final <T> State<T> lazyState(@NotNull Supplier<T> computation) {
         final long id = State.next();
-        final StateValueFactory factory = (host, state) -> new LazyValue(state, computation);
+        final StateValueFactory factory = (host, state) -> new LazyValue(id, computation);
         final State<T> state = new BaseState<>(id, factory);
         this.stateRegistry.registerState(state, this);
 
@@ -122,7 +122,7 @@ public final class StateAccessImpl<
     public final <T> MutableState<T> initialState(@NotNull String key) {
         final long id = State.next();
         final MutableState<T> state =
-                new BaseMutableState<>(id, (host, valueState) -> new InitialDataStateValue(valueState, host, key));
+                new BaseMutableState<>(id, (host, valueState) -> new InitialDataStateValue(id, host, key));
         this.stateRegistry.registerState(state, this);
 
         return state;

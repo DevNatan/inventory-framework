@@ -8,6 +8,7 @@ import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.UnsupportedOperationInSharedContextException;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.IFContext;
+import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.state.State;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
@@ -39,11 +40,6 @@ public abstract class AbstractComponent implements Component {
     @Override
     public final @NotNull VirtualView getRoot() {
         return root;
-    }
-
-    @Override
-    public final boolean intersects(@NotNull Component other) {
-        return Component.intersects(this, other);
     }
 
     @Override
@@ -80,7 +76,7 @@ public abstract class AbstractComponent implements Component {
             throw new IllegalStateException(
                     "This component is externally managed by another component and cannot be updated directly");
 
-        getRootAsContext().updateComponent(this, false);
+        getRootAsContext().updateComponent(this, false, null);
     }
 
     @Override
@@ -91,7 +87,7 @@ public abstract class AbstractComponent implements Component {
     @Override
     public final void forceUpdate() {
         wasForceUpdated = true;
-        getRootAsContext().updateComponent(this, true);
+        getRootAsContext().updateComponent(this, true, null);
         wasForceUpdated = false;
     }
 
@@ -107,12 +103,11 @@ public abstract class AbstractComponent implements Component {
         update();
     }
 
-    protected final IFContext getRootAsContext() {
+    protected final IFRenderContext getRootAsContext() {
         if (getRoot() instanceof AbstractComponent) return ((AbstractComponent) getRoot()).getRootAsContext();
-
         if (getRoot() instanceof RootView) throw new IllegalStateException("Root is not a context but a regular view");
 
-        return (IFContext) getRoot();
+        return (IFRenderContext) getRoot();
     }
 
     protected final boolean wasForceUpdated() {

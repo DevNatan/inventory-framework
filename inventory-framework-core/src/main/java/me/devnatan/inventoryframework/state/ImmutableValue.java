@@ -12,8 +12,8 @@ public final class ImmutableValue extends AbstractStateValue {
 
     private final Object value;
 
-    public ImmutableValue(State<?> state, Object value) {
-        super(state);
+    public ImmutableValue(long internalId, Object value) {
+        super(internalId);
         this.value = value;
     }
 

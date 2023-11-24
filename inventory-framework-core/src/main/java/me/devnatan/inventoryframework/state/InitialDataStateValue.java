@@ -17,20 +17,20 @@ public final class InitialDataStateValue extends AbstractStateValue {
     private final String key;
     private StateValue backingValue;
 
-    public InitialDataStateValue(@NotNull State<?> state, @NotNull StateValueHost host, String key) {
-        super(state);
+    public InitialDataStateValue(long internalId, @NotNull StateValueHost host, String key) {
+        super(internalId);
         this.key = key;
         if (!(host instanceof IFContext))
             throw new IllegalArgumentException("State host for initial data must be a IFContext");
 
         this.context = (IFContext) host;
-        this.backingValue = createBackingValue(state, (IFContext) host, key);
+        this.backingValue = createBackingValue(internalId, (IFContext) host, key);
     }
 
     @SuppressWarnings("unchecked")
-    private StateValue createBackingValue(State<?> state, IFContext context, String key) {
+    private StateValue createBackingValue(long internalId, IFContext context, String key) {
         return new LazyValue(
-                state,
+                internalId,
                 () -> key != null && context.getInitialData() instanceof Map
                         ? ((Map<String, ?>) context.getInitialData()).get(key)
                         : context.getInitialData());
@@ -48,6 +48,6 @@ public final class InitialDataStateValue extends AbstractStateValue {
     }
 
     public void reset() {
-        backingValue = createBackingValue(getState(), context, key);
+        backingValue = createBackingValue(internalId(), context, key);
     }
 }

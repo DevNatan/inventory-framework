@@ -22,8 +22,8 @@ public final class LazyValue extends AbstractStateValue {
     private final Supplier<?> computation;
     private Object currValue = UNINITIALIZED;
 
-    public LazyValue(State<?> state, @NotNull Supplier<?> computation) {
-        super(state);
+    public LazyValue(long internalId, @NotNull Supplier<?> computation) {
+        super(internalId);
         this.computation = computation;
     }
 

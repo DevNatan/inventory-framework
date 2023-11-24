@@ -413,7 +413,7 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
         }
 
         if (!isVisible()) return;
-        getInternalComponents().forEach(child -> root.updateComponent(child, context.isForceUpdate()));
+        getInternalComponents().forEach(child -> root.updateComponent(child, context.isForceUpdate(), null));
     }
 
     /**
@@ -428,8 +428,8 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
     }
 
     @Override
-    public void cleared(@NotNull IFContext context) {
-        debug("[Pagination] #clear(IFContext) called (pageWasChanged = %b)", pageWasChanged);
+    public void cleared(@NotNull IFRenderContext context) {
+        debug("[Pagination] #clear(IFRenderContext) called (pageWasChanged = %b)", pageWasChanged);
         if (!pageWasChanged) {
             getInternalComponents().forEach(context::clearComponent);
             return;
@@ -466,6 +466,11 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
             if (component.isContainedWithin(position)) return true;
         }
         return false;
+    }
+
+    @Override
+    public boolean intersects(@NotNull Component other) {
+        throw new UnsupportedOperationException("Missing #intersects(Component) implementation.");
     }
 
     @Override

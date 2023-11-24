@@ -6,6 +6,7 @@ import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.context.IFComponentRenderContext;
 import me.devnatan.inventoryframework.context.IFComponentUpdateContext;
 import me.devnatan.inventoryframework.context.IFContext;
+import me.devnatan.inventoryframework.context.IFRenderContext;
 import org.jetbrains.annotations.NotNull;
 
 public class TestComponent extends BukkitPlatformComponent<TestComponent.Builder> {
@@ -31,7 +32,7 @@ public class TestComponent extends BukkitPlatformComponent<TestComponent.Builder
 	}
 
 	@Override
-	public void cleared(@NotNull IFContext context) {
+	public void cleared(@NotNull IFRenderContext context) {
 
 	}
 
