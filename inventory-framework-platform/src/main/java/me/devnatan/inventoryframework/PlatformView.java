@@ -104,6 +104,7 @@ public abstract class PlatformView<
         }
 
         if (targetContext == null) throw new IllegalArgumentException("Context not found: " + contextId);
+		if (targetContext.isActive()) throw new IllegalStateException("Invalidated");
 
         targetContext.addViewer(viewer);
         viewer.setActiveContext(targetContext);
