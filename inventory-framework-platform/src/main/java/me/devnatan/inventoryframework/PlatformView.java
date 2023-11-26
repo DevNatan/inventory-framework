@@ -49,6 +49,7 @@ import org.jetbrains.annotations.NotNull;
 
 public abstract class PlatformView<
                 TFramework extends IFViewFrame<?, ?>,
+                TViewer,
                 TItem extends ItemComponentBuilder<TItem, TContext> & ComponentFactory,
                 TContext extends IFContext,
                 TOpenContext extends IFOpenContext,
@@ -104,12 +105,12 @@ public abstract class PlatformView<
         }
 
         if (targetContext == null) throw new IllegalArgumentException("Context not found: " + contextId);
-		if (targetContext.isActive()) throw new IllegalStateException("Invalidated");
+        if (!targetContext.isActive()) throw new IllegalStateException("Invalidated");
 
         targetContext.addViewer(viewer);
         viewer.setActiveContext(targetContext);
         viewer.open(targetContext.getContainer());
-        onViewerAdded((TContext) targetContext, initialData);
+        onViewerAdded((TContext) targetContext, (TViewer) viewer.getPlatformInstance(), initialData);
     }
     // endregion
 
@@ -390,7 +391,7 @@ public abstract class PlatformView<
      * will be thrown.
      * <p>
      * <b>This method is called once in Shared Contexts. To know when a viewer is added/removed from
-     * this kind of context use {@link #onViewerAdded(IFContext, Object)}/{@link #onViewerRemoved(IFContext)}</b>.
+     * this kind of context use {@link #onViewerAdded(TContext, TViewer, Object)}/{@link #onViewerRemoved(IFContext)}</b>.
      *
      * @param open The open context.
      */
@@ -467,12 +468,13 @@ public abstract class PlatformView<
      * <b><i> This API is experimental and is not subject to the general compatibility guarantees
      * such API may be changed or may be removed completely in any further release. </i></b>
      *
-     * @param context The context.
-     * @param data    Initial data set wen the viewer was added.
+     * @param context 	The context.
+     * @param viewer 	Who was added to the context.
+     * @param data    	Initial data set wen the viewer was added.
      */
     @ApiStatus.OverrideOnly
     @ApiStatus.Experimental
-    public void onViewerAdded(@NotNull TContext context, Object data) {}
+    public void onViewerAdded(@NotNull TContext context, @NotNull TViewer viewer, Object data) {}
 
     /**
      * Called when a {@link Viewer viewer} is removed from a context.

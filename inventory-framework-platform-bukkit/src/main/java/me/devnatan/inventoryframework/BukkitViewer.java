@@ -104,6 +104,11 @@ public final class BukkitViewer implements Viewer {
     }
 
     @Override
+    public Object getPlatformInstance() {
+        return player;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;

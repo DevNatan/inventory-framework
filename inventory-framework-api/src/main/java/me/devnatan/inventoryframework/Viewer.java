@@ -113,4 +113,11 @@ public interface Viewer {
      */
     @ApiStatus.Internal
     void unsetPreviousContext();
+
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
+    Object getPlatformInstance();
 }
