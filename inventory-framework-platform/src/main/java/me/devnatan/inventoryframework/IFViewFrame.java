@@ -192,6 +192,22 @@ abstract class IFViewFrame<S extends IFViewFrame<S, V>, V extends PlatformView<S
 		throw new UnsupportedOperationException("Not implemented.");
 	}
 
+	/**
+	 * Invalidates a context created by {@link #createIndefiniteContext(Class)}.
+	 * <p>
+	 * <b><i> This API is experimental and is not subject to the general compatibility guarantees
+	 * such API may be changed or may be removed completely in any further release. </i></b>
+	 *
+	 * @param viewClass The view of the context to be later opened.
+	 */
+	@ApiStatus.Experimental
+	public final void invalidateIndefiniteContext(
+		@NotNull Class<? extends RootView> viewClass,
+		@NotNull String contextId
+	) {
+		throw new UnsupportedOperationException("Not implemented.");
+	}
+
     void addViewer(@NotNull Viewer viewer) {
         synchronized (viewerById) {
             viewerById.put(viewer.getId(), viewer);
