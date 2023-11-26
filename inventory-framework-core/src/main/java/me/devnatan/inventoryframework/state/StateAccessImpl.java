@@ -27,10 +27,12 @@ public final class StateAccessImpl<
                 ItemBuilder extends ItemComponentBuilder<ItemBuilder, Context> & ComponentFactory>
         implements StateAccess<Context, ItemBuilder> {
 
+    private final Object caller;
     private final ElementFactory elementFactory;
     private final StateRegistry stateRegistry;
 
-    public StateAccessImpl(ElementFactory elementFactory, StateRegistry stateRegistry) {
+    public StateAccessImpl(Object caller, ElementFactory elementFactory, StateRegistry stateRegistry) {
+        this.caller = caller;
         this.elementFactory = elementFactory;
         this.stateRegistry = stateRegistry;
     }
@@ -236,7 +238,7 @@ public final class StateAccessImpl<
                 builder.isAsync(),
                 builder.isComputed());
         final State<Pagination> state = new PaginationState(id, factory);
-        this.stateRegistry.registerState(state, this);
+        this.stateRegistry.registerState(state, caller);
 
         return state;
     }
