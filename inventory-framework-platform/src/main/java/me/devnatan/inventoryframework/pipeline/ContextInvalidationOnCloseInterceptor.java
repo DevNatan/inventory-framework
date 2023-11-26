@@ -1,6 +1,7 @@
 package me.devnatan.inventoryframework.pipeline;
 
 import me.devnatan.inventoryframework.PlatformView;
+import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.IFCloseContext;
 
@@ -15,7 +16,8 @@ public final class ContextInvalidationOnCloseInterceptor implements PipelineInte
         if (!context.isActive() || context.isCancelled()) return;
 
         final PlatformView root = (PlatformView) context.getRoot();
-        root.removeAndTryInvalidateContext(context.getViewer(), context);
-        root.onViewerRemoved(context.getParent());
+        final Viewer viewer = context.getViewer();
+        root.removeAndTryInvalidateContext(viewer, context);
+        root.onViewerRemoved(context.getParent(), viewer.getPlatformInstance());
     }
 }

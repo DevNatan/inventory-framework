@@ -108,7 +108,7 @@ public abstract class PlatformView<
         if (!targetContext.isActive()) throw new IllegalStateException("Invalidated");
 
         targetContext.addViewer(viewer);
-		getFramework().addViewer(viewer);
+        getFramework().addViewer(viewer);
         viewer.setActiveContext(targetContext);
         viewer.open(targetContext.getContainer());
         onViewerAdded((TContext) targetContext, (TViewer) viewer.getPlatformInstance(), initialData);
@@ -486,10 +486,11 @@ public abstract class PlatformView<
      * such API may be changed or may be removed completely in any further release. </i></b>
      *
      * @param context The context.
+     * @param viewer Who was removed from the context.
      */
     @ApiStatus.OverrideOnly
     @ApiStatus.Experimental
-    public void onViewerRemoved(@NotNull TContext context) {}
+    public void onViewerRemoved(@NotNull TContext context, @NotNull TViewer viewer) {}
     // endregion
 
     // region Internals
