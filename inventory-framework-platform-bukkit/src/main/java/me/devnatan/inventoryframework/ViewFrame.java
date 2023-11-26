@@ -46,6 +46,7 @@ public class ViewFrame extends IFViewFrame<ViewFrame, View> {
         return owner;
     }
 
+    // region Opening
     /**
      * Opens a view to a player.
      *
@@ -105,6 +106,21 @@ public class ViewFrame extends IFViewFrame<ViewFrame, View> {
         return internalOpen(viewClass, players, initialData);
     }
 
+    /**
+     * Opens an already active context to a player.
+     * <p>
+     * <b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     *
+     * @param contextId The id of the context.
+     * @param player Who the context will be open to.
+     */
+    @ApiStatus.Experimental
+    public final void openActive(
+            @NotNull Class<? extends View> viewClass, @NotNull String contextId, @NotNull Player player) {}
+
+    // endregion
+
     @Override
     public final ViewFrame register() {
         if (isRegistered()) throw new IllegalStateException("This view frame is already registered");
@@ -137,6 +153,7 @@ public class ViewFrame extends IFViewFrame<ViewFrame, View> {
         getPipeline().execute(IFViewFrame.FRAME_UNREGISTERED, this);
     }
 
+    // region Internals
     private void tryEnableMetrics() {
         final ServicesManager servicesManager = getOwner().getServer().getServicesManager();
         if (servicesManager.isProvidedFor(IFViewFrame.class)) return;
@@ -197,6 +214,7 @@ public class ViewFrame extends IFViewFrame<ViewFrame, View> {
 
         if (!isLibraryAsPluginEnabled && isLibraryPresent) plugin.getLogger().warning(RELOCATION_MESSAGE);
     }
+    // endregion
 
     /**
      * <b><i> This is an internal inventory-framework API that should not be used from outside of
