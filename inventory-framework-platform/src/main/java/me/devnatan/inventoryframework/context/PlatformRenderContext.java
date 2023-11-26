@@ -153,12 +153,12 @@ public abstract class PlatformRenderContext<T extends ItemComponentBuilder<T, C>
      *                The first parameter is the iteration index of the available slot.
      */
     public final void availableSlot(@NotNull BiConsumer<Integer, T> factory) {
-		availableSlotFactories.add((index, slot) -> {
-			final T builder = createBuilder();
-			builder.withSlot(slot);
-			factory.accept(index, builder);
-			return (ComponentFactory) builder;
-		});
+        availableSlotFactories.add((index, slot) -> {
+            final T builder = createBuilder();
+            builder.withSlot(slot);
+            factory.accept(index, builder);
+            return (ComponentFactory) builder;
+        });
     }
 
     /**
