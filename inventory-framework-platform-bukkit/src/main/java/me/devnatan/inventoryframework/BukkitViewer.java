@@ -17,8 +17,8 @@ public final class BukkitViewer implements Viewer {
     private boolean transitioning;
 
     public BukkitViewer(@NotNull Player player, IFRenderContext activeContext) {
-		this.player = player;
-		this.activeContext = activeContext;
+        this.player = player;
+        this.activeContext = activeContext;
     }
 
     public Player getPlayer() {

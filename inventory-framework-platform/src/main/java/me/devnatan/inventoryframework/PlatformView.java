@@ -117,13 +117,14 @@ public abstract class PlatformView<
      * @param initialData The initial data.
      */
     @ApiStatus.Internal
-    public final void open(@NotNull List<Viewer> viewers, Object initialData) {
+    public final String open(@NotNull List<Viewer> viewers, Object initialData) {
         if (!isInitialized()) throw new IllegalStateException("Cannot open a uninitialized view");
 
         final Viewer subject = viewers.size() == 1 ? viewers.get(0) : null;
         final IFOpenContext context = getElementFactory().createOpenContext(this, subject, viewers, initialData);
 
         getPipeline().execute(StandardPipelinePhases.OPEN, context);
+        return context.getId().toString();
     }
 
     /**
@@ -394,9 +395,9 @@ public abstract class PlatformView<
      *
      * <p>It is not possible to manipulate the inventory in this handler, if it happens an exception
      * will be thrown.
-	 * <p>
-	 * <b>This method is called once in Shared Contexts. To know when a viewer is added/removed from
-	 * this kind of context use {@link #onViewerAdded(IFContext, Object)}/{@link #onViewerRemoved(IFContext)}</b>.
+     * <p>
+     * <b>This method is called once in Shared Contexts. To know when a viewer is added/removed from
+     * this kind of context use {@link #onViewerAdded(IFContext, Object)}/{@link #onViewerRemoved(IFContext)}</b>.
      *
      * @param open The open context.
      */
@@ -470,9 +471,9 @@ public abstract class PlatformView<
      * <p>
      * <b><i> This API is experimental and is not subject to the general compatibility guarantees
      * such API may be changed or may be removed completely in any further release. </i></b>
-	 *
+     *
      * @param context The context.
-	 * @param data    Initial data set wen the viewer was added.
+     * @param data    Initial data set wen the viewer was added.
      */
     @ApiStatus.Experimental
     public void onViewerAdded(@NotNull TContext context, Object data) {}
@@ -482,7 +483,7 @@ public abstract class PlatformView<
      * <p>
      * <b><i> This API is experimental and is not subject to the general compatibility guarantees
      * such API may be changed or may be removed completely in any further release. </i></b>
-	 *
+     *
      * @param context The context.
      */
     @ApiStatus.Experimental

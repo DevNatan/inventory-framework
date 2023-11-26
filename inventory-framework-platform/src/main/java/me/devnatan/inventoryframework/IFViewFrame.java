@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-
 import kotlin.NotImplementedError;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
 import me.devnatan.inventoryframework.pipeline.PipelinePhase;
@@ -151,8 +150,9 @@ abstract class IFViewFrame<S extends IFViewFrame<S, V>, V extends PlatformView<S
      * @param viewClass   The target view to be opened.
      * @param players     The players that the view will be open to.
      * @param initialData The initial data.
+     * @return The id of the generated context.
      */
-    protected final void internalOpen(
+    protected final String internalOpen(
             @NotNull Class<? extends V> viewClass, @NotNull Collection<?> players, Object initialData) {
         final V view = getRegisteredViewByType(viewClass);
         final List<Viewer> viewers = players.stream()
@@ -160,33 +160,33 @@ abstract class IFViewFrame<S extends IFViewFrame<S, V>, V extends PlatformView<S
                 .collect(Collectors.toList());
 
         viewers.forEach(Viewer::close);
-        view.open(viewers, initialData);
+        return view.open(viewers, initialData);
     }
 
-	/**
-	 * Attaches a viewer to an already active context.
-	 *
-	 * @param contextId Context id to attach into.
-	 * @param viewer The viewer to attach into the specified context.
-	 */
-	@ApiStatus.Experimental
-	protected final void internalEnterInContext(UUID contextId, Viewer viewer) {
-		throw new NotImplementedError();
-	}
+    /**
+     * Attaches a viewer to an already active context.
+     *
+     * @param contextId Context id to attach into.
+     * @param viewer The viewer to attach into the specified context.
+     */
+    @ApiStatus.Experimental
+    protected final void internalEnterInContext(UUID contextId, Viewer viewer) {
+        throw new NotImplementedError();
+    }
 
-	/**
-	 * Creates a shared context for later use.
-	 * <p>
-	 * TODO Needs a very descriptive documentation about how this really works
-	 *      also explain that the context created by this method never invalidates.
-	 *
-	 * @param viewClass The target view to be later opened.
-	 * @see <a href="https://github.com/DevNatan/inventory-framework/wiki/Shared-Contexts">Shared Contexts on Wiki</a>
-	 */
-	@ApiStatus.Experimental
-	public final UUID createIndefiniteContext(@NotNull Class<? extends V> viewClass) {
-		throw new NotImplementedError();
-	}
+    /**
+     * Creates a shared context for later use.
+     * <p>
+     * TODO Needs a very descriptive documentation about how this really works
+     *      also explain that the context created by this method never invalidates.
+     *
+     * @param viewClass The target view to be later opened.
+     * @see <a href="https://github.com/DevNatan/inventory-framework/wiki/Shared-Contexts">Shared Contexts on Wiki</a>
+     */
+    @ApiStatus.Experimental
+    public final UUID createIndefiniteContext(@NotNull Class<? extends V> viewClass) {
+        throw new NotImplementedError();
+    }
 
     void addViewer(@NotNull Viewer viewer) {
         synchronized (viewerById) {

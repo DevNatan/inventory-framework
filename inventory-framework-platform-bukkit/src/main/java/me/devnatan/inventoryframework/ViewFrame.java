@@ -77,10 +77,11 @@ public class ViewFrame extends IFViewFrame<ViewFrame, View> {
      *
      * @param viewClass The target view to be opened.
      * @param players   The players that the view will be open to.
+     * @return The id of the generated context.
      */
     @ApiStatus.Experimental
-    public final void open(@NotNull Class<? extends View> viewClass, @NotNull Collection<? extends Player> players) {
-        open(viewClass, players, null);
+    public final String open(@NotNull Class<? extends View> viewClass, @NotNull Collection<? extends Player> players) {
+        return open(viewClass, players, null);
     }
 
     /**
@@ -94,13 +95,14 @@ public class ViewFrame extends IFViewFrame<ViewFrame, View> {
      * @param viewClass   The target view to be opened.
      * @param players     The players that the view will be open to.
      * @param initialData The initial data.
+     * @return The id of the generated context.
      */
     @ApiStatus.Experimental
-    public final void open(
+    public final String open(
             @NotNull Class<? extends View> viewClass,
             @NotNull Collection<? extends Player> players,
             Object initialData) {
-        internalOpen(viewClass, players, initialData);
+        return internalOpen(viewClass, players, initialData);
     }
 
     @Override
