@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-import kotlin.NotImplementedError;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
 import me.devnatan.inventoryframework.pipeline.PipelinePhase;
@@ -177,21 +176,6 @@ abstract class IFViewFrame<S extends IFViewFrame<S, V>, V extends PlatformView<S
         final V view = getRegisteredViewByType(viewClass);
         final Viewer convertedViewer = view.getElementFactory().createViewer(viewer, null);
         view.open(contextId, convertedViewer, initialData);
-    }
-
-    /**
-     * Creates a context that never invalidates.
-     * <p>
-     * TODO Needs a very descriptive documentation about how this really works
-     *      also explain that the context created by this method never invalidates.
-     *
-     * @param viewClass The target view to be later opened.
-     * @see <a href="https://github.com/DevNatan/inventory-framework/wiki/Shared-Contexts">Shared Contexts on Wiki</a>
-     * @return The id of the generated indefinite context.
-     */
-    @ApiStatus.Experimental
-    public final String createIndefiniteContext(@NotNull Class<? extends V> viewClass) {
-        throw new NotImplementedError();
     }
 
     void addViewer(@NotNull Viewer viewer) {
