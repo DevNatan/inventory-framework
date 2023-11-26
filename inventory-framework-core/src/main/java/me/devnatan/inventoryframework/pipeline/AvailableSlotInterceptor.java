@@ -20,7 +20,7 @@ public final class AvailableSlotInterceptor implements PipelineInterceptor<Virtu
         if (!(subject instanceof IFRenderContext)) return;
 
         final IFRenderContext context = (IFRenderContext) subject;
-        if (context.getAvailableSlotFactory() == null) return;
+        if (context.getAvailableSlotFactories() == null) return;
 
         final List<ComponentFactory> slotComponents = context.getConfig().getLayout() == null
                 ? resolveFromInitialSlot(context)
@@ -38,7 +38,7 @@ public final class AvailableSlotInterceptor implements PipelineInterceptor<Virtu
     @VisibleForTesting
     List<ComponentFactory> resolveFromInitialSlot(IFRenderContext context) {
         final List<BiFunction<Integer, Integer, ComponentFactory>> availableSlotFactories =
-                context.getAvailableSlotFactory();
+                context.getAvailableSlotFactories();
         final List<ComponentFactory> result = new ArrayList<>();
 
         int slot = 0;
@@ -77,7 +77,7 @@ public final class AvailableSlotInterceptor implements PipelineInterceptor<Virtu
         if (fillablePositions == null || fillablePositions.length == 0) return Collections.emptyList();
 
         final List<BiFunction<Integer, Integer, ComponentFactory>> availableSlotFactories =
-                context.getAvailableSlotFactory();
+                context.getAvailableSlotFactories();
 
         final List<ComponentFactory> result = new ArrayList<>();
         // Offset is incremented for each unavailable slot found

@@ -43,7 +43,7 @@ public abstract class PlatformRenderContext<T extends ItemComponentBuilder<T, C>
     // --- Properties ---
     private final List<ComponentFactory> componentBuilders = new ArrayList<>();
     private final List<LayoutSlot> layoutSlots = new ArrayList<>();
-    private final List<BiFunction<Integer, Integer, ComponentFactory>> availableSlotFactory = new ArrayList<>();
+    private final List<BiFunction<Integer, Integer, ComponentFactory>> availableSlotFactories = new ArrayList<>();
 
     PlatformRenderContext(
             @NotNull UUID id,
@@ -137,7 +137,7 @@ public abstract class PlatformRenderContext<T extends ItemComponentBuilder<T, C>
      */
     public final @NotNull T availableSlot() {
         final T builder = createBuilder();
-        availableSlotFactory.add(
+        availableSlotFactories.add(
                 (index, slot) -> (ComponentFactory) builder.copy().withSlot(slot));
         return builder;
     }
@@ -153,15 +153,12 @@ public abstract class PlatformRenderContext<T extends ItemComponentBuilder<T, C>
      *                The first parameter is the iteration index of the available slot.
      */
     public final void availableSlot(@NotNull BiConsumer<Integer, T> factory) {
-        final BiFunction<Integer, Integer, ComponentFactory> value = (index, slot) -> {
-            final T builder = createBuilder();
-            builder.withSlot(slot);
-            factory.accept(index, builder);
-            return (ComponentFactory) builder;
-        };
-
-        availableSlotFactory.clear();
-        availableSlotFactory.add(value);
+		availableSlotFactories.add((index, slot) -> {
+			final T builder = createBuilder();
+			builder.withSlot(slot);
+			factory.accept(index, builder);
+			return (ComponentFactory) builder;
+		});
     }
 
     /**
@@ -277,8 +274,8 @@ public abstract class PlatformRenderContext<T extends ItemComponentBuilder<T, C>
     }
 
     @Override
-    public final List<BiFunction<Integer, Integer, ComponentFactory>> getAvailableSlotFactory() {
-        return availableSlotFactory;
+    public final List<BiFunction<Integer, Integer, ComponentFactory>> getAvailableSlotFactories() {
+        return availableSlotFactories;
     }
 
     @Override
