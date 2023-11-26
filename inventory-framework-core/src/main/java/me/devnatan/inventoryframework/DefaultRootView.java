@@ -21,7 +21,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 @ApiStatus.NonExtendable
-public class DefaultRootView implements RootView {
+public abstract class DefaultRootView implements RootView {
 
     private final UUID id = UUID.randomUUID();
     private ViewConfig config;
@@ -30,7 +30,6 @@ public class DefaultRootView implements RootView {
     private final Set<IFContext> contexts = newSetFromMap(synchronizedMap(new HashMap<>()));
     final StateRegistry stateRegistry = new StateRegistry();
     private Job scheduledUpdateJob;
-    private final Map<String, Object> metadata = new HashMap<>();
 
     @Override
     public final @NotNull UUID getUniqueId() {
@@ -81,11 +80,5 @@ public class DefaultRootView implements RootView {
     @Override
     public final void setScheduledUpdateJob(@NotNull Job job) {
         this.scheduledUpdateJob = job;
-    }
-
-    @NotNull
-    @Override
-    public final Map<String, Object> getMetadata() {
-        return metadata;
     }
 }

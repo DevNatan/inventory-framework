@@ -2,6 +2,7 @@ package me.devnatan.inventoryframework;
 
 import static java.lang.String.format;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -72,10 +73,25 @@ public abstract class PlatformView<
     }
 
     /**
+     * Setups a endless context.
+     *
+     * @param initialData Initial data to pass through opening handler.
+     * @return The id of the generated context.
+     */
+    final String createEndless(Object initialData) {
+        final IFOpenContext context = getElementFactory().createOpenContext(this, null, new ArrayList<>(), initialData);
+
+        context.setEndless(true);
+        getPipeline().execute(StandardPipelinePhases.OPEN, context);
+        return context.getId().toString();
+    }
+
+    /**
      * Opens this view to one or more viewers.
      *
      * @param viewers     The viewers that'll see this view.
      * @param initialData The initial data.
+     * @return The id of the generated context.
      */
     final String open(List<Viewer> viewers, Object initialData) {
         if (!isInitialized()) throw new IllegalStateException("Cannot open a uninitialized view");
@@ -260,6 +276,7 @@ public abstract class PlatformView<
         synchronized (getInternalContexts()) {
             getInternalContexts().add(context);
         }
+        IFDebug.debug("Context %s added to %s", context.getId(), getClass().getName());
     }
 
     /**
@@ -275,6 +292,7 @@ public abstract class PlatformView<
         synchronized (getInternalContexts()) {
             getInternalContexts().removeIf(other -> other.getId() == context.getId());
         }
+        IFDebug.debug("Context %s removed from %s", context.getId(), getClass().getName());
     }
 
     /**
@@ -310,6 +328,7 @@ public abstract class PlatformView<
             if (!context.getContainer().isProxied()) context.getContainer().open(viewer);
             viewer.setTransitioning(false);
         });
+        IFDebug.debug("Rendering context %s", context.getId());
     }
 
     @SuppressWarnings("rawtypes")
@@ -323,12 +342,35 @@ public abstract class PlatformView<
         final IFRenderContext target =
                 viewer.isTransitioning() ? viewer.getPreviousContext() : viewer.getActiveContext();
 
-        if (target == null) return;
-
+        if (target == null || target.isEndless()) return;
         if (target.getViewers().isEmpty()) {
             target.setActive(false);
             removeContext(target);
         }
+    }
+
+    @Override
+    public void invalidateEndlessContext(String contextId) {
+        final IFContext context = getInternalContexts().stream()
+                .filter(value -> value.getId().toString().equals(contextId))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Context not found: " + contextId));
+
+        if (!context.isActive()) return;
+        if (!context.isEndless())
+            throw new IllegalArgumentException(
+                    "#invalidateEndlessContext() can only be called in #isEndless() == true context");
+
+        IFDebug.debug("Invalidating endless context %s...", contextId);
+
+        // closeForEveryone() will perform everything needed to ensure non-abnormal closing
+        // like calling close handlers, state management, removing viewers and so on
+        context.closeForEveryone();
+
+        // We need to do this here because in the natural flow of context invalidating checks if the
+        // context is endless so if it's an endless then it will not be removed nor deactivated
+        context.setActive(false);
+        removeContext(context);
     }
     // endregion
 
