@@ -54,8 +54,10 @@ public final class PlatformOpenInterceptor implements PipelineInterceptor<Virtua
         root.renderContext(render);
     }
 
+    @SuppressWarnings("unchecked")
     IFRenderContext createRenderContext(IFOpenContext openContext) {
-        final RootView root = openContext.getRoot();
+        @SuppressWarnings("rawtypes")
+        final PlatformView root = (PlatformView) openContext.getRoot();
 
         final ViewConfig contextConfig = openContext.getConfig();
         final String[] layout = contextConfig.getLayout();
@@ -74,13 +76,14 @@ public final class PlatformOpenInterceptor implements PipelineInterceptor<Virtua
 
         final IFRenderContext context = elementFactory.createRenderContext(
                 openContext.getId(),
-                openContext.getRoot(),
+                root,
                 openContext.getConfig(),
                 createdContainer,
                 new HashMap<>(),
                 openContext.getViewer(),
                 openContext.getInitialData());
 
+        root.onViewerAdded(context, context.getInitialData());
         openContext.getStateValues().forEach(context::initializeState);
 
         for (final Viewer viewer : openContext.getIndexedViewers().values()) {
