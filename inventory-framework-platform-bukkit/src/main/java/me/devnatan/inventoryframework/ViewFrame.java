@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.UnaryOperator;
+import me.devnatan.inventoryframework.context.EndlessContextInfo;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.feature.DefaultFeatureInstaller;
 import me.devnatan.inventoryframework.feature.Feature;
@@ -121,9 +122,62 @@ public class ViewFrame extends IFViewFrame<ViewFrame, View> {
     @ApiStatus.Experimental
     public final void openActive(
             @NotNull Class<? extends View> viewClass, @NotNull String contextId, @NotNull Player player) {
-        internalOpenActiveContext(viewClass, contextId, player, null);
+        openActive(viewClass, contextId, player, null);
     }
 
+    /**
+     * Opens an already active context to a player.
+     * <p>
+     * <b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     *
+     * @param contextId The id of the context.
+     * @param player Who the context will be open to.
+     * @param initialData Initial data to pass to {@link PlatformView#onViewerAdded(IFContext, Object, Object)}.
+     */
+    @ApiStatus.Experimental
+    public final void openActive(
+            @NotNull Class<? extends View> viewClass,
+            @NotNull String contextId,
+            @NotNull Player player,
+            Object initialData) {
+        internalOpenActiveContext(viewClass, contextId, player, initialData);
+    }
+
+    /**
+     * Opens an already active context to a player.
+     * <p>
+     * <b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     *
+     * @param endlessContextInfo The id of the context.
+     * @param player Who the context will be open to.
+     */
+    @ApiStatus.Experimental
+    public final void openEndless(@NotNull EndlessContextInfo endlessContextInfo, @NotNull Player player) {
+        openEndless(endlessContextInfo, player, null);
+    }
+
+    /**
+     * Opens an already active context to a player.
+     * <p>
+     * <b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     *
+     * @param endlessContextInfo The id of the context.
+     * @param player Who the context will be open to.
+     * @param initialData Initial data to pass to {@link PlatformView#onViewerAdded(IFContext, Object, Object)}.
+     */
+    @SuppressWarnings("unchecked")
+    @ApiStatus.Experimental
+    public final void openEndless(
+            @NotNull EndlessContextInfo endlessContextInfo, @NotNull Player player, Object initialData) {
+        openActive(
+                (Class<? extends View>) endlessContextInfo.getView().getClass(),
+                endlessContextInfo.getContextId(),
+                player,
+                initialData);
+    }
     // endregion
 
     @Override
