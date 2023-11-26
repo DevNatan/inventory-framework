@@ -6,9 +6,11 @@ import org.jetbrains.annotations.Nullable;
 
 public abstract class PlatformContext extends AbstractIFContext {
 
+	private boolean endless;
     private boolean active = true;
 
-    PlatformContext() {}
+    PlatformContext() {
+	}
 
     @SuppressWarnings("rawtypes")
     @Override
@@ -88,4 +90,14 @@ public abstract class PlatformContext extends AbstractIFContext {
     public void setActive(boolean active) {
         this.active = active;
     }
+
+	@Override
+	public boolean isEndless() {
+		return endless;
+	}
+
+	@Override
+	public void setEndless(boolean endless) {
+		this.endless = endless;
+	}
 }

@@ -239,4 +239,18 @@ public interface IFContext extends VirtualView, StateValueHost, ComponentContain
      */
     @ApiStatus.Internal
     void setActive(boolean active);
+
+	/**
+	 * <b><i> This is an internal inventory-framework API that should not be used from outside of
+	 * this library. No compatibility guarantees are provided. </i></b>
+	 */
+	@ApiStatus.Internal
+	boolean isEndless();
+
+	/**
+	 * <b><i> This is an internal inventory-framework API that should not be used from outside of
+	 * this library. No compatibility guarantees are provided. </i></b>
+	 */
+	@ApiStatus.Internal
+	void setEndless(boolean endless);
 }

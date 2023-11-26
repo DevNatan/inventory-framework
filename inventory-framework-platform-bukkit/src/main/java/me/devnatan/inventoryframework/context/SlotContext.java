@@ -181,7 +181,17 @@ public abstract class SlotContext extends PlatformContext implements IFSlotConte
         getParent().setActive(active);
     }
 
-    @Override
+	@Override
+	public final boolean isEndless() {
+		return getParent().isEndless();
+	}
+
+	@Override
+	public final void setEndless(boolean endless) {
+		getParent().setEndless(endless);
+	}
+
+	@Override
     public void back() {
         getParent().back();
     }
