@@ -46,7 +46,6 @@ final class IFInventoryListener implements Listener {
                 .filter(Component::isVisible)
                 .findFirst()
                 .orElse(null);
-        System.out.println("clickedComponent = " + clickedComponent);
         final ViewContainer clickedContainer = event.getClickedInventory() instanceof PlayerInventory
                 ? viewer.getSelfContainer()
                 : context.getContainer();
