@@ -108,6 +108,7 @@ public abstract class PlatformView<
         if (!targetContext.isActive()) throw new IllegalStateException("Invalidated");
 
         targetContext.addViewer(viewer);
+		getFramework().addViewer(viewer);
         viewer.setActiveContext(targetContext);
         viewer.open(targetContext.getContainer());
         onViewerAdded((TContext) targetContext, (TViewer) viewer.getPlatformInstance(), initialData);
