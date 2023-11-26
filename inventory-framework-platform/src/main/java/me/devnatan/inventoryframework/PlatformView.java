@@ -468,8 +468,8 @@ public abstract class PlatformView<
 
     /**
      * Called when a {@link Viewer viewer} is added to a context.
-	 * <p>
-	 * This method is called after {@link #onFirstRender(IFRenderContext) initial render phase}.
+     * <p>
+     * This method is called after {@link #onFirstRender(IFRenderContext) initial render phase}.
      * <p>
      * <b><i> This API is experimental and is not subject to the general compatibility guarantees
      * such API may be changed or may be removed completely in any further release. </i></b>
@@ -477,21 +477,21 @@ public abstract class PlatformView<
      * @param context The context.
      * @param data    Initial data set wen the viewer was added.
      */
-	@ApiStatus.OverrideOnly
+    @ApiStatus.OverrideOnly
     @ApiStatus.Experimental
     public void onViewerAdded(@NotNull TContext context, Object data) {}
 
     /**
      * Called when a {@link Viewer viewer} is removed from a context.
      * <p>
-	 * This method is called before {@link #onClose(IFCloseContext) close phase}.
-	 * <p>
+     * This method is called before {@link #onClose(IFCloseContext) close phase}.
+     * <p>
      * <b><i> This API is experimental and is not subject to the general compatibility guarantees
      * such API may be changed or may be removed completely in any further release. </i></b>
      *
      * @param context The context.
      */
-	@ApiStatus.OverrideOnly
+    @ApiStatus.OverrideOnly
     @ApiStatus.Experimental
     public void onViewerRemoved(@NotNull TContext context) {}
 

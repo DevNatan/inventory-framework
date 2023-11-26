@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.UnaryOperator;
+import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.feature.DefaultFeatureInstaller;
 import me.devnatan.inventoryframework.feature.Feature;
 import me.devnatan.inventoryframework.feature.FeatureInstaller;
@@ -52,9 +53,10 @@ public class ViewFrame extends IFViewFrame<ViewFrame, View> {
      *
      * @param viewClass The target view to be opened.
      * @param player    The player that the view will be open to.
+     * @return The id of the newly created {@link IFContext}.
      */
-    public final void open(@NotNull Class<? extends View> viewClass, @NotNull Player player) {
-        open(viewClass, player, null);
+    public final String open(@NotNull Class<? extends View> viewClass, @NotNull Player player) {
+        return open(viewClass, player, null);
     }
 
     /**
@@ -63,9 +65,10 @@ public class ViewFrame extends IFViewFrame<ViewFrame, View> {
      * @param viewClass   The target view to be opened.
      * @param player      The player that the view will be open to.
      * @param initialData The initial data.
+     * @return The id of the newly created {@link IFContext}.
      */
-    public final void open(@NotNull Class<? extends View> viewClass, @NotNull Player player, Object initialData) {
-        open(viewClass, Collections.singletonList(player), initialData);
+    public final String open(@NotNull Class<? extends View> viewClass, @NotNull Player player, Object initialData) {
+        return open(viewClass, Collections.singletonList(player), initialData);
     }
 
     /**
@@ -78,7 +81,7 @@ public class ViewFrame extends IFViewFrame<ViewFrame, View> {
      *
      * @param viewClass The target view to be opened.
      * @param players   The players that the view will be open to.
-     * @return The id of the generated context.
+     * @return The id of the newly created {@link IFContext}.
      */
     @ApiStatus.Experimental
     public final String open(@NotNull Class<? extends View> viewClass, @NotNull Collection<? extends Player> players) {
@@ -96,7 +99,7 @@ public class ViewFrame extends IFViewFrame<ViewFrame, View> {
      * @param viewClass   The target view to be opened.
      * @param players     The players that the view will be open to.
      * @param initialData The initial data.
-     * @return The id of the generated context.
+     * @return The id of the newly created {@link IFContext}.
      */
     @ApiStatus.Experimental
     public final String open(
