@@ -12,6 +12,7 @@ import me.devnatan.inventoryframework.IFDebug;
 import me.devnatan.inventoryframework.InventoryFrameworkException;
 import me.devnatan.inventoryframework.UnsupportedOperationInSharedContextException;
 import me.devnatan.inventoryframework.ViewConfig;
+import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.ComponentComposition;
@@ -164,6 +165,20 @@ abstract class AbstractIFContext extends DefaultStateValueHost implements IFCont
     @Override
     public void updateComponent(@NotNull Component component, boolean force) {
         component.updated(createSlotRenderContext(component, force));
+    }
+
+    @Override
+    public void performClickInComponent(
+            @NotNull Component component,
+            @NotNull Viewer viewer,
+            @NotNull ViewContainer clickedContainer,
+            Object platformEvent,
+            int clickedSlot) {
+        final IFSlotClickContext clickContext = getRoot()
+                .getElementFactory()
+                .createSlotClickContext(clickedSlot, viewer, clickedContainer, component, platformEvent);
+
+        getRoot().getPipeline().execute(StandardPipelinePhases.CLICK, clickContext);
     }
 
     @Override

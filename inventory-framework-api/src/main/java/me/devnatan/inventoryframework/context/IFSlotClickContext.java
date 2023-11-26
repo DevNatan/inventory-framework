@@ -2,6 +2,7 @@ package me.devnatan.inventoryframework.context;
 
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.component.Component;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -84,4 +85,11 @@ public interface IFSlotClickContext extends IFSlotContext, IFConfinedContext {
      * @param cancelled If the click should be cancelled.
      */
     void setCancelled(boolean cancelled);
+
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
+    Object getPlatformEvent();
 }

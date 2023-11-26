@@ -644,7 +644,13 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
             }
 
             if (child.isContainedWithin(context.getClickedSlot())) {
-                child.getInteractionHandler().clicked(component, context);
+                context.getParent()
+                        .performClickInComponent(
+                                child,
+                                context.getViewer(),
+                                context.getClickedContainer(),
+                                context.getPlatformEvent(),
+                                context.getClickedSlot());
                 break;
             }
         }
