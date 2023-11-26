@@ -149,28 +149,35 @@ abstract class IFViewFrame<S extends IFViewFrame<S, V>, V extends PlatformView<S
      * These players will see the same inventory and share the same context.
      *
      * @param viewClass   The target view to be opened.
-     * @param players     The players that the view will be open to.
+     * @param viewers     The viewers that the view will be open to.
      * @param initialData The initial data.
      * @return The id of the newly created {@link IFContext}.
      */
     protected final String internalOpen(
-            @NotNull Class<? extends V> viewClass, @NotNull Collection<?> players, Object initialData) {
+            @NotNull Class<? extends V> viewClass, @NotNull Collection<?> viewers, Object initialData) {
         final V view = getRegisteredViewByType(viewClass);
-        final List<Viewer> viewers = players.stream()
+        final List<Viewer> convertedViewers = viewers.stream()
                 .map(player -> view.getElementFactory().createViewer(player, null))
                 .collect(Collectors.toList());
 
-        viewers.forEach(Viewer::close);
-        return view.open(viewers, initialData);
+        convertedViewers.forEach(Viewer::close);
+        return view.open(convertedViewers, initialData);
     }
 
     /**
      * Opens an active context.
      *
-     * @param contextId Context id to open into.
-     * @param viewer The viewer to attach into the specified context.
+     * @param viewClass		The target view to be opened.
+     * @param contextId 	Context id to open into.
+     * @param viewer 		The viewer to attach into the specified context.
+     * @param initialData 	The initial viewer data.
      */
-    protected final void internalOpenActiveContext(String contextId, Viewer viewer) {}
+    protected final void internalOpenActiveContext(
+            Class<? extends RootView> viewClass, String contextId, Object viewer, Object initialData) {
+        final V view = getRegisteredViewByType(viewClass);
+        final Viewer convertedViewer = view.getElementFactory().createViewer(viewer, null);
+        view.open(contextId, convertedViewer, initialData);
+    }
 
     /**
      * Creates a context that never invalidates.

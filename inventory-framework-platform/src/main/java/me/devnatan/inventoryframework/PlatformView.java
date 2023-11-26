@@ -72,15 +72,11 @@ public abstract class PlatformView<
 
     /**
      * Opens this view to one or more viewers.
-     * <p>
-     * <b><i> This is an internal inventory-framework API that should not be used from outside of
-     * this library. No compatibility guarantees are provided. </i></b>
      *
      * @param viewers     The viewers that'll see this view.
      * @param initialData The initial data.
      */
-    @ApiStatus.Internal
-    public final String open(@NotNull List<Viewer> viewers, Object initialData) {
+    final String open(List<Viewer> viewers, Object initialData) {
         if (!isInitialized()) throw new IllegalStateException("Cannot open a uninitialized view");
 
         final Viewer subject = viewers.size() == 1 ? viewers.get(0) : null;
@@ -88,6 +84,31 @@ public abstract class PlatformView<
 
         getPipeline().execute(StandardPipelinePhases.OPEN, context);
         return context.getId().toString();
+    }
+
+    /**
+     * Opens an already active context to a viewer.
+     *
+     * @param contextId The id of the context.
+     * @param viewer The viewer to open the context to.
+     * @param initialData Initial data.
+     */
+    @SuppressWarnings("unchecked")
+    final void open(String contextId, Viewer viewer, Object initialData) {
+        IFRenderContext targetContext = null;
+        for (final IFContext context : getInternalContexts()) {
+            if (context.getId().toString().equals(contextId)) {
+                targetContext = (IFRenderContext) context;
+                break;
+            }
+        }
+
+        if (targetContext == null) throw new IllegalArgumentException("Context not found: " + contextId);
+
+        targetContext.addViewer(viewer);
+        viewer.setActiveContext(targetContext);
+        viewer.open(targetContext.getContainer());
+        onViewerAdded((TContext) targetContext, initialData);
     }
     // endregion
 

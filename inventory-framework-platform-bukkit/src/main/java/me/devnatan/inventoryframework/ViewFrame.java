@@ -120,7 +120,9 @@ public class ViewFrame extends IFViewFrame<ViewFrame, View> {
      */
     @ApiStatus.Experimental
     public final void openActive(
-            @NotNull Class<? extends View> viewClass, @NotNull String contextId, @NotNull Player player) {}
+            @NotNull Class<? extends View> viewClass, @NotNull String contextId, @NotNull Player player) {
+        internalOpenActiveContext(viewClass, contextId, player, null);
+    }
 
     // endregion
 
