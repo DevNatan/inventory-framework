@@ -1,6 +1,5 @@
 package me.devnatan.inventoryframework;
 
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import me.devnatan.inventoryframework.context.IFContext;
@@ -9,7 +8,6 @@ import me.devnatan.inventoryframework.internal.Job;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.UnmodifiableView;
 
 public interface RootView extends VirtualView {
 
@@ -27,10 +25,9 @@ public interface RootView extends VirtualView {
      * <b><i> This is an internal inventory-framework API that should not be used from outside of
      * this library. No compatibility guarantees are provided. </i></b>
      *
-     * @return An unmodifiable set of all currently active contexts in this view.
+     * @return An set of all currently active contexts in this view.
      */
     @ApiStatus.Internal
-    @UnmodifiableView
     Set<IFContext> getInternalContexts();
 
     /**
@@ -95,6 +92,10 @@ public interface RootView extends VirtualView {
     @ApiStatus.Internal
     void setScheduledUpdateJob(@NotNull Job job);
 
-    @NotNull
-    Map<String, Object> getMetadata();
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
+    void invalidateContext(String contextId);
 }

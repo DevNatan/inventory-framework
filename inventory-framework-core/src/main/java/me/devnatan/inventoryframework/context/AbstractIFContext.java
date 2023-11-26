@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import me.devnatan.inventoryframework.IFDebug;
 import me.devnatan.inventoryframework.InventoryFrameworkException;
 import me.devnatan.inventoryframework.UnsupportedOperationInSharedContextException;
 import me.devnatan.inventoryframework.ViewConfig;
@@ -42,6 +43,9 @@ abstract class AbstractIFContext extends DefaultStateValueHost implements IFCont
         synchronized (getIndexedViewers()) {
             getIndexedViewers().put(viewer.getId(), viewer);
         }
+
+        IFDebug.debug(
+                "Viewer %s added to %s", viewer.getId(), getRoot().getClass().getName());
     }
 
     @Override
@@ -49,6 +53,9 @@ abstract class AbstractIFContext extends DefaultStateValueHost implements IFCont
         synchronized (getIndexedViewers()) {
             getIndexedViewers().remove(viewer.getId());
         }
+        IFDebug.debug(
+                "Viewer %s removed from %s",
+                viewer.getId(), getRoot().getClass().getName());
     }
 
     @Override

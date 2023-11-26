@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+import me.devnatan.inventoryframework.context.EndlessContextData;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
 import me.devnatan.inventoryframework.pipeline.PipelinePhase;
@@ -188,36 +189,40 @@ abstract class IFViewFrame<S extends IFViewFrame<S, V>, V extends PlatformView<S
      * @return The id of the context.
      */
     @ApiStatus.Experimental
-    public final String createIndefiniteContext(@NotNull Class<? extends RootView> viewClass) {
-		throw new UnsupportedOperationException("Not implemented.");
-	}
+    public final EndlessContextData createEndlessContext(@NotNull Class<? extends RootView> viewClass) {
+        return createEndlessContext(viewClass, null);
+    }
 
-	/**
-	 * Invalidates a context created by {@link #createIndefiniteContext(Class)}.
-	 * <p>
-	 * <b><i> This API is experimental and is not subject to the general compatibility guarantees
-	 * such API may be changed or may be removed completely in any further release. </i></b>
-	 *
-	 * @param viewClass The view of the context to be later opened.
-	 */
-	@ApiStatus.Experimental
-	public final void invalidateIndefiniteContext(
-		@NotNull Class<? extends RootView> viewClass,
-		@NotNull String contextId
-	) {
-		throw new UnsupportedOperationException("Not implemented.");
-	}
+    /**
+     * Creates a context that is never invalidated.
+     * <p>
+     * <b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     *
+     * @param viewClass The view of the context to be later opened.
+     * @param initialData Initial setup data to pass to opening handler.
+     * @return The id of the context.
+     */
+    @ApiStatus.Experimental
+    public final EndlessContextData createEndlessContext(
+            @NotNull Class<? extends RootView> viewClass, Object initialData) {
+        final V view = getRegisteredViewByType(viewClass);
+        final String context = view.createEndless(initialData);
+        return new EndlessContextData(context, view);
+    }
 
     void addViewer(@NotNull Viewer viewer) {
         synchronized (viewerById) {
             viewerById.put(viewer.getId(), viewer);
         }
+        IFDebug.debug("Viewer added globally %s", viewer.getId());
     }
 
     void removeViewer(@NotNull Viewer viewer) {
         synchronized (viewerById) {
             viewerById.remove(viewer.getId());
         }
+        IFDebug.debug("Viewer removed globally %s", viewer.getId());
     }
 
     /**
