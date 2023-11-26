@@ -1,5 +1,14 @@
 # Changelog
 
+# 3.0.5 (11-26-2023)
+
+* Experimental `onViewerAdded` and `onViewerRemoved` to manage viewers in shared contexts (#516)
+* New `openActive(...)` to allow players "join" an already created context (#516)
+* Now ComponentBuilder's `closeOnClick()` closes only for the player who clicked, not for everyone in Shared Context (#516)
+* `type(ViewType.ANVIL)` is now automatically set when Anvil Input feature is applied (#523)
+* Do not fill all available slots when availableSlot() is used (#533)
+* Fix "Pagination state can only be registered by RootView" (#536)
+
 # 3.0.4 (11-20-2023)
 
 * Scheduled update now checks if a context is active before updating it (#517)
