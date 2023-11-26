@@ -62,44 +62,7 @@ public abstract class PlatformView<
     private final StateAccess<TContext, TItem> stateAccess =
             new StateAccessImpl<>(this, getElementFactory(), stateRegistry);
 
-    /**
-     * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
-     * this library. No compatibility guarantees are provided.</i></b>
-     */
-    @ApiStatus.Internal
-    public final TFramework getFramework() {
-        return framework;
-    }
-
-    /**
-     * The initialization state of this view.
-     *
-     * @return If this view was initialized.
-     */
-    final boolean isInitialized() {
-        return initialized;
-    }
-
-    /**
-     * Sets the initialization state of this view.
-     *
-     * @param initialized The new initialization state.
-     */
-    final void setInitialized(boolean initialized) {
-        this.initialized = initialized;
-    }
-
-    /**
-     * Throws an exception if this view is already initialized.
-     *
-     * @throws IllegalStateException if this view is already initialized.
-     */
-    private void requireNotInitialized() {
-        if (!isInitialized()) return;
-        throw new IllegalStateException(
-                "View is already initialized, please move this method call to class constructor or #onInit.");
-    }
-
+    // region Open & Close
     /**
      * Closes all contexts that are currently active in this view.
      */
@@ -126,7 +89,9 @@ public abstract class PlatformView<
         getPipeline().execute(StandardPipelinePhases.OPEN, context);
         return context.getId().toString();
     }
+    // endregion
 
+    // region Navigation
     /**
      * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
      * this library. No compatibility guarantees are provided.</i></b>
@@ -205,6 +170,7 @@ public abstract class PlatformView<
         viewer.setTransitioning(true);
         viewer.setPreviousContext(origin);
     }
+    // endregion
 
     /**
      * Creates a new ViewConfigBuilder instance with the default platform configuration.
@@ -219,6 +185,7 @@ public abstract class PlatformView<
         return configBuilder;
     }
 
+    // region Contexts
     /**
      * Returns the context that is linked to the specified viewer in this view.
      * <p>
@@ -339,6 +306,7 @@ public abstract class PlatformView<
             removeContext(target);
         }
     }
+    // endregion
 
     @SuppressWarnings("unchecked")
     @NotNull
@@ -347,6 +315,7 @@ public abstract class PlatformView<
         return (Iterator<TContext>) getContexts().iterator();
     }
 
+    // region Refs API
     /**
      * Creates a new unassigned reference instance.
      * <p>
@@ -376,7 +345,9 @@ public abstract class PlatformView<
     protected final <E> Ref<List<E>> multiRefs() {
         return new MultiRefsImpl<>();
     }
+    // endregion
 
+    // region Public Platform Handlers
     /**
      * Called when the view is about to be configured, the returned object will be the view's
      * configuration.
@@ -494,6 +465,46 @@ public abstract class PlatformView<
     @ApiStatus.OverrideOnly
     @ApiStatus.Experimental
     public void onViewerRemoved(@NotNull TContext context) {}
+    // endregion
+
+    // region Internals
+    /**
+     * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided.</i></b>
+     */
+    @ApiStatus.Internal
+    public final TFramework getFramework() {
+        return framework;
+    }
+
+    /**
+     * The initialization state of this view.
+     *
+     * @return If this view was initialized.
+     */
+    final boolean isInitialized() {
+        return initialized;
+    }
+
+    /**
+     * Sets the initialization state of this view.
+     *
+     * @param initialized The new initialization state.
+     */
+    final void setInitialized(boolean initialized) {
+        this.initialized = initialized;
+    }
+
+    /**
+     * Throws an exception if this view is already initialized.
+     *
+     * @throws IllegalStateException if this view is already initialized.
+     */
+    private void requireNotInitialized() {
+        if (!isInitialized()) return;
+        throw new IllegalStateException(
+                "View is already initialized, please move this method call to class constructor or #onInit.");
+    }
 
     /**
      * Called internally before the first initialization.
@@ -528,13 +539,15 @@ public abstract class PlatformView<
         pipeline.execute(StandardPipelinePhases.INIT, this);
     }
 
-    public abstract void registerPlatformInterceptors();
+    abstract void registerPlatformInterceptors();
+    // endregion
 
     @ApiStatus.Internal
     public @NotNull ElementFactory getElementFactory() {
         return PlatformUtils.getFactory();
     }
 
+    // region State Management
     @Override
     public final <T> State<T> state(T initialValue) {
         requireNotInitialized();
@@ -678,4 +691,5 @@ public abstract class PlatformView<
         requireNotInitialized();
         return stateAccess.buildLazyAsyncPaginationState(sourceProvider);
     }
+    // endregion
 }
