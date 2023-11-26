@@ -392,7 +392,7 @@ public abstract class PlatformView<
      * will be thrown.
      * <p>
      * <b>This method is called once in Shared Contexts. To know when a viewer is added/removed from
-     * this kind of context use {@link #onViewerAdded(TContext, TViewer, Object)}/{@link #onViewerRemoved(IFContext)}</b>.
+     * this kind of context use {@link #onViewerAdded(TContext, TViewer, Object)}/{@link #onViewerRemoved(TContext, TViewer)}</b>.
      *
      * @param open The open context.
      */
@@ -480,7 +480,7 @@ public abstract class PlatformView<
     /**
      * Called when a {@link Viewer viewer} is removed from a context.
      * <p>
-     * This method is called before {@link #onClose(IFCloseContext) close phase}.
+     * This method is called on {@link #onClose(IFCloseContext) close phase} before context invalidation.
      * <p>
      * <b><i> This API is experimental and is not subject to the general compatibility guarantees
      * such API may be changed or may be removed completely in any further release. </i></b>

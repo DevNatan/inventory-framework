@@ -17,7 +17,7 @@ public final class ContextInvalidationOnCloseInterceptor implements PipelineInte
 
         final PlatformView root = (PlatformView) context.getRoot();
         final Viewer viewer = context.getViewer();
-        root.removeAndTryInvalidateContext(viewer, context);
         root.onViewerRemoved(context.getParent(), viewer.getPlatformInstance());
+        root.removeAndTryInvalidateContext(viewer, context);
     }
 }
