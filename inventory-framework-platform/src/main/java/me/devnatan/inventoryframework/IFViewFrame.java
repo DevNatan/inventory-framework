@@ -178,6 +178,20 @@ abstract class IFViewFrame<S extends IFViewFrame<S, V>, V extends PlatformView<S
         view.open(contextId, convertedViewer, initialData);
     }
 
+    /**
+     * Creates a context that is never invalidated.
+     * <p>
+     * <b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     *
+     * @param viewClass The view of the context to be later opened.
+     * @return The id of the context.
+     */
+    @ApiStatus.Experimental
+    public final String createIndefiniteContext(@NotNull Class<? extends RootView> viewClass) {
+		throw new UnsupportedOperationException("Not implemented.");
+	}
+
     void addViewer(@NotNull Viewer viewer) {
         synchronized (viewerById) {
             viewerById.put(viewer.getId(), viewer);
