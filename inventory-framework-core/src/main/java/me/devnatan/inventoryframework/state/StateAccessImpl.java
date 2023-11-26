@@ -27,12 +27,12 @@ public final class StateAccessImpl<
                 ItemBuilder extends ItemComponentBuilder<ItemBuilder, Context> & ComponentFactory>
         implements StateAccess<Context, ItemBuilder> {
 
-	private final Object caller;
+    private final Object caller;
     private final ElementFactory elementFactory;
     private final StateRegistry stateRegistry;
 
     public StateAccessImpl(Object caller, ElementFactory elementFactory, StateRegistry stateRegistry) {
-		this.caller = caller;
+        this.caller = caller;
         this.elementFactory = elementFactory;
         this.stateRegistry = stateRegistry;
     }

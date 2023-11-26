@@ -59,7 +59,8 @@ public abstract class PlatformView<
 
     private TFramework framework;
     private boolean initialized;
-    private final StateAccess<TContext, TItem> stateAccess = new StateAccessImpl<>(this, getElementFactory(), stateRegistry);
+    private final StateAccess<TContext, TItem> stateAccess =
+            new StateAccessImpl<>(this, getElementFactory(), stateRegistry);
 
     /**
      * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
