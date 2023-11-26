@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.UUID;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewConfig;
+import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.component.Component;
@@ -154,6 +155,20 @@ public interface IFContext extends VirtualView, StateValueHost, ComponentContain
      */
     @ApiStatus.Internal
     void updateComponent(@NotNull Component component, boolean force);
+
+    /**
+     * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided.</i></b>
+     *
+     * @param component The clicked component.
+     */
+    @ApiStatus.Internal
+    void performClickInComponent(
+            @NotNull Component component,
+            @NotNull Viewer viewer,
+            @NotNull ViewContainer clickedContainer,
+            Object platformEvent,
+            int clickedSlot);
 
     /**
      * Updates all components for all viewers in this context.

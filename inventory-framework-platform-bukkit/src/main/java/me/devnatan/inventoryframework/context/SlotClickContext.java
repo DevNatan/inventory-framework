@@ -85,6 +85,11 @@ public class SlotClickContext extends SlotContext implements IFSlotClickContext 
     }
 
     @Override
+    public final Object getPlatformEvent() {
+        return clickOrigin;
+    }
+
+    @Override
     public final int getClickedSlot() {
         return clickOrigin.getRawSlot();
     }

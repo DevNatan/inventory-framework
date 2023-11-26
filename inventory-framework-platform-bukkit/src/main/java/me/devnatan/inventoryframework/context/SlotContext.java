@@ -92,6 +92,16 @@ public abstract class SlotContext extends PlatformContext implements IFSlotConte
     }
 
     @Override
+    public final void performClickInComponent(
+            @NotNull Component component,
+            @NotNull Viewer viewer,
+            @NotNull ViewContainer clickedContainer,
+            Object platformEvent,
+            int clickedSlot) {
+        getParent().performClickInComponent(component, viewer, clickedContainer, platformEvent, clickedSlot);
+    }
+
+    @Override
     public final void update() {
         getParent().update();
     }
