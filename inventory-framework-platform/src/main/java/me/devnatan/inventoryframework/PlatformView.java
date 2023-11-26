@@ -350,16 +350,27 @@ public abstract class PlatformView<
     }
 
     @Override
-    public void invalidateContext(String contextId) {
-        IFDebug.debug("Invalidating context %s...", contextId);
+    public void invalidateEndlessContext(String contextId) {
         final IFContext context = getInternalContexts().stream()
                 .filter(value -> value.getId().toString().equals(contextId))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Context not found: " + contextId));
 
-        if (!context.isActive() || context.isEndless()) return;
+        if (!context.isActive()) return;
+        if (!context.isEndless())
+            throw new IllegalArgumentException(
+                    "#invalidateEndlessContext() can only be called in #isEndless() == true context");
 
+        IFDebug.debug("Invalidating endless context %s...", contextId);
+
+        // closeForEveryone() will perform everything needed to ensure non-abnormal closing
+        // like calling close handlers, state management, removing viewers and so on
         context.closeForEveryone();
+
+        // We need to do this here because in the natural flow of context invalidating checks if the
+        // context is endless so if it's an endless then it will not be removed nor deactivated
+        context.setActive(false);
+        removeContext(context);
     }
     // endregion
 

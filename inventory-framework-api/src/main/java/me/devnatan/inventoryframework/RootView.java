@@ -25,7 +25,7 @@ public interface RootView extends VirtualView {
      * <b><i> This is an internal inventory-framework API that should not be used from outside of
      * this library. No compatibility guarantees are provided. </i></b>
      *
-     * @return An set of all currently active contexts in this view.
+     * @return A set of all currently active contexts in this view.
      */
     @ApiStatus.Internal
     Set<IFContext> getInternalContexts();
@@ -97,5 +97,5 @@ public interface RootView extends VirtualView {
      * this library. No compatibility guarantees are provided. </i></b>
      */
     @ApiStatus.Internal
-    void invalidateContext(String contextId);
+    void invalidateEndlessContext(String contextId);
 }

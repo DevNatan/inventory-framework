@@ -7,6 +7,7 @@ public final class EndlessContextData {
 
     private final String contextId;
     private final RootView view;
+    private boolean invalidated;
 
     public EndlessContextData(String contextId, RootView view) {
         this.contextId = contextId;
@@ -22,7 +23,12 @@ public final class EndlessContextData {
     }
 
     public void invalidate() {
-        getView().invalidateContext(contextId);
+        getView().invalidateEndlessContext(contextId);
+        invalidated = true;
+    }
+
+    public boolean wasInvalidated() {
+        return invalidated;
     }
 
     @Override
