@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.UnaryOperator;
+import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.feature.DefaultFeatureInstaller;
 import me.devnatan.inventoryframework.feature.Feature;
 import me.devnatan.inventoryframework.feature.FeatureInstaller;
@@ -46,14 +47,16 @@ public class ViewFrame extends IFViewFrame<ViewFrame, View> {
         return owner;
     }
 
+    // region Opening
     /**
      * Opens a view to a player.
      *
      * @param viewClass The target view to be opened.
      * @param player    The player that the view will be open to.
+     * @return The id of the newly created {@link IFContext}.
      */
-    public final void open(@NotNull Class<? extends View> viewClass, @NotNull Player player) {
-        open(viewClass, player, null);
+    public final String open(@NotNull Class<? extends View> viewClass, @NotNull Player player) {
+        return open(viewClass, player, null);
     }
 
     /**
@@ -62,9 +65,10 @@ public class ViewFrame extends IFViewFrame<ViewFrame, View> {
      * @param viewClass   The target view to be opened.
      * @param player      The player that the view will be open to.
      * @param initialData The initial data.
+     * @return The id of the newly created {@link IFContext}.
      */
-    public final void open(@NotNull Class<? extends View> viewClass, @NotNull Player player, Object initialData) {
-        open(viewClass, Collections.singletonList(player), initialData);
+    public final String open(@NotNull Class<? extends View> viewClass, @NotNull Player player, Object initialData) {
+        return open(viewClass, Collections.singletonList(player), initialData);
     }
 
     /**
@@ -77,10 +81,11 @@ public class ViewFrame extends IFViewFrame<ViewFrame, View> {
      *
      * @param viewClass The target view to be opened.
      * @param players   The players that the view will be open to.
+     * @return The id of the newly created {@link IFContext}.
      */
     @ApiStatus.Experimental
-    public final void open(@NotNull Class<? extends View> viewClass, @NotNull Collection<? extends Player> players) {
-        open(viewClass, players, null);
+    public final String open(@NotNull Class<? extends View> viewClass, @NotNull Collection<? extends Player> players) {
+        return open(viewClass, players, null);
     }
 
     /**
@@ -94,14 +99,32 @@ public class ViewFrame extends IFViewFrame<ViewFrame, View> {
      * @param viewClass   The target view to be opened.
      * @param players     The players that the view will be open to.
      * @param initialData The initial data.
+     * @return The id of the newly created {@link IFContext}.
      */
     @ApiStatus.Experimental
-    public final void open(
+    public final String open(
             @NotNull Class<? extends View> viewClass,
             @NotNull Collection<? extends Player> players,
             Object initialData) {
-        internalOpen(viewClass, players, initialData);
+        return internalOpen(viewClass, players, initialData);
     }
+
+    /**
+     * Opens an already active context to a player.
+     * <p>
+     * <b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     *
+     * @param contextId The id of the context.
+     * @param player Who the context will be open to.
+     */
+    @ApiStatus.Experimental
+    public final void openActive(
+            @NotNull Class<? extends View> viewClass, @NotNull String contextId, @NotNull Player player) {
+        internalOpenActiveContext(viewClass, contextId, player, null);
+    }
+
+    // endregion
 
     @Override
     public final ViewFrame register() {
@@ -135,6 +158,7 @@ public class ViewFrame extends IFViewFrame<ViewFrame, View> {
         getPipeline().execute(IFViewFrame.FRAME_UNREGISTERED, this);
     }
 
+    // region Internals
     private void tryEnableMetrics() {
         final ServicesManager servicesManager = getOwner().getServer().getServicesManager();
         if (servicesManager.isProvidedFor(IFViewFrame.class)) return;
@@ -195,6 +219,7 @@ public class ViewFrame extends IFViewFrame<ViewFrame, View> {
 
         if (!isLibraryAsPluginEnabled && isLibraryPresent) plugin.getLogger().warning(RELOCATION_MESSAGE);
     }
+    // endregion
 
     /**
      * <b><i> This is an internal inventory-framework API that should not be used from outside of

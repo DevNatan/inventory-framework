@@ -49,6 +49,7 @@ import org.jetbrains.annotations.NotNull;
 
 public abstract class PlatformView<
                 TFramework extends IFViewFrame<?, ?>,
+                TViewer,
                 TItem extends ItemComponentBuilder<TItem, TContext> & ComponentFactory,
                 TContext extends IFContext,
                 TOpenContext extends IFOpenContext,
@@ -62,44 +63,7 @@ public abstract class PlatformView<
     private final StateAccess<TContext, TItem> stateAccess =
             new StateAccessImpl<>(this, getElementFactory(), stateRegistry);
 
-    /**
-     * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
-     * this library. No compatibility guarantees are provided.</i></b>
-     */
-    @ApiStatus.Internal
-    public final TFramework getFramework() {
-        return framework;
-    }
-
-    /**
-     * The initialization state of this view.
-     *
-     * @return If this view was initialized.
-     */
-    final boolean isInitialized() {
-        return initialized;
-    }
-
-    /**
-     * Sets the initialization state of this view.
-     *
-     * @param initialized The new initialization state.
-     */
-    final void setInitialized(boolean initialized) {
-        this.initialized = initialized;
-    }
-
-    /**
-     * Throws an exception if this view is already initialized.
-     *
-     * @throws IllegalStateException if this view is already initialized.
-     */
-    private void requireNotInitialized() {
-        if (!isInitialized()) return;
-        throw new IllegalStateException(
-                "View is already initialized, please move this method call to class constructor or #onInit.");
-    }
-
+    // region Open & Close
     /**
      * Closes all contexts that are currently active in this view.
      */
@@ -109,23 +73,49 @@ public abstract class PlatformView<
 
     /**
      * Opens this view to one or more viewers.
-     * <p>
-     * <b><i> This is an internal inventory-framework API that should not be used from outside of
-     * this library. No compatibility guarantees are provided. </i></b>
      *
      * @param viewers     The viewers that'll see this view.
      * @param initialData The initial data.
      */
-    @ApiStatus.Internal
-    public final void open(@NotNull List<Viewer> viewers, Object initialData) {
+    final String open(List<Viewer> viewers, Object initialData) {
         if (!isInitialized()) throw new IllegalStateException("Cannot open a uninitialized view");
 
         final Viewer subject = viewers.size() == 1 ? viewers.get(0) : null;
         final IFOpenContext context = getElementFactory().createOpenContext(this, subject, viewers, initialData);
 
         getPipeline().execute(StandardPipelinePhases.OPEN, context);
+        return context.getId().toString();
     }
 
+    /**
+     * Opens an already active context to a viewer.
+     *
+     * @param contextId The id of the context.
+     * @param viewer The viewer to open the context to.
+     * @param initialData Initial data.
+     */
+    @SuppressWarnings("unchecked")
+    final void open(String contextId, Viewer viewer, Object initialData) {
+        IFRenderContext targetContext = null;
+        for (final IFContext context : getInternalContexts()) {
+            if (context.getId().toString().equals(contextId)) {
+                targetContext = (IFRenderContext) context;
+                break;
+            }
+        }
+
+        if (targetContext == null) throw new IllegalArgumentException("Context not found: " + contextId);
+        if (!targetContext.isActive()) throw new IllegalStateException("Invalidated");
+
+        targetContext.addViewer(viewer);
+        getFramework().addViewer(viewer);
+        viewer.setActiveContext(targetContext);
+        viewer.open(targetContext.getContainer());
+        onViewerAdded((TContext) targetContext, (TViewer) viewer.getPlatformInstance(), initialData);
+    }
+    // endregion
+
+    // region Navigation
     /**
      * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
      * this library. No compatibility guarantees are provided.</i></b>
@@ -204,6 +194,7 @@ public abstract class PlatformView<
         viewer.setTransitioning(true);
         viewer.setPreviousContext(origin);
     }
+    // endregion
 
     /**
      * Creates a new ViewConfigBuilder instance with the default platform configuration.
@@ -218,6 +209,7 @@ public abstract class PlatformView<
         return configBuilder;
     }
 
+    // region Contexts
     /**
      * Returns the context that is linked to the specified viewer in this view.
      * <p>
@@ -338,6 +330,7 @@ public abstract class PlatformView<
             removeContext(target);
         }
     }
+    // endregion
 
     @SuppressWarnings("unchecked")
     @NotNull
@@ -346,6 +339,7 @@ public abstract class PlatformView<
         return (Iterator<TContext>) getContexts().iterator();
     }
 
+    // region Refs API
     /**
      * Creates a new unassigned reference instance.
      * <p>
@@ -375,7 +369,9 @@ public abstract class PlatformView<
     protected final <E> Ref<List<E>> multiRefs() {
         return new MultiRefsImpl<>();
     }
+    // endregion
 
+    // region Public Platform Handlers
     /**
      * Called when the view is about to be configured, the returned object will be the view's
      * configuration.
@@ -386,7 +382,7 @@ public abstract class PlatformView<
     public void onInit(@NotNull ViewConfigBuilder config) {}
 
     /**
-     * Called before the inventory is opened to the player.
+     * Called before a context is rendered, used to set up it.
      *
      * <p>This handler is often called "pre-rendering" because it is possible to set the title and
      * size of the inventory and also cancel the opening of the View without even doing any handling
@@ -394,8 +390,11 @@ public abstract class PlatformView<
      *
      * <p>It is not possible to manipulate the inventory in this handler, if it happens an exception
      * will be thrown.
+     * <p>
+     * <b>This method is called once in Shared Contexts. To know when a viewer is added/removed from
+     * this kind of context use {@link #onViewerAdded(TContext, TViewer, Object)}/{@link #onViewerRemoved(TContext, TViewer)}</b>.
      *
-     * @param open The player view context.
+     * @param open The open context.
      */
     @ApiStatus.OverrideOnly
     public void onOpen(@NotNull TOpenContext open) {}
@@ -463,6 +462,77 @@ public abstract class PlatformView<
     public void onResume(@NotNull TContext origin, @NotNull TContext target) {}
 
     /**
+     * Called when a {@link Viewer viewer} is added to a context.
+     * <p>
+     * This method is called after {@link #onFirstRender(IFRenderContext) initial render phase}.
+     * <p>
+     * <b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     *
+     * @param context 	The context.
+     * @param viewer 	Who was added to the context.
+     * @param data    	Initial data set wen the viewer was added.
+     */
+    @ApiStatus.OverrideOnly
+    @ApiStatus.Experimental
+    public void onViewerAdded(@NotNull TContext context, @NotNull TViewer viewer, Object data) {}
+
+    /**
+     * Called when a {@link Viewer viewer} is removed from a context.
+     * <p>
+     * This method is called on {@link #onClose(IFCloseContext) close phase} before context invalidation.
+     * <p>
+     * <b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     *
+     * @param context The context.
+     * @param viewer Who was removed from the context.
+     */
+    @ApiStatus.OverrideOnly
+    @ApiStatus.Experimental
+    public void onViewerRemoved(@NotNull TContext context, @NotNull TViewer viewer) {}
+    // endregion
+
+    // region Internals
+    /**
+     * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided.</i></b>
+     */
+    @ApiStatus.Internal
+    public final TFramework getFramework() {
+        return framework;
+    }
+
+    /**
+     * The initialization state of this view.
+     *
+     * @return If this view was initialized.
+     */
+    final boolean isInitialized() {
+        return initialized;
+    }
+
+    /**
+     * Sets the initialization state of this view.
+     *
+     * @param initialized The new initialization state.
+     */
+    final void setInitialized(boolean initialized) {
+        this.initialized = initialized;
+    }
+
+    /**
+     * Throws an exception if this view is already initialized.
+     *
+     * @throws IllegalStateException if this view is already initialized.
+     */
+    private void requireNotInitialized() {
+        if (!isInitialized()) return;
+        throw new IllegalStateException(
+                "View is already initialized, please move this method call to class constructor or #onInit.");
+    }
+
+    /**
      * Called internally before the first initialization.
      * <p>
      * Use it to register pipeline interceptors.
@@ -495,13 +565,15 @@ public abstract class PlatformView<
         pipeline.execute(StandardPipelinePhases.INIT, this);
     }
 
-    public abstract void registerPlatformInterceptors();
+    abstract void registerPlatformInterceptors();
+    // endregion
 
     @ApiStatus.Internal
     public @NotNull ElementFactory getElementFactory() {
         return PlatformUtils.getFactory();
     }
 
+    // region State Management
     @Override
     public final <T> State<T> state(T initialValue) {
         requireNotInitialized();
@@ -645,4 +717,5 @@ public abstract class PlatformView<
         requireNotInitialized();
         return stateAccess.buildLazyAsyncPaginationState(sourceProvider);
     }
+    // endregion
 }
