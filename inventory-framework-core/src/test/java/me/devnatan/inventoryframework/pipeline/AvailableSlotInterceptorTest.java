@@ -80,7 +80,7 @@ public class AvailableSlotInterceptorTest {
 
         when(componentFactory.create()).thenReturn(component);
         when(availableSlotFactory.apply(anyInt(), anyInt())).thenReturn(componentFactory);
-        when(context.getAvailableSlotFactory()).thenReturn(availableSlotFactory);
+        when(context.getAvailableSlotFactories()).thenReturn(availableSlotFactory);
 
         LayoutSlot layoutSlot =
                 new LayoutSlot(LayoutSlot.FILLED_RESERVED_CHAR, $ -> componentFactory, defaultLayoutSlotRange);
@@ -108,7 +108,7 @@ public class AvailableSlotInterceptorTest {
 
         BiFunction<Integer, Integer, ComponentFactory> availableSlotFactory = mock(BiFunction.class);
         when(availableSlotFactory.apply(anyInt(), anyInt())).thenReturn(componentFactory);
-        when(context.getAvailableSlotFactory()).thenReturn(availableSlotFactory);
+        when(context.getAvailableSlotFactories()).thenReturn(availableSlotFactory);
 
         LayoutSlot layoutSlot =
                 new LayoutSlot(LayoutSlot.FILLED_RESERVED_CHAR, $ -> componentFactory, defaultLayoutSlotRange);

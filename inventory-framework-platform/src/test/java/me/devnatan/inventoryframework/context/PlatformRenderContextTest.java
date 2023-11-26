@@ -38,7 +38,7 @@ public class PlatformRenderContextTest {
 
         context.availableSlot();
 
-        BiFunction<Integer, Integer, ComponentFactory> factory = context.getAvailableSlotFactory();
+        BiFunction<Integer, Integer, ComponentFactory> factory = context.getAvailableSlotFactories();
         ComponentFactory value = factory.apply(0, 0);
         assertEquals(itemBuilder, value);
     }

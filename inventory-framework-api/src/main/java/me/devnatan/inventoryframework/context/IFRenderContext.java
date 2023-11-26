@@ -38,7 +38,7 @@ public interface IFRenderContext extends IFConfinedContext {
      * this library. No compatibility guarantees are provided. </i></b>
      */
     @ApiStatus.Internal
-    BiFunction<Integer, Integer, ComponentFactory> getAvailableSlotFactory();
+    List<BiFunction<Integer, Integer, ComponentFactory>> getAvailableSlotFactories();
 
     /**
      * The container of this context.
