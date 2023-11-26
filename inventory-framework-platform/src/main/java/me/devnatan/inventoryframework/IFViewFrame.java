@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-import me.devnatan.inventoryframework.context.EndlessContextData;
+import me.devnatan.inventoryframework.context.EndlessContextInfo;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
 import me.devnatan.inventoryframework.pipeline.PipelinePhase;
@@ -189,7 +189,7 @@ abstract class IFViewFrame<S extends IFViewFrame<S, V>, V extends PlatformView<S
      * @return The id of the context.
      */
     @ApiStatus.Experimental
-    public final EndlessContextData createEndlessContext(@NotNull Class<? extends RootView> viewClass) {
+    public final EndlessContextInfo createEndlessContext(@NotNull Class<? extends RootView> viewClass) {
         return createEndlessContext(viewClass, null);
     }
 
@@ -204,11 +204,11 @@ abstract class IFViewFrame<S extends IFViewFrame<S, V>, V extends PlatformView<S
      * @return The id of the context.
      */
     @ApiStatus.Experimental
-    public final EndlessContextData createEndlessContext(
+    public final EndlessContextInfo createEndlessContext(
             @NotNull Class<? extends RootView> viewClass, Object initialData) {
         final V view = getRegisteredViewByType(viewClass);
         final String context = view.createEndless(initialData);
-        return new EndlessContextData(context, view);
+        return new EndlessContextInfo(context, view);
     }
 
     void addViewer(@NotNull Viewer viewer) {

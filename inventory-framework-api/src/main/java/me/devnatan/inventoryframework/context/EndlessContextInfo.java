@@ -3,13 +3,13 @@ package me.devnatan.inventoryframework.context;
 import java.util.Objects;
 import me.devnatan.inventoryframework.RootView;
 
-public final class EndlessContextData {
+public final class EndlessContextInfo {
 
     private final String contextId;
     private final RootView view;
     private boolean invalidated;
 
-    public EndlessContextData(String contextId, RootView view) {
+    public EndlessContextInfo(String contextId, RootView view) {
         this.contextId = contextId;
         this.view = view;
     }
@@ -35,7 +35,7 @@ public final class EndlessContextData {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        EndlessContextData that = (EndlessContextData) o;
+        EndlessContextInfo that = (EndlessContextInfo) o;
         return Objects.equals(contextId, that.contextId) && Objects.equals(view, that.view);
     }
 
