@@ -1,5 +1,11 @@
 # Changelog
 
+# 3.0.6 (11-27-2023)
+
+* New `createEndlessContext` and `openEndless` to create shared views with multiple players that are never invalidated (#538)
+* Re-propagate click interaction in pagination child - now `cancelOnClick()` works correctly in pagination items (#539)
+* Some components disappearing on global context update (#541)
+
 # 3.0.5 (11-26-2023)
 
 * Experimental `onViewerAdded` and `onViewerRemoved` to manage viewers in shared contexts (#516)
