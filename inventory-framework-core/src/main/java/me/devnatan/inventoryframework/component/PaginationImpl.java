@@ -427,6 +427,7 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
             return;
         }
 
+        if (!isVisible()) return;
         getInternalComponents().forEach(child -> child.updated(context));
     }
 
