@@ -1,0 +1,21 @@
+name: Test
+
+on:
+  push:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    needs:
+      - build
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+      - name: Test with Gradle
+        uses: gradle/gradle-build-action@64a1064eca4dce12f511de38c4afb06707e4e7fc
+        with:
+          arguments: test
