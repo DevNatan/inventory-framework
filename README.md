@@ -6,17 +6,11 @@
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FDevNatan%2Finventory-framework.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FDevNatan%2Finventory-framework?ref=badge_shield)
 [![Maven Central](https://img.shields.io/maven-central/v/me.devnatan/inventory-framework-api)](https://github.com/DevNatan/inventory-framework/wiki/Installation)
 
-Inventory Framework is a Bukkit Inventory API framework that allows you to create custom inventories
-with varied interaction treatments that would be almost impossible to create manually by the developer.
+Inventory Framework is a Minecraft Inventory API framework that allows you to create custom inventories
+with varied interaction treatments, have resolution and detection of known platform issues that are resolved internally,
+high-level secure and robust API.
 
-We provide to you with extra inventory manipulation functionality, common code for creating inventories of different types,
-resolution and detection of known platform issues that are resolved internally, high-level secure and robust API.
-
-Works for Minecraft versions 1.8-1.20 (see [Versions Compatibility](https://github.com/DevNatan/inventory-framework/wiki#versions-compatibility))
-
-* [Documentation](https://github.com/DevNatan/inventory-framework/wiki)
-* [Installation](https://github.com/DevNatan/inventory-framework/wiki/Installation)
-* [Code Samples](https://github.com/DevNatan/inventory-framework/wiki/Code-Samples)
+[Click here to see the documentation](https://github.com/DevNatan/inventory-framework/wiki)
 
 ## License
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FDevNatan%2Finventory-framework.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FDevNatan%2Finventory-framework?ref=badge_large)
