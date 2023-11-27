@@ -180,7 +180,7 @@ public class ItemComponent implements Component, InteractionHandler {
         // Static item with no `displayIf` must not even reach the update handler
         if (!context.isForceUpdate() && displayCondition == null && getRenderHandler() == null) return;
 
-        if (getUpdateHandler() != null) {
+        if (isVisible() && getUpdateHandler() != null) {
             getUpdateHandler().accept(context);
             if (context.isCancelled()) return;
         }
