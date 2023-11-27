@@ -18,13 +18,6 @@ public final class UpdateInterceptor implements PipelineInterceptor<VirtualView>
         if (!context.isRendered()) return;
 
         final List<Component> componentList = context.getComponents();
-        for (final Component component : componentList) {
-            if (!component.isVisible()) {
-                component.clear(context);
-                continue;
-            }
-
-            context.updateComponent(component, false);
-        }
+        for (final Component component : componentList) context.updateComponent(component, false);
     }
 }
