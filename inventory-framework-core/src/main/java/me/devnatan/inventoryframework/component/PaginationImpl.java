@@ -15,6 +15,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import me.devnatan.inventoryframework.IFDebug;
 import me.devnatan.inventoryframework.Ref;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.VirtualView;
@@ -640,9 +641,7 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
         }
 
         for (final Component child : getInternalComponents()) {
-            if (child.getInteractionHandler() == null || !child.isVisible()) {
-                continue;
-            }
+            if (child.getInteractionHandler() == null || !child.isVisible()) continue;
 
             if (child.isContainedWithin(context.getClickedSlot())) {
                 context.getParent()
@@ -651,7 +650,8 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
                                 context.getViewer(),
                                 context.getClickedContainer(),
                                 context.getPlatformEvent(),
-                                context.getClickedSlot());
+                                context.getClickedSlot(),
+                                true);
                 break;
             }
         }

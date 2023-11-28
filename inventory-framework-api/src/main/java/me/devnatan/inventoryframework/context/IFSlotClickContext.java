@@ -92,4 +92,11 @@ public interface IFSlotClickContext extends IFSlotContext, IFConfinedContext {
      */
     @ApiStatus.Internal
     Object getPlatformEvent();
+
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
+    boolean isCombined();
 }

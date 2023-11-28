@@ -52,7 +52,7 @@ final class IFInventoryListener implements Listener {
 
         final RootView root = context.getRoot();
         final IFSlotClickContext clickContext = root.getElementFactory()
-                .createSlotClickContext(event.getRawSlot(), viewer, clickedContainer, clickedComponent, event);
+                .createSlotClickContext(event.getRawSlot(), viewer, clickedContainer, clickedComponent, event, false);
 
         root.getPipeline().execute(StandardPipelinePhases.CLICK, clickContext);
     }

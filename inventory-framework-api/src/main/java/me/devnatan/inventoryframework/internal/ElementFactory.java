@@ -64,7 +64,8 @@ public abstract class ElementFactory {
             @NotNull Viewer whoClicked,
             @NotNull ViewContainer interactionContainer,
             @Nullable Component componentClicked,
-            @NotNull Object origin);
+            @NotNull Object origin,
+            boolean combined);
 
     public abstract IFSlotRenderContext createSlotRenderContext(
             int slot, @NotNull IFRenderContext parent, @Nullable Viewer viewer);
