@@ -1,5 +1,9 @@
 # Changelog
 
+# 3.0.8 (11-28-2023)
+
+* Interaction delay intercepting re-propagated interactions (#543)
+
 # 3.0.7 (11-28-2023)
 
 * Solve issues with click handlers not working in pagination by calling component interaction handler in core interceptors (#542)
