@@ -77,9 +77,11 @@ abstract class AbstractIFContext extends DefaultStateValueHost implements IFCont
     @Override
     public List<Component> getComponentsAt(int position) {
         final List<Component> componentList = new ArrayList<>();
-        for (final Component component : getInternalComponents()) {
-            if (component.isContainedWithin(position)) {
-                componentList.add(component);
+        synchronized (getInternalComponents()) {
+            for (final Component component : getInternalComponents()) {
+                if (component.isContainedWithin(position)) {
+                    componentList.add(component);
+                }
             }
         }
         return componentList;
@@ -173,10 +175,11 @@ abstract class AbstractIFContext extends DefaultStateValueHost implements IFCont
             @NotNull Viewer viewer,
             @NotNull ViewContainer clickedContainer,
             Object platformEvent,
-            int clickedSlot) {
+            int clickedSlot,
+            boolean combined) {
         final IFSlotClickContext clickContext = getRoot()
                 .getElementFactory()
-                .createSlotClickContext(clickedSlot, viewer, clickedContainer, component, platformEvent);
+                .createSlotClickContext(clickedSlot, viewer, clickedContainer, component, platformEvent, combined);
 
         getRoot().getPipeline().execute(StandardPipelinePhases.CLICK, clickContext);
     }
@@ -220,7 +223,7 @@ abstract class AbstractIFContext extends DefaultStateValueHost implements IFCont
     @Override
     public String toString() {
         return "AbstractIFContext{" + "id="
-                + getId() + ", viewers="
+                + getId() + ", indexedViewers="
                 + getIndexedViewers() + ", config="
                 + getConfig() + ", initialData="
                 + getInitialData() + "} "
