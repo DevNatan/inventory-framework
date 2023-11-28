@@ -1,5 +1,9 @@
 # Changelog
 
+# 3.0.7 (11-28-2023)
+
+* Solve issues with click handlers not working in pagination by calling component interaction handler in core interceptors (#542)
+
 # 3.0.6 (11-27-2023)
 
 * New `createEndlessContext` and `openEndless` to create shared views with multiple players that are never invalidated (#538)
