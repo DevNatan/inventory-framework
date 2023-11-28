@@ -1,5 +1,6 @@
 package me.devnatan.inventoryframework.pipeline;
 
+import me.devnatan.inventoryframework.IFDebug;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.context.IFSlotClickContext;
@@ -13,9 +14,17 @@ public final class ComponentClickHandlerCallInterceptor implements PipelineInter
 
         final IFSlotClickContext click = (IFSlotClickContext) subject;
         final Component component = click.getComponent();
-        if (component == null) return;
-        if (component.getInteractionHandler() == null) return;
 
+        if (component == null) {
+            IFDebug.debug("ComponentClickHandlerCallInterceptor: null component");
+            return;
+        }
+        if (component.getInteractionHandler() == null) {
+            IFDebug.debug("ComponentClickHandlerCallInterceptor: null component.getInteractionHandler()");
+            return;
+        }
+
+        IFDebug.debug("ComponentClickHandlerCallInterceptor: %s", component);
         component.getInteractionHandler().clicked(component, click);
     }
 }

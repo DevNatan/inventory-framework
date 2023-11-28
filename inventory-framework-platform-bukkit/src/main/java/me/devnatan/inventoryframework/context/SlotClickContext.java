@@ -20,6 +20,7 @@ public class SlotClickContext extends SlotContext implements IFSlotClickContext 
     private final ViewContainer clickedContainer;
     private final Component clickedComponent;
     private final InventoryClickEvent clickOrigin;
+    private final boolean combined;
     private boolean cancelled;
 
     @ApiStatus.Internal
@@ -29,12 +30,14 @@ public class SlotClickContext extends SlotContext implements IFSlotClickContext 
             @NotNull Viewer whoClicked,
             @NotNull ViewContainer clickedContainer,
             @Nullable Component clickedComponent,
-            @NotNull InventoryClickEvent clickOrigin) {
+            @NotNull InventoryClickEvent clickOrigin,
+            boolean combined) {
         super(slot, parent);
         this.whoClicked = whoClicked;
         this.clickedContainer = clickedContainer;
         this.clickedComponent = clickedComponent;
         this.clickOrigin = clickOrigin;
+        this.combined = combined;
     }
 
     /**
@@ -163,5 +166,10 @@ public class SlotClickContext extends SlotContext implements IFSlotClickContext 
     @Override
     public final void resetTitleForPlayer() {
         getParent().resetTitleForPlayer();
+    }
+
+    @Override
+    public final boolean isCombined() {
+        return combined;
     }
 }

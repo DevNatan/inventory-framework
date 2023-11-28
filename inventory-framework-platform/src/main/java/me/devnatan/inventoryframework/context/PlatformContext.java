@@ -99,4 +99,9 @@ public abstract class PlatformContext extends AbstractIFContext {
     public void setEndless(boolean endless) {
         this.endless = endless;
     }
+
+    @Override
+    public String toString() {
+        return "PlatformContext{" + "endless=" + endless + ", active=" + active + "} " + super.toString();
+    }
 }

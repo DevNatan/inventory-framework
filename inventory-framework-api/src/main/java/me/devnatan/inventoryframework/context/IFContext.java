@@ -168,7 +168,8 @@ public interface IFContext extends VirtualView, StateValueHost, ComponentContain
             @NotNull Viewer viewer,
             @NotNull ViewContainer clickedContainer,
             Object platformEvent,
-            int clickedSlot);
+            int clickedSlot,
+            boolean combined);
 
     /**
      * Updates all components for all viewers in this context.

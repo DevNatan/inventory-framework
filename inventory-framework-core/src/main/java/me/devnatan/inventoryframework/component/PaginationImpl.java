@@ -640,9 +640,7 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
         }
 
         for (final Component child : getInternalComponents()) {
-            if (child.getInteractionHandler() == null || !child.isVisible()) {
-                continue;
-            }
+            if (child.getInteractionHandler() == null || !child.isVisible()) continue;
 
             if (child.isContainedWithin(context.getClickedSlot())) {
                 context.getParent()
@@ -651,7 +649,8 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
                                 context.getViewer(),
                                 context.getClickedContainer(),
                                 context.getPlatformEvent(),
-                                context.getClickedSlot());
+                                context.getClickedSlot(),
+                                true);
                 break;
             }
         }
