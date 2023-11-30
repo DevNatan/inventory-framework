@@ -14,9 +14,9 @@ import org.bukkit.inventory.InventoryHolder;
  * Supports {@link Component} as inventory title.
  */
 @SuppressWarnings("unused")
-class PaperInventoryFactory extends BukkitInventoryFactory {
+final class PaperInventoryFactory extends BukkitInventoryFactory {
 
-    private PaperInventoryFactory() {}
+    PaperInventoryFactory() {}
 
     @Override
     public Inventory createInventory(InventoryHolder holder, ViewType type, int size, Object title) {
