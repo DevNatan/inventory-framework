@@ -2,6 +2,7 @@ package me.devnatan.inventoryframework.internal;
 
 import static java.util.Objects.requireNonNull;
 
+import me.devnatan.inventoryframework.IFDebug;
 import me.devnatan.inventoryframework.ViewType;
 import me.devnatan.inventoryframework.runtime.util.InventoryUtils;
 import net.kyori.adventure.text.Component;
@@ -14,9 +15,9 @@ import org.bukkit.inventory.InventoryHolder;
  * Supports {@link Component} as inventory title.
  */
 @SuppressWarnings("unused")
-class PaperInventoryFactory extends BukkitInventoryFactory {
+final class PaperInventoryFactory extends BukkitInventoryFactory {
 
-    private PaperInventoryFactory() {}
+	PaperInventoryFactory() {}
 
     @Override
     public Inventory createInventory(InventoryHolder holder, ViewType type, int size, Object title) {
