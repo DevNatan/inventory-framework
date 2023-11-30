@@ -15,23 +15,23 @@ abstract class InventoryFactory {
     }
 
     private static InventoryFactory forCurrentPlatform() {
-		String paperINFQName = "me.devnatan.inventoryframework.internal.PaperInventoryFactory";
-		InventoryFactory factory = new BukkitInventoryFactory();
-		try {
-			final Class<?> clazz = Class.forName(paperINFQName);
-			factory = (InventoryFactory) clazz.newInstance();
-		} catch (final ClassNotFoundException | InstantiationException | IllegalAccessException ignored) {
-		}
+        String paperINFQName = "me.devnatan.inventoryframework.internal.PaperInventoryFactory";
+        InventoryFactory factory = new BukkitInventoryFactory();
+        try {
+            final Class<?> clazz = Class.forName(paperINFQName);
+            factory = (InventoryFactory) clazz.newInstance();
+        } catch (final ClassNotFoundException | InstantiationException | IllegalAccessException ignored) {
+        }
 
         try {
             Class.forName("com.destroystokyo.paper.ParticleBuilder");
         } catch (final ClassNotFoundException ignored) {
-			if (factory.getClass().getName().equals(paperINFQName))
-				throw new RuntimeException("inventory-framework-paper is loaded but current platform is not Paper.");
-		}
+            if (factory.getClass().getName().equals(paperINFQName))
+                throw new RuntimeException("inventory-framework-paper is loaded but current platform is not Paper.");
+        }
 
-		IFDebug.debug("Using %s", factory.getClass().getName());
-		return factory;
+        IFDebug.debug("Using %s", factory.getClass().getName());
+        return factory;
     }
 
     public abstract Inventory createInventory(InventoryHolder holder, ViewType type, int size, Object title);
