@@ -19,7 +19,7 @@ public class PlatformUtils {
         try {
             factory = fallbackFactory();
         } catch (final Exception e) {
-            throw new IllegalStateException("Failed to use fallback ViewComponentFactory on classpath.", e);
+            throw new IllegalStateException("Failed to use fallback component factory on classpath.", e);
         }
 
         checkIfPlatformWorksInCurrentPlatform();
@@ -29,7 +29,7 @@ public class PlatformUtils {
     private static void checkIfPlatformWorksInCurrentPlatform() {
         if (factory.worksInCurrentPlatform()) return;
 
-        throw new IllegalStateException("We found a ViewComponentFactory on the classpath but it is not usable on this "
+        throw new IllegalStateException("We found a component factory on the classpath but it is not usable on this "
                 + "platform, make sure you have in your classpath an implementation of this class "
                 + "that is functional on the current platform.");
     }
@@ -50,7 +50,7 @@ public class PlatformUtils {
     @SuppressWarnings("deprecation")
     private static ElementFactory fallbackFactory()
             throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-        final Class<?> clazz = Class.forName("me.saiintbrisson.minecraft.BukkitViewComponentFactory");
+        final Class<?> clazz = Class.forName("me.devnatan.inventoryframework.internal.BukkitInventoryFactory");
         return (ElementFactory) clazz.newInstance();
     }
 }

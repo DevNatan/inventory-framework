@@ -1,8 +1,43 @@
+plugins {
+    alias(libs.plugins.shadowjar)
+    alias(libs.plugins.bukkit)
+}
+
+apply from: '../library.gradle'
+
+dependencies {
+    compileOnly libs.spigot
+    compileOnly projects.inventoryFrameworkPlatformBukkit
+    implementation projects.inventoryFrameworkExamples.snakeGame
+}
+
 subprojects {
     apply from: '../../library.gradle'
 
     dependencies {
         compileOnly libs.spigot
-        implementation projects.inventoryFrameworkPlatformBukkit
+        compileOnly projects.inventoryFrameworkPlatformBukkit
     }
+}
+
+shadowJar {
+    archiveBaseName.set('inventory-framework')
+    archiveAppendix.set('examples')
+
+    dependencies {
+        exclude(dependency {
+            it.moduleGroup == "org.jetbrains.kotlin"
+        })
+    }
+}
+
+bukkit {
+    main = "me.devnatan.inventoryframework.examples.InventoryFrameworkExamples"
+    name = "InventoryFrameworkExamples"
+    version = project.version
+    description = "Minecraft Inventory API framework"
+    depend = ['InventoryFramework']
+    website = "https://github.com/DevNatan/inventory-framework"
+    apiVersion = "1.20"
+    authors = ['DevNatan']
 }
