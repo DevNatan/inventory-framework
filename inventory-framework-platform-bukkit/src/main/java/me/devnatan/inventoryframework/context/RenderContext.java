@@ -2,7 +2,6 @@ package me.devnatan.inventoryframework.context;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import me.devnatan.inventoryframework.BukkitViewContainer;
@@ -145,7 +144,7 @@ public final class RenderContext extends PlatformRenderContext<BukkitItemCompone
         return new BukkitItemComponentBuilder(this);
     }
 
-	@Override
+    @Override
     public String toString() {
         return "RenderContext{" + "player=" + player + "} " + super.toString();
     }

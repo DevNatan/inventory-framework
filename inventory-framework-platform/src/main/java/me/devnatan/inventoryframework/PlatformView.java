@@ -319,7 +319,7 @@ public abstract class PlatformView<
     @ApiStatus.Internal
     public void renderContext(@NotNull TRenderContext context) {
         getPipeline().execute(context);
-        ((PlatformRenderContext<?, ?>) context).setRendered();
+        ((PlatformRenderContext<?, ?>) context).markRendered();
 
         @SuppressWarnings("rawtypes")
         final PlatformView view = (PlatformView) context.getRoot();
