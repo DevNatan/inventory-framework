@@ -4,10 +4,6 @@ apply plugin: 'com.diffplug.spotless'
 group rootProject.group
 version rootProject.version
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     compileOnly libs.jetbrains.annotations
     testCompileOnly libs.jetbrains.annotations
