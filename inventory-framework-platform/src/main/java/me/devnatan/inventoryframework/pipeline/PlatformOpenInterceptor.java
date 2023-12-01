@@ -74,26 +74,26 @@ public final class PlatformOpenInterceptor implements PipelineInterceptor<Virtua
         ViewContainer createdContainer = openContext.getContainer();
         if (createdContainer == null) createdContainer = elementFactory.createContainer(openContext);
 
-        final IFRenderContext context = elementFactory.createRenderContext(
+        final IFRenderContext renderContext = elementFactory.createRenderContext(
                 openContext.getId(),
                 root,
                 openContext.getConfig(),
                 createdContainer,
                 new HashMap<>(),
-                openContext.getViewer(),
+                openContext.isShared() ? null : openContext.getViewer(),
                 openContext.getInitialData());
 
-        context.setEndless(openContext.isEndless());
-        openContext.getStateValues().forEach(context::initializeState);
+        renderContext.setEndless(openContext.isEndless());
+        openContext.getStateValues().forEach(renderContext::initializeState);
 
         for (final Viewer viewer : openContext.getIndexedViewers().values()) {
-            if (!viewer.isTransitioning()) viewer.setActiveContext(context);
+            if (!viewer.isTransitioning()) viewer.setActiveContext(renderContext);
             // TODO Pass viewer object as parameter instead
-            root.onViewerAdded(context, viewer.getPlatformInstance(), context.getInitialData());
-            context.addViewer(viewer);
+            root.onViewerAdded(renderContext, viewer.getPlatformInstance(), renderContext.getInitialData());
+            renderContext.addViewer(viewer);
         }
 
-        context.setActive(true);
-        return context;
+        renderContext.setActive(true);
+        return renderContext;
     }
 }
