@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -319,7 +320,7 @@ public abstract class PlatformRenderContext<T extends ItemComponentBuilder<T, C>
      * this library. No compatibility guarantees are provided. </i></b>
      */
     @ApiStatus.Internal
-    public final void setRendered() {
+    public final void markRendered() {
         this.rendered = true;
     }
 
@@ -364,4 +365,18 @@ public abstract class PlatformRenderContext<T extends ItemComponentBuilder<T, C>
                     character));
     }
     // endregion
+
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		PlatformRenderContext<?, ?> that = (PlatformRenderContext<?, ?>) o;
+		return Objects.equals(getId(), that.getId());
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(getId());
+	}
 }
