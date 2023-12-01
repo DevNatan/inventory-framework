@@ -50,7 +50,7 @@ final class IFInventoryListener implements Listener {
                 ? viewer.getSelfContainer()
                 : context.getContainer();
 
-        final RootView root = context.getRoot();
+        final RootView root = (RootView) context.getRoot();
         final IFSlotClickContext clickContext = root.getElementFactory()
                 .createSlotClickContext(event.getRawSlot(), viewer, clickedContainer, clickedComponent, event, false);
 
@@ -67,7 +67,7 @@ final class IFInventoryListener implements Listener {
         if (viewer == null) return;
 
         final IFRenderContext context = viewer.getActiveContext();
-        final RootView root = context.getRoot();
+        final RootView root = (RootView) context.getRoot();
         final IFCloseContext closeContext = root.getElementFactory().createCloseContext(viewer, context);
 
         root.getPipeline().execute(StandardPipelinePhases.CLOSE, closeContext);

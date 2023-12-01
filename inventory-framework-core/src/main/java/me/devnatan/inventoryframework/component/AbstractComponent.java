@@ -2,10 +2,9 @@ package me.devnatan.inventoryframework.component;
 
 import java.util.Collections;
 import java.util.Set;
-import java.util.UUID;
+import java.util.function.Predicate;
 import me.devnatan.inventoryframework.Ref;
 import me.devnatan.inventoryframework.RootView;
-import me.devnatan.inventoryframework.UnsupportedOperationInSharedContextException;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
@@ -15,26 +14,31 @@ import org.jetbrains.annotations.UnmodifiableView;
 
 public abstract class AbstractComponent implements Component {
 
-    private final String defaultKey = UUID.randomUUID().toString();
+    private final String key;
     private final VirtualView root;
     private final Ref<Component> reference;
     private final Set<State<?>> watchingStates;
+    private final Predicate<? extends IFContext> displayCondition;
+
     private boolean isVisible;
     private boolean wasForceUpdated;
 
-    protected AbstractComponent() {
-        this(null, null, null);
-    }
-
-    protected AbstractComponent(VirtualView root, Ref<Component> reference, Set<State<?>> watchingStates) {
+    protected AbstractComponent(
+            String key,
+            VirtualView root,
+            Ref<Component> reference,
+            Set<State<?>> watchingStates,
+            Predicate<? extends IFContext> displayCondition) {
+        this.key = key;
         this.root = root;
         this.reference = reference;
         this.watchingStates = watchingStates;
+        this.displayCondition = displayCondition;
     }
 
     @Override
-    public String getKey() {
-        return defaultKey;
+    public final String getKey() {
+        return key;
     }
 
     @Override
@@ -65,9 +69,10 @@ public abstract class AbstractComponent implements Component {
         return false;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public boolean shouldRender(IFContext context) {
-        throw new UnsupportedOperationInSharedContextException();
+    public final boolean shouldRender(IFContext context) {
+        return displayCondition == null || ((Predicate<? super IFContext>) displayCondition).test(context);
     }
 
     @Override
@@ -103,6 +108,11 @@ public abstract class AbstractComponent implements Component {
         update();
     }
 
+    protected final Predicate<? extends IFContext> getDisplayCondition() {
+        return displayCondition;
+    }
+
+    // region Internals
     protected final IFRenderContext getRootAsContext() {
         if (getRoot() instanceof AbstractComponent) return ((AbstractComponent) getRoot()).getRootAsContext();
         if (getRoot() instanceof RootView) throw new IllegalStateException("Root is not a context but a regular view");
@@ -113,4 +123,5 @@ public abstract class AbstractComponent implements Component {
     protected final boolean wasForceUpdated() {
         return wasForceUpdated;
     }
+    // endregion
 }

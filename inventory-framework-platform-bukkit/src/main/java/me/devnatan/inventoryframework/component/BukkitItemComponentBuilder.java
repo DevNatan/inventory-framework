@@ -1,95 +1,32 @@
 package me.devnatan.inventoryframework.component;
 
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
-import me.devnatan.inventoryframework.Ref;
-import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.VirtualView;
-import me.devnatan.inventoryframework.context.*;
-import me.devnatan.inventoryframework.state.State;
-import me.devnatan.inventoryframework.utils.SlotConverter;
+import me.devnatan.inventoryframework.context.Context;
+import me.devnatan.inventoryframework.context.IFComponentRenderContext;
+import me.devnatan.inventoryframework.context.IFComponentUpdateContext;
+import me.devnatan.inventoryframework.context.IFSlotClickContext;
+import me.devnatan.inventoryframework.context.SlotClickContext;
+import me.devnatan.inventoryframework.context.SlotContext;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class BukkitItemComponentBuilder
-		extends AbstractComponentBuilder<BukkitItemComponentBuilder>
+public final class BukkitItemComponentBuilder extends PlatformComponentBuilder<BukkitItemComponentBuilder, Context>
         implements ItemComponentBuilder<BukkitItemComponentBuilder, ItemStack> {
 
-    private final VirtualView root;
-
-	// region User-Provided Properties
     private int slot;
     private ItemStack item;
-    private Consumer<? super IFSlotRenderContext> renderHandler;
-    private Consumer<? super IFSlotClickContext> clickHandler;
-    private Consumer<? super IFSlotContext> updateHandler;
-	// endregion
 
-    public BukkitItemComponentBuilder(VirtualView root) {
-        this(
-                root,
-                -1,
-                null,
-                null,
-                null,
-                null,
-                null,
-                new HashMap<>(),
-                false,
-                false,
-                false,
-                new LinkedHashSet<>(),
-                false,
-                null);
-    }
-
-    private BukkitItemComponentBuilder(
-            VirtualView root,
-            int slot,
-            ItemStack item,
-            Consumer<? super IFSlotRenderContext> renderHandler,
-            Consumer<? super IFSlotClickContext> clickHandler,
-            Consumer<? super IFSlotContext> updateHandler,
-            Ref<Component> reference,
-            Map<String, Object> data,
-            boolean cancelOnClick,
-            boolean closeOnClick,
-            boolean updateOnClick,
-            Set<State<?>> watchingStates,
-            boolean isManagedExternally,
-            Predicate<Context> displayCondition) {
-        super(
-                reference,
-                data,
-                cancelOnClick,
-                closeOnClick,
-                updateOnClick,
-                watchingStates,
-                isManagedExternally,
-                displayCondition);
-        this.root = root;
-        this.slot = slot;
-        this.item = item;
-        this.renderHandler = renderHandler;
-        this.clickHandler = clickHandler;
-        this.updateHandler = updateHandler;
-    }
+    // TODO Use platform-specific Render and Update component context
+    private Consumer<? super IFComponentRenderContext> renderHandler;
+    private Consumer<? super IFComponentUpdateContext> updateHandler;
+    private Consumer<? super SlotClickContext> clickHandler;
 
     @Override
     public String toString() {
-        return "BukkitItemComponentBuilder{"
-                + "slot=" + slot
-                + ", item=" + item
-                + ", renderHandler=" + renderHandler
-                + ", clickHandler=" + clickHandler
-                + ", updateHandler=" + updateHandler
-                + "} " + super.toString();
+        return "BukkitItemComponentBuilder{" + "slot=" + slot + ", item=" + item + "} " + super.toString();
     }
 
     @Override
@@ -97,9 +34,6 @@ public class BukkitItemComponentBuilder
         return position == slot;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public BukkitItemComponentBuilder withSlot(int slot) {
         this.slot = slot;
@@ -108,8 +42,11 @@ public class BukkitItemComponentBuilder
 
     @Override
     public BukkitItemComponentBuilder withSlot(int row, int column) {
-        final ViewContainer container = ((IFRenderContext) root).getContainer();
-        return withSlot(SlotConverter.convertSlot(row, column, container.getRowsCount(), container.getColumnsCount()));
+        // FIXME Missing root availability, root must be available
+        // final ViewContainer container = ((IFRenderContext) root).getContainer();
+        // return withSlot(SlotConverter.convertSlot(row, column, container.getRowsCount(),
+        // container.getColumnsCount()));
+        return this;
     }
 
     /**
@@ -132,9 +69,8 @@ public class BukkitItemComponentBuilder
      * @param renderHandler The render handler.
      * @return This item builder.
      */
-    @SuppressWarnings("unchecked")
-    public BukkitItemComponentBuilder onRender(@Nullable Consumer<? super SlotRenderContext> renderHandler) {
-        this.renderHandler = (Consumer<? super IFSlotRenderContext>) renderHandler;
+    public BukkitItemComponentBuilder onRender(@Nullable Consumer<? super IFComponentRenderContext> renderHandler) {
+        this.renderHandler = renderHandler;
         return this;
     }
 
@@ -147,11 +83,13 @@ public class BukkitItemComponentBuilder
      * @return This item builder.
      */
     public BukkitItemComponentBuilder renderWith(@NotNull Supplier<@Nullable ItemStack> renderFactory) {
-        return onRender(render -> render.setItem(renderFactory.get()));
+        // FIXME Missing implementation
+        return this;
+        // return onRender(render -> render.setItem(renderFactory.get()));
     }
 
     /**
-     * Called when a player clicks on the item.
+     * Called when a player clicks on the component.
      * <p>
      * This handler works on any container that the actor has access to and only works if the
      * interaction has not been cancelled.
@@ -166,7 +104,7 @@ public class BukkitItemComponentBuilder
     }
 
     /**
-     * Called when a player clicks on the item.
+     * Called when a player clicks on the component.
      * <p>
      * This handler works on any container that the actor has access to and only works if the
      * interaction has not been cancelled.
@@ -186,50 +124,25 @@ public class BukkitItemComponentBuilder
      */
     @SuppressWarnings("unchecked")
     public BukkitItemComponentBuilder onUpdate(@Nullable Consumer<? super SlotContext> updateHandler) {
-        this.updateHandler = (Consumer<? super IFSlotContext>) updateHandler;
+        this.updateHandler = (Consumer<? super IFComponentUpdateContext>) updateHandler;
         return this;
     }
 
     @Override
-    public @NotNull Component create() {
+    public Component build(VirtualView root) {
         return new BukkitItemComponentImpl(
-                root,
                 slot,
                 item,
-                cancelOnClick,
-                closeOnClick,
+                key,
+                root,
+                reference,
+                watchingStates,
                 displayCondition,
                 renderHandler,
                 updateHandler,
-                clickHandler,
-                watchingStates,
-                isManagedExternally,
-                updateOnClick,
-                false,
-                reference);
-    }
-
-    @Override
-    public BukkitItemComponentBuilder copy() {
-        return new BukkitItemComponentBuilder(
-                root,
-                slot,
-                item,
-                renderHandler,
-                clickHandler,
-                updateHandler,
-                reference,
-                data,
+                (Consumer<? super IFSlotClickContext>) clickHandler,
                 cancelOnClick,
                 closeOnClick,
-                updateOnClick,
-                watchingStates,
-                isManagedExternally,
-                displayCondition);
+                updateOnClick);
     }
-
-	@Override
-	public Component build(VirtualView root) {
-		return null;
-	}
 }

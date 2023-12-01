@@ -51,9 +51,9 @@ import org.jetbrains.annotations.NotNull;
 
 public abstract class PlatformView<
                 FRAMEWORK extends IFViewFrame<?, ?>,
-				VIEWER,
-				ITEM,
-                ITEM_BUILDER extends ItemComponentBuilder<ITEM_BUILDER>,
+                VIEWER,
+                ITEM,
+                ITEM_BUILDER extends ItemComponentBuilder<ITEM_BUILDER, ITEM>,
                 PLATFORM_CONTEXT extends IFContext,
                 OPEN_CONTEXT extends IFOpenContext,
                 CLOSE_CONTEXT extends IFCloseContext,
@@ -63,34 +63,8 @@ public abstract class PlatformView<
 
     private FRAMEWORK framework;
     private boolean initialized;
-    private final StateAccess<PLATFORM_CONTEXT, ITEM_BUILDER> stateAccess = new StateAccessImpl<>(getElementFactory(), getStateRegistry());
-
-    /**
-     * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
-     * this library. No compatibility guarantees are provided.</i></b>
-     */
-    @ApiStatus.Internal
-    public final FRAMEWORK getFramework() {
-        return framework;
-    }
-
-    /**
-     * The initialization state of this view.
-     *
-     * @return If this view was initialized.
-     */
-    final boolean isInitialized() {
-        return initialized;
-    }
-
-    /**
-     * Sets the initialization state of this view.
-     *
-     * @param initialized The new initialization state.
-     */
-    final void setInitialized(boolean initialized) {
-        this.initialized = initialized;
-    }
+    private final StateAccess<PLATFORM_CONTEXT, ITEM_BUILDER> stateAccess =
+            new StateAccessImpl<>(this, getElementFactory(), getStateRegistry());
 
     // region Open & Close
     /**
@@ -155,7 +129,7 @@ public abstract class PlatformView<
         getFramework().addViewer(viewer);
         viewer.setActiveContext(targetContext);
         viewer.open(targetContext.getContainer());
-        onViewerAdded((TContext) targetContext, (TViewer) viewer.getPlatformInstance(), initialData);
+        onViewerAdded((PLATFORM_CONTEXT) targetContext, (VIEWER) viewer.getPlatformInstance(), initialData);
     }
     // endregion
 
@@ -346,7 +320,7 @@ public abstract class PlatformView<
     @ApiStatus.Internal
     public void renderContext(@NotNull RENDER_CONTEXT context) {
         getPipeline().execute(context);
-        ((PlatformRenderContext<?, ?>) context).setRendered();
+        ((PlatformRenderContext) context).setRendered();
 
         @SuppressWarnings("rawtypes")
         final PlatformView view = (PlatformView) context.getRoot();
@@ -462,7 +436,7 @@ public abstract class PlatformView<
      * will be thrown.
      * <p>
      * <b>This method is called once in Shared Contexts. To know when a viewer is added/removed from
-     * this kind of context use {@link #onViewerAdded(TContext, TViewer, Object)}/{@link #onViewerRemoved(TContext, TViewer)}</b>.
+     * this kind of context use {@link #onViewerAdded(PLATFORM_CONTEXT, VIEWER, Object)}/{@link #onViewerRemoved(PLATFORM_CONTEXT, VIEWER)}</b>.
      *
      * @param open The open context.
      */
@@ -545,7 +519,7 @@ public abstract class PlatformView<
      */
     @ApiStatus.OverrideOnly
     @ApiStatus.Experimental
-    public void onViewerAdded(@NotNull TContext context, @NotNull TViewer viewer, Object data) {}
+    public void onViewerAdded(@NotNull PLATFORM_CONTEXT context, @NotNull VIEWER viewer, Object data) {}
 
     /**
      * Called when a {@link Viewer viewer} is removed from a context.
@@ -560,7 +534,7 @@ public abstract class PlatformView<
      */
     @ApiStatus.OverrideOnly
     @ApiStatus.Experimental
-    public void onViewerRemoved(@NotNull TContext context, @NotNull TViewer viewer) {}
+    public void onViewerRemoved(@NotNull PLATFORM_CONTEXT context, @NotNull VIEWER viewer) {}
     // endregion
 
     // region Internals
@@ -569,7 +543,7 @@ public abstract class PlatformView<
      * this library. No compatibility guarantees are provided.</i></b>
      */
     @ApiStatus.Internal
-    public final TFramework getFramework() {
+    public final FRAMEWORK getFramework() {
         return framework;
     }
 
@@ -748,42 +722,42 @@ public abstract class PlatformView<
     }
 
     @Override
-    public final <T> PaginationStateBuilder<PLATFORM_CONTEXT, ITEM_BUILDER, T> buildPaginationState(
+    public final <T> PaginationBuilder<PLATFORM_CONTEXT, ITEM_BUILDER, T> buildPaginationState(
             @NotNull List<? super T> sourceProvider) {
         requireNotInitialized();
         return stateAccess.buildPaginationState(sourceProvider);
     }
 
     @Override
-    public final <T> PaginationStateBuilder<PLATFORM_CONTEXT, ITEM_BUILDER, T> buildComputedPaginationState(
+    public final <T> PaginationBuilder<PLATFORM_CONTEXT, ITEM_BUILDER, T> buildComputedPaginationState(
             @NotNull Function<PLATFORM_CONTEXT, List<? super T>> sourceProvider) {
         requireNotInitialized();
         return stateAccess.buildComputedPaginationState(sourceProvider);
     }
 
     @Override
-    public final <T> PaginationStateBuilder<PLATFORM_CONTEXT, ITEM_BUILDER, T> buildComputedAsyncPaginationState(
+    public final <T> PaginationBuilder<PLATFORM_CONTEXT, ITEM_BUILDER, T> buildComputedAsyncPaginationState(
             @NotNull Function<PLATFORM_CONTEXT, CompletableFuture<List<T>>> sourceProvider) {
         requireNotInitialized();
         return stateAccess.buildComputedAsyncPaginationState(sourceProvider);
     }
 
     @Override
-    public final <T> PaginationStateBuilder<PLATFORM_CONTEXT, ITEM_BUILDER, T> buildLazyPaginationState(
+    public final <T> PaginationBuilder<PLATFORM_CONTEXT, ITEM_BUILDER, T> buildLazyPaginationState(
             @NotNull Supplier<List<? super T>> sourceProvider) {
         requireNotInitialized();
         return stateAccess.buildLazyPaginationState(sourceProvider);
     }
 
     @Override
-    public final <T> PaginationStateBuilder<PLATFORM_CONTEXT, ITEM_BUILDER, T> buildLazyPaginationState(
+    public final <T> PaginationBuilder<PLATFORM_CONTEXT, ITEM_BUILDER, T> buildLazyPaginationState(
             @NotNull Function<PLATFORM_CONTEXT, List<? super T>> sourceProvider) {
         requireNotInitialized();
         return stateAccess.buildLazyPaginationState(sourceProvider);
     }
 
     @Override
-    public final <T> PaginationStateBuilder<PLATFORM_CONTEXT, ITEM_BUILDER, T> buildLazyAsyncPaginationState(
+    public final <T> PaginationBuilder<PLATFORM_CONTEXT, ITEM_BUILDER, T> buildLazyAsyncPaginationState(
             @NotNull Function<PLATFORM_CONTEXT, CompletableFuture<List<T>>> sourceProvider) {
         requireNotInitialized();
         return stateAccess.buildLazyAsyncPaginationState(sourceProvider);

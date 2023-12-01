@@ -19,18 +19,19 @@ import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.ViewType;
 import me.devnatan.inventoryframework.Viewer;
-import me.devnatan.inventoryframework.component.PlatformComponent;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.ComponentBuilder;
 import me.devnatan.inventoryframework.component.ComponentFactory;
 import me.devnatan.inventoryframework.component.ItemComponentBuilder;
+import me.devnatan.inventoryframework.component.PlatformComponent;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
 
 @SuppressWarnings("rawtypes")
-public abstract class PlatformRenderContext<ITEM_BUILDER extends ItemComponentBuilder<ITEM_BUILDER>, CONTEXT extends IFContext>
+public abstract class PlatformRenderContext<
+                ITEM, ITEM_BUILDER extends ItemComponentBuilder<ITEM_BUILDER, ITEM>, CONTEXT extends IFContext>
         extends PlatformConfinedContext implements IFRenderContext {
 
     // --- Must inherit from parent context ---
@@ -67,7 +68,7 @@ public abstract class PlatformRenderContext<ITEM_BUILDER extends ItemComponentBu
         this.initialData = initialData;
     }
 
-	// region Slot Assignment Methods
+    // region Slot Assignment Methods
     /**
      * Creates a new item builder without a specified slot.
      * <p>
@@ -142,8 +143,7 @@ public abstract class PlatformRenderContext<ITEM_BUILDER extends ItemComponentBu
      */
     public final @NotNull ITEM_BUILDER availableSlot() {
         final ITEM_BUILDER builder = createBuilder();
-		availableSlotFactories.add(
-                (index, slot) -> (ComponentFactory) builder.copy().withSlot(slot));
+        availableSlotFactories.add((index, slot) -> (ComponentFactory) builder.withSlot(slot));
         return builder;
     }
 
@@ -211,25 +211,29 @@ public abstract class PlatformRenderContext<ITEM_BUILDER extends ItemComponentBu
         }));
     }
 
-	/**
-	 * Defines the item that will represent a character provided in the context layout.
-	 *
-	 * @param character The layout character target.
-	 * @return An item builder to configure the item.
-	 */
-	public @NotNull <BUILDER extends ComponentBuilder<BUILDER>, COMPONENT extends PlatformComponent<CONTEXT, BUILDER, ITEM_BUILDER>> BUILDER layoutComponent(char character, COMPONENT component) {
-		requireNonReservedLayoutCharacter(character);
+    /**
+     * Defines the item that will represent a character provided in the context layout.
+     *
+     * @param character The layout character target.
+     * @return An item builder to configure the item.
+     */
+    public @NotNull <BUILDER extends ComponentBuilder<BUILDER>, COMPONENT extends PlatformComponent<CONTEXT, BUILDER>>
+            BUILDER layoutComponent(char character, COMPONENT component) {
+        requireNonReservedLayoutCharacter(character);
 
-		// TODO More detailed exception message
-		final LayoutSlot layoutSlot = getLayoutSlots().stream()
-			.filter(value -> value.getCharacter() == character)
-			.findFirst()
-			.orElseThrow(() -> new InventoryFrameworkException("Missing layout character: " + character));
+        // TODO More detailed exception message
+        final LayoutSlot layoutSlot = getLayoutSlots().stream()
+                .filter(value -> value.getCharacter() == character)
+                .findFirst()
+                .orElseThrow(() -> new InventoryFrameworkException("Missing layout character: " + character));
 
-		final BUILDER builder = component.createBuilder();
-		getLayoutSlots().add(layoutSlot.withFactory($ -> (ComponentFactory) builder));
-		return builder;
-	}
+        // FIXME Missing implementation
+        final BUILDER builder = null;
+        // final BUILDER builder = component.createBuilder();
+
+        getLayoutSlots().add(layoutSlot.withFactory($ -> (ComponentFactory) builder));
+        return builder;
+    }
 
     /**
      * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
@@ -247,17 +251,17 @@ public abstract class PlatformRenderContext<ITEM_BUILDER extends ItemComponentBu
         return slot(resultSlots[0]);
     }
 
-	/**
-	 * Renders a new component in that context.
-	 * <p>
-	 * <b><i> This API is experimental and is not subject to the general compatibility guarantees
-	 * such API may be changed or may be removed completely in any further release. </i></b>
-	 *
-	 * @param component The component to be rendered.
-	 */
-	@ApiStatus.Experimental
-	public void component(@NotNull Component component) {}
-	// endregion
+    /**
+     * Renders a new component in that context.
+     * <p>
+     * <b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     *
+     * @param component The component to be rendered.
+     */
+    @ApiStatus.Experimental
+    public void component(@NotNull Component component) {}
+    // endregion
 
     @Override
     public final @NotNull UUID getId() {
@@ -359,71 +363,64 @@ public abstract class PlatformRenderContext<ITEM_BUILDER extends ItemComponentBu
         this.rendered = true;
     }
 
-	@Override
-	public final void renderComponent(@NotNull Component component) {
-		if (!component.shouldRender(this)) {
-			component.setVisible(false);
+    @Override
+    public final void renderComponent(@NotNull Component component) {
+        if (!component.shouldRender(this)) {
+            component.setVisible(false);
 
-			final Optional<Component> overlapOptional = getOverlappingComponentToRender(this, component);
-			if (overlapOptional.isPresent()) {
-				Component overlap = overlapOptional.get();
-				renderComponent(overlap);
+            final Optional<Component> overlapOptional = getOverlappingComponentToRender(this, component);
+            if (overlapOptional.isPresent()) {
+                Component overlap = overlapOptional.get();
+                renderComponent(overlap);
 
-				if (overlap.isVisible()) return;
-			}
+                if (overlap.isVisible()) return;
+            }
 
-			component.cleared(this);
-			clearComponent(component);
-			return;
-		}
+            component.cleared(this);
+            clearComponent(component);
+            return;
+        }
 
-		component.render(createComponentRenderContext(component, false));
-	}
+        component.render(createComponentRenderContext(component, false));
+    }
 
-	@Override
-	public final void updateComponent(Component component, boolean force, UpdateReason reason) {
-		component.updated(createComponentUpdateContext(component, force, reason));
-	}
+    @Override
+    public final void updateComponent(Component component, boolean force, UpdateReason reason) {
+        component.updated(createComponentUpdateContext(component, force, reason));
+    }
 
-	@Override
-	public final void clearComponent(@NotNull Component component) {}
+    @Override
+    public final void clearComponent(@NotNull Component component) {}
 
-	/**
-	 * Creates a IFComponentRenderContext for the current platform.
-	 *
-	 * @param component The component.
-	 * @param force If the context was created due to usage of forceRender().
-	 * @return A new IFComponentRenderContext instance.
-	 */
-	@ApiStatus.Internal
-	abstract IFComponentRenderContext createComponentRenderContext(
-		Component component,
-		boolean force
-	);
+    /**
+     * Creates a IFComponentRenderContext for the current platform.
+     *
+     * @param component The component.
+     * @param force If the context was created due to usage of forceRender().
+     * @return A new IFComponentRenderContext instance.
+     */
+    @ApiStatus.Internal
+    abstract IFComponentRenderContext createComponentRenderContext(Component component, boolean force);
 
-	/**
-	 * Creates a IFComponentUpdateContext for the current platform.
-	 *
-	 * @param component The component.
-	 * @param force If the context was created due to usage of forceUpdate().
-	 * @param reason Reason why this component was updated.
-	 * @return A new IFComponentUpdateContext instance.
-	 */
-	@ApiStatus.Internal
-	abstract IFComponentUpdateContext createComponentUpdateContext(
-		Component component,
-		boolean force,
-		UpdateReason reason
-	);
-	// endregion
+    /**
+     * Creates a IFComponentUpdateContext for the current platform.
+     *
+     * @param component The component.
+     * @param force If the context was created due to usage of forceUpdate().
+     * @param reason Reason why this component was updated.
+     * @return A new IFComponentUpdateContext instance.
+     */
+    @ApiStatus.Internal
+    abstract IFComponentUpdateContext createComponentUpdateContext(
+            Component component, boolean force, UpdateReason reason);
 
-	/**
-	 * Creates a new platform builder instance.
-	 *
-	 * @return A new platform builder instance.
-	 */
-	// TODO use ElementFactory's `createBuilder` instead
-	protected abstract ITEM_BUILDER createBuilder();
+    /**
+     * Creates a new platform builder instance.
+     *
+     * @return A new platform builder instance.
+     */
+    // TODO use ElementFactory's `createBuilder` instead
+    protected abstract ITEM_BUILDER createBuilder();
 
     /**
      * Creates a new platform builder instance and registers it.

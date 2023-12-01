@@ -7,7 +7,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import me.devnatan.inventoryframework.IFDebug;
 import me.devnatan.inventoryframework.InventoryFrameworkException;
 import me.devnatan.inventoryframework.RootView;
@@ -103,20 +102,20 @@ abstract class AbstractIFContext extends DefaultStateValueHost implements IFCont
         }
     }
 
-	@Override
-	public void performClickInComponent(
-		@NotNull Component component,
-		@NotNull Viewer viewer,
-		@NotNull ViewContainer clickedContainer,
-		Object platformEvent,
-		int clickedSlot,
-		boolean combined) {
-		final IFSlotClickContext clickContext = getRoot()
-			.getElementFactory()
-			.createSlotClickContext(clickedSlot, viewer, clickedContainer, component, platformEvent, combined);
+    @Override
+    public void performClickInComponent(
+            @NotNull Component component,
+            @NotNull Viewer viewer,
+            @NotNull ViewContainer clickedContainer,
+            Object platformEvent,
+            int clickedSlot,
+            boolean combined) {
+        final RootView root = (RootView) getRoot();
+        final IFSlotClickContext clickContext = root.getElementFactory()
+                .createSlotClickContext(clickedSlot, viewer, clickedContainer, component, platformEvent, combined);
 
-		getRoot().getPipeline().execute(StandardPipelinePhases.CLICK, clickContext);
-	}
+        root.getPipeline().execute(StandardPipelinePhases.CLICK, clickContext);
+    }
     // endregion
 
     @Override

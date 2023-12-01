@@ -19,32 +19,12 @@ public abstract class AbstractComponentBuilder<SELF extends ComponentBuilder<SEL
     protected Ref<Component> reference;
     protected Map<String, Object> data;
     protected boolean cancelOnClick, closeOnClick, updateOnClick;
-    protected Set<State<?>> watchingStates;
+    protected Set<State<?>> watchingStates = new HashSet<>();
     protected boolean isManagedExternally;
     protected Predicate<? extends IFContext> displayCondition;
+    protected String key;
 
-    protected AbstractComponentBuilder() {
-        this(null, new HashMap<>(), false, false, false, new HashSet<>(), false, null);
-    }
-
-    protected AbstractComponentBuilder(
-            Ref<Component> reference,
-            Map<String, Object> data,
-            boolean cancelOnClick,
-            boolean closeOnClick,
-            boolean updateOnClick,
-            Set<State<?>> watchingStates,
-            boolean isManagedExternally,
-            Predicate<? extends IFContext> displayCondition) {
-        this.reference = reference;
-        this.data = data;
-        this.cancelOnClick = cancelOnClick;
-        this.closeOnClick = closeOnClick;
-        this.updateOnClick = updateOnClick;
-        this.watchingStates = watchingStates;
-        this.isManagedExternally = isManagedExternally;
-        this.displayCondition = displayCondition;
-    }
+    protected AbstractComponentBuilder() {}
 
     @Override
     public SELF referencedBy(@NotNull Ref<Component> reference) {
@@ -117,7 +97,22 @@ public abstract class AbstractComponentBuilder<SELF extends ComponentBuilder<SEL
     }
 
     @Override
-    public SELF copy() {
-        throw new UnsupportedOperationException("Component builder not copyable, missing #copy() impl");
+    public SELF key(String key) {
+        this.key = key;
+        return (SELF) this;
+    }
+
+    @Override
+    public String toString() {
+        return "AbstractComponentBuilder{" + "reference="
+                + reference + ", data="
+                + data + ", cancelOnClick="
+                + cancelOnClick + ", closeOnClick="
+                + closeOnClick + ", updateOnClick="
+                + updateOnClick + ", watchingStates="
+                + watchingStates + ", isManagedExternally="
+                + isManagedExternally + ", displayCondition="
+                + displayCondition + ", key='"
+                + key + '\'' + '}';
     }
 }

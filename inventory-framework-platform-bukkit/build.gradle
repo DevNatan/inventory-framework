@@ -12,10 +12,6 @@ dependencies {
     api projects.inventoryFrameworkPlatform
     runtimeOnly projects.inventoryFrameworkAnvilInput
     compileOnly libs.spigot
-    testCompileOnly libs.spigot
-    testRuntimeOnly libs.spigot
-    testImplementation projects.inventoryFrameworkApi
-    testImplementation projects.inventoryFrameworkTest
 }
 
 shadowJar {

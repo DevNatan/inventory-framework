@@ -19,12 +19,7 @@ public final class ComponentClickHandlerCallInterceptor implements PipelineInter
             IFDebug.debug("ComponentClickHandlerCallInterceptor: null component");
             return;
         }
-        if (component.getInteractionHandler() == null) {
-            IFDebug.debug("ComponentClickHandlerCallInterceptor: null component.getInteractionHandler()");
-            return;
-        }
-
         IFDebug.debug("ComponentClickHandlerCallInterceptor: %s", component);
-        component.getInteractionHandler().clicked(component, click);
+        component.clicked(click);
     }
 }

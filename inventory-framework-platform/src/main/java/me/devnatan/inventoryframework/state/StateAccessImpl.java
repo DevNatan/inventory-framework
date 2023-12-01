@@ -2,15 +2,13 @@ package me.devnatan.inventoryframework.state;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import me.devnatan.inventoryframework.component.ComponentFactory;
+import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.component.ItemComponentBuilder;
 import me.devnatan.inventoryframework.component.Pagination;
-import me.devnatan.inventoryframework.component.PaginationElementFactory;
+import me.devnatan.inventoryframework.component.PaginationBuilder;
 import me.devnatan.inventoryframework.component.PaginationImpl;
-import me.devnatan.inventoryframework.component.PaginationStateBuilder;
 import me.devnatan.inventoryframework.component.PaginationValueConsumer;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.internal.ElementFactory;
@@ -23,15 +21,14 @@ import org.jetbrains.annotations.NotNull;
  */
 @ApiStatus.Internal
 public final class StateAccessImpl<
-                CONTEXT extends IFContext,
-                ITEM_BUILDER extends ItemComponentBuilder<ITEM_BUILDER>>
+                ITEM, CONTEXT extends IFContext, ITEM_BUILDER extends ItemComponentBuilder<ITEM_BUILDER, ITEM>>
         implements StateAccess<CONTEXT, ITEM_BUILDER> {
 
-    private final Object caller;
+    private final VirtualView caller;
     private final ElementFactory elementFactory;
     private final StateRegistry stateRegistry;
 
-    public StateAccessImpl(Object caller, ElementFactory elementFactory, StateRegistry stateRegistry) {
+    public StateAccessImpl(VirtualView caller, ElementFactory elementFactory, StateRegistry stateRegistry) {
         this.caller = caller;
         this.elementFactory = elementFactory;
         this.stateRegistry = stateRegistry;
@@ -48,7 +45,7 @@ public final class StateAccessImpl<
     }
 
     @Override
-    public final <T> MutableState<T> mutableState(T initialValue) {
+    public <T> MutableState<T> mutableState(T initialValue) {
         final long id = State.next();
         final StateValueFactory factory = (host, state) -> new MutableValue(id, initialValue);
         final MutableState<T> state = new MutableGenericStateImpl<>(id, factory);
@@ -58,7 +55,7 @@ public final class StateAccessImpl<
     }
 
     @Override
-    public final MutableIntState mutableState(int initialValue) {
+    public MutableIntState mutableState(int initialValue) {
         final long id = State.next();
         final StateValueFactory factory = (host, state) -> new MutableValue(id, initialValue);
         final MutableIntState state = new MutableIntStateImpl(id, factory);
@@ -68,7 +65,7 @@ public final class StateAccessImpl<
     }
 
     @Override
-    public final <T> State<T> computedState(@NotNull Function<CONTEXT, T> computation) {
+    public <T> State<T> computedState(@NotNull Function<CONTEXT, T> computation) {
         final long id = State.next();
         @SuppressWarnings("unchecked")
         final StateValueFactory factory =
@@ -80,7 +77,7 @@ public final class StateAccessImpl<
     }
 
     @Override
-    public final <T> State<T> computedState(@NotNull Supplier<T> computation) {
+    public <T> State<T> computedState(@NotNull Supplier<T> computation) {
         final long id = State.next();
         final StateValueFactory factory = (host, state) -> new ComputedValue(id, computation);
         final State<T> state = new BaseState<>(id, factory);
@@ -90,11 +87,10 @@ public final class StateAccessImpl<
     }
 
     @Override
-    public final <T> State<T> lazyState(@NotNull Function<CONTEXT, T> computation) {
+    public <T> State<T> lazyState(@NotNull Function<CONTEXT, T> computation) {
         final long id = State.next();
         @SuppressWarnings("unchecked")
-        final StateValueFactory factory =
-                (host, state) -> new LazyValue(id, () -> computation.apply((CONTEXT) host));
+        final StateValueFactory factory = (host, state) -> new LazyValue(id, () -> computation.apply((CONTEXT) host));
         final State<T> state = new BaseState<>(id, factory);
         this.stateRegistry.registerState(state, this);
 
@@ -102,7 +98,7 @@ public final class StateAccessImpl<
     }
 
     @Override
-    public final <T> State<T> lazyState(@NotNull Supplier<T> computation) {
+    public <T> State<T> lazyState(@NotNull Supplier<T> computation) {
         final long id = State.next();
         final StateValueFactory factory = (host, state) -> new LazyValue(id, computation);
         final State<T> state = new BaseState<>(id, factory);
@@ -113,13 +109,13 @@ public final class StateAccessImpl<
 
     @SuppressWarnings("DataFlowIssue")
     @Override
-    public final <T> MutableState<T> initialState() {
+    public <T> MutableState<T> initialState() {
         return initialState(null);
     }
 
     @SuppressWarnings("NullableProblems")
     @Override
-    public final <T> MutableState<T> initialState(@NotNull String key) {
+    public <T> MutableState<T> initialState(@NotNull String key) {
         final long id = State.next();
         final MutableState<T> state =
                 new BaseMutableState<>(id, (host, valueState) -> new InitialDataStateValue(id, host, key));
@@ -129,115 +125,91 @@ public final class StateAccessImpl<
     }
 
     @Override
-    public final <T> State<Pagination> paginationState(
+    public <T> State<Pagination> paginationState(
             @NotNull List<? super T> sourceProvider,
             @NotNull PaginationValueConsumer<CONTEXT, ITEM_BUILDER, T> elementConsumer) {
-        return this.<T>buildPaginationState(sourceProvider)
-                .elementFactory(elementConsumer)
-                .build();
+        return createPaginationState(
+                this.<T>buildPaginationState(sourceProvider).elementFactory(elementConsumer));
     }
 
     @Override
-    public final <T> State<Pagination> computedPaginationState(
+    public <T> State<Pagination> computedPaginationState(
             @NotNull Function<CONTEXT, List<? super T>> sourceProvider,
             @NotNull PaginationValueConsumer<CONTEXT, ITEM_BUILDER, T> valueConsumer) {
-        return this.buildComputedPaginationState(sourceProvider)
-                .elementFactory(valueConsumer)
-                .build();
+        return createPaginationState(
+                this.buildComputedPaginationState(sourceProvider).elementFactory(valueConsumer));
     }
 
     @Override
-    public final <T> State<Pagination> computedAsyncPaginationState(
+    public <T> State<Pagination> computedAsyncPaginationState(
             @NotNull Function<CONTEXT, CompletableFuture<List<T>>> sourceProvider,
             @NotNull PaginationValueConsumer<CONTEXT, ITEM_BUILDER, T> valueConsumer) {
-        return this.buildComputedAsyncPaginationState(sourceProvider)
-                .elementFactory(valueConsumer)
-                .build();
+        return createPaginationState(
+                this.buildComputedAsyncPaginationState(sourceProvider).elementFactory(valueConsumer));
     }
 
     @Override
-    public final <T> State<Pagination> lazyPaginationState(
+    public <T> State<Pagination> lazyPaginationState(
             @NotNull Function<CONTEXT, List<? super T>> sourceProvider,
             @NotNull PaginationValueConsumer<CONTEXT, ITEM_BUILDER, T> valueConsumer) {
-        return this.buildLazyPaginationState(sourceProvider)
-                .elementFactory(valueConsumer)
-                .build();
+        return createPaginationState(buildLazyPaginationState(sourceProvider).elementFactory(valueConsumer));
     }
 
     @Override
     public <T> State<Pagination> lazyPaginationState(
             @NotNull Supplier<List<? super T>> sourceProvider,
             @NotNull PaginationValueConsumer<CONTEXT, ITEM_BUILDER, T> valueConsumer) {
-        return this.buildLazyPaginationState(sourceProvider)
-                .elementFactory(valueConsumer)
-                .build();
+        return createPaginationState(buildLazyPaginationState(sourceProvider).elementFactory(valueConsumer));
     }
 
     @Override
     public <T> State<Pagination> lazyAsyncPaginationState(
             @NotNull Function<CONTEXT, CompletableFuture<List<T>>> sourceProvider,
             @NotNull PaginationValueConsumer<CONTEXT, ITEM_BUILDER, T> valueConsumer) {
-        return this.buildLazyAsyncPaginationState(sourceProvider)
-                .elementFactory(valueConsumer)
-                .build();
+        return createPaginationState(
+                buildLazyAsyncPaginationState(sourceProvider).elementFactory(valueConsumer));
     }
 
     @Override
-    public final <T> PaginationStateBuilder<CONTEXT, ITEM_BUILDER, T> buildPaginationState(
+    public <T> PaginationBuilder<CONTEXT, ITEM_BUILDER, T> buildPaginationState(
             @NotNull List<? super T> sourceProvider) {
-        return new PaginationStateBuilder<>(
-                this.elementFactory, sourceProvider, this::createPaginationState, false, false);
+        return new PaginationBuilder<>(this.elementFactory, sourceProvider, false, false);
     }
 
     @Override
-    public final <T> PaginationStateBuilder<CONTEXT, ITEM_BUILDER, T> buildComputedPaginationState(
+    public <T> PaginationBuilder<CONTEXT, ITEM_BUILDER, T> buildComputedPaginationState(
             @NotNull Function<CONTEXT, List<? super T>> sourceProvider) {
-        return new PaginationStateBuilder<>(
-                this.elementFactory, sourceProvider, this::createPaginationState, false, true);
+        return new PaginationBuilder<>(this.elementFactory, sourceProvider, false, true);
     }
 
     @Override
-    public final <T> PaginationStateBuilder<CONTEXT, ITEM_BUILDER, T> buildComputedAsyncPaginationState(
+    public <T> PaginationBuilder<CONTEXT, ITEM_BUILDER, T> buildComputedAsyncPaginationState(
             @NotNull Function<CONTEXT, CompletableFuture<List<T>>> sourceProvider) {
-        return new PaginationStateBuilder<>(
-                this.elementFactory, sourceProvider, this::createPaginationState, true, true);
+        return new PaginationBuilder<>(this.elementFactory, sourceProvider, true, true);
     }
 
     @Override
-    public final <T> PaginationStateBuilder<CONTEXT, ITEM_BUILDER, T> buildLazyPaginationState(
+    public <T> PaginationBuilder<CONTEXT, ITEM_BUILDER, T> buildLazyPaginationState(
             @NotNull Supplier<List<? super T>> sourceProvider) {
-        return new PaginationStateBuilder<>(
-                this.elementFactory, sourceProvider, this::createPaginationState, false, false);
+        return new PaginationBuilder<>(this.elementFactory, sourceProvider, false, false);
     }
 
     @Override
-    public final <T> PaginationStateBuilder<CONTEXT, ITEM_BUILDER, T> buildLazyPaginationState(
+    public <T> PaginationBuilder<CONTEXT, ITEM_BUILDER, T> buildLazyPaginationState(
             @NotNull Function<CONTEXT, List<? super T>> sourceProvider) {
-        return new PaginationStateBuilder<>(
-                this.elementFactory, sourceProvider, this::createPaginationState, false, false);
+        return new PaginationBuilder<>(this.elementFactory, sourceProvider, false, false);
     }
 
     @Override
-    public final <T> PaginationStateBuilder<CONTEXT, ITEM_BUILDER, T> buildLazyAsyncPaginationState(
+    public <T> PaginationBuilder<CONTEXT, ITEM_BUILDER, T> buildLazyAsyncPaginationState(
             @NotNull Function<CONTEXT, CompletableFuture<List<T>>> sourceProvider) {
-        return new PaginationStateBuilder<>(
-                this.elementFactory, sourceProvider, this::createPaginationState, true, false);
+        return new PaginationBuilder<>(this.elementFactory, sourceProvider, true, false);
     }
 
-    protected final <V> State<Pagination> createPaginationState(
-            @NotNull PaginationStateBuilder<CONTEXT, ITEM_BUILDER, V> builder) {
+    <V> State<Pagination> createPaginationState(@NotNull PaginationBuilder<CONTEXT, ITEM_BUILDER, V> builder) {
         final long id = State.next();
-        @SuppressWarnings({"unchecked", "rawtypes"})
-        final StateValueFactory factory = (host, state) -> new PaginationImpl(
-                state,
-                (IFContext) host,
-				builder.getRefer
-                builder.getLayoutTarget(),
-                builder.getSourceProvider(),
-                (PaginationElementFactory) builder.getPaginationElementFactory(),
-                (BiConsumer) builder.getPageSwitchHandler(),
-                builder.isAsync(),
-                builder.isComputed());
+        final PaginationImpl pagination = (PaginationImpl) builder.build(caller);
+        final StateValueFactory factory = (host, state) -> pagination;
         final State<Pagination> state = new PaginationState(id, factory);
         this.stateRegistry.registerState(state, caller);
 

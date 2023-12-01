@@ -107,7 +107,7 @@ public final class AnvilInput extends BaseMutableState<String> implements ViewCo
     @ApiStatus.Experimental
     public static AnvilInput createAnvilInput(@NotNull AnvilInputConfig config) {
         final long id = State.next();
-        final StateValueFactory factory = (host, state) -> new AnvilInputStateValue(state, config);
+        final StateValueFactory factory = (host, state) -> new AnvilInputStateValue(id, config);
 
         return new AnvilInput(id, factory);
     }

@@ -1,43 +1,55 @@
 package me.devnatan.inventoryframework.component;
 
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
-
+import me.devnatan.inventoryframework.InventoryFrameworkException;
+import me.devnatan.inventoryframework.Ref;
+import me.devnatan.inventoryframework.VirtualView;
+import me.devnatan.inventoryframework.context.Context;
 import me.devnatan.inventoryframework.context.IFComponentRenderContext;
 import me.devnatan.inventoryframework.context.IFComponentUpdateContext;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.context.IFSlotClickContext;
-import me.devnatan.inventoryframework.context.PlatformContext;
+import me.devnatan.inventoryframework.state.State;
 import org.jetbrains.annotations.NotNull;
 
 // TODO Make this render abstract and remove `getResult` (Object) from IFSlotRenderContext
-public final class BukkitItemComponentImpl extends BukkitPlatformComponent<BukkitItemComponentBuilder> {
+final class BukkitItemComponentImpl extends PlatformComponent<Context, BukkitItemComponentBuilder> {
 
     private int position;
     private final Object stack;
-    private final Predicate<? extends IFContext> displayCondition;
 
-    public BukkitItemComponentImpl(
+    BukkitItemComponentImpl(
             int position,
             Object stack,
-            boolean cancelOnClick,
-            boolean closeOnClick,
+            String key,
+            VirtualView root,
+            Ref<Component> reference,
+            Set<State<?>> watchingStates,
             Predicate<? extends IFContext> displayCondition,
             Consumer<? super IFComponentRenderContext> renderHandler,
             Consumer<? super IFComponentUpdateContext> updateHandler,
             Consumer<? super IFSlotClickContext> clickHandler,
+            boolean cancelOnClick,
+            boolean closeOnClick,
             boolean updateOnClick) {
+        super(
+                key,
+                root,
+                reference,
+                watchingStates,
+                displayCondition,
+                renderHandler,
+                updateHandler,
+                clickHandler,
+                cancelOnClick,
+                closeOnClick,
+                updateOnClick);
         this.position = position;
         this.stack = stack;
-        this.cancelOnClick = cancelOnClick;
-        this.closeOnClick = closeOnClick;
-        this.displayCondition = displayCondition;
-        this.renderHandler = renderHandler;
-        this.updateHandler = updateHandler;
-        this.clickHandler = clickHandler;
-        this.updateOnClick = updateOnClick;
     }
 
     public int getPosition() {
@@ -48,13 +60,12 @@ public final class BukkitItemComponentImpl extends BukkitPlatformComponent<Bukki
         return stack;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public boolean shouldRender(IFContext context) {
-        return displayCondition == null || ((Predicate<? super IFContext>) displayCondition).test(context);
+    public boolean intersects(@NotNull Component other) {
+        if (!(other instanceof ItemComponent)) return other.intersects(this);
+
+        return getPosition() == ((ItemComponent) other).getPosition();
     }
-
-
 
     @Override
     public boolean isContainedWithin(int position) {
@@ -68,24 +79,25 @@ public final class BukkitItemComponentImpl extends BukkitPlatformComponent<Bukki
             getRenderHandler().accept(context);
 
             // Externally managed components have its own displacement measures
-			// TODO Component-based context do not need displacement measures?
-//            if (!isManagedExternally()) {
-//                final int updatedSlot = context.getComponent().getPosition();
-//                position = updatedSlot;
-//
-//                if (updatedSlot == -1 && initialSlot == -1) {
-//                    // TODO needs more user-friendly "do something"-like message
-//                    throw new InventoryFrameworkException("Missing position (unset slot) for item component");
-//                }
-//
-//                // TODO Misplaced - move this to overall item component misplacement check
-//                if (initialSlot != -1 && initialSlot != updatedSlot) {
-//                    context.getContainer().removeItem(initialSlot);
-//                    setVisible(false);
-//                }
-//            }
+            // FIXME Missing implementation
+            // TODO Component-based context do not need displacement measures?
+            if (!isManagedExternally()) {
+                final int updatedSlot = ((BukkitItemComponentImpl) context.getComponent()).getPosition();
+                position = updatedSlot;
 
-            context.getContainer().renderItem(getPosition(), context.getResult());
+                if (updatedSlot == -1 && initialSlot == -1) {
+                    // TODO needs more user-friendly "do something"-like message
+                    throw new InventoryFrameworkException("Missing position (unset slot) for item component");
+                }
+
+                // TODO Misplaced - move this to overall item component misplacement check
+                if (initialSlot != -1 && initialSlot != updatedSlot) {
+                    context.getContainer().removeItem(initialSlot);
+                    setVisible(false);
+                }
+            }
+
+            // context.getContainer().renderItem(getPosition(), context.getResult());
             setVisible(true);
             return;
         }
@@ -107,19 +119,19 @@ public final class BukkitItemComponentImpl extends BukkitPlatformComponent<Bukki
         if (context.isCancelled()) return;
 
         // Static item with no `displayIf` must not even reach the update handler
-        if (!context.isForceUpdate() && displayCondition == null && getRenderHandler() == null) return;
+        if (!context.isForceUpdate() && getDisplayCondition() == null && getRenderHandler() == null) return;
 
         if (isVisible() && getUpdateHandler() != null) {
             getUpdateHandler().accept(context);
             if (context.isCancelled()) return;
         }
 
-		context.getRoot().renderComponent(this);
+        context.getRoot().renderComponent(this);
     }
 
     @Override
     public void cleared(@NotNull IFRenderContext context) {
-        ((IFRenderContext) context).getContainer().removeItem(getPosition());
+        context.getContainer().removeItem(getPosition());
     }
 
     @Override
@@ -143,14 +155,6 @@ public final class BukkitItemComponentImpl extends BukkitPlatformComponent<Bukki
 
     @Override
     public String toString() {
-        return "BukkitItemComponentImpl{" + ", position="
-                + position + ", stack="
-                + stack + ", cancelOnClick="
-                + cancelOnClick + ", closeOnClick="
-                + closeOnClick + ", displayCondition="
-                + displayCondition + ", renderHandler="
-                + renderHandler + ", updateHandler="
-                + updateHandler + ", clickHandler="
-                + clickHandler + "}";
+        return "BukkitItemComponentImpl{" + "position=" + position + ", stack=" + stack + "} " + super.toString();
     }
 }

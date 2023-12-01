@@ -82,7 +82,7 @@ public abstract class DefaultRootView implements RootView {
         this.scheduledUpdateJob = job;
     }
 
-	public StateRegistry getStateRegistry() {
-		return stateRegistry;
-	}
+    public StateRegistry getStateRegistry() {
+        return stateRegistry;
+    }
 }

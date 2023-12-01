@@ -4,11 +4,9 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.function.Supplier;
-
 import me.devnatan.inventoryframework.component.ComponentBuilder;
-import me.devnatan.inventoryframework.component.ItemComponentBuilder;
 import me.devnatan.inventoryframework.component.Pagination;
-import me.devnatan.inventoryframework.component.PaginationStateBuilder;
+import me.devnatan.inventoryframework.component.PaginationBuilder;
 import me.devnatan.inventoryframework.component.PaginationValueConsumer;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFOpenContext;
@@ -266,7 +264,7 @@ public interface StateAccess<CONTEXT extends IFContext, COMPONENT_BUILDER extend
      * @param <T>            The pagination data type.
      * @return A new pagination state builder.
      */
-    <T> PaginationStateBuilder<CONTEXT, COMPONENT_BUILDER, T> buildPaginationState(@NotNull List<? super T> sourceProvider);
+    <T> PaginationBuilder<CONTEXT, COMPONENT_BUILDER, T> buildPaginationState(@NotNull List<? super T> sourceProvider);
 
     /**
      * Creates a new unmodifiable dynamic pagination state builder.
@@ -275,7 +273,7 @@ public interface StateAccess<CONTEXT extends IFContext, COMPONENT_BUILDER extend
      * @param <T>            The pagination data type.
      * @return A new pagination state builder.
      */
-    <T> PaginationStateBuilder<CONTEXT, COMPONENT_BUILDER, T> buildComputedPaginationState(
+    <T> PaginationBuilder<CONTEXT, COMPONENT_BUILDER, T> buildComputedPaginationState(
             @NotNull Function<CONTEXT, List<? super T>> sourceProvider);
 
     /**
@@ -289,7 +287,7 @@ public interface StateAccess<CONTEXT extends IFContext, COMPONENT_BUILDER extend
      * @return A new pagination state builder.
      */
     @ApiStatus.Experimental
-    <T> PaginationStateBuilder<CONTEXT, COMPONENT_BUILDER, T> buildComputedAsyncPaginationState(
+    <T> PaginationBuilder<CONTEXT, COMPONENT_BUILDER, T> buildComputedAsyncPaginationState(
             @NotNull Function<CONTEXT, CompletableFuture<List<T>>> sourceProvider);
 
     /**
@@ -299,7 +297,7 @@ public interface StateAccess<CONTEXT extends IFContext, COMPONENT_BUILDER extend
      * @param <T>            The pagination data type.
      * @return A new pagination state builder.
      */
-    <T> PaginationStateBuilder<CONTEXT, COMPONENT_BUILDER, T> buildLazyPaginationState(
+    <T> PaginationBuilder<CONTEXT, COMPONENT_BUILDER, T> buildLazyPaginationState(
             @NotNull Supplier<List<? super T>> sourceProvider);
 
     /**
@@ -309,7 +307,7 @@ public interface StateAccess<CONTEXT extends IFContext, COMPONENT_BUILDER extend
      * @param <T>            The pagination data type.
      * @return A new pagination state builder.
      */
-    <T> PaginationStateBuilder<CONTEXT, COMPONENT_BUILDER, T> buildLazyPaginationState(
+    <T> PaginationBuilder<CONTEXT, COMPONENT_BUILDER, T> buildLazyPaginationState(
             @NotNull Function<CONTEXT, List<? super T>> sourceProvider);
 
     /**
@@ -323,6 +321,6 @@ public interface StateAccess<CONTEXT extends IFContext, COMPONENT_BUILDER extend
      * @return A new pagination state builder.
      */
     @ApiStatus.Experimental
-    <T> PaginationStateBuilder<CONTEXT, COMPONENT_BUILDER, T> buildLazyAsyncPaginationState(
+    <T> PaginationBuilder<CONTEXT, COMPONENT_BUILDER, T> buildLazyAsyncPaginationState(
             @NotNull Function<CONTEXT, CompletableFuture<List<T>>> sourceProvider);
 }

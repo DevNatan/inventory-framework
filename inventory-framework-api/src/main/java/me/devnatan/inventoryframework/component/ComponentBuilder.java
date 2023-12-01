@@ -15,6 +15,13 @@ import org.jetbrains.annotations.NotNull;
 public interface ComponentBuilder<SELF> {
 
     /**
+     * Builds a component from this component builder.
+     *
+     * @return A new component instance built from this component builder.
+     */
+    Component build(VirtualView root);
+
+    /**
      * Assigns {@link Ref a reference} to this component.
      *
      * @param reference Component reference key.
@@ -105,13 +112,6 @@ public interface ComponentBuilder<SELF> {
     SELF updateOnStateChange(@NotNull State<?> state, State<?>... states);
 
     /**
-     * Returns a copy of this component builder.
-     *
-     * @return A copy of this component builder.
-     */
-    SELF copy();
-
-    /**
      * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
      * this library. No compatibility guarantees are provided.</i></b>
      */
@@ -148,9 +148,13 @@ public interface ComponentBuilder<SELF> {
     SELF hideIf(BooleanSupplier condition);
 
     /**
-     * Builds a component from this component builder.
+     * Sets the key of the component.
      *
-     * @return A new component instance built from this component builder.
+     * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     *
+     * @return This component builder.
      */
-    Component build(VirtualView root);
+    @ApiStatus.Experimental
+    SELF key(String key);
 }

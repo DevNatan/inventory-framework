@@ -7,18 +7,21 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import me.devnatan.inventoryframework.BukkitViewContainer;
 import me.devnatan.inventoryframework.BukkitViewer;
+import me.devnatan.inventoryframework.UpdateReason;
 import me.devnatan.inventoryframework.View;
 import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.component.BukkitItemComponentBuilder;
+import me.devnatan.inventoryframework.component.Component;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public final class RenderContext extends PlatformRenderContext<BukkitItemComponentBuilder, Context> implements Context {
+public final class RenderContext extends PlatformRenderContext<ItemStack, BukkitItemComponentBuilder, Context>
+        implements Context {
 
     private final Player player;
 
@@ -68,6 +71,7 @@ public final class RenderContext extends PlatformRenderContext<BukkitItemCompone
         ((BukkitViewContainer) getContainer()).changeTitle(null, player);
     }
 
+    // region Slot Assignment Methods
     /**
      * Adds an item to a specific slot in the context container.
      *
@@ -139,11 +143,24 @@ public final class RenderContext extends PlatformRenderContext<BukkitItemCompone
     public @NotNull BukkitItemComponentBuilder resultSlot(@Nullable ItemStack item) {
         return resultSlot().withItem(item);
     }
+    // endregion
 
+    // region Internals
     @Override
     protected BukkitItemComponentBuilder createBuilder() {
-        return new BukkitItemComponentBuilder(this);
+        return new BukkitItemComponentBuilder();
     }
+
+    @Override
+    IFComponentRenderContext createComponentRenderContext(Component component, boolean force) {
+        return null;
+    }
+
+    @Override
+    IFComponentUpdateContext createComponentUpdateContext(Component component, boolean force, UpdateReason reason) {
+        return null;
+    }
+    // endregion
 
     @Override
     public boolean equals(Object o) {

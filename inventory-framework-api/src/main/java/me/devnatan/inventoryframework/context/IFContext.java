@@ -131,20 +131,20 @@ public interface IFContext extends VirtualView, StateValueHost, ComponentContain
     @ApiStatus.Internal
     void removeComponent(@NotNull Component component);
 
-	/**
-	 * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
-	 * this library. No compatibility guarantees are provided.</i></b>
-	 *
-	 * @param component The clicked component.
-	 */
-	@ApiStatus.Internal
-	void performClickInComponent(
-		@NotNull Component component,
-		@NotNull Viewer viewer,
-		@NotNull ViewContainer clickedContainer,
-		Object platformEvent,
-		int clickedSlot,
-		boolean combined);
+    /**
+     * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided.</i></b>
+     *
+     * @param component The clicked component.
+     */
+    @ApiStatus.Internal
+    void performClickInComponent(
+            @NotNull Component component,
+            @NotNull Viewer viewer,
+            @NotNull ViewContainer clickedContainer,
+            Object platformEvent,
+            int clickedSlot,
+            boolean combined);
 
     /**
      * Updates all components for all viewers in this context.

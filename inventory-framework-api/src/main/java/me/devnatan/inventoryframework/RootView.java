@@ -28,7 +28,6 @@ public interface RootView extends VirtualView {
      * @return A set of all currently active contexts in this view.
      */
     @ApiStatus.Internal
-    @UnmodifiableView
     Set<IFContext> getInternalContexts();
 
     /**

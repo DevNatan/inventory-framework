@@ -1,18 +1,12 @@
 package me.devnatan.inventoryframework.context;
 
+import java.util.Optional;
 import me.devnatan.inventoryframework.*;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.ComponentComposition;
 import me.devnatan.inventoryframework.component.ComponentContainer;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.UnmodifiableView;
-
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
 
 public abstract class PlatformContext extends AbstractIFContext implements ComponentContainer {
 
@@ -25,7 +19,7 @@ public abstract class PlatformContext extends AbstractIFContext implements Compo
     @Override
     public abstract @NotNull PlatformView getRoot();
 
-	// region Title Update
+    // region Title Update
     /**
      * The actual title of this context.
      * <p>
@@ -59,9 +53,9 @@ public abstract class PlatformContext extends AbstractIFContext implements Compo
     public final void resetTitleForEveryone() {
         for (final Viewer viewer : getViewers()) getContainerOrThrow().changeTitle(null, viewer);
     }
-	// endregion
+    // endregion
 
-	// region Open & Close
+    // region Open & Close
     @Override
     public final void closeForEveryone() {
         getContainerOrThrow().close();
@@ -77,9 +71,9 @@ public abstract class PlatformContext extends AbstractIFContext implements Compo
     public final void openForEveryone(@NotNull Class<? extends RootView> other, Object initialData) {
         getRoot().navigateTo(other, (IFRenderContext) this, initialData);
     }
-	// endregion
+    // endregion
 
-	// region Internal Context API
+    // region Internal Context API
     @Override
     public boolean isActive() {
         return active;
@@ -100,58 +94,58 @@ public abstract class PlatformContext extends AbstractIFContext implements Compo
         this.endless = endless;
     }
 
-	/**
-	 * Tries to get a container from the current context or throws an exception if not available.
-	 * @return The container of this context.
-	 * @throws InventoryFrameworkException If there's no container available in the current context.
-	 */
-	protected final @NotNull ViewContainer getContainerOrThrow() {
-		if (this instanceof IFRenderContext) return ((IFRenderContext) this).getContainer();
-		if (this instanceof IFCloseContext) return ((IFCloseContext) this).getContainer();
-		if (this instanceof IFSlotContext) return ((IFSlotContext) this).getContainer();
+    /**
+     * Tries to get a container from the current context or throws an exception if not available.
+     * @return The container of this context.
+     * @throws InventoryFrameworkException If there's no container available in the current context.
+     */
+    protected final @NotNull ViewContainer getContainerOrThrow() {
+        if (this instanceof IFRenderContext) return ((IFRenderContext) this).getContainer();
+        if (this instanceof IFCloseContext) return ((IFCloseContext) this).getContainer();
+        if (this instanceof IFSlotContext) return ((IFSlotContext) this).getContainer();
 
-		throw new InventoryFrameworkException(String.format(
-			"Container is not available in the current context: %s",
-			getClass().getName()));
-	}
-	// endregion
+        throw new InventoryFrameworkException(String.format(
+                "Container is not available in the current context: %s",
+                getClass().getName()));
+    }
+    // endregion
 
-	// region Internal Components Rendering
-	final Optional<Component> getOverlappingComponentToRender(ComponentContainer container, Component subject) {
-		// TODO Support recursive overlapping (more than two components overlapping each other)
-		for (final Component child : container.getInternalComponents()) {
-			if (!child.isVisible()) continue;
-			if (child.getKey().equals(subject.getKey())) continue;
-			if (child instanceof ComponentComposition) {
-				// This prevents from child being compared with its own root that would cause an
-				// infinite rendering loop causing the root being re-rendered entirely, thus the
-				// child, because child always intersects with its root since it is inside it
-				if (subject.getRoot() instanceof Component
-					&& child.getKey().equals(((Component) subject.getRoot()).getKey())) {
-					continue;
-				}
+    // region Internal Components Rendering
+    final Optional<Component> getOverlappingComponentToRender(ComponentContainer container, Component subject) {
+        // TODO Support recursive overlapping (more than two components overlapping each other)
+        for (final Component child : container.getInternalComponents()) {
+            if (!child.isVisible()) continue;
+            if (child.getKey().equals(subject.getKey())) continue;
+            if (child instanceof ComponentComposition) {
+                // This prevents from child being compared with its own root that would cause an
+                // infinite rendering loop causing the root being re-rendered entirely, thus the
+                // child, because child always intersects with its root since it is inside it
+                if (subject.getRoot() instanceof Component
+                        && child.getKey().equals(((Component) subject.getRoot()).getKey())) {
+                    continue;
+                }
 
-				// We skip ComponentComposition here because is expected to ComponentComposition,
-				// on its render handler use #renderComponent to render its children so each
-				// child will have its own overlapping checks
-				for (final Component deepChild : ((ComponentComposition) child).getInternalComponents()) {
-					if (!deepChild.isVisible()) continue;
-					if (deepChild.intersects(subject)) return Optional.of(deepChild);
-				}
+                // We skip ComponentComposition here because is expected to ComponentComposition,
+                // on its render handler use #renderComponent to render its children so each
+                // child will have its own overlapping checks
+                for (final Component deepChild : ((ComponentComposition) child).getInternalComponents()) {
+                    if (!deepChild.isVisible()) continue;
+                    if (deepChild.intersects(subject)) return Optional.of(deepChild);
+                }
 
-				// Ignore ComponentComposition, we want to check intersections only with children
-				continue;
-			}
+                // Ignore ComponentComposition, we want to check intersections only with children
+                continue;
+            }
 
-			if (child.intersects(subject)) return Optional.of(child);
-		}
+            if (child.intersects(subject)) return Optional.of(child);
+        }
 
-		return Optional.empty();
-	}
-	// endregion
+        return Optional.empty();
+    }
+    // endregion
 
-	@Override
-	public String toString() {
-		return "PlatformContext{" + "endless=" + endless + ", active=" + active + "} " + super.toString();
-	}
+    @Override
+    public String toString() {
+        return "PlatformContext{" + "endless=" + endless + ", active=" + active + "} " + super.toString();
+    }
 }

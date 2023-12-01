@@ -14,6 +14,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import me.devnatan.inventoryframework.Ref;
 import me.devnatan.inventoryframework.ViewContainer;
@@ -66,17 +67,19 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
     private List<?> currSource;
 
     public PaginationImpl(
-            long internalStateId,
+            String key,
             VirtualView root,
             Ref<Component> reference,
             Set<State<?>> watchingStates,
+            Predicate<? extends IFContext> displayCondition,
+            long internalStateId,
             char layoutTarget,
             Object sourceProvider,
             PaginationElementFactory<Object> elementFactory,
             BiConsumer<VirtualView, Pagination> pageSwitchHandler,
             boolean isAsync,
             boolean isComputed) {
-        super(root, reference, watchingStates);
+        super(key, root, reference, watchingStates, displayCondition);
         this.internalStateId = internalStateId;
         this.layoutTarget = layoutTarget;
         this.sourceProvider = sourceProvider;
@@ -616,19 +619,19 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
                 continue;
             }
 
-			if (child.isContainedWithin(context.getClickedSlot())) {
-				context.getParent()
-					.performClickInComponent(
-						child,
-						context.getViewer(),
-						context.getClickedContainer(),
-						context.getPlatformEvent(),
-						context.getClickedSlot(),
-						true);
-				break;
-			}
-		}
-	}
+            if (child.isContainedWithin(context.getClickedSlot())) {
+                context.getParent()
+                        .performClickInComponent(
+                                child,
+                                context.getViewer(),
+                                context.getClickedContainer(),
+                                context.getPlatformEvent(),
+                                context.getClickedSlot(),
+                                true);
+                break;
+            }
+        }
+    }
 
     @Override
     public boolean equals(Object o) {
