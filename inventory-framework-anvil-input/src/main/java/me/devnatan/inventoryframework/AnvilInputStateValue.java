@@ -1,14 +1,13 @@
 package me.devnatan.inventoryframework;
 
 import me.devnatan.inventoryframework.state.MutableValue;
-import me.devnatan.inventoryframework.state.State;
 
 class AnvilInputStateValue extends MutableValue {
 
     private final AnvilInputConfig config;
 
-    public AnvilInputStateValue(State<?> state, AnvilInputConfig config) {
-        super(state, config.initialInput);
+    public AnvilInputStateValue(long internalId, AnvilInputConfig config) {
+        super(internalId, config.initialInput);
         this.config = config;
     }
 

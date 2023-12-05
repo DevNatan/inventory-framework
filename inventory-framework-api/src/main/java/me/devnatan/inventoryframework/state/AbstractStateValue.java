@@ -9,20 +9,15 @@ import org.jetbrains.annotations.ApiStatus;
 @ApiStatus.Internal
 public abstract class AbstractStateValue implements StateValue {
 
-    private final State<?> state;
+    private final long internalId;
 
-    protected AbstractStateValue(State<?> state) {
-        this.state = state;
+    protected AbstractStateValue(long internalId) {
+        this.internalId = internalId;
     }
 
     @Override
-    public final State<?> getState() {
-        return state;
-    }
-
-    @Override
-    public final long getId() {
-        return getState().internalId();
+    public final long internalId() {
+        return internalId;
     }
 
     @Override
@@ -35,6 +30,6 @@ public abstract class AbstractStateValue implements StateValue {
 
     @Override
     public String toString() {
-        return "AbstractStateValue{" + "state=" + state + '}';
+        return "AbstractStateValue{" + "internalId=" + internalId() + '}';
     }
 }

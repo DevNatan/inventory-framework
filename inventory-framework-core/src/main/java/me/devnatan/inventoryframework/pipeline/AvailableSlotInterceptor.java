@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import me.devnatan.inventoryframework.VirtualView;
-import me.devnatan.inventoryframework.component.ComponentFactory;
+import me.devnatan.inventoryframework.component.ComponentBuilder;
 import me.devnatan.inventoryframework.component.ItemComponentBuilder;
 import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.exception.SlotFillExceededException;
@@ -22,11 +22,11 @@ public final class AvailableSlotInterceptor implements PipelineInterceptor<Virtu
         final IFRenderContext context = (IFRenderContext) subject;
         if (context.getAvailableSlotFactories() == null) return;
 
-        final List<ComponentFactory> slotComponents = context.getConfig().getLayout() == null
+        final List<ComponentBuilder> slotComponents = context.getConfig().getLayout() == null
                 ? resolveFromInitialSlot(context)
                 : resolveFromLayoutSlot(context);
 
-        slotComponents.forEach(componentFactory -> context.addComponent(componentFactory.create()));
+        slotComponents.forEach(componentFactory -> context.addComponent(componentFactory.build(context)));
     }
 
     /**
@@ -36,17 +36,17 @@ public final class AvailableSlotInterceptor implements PipelineInterceptor<Virtu
      * @param context The rendering context.
      */
     @VisibleForTesting
-    List<ComponentFactory> resolveFromInitialSlot(IFRenderContext context) {
-        final List<BiFunction<Integer, Integer, ComponentFactory>> availableSlotFactories =
+    List<ComponentBuilder> resolveFromInitialSlot(IFRenderContext context) {
+        final List<BiFunction<Integer, Integer, ComponentBuilder>> availableSlotFactories =
                 context.getAvailableSlotFactories();
-        final List<ComponentFactory> result = new ArrayList<>();
+        final List<ComponentBuilder> result = new ArrayList<>();
 
         int slot = 0;
         for (int i = 0; i < context.getContainer().getSize(); i++) {
             while (isSlotNotAvailableForAutoFilling(context, slot)) slot++;
 
             try {
-                final BiFunction<Integer, Integer, ComponentFactory> factory = availableSlotFactories.get(i);
+                final BiFunction<Integer, Integer, ComponentBuilder> factory = availableSlotFactories.get(i);
                 result.add(factory.apply(i, slot++));
             } catch (IndexOutOfBoundsException ignored) {
                 break;
@@ -63,7 +63,7 @@ public final class AvailableSlotInterceptor implements PipelineInterceptor<Virtu
      * @param context The rendering context.
      */
     @VisibleForTesting
-    List<ComponentFactory> resolveFromLayoutSlot(IFRenderContext context) {
+    List<ComponentBuilder> resolveFromLayoutSlot(IFRenderContext context) {
         final Optional<LayoutSlot> layoutSlotOption = context.getLayoutSlots().stream()
                 .filter(layoutSlot -> layoutSlot.getCharacter() == LayoutSlot.FILLED_RESERVED_CHAR)
                 .findFirst();
@@ -76,10 +76,10 @@ public final class AvailableSlotInterceptor implements PipelineInterceptor<Virtu
         // Positions may be null if the layout has not yet been resolved
         if (fillablePositions == null || fillablePositions.length == 0) return Collections.emptyList();
 
-        final List<BiFunction<Integer, Integer, ComponentFactory>> availableSlotFactories =
+        final List<BiFunction<Integer, Integer, ComponentBuilder>> availableSlotFactories =
                 context.getAvailableSlotFactories();
 
-        final List<ComponentFactory> result = new ArrayList<>();
+        final List<ComponentBuilder> result = new ArrayList<>();
         // Offset is incremented for each unavailable slot found
         int offset = 0;
 
@@ -107,7 +107,7 @@ public final class AvailableSlotInterceptor implements PipelineInterceptor<Virtu
                 }
             }
 
-            final BiFunction<Integer, Integer, ComponentFactory> factory = availableSlotFactories.get(i);
+            final BiFunction<Integer, Integer, ComponentBuilder> factory = availableSlotFactories.get(i);
             result.add(factory.apply(i, slot));
         }
 
@@ -121,9 +121,11 @@ public final class AvailableSlotInterceptor implements PipelineInterceptor<Virtu
         if (context.getContainer().hasItem(slot)) return true;
 
         // we need to check component factories since components don't have been yet rendered
-        return context.getComponentFactories().stream()
+        // TODO Find a better way to check this "noneMatch" to remove isContainedWithin from builder
+        //      since slot can be re-defined on render and this interceptor runs before it
+        return context.getNotRenderedComponents().stream()
                 .filter(componentFactory -> componentFactory instanceof ItemComponentBuilder)
-                .map(componentFactory -> (ItemComponentBuilder<?, ?>) componentFactory)
+                .map(componentFactory -> (ItemComponentBuilder) componentFactory)
                 .anyMatch(itemBuilder -> itemBuilder.isContainedWithin(slot));
     }
 }

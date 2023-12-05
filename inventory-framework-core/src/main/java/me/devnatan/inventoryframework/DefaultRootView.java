@@ -28,7 +28,7 @@ public abstract class DefaultRootView implements RootView {
     private final Pipeline<VirtualView> pipeline =
             new Pipeline<>(INIT, OPEN, LAYOUT_RESOLUTION, FIRST_RENDER, UPDATE, CLICK, CLOSE, INVALIDATION);
     private final Set<IFContext> contexts = newSetFromMap(synchronizedMap(new HashMap<>()));
-    final StateRegistry stateRegistry = new StateRegistry();
+    private final StateRegistry stateRegistry = new StateRegistry();
     private Job scheduledUpdateJob;
 
     @Override
@@ -80,5 +80,9 @@ public abstract class DefaultRootView implements RootView {
     @Override
     public final void setScheduledUpdateJob(@NotNull Job job) {
         this.scheduledUpdateJob = job;
+    }
+
+    public StateRegistry getStateRegistry() {
+        return stateRegistry;
     }
 }

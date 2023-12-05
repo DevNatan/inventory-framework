@@ -3,6 +3,4 @@ apply from: '../publish.gradle'
 
 dependencies {
     api projects.inventoryFrameworkApi
-    testImplementation projects.inventoryFrameworkApi
-    testImplementation projects.inventoryFrameworkTest
 }

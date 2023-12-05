@@ -1,7 +1,0 @@
-apply from: '../library.gradle'
-
-dependencies {
-    compileOnly projects.inventoryFrameworkApi
-    compileOnly projects.inventoryFrameworkCore
-    compileOnly libs.mockito.core
-}

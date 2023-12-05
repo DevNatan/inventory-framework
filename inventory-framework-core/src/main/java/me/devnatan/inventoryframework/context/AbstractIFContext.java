@@ -7,36 +7,40 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import me.devnatan.inventoryframework.IFDebug;
 import me.devnatan.inventoryframework.InventoryFrameworkException;
+import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.UnsupportedOperationInSharedContextException;
 import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.component.Component;
-import me.devnatan.inventoryframework.component.ComponentComposition;
-import me.devnatan.inventoryframework.component.ComponentContainer;
 import me.devnatan.inventoryframework.pipeline.StandardPipelinePhases;
 import me.devnatan.inventoryframework.state.DefaultStateValueHost;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Unmodifiable;
 import org.jetbrains.annotations.UnmodifiableView;
 
 abstract class AbstractIFContext extends DefaultStateValueHost implements IFContext {
 
+    // TODO Reconsider usage of LinkedList - why its a LinkedList?? :clown:
     private final List<Component> components = new LinkedList<>();
     private final Map<String, Viewer> indexedViewers = new HashMap<>();
     protected ViewConfig config;
 
+    @Override
+    public final @NotNull String getInitialTitle() {
+        return getConfig().getTitle().toString();
+    }
+
+    // region Viewers API
     @Override
     public @NotNull Map<String, Viewer> getIndexedViewers() {
         return indexedViewers;
     }
 
     @Override
-    public final @NotNull @Unmodifiable List<Viewer> getViewers() {
-        return Collections.unmodifiableList(new ArrayList<>(getIndexedViewers().values()));
+    public final @NotNull List<Viewer> getViewers() {
+        return new ArrayList<>(getIndexedViewers().values());
     }
 
     @Override
@@ -58,24 +62,21 @@ abstract class AbstractIFContext extends DefaultStateValueHost implements IFCont
                 "Viewer %s removed from %s",
                 viewer.getId(), getRoot().getClass().getName());
     }
+    // endregion
 
+    // region Components API
     @Override
-    public final @NotNull String getInitialTitle() {
-        return getConfig().getTitle().toString();
-    }
-
-    @Override
-    public @UnmodifiableView @NotNull List<Component> getComponents() {
+    public final @UnmodifiableView @NotNull List<Component> getComponents() {
         return Collections.unmodifiableList(getInternalComponents());
     }
 
     @Override
-    public List<Component> getInternalComponents() {
+    public final List<Component> getInternalComponents() {
         return components;
     }
 
     @Override
-    public List<Component> getComponentsAt(int position) {
+    public final List<Component> getComponentsAt(int position) {
         final List<Component> componentList = new ArrayList<>();
         synchronized (getInternalComponents()) {
             for (final Component component : getInternalComponents()) {
@@ -88,85 +89,17 @@ abstract class AbstractIFContext extends DefaultStateValueHost implements IFCont
     }
 
     @Override
-    public void addComponent(@NotNull Component component) {
+    public final void addComponent(@NotNull Component component) {
         synchronized (getInternalComponents()) {
             getInternalComponents().add(0, component);
         }
     }
 
     @Override
-    public void removeComponent(@NotNull Component component) {
+    public final void removeComponent(@NotNull Component component) {
         synchronized (getInternalComponents()) {
             getInternalComponents().remove(component);
         }
-    }
-
-    private IFSlotRenderContext createSlotRenderContext(@NotNull Component component, boolean force) {
-        if (!(this instanceof IFRenderContext))
-            throw new InventoryFrameworkException("Slot render context cannot be created from non-render parent");
-
-        final IFRenderContext renderContext = (IFRenderContext) this;
-        final IFSlotRenderContext slotRender = getRoot()
-                .getElementFactory()
-                .createSlotRenderContext(component.getPosition(), renderContext, renderContext.getViewer());
-        slotRender.setForceUpdate(force);
-        return slotRender;
-    }
-
-    @Override
-    public void renderComponent(@NotNull Component component) {
-        if (!component.shouldRender(this)) {
-            component.setVisible(false);
-
-            final Optional<Component> overlapOptional = getOverlappingComponentToRender(this, component);
-            if (overlapOptional.isPresent()) {
-                Component overlap = overlapOptional.get();
-                renderComponent(overlap);
-
-                if (overlap.isVisible()) return;
-            }
-
-            component.clear(this);
-            return;
-        }
-        component.render(createSlotRenderContext(component, false));
-    }
-
-    private Optional<Component> getOverlappingComponentToRender(ComponentContainer container, Component subject) {
-        // TODO Support recursive overlapping (more than two components overlapping each other)
-        for (final Component child : container.getInternalComponents()) {
-            if (!child.isVisible()) continue;
-            if (child.getKey().equals(subject.getKey())) continue;
-            if (child instanceof ComponentComposition) {
-                // This prevents from child being compared with its own root that would cause an
-                // infinite rendering loop causing the root being re-rendered entirely, thus the
-                // child, because child always intersects with its root since it is inside it
-                if (subject.getRoot() instanceof Component
-                        && child.getKey().equals(((Component) subject.getRoot()).getKey())) {
-                    continue;
-                }
-
-                // We skip ComponentComposition here because is expected to ComponentComposition,
-                // on its render handler use #renderComponent to render its children so each
-                // child will have its own overlapping checks
-                for (final Component deepChild : ((ComponentComposition) child).getInternalComponents()) {
-                    if (!deepChild.isVisible()) continue;
-                    if (deepChild.intersects(subject)) return Optional.of(deepChild);
-                }
-
-                // Ignore ComponentComposition, we want to check intersections only with children
-                continue;
-            }
-
-            if (child.intersects(subject)) return Optional.of(child);
-        }
-
-        return Optional.empty();
-    }
-
-    @Override
-    public void updateComponent(@NotNull Component component, boolean force) {
-        component.updated(createSlotRenderContext(component, force));
     }
 
     @Override
@@ -177,16 +110,17 @@ abstract class AbstractIFContext extends DefaultStateValueHost implements IFCont
             Object platformEvent,
             int clickedSlot,
             boolean combined) {
-        final IFSlotClickContext clickContext = getRoot()
-                .getElementFactory()
+        final RootView root = (RootView) getRoot();
+        final IFSlotClickContext clickContext = root.getElementFactory()
                 .createSlotClickContext(clickedSlot, viewer, clickedContainer, component, platformEvent, combined);
 
-        getRoot().getPipeline().execute(StandardPipelinePhases.CLICK, clickContext);
+        root.getPipeline().execute(StandardPipelinePhases.CLICK, clickContext);
     }
+    // endregion
 
     @Override
     public void update() {
-        getRoot().getPipeline().execute(StandardPipelinePhases.UPDATE, this);
+        ((RootView) getRoot()).getPipeline().execute(StandardPipelinePhases.UPDATE, this);
     }
 
     @Override

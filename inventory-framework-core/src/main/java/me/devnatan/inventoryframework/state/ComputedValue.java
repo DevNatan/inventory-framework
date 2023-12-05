@@ -17,8 +17,8 @@ public final class ComputedValue extends AbstractStateValue {
 
     private final Supplier<?> factory;
 
-    public ComputedValue(@NotNull State<?> state, @NotNull Supplier<?> factory) {
-        super(state);
+    public ComputedValue(long internalId, @NotNull Supplier<?> factory) {
+        super(internalId);
         this.factory = factory;
     }
 

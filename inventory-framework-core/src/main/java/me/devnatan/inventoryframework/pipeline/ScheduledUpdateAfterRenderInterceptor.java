@@ -13,7 +13,7 @@ public final class ScheduledUpdateAfterRenderInterceptor implements PipelineInte
         if (!(subject instanceof IFRenderContext)) return;
 
         final IFContext context = (IFContext) subject;
-        final RootView root = context.getRoot();
+        final RootView root = (RootView) context.getRoot();
         final long updateIntervalInTicks = context.getConfig().getUpdateIntervalInTicks();
 
         if (updateIntervalInTicks == 0) return;
