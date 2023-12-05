@@ -1,8 +1,15 @@
 package me.devnatan.inventoryframework.component;
 
+import me.devnatan.inventoryframework.VirtualView;
 import org.jetbrains.annotations.ApiStatus;
 
-public interface ItemComponentBuilder<SELF, ITEM> extends ComponentBuilder<SELF> {
+/**
+ * A component builder for the {@link ItemComponent} component.
+ *
+ * @param <SELF> The self reference of this component builder.
+ * @param <ITEM> Item value type of the current platform.
+ */
+public interface ItemComponentBuilder<SELF extends ComponentBuilder<SELF>, ITEM> extends ComponentBuilder<SELF> {
 
     /**
      * Sets the slot that the item will be positioned.
@@ -23,7 +30,6 @@ public interface ItemComponentBuilder<SELF, ITEM> extends ComponentBuilder<SELF>
 
     /**
      * Sets the item that will be rendered in where this component is placed on.
-     * The rendered item is always static. For dynamic rendering use
      *
      * @param item The item.
      * @return This component builder.
@@ -32,4 +38,7 @@ public interface ItemComponentBuilder<SELF, ITEM> extends ComponentBuilder<SELF>
 
     @ApiStatus.Internal
     boolean isContainedWithin(int position);
+
+	@Override
+	ItemComponent build(VirtualView root);
 }

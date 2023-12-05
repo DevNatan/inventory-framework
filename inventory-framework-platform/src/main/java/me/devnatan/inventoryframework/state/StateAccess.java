@@ -13,7 +13,7 @@ import me.devnatan.inventoryframework.context.IFOpenContext;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
-public interface StateAccess<CONTEXT extends IFContext, COMPONENT_BUILDER extends ComponentBuilder<COMPONENT_BUILDER>> {
+public interface StateAccess<CONTEXT, COMPONENT_BUILDER> {
 
     /**
      * Creates an immutable state with an initial value.

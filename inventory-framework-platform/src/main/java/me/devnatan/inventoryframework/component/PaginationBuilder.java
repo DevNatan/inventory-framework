@@ -1,6 +1,8 @@
 package me.devnatan.inventoryframework.component;
 
 import java.util.function.BiConsumer;
+import java.util.function.Supplier;
+
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.internal.ElementFactory;
@@ -9,7 +11,7 @@ import me.devnatan.inventoryframework.state.State;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
-public final class PaginationBuilder<CONTEXT extends IFContext, BUILDER extends ComponentBuilder<BUILDER>, V>
+public final class PaginationBuilder<CONTEXT, BUILDER, V>
         extends PlatformComponentBuilder<PaginationBuilder<CONTEXT, BUILDER, V>, CONTEXT> {
 
     private final ElementFactory internalElementFactory;
@@ -66,23 +68,12 @@ public final class PaginationBuilder<CONTEXT extends IFContext, BUILDER extends 
         this.paginationElementFactory = (pagination, index, slot, value) -> {
             CONTEXT context = (CONTEXT) pagination.getRoot();
             BUILDER builder = (BUILDER) internalElementFactory.createComponentBuilder(pagination);
-            builder = builder.withExternallyManaged(true);
             if (builder instanceof ItemComponentBuilder)
                 builder = (BUILDER) ((ItemComponentBuilder<?, ?>) builder).withSlot(slot);
 
             elementConsumer.accept(context, builder, index, value);
 
-            final BUILDER finalBuilder = builder;
-
-            // TODO Drop ComponentFactory usage
-            if (builder instanceof ComponentFactory) return (ComponentFactory) finalBuilder;
-            else
-                return new ComponentFactory() {
-                    @Override
-                    public @NotNull Component create() {
-                        return finalBuilder.build(context);
-                    }
-                };
+			return ((ComponentBuilder<?>) builder).build(pagination);
         };
         return this;
     }
@@ -119,20 +110,6 @@ public final class PaginationBuilder<CONTEXT extends IFContext, BUILDER extends 
         return this;
     }
 
-    //    /**
-    //     * Builds a pagination state based on this builder values.
-    //     *
-    //     * @return A new {@link Pagination} state.
-    //     * @throws IllegalStateException If the element factory wasn't set.
-    //     */
-    //    public State<Pagination> build() {
-    //        if (paginationElementFactory == null)
-    //            throw new IllegalStateException(String.format(
-    //                    "Element factory from #buildPaginationState(...) cannot be null. Set it using %s or %s.",
-    //                    "#elementFactory(PaginationElementFactory)", "#itemFactory(BiConsumer)"));
-    //
-    //        return internalStateFactory.apply(this);
-    //    }
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     public Component build(VirtualView root) {
@@ -140,9 +117,9 @@ public final class PaginationBuilder<CONTEXT extends IFContext, BUILDER extends 
         return new PaginationImpl(
                 Long.toString(stateId),
                 root,
-                reference,
-                watchingStates,
-                displayCondition,
+                getReference(),
+                getWatchingStates(),
+                getDisplayCondition(),
                 stateId,
                 layoutTarget,
                 sourceProvider,

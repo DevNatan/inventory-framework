@@ -22,8 +22,11 @@ import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.ComponentBuilder;
 import me.devnatan.inventoryframework.component.ComponentFactory;
+import me.devnatan.inventoryframework.component.ComponentHandle;
+import me.devnatan.inventoryframework.component.ItemComponent;
 import me.devnatan.inventoryframework.component.ItemComponentBuilder;
 import me.devnatan.inventoryframework.component.PlatformComponent;
+import me.devnatan.inventoryframework.component.PlatformComponentBuilder;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -125,6 +128,21 @@ public abstract class PlatformRenderContext<
      */
     public final @NotNull ITEM_BUILDER firstSlot() {
         return createRegisteredBuilder().withSlot(getContainer().getFirstSlot());
+    }
+
+    /**
+     * Sets a component in the first slot of the container.
+     * <p>
+     * <b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     *
+     * @return An {@link ComponentBuilder} to configure the properties of the component.
+     */
+    @ApiStatus.Experimental
+    public final @NotNull <
+		C extends ComponentHandle<CONTEXT, B>,
+		B extends PlatformComponentBuilder<?, CONTEXT>> B firstSlot(@NotNull C component) {
+        throw new UnsupportedOperationException();
     }
 
     /**

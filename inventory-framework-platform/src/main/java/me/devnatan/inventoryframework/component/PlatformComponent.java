@@ -23,8 +23,9 @@ import me.devnatan.inventoryframework.state.StateAccessImpl;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
-public abstract class PlatformComponent<CONTEXT extends IFContext, BUILDER extends ComponentBuilder<BUILDER>>
-        extends AbstractComponent implements Component, StateAccess<CONTEXT, BUILDER> {
+public abstract class PlatformComponent<CONTEXT extends IFContext, COMPONENT_BUILDER>
+	extends AbstractComponent
+	implements Component, StateAccess<CONTEXT, COMPONENT_BUILDER> {
 
     private final StateAccessImpl stateAccess;
     private final boolean cancelOnClick;
@@ -143,77 +144,77 @@ public abstract class PlatformComponent<CONTEXT extends IFContext, BUILDER exten
     @Override
     public final <T> State<Pagination> paginationState(
             @NotNull List<? super T> sourceProvider,
-            @NotNull PaginationValueConsumer<CONTEXT, BUILDER, T> elementConsumer) {
+            @NotNull PaginationValueConsumer<CONTEXT, COMPONENT_BUILDER, T> elementConsumer) {
         return stateAccess.paginationState(sourceProvider, elementConsumer);
     }
 
     @Override
     public final <T> State<Pagination> computedPaginationState(
             @NotNull Function<CONTEXT, List<? super T>> sourceProvider,
-            @NotNull PaginationValueConsumer<CONTEXT, BUILDER, T> valueConsumer) {
+            @NotNull PaginationValueConsumer<CONTEXT, COMPONENT_BUILDER, T> valueConsumer) {
         return stateAccess.computedPaginationState(sourceProvider, valueConsumer);
     }
 
     @Override
     public final <T> State<Pagination> computedAsyncPaginationState(
             @NotNull Function<CONTEXT, CompletableFuture<List<T>>> sourceProvider,
-            @NotNull PaginationValueConsumer<CONTEXT, BUILDER, T> valueConsumer) {
+            @NotNull PaginationValueConsumer<CONTEXT, COMPONENT_BUILDER, T> valueConsumer) {
         return stateAccess.computedAsyncPaginationState(sourceProvider, valueConsumer);
     }
 
     @Override
     public final <T> State<Pagination> lazyPaginationState(
             @NotNull Function<CONTEXT, List<? super T>> sourceProvider,
-            @NotNull PaginationValueConsumer<CONTEXT, BUILDER, T> valueConsumer) {
+            @NotNull PaginationValueConsumer<CONTEXT, COMPONENT_BUILDER, T> valueConsumer) {
         return stateAccess.lazyPaginationState(sourceProvider, valueConsumer);
     }
 
     @Override
     public final <T> State<Pagination> lazyPaginationState(
             @NotNull Supplier<List<? super T>> sourceProvider,
-            @NotNull PaginationValueConsumer<CONTEXT, BUILDER, T> valueConsumer) {
+            @NotNull PaginationValueConsumer<CONTEXT, COMPONENT_BUILDER, T> valueConsumer) {
         return stateAccess.lazyPaginationState(sourceProvider, valueConsumer);
     }
 
     @Override
     public final <T> State<Pagination> lazyAsyncPaginationState(
             @NotNull Function<CONTEXT, CompletableFuture<List<T>>> sourceProvider,
-            @NotNull PaginationValueConsumer<CONTEXT, BUILDER, T> valueConsumer) {
+            @NotNull PaginationValueConsumer<CONTEXT, COMPONENT_BUILDER, T> valueConsumer) {
         return stateAccess.lazyAsyncPaginationState(sourceProvider, valueConsumer);
     }
 
     @Override
-    public final <T> PaginationBuilder<CONTEXT, BUILDER, T> buildPaginationState(
+    public final <T> PaginationBuilder<CONTEXT, COMPONENT_BUILDER, T> buildPaginationState(
             @NotNull List<? super T> sourceProvider) {
         return stateAccess.buildPaginationState(sourceProvider);
     }
 
     @Override
-    public final <T> PaginationBuilder<CONTEXT, BUILDER, T> buildComputedPaginationState(
+    public final <T> PaginationBuilder<CONTEXT, COMPONENT_BUILDER, T> buildComputedPaginationState(
             @NotNull Function<CONTEXT, List<? super T>> sourceProvider) {
         return stateAccess.buildComputedPaginationState(sourceProvider);
     }
 
     @Override
-    public final <T> PaginationBuilder<CONTEXT, BUILDER, T> buildComputedAsyncPaginationState(
+    public final <T> PaginationBuilder<CONTEXT, COMPONENT_BUILDER, T> buildComputedAsyncPaginationState(
             @NotNull Function<CONTEXT, CompletableFuture<List<T>>> sourceProvider) {
         return stateAccess.buildComputedAsyncPaginationState(sourceProvider);
     }
 
     @Override
-    public final <T> PaginationBuilder<CONTEXT, BUILDER, T> buildLazyPaginationState(
+    public final <T> PaginationBuilder<CONTEXT, COMPONENT_BUILDER, T> buildLazyPaginationState(
             @NotNull Supplier<List<? super T>> sourceProvider) {
         return stateAccess.buildLazyPaginationState(sourceProvider);
     }
 
     @Override
-    public final <T> PaginationBuilder<CONTEXT, BUILDER, T> buildLazyPaginationState(
+    public final <T> PaginationBuilder<CONTEXT, COMPONENT_BUILDER, T> buildLazyPaginationState(
             @NotNull Function<CONTEXT, List<? super T>> sourceProvider) {
         return stateAccess.buildLazyPaginationState(sourceProvider);
     }
 
     @Override
-    public final <T> PaginationBuilder<CONTEXT, BUILDER, T> buildLazyAsyncPaginationState(
+    public final <T> PaginationBuilder<CONTEXT, COMPONENT_BUILDER, T> buildLazyAsyncPaginationState(
             @NotNull Function<CONTEXT, CompletableFuture<List<T>>> sourceProvider) {
         return stateAccess.buildLazyAsyncPaginationState(sourceProvider);
     }

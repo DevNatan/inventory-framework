@@ -1,5 +1,6 @@
 package me.devnatan.inventoryframework.component;
 
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -14,17 +15,23 @@ import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.state.State;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-// TODO Make this render abstract and remove `getResult` (Object) from IFSlotRenderContext
-final class BukkitItemComponentImpl extends PlatformComponent<Context, BukkitItemComponentBuilder> {
+public class BukkitItemComponent<BUILDER extends BukkitItemComponentBuilder<BUILDER>>
+	extends PlatformComponent<Context, BUILDER>
+	implements ItemComponent {
 
     private int position;
-    private final Object stack;
+    private final ItemStack stack;
 
-    BukkitItemComponentImpl(
+	protected BukkitItemComponent() {
+		this(0, null, null, null, null, new HashSet<>(), null, null, null, null, false, false, false);
+	}
+
+    BukkitItemComponent(
             int position,
-            Object stack,
+			ItemStack stack,
             String key,
             VirtualView root,
             Ref<Component> reference,
@@ -52,23 +59,27 @@ final class BukkitItemComponentImpl extends PlatformComponent<Context, BukkitIte
         this.stack = stack;
     }
 
-    public int getPosition() {
+	// region ItemComponent Public API
+    @Override
+	public int getPosition() {
         return position;
     }
 
-    public Object getStack() {
+    public ItemStack getStack() {
         return stack;
     }
+	// endregion
 
     @Override
-    public boolean intersects(@NotNull Component other) {
-        if (!(other instanceof ItemComponent)) return other.intersects(this);
+    public final boolean intersects(@NotNull Component other) {
+		if (other == this) return true;
+		if (other instanceof ItemComponent) return getPosition() == ((ItemComponent) other).getPosition();
 
-        return getPosition() == ((ItemComponent) other).getPosition();
+        return other.intersects(this);
     }
 
     @Override
-    public boolean isContainedWithin(int position) {
+    public final boolean isContainedWithin(int position) {
         return getPosition() == position;
     }
 
@@ -82,7 +93,7 @@ final class BukkitItemComponentImpl extends PlatformComponent<Context, BukkitIte
             // FIXME Missing implementation
             // TODO Component-based context do not need displacement measures?
             if (!isManagedExternally()) {
-                final int updatedSlot = ((BukkitItemComponentImpl) context.getComponent()).getPosition();
+                final int updatedSlot = ((BukkitItemComponent) context.getComponent()).getPosition();
                 position = updatedSlot;
 
                 if (updatedSlot == -1 && initialSlot == -1) {
@@ -144,7 +155,7 @@ final class BukkitItemComponentImpl extends PlatformComponent<Context, BukkitIte
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        BukkitItemComponentImpl that = (BukkitItemComponentImpl) o;
+        BukkitItemComponent that = (BukkitItemComponent) o;
         return getPosition() == that.getPosition() && Objects.equals(getStack(), that.getStack());
     }
 

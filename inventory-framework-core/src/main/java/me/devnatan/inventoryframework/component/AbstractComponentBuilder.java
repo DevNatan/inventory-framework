@@ -1,106 +1,96 @@
 package me.devnatan.inventoryframework.component;
 
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.BooleanSupplier;
 import java.util.function.Predicate;
 import me.devnatan.inventoryframework.Ref;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.state.State;
-import org.jetbrains.annotations.NotNull;
 
-@SuppressWarnings("unchecked")
-public abstract class AbstractComponentBuilder<SELF extends ComponentBuilder<SELF>> implements ComponentBuilder<SELF> {
+public abstract class AbstractComponentBuilder implements ComponentBuilder {
 
-    protected Ref<Component> reference;
-    protected Map<String, Object> data;
-    protected boolean cancelOnClick, closeOnClick, updateOnClick;
-    protected Set<State<?>> watchingStates = new HashSet<>();
-    protected boolean isManagedExternally;
-    protected Predicate<? extends IFContext> displayCondition;
-    protected String key;
+	private Ref<Component> reference;
+	private Map<String, Object> data;
+	private boolean cancelOnClick, closeOnClick, updateOnClick;
+	private Set<State<?>> watchingStates = new HashSet<>();
+	private boolean isManagedExternally;
+	private Predicate<? extends IFContext> displayCondition;
+    private String key;
 
     protected AbstractComponentBuilder() {}
 
-    @Override
-    public SELF referencedBy(@NotNull Ref<Component> reference) {
-        this.reference = reference;
-        return (SELF) this;
-    }
+	protected final Ref<Component> getReference() {
+		return reference;
+	}
 
-    @Override
-    public SELF withData(@NotNull String key, Object value) {
-        if (data == null) data = new HashMap<>();
-        data.put(key, value);
-        return (SELF) this;
-    }
+	protected final void setReference(Ref<Component> reference) {
+		this.reference = reference;
+	}
 
-    @Override
-    public SELF cancelOnClick() {
-        cancelOnClick = !cancelOnClick;
-        return (SELF) this;
-    }
+	protected final Map<String, Object> getData() {
+		return data;
+	}
 
-    @Override
-    public SELF closeOnClick() {
-        closeOnClick = !closeOnClick;
-        return (SELF) this;
-    }
+	protected final void setData(Map<String, Object> data) {
+		this.data = data;
+	}
 
-    @Override
-    public SELF updateOnClick() {
-        updateOnClick = !updateOnClick;
-        return (SELF) this;
-    }
+	protected final boolean isCancelOnClick() {
+		return cancelOnClick;
+	}
 
-    @Override
-    public SELF watch(State<?>... states) {
-        if (watchingStates == null) watchingStates = new LinkedHashSet<>();
-        watchingStates.addAll(Arrays.asList(states));
-        return (SELF) this;
-    }
+	protected final void setCancelOnClick(boolean cancelOnClick) {
+		this.cancelOnClick = cancelOnClick;
+	}
 
-    @Override
-    public SELF updateOnStateChange(@NotNull State<?> state) {
-        if (watchingStates == null) watchingStates = new LinkedHashSet<>();
-        watchingStates.add(state);
-        return (SELF) this;
-    }
+	protected final boolean isCloseOnClick() {
+		return closeOnClick;
+	}
 
-    @Override
-    public SELF updateOnStateChange(@NotNull State<?> state, State<?>... states) {
-        if (watchingStates == null) watchingStates = new LinkedHashSet<>();
-        watchingStates.add(state);
-        watchingStates.addAll(Arrays.asList(states));
-        return (SELF) this;
-    }
+	protected final void setCloseOnClick(boolean closeOnClick) {
+		this.closeOnClick = closeOnClick;
+	}
 
-    @Override
-    public SELF withExternallyManaged(boolean isExternallyManaged) {
-        isManagedExternally = isExternallyManaged;
-        return (SELF) this;
-    }
+	protected final boolean isUpdateOnClick() {
+		return updateOnClick;
+	}
 
-    @Override
-    public SELF displayIf(BooleanSupplier displayCondition) {
-        this.displayCondition = displayCondition == null ? null : $ -> displayCondition.getAsBoolean();
-        return (SELF) this;
-    }
+	protected final void setUpdateOnClick(boolean updateOnClick) {
+		this.updateOnClick = updateOnClick;
+	}
 
-    @Override
-    public SELF hideIf(BooleanSupplier condition) {
-        return displayIf(condition == null ? null : () -> !condition.getAsBoolean());
-    }
+	protected final Set<State<?>> getWatchingStates() {
+		return watchingStates;
+	}
 
-    @Override
-    public SELF key(String key) {
-        this.key = key;
-        return (SELF) this;
-    }
+	protected final void setWatchingStates(Set<State<?>> watchingStates) {
+		this.watchingStates = watchingStates;
+	}
+
+	protected final boolean isManagedExternally() {
+		return isManagedExternally;
+	}
+
+	protected final void setManagedExternally(boolean managedExternally) {
+		isManagedExternally = managedExternally;
+	}
+
+	protected final Predicate<? extends IFContext> getDisplayCondition() {
+		return displayCondition;
+	}
+
+	protected final void setDisplayCondition(Predicate<? extends IFContext> displayCondition) {
+		this.displayCondition = displayCondition;
+	}
+
+	protected final String getKey() {
+		return key;
+	}
+
+	protected final void setKey(String key) {
+		this.key = key;
+	}
 
     @Override
     public String toString() {
