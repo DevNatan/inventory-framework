@@ -27,17 +27,17 @@ import me.devnatan.inventoryframework.component.ItemComponent;
 import me.devnatan.inventoryframework.component.ItemComponentBuilder;
 import me.devnatan.inventoryframework.component.PlatformComponent;
 import me.devnatan.inventoryframework.component.PlatformComponentBuilder;
+import me.devnatan.inventoryframework.component.PlatformItemComponentBuilder;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
 
 @SuppressWarnings("rawtypes")
-public abstract class PlatformRenderContext<
-                ITEM, ITEM_BUILDER extends ItemComponentBuilder<ITEM_BUILDER, ITEM>, CONTEXT extends IFContext>
-        extends PlatformConfinedContext implements IFRenderContext {
+public abstract class PlatformRenderContext<ITEM_BUILDER extends PlatformItemComponentBuilder<ITEM_BUILDER, ?>, CONTEXT extends IFContext>
+	extends PlatformConfinedContext
+	implements IFRenderContext {
 
-    // --- Must inherit from parent context ---
     private final UUID id;
     protected final PlatformView root;
     private final ViewConfig config;
@@ -235,7 +235,7 @@ public abstract class PlatformRenderContext<
      * @param character The layout character target.
      * @return An item builder to configure the item.
      */
-    public @NotNull <BUILDER extends ComponentBuilder<BUILDER>, COMPONENT extends PlatformComponent<CONTEXT, BUILDER>>
+    public @NotNull <BUILDER extends ComponentBuilder, COMPONENT extends PlatformComponent<CONTEXT, BUILDER>>
             BUILDER layoutComponent(char character, COMPONENT component) {
         requireNonReservedLayoutCharacter(character);
 

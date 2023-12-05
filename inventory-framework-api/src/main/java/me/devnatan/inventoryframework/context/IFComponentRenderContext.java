@@ -6,7 +6,4 @@ import org.jetbrains.annotations.NotNull;
 public interface IFComponentRenderContext extends IFComponentContext, IFConfinedContext {
 
     ViewContainer getContainer();
-
-    @NotNull
-    IFRenderContext getRoot();
 }

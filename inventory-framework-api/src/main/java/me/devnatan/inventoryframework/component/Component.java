@@ -2,6 +2,7 @@ package me.devnatan.inventoryframework.component;
 
 import java.util.Set;
 import me.devnatan.inventoryframework.Ref;
+import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.IFComponentRenderContext;
 import me.devnatan.inventoryframework.context.IFComponentUpdateContext;
@@ -32,6 +33,8 @@ public interface Component extends VirtualView {
      */
     @NotNull
     VirtualView getRoot();
+
+	ViewContainer getContainer();
 
     /**
      * Checks if this component is in a specific position.

@@ -20,8 +20,9 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public final class RenderContext extends PlatformRenderContext<ItemStack, BukkitItemComponentBuilder, Context>
-        implements Context {
+public final class RenderContext
+	extends PlatformRenderContext<BukkitItemComponentBuilder<BukkitItemComponentBuilder<?>>, Context>
+	implements Context {
 
     private final Player player;
 
@@ -90,7 +91,7 @@ public final class RenderContext extends PlatformRenderContext<ItemStack, Bukkit
      * @return An item builder to configure the item.
      */
     @NotNull
-    public BukkitItemComponentBuilder slot(int row, int column, @Nullable ItemStack item) {
+    public BukkitItemComponentBuilder<BukkitItemComponentBuilder<BukkitItemComponentBuilder<?>> slot(int row, int column, @Nullable ItemStack item) {
         return slot(row, column).withItem(item);
     }
 

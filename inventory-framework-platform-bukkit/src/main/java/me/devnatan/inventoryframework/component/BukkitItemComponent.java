@@ -1,6 +1,5 @@
 package me.devnatan.inventoryframework.component;
 
-import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -18,20 +17,19 @@ import me.devnatan.inventoryframework.state.State;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-public class BukkitItemComponent<BUILDER extends BukkitItemComponentBuilder<BUILDER>>
-	extends PlatformComponent<Context, BUILDER>
+/**
+ * {@link ItemComponent} implementation for Bukkit platform.
+ */
+public final class BukkitItemComponent
+	extends PlatformComponent<Context, Void>
 	implements ItemComponent {
 
     private int position;
     private final ItemStack stack;
 
-	protected BukkitItemComponent() {
-		this(0, null, null, null, null, new HashSet<>(), null, null, null, null, false, false, false);
-	}
-
     BukkitItemComponent(
             int position,
-			ItemStack stack,
+			ItemStack itemStack,
             String key,
             VirtualView root,
             Ref<Component> reference,
@@ -56,19 +54,22 @@ public class BukkitItemComponent<BUILDER extends BukkitItemComponentBuilder<BUIL
                 closeOnClick,
                 updateOnClick);
         this.position = position;
-        this.stack = stack;
+        this.stack = itemStack;
     }
 
-	// region ItemComponent Public API
     @Override
 	public int getPosition() {
         return position;
     }
 
-    public ItemStack getStack() {
-        return stack;
-    }
-	// endregion
+	public ItemStack getItemStack() {
+		return stack;
+	}
+
+	@Override
+	public Object getPlatformItem() {
+		return getItemStack();
+	}
 
     @Override
     public final boolean intersects(@NotNull Component other) {
@@ -113,7 +114,7 @@ public class BukkitItemComponent<BUILDER extends BukkitItemComponentBuilder<BUIL
             return;
         }
 
-        if (getStack() == null) {
+        if (getItemStack() == null) {
             if (context.getContainer().getType().isResultSlot(getPosition())) {
                 setVisible(true);
                 return;
@@ -121,7 +122,7 @@ public class BukkitItemComponent<BUILDER extends BukkitItemComponentBuilder<BUIL
             throw new IllegalStateException("At least one fallback item or render handler must be provided");
         }
 
-        context.getContainer().renderItem(getPosition(), getStack());
+        context.getContainer().renderItem(getPosition(), getItemStack());
         setVisible(true);
     }
 
@@ -156,16 +157,16 @@ public class BukkitItemComponent<BUILDER extends BukkitItemComponentBuilder<BUIL
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         BukkitItemComponent that = (BukkitItemComponent) o;
-        return getPosition() == that.getPosition() && Objects.equals(getStack(), that.getStack());
+        return getPosition() == that.getPosition() && Objects.equals(getItemStack(), that.getItemStack());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getPosition(), getStack());
+        return Objects.hash(getPosition(), getItemStack());
     }
 
     @Override
     public String toString() {
-        return "BukkitItemComponentImpl{" + "position=" + position + ", stack=" + stack + "} " + super.toString();
+        return "BukkitItemComponentImpl{" + "position=" + getPosition() + ", itemStack=" + getItemStack() + "} " + super.toString();
     }
 }

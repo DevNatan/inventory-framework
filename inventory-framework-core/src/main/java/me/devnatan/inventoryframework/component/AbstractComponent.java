@@ -5,6 +5,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 import me.devnatan.inventoryframework.Ref;
 import me.devnatan.inventoryframework.RootView;
+import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
@@ -46,7 +47,12 @@ public abstract class AbstractComponent implements Component {
         return root;
     }
 
-    @Override
+	@Override
+	public final ViewContainer getContainer() {
+		return getRootAsContext().getContainer();
+	}
+
+	@Override
     public final @UnmodifiableView Set<State<?>> getWatchingStates() {
         return Collections.unmodifiableSet(watchingStates);
     }

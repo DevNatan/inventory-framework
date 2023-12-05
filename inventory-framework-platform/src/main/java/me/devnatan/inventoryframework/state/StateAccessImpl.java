@@ -20,8 +20,7 @@ import org.jetbrains.annotations.NotNull;
  * this library. No compatibility guarantees are provided. </i></b>
  */
 @ApiStatus.Internal
-public final class StateAccessImpl<
-                ITEM, CONTEXT extends IFContext, ITEM_BUILDER extends ItemComponentBuilder<ITEM_BUILDER, ITEM>>
+public final class StateAccessImpl<CONTEXT extends IFContext, ITEM_BUILDER extends ItemComponentBuilder>
         implements StateAccess<CONTEXT, ITEM_BUILDER> {
 
     private final VirtualView caller;

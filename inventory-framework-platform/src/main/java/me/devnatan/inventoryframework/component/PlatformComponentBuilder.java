@@ -11,17 +11,19 @@ import me.devnatan.inventoryframework.Ref;
 import me.devnatan.inventoryframework.context.IFComponentRenderContext;
 import me.devnatan.inventoryframework.context.IFComponentUpdateContext;
 import me.devnatan.inventoryframework.context.IFContext;
+import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.state.State;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings("unchecked")
-public abstract class PlatformComponentBuilder<SELF extends PlatformComponentBuilder<SELF, CONTEXT>, CONTEXT extends IFContext>
+public abstract class PlatformComponentBuilder<SELF, CONTEXT extends IFContext>
 	extends AbstractComponentBuilder {
 
 	private Consumer<? super IFComponentRenderContext> renderHandler;
 	private Consumer<? super IFComponentUpdateContext> updateHandler;
+	private Consumer<? super IFSlotClickContext> clickHandler;
 
     protected PlatformComponentBuilder() {}
 
@@ -30,32 +32,51 @@ public abstract class PlatformComponentBuilder<SELF extends PlatformComponentBui
 		return renderHandler;
 	}
 
+	protected final void setRenderHandler(Consumer<? super IFComponentRenderContext> renderHandler) {
+		this.renderHandler = renderHandler;
+	}
+
 	protected final Consumer<? super IFComponentUpdateContext> getUpdateHandler() {
 		return updateHandler;
 	}
+
+	protected final void setUpdateHandler(Consumer<? super IFComponentUpdateContext> updateHandler) {
+		this.updateHandler = updateHandler;
+	}
+
+	protected final Consumer<? super IFSlotClickContext> getClickHandler() {
+		return clickHandler;
+	}
+
+	protected final void setClickHandler(Consumer<? super IFSlotClickContext> clickHandler) {
+		this.clickHandler = clickHandler;
+	}
 	// endregion
 
+
+
 	/**
-	 * Called when the item is rendered.
-	 * <p>
-	 * This handler is called every time the item or the view that owns it is updated.
+	 * Called when the component is updated.
 	 *
-	 * @param renderHandler The render handler.
-	 * @return This item builder.
+	 * @param updateHandler The update handler.
+	 * @return This component builder.
 	 */
-	public final SELF onRender(@Nullable Consumer<? super IFComponentRenderContext> renderHandler) {
-		this.renderHandler = renderHandler;
+	public final SELF onUpdate(@Nullable Consumer<? super IFComponentUpdateContext> updateHandler) {
+		setUpdateHandler(updateHandler);
 		return (SELF) this;
 	}
 
 	/**
-	 * Called when the item is updated.
+	 * Called when a player clicks on the component.
+	 * <p>
+	 * This handler works on any container that the actor has access to and only works if the
+	 * interaction has not been cancelled.
 	 *
-	 * @param updateHandler The update handler.
-	 * @return This item builder.
+	 * @param clickHandler The click handler.
+	 * @return This component builder.
 	 */
-	public final SELF onUpdate(@Nullable Consumer<? super IFComponentUpdateContext> updateHandler) {
-		this.updateHandler = updateHandler;
+	public final SELF onClick(@Nullable Runnable clickHandler) {
+		setClickHandler(clickHandler == null ? null : $ -> clickHandler.run());
 		return (SELF) this;
 	}
 
