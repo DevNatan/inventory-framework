@@ -20,16 +20,14 @@ import org.jetbrains.annotations.NotNull;
 /**
  * {@link ItemComponent} implementation for Bukkit platform.
  */
-public final class BukkitItemComponent
-	extends PlatformComponent<Context, Void>
-	implements ItemComponent {
+public final class BukkitItemComponent extends PlatformComponent<Context, Void> implements ItemComponent {
 
     private int position;
     private final ItemStack stack;
 
     BukkitItemComponent(
             int position,
-			ItemStack itemStack,
+            ItemStack itemStack,
             String key,
             VirtualView root,
             Ref<Component> reference,
@@ -58,23 +56,23 @@ public final class BukkitItemComponent
     }
 
     @Override
-	public int getPosition() {
+    public int getPosition() {
         return position;
     }
 
-	public ItemStack getItemStack() {
-		return stack;
-	}
+    public ItemStack getItemStack() {
+        return stack;
+    }
 
-	@Override
-	public Object getPlatformItem() {
-		return getItemStack();
-	}
+    @Override
+    public Object getPlatformItem() {
+        return getItemStack();
+    }
 
     @Override
     public final boolean intersects(@NotNull Component other) {
-		if (other == this) return true;
-		if (other instanceof ItemComponent) return getPosition() == ((ItemComponent) other).getPosition();
+        if (other == this) return true;
+        if (other instanceof ItemComponent) return getPosition() == ((ItemComponent) other).getPosition();
 
         return other.intersects(this);
     }
@@ -167,6 +165,6 @@ public final class BukkitItemComponent
 
     @Override
     public String toString() {
-        return "BukkitItemComponentImpl{" + "position=" + getPosition() + ", itemStack=" + getItemStack() + "} " + super.toString();
+        return "BukkitItemComponentImpl{" + "position=" + position + ", itemStack=" + stack + "} " + super.toString();
     }
 }

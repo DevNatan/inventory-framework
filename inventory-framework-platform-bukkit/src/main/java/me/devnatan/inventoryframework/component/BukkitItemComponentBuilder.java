@@ -1,53 +1,28 @@
 package me.devnatan.inventoryframework.component;
 
 import me.devnatan.inventoryframework.VirtualView;
-import me.devnatan.inventoryframework.context.Context;
 import org.bukkit.inventory.ItemStack;
 
-@SuppressWarnings("unchecked")
-public class BukkitItemComponentBuilder<SELF>
-	extends PlatformItemComponentBuilder<SELF, Context>
-	implements ItemComponentBuilder {
+public abstract class BukkitItemComponentBuilder<SELF> extends BukkitComponentBuilder<SELF>
+        implements ItemComponentBuilder {
 
     private ItemStack item;
 
-	public BukkitItemComponentBuilder() {
-	}
+    protected BukkitItemComponentBuilder() {}
 
-	public ItemStack getItem() {
-		return item;
-	}
-
-	public void setItem(ItemStack item) {
-		this.item = item;
-	}
-
-	@Override
-    public ItemComponent build(VirtualView root) {
-        return new BukkitItemComponent(
-			getPosition(),
-                getItem(),
-                getKey(),
-                root,
-                getReference(),
-                getWatchingStates(),
-                getDisplayCondition(),
-                getRenderHandler(),
-                getUpdateHandler(),
-                getClickHandler(),
-                isCancelOnClick(),
-                isCloseOnClick(),
-                isUpdateOnClick());
+    protected final ItemStack getItem() {
+        return item;
     }
 
-	@Override
-	public SELF withSlot(int row, int column) {
-		return null;
-	}
+    protected final void setItem(ItemStack item) {
+        this.item = item;
+    }
 
-	@Override
-	public String toString() {
-		return "BukkitItemComponentBuilder{" + "item=" + item + "} " + super.toString();
-	}
+    @Override
+    public abstract ItemComponent build(VirtualView root);
 
+    @Override
+    public String toString() {
+        return "BukkitItemComponentBuilder{" + "item=" + item + "} " + super.toString();
+    }
 }

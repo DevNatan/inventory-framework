@@ -12,14 +12,8 @@ public final class InventoryFramework extends JavaPlugin {
 
 class TestView extends View {
 
-	@Override
-	public void onFirstRender(@NotNull RenderContext render) {
-		render.firstSlot(new MyCustomComponent())
-			.cancelOnClick()
-			.onClick(click -> click.getPlayer().sendMessage("Piroca de foice"));
-
-		render.firstSlot(new MyCustomComponent())
-			.cancelOnClick()
-			.onClick(click -> click.getPlayer().sendMessage("Piroca de foice"));
-	}
+    @Override
+    public void onFirstRender(@NotNull RenderContext render) {
+        render.firstSlot().cancelOnClick().onClick(click -> click.getPlayer().sendMessage("Piroca de foice"));
+    }
 }

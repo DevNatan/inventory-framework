@@ -12,7 +12,7 @@ import me.devnatan.inventoryframework.View;
 import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
-import me.devnatan.inventoryframework.component.BukkitItemComponentBuilder;
+import me.devnatan.inventoryframework.component.BukkitInternalSlotComponentBuilder;
 import me.devnatan.inventoryframework.component.Component;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -20,9 +20,8 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public final class RenderContext
-	extends PlatformRenderContext<BukkitItemComponentBuilder<BukkitItemComponentBuilder<?>>, Context>
-	implements Context {
+public final class RenderContext extends PlatformRenderContext<BukkitInternalSlotComponentBuilder, Context>
+        implements Context {
 
     private final Player player;
 
@@ -79,7 +78,7 @@ public final class RenderContext
      * @param slot The slot in which the item will be positioned.
      * @return An item builder to configure the item.
      */
-    public @NotNull BukkitItemComponentBuilder slot(int slot, @Nullable ItemStack item) {
+    public @NotNull BukkitInternalSlotComponentBuilder slot(int slot, @Nullable ItemStack item) {
         return slot(slot).withItem(item);
     }
 
@@ -91,7 +90,7 @@ public final class RenderContext
      * @return An item builder to configure the item.
      */
     @NotNull
-    public BukkitItemComponentBuilder<BukkitItemComponentBuilder<BukkitItemComponentBuilder<?>> slot(int row, int column, @Nullable ItemStack item) {
+    public BukkitInternalSlotComponentBuilder slot(int row, int column, @Nullable ItemStack item) {
         return slot(row, column).withItem(item);
     }
 
@@ -101,7 +100,7 @@ public final class RenderContext
      * @param item The item that'll be set.
      * @return An item builder to configure the item.
      */
-    public @NotNull BukkitItemComponentBuilder firstSlot(@Nullable ItemStack item) {
+    public @NotNull BukkitInternalSlotComponentBuilder firstSlot(@Nullable ItemStack item) {
         return firstSlot().withItem(item);
     }
 
@@ -111,7 +110,7 @@ public final class RenderContext
      * @param item The item that'll be set.
      * @return An item builder to configure the item.
      */
-    public @NotNull BukkitItemComponentBuilder lastSlot(@Nullable ItemStack item) {
+    public @NotNull BukkitInternalSlotComponentBuilder lastSlot(@Nullable ItemStack item) {
         return lastSlot().withItem(item);
     }
 
@@ -121,7 +120,7 @@ public final class RenderContext
      * @param item The item that'll be added.
      * @return An item builder to configure the item.
      */
-    public @NotNull BukkitItemComponentBuilder availableSlot(@Nullable ItemStack item) {
+    public @NotNull BukkitInternalSlotComponentBuilder availableSlot(@Nullable ItemStack item) {
         return availableSlot().withItem(item);
     }
 
@@ -132,7 +131,7 @@ public final class RenderContext
      * @param item      The item that'll represent the layout character.
      * @return An item builder to configure the item.
      */
-    public @NotNull BukkitItemComponentBuilder layoutSlot(char character, @Nullable ItemStack item) {
+    public @NotNull BukkitInternalSlotComponentBuilder layoutSlot(char character, @Nullable ItemStack item) {
         return layoutSlot(character).withItem(item);
     }
 
@@ -141,15 +140,15 @@ public final class RenderContext
      * such API may be changed or may be removed completely in any further release. </i></b>
      */
     @ApiStatus.Experimental
-    public @NotNull BukkitItemComponentBuilder resultSlot(@Nullable ItemStack item) {
+    public @NotNull BukkitInternalSlotComponentBuilder resultSlot(@Nullable ItemStack item) {
         return resultSlot().withItem(item);
     }
     // endregion
 
     // region Internals
     @Override
-    protected BukkitItemComponentBuilder createBuilder() {
-        return new BukkitItemComponentBuilder();
+    protected BukkitInternalSlotComponentBuilder createBuilder() {
+        return new BukkitInternalSlotComponentBuilder();
     }
 
     @Override

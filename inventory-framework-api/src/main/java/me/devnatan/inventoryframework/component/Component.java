@@ -34,7 +34,7 @@ public interface Component extends VirtualView {
     @NotNull
     VirtualView getRoot();
 
-	ViewContainer getContainer();
+    ViewContainer getContainer();
 
     /**
      * Checks if this component is in a specific position.

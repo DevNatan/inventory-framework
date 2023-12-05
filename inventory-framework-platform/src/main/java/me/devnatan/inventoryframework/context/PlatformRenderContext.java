@@ -23,20 +23,17 @@ import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.ComponentBuilder;
 import me.devnatan.inventoryframework.component.ComponentFactory;
 import me.devnatan.inventoryframework.component.ComponentHandle;
-import me.devnatan.inventoryframework.component.ItemComponent;
-import me.devnatan.inventoryframework.component.ItemComponentBuilder;
 import me.devnatan.inventoryframework.component.PlatformComponent;
 import me.devnatan.inventoryframework.component.PlatformComponentBuilder;
-import me.devnatan.inventoryframework.component.PlatformItemComponentBuilder;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
 
 @SuppressWarnings("rawtypes")
-public abstract class PlatformRenderContext<ITEM_BUILDER extends PlatformItemComponentBuilder<ITEM_BUILDER, ?>, CONTEXT extends IFContext>
-	extends PlatformConfinedContext
-	implements IFRenderContext {
+public abstract class PlatformRenderContext<
+                ITEM_BUILDER extends PlatformItemComponentBuilder<ITEM_BUILDER, CONTEXT>, CONTEXT extends IFContext>
+        extends PlatformConfinedContext implements IFRenderContext {
 
     private final UUID id;
     protected final PlatformView root;
@@ -139,9 +136,8 @@ public abstract class PlatformRenderContext<ITEM_BUILDER extends PlatformItemCom
      * @return An {@link ComponentBuilder} to configure the properties of the component.
      */
     @ApiStatus.Experimental
-    public final @NotNull <
-		C extends ComponentHandle<CONTEXT, B>,
-		B extends PlatformComponentBuilder<?, CONTEXT>> B firstSlot(@NotNull C component) {
+    public final @NotNull <C extends ComponentHandle<CONTEXT, B>, B extends PlatformComponentBuilder<?, CONTEXT>>
+            B firstSlot(@NotNull C component) {
         throw new UnsupportedOperationException();
     }
 

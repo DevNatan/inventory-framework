@@ -23,9 +23,8 @@ import me.devnatan.inventoryframework.state.StateAccessImpl;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
-public abstract class PlatformComponent<CONTEXT extends IFContext, COMPONENT_BUILDER>
-	extends AbstractComponent
-	implements Component, StateAccess<CONTEXT, COMPONENT_BUILDER> {
+public abstract class PlatformComponent<CONTEXT, COMPONENT_BUILDER> extends AbstractComponent
+        implements Component, StateAccess<CONTEXT, COMPONENT_BUILDER> {
 
     private final StateAccessImpl stateAccess;
     private final boolean cancelOnClick;

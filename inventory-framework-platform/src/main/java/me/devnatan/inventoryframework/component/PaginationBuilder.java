@@ -1,10 +1,7 @@
 package me.devnatan.inventoryframework.component;
 
 import java.util.function.BiConsumer;
-import java.util.function.Supplier;
-
 import me.devnatan.inventoryframework.VirtualView;
-import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.internal.ElementFactory;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
 import me.devnatan.inventoryframework.state.State;
@@ -68,12 +65,11 @@ public final class PaginationBuilder<CONTEXT, BUILDER, V>
         this.paginationElementFactory = (pagination, index, slot, value) -> {
             CONTEXT context = (CONTEXT) pagination.getRoot();
             BUILDER builder = (BUILDER) internalElementFactory.createComponentBuilder(pagination);
-            if (builder instanceof ItemComponentBuilder)
-                builder = (BUILDER) ((ItemComponentBuilder<?, ?>) builder).withSlot(slot);
+            if (builder instanceof ItemComponentBuilder) ((ItemComponentBuilder) builder).setPosition(slot);
 
             elementConsumer.accept(context, builder, index, value);
 
-			return ((ComponentBuilder<?>) builder).build(pagination);
+            return ((ComponentBuilder) builder).build(pagination);
         };
         return this;
     }

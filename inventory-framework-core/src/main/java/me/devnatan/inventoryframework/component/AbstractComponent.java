@@ -47,12 +47,12 @@ public abstract class AbstractComponent implements Component {
         return root;
     }
 
-	@Override
-	public final ViewContainer getContainer() {
-		return getRootAsContext().getContainer();
-	}
+    @Override
+    public final ViewContainer getContainer() {
+        return getRootAsContext().getContainer();
+    }
 
-	@Override
+    @Override
     public final @UnmodifiableView Set<State<?>> getWatchingStates() {
         return Collections.unmodifiableSet(watchingStates);
     }
