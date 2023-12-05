@@ -136,7 +136,7 @@ public final class BukkitItemComponent extends PlatformComponent<Context, Void> 
             if (context.isCancelled()) return;
         }
 
-        context.getRoot().renderComponent(this);
+        ((IFRenderContext) context.getRoot()).renderComponent(this);
     }
 
     @Override

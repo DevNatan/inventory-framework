@@ -233,8 +233,8 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
         final int lastSlot = Math.min(container.getLastSlot() + 1 /* inclusive */, pageContents.size());
         for (int i = container.getFirstSlot(); i < lastSlot; i++) {
             final Object value = pageContents.get(i);
-            final ComponentFactory factory = elementFactory.create(this, i, i, value);
-            getInternalComponents().add(factory.create());
+            final Component component = elementFactory.create(this, i, i, value);
+            getInternalComponents().add(component);
         }
     }
 
@@ -258,8 +258,7 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
             final Object value = pageContents.get(iterationIndex++);
 
             try {
-                final ComponentFactory factory = elementFactory.create(this, iterationIndex, position, value);
-                final Component component = factory.create();
+                final Component component = elementFactory.create(this, iterationIndex, position, value);
 
                 debug(
                         () -> "  @ added %d (index %d) = %s",
@@ -379,7 +378,7 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
 
     @Override
     public void render(@NotNull IFComponentRenderContext context) {
-        final IFRenderContext root = context.getRoot();
+        final IFRenderContext root = context.getParent();
         if (!initialized || pageWasChanged) {
             if (!initialized) updatePageSize(root);
             loadCurrentPage(root).thenRun(() -> {
@@ -400,7 +399,8 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
 
     @Override
     public void updated(@NotNull IFComponentUpdateContext context) {
-        final IFRenderContext root = context.getRoot();
+        // TODO Change to context.getParent()
+        final IFRenderContext root = (IFRenderContext) context.getRoot();
 
         debug(
                 "[Pagination] #updated(IFSlotRenderContext) called (forceUpdated = %b, pageWasChanged = %b)",

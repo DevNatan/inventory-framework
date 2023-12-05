@@ -1,12 +1,8 @@
 package me.devnatan.inventoryframework.context;
 
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
 
 public interface IFComponentUpdateContext extends IFComponentContext, IFConfinedContext {
-
-    @NotNull
-    IFRenderContext getRoot();
 
     /**
      * <b><i> This is an internal inventory-framework API that should not be used from outside of

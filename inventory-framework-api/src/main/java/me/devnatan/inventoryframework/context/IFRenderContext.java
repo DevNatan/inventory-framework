@@ -5,7 +5,7 @@ import java.util.function.BiFunction;
 import me.devnatan.inventoryframework.UpdateReason;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.component.Component;
-import me.devnatan.inventoryframework.component.ComponentFactory;
+import me.devnatan.inventoryframework.component.ComponentBuilder;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -19,7 +19,7 @@ public interface IFRenderContext extends IFConfinedContext {
      */
     @UnmodifiableView
     @ApiStatus.Internal
-    List<ComponentFactory> getComponentFactories();
+    List<ComponentBuilder> getNotRenderedComponents();
 
     /**
      * <b><i> This is an internal inventory-framework API that should not be used from outside of
@@ -40,7 +40,7 @@ public interface IFRenderContext extends IFConfinedContext {
      * this library. No compatibility guarantees are provided. </i></b>
      */
     @ApiStatus.Internal
-    List<BiFunction<Integer, Integer, ComponentFactory>> getAvailableSlotFactories();
+    List<BiFunction<Integer, Integer, ComponentBuilder>> getAvailableSlotFactories();
 
     /**
      * The container of this context.

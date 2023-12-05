@@ -23,6 +23,7 @@ import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.ComponentBuilder;
 import me.devnatan.inventoryframework.component.ComponentFactory;
 import me.devnatan.inventoryframework.component.ComponentHandle;
+import me.devnatan.inventoryframework.component.ItemComponentBuilder;
 import me.devnatan.inventoryframework.component.PlatformComponent;
 import me.devnatan.inventoryframework.component.PlatformComponentBuilder;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
@@ -31,8 +32,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
 
 @SuppressWarnings("rawtypes")
-public abstract class PlatformRenderContext<
-                ITEM_BUILDER extends PlatformItemComponentBuilder<ITEM_BUILDER, CONTEXT>, CONTEXT extends IFContext>
+public abstract class PlatformRenderContext<ITEM_BUILDER extends ItemComponentBuilder, CONTEXT extends IFContext>
         extends PlatformConfinedContext implements IFRenderContext {
 
     private final UUID id;
@@ -47,9 +47,9 @@ public abstract class PlatformRenderContext<
     private boolean rendered;
 
     // --- Properties ---
-    private final List<ComponentFactory> componentBuilders = new ArrayList<>();
+    private final List<ComponentBuilder> componentBuilders = new ArrayList<>();
     private final List<LayoutSlot> layoutSlots = new ArrayList<>();
-    private final List<BiFunction<Integer, Integer, ComponentFactory>> availableSlotFactories = new ArrayList<>();
+    private final List<BiFunction<Integer, Integer, ComponentBuilder>> availableSlotFactories = new ArrayList<>();
 
     PlatformRenderContext(
             @NotNull UUID id,
@@ -97,7 +97,7 @@ public abstract class PlatformRenderContext<
      * @return An item builder to configure the item.
      */
     public final @NotNull ITEM_BUILDER slot(int slot) {
-        return createRegisteredBuilder().withSlot(slot);
+        return createRegisteredBuilderInPosition(slot);
     }
 
     /**
@@ -110,12 +110,8 @@ public abstract class PlatformRenderContext<
     @NotNull
     public final ITEM_BUILDER slot(int row, int column) {
         checkAlignedContainerTypeForSlotAssignment();
-        return createRegisteredBuilder()
-                .withSlot(convertSlot(
-                        row,
-                        column,
-                        getContainer().getRowsCount(),
-                        getContainer().getColumnsCount()));
+        return createRegisteredBuilderInPosition(convertSlot(
+                row, column, getContainer().getRowsCount(), getContainer().getColumnsCount()));
     }
 
     /**
@@ -124,7 +120,7 @@ public abstract class PlatformRenderContext<
      * @return An item builder to configure the item.
      */
     public final @NotNull ITEM_BUILDER firstSlot() {
-        return createRegisteredBuilder().withSlot(getContainer().getFirstSlot());
+        return createRegisteredBuilderInPosition(getContainer().getFirstSlot());
     }
 
     /**
@@ -147,7 +143,7 @@ public abstract class PlatformRenderContext<
      * @return An item builder to configure the item.
      */
     public final @NotNull ITEM_BUILDER lastSlot() {
-        return createRegisteredBuilder().withSlot(getContainer().getLastSlot());
+        return createRegisteredBuilderInPosition(getContainer().getLastSlot());
     }
 
     /**
@@ -157,7 +153,10 @@ public abstract class PlatformRenderContext<
      */
     public final @NotNull ITEM_BUILDER availableSlot() {
         final ITEM_BUILDER builder = createBuilder();
-        availableSlotFactories.add((index, slot) -> (ComponentFactory) builder.withSlot(slot));
+        availableSlotFactories.add((index, slot) -> {
+            builder.setPosition(slot);
+            return builder;
+        });
         return builder;
     }
 
@@ -174,9 +173,9 @@ public abstract class PlatformRenderContext<
     public final void availableSlot(@NotNull BiConsumer<Integer, ITEM_BUILDER> factory) {
         availableSlotFactories.add((index, slot) -> {
             final ITEM_BUILDER builder = createBuilder();
-            builder.withSlot(slot);
+            builder.setPosition(slot);
             factory.accept(index, builder);
-            return (ComponentFactory) builder;
+            return builder;
         });
     }
 
@@ -313,7 +312,7 @@ public abstract class PlatformRenderContext<
     }
 
     @Override
-    public final @NotNull @UnmodifiableView List<ComponentFactory> getComponentFactories() {
+    public final @NotNull @UnmodifiableView List<ComponentBuilder> getNotRenderedComponents() {
         return Collections.unmodifiableList(componentBuilders);
     }
 
@@ -328,7 +327,7 @@ public abstract class PlatformRenderContext<
     }
 
     @Override
-    public final List<BiFunction<Integer, Integer, ComponentFactory>> getAvailableSlotFactories() {
+    public final List<BiFunction<Integer, Integer, ComponentBuilder>> getAvailableSlotFactories() {
         return availableSlotFactories;
     }
 
@@ -443,7 +442,19 @@ public abstract class PlatformRenderContext<
      */
     protected final ITEM_BUILDER createRegisteredBuilder() {
         final ITEM_BUILDER builder = createBuilder();
-        componentBuilders.add((ComponentFactory) builder);
+        componentBuilders.add(builder);
+        return builder;
+    }
+
+    /**
+     * Creates a new platform builder instance and registers it.
+     *
+     * @return A new registered platform builder instance.
+     */
+    protected final ITEM_BUILDER createRegisteredBuilderInPosition(int position) {
+        final ITEM_BUILDER builder = createBuilder();
+        builder.setPosition(position);
+        componentBuilders.add(builder);
         return builder;
     }
 

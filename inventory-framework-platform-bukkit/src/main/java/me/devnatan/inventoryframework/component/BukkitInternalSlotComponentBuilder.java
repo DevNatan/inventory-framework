@@ -12,13 +12,18 @@ import org.jetbrains.annotations.ApiStatus;
 public class BukkitInternalSlotComponentBuilder extends BukkitComponentBuilder<BukkitInternalSlotComponentBuilder>
         implements ItemComponentBuilder {
 
-    private int slot;
+    private int position;
     private ItemStack item;
 
     public BukkitInternalSlotComponentBuilder() {}
 
+    @Override
+    public final void setPosition(int position) {
+        this.position = position;
+    }
+
     public final BukkitInternalSlotComponentBuilder withSlot(int slot) {
-        this.slot = slot;
+        setPosition(slot);
         return this;
     }
 
@@ -38,13 +43,13 @@ public class BukkitInternalSlotComponentBuilder extends BukkitComponentBuilder<B
 
     @Override
     public final boolean isContainedWithin(int position) {
-        return this.slot == position;
+        return this.position == position;
     }
 
     @Override
     public ItemComponent build(VirtualView root) {
         return new BukkitItemComponent(
-                slot,
+                position,
                 item,
                 getKey(),
                 root,

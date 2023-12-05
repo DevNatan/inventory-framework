@@ -7,7 +7,6 @@ import me.devnatan.inventoryframework.Ref;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.ComponentComposition;
-import me.devnatan.inventoryframework.component.ComponentFactory;
 import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.state.State;
 import me.devnatan.inventoryframework.state.StateValue;
@@ -44,14 +43,14 @@ public final class FirstRenderInterceptor implements PipelineInterceptor<Virtual
     }
 
     /**
-     * Registers all components set up from {@link IFRenderContext#getComponentFactories() component factories}
+     * Registers all components set up from {@link IFRenderContext#getNotRenderedComponents() component factories}
      * to the rendering context.
      *
      * @param context The context.
      */
     private void registerComponents(IFRenderContext context) {
-        context.getComponentFactories().stream()
-                .map(ComponentFactory::create)
+        context.getNotRenderedComponents().stream()
+                .map(builder -> builder.build(context))
                 .peek(this::assignReference)
                 .forEach(context::addComponent);
     }
