@@ -10,7 +10,4 @@ public interface ItemComponentBuilder extends ComponentBuilder {
 
     @ApiStatus.Internal
     boolean isContainedWithin(int position);
-
-    @Override
-    ItemComponent build(VirtualView root);
 }

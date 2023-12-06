@@ -9,6 +9,8 @@ import me.devnatan.inventoryframework.context.IFComponentUpdateContext;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.context.IFSlotClickContext;
+import me.devnatan.inventoryframework.pipeline.Pipeline;
+import me.devnatan.inventoryframework.pipeline.PipelinePhase;
 import me.devnatan.inventoryframework.state.State;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -18,6 +20,11 @@ import org.jetbrains.annotations.UnmodifiableView;
  * A component represents one or {@link ComponentComposition more} items within a {@link VirtualView}.
  */
 public interface Component extends VirtualView {
+
+	PipelinePhase RENDER = new PipelinePhase("component-render");
+	PipelinePhase UPDATE = new PipelinePhase("component-update");
+	PipelinePhase CLICK = new PipelinePhase("component-click");
+	PipelinePhase CLEAR = new PipelinePhase("component-clear");
 
     /**
      * <b><i> This is an internal inventory-framework API that should not be used from outside of
@@ -130,31 +137,26 @@ public interface Component extends VirtualView {
     @ApiStatus.Experimental
     void hide();
 
-    /**
-     * Renders this component to the given context.
-     *
-     * @param context The context that this component will be rendered on.
-     */
-    void render(@NotNull IFComponentRenderContext context);
+	/**
+	 * <b><i> This is an internal inventory-framework API that should not be used from outside of
+	 * this library. No compatibility guarantees are provided. </i></b>
+	 */
+	@ApiStatus.Internal
+	@NotNull
+	ComponentHandle getHandle();
 
-    /**
-     * Called when this component is updated in the given context.
-     *
-     * @param context The update context.
-     */
-    void updated(@NotNull IFComponentUpdateContext context);
+	/**
+	 * <b><i> This is an internal inventory-framework API that should not be used from outside of
+	 * this library. No compatibility guarantees are provided. </i></b>
+	 */
+	@ApiStatus.Internal
+	void setHandle(ComponentHandle handle);
 
-    /**
-     * Clears this component from the given context.
-     *
-     * @param context The context that this component will be cleared from.
-     */
-    void cleared(@NotNull IFRenderContext context);
-
-    /**
-     * Called when a viewer clicks in that component.
-     *
-     * @param context The click context.
-     */
-    void clicked(@NotNull IFSlotClickContext context);
+	/**
+	 * <b><i> This is an internal inventory-framework API that should not be used from outside of
+	 * this library. No compatibility guarantees are provided. </i></b>
+	 */
+	@ApiStatus.Internal
+	@NotNull
+	Pipeline<VirtualView> getPipeline();
 }

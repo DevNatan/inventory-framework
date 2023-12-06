@@ -4,6 +4,7 @@ import me.devnatan.inventoryframework.View;
 import me.devnatan.inventoryframework.context.RenderContext;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+import test.TestComponent;
 
 public final class InventoryFramework extends JavaPlugin {
 
@@ -14,6 +15,9 @@ class TestView extends View {
 
     @Override
     public void onFirstRender(@NotNull RenderContext render) {
-        render.firstSlot().cancelOnClick().onClick(click -> click.getPlayer().sendMessage("Piroca de foice"));
+        render.firstSlot(new TestComponent())
+			.cancelOnClick()
+			.something()
+			.onClick(click -> click.getPlayer().sendMessage("Piroca de foice"));
     }
 }

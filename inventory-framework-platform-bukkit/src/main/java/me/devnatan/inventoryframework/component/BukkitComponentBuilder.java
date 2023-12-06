@@ -44,5 +44,18 @@ public abstract class BukkitComponentBuilder<SELF> extends PlatformComponentBuil
 
     /** {@inheritDoc} */
     @Override
-    public abstract Component build(VirtualView root);
+    public Component build(VirtualView root) {
+		return new BukkitComponentImpl<>(
+			getKey(),
+			root,
+			getReference(),
+			getWatchingStates(),
+			getDisplayCondition(),
+			getRenderHandler(),
+			getUpdateHandler(),
+			getClickHandler(),
+			isCancelOnClick(),
+			isCloseOnClick(),
+			isUpdateOnClick());
+	}
 }

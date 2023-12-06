@@ -399,8 +399,7 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
 
     @Override
     public void updated(@NotNull IFComponentUpdateContext context) {
-        // TODO Change to context.getParent()
-        final IFRenderContext root = (IFRenderContext) context.getRoot();
+        final IFRenderContext root = (IFRenderContext) context.getTopLevelContext();
 
         debug(
                 "[Pagination] #updated(IFSlotRenderContext) called (forceUpdated = %b, pageWasChanged = %b)",

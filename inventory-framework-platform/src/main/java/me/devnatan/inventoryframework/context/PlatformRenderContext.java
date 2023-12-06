@@ -19,6 +19,7 @@ import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.ViewType;
 import me.devnatan.inventoryframework.Viewer;
+import me.devnatan.inventoryframework.component.AbstractComponentHandle;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.ComponentBuilder;
 import me.devnatan.inventoryframework.component.ComponentFactory;
@@ -27,6 +28,7 @@ import me.devnatan.inventoryframework.component.ItemComponentBuilder;
 import me.devnatan.inventoryframework.component.PlatformComponent;
 import me.devnatan.inventoryframework.component.PlatformComponentBuilder;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
+import me.devnatan.inventoryframework.pipeline.PipelinePhase;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
@@ -132,9 +134,14 @@ public abstract class PlatformRenderContext<ITEM_BUILDER extends ItemComponentBu
      * @return An {@link ComponentBuilder} to configure the properties of the component.
      */
     @ApiStatus.Experimental
-    public final @NotNull <C extends ComponentHandle<CONTEXT, B>, B extends PlatformComponentBuilder<?, CONTEXT>>
-            B firstSlot(@NotNull C component) {
-        throw new UnsupportedOperationException();
+    public final @NotNull <
+		T extends AbstractComponentHandle<CONTEXT, B>,
+		B extends PlatformComponentBuilder<B, CONTEXT>> B firstSlot(@NotNull T componentHandle) {
+		final B builder = componentHandle.builder();
+		final Component component = builder.build(this);
+		component.setHandle(componentHandle);
+		addComponent(component);
+		return builder;
     }
 
     /**
@@ -389,17 +396,18 @@ public abstract class PlatformRenderContext<ITEM_BUILDER extends ItemComponentBu
                 if (overlap.isVisible()) return;
             }
 
-            component.cleared(this);
+            component.getHandle().cleared(this);
             clearComponent(component);
             return;
         }
 
-        component.render(createComponentRenderContext(component, false));
+
+		component.getPipeline().execute(Component.RENDER, createComponentRenderContext(component, false));
     }
 
     @Override
     public final void updateComponent(Component component, boolean force, UpdateReason reason) {
-        component.updated(createComponentUpdateContext(component, force, reason));
+		component.getPipeline().execute(Component.UPDATE, createComponentUpdateContext(component, force, reason));
     }
 
     @Override
