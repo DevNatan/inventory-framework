@@ -20,7 +20,8 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public final class RenderContext extends PlatformRenderContext<BukkitItemComponentBuilder<BukkitItemComponentBuilder<?>>, Context>
+public final class RenderContext
+        extends PlatformRenderContext<BukkitItemComponentBuilder<BukkitItemComponentBuilder<?>>, Context>
         implements Context {
 
     private final Player player;

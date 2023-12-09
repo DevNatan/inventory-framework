@@ -21,6 +21,8 @@ import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.*;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
+import me.devnatan.inventoryframework.pipeline.PipelineContext;
+import me.devnatan.inventoryframework.pipeline.PipelinePhase;
 import me.devnatan.inventoryframework.state.State;
 import me.devnatan.inventoryframework.state.StateValue;
 import me.devnatan.inventoryframework.state.StateValueHost;
@@ -91,8 +93,10 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
         this.isStatic = sourceProvider instanceof Collection;
         this.isLazy =
                 !isStatic && !isComputed && (sourceProvider instanceof Function || sourceProvider instanceof Supplier);
+        setHandle(new Handle(this));
     }
 
+    // region Source Retrieval & Assignment
     /**
      * Tries to access and load the source to the current page.
      * <p>
@@ -185,12 +189,64 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
     }
 
     /**
+     * Converts the user provided source provider to a valid static source.
+     * <p>
+     * Also, assigns the {@link #_srcFactory} value if the provided source has dynamic capabilities.
+     *
+     * @return The current source.
+     * @throws IllegalArgumentException If the provided source is not supported.
+     */
+    @SuppressWarnings("unchecked")
+    private List<?> convertSourceProvider() {
+        if (sourceProvider instanceof Collection) {
+            currSource = new ArrayList<>((Collection<?>) sourceProvider);
+        } else if (sourceProvider instanceof Function) {
+            _srcFactory = (Function<VirtualView, Object>) sourceProvider;
+        } else if (sourceProvider instanceof Supplier) {
+            _srcFactory = $ -> ((Supplier<List<?>>) sourceProvider).get();
+        } else {
+            throw new IllegalArgumentException(String.format(
+                    "Unsupported pagination source provider: %s",
+                    sourceProvider.getClass().getName()));
+        }
+
+        return currSource;
+    }
+    // endregion
+
+    // region Page Rendering & Update
+    /**
+     * The current page size.
+     *
+     * @return Number of available elements position for pagination in the current page.
+     */
+    private int getPageSize() {
+        if (pageSize == -1) throw new IllegalStateException("Page size need to be updated before try to get it");
+
+        return pageSize;
+    }
+
+    /**
      * The total number of pages available.
      *
      * @return The number of pages based on the current source.
      */
     private int getPagesCount() {
         return pagesCount;
+    }
+
+    private LayoutSlot getLayoutSlotForCurrentTarget(IFRenderContext context) {
+        if (currentLayoutSlot != null) return currentLayoutSlot;
+
+        final Optional<LayoutSlot> layoutSlotOptional = context.getLayoutSlots().stream()
+                .filter(layoutSlot -> layoutSlot.getCharacter() == getLayoutTarget())
+                .findFirst();
+
+        if (!layoutSlotOptional.isPresent())
+            // TODO more detailed error message
+            throw new IllegalArgumentException(String.format("Layout slot target not found: %c", getLayoutTarget()));
+
+        return (currentLayoutSlot = layoutSlotOptional.get());
     }
 
     /**
@@ -203,15 +259,29 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
         return (int) Math.ceil((double) source.size() / getPageSize());
     }
 
-    /**
-     * The current page size.
-     *
-     * @return Number of available elements position for pagination in the current page.
-     */
-    public int getPageSize() {
-        if (pageSize == -1) throw new IllegalStateException("Page size need to be updated before try to get it");
+    private void renderChild(IFRenderContext context) {
+        getInternalComponents().forEach(context::renderComponent);
+    }
 
-        return pageSize;
+    /**
+     * Loads the current page contents.
+     *
+     * @param context The render context.
+     * @return A CompletableFuture with the completion stage of the current page.
+     */
+    private CompletableFuture<?> loadCurrentPage(IFRenderContext context) {
+        return loadSourceForTheCurrentPage().thenAccept(pageContents -> {
+            if (pageContents.isEmpty()) {
+                debug("[Pagination] Empty page contents (page %d of %d)", currentPageIndex(), getPagesCount());
+                return;
+            }
+
+            final boolean useLayout = context.getConfig().getLayout() != null;
+            debug("[Pagination] Adding components.. (useLayout = %b)", useLayout);
+
+            if (useLayout) addComponentsForLayeredPagination(context, pageContents);
+            else addComponentsForUnconstrainedPagination(context, pageContents);
+        });
     }
 
     /**
@@ -295,67 +365,9 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
                 "[Pagination] Page size updated to %d (page = %d, useLayout = %b)",
                 pageSize, currentPageIndex(), useLayout);
     }
+    // endregion
 
-    private LayoutSlot getLayoutSlotForCurrentTarget(IFRenderContext context) {
-        if (currentLayoutSlot != null) return currentLayoutSlot;
-
-        final Optional<LayoutSlot> layoutSlotOptional = context.getLayoutSlots().stream()
-                .filter(layoutSlot -> layoutSlot.getCharacter() == getLayoutTarget())
-                .findFirst();
-
-        if (!layoutSlotOptional.isPresent())
-            // TODO more detailed error message
-            throw new IllegalArgumentException(String.format("Layout slot target not found: %c", getLayoutTarget()));
-
-        return (currentLayoutSlot = layoutSlotOptional.get());
-    }
-
-    /**
-     * Converts the user provided source provider to a valid static source.
-     * <p>
-     * Also, assigns the {@link #_srcFactory} value if the provided source has dynamic capabilities.
-     *
-     * @return The current source.
-     * @throws IllegalArgumentException If the provided source is not supported.
-     */
-    @SuppressWarnings("unchecked")
-    private List<?> convertSourceProvider() {
-        if (sourceProvider instanceof Collection) {
-            currSource = new ArrayList<>((Collection<?>) sourceProvider);
-        } else if (sourceProvider instanceof Function) {
-            _srcFactory = (Function<VirtualView, Object>) sourceProvider;
-        } else if (sourceProvider instanceof Supplier) {
-            _srcFactory = $ -> ((Supplier<List<?>>) sourceProvider).get();
-        } else {
-            throw new IllegalArgumentException(String.format(
-                    "Unsupported pagination source provider: %s",
-                    sourceProvider.getClass().getName()));
-        }
-
-        return currSource;
-    }
-
-    /**
-     * Loads the current page contents.
-     *
-     * @param context The render context.
-     * @return A CompletableFuture with the completion stage of the current page.
-     */
-    private CompletableFuture<?> loadCurrentPage(IFRenderContext context) {
-        return loadSourceForTheCurrentPage().thenAccept(pageContents -> {
-            if (pageContents.isEmpty()) {
-                debug("[Pagination] Empty page contents (page %d of %d)", currentPageIndex(), getPagesCount());
-                return;
-            }
-
-            final boolean useLayout = context.getConfig().getLayout() != null;
-            debug("[Pagination] Adding components.. (useLayout = %b)", useLayout);
-
-            if (useLayout) addComponentsForLayeredPagination(context, pageContents);
-            else addComponentsForUnconstrainedPagination(context, pageContents);
-        });
-    }
-
+    // region State Management
     @Override
     public long internalId() {
         return internalStateId;
@@ -376,48 +388,6 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
         consumer.accept((StateValueHost) getRoot());
     }
 
-    @Override
-    public void render(@NotNull IFComponentRenderContext context) {
-        final IFRenderContext root = context.getParent();
-        if (!initialized || pageWasChanged) {
-            if (!initialized) updatePageSize(root);
-            loadCurrentPage(root).thenRun(() -> {
-                renderChild(root);
-                simulateStateUpdate();
-            });
-            setVisible(true);
-            initialized = true;
-            return;
-        }
-
-        renderChild(root);
-    }
-
-    private void renderChild(IFRenderContext context) {
-        getInternalComponents().forEach(context::renderComponent);
-    }
-
-    @Override
-    public void updated(@NotNull IFComponentUpdateContext context) {
-        final IFRenderContext root = (IFRenderContext) context.getTopLevelContext();
-
-        debug(
-                "[Pagination] #updated(IFSlotRenderContext) called (forceUpdated = %b, pageWasChanged = %b)",
-                wasForceUpdated(), pageWasChanged);
-
-        // If page was changed all components will be removed, so don't trigger update on them
-        if (wasForceUpdated() || pageWasChanged) {
-            cleared(root);
-            components = new ArrayList<>();
-            root.renderComponent(this);
-            pageWasChanged = false;
-            return;
-        }
-
-        if (!isVisible()) return;
-        getInternalComponents().forEach(child -> root.updateComponent(child, context.isForceUpdate(), null));
-    }
-
     /**
      * Simulate state update to call listeners thus calling watches in parent components.
      * <p>
@@ -428,22 +398,7 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
         debug("[Pagination] State update simulation triggered on %d", internalStateId);
         accessStateHost(host -> host.updateState(internalStateId, this));
     }
-
-    @Override
-    public void cleared(@NotNull IFRenderContext context) {
-        debug("[Pagination] #clear(IFRenderContext) called (pageWasChanged = %b)", pageWasChanged);
-        if (!pageWasChanged) {
-            getInternalComponents().forEach(context::clearComponent);
-            return;
-        }
-
-        final Iterator<Component> childIterator = getInternalComponents().iterator();
-        while (childIterator.hasNext()) {
-            Component child = childIterator.next();
-            context.clearComponent(child);
-            childIterator.remove();
-        }
-    }
+    // endregion
 
     @Override
     public @UnmodifiableView List<Component> getComponents() {
@@ -605,8 +560,44 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
         getInternalComponents().forEach(component -> component.setVisible(isVisible()));
     }
 
-    @Override
-    public void clicked(@NotNull IFSlotClickContext context) {
+    // region Pipelining
+    void render(@NotNull IFComponentRenderContext context) {
+        final IFRenderContext root = context.getParent();
+        if (!initialized || pageWasChanged) {
+            if (!initialized) updatePageSize(root);
+            loadCurrentPage(root).thenRun(() -> {
+                renderChild(root);
+                simulateStateUpdate();
+            });
+            setVisible(true);
+            initialized = true;
+            return;
+        }
+
+        renderChild(root);
+    }
+
+    void updated(@NotNull IFComponentUpdateContext context) {
+        final IFRenderContext root = (IFRenderContext) context.getTopLevelContext();
+
+        debug(
+                "[Pagination] #updated(IFSlotRenderContext) called (forceUpdated = %b, pageWasChanged = %b)",
+                wasForceUpdated(), pageWasChanged);
+
+        // If page was changed all components will be removed, so don't trigger update on them
+        if (wasForceUpdated() || pageWasChanged) {
+            cleared(root);
+            components = new ArrayList<>();
+            root.renderComponent(this);
+            pageWasChanged = false;
+            return;
+        }
+
+        if (!isVisible()) return;
+        getInternalComponents().forEach(child -> root.updateComponent(child, context.isForceUpdate(), null));
+    }
+
+    void clicked(@NotNull IFSlotClickContext context) {
         // Lock child interactions while page is changing (specially for async pagination cases)
         if (pageWasChanged) {
             context.setCancelled(true);
@@ -631,6 +622,22 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
             }
         }
     }
+
+    void cleared(@NotNull IFRenderContext context) {
+        debug("[Pagination] #clear(IFRenderContext) called (pageWasChanged = %b)", pageWasChanged);
+        if (!pageWasChanged) {
+            getInternalComponents().forEach(context::clearComponent);
+            return;
+        }
+
+        final Iterator<Component> childIterator = getInternalComponents().iterator();
+        while (childIterator.hasNext()) {
+            Component child = childIterator.next();
+            context.clearComponent(child);
+            childIterator.remove();
+        }
+    }
+    // endregion
 
     @Override
     public boolean equals(Object o) {
@@ -673,5 +680,24 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
                 + _srcFactory + ", currSource="
                 + currSource + "} "
                 + super.toString();
+    }
+}
+
+class Handle extends ComponentHandle {
+
+    private final PaginationImpl pagination;
+
+    public Handle(PaginationImpl pagination) {
+        this.pagination = pagination;
+    }
+
+    @Override
+    public void intercept(PipelineContext<VirtualView> pipeline, VirtualView subject) {
+        final PipelinePhase phase = Objects.requireNonNull(
+                pipeline.getPhase(), "Pipeline phase cannot be null in ComponentHandle interceptor");
+        if (phase == Component.RENDER) pagination.render((IFComponentRenderContext) subject);
+        else if (phase == Component.UPDATE) pagination.updated((IFComponentUpdateContext) subject);
+        else if (phase == Component.CLEAR) pagination.cleared((IFRenderContext) subject);
+        else if (phase == Component.CLICK) pagination.clicked((IFSlotClickContext) subject);
     }
 }

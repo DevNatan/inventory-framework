@@ -26,7 +26,7 @@ public final class AvailableSlotInterceptor implements PipelineInterceptor<Virtu
                 ? resolveFromInitialSlot(context)
                 : resolveFromLayoutSlot(context);
 
-        slotComponents.forEach(componentFactory -> context.addComponent(componentFactory.build(context)));
+        slotComponents.forEach(componentFactory -> context.addComponent(componentFactory.buildComponent(context)));
     }
 
     /**

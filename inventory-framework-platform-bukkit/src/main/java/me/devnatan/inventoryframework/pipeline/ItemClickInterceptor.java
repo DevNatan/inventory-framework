@@ -27,6 +27,6 @@ public final class ItemClickInterceptor implements PipelineInterceptor<VirtualVi
 
         // inherit cancellation so we can un-cancel it
         context.setCancelled(component.isCancelOnClick());
-		component.getPipeline().execute(Component.CLICK, context);
+        component.getPipeline().execute(Component.CLICK, context);
     }
 }

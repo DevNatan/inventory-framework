@@ -207,7 +207,7 @@ public final class StateAccessImpl<CONTEXT extends IFContext, ITEM_BUILDER exten
 
     <V> State<Pagination> createPaginationState(@NotNull PaginationBuilder<CONTEXT, ITEM_BUILDER, V> builder) {
         final long id = State.next();
-        final PaginationImpl pagination = (PaginationImpl) builder.build(caller);
+        final PaginationImpl pagination = (PaginationImpl) builder.buildComponent(caller);
         final StateValueFactory factory = (host, state) -> pagination;
         final State<Pagination> state = new PaginationState(id, factory);
         this.stateRegistry.registerState(state, caller);

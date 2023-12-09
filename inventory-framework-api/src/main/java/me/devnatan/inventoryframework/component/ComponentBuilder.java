@@ -14,5 +14,5 @@ public interface ComponentBuilder {
      * @return A new component instance built from this component builder.
      */
     @ApiStatus.Internal
-    Component build(VirtualView root);
+    Component buildComponent(VirtualView root);
 }

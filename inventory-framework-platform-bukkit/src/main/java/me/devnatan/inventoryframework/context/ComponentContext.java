@@ -18,12 +18,12 @@ public abstract class ComponentContext extends PlatformConfinedContext implement
         this.component = component;
     }
 
-	@Override
-	public IFContext getTopLevelContext() {
-		return getParent();
-	}
+    @Override
+    public IFContext getTopLevelContext() {
+        return getParent();
+    }
 
-	public RenderContext getParent() {
+    public RenderContext getParent() {
         return parent;
     }
 

@@ -4,11 +4,7 @@ import java.util.Set;
 import me.devnatan.inventoryframework.Ref;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.VirtualView;
-import me.devnatan.inventoryframework.context.IFComponentRenderContext;
-import me.devnatan.inventoryframework.context.IFComponentUpdateContext;
 import me.devnatan.inventoryframework.context.IFContext;
-import me.devnatan.inventoryframework.context.IFRenderContext;
-import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
 import me.devnatan.inventoryframework.pipeline.PipelinePhase;
 import me.devnatan.inventoryframework.state.State;
@@ -21,10 +17,10 @@ import org.jetbrains.annotations.UnmodifiableView;
  */
 public interface Component extends VirtualView {
 
-	PipelinePhase RENDER = new PipelinePhase("component-render");
-	PipelinePhase UPDATE = new PipelinePhase("component-update");
-	PipelinePhase CLICK = new PipelinePhase("component-click");
-	PipelinePhase CLEAR = new PipelinePhase("component-clear");
+    PipelinePhase RENDER = new PipelinePhase("component-render");
+    PipelinePhase UPDATE = new PipelinePhase("component-update");
+    PipelinePhase CLICK = new PipelinePhase("component-click");
+    PipelinePhase CLEAR = new PipelinePhase("component-clear");
 
     /**
      * <b><i> This is an internal inventory-framework API that should not be used from outside of
@@ -137,26 +133,26 @@ public interface Component extends VirtualView {
     @ApiStatus.Experimental
     void hide();
 
-	/**
-	 * <b><i> This is an internal inventory-framework API that should not be used from outside of
-	 * this library. No compatibility guarantees are provided. </i></b>
-	 */
-	@ApiStatus.Internal
-	@NotNull
-	ComponentHandle getHandle();
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
+    @NotNull
+    ComponentHandle getHandle();
 
-	/**
-	 * <b><i> This is an internal inventory-framework API that should not be used from outside of
-	 * this library. No compatibility guarantees are provided. </i></b>
-	 */
-	@ApiStatus.Internal
-	void setHandle(ComponentHandle handle);
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
+    void setHandle(ComponentHandle handle);
 
-	/**
-	 * <b><i> This is an internal inventory-framework API that should not be used from outside of
-	 * this library. No compatibility guarantees are provided. </i></b>
-	 */
-	@ApiStatus.Internal
-	@NotNull
-	Pipeline<VirtualView> getPipeline();
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
+    @NotNull
+    Pipeline<VirtualView> getPipeline();
 }

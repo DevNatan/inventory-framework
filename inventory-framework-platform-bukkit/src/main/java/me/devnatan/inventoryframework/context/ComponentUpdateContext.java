@@ -10,7 +10,7 @@ public final class ComponentUpdateContext extends ComponentContext implements IF
 
     private final Viewer viewer;
     private final Player player;
-	private boolean forceUpdate, cancelled;
+    private boolean forceUpdate, cancelled;
 
     public ComponentUpdateContext(RenderContext parent, Component component, Viewer viewer) {
         super(parent, component);
@@ -33,33 +33,33 @@ public final class ComponentUpdateContext extends ComponentContext implements IF
         return getParent().getContainer();
     }
 
-	@Override
-	public boolean isForceUpdate() {
-		return forceUpdate;
-	}
+    @Override
+    public boolean isForceUpdate() {
+        return forceUpdate;
+    }
 
-	@Override
-	public void setForceUpdate(boolean forceUpdate) {
-		this.forceUpdate = forceUpdate;
-	}
+    @Override
+    public void setForceUpdate(boolean forceUpdate) {
+        this.forceUpdate = forceUpdate;
+    }
 
-	@Override
-	public boolean isCancelled() {
-		return cancelled;
-	}
+    @Override
+    public boolean isCancelled() {
+        return cancelled;
+    }
 
-	@Override
-	public void setCancelled(boolean cancelled) {
-		this.cancelled = cancelled;
-	}
+    @Override
+    public void setCancelled(boolean cancelled) {
+        this.cancelled = cancelled;
+    }
 
-	@Override
-	public String toString() {
-		return "ComponentUpdateContext{" +
-			"viewer=" + viewer +
-			", player=" + player +
-			", forceUpdate=" + forceUpdate +
-			", cancelled=" + cancelled +
-			"} " + super.toString();
-	}
+    @Override
+    public String toString() {
+        return "ComponentUpdateContext{" + "viewer="
+                + viewer + ", player="
+                + player + ", forceUpdate="
+                + forceUpdate + ", cancelled="
+                + cancelled + "} "
+                + super.toString();
+    }
 }

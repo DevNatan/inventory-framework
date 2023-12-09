@@ -1,32 +1,46 @@
 package me.devnatan.inventoryframework.component;
 
-import me.devnatan.inventoryframework.VirtualView;
 import org.bukkit.inventory.ItemStack;
 
-public class BukkitItemComponentBuilder<SELF>
-	extends BukkitComponentBuilder<SELF>
-	implements ItemComponentBuilder {
+public class BukkitItemComponentBuilder<SELF> extends BukkitComponentBuilder<SELF> implements ItemComponentBuilder {
 
-	private int position;
+    private int position;
+    private int row = -1, column = -1;
     private ItemStack item;
 
-	public BukkitItemComponentBuilder() {}
+    public BukkitItemComponentBuilder() {}
 
-	protected final int getPosition() {
-		return position;
-	}
+    protected final int getPosition() {
+        return position;
+    }
 
-	@Override
-	public final void setPosition(int position) {
-		this.position = position;
-	}
+    @Override
+    public final void setPosition(int position) {
+        this.position = position;
+    }
 
-	@Override
-	public final boolean isContainedWithin(int position) {
-		return this.position == position;
-	}
+    protected final int getRow() {
+        return row;
+    }
 
-	protected final ItemStack getItem() {
+    protected final void setRow(int row) {
+        this.row = row;
+    }
+
+    protected final int getColumn() {
+        return column;
+    }
+
+    protected final void setColumn(int column) {
+        this.column = column;
+    }
+
+    @Override
+    public final boolean isContainedWithin(int position) {
+        return this.position == position;
+    }
+
+    protected final ItemStack getItem() {
         return item;
     }
 
@@ -34,24 +48,24 @@ public class BukkitItemComponentBuilder<SELF>
         this.item = item;
     }
 
-	public final SELF withSlot(int slot) {
-		setPosition(slot);
-		return (SELF) this;
-	}
+    @SuppressWarnings("unchecked")
+    public final SELF withSlot(int slot) {
+        setPosition(slot);
+        return (SELF) this;
+    }
 
-	public final SELF withSlot(int row, int column) {
-		// FIXME Missing root availability, root must be available
-		// final ViewContainer container = ((IFRenderContext) root).getContainer();
-		// return withSlot(SlotConverter.convertSlot(row, column, container.getRowsCount(),
-		// container.getColumnsCount()));
-		// return (SELF) this;
-		return (SELF) this;
-	}
+    @SuppressWarnings("unchecked")
+    public final SELF withSlot(int row, int column) {
+        setRow(row);
+        setColumn(column);
+        return (SELF) this;
+    }
 
-	public final SELF withItem(ItemStack item) {
-		this.item = item;
-		return (SELF) this;
-	}
+    @SuppressWarnings("unchecked")
+    public final SELF withItem(ItemStack item) {
+        setItem(item);
+        return (SELF) this;
+    }
 
     @Override
     public String toString() {

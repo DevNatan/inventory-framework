@@ -69,7 +69,7 @@ public final class PaginationBuilder<CONTEXT, BUILDER, V>
 
             elementConsumer.accept(context, builder, index, value);
 
-            return ((ComponentBuilder) builder).build(pagination);
+            return ((ComponentBuilder) builder).buildComponent(pagination);
         };
         return this;
     }
@@ -108,7 +108,7 @@ public final class PaginationBuilder<CONTEXT, BUILDER, V>
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
-    public Component build(VirtualView root) {
+    public Component buildComponent(VirtualView root) {
         long stateId = State.next();
         return new PaginationImpl(
                 Long.toString(stateId),

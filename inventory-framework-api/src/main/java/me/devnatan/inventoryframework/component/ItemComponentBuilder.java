@@ -1,6 +1,5 @@
 package me.devnatan.inventoryframework.component;
 
-import me.devnatan.inventoryframework.VirtualView;
 import org.jetbrains.annotations.ApiStatus;
 
 public interface ItemComponentBuilder extends ComponentBuilder {

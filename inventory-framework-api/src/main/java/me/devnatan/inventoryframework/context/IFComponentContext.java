@@ -4,7 +4,7 @@ import me.devnatan.inventoryframework.component.Component;
 
 public interface IFComponentContext extends IFContext {
 
-	IFContext getTopLevelContext();
+    IFContext getTopLevelContext();
 
     Component getComponent();
 }
