@@ -166,37 +166,37 @@ public final class StateAccessImpl<CONTEXT, ITEM_BUILDER> implements StateAccess
     @Override
     public <T> PaginationBuilder<CONTEXT, ITEM_BUILDER, T> buildPaginationState(
             @NotNull List<? super T> sourceProvider) {
-        return new PaginationBuilder<>(sourceProvider, false, false);
+        return new PaginationBuilder<>(sourceProvider, false, false, this::createPaginationState);
     }
 
     @Override
     public <T> PaginationBuilder<CONTEXT, ITEM_BUILDER, T> buildComputedPaginationState(
             @NotNull Function<CONTEXT, List<? super T>> sourceProvider) {
-        return new PaginationBuilder<>(sourceProvider, false, true);
+        return new PaginationBuilder<>(sourceProvider, false, true, this::createPaginationState);
     }
 
     @Override
     public <T> PaginationBuilder<CONTEXT, ITEM_BUILDER, T> buildComputedAsyncPaginationState(
             @NotNull Function<CONTEXT, CompletableFuture<List<T>>> sourceProvider) {
-        return new PaginationBuilder<>(sourceProvider, true, true);
+        return new PaginationBuilder<>(sourceProvider, true, true, this::createPaginationState);
     }
 
     @Override
     public <T> PaginationBuilder<CONTEXT, ITEM_BUILDER, T> buildLazyPaginationState(
             @NotNull Supplier<List<? super T>> sourceProvider) {
-        return new PaginationBuilder<>(sourceProvider, false, false);
+        return new PaginationBuilder<>(sourceProvider, false, false, this::createPaginationState);
     }
 
     @Override
     public <T> PaginationBuilder<CONTEXT, ITEM_BUILDER, T> buildLazyPaginationState(
             @NotNull Function<CONTEXT, List<? super T>> sourceProvider) {
-        return new PaginationBuilder<>(sourceProvider, false, false);
+        return new PaginationBuilder<>(sourceProvider, false, false, this::createPaginationState);
     }
 
     @Override
     public <T> PaginationBuilder<CONTEXT, ITEM_BUILDER, T> buildLazyAsyncPaginationState(
             @NotNull Function<CONTEXT, CompletableFuture<List<T>>> sourceProvider) {
-        return new PaginationBuilder<>(sourceProvider, true, false);
+        return new PaginationBuilder<>(sourceProvider, true, false, this::createPaginationState);
     }
 
     <V> State<Pagination> createPaginationState(@NotNull PaginationBuilder<CONTEXT, ITEM_BUILDER, V> builder) {

@@ -1,6 +1,7 @@
 package me.devnatan.inventoryframework.component;
 
 import java.util.function.BiConsumer;
+import java.util.function.Function;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
 import me.devnatan.inventoryframework.internal.PlatformUtils;
@@ -16,16 +17,22 @@ public final class PaginationBuilder<CONTEXT, BUILDER, V>
     private PaginationElementFactory<V> paginationElementFactory;
     private BiConsumer<CONTEXT, Pagination> pageSwitchHandler;
     private final boolean async, computed;
+    private final Function<PaginationBuilder<CONTEXT, BUILDER, V>, State<Pagination>> stateFactory;
 
     /**
      * <b><i> This is an internal inventory-framework API that should not be used from outside of
      * this library. No compatibility guarantees are provided. </i></b>
      */
     @ApiStatus.Internal
-    public PaginationBuilder(Object sourceProvider, boolean async, boolean computed) {
+    public PaginationBuilder(
+            Object sourceProvider,
+            boolean async,
+            boolean computed,
+            Function<PaginationBuilder<CONTEXT, BUILDER, V>, State<Pagination>> stateFactory) {
         this.sourceProvider = sourceProvider;
         this.async = async;
         this.computed = computed;
+        this.stateFactory = stateFactory;
     }
 
     /**
@@ -101,6 +108,15 @@ public final class PaginationBuilder<CONTEXT, BUILDER, V>
             @NotNull BiConsumer<CONTEXT, Pagination> pageSwitchHandler) {
         this.pageSwitchHandler = pageSwitchHandler;
         return this;
+    }
+
+    /**
+     * Builds a {@link Pagination} state from this pagination builder.
+     *
+     * @return A new pagination state.
+     */
+    public State<Pagination> build() {
+        return stateFactory.apply(this);
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
