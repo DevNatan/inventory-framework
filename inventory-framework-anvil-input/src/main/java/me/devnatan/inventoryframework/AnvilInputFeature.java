@@ -168,7 +168,7 @@ public final class AnvilInputFeature implements Feature<AnvilInputConfig, Void, 
                     context.getConfig().getTitle(),
                     scopedInitialInput.isEmpty() ? globalInitialInput : scopedInitialInput);
             final ViewContainer container =
-                    new BukkitViewContainer(inventory, context.isShared(), ViewType.ANVIL, true);
+                    new BukkitViewContainer(inventory, ViewType.ANVIL, false, true);
 
             context.setContainer(container);
         });

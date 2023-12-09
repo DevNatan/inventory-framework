@@ -1,6 +1,5 @@
 plugins {
     alias(libs.plugins.shadowjar)
-    alias(libs.plugins.kotlin)
 }
 
 apply from: '../library.gradle'
@@ -8,5 +7,5 @@ apply from: '../publish.gradle'
 
 dependencies {
     compileOnly libs.spigot
-    compileOnlyApi projects.inventoryFrameworkPlatformBukkit
+    compileOnly projects.inventoryFrameworkPlatformBukkit
 }

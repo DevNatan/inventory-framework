@@ -326,7 +326,7 @@ public abstract class PlatformView<
         context.getViewers().forEach(viewer -> {
             if (viewer.isTransitioning()) viewer.setActiveContext(context);
             view.getFramework().addViewer(viewer);
-            if (!context.getContainer().isProxied()) context.getContainer().open(viewer);
+            if (!context.getContainer().isExternal()) context.getContainer().open(viewer);
             viewer.setTransitioning(false);
         });
         IFDebug.debug("Rendering context %s", context.getId());

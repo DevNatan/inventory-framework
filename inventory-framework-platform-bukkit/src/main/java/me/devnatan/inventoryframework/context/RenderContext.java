@@ -153,12 +153,12 @@ public final class RenderContext
 
     @Override
     IFComponentRenderContext createComponentRenderContext(Component component, boolean force) {
-        return null;
+        return new ComponentRenderContext(this, component, getViewer());
     }
 
     @Override
     IFComponentUpdateContext createComponentUpdateContext(Component component, boolean force, UpdateReason reason) {
-        return null;
+        return new ComponentUpdateContext(this, component, getViewer());
     }
     // endregion
 

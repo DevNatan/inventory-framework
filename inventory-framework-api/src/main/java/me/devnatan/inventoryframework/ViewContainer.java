@@ -5,8 +5,6 @@ import org.jetbrains.annotations.Nullable;
 
 public interface ViewContainer {
 
-    String getTitle();
-
     /**
      * The type of this container.
      *
@@ -38,6 +36,8 @@ public interface ViewContainer {
     boolean hasItem(int slot);
 
     void removeItem(int slot);
+
+	void renderItem(int slot, Object platformItem);
 
     /**
      * The number of slots in this container.
@@ -78,4 +78,8 @@ public interface ViewContainer {
     boolean isEntityContainer();
 
     boolean isProxied();
+
+	ViewContainer unproxied();
+
+	boolean isExternal();
 }

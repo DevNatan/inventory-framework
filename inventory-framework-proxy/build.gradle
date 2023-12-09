@@ -1,5 +1,6 @@
 plugins {
-    alias(libs.plugins.kotlin)
+    alias(libs.plugins.shadowjar)
+    alias(libs.plugins.bukkit)
 }
 
 apply from: '../library.gradle'
@@ -7,5 +8,15 @@ apply from: '../publish.gradle'
 
 dependencies {
     compileOnly libs.spigot
-    compileOnlyApi projects.inventoryFrameworkPlatformBukkit
+    implementation projects.inventoryFrameworkPlatformBukkit
+}
+
+bukkit {
+    main = "me.devnatan.inventoryframework.Test"
+    name = "InventoryFramework"
+    version = project.version
+    description = "Minecraft Inventory API framework"
+    website = "https://github.com/DevNatan/inventory-framework"
+    apiVersion = "1.20"
+    authors = ['SaiintBrisson', 'DevNatan', 'sasuked']
 }

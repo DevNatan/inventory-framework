@@ -2,6 +2,8 @@ package me.devnatan.inventoryframework.context;
 
 import me.devnatan.inventoryframework.BukkitViewContainer;
 import me.devnatan.inventoryframework.BukkitViewer;
+import me.devnatan.inventoryframework.View;
+import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.component.Component;
 import org.bukkit.entity.Player;
@@ -28,8 +30,8 @@ public final class ComponentRenderContext extends ComponentContext implements IF
     }
 
     @Override
-    public BukkitViewContainer getContainer() {
-        return (BukkitViewContainer) getParent().getContainer();
+    public ViewContainer getContainer() {
+        return getComponent().getContainer();
     }
 
     @Override

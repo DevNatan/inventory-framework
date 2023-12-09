@@ -55,8 +55,7 @@ public final class BukkitViewer extends DefaultStateValueHost implements Viewer 
     @Override
     public @NotNull ViewContainer getSelfContainer() {
         if (selfContainer == null)
-            selfContainer = new BukkitViewContainer(
-                    getPlayer().getInventory(), getActiveContext().isShared(), ViewType.PLAYER, false);
+            selfContainer = new BukkitViewContainer(getPlayer().getInventory(), ViewType.PLAYER);
 
         return selfContainer;
     }

@@ -24,8 +24,8 @@ public final class Proxy implements ViewConfig.Modifier {
                     containerType));
 
         final IFOpenContext openContext = (IFOpenContext) context;
-        openContext.setContainer(new ProxyContainer(openContext.getContainer(), proxiedContainer));
-    }
+		openContext.setContainer(new ProxyContainer(openContext.getContainer(), proxiedContainer));
+	}
 
     /**
      * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
@@ -33,6 +33,6 @@ public final class Proxy implements ViewConfig.Modifier {
      */
     @ApiStatus.Experimental
     public static Proxy createProxy(Inventory inventory) {
-        return new Proxy(new BukkitViewContainer(inventory, false, ViewType.CHEST, true));
+        return new Proxy(new BukkitViewContainer(inventory, ViewType.PLAYER, true, false));
     }
 }

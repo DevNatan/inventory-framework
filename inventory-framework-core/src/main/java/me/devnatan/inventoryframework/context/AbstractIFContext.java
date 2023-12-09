@@ -90,7 +90,7 @@ abstract class AbstractIFContext extends DefaultStateValueHost implements IFCont
 
     @Override
     public final void addComponent(@NotNull Component component) {
-        synchronized (getInternalComponents()) {
+		synchronized (getInternalComponents()) {
             getInternalComponents().add(0, component);
         }
     }
