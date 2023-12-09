@@ -7,20 +7,15 @@ import java.util.function.Supplier;
 import me.devnatan.inventoryframework.state.MutableIntState;
 import me.devnatan.inventoryframework.state.MutableState;
 import me.devnatan.inventoryframework.state.State;
+import me.devnatan.inventoryframework.state.StateAccess;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class AbstractComponentHandle<CONTEXT, COMPONENT_BUILDER>
-        implements ComponentHandle<CONTEXT, COMPONENT_BUILDER> {
+public abstract class AbstractComponentHandle<CONTEXT, COMPONENT_BUILDER> extends ComponentHandle
+        implements StateAccess<CONTEXT, COMPONENT_BUILDER> {
 
-    private final Component component;
+    protected AbstractComponentHandle() {}
 
-    public AbstractComponentHandle(Component component) {
-        this.component = component;
-    }
-
-    public final Component getComponent() {
-        return component;
-    }
+    public abstract COMPONENT_BUILDER builder();
 
     @Override
     public <T> State<T> state(T initialValue) {

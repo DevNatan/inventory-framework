@@ -20,6 +20,6 @@ public final class ComponentClickHandlerCallInterceptor implements PipelineInter
             return;
         }
         IFDebug.debug("ComponentClickHandlerCallInterceptor: %s", component);
-        component.clicked(click);
+        component.getPipeline().execute(Component.CLICK, click);
     }
 }

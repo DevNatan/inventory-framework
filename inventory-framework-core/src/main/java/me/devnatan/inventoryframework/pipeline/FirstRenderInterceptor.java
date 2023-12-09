@@ -50,7 +50,7 @@ public final class FirstRenderInterceptor implements PipelineInterceptor<Virtual
      */
     private void registerComponents(IFRenderContext context) {
         context.getNotRenderedComponents().stream()
-                .map(builder -> builder.build(context))
+                .map(builder -> builder.buildComponent(context))
                 .peek(this::assignReference)
                 .forEach(context::addComponent);
     }

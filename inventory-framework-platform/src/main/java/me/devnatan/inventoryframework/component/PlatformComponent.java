@@ -88,13 +88,6 @@ public abstract class PlatformComponent<CONTEXT, COMPONENT_BUILDER> extends Abst
     }
     // endregion
 
-    /**
-     * Called when a viewer clicks on this component.
-     *
-     * @param context The click context.
-     */
-    public abstract void clicked(@NotNull IFSlotClickContext context);
-
     @Override
     public final <T> State<T> state(T initialValue) {
         return stateAccess.state(initialValue);

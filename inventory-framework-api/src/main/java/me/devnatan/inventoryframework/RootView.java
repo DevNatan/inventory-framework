@@ -5,11 +5,11 @@ import java.util.UUID;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.internal.ElementFactory;
 import me.devnatan.inventoryframework.internal.Job;
-import me.devnatan.inventoryframework.pipeline.Pipeline;
+import me.devnatan.inventoryframework.pipeline.Pipelined;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
-public interface RootView extends VirtualView {
+public interface RootView extends VirtualView, Pipelined {
 
     /**
      * The unique identifier of this view.
@@ -46,14 +46,6 @@ public interface RootView extends VirtualView {
      * @throws IllegalStateException If the configuration was already set before.
      */
     void setConfig(@NotNull ViewConfig config);
-
-    /**
-     * The execution pipeline for this view.
-     *
-     * @return The pipeline for this view.
-     */
-    @NotNull
-    Pipeline<VirtualView> getPipeline();
 
     /**
      * The ElementFactory for this view.

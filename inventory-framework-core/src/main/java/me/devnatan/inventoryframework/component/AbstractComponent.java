@@ -9,18 +9,26 @@ import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
+import me.devnatan.inventoryframework.pipeline.Pipeline;
+import me.devnatan.inventoryframework.pipeline.PipelineContext;
+import me.devnatan.inventoryframework.pipeline.PipelinePhase;
 import me.devnatan.inventoryframework.state.State;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
 
 public abstract class AbstractComponent implements Component {
 
+    private static final ComponentHandle NOOP_HANDLE = new NoopComponentHandle();
+
     private final String key;
     private final VirtualView root;
     private final Ref<Component> reference;
     private final Set<State<?>> watchingStates;
     private final Predicate<? extends IFContext> displayCondition;
+    private final Pipeline<VirtualView> pipeline =
+            new Pipeline<>(Component.RENDER, Component.UPDATE, Component.CLICK, Component.CLEAR);
 
+    private ComponentHandle handle;
     private boolean isVisible;
     private boolean wasForceUpdated;
 
@@ -114,6 +122,29 @@ public abstract class AbstractComponent implements Component {
         update();
     }
 
+    @Override
+    public final @NotNull ComponentHandle getHandle() {
+        if (handle != null) getPipeline().removeInterceptor(handle);
+
+        return handle == null ? NOOP_HANDLE : handle;
+    }
+
+    @Override
+    public final void setHandle(ComponentHandle handle) {
+        if (handle != null) {
+            for (final PipelinePhase phase :
+                    new PipelinePhase[] {Component.RENDER, Component.UPDATE, Component.CLEAR, Component.CLICK})
+                getPipeline().intercept(phase, handle);
+        }
+
+        this.handle = handle;
+    }
+
+    @Override
+    public final @NotNull Pipeline<VirtualView> getPipeline() {
+        return pipeline;
+    }
+
     protected final Predicate<? extends IFContext> getDisplayCondition() {
         return displayCondition;
     }
@@ -130,4 +161,10 @@ public abstract class AbstractComponent implements Component {
         return wasForceUpdated;
     }
     // endregion
+}
+
+final class NoopComponentHandle extends ComponentHandle {
+
+    @Override
+    public void intercept(PipelineContext<VirtualView> pipeline, VirtualView subject) {}
 }

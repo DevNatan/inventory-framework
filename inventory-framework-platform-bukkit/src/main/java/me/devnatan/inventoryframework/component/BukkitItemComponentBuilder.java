@@ -1,14 +1,44 @@
 package me.devnatan.inventoryframework.component;
 
-import me.devnatan.inventoryframework.VirtualView;
 import org.bukkit.inventory.ItemStack;
 
-public abstract class BukkitItemComponentBuilder<SELF> extends BukkitComponentBuilder<SELF>
-        implements ItemComponentBuilder {
+public class BukkitItemComponentBuilder<SELF> extends BukkitComponentBuilder<SELF> implements ItemComponentBuilder {
 
+    private int position;
+    private int row = -1, column = -1;
     private ItemStack item;
 
-    protected BukkitItemComponentBuilder() {}
+    public BukkitItemComponentBuilder() {}
+
+    protected final int getPosition() {
+        return position;
+    }
+
+    @Override
+    public final void setPosition(int position) {
+        this.position = position;
+    }
+
+    protected final int getRow() {
+        return row;
+    }
+
+    protected final void setRow(int row) {
+        this.row = row;
+    }
+
+    protected final int getColumn() {
+        return column;
+    }
+
+    protected final void setColumn(int column) {
+        this.column = column;
+    }
+
+    @Override
+    public final boolean isContainedWithin(int position) {
+        return this.position == position;
+    }
 
     protected final ItemStack getItem() {
         return item;
@@ -18,8 +48,24 @@ public abstract class BukkitItemComponentBuilder<SELF> extends BukkitComponentBu
         this.item = item;
     }
 
-    @Override
-    public abstract ItemComponent build(VirtualView root);
+    @SuppressWarnings("unchecked")
+    public final SELF withSlot(int slot) {
+        setPosition(slot);
+        return (SELF) this;
+    }
+
+    @SuppressWarnings("unchecked")
+    public final SELF withSlot(int row, int column) {
+        setRow(row);
+        setColumn(column);
+        return (SELF) this;
+    }
+
+    @SuppressWarnings("unchecked")
+    public final SELF withItem(ItemStack item) {
+        setItem(item);
+        return (SELF) this;
+    }
 
     @Override
     public String toString() {
