@@ -48,7 +48,6 @@ public final class RenderContext
         return (View) root;
     }
 
-    // TODO documentation
     public @NotNull Player getPlayer() {
         tryThrowDoNotWorkWithSharedContext("getAllPlayers");
         return player;

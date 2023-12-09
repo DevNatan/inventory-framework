@@ -5,7 +5,6 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 import me.devnatan.inventoryframework.Ref;
 import me.devnatan.inventoryframework.VirtualView;
-import me.devnatan.inventoryframework.context.Context;
 import me.devnatan.inventoryframework.context.IFComponentRenderContext;
 import me.devnatan.inventoryframework.context.IFComponentUpdateContext;
 import me.devnatan.inventoryframework.context.IFContext;
@@ -13,8 +12,7 @@ import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.state.State;
 import org.jetbrains.annotations.NotNull;
 
-public final class BukkitComponentImpl<COMPONENT_BUILDER extends BukkitComponentBuilder<COMPONENT_BUILDER>>
-        extends PlatformComponent<Context, COMPONENT_BUILDER> {
+public final class BukkitComponentImpl extends PlatformComponent {
 
     BukkitComponentImpl(
             String key,

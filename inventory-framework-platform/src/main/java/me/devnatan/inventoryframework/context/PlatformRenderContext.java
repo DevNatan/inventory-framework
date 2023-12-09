@@ -23,7 +23,6 @@ import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.ComponentBuilder;
 import me.devnatan.inventoryframework.component.ComponentFactory;
 import me.devnatan.inventoryframework.component.ItemComponentBuilder;
-import me.devnatan.inventoryframework.component.PlatformComponent;
 import me.devnatan.inventoryframework.component.PlatformComponentBuilder;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
 import org.jetbrains.annotations.ApiStatus;
@@ -222,29 +221,6 @@ public abstract class PlatformRenderContext<ITEM_BUILDER extends ItemComponentBu
             factory.accept(index, builder);
             return (ComponentFactory) builder;
         }));
-    }
-
-    /**
-     * Defines the item that will represent a character provided in the context layout.
-     *
-     * @param character The layout character target.
-     * @return An item builder to configure the item.
-     */
-    public @NotNull <BUILDER extends ComponentBuilder, COMPONENT extends PlatformComponent<CONTEXT, BUILDER>>
-            BUILDER layoutComponent(char character, COMPONENT component) {
-
-        // TODO More detailed exception message
-        final LayoutSlot layoutSlot = getLayoutSlots().stream()
-                .filter(value -> value.getCharacter() == character)
-                .findFirst()
-                .orElseThrow(() -> new InventoryFrameworkException("Missing layout character: " + character));
-
-        // FIXME Missing implementation
-        final BUILDER builder = null;
-        // final BUILDER builder = component.createBuilder();
-
-        getLayoutSlots().add(layoutSlot.withFactory($ -> (ComponentFactory) builder));
-        return builder;
     }
 
     /**

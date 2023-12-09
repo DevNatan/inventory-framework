@@ -63,7 +63,7 @@ public abstract class PlatformView<
     private FRAMEWORK framework;
     private boolean initialized;
     private final StateAccess<PLATFORM_CONTEXT, ITEM_BUILDER> stateAccess =
-            new StateAccessImpl<>(this, getElementFactory(), getStateRegistry());
+            new StateAccessImpl<>(this, getStateRegistry());
 
     // region Open & Close
     /**

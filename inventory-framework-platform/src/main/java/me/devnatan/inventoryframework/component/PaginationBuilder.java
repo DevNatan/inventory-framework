@@ -2,8 +2,8 @@ package me.devnatan.inventoryframework.component;
 
 import java.util.function.BiConsumer;
 import me.devnatan.inventoryframework.VirtualView;
-import me.devnatan.inventoryframework.internal.ElementFactory;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
+import me.devnatan.inventoryframework.internal.PlatformUtils;
 import me.devnatan.inventoryframework.state.State;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -11,7 +11,6 @@ import org.jetbrains.annotations.NotNull;
 public final class PaginationBuilder<CONTEXT, BUILDER, V>
         extends PlatformComponentBuilder<PaginationBuilder<CONTEXT, BUILDER, V>, CONTEXT> {
 
-    private final ElementFactory internalElementFactory;
     private final Object sourceProvider;
     private char layoutTarget = LayoutSlot.DEFAULT_SLOT_FILL_CHAR;
     private PaginationElementFactory<V> paginationElementFactory;
@@ -23,9 +22,7 @@ public final class PaginationBuilder<CONTEXT, BUILDER, V>
      * this library. No compatibility guarantees are provided. </i></b>
      */
     @ApiStatus.Internal
-    public PaginationBuilder(
-            ElementFactory internalElementFactory, Object sourceProvider, boolean async, boolean computed) {
-        this.internalElementFactory = internalElementFactory;
+    public PaginationBuilder(Object sourceProvider, boolean async, boolean computed) {
         this.sourceProvider = sourceProvider;
         this.async = async;
         this.computed = computed;
@@ -64,7 +61,7 @@ public final class PaginationBuilder<CONTEXT, BUILDER, V>
             @NotNull PaginationValueConsumer<CONTEXT, BUILDER, V> elementConsumer) {
         this.paginationElementFactory = (pagination, index, slot, value) -> {
             CONTEXT context = (CONTEXT) pagination.getRoot();
-            BUILDER builder = (BUILDER) internalElementFactory.createComponentBuilder(pagination);
+            BUILDER builder = (BUILDER) PlatformUtils.getFactory().createComponentBuilder(pagination);
             if (builder instanceof ItemComponentBuilder) ((ItemComponentBuilder) builder).setPosition(slot);
 
             elementConsumer.accept(context, builder, index, value);
