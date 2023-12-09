@@ -13,7 +13,7 @@ public final class PaginationBuilder<CONTEXT, BUILDER, V>
 
     private final ElementFactory internalElementFactory;
     private final Object sourceProvider;
-    private char layoutTarget = LayoutSlot.FILLED_RESERVED_CHAR;
+    private char layoutTarget = LayoutSlot.DEFAULT_SLOT_FILL_CHAR;
     private PaginationElementFactory<V> paginationElementFactory;
     private BiConsumer<CONTEXT, Pagination> pageSwitchHandler;
     private final boolean async, computed;
@@ -79,7 +79,7 @@ public final class PaginationBuilder<CONTEXT, BUILDER, V>
      * <p>
      * By default, if there is a layout available and a target character has not
      * been explicitly  defined in the layout, the layout's rendering target
-     * character will be the {@link LayoutSlot#FILLED_RESERVED_CHAR reserved layout character}.
+     * character will be the {@link LayoutSlot#DEFAULT_SLOT_FILL_CHAR default layout character}.
      * <p>
      * If there is no layout configured, pagination will be rendered throughout the view container.
      *

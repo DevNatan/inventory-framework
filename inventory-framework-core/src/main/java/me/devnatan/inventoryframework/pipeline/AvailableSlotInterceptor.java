@@ -65,7 +65,7 @@ public final class AvailableSlotInterceptor implements PipelineInterceptor<Virtu
     @VisibleForTesting
     List<ComponentBuilder> resolveFromLayoutSlot(IFRenderContext context) {
         final Optional<LayoutSlot> layoutSlotOption = context.getLayoutSlots().stream()
-                .filter(layoutSlot -> layoutSlot.getCharacter() == LayoutSlot.FILLED_RESERVED_CHAR)
+                .filter(layoutSlot -> layoutSlot.getCharacter() == LayoutSlot.DEFAULT_SLOT_FILL_CHAR)
                 .findFirst();
 
         if (!layoutSlotOption.isPresent()) return Collections.emptyList();
