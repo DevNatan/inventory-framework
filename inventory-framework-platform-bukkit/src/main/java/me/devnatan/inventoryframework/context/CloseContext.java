@@ -31,7 +31,6 @@ public class CloseContext extends PlatformConfinedContext implements IFCloseCont
         this.parent = parent;
     }
 
-    // TODO Needs documentation
     public final @NotNull Player getPlayer() {
         return player;
     }

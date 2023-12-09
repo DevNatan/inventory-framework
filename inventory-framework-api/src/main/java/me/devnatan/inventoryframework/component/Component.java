@@ -89,7 +89,6 @@ public interface Component extends VirtualView, Pipelined {
     @ApiStatus.Internal
     boolean isManagedExternally();
 
-    // TODO Needs documentation
     boolean shouldRender(IFContext context);
 
     /**

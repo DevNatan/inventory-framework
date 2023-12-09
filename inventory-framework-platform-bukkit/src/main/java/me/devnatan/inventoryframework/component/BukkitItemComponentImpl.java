@@ -8,7 +8,6 @@ import me.devnatan.inventoryframework.InventoryFrameworkException;
 import me.devnatan.inventoryframework.Ref;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.ComponentRenderContext;
-import me.devnatan.inventoryframework.context.Context;
 import me.devnatan.inventoryframework.context.IFComponentContext;
 import me.devnatan.inventoryframework.context.IFComponentRenderContext;
 import me.devnatan.inventoryframework.context.IFComponentUpdateContext;
@@ -22,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * {@link ItemComponent} implementation for Bukkit platform.
  */
-public final class BukkitItemComponentImpl extends PlatformComponent<Context, Void> implements ItemComponent {
+public final class BukkitItemComponentImpl extends PlatformComponent implements ItemComponent {
 
     private int position;
     private final ItemStack stack;
@@ -55,7 +54,7 @@ public final class BukkitItemComponentImpl extends PlatformComponent<Context, Vo
                 updateOnClick);
         this.position = position;
         this.stack = itemStack;
-        setHandle(new Handle(this));
+        setHandle(new Handle());
     }
 
     @Override
@@ -109,12 +108,6 @@ public final class BukkitItemComponentImpl extends PlatformComponent<Context, Vo
 }
 
 class Handle extends BukkitComponentHandle<BukkitItemComponentBuilder<Void>> {
-
-    private BukkitItemComponentImpl component;
-
-    Handle(BukkitItemComponentImpl component) {
-        this.component = component;
-    }
 
     @Override
     public void rendered(@NotNull ComponentRenderContext context) {
