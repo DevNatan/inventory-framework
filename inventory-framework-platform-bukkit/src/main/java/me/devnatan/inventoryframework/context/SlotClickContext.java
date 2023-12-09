@@ -172,4 +172,18 @@ public class SlotClickContext extends SlotContext implements IFSlotClickContext 
     public final boolean isCombined() {
         return combined;
     }
+
+    @Override
+    public boolean isLayoutSlot() {
+        return getParent().getLayoutSlots().stream().anyMatch(layoutSlot -> layoutSlot.isInPosition(getClickedSlot()));
+    }
+
+    @Override
+    public boolean isLayoutSlot(char character) {
+        return getParent().getLayoutSlots().stream()
+                .filter(layoutSlot -> layoutSlot.getCharacter() == character)
+                .findFirst()
+                .map(layoutSlot -> layoutSlot.isInPosition(getClickedSlot()))
+                .orElse(false);
+    }
 }
