@@ -22,6 +22,11 @@ import org.jetbrains.annotations.ApiStatus;
  */
 public interface Pagination extends ComponentComposition {
 
+    public enum Orientation {
+        VERTICAL,
+        HORIZONTAL,
+    }
+
     /**
      * The current page number.
      *
@@ -211,6 +216,8 @@ public interface Pagination extends ComponentComposition {
      */
     @ApiStatus.Experimental
     void forceUpdate();
+
+    Orientation getOrientation();
 
     /**
      * Gets all elements in a given page index based of the specified source.

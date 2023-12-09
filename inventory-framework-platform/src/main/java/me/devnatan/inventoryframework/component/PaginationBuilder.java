@@ -17,6 +17,7 @@ public final class PaginationBuilder<CONTEXT, BUILDER, V>
     private PaginationElementFactory<V> paginationElementFactory;
     private BiConsumer<CONTEXT, Pagination> pageSwitchHandler;
     private final boolean async, computed;
+    private Pagination.Orientation orientation = Pagination.Orientation.HORIZONTAL;
 
     /**
      * <b><i> This is an internal inventory-framework API that should not be used from outside of
@@ -106,6 +107,23 @@ public final class PaginationBuilder<CONTEXT, BUILDER, V>
         return this;
     }
 
+    /**
+     * Defines the pagination iteration order.
+     * Default value is {@link Pagination.Orientation#HORIZONTAL}.
+     *
+     * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     *
+     * @param orientation The pagination orientation.
+     * @return This pagination builder.
+     * @see <a href="https://github.com/DevNatan/inventory-framework/wiki/Pagination#pagination-orientation">Pagination Orientation on Wiki</a>
+     */
+    @ApiStatus.Experimental
+    public PaginationBuilder<CONTEXT, BUILDER, V> orientation(@NotNull Pagination.Orientation orientation) {
+        this.orientation = orientation;
+        return this;
+    }
+
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     public Component build(VirtualView root) {
@@ -122,6 +140,7 @@ public final class PaginationBuilder<CONTEXT, BUILDER, V>
                 (PaginationElementFactory) paginationElementFactory,
                 (BiConsumer) pageSwitchHandler,
                 async,
-                computed);
+                computed,
+                orientation);
     }
 }

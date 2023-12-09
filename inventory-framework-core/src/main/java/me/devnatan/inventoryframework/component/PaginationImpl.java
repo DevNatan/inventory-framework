@@ -39,6 +39,7 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
     private final Object sourceProvider;
     private final PaginationElementFactory<Object> elementFactory;
     private final BiConsumer<VirtualView, Pagination> pageSwitchHandler;
+    private final Orientation orientation;
 
     // --- Internal ---
     private final long internalStateId;
@@ -78,7 +79,8 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
             PaginationElementFactory<Object> elementFactory,
             BiConsumer<VirtualView, Pagination> pageSwitchHandler,
             boolean isAsync,
-            boolean isComputed) {
+            boolean isComputed,
+            Orientation orientation) {
         super(key, root, reference, watchingStates, displayCondition);
         this.internalStateId = internalStateId;
         this.layoutTarget = layoutTarget;
@@ -91,6 +93,7 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
         this.isStatic = sourceProvider instanceof Collection;
         this.isLazy =
                 !isStatic && !isComputed && (sourceProvider instanceof Function || sourceProvider instanceof Supplier);
+        this.orientation = orientation;
     }
 
     /**
@@ -631,6 +634,11 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
                 break;
             }
         }
+    }
+
+    @Override
+    public Orientation getOrientation() {
+        return orientation;
     }
 
     @Override
