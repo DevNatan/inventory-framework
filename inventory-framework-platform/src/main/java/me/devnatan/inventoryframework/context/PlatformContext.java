@@ -1,10 +1,14 @@
 package me.devnatan.inventoryframework.context;
 
 import java.util.Optional;
+import java.util.function.Consumer;
 import me.devnatan.inventoryframework.*;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.ComponentComposition;
 import me.devnatan.inventoryframework.component.ComponentContainer;
+import me.devnatan.inventoryframework.state.State;
+import me.devnatan.inventoryframework.state.StateValue;
+import me.devnatan.inventoryframework.state.StateWatcher;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -143,6 +147,15 @@ public abstract class PlatformContext extends AbstractIFContext implements Compo
         return Optional.empty();
     }
     // endregion
+
+    @Override
+    protected void callStateListeners(@NotNull StateValue value, Consumer<StateWatcher> call) {
+        super.callStateListeners(value, call);
+        for (final State<?> state : getRoot().getStateRegistry()) {
+            if (!(state instanceof StateWatcher)) continue;
+            call.accept((StateWatcher) state);
+        }
+    }
 
     @Override
     public String toString() {

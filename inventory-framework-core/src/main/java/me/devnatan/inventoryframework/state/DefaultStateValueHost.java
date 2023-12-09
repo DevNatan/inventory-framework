@@ -37,7 +37,7 @@ public class DefaultStateValueHost implements StateValueHost {
     public Object getRawStateValue(State<?> state) {
         final StateValue value = getInternalStateValue(state);
         final Object result = value.get();
-        callListeners(value, listener -> listener.stateValueGet(state, this, value, result));
+        callStateListeners(value, listener -> listener.stateValueGet(state, this, value, result));
         return result;
     }
 
@@ -67,7 +67,7 @@ public class DefaultStateValueHost implements StateValueHost {
 
         final Object newValue = stateValue.get();
         IFDebug.debug("State %s updated (oldValue = %s, newValue = %s)", id, oldValue, newValue);
-        callListeners(stateValue, listener -> listener.stateValueSet(this, stateValue, oldValue, newValue));
+        callStateListeners(stateValue, listener -> listener.stateValueSet(this, stateValue, oldValue, newValue));
     }
 
     @Override
@@ -75,14 +75,10 @@ public class DefaultStateValueHost implements StateValueHost {
         listeners.computeIfAbsent(id, $ -> new ArrayList<>()).add(listener);
     }
 
-    private void callListeners(@NotNull StateValue value, Consumer<StateWatcher> call) {
+    protected void callStateListeners(@NotNull StateValue value, Consumer<StateWatcher> call) {
         if (value instanceof StateWatcher) call.accept((StateWatcher) value);
 
-        // TODO Put it back to work with PaginationState as StateWatcher
-        //        if (value.getState() instanceof StateWatcher) call.accept((StateWatcher) value.getState());
-
-        if (!listeners.containsKey(value.internalId())) return;
-
-        listeners.get(value.internalId()).forEach(call);
+        if (listeners.containsKey(value.internalId()))
+            listeners.get(value.internalId()).forEach(call);
     }
 }
