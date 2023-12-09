@@ -2,7 +2,6 @@ package me.devnatan.inventoryframework.state;
 
 import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.LAYOUT_RESOLUTION;
 
-import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.component.Pagination;
 import me.devnatan.inventoryframework.context.IFContext;
@@ -11,6 +10,7 @@ import me.devnatan.inventoryframework.pipeline.Pipeline;
 import me.devnatan.inventoryframework.pipeline.PipelineContext;
 import me.devnatan.inventoryframework.pipeline.PipelineInterceptor;
 import me.devnatan.inventoryframework.pipeline.PipelinePhase;
+import me.devnatan.inventoryframework.pipeline.Pipelined;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -32,24 +32,18 @@ public final class PaginationState extends BaseState<Pagination> implements Stat
 
     @Override
     public void stateRegistered(@NotNull State<?> state, Object caller) {
-        // TODO Allow usage in abstract components
-        if (!(caller instanceof RootView))
+        if (!(caller instanceof Pipelined))
             throw new IllegalArgumentException(
-                    "Pagination state can only be registered by RootView: " + caller.getClass());
+                    "Caller of Pagination state must be a pipeline-based entity: " + caller.getClass());
 
-        final Pipeline<VirtualView> pipeline = ((RootView) caller).getPipeline();
+        final Pipeline<VirtualView> pipeline = ((Pipelined) caller).getPipeline();
         pipeline.insertPhaseAfter(LAYOUT_RESOLUTION, PAGINATION_RENDER);
         pipeline.intercept(PAGINATION_RENDER, pipelineInterceptor);
     }
 
     @Override
     public void stateUnregistered(@NotNull State<?> state, Object caller) {
-        // TODO Allow usage in abstract components
-        if (!(caller instanceof RootView))
-            throw new IllegalArgumentException(
-                    "Pagination state can only be unregistered by RootView: " + caller.getClass());
-
-        (((RootView) caller)).getPipeline().removeInterceptor(PAGINATION_RENDER, pipelineInterceptor);
+        (((Pipelined) caller)).getPipeline().removeInterceptor(PAGINATION_RENDER, pipelineInterceptor);
     }
 
     @Override

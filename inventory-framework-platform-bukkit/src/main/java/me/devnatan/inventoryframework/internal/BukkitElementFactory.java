@@ -31,7 +31,6 @@ public class BukkitElementFactory extends ElementFactory {
         return new View();
     }
 
-    // TODO Test it
     @Override
     public @NotNull ViewContainer createContainer(@NotNull IFContext context) {
         final ViewConfig config = context.getConfig();

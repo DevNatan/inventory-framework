@@ -5,8 +5,8 @@ import me.devnatan.inventoryframework.Ref;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.IFContext;
-import me.devnatan.inventoryframework.pipeline.Pipeline;
 import me.devnatan.inventoryframework.pipeline.PipelinePhase;
+import me.devnatan.inventoryframework.pipeline.Pipelined;
 import me.devnatan.inventoryframework.state.State;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -15,7 +15,7 @@ import org.jetbrains.annotations.UnmodifiableView;
 /**
  * A component represents one or {@link ComponentComposition more} items within a {@link VirtualView}.
  */
-public interface Component extends VirtualView {
+public interface Component extends VirtualView, Pipelined {
 
     PipelinePhase RENDER = new PipelinePhase("component-render");
     PipelinePhase UPDATE = new PipelinePhase("component-update");
@@ -147,12 +147,4 @@ public interface Component extends VirtualView {
      */
     @ApiStatus.Internal
     void setHandle(ComponentHandle handle);
-
-    /**
-     * <b><i> This is an internal inventory-framework API that should not be used from outside of
-     * this library. No compatibility guarantees are provided. </i></b>
-     */
-    @ApiStatus.Internal
-    @NotNull
-    Pipeline<VirtualView> getPipeline();
 }
