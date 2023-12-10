@@ -74,9 +74,7 @@ public final class BukkitViewContainer implements ViewContainer {
 
     @Override
     public void renderItem(int slot, Object platformItem) {
-        System.out.println("slot = " + slot);
         final int fixedSlot = isEntityContainer() && isProxied() ? getLastSlot() - slot : slot;
-        System.out.println("fixedSlot = " + fixedSlot);
         inventory.setItem(fixedSlot, (ItemStack) platformItem);
     }
 
@@ -109,8 +107,6 @@ public final class BukkitViewContainer implements ViewContainer {
 
     @Override
     public int getLastSlot() {
-        System.out.println("isEntityContainer() = " + isEntityContainer());
-        System.out.println("inventory.getSize() = " + inventory.getSize());
         if (isEntityContainer()) return inventory.getSize() - 1;
 
         final int[] resultSlots = getType().getResultSlots();

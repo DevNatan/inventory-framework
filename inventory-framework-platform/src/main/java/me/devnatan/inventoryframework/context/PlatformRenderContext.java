@@ -146,7 +146,6 @@ public abstract class PlatformRenderContext<ITEM_BUILDER extends ItemComponentBu
      * @return An item builder to configure the item.
      */
     public final @NotNull ITEM_BUILDER lastSlot() {
-        System.out.println("getContainer().getLastSlot() = " + getContainer().getLastSlot());
         return createRegisteredBuilderInPosition(getContainer().getLastSlot());
     }
 
