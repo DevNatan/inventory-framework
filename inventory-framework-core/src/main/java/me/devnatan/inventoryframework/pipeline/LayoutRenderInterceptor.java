@@ -4,7 +4,7 @@ import java.util.function.IntFunction;
 import me.devnatan.inventoryframework.InventoryFrameworkException;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.component.Component;
-import me.devnatan.inventoryframework.component.ComponentFactory;
+import me.devnatan.inventoryframework.component.ComponentBuilder;
 import me.devnatan.inventoryframework.component.ItemComponentBuilder;
 import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
@@ -17,7 +17,7 @@ public final class LayoutRenderInterceptor implements PipelineInterceptor<Virtua
 
         final IFRenderContext renderContext = (IFRenderContext) subject;
         for (final LayoutSlot layoutSlot : renderContext.getLayoutSlots()) {
-            final IntFunction<ComponentFactory> factory = layoutSlot.getFactory();
+            final IntFunction<ComponentBuilder> factory = layoutSlot.getFactory();
             if (factory == null) {
                 if (layoutSlot.isDefinedByTheUser())
                     throw new InventoryFrameworkException(
@@ -27,11 +27,11 @@ public final class LayoutRenderInterceptor implements PipelineInterceptor<Virtua
 
             int iterationIndex = 0;
             for (final int slot : layoutSlot.getPositions()) {
-                final ComponentFactory componentFactory = factory.apply(iterationIndex++);
+                final ComponentBuilder componentFactory = factory.apply(iterationIndex++);
                 if (componentFactory instanceof ItemComponentBuilder)
                     ((ItemComponentBuilder) componentFactory).setPosition(slot);
 
-                final Component component = componentFactory.create();
+                final Component component = componentFactory.buildComponent(renderContext);
                 renderContext.addComponent(component);
             }
         }

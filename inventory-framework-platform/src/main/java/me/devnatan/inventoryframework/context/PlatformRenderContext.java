@@ -21,7 +21,6 @@ import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.component.AbstractComponentHandle;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.ComponentBuilder;
-import me.devnatan.inventoryframework.component.ComponentFactory;
 import me.devnatan.inventoryframework.component.ItemComponentBuilder;
 import me.devnatan.inventoryframework.component.PlatformComponentBuilder;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
@@ -196,7 +195,7 @@ public abstract class PlatformRenderContext<ITEM_BUILDER extends ItemComponentBu
                 .orElseThrow(() -> new InventoryFrameworkException("Missing layout character: " + character));
 
         final ITEM_BUILDER builder = createBuilder();
-        getLayoutSlots().add(layoutSlot.withFactory($ -> (ComponentFactory) builder));
+        getLayoutSlots().add(layoutSlot.withFactory($ -> builder));
         return builder;
     }
 
@@ -219,7 +218,7 @@ public abstract class PlatformRenderContext<ITEM_BUILDER extends ItemComponentBu
         getLayoutSlots().add(layoutSlot.withFactory(index -> {
             final ITEM_BUILDER builder = createBuilder();
             factory.accept(index, builder);
-            return (ComponentFactory) builder;
+            return builder;
         }));
     }
 

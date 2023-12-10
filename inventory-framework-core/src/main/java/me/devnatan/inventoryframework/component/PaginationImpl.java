@@ -34,10 +34,6 @@ import org.jetbrains.annotations.VisibleForTesting;
 @VisibleForTesting
 public class PaginationImpl extends AbstractComponent implements Pagination, StateValue {
 
-    {
-        setHandle(new Handle(this));
-    }
-
     private List<Component> components = new ArrayList<>();
 
     // --- User provided ---
@@ -86,6 +82,7 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
             boolean isAsync,
             boolean isComputed) {
         super(key, root, reference, watchingStates, displayCondition);
+        setHandle(new Handle(this));
         this.internalStateId = internalStateId;
         this.layoutTarget = layoutTarget;
         this.sourceProvider = sourceProvider;
@@ -649,7 +646,7 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
         PaginationImpl that = (PaginationImpl) o;
         return getLayoutTarget() == that.getLayoutTarget()
                 && currPageIndex == that.currPageIndex
-                && getPageSize() == that.getPageSize()
+                && pageSize == that.pageSize
                 && isLazy() == that.isLazy()
                 && pageWasChanged == that.pageWasChanged
                 && Objects.equals(sourceProvider, that.sourceProvider)
@@ -663,7 +660,7 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
                 sourceProvider,
                 pageSwitchHandler,
                 currPageIndex,
-                getPageSize(),
+                pageSize,
                 isLazy(),
                 pageWasChanged);
     }
