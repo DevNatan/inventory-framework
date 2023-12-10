@@ -87,7 +87,7 @@ public final class BukkitItemComponentImplHandle extends BukkitComponentHandle<B
     }
 
     @Override
-    public BukkitItemComponentBuilder<Void> builder() {
-        return new BukkitItemComponentBuilder<>();
+    public BukkitItemComponentBuilder builder() {
+        return new BukkitItemComponentBuilder();
     }
 }

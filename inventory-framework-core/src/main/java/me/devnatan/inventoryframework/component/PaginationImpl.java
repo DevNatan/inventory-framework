@@ -34,6 +34,10 @@ import org.jetbrains.annotations.VisibleForTesting;
 @VisibleForTesting
 public class PaginationImpl extends AbstractComponent implements Pagination, StateValue {
 
+    {
+        setHandle(new Handle(this));
+    }
+
     private List<Component> components = new ArrayList<>();
 
     // --- User provided ---
@@ -93,7 +97,6 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
         this.isStatic = sourceProvider instanceof Collection;
         this.isLazy =
                 !isStatic && !isComputed && (sourceProvider instanceof Function || sourceProvider instanceof Supplier);
-        setHandle(new Handle(this));
     }
 
     // region Source Retrieval & Assignment
