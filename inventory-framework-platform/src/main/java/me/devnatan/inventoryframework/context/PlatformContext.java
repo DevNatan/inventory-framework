@@ -1,5 +1,6 @@
 package me.devnatan.inventoryframework.context;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import me.devnatan.inventoryframework.*;
@@ -131,13 +132,13 @@ public abstract class PlatformContext extends AbstractIFContext implements Compo
         // TODO Support recursive overlapping (more than two components overlapping each other)
         for (final Component child : container.getInternalComponents()) {
             if (!child.isVisible()) continue;
-            if (child.getKey().equals(subject.getKey())) continue;
+            if (Objects.equals(child.getKey(), subject.getKey())) continue;
             if (child instanceof ComponentComposition) {
                 // This prevents from child being compared with its own root that would cause an
                 // infinite rendering loop causing the root being re-rendered entirely, thus the
                 // child, because child always intersects with its root since it is inside it
                 if (subject.getRoot() instanceof Component
-                        && child.getKey().equals(((Component) subject.getRoot()).getKey())) {
+                        && Objects.equals(child.getKey(), ((Component) subject.getRoot()).getKey())) {
                     continue;
                 }
 

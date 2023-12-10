@@ -12,7 +12,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -21,8 +20,6 @@ import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.*;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
-import me.devnatan.inventoryframework.pipeline.PipelineContext;
-import me.devnatan.inventoryframework.pipeline.PipelinePhase;
 import me.devnatan.inventoryframework.state.State;
 import me.devnatan.inventoryframework.state.StateValue;
 import me.devnatan.inventoryframework.state.StateValueHost;
@@ -82,7 +79,6 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
             boolean isAsync,
             boolean isComputed) {
         super(key, root, reference, watchingStates, displayCondition);
-        setHandle(new Handle(this));
         this.internalStateId = internalStateId;
         this.layoutTarget = layoutTarget;
         this.sourceProvider = sourceProvider;
@@ -148,7 +144,7 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
         simulateStateUpdate();
 
         // TODO Do some error treatment here, even if we expect to the user to handle it
-        return createProvidedNewSource().handle((result, exception) -> {
+        return createNewProvidedSource().handle((result, exception) -> {
             if (exception != null) {
                 debug("[Pagination] An error occurred on data source computation: %s", exception.getMessage());
                 exception.printStackTrace();
@@ -166,8 +162,10 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
     }
 
     @SuppressWarnings("unchecked")
-    private CompletableFuture<List<?>> createProvidedNewSource() {
+    private CompletableFuture<List<?>> createNewProvidedSource() {
         CompletableFuture<List<?>> job = new CompletableFuture<>();
+
+        System.out.println("getRoot() = " + getRoot());
 
         final Object source = _srcFactory.apply(getRoot());
         if (isAsync()) job = (CompletableFuture<List<?>>) source;
@@ -383,11 +381,6 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
         // do nothing since Pagination is not immutable but unmodifiable directly
     }
 
-    private void accessStateHost(Consumer<StateValueHost> consumer) {
-        if (!(getRoot() instanceof StateValueHost)) return;
-        consumer.accept((StateValueHost) getRoot());
-    }
-
     /**
      * Simulate state update to call listeners thus calling watches in parent components.
      * <p>
@@ -395,8 +388,8 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
      * for changes in {@link #isLoading()} and current page states.
      */
     private void simulateStateUpdate() {
-        debug("[Pagination] State update simulation triggered on %d", internalStateId);
-        accessStateHost(host -> host.updateState(internalStateId, this));
+        debug("[Pagination] State update simulation triggered on %d", internalId());
+        ((StateValueHost) getRoot()).updateState(internalId(), this);
     }
     // endregion
 
@@ -680,24 +673,5 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
                 + _srcFactory + ", currSource="
                 + currSource + "} "
                 + super.toString();
-    }
-}
-
-class Handle extends ComponentHandle {
-
-    private final PaginationImpl pagination;
-
-    public Handle(PaginationImpl pagination) {
-        this.pagination = pagination;
-    }
-
-    @Override
-    public void intercept(PipelineContext<VirtualView> pipeline, VirtualView subject) {
-        final PipelinePhase phase = Objects.requireNonNull(
-                pipeline.getPhase(), "Pipeline phase cannot be null in ComponentHandle interceptor");
-        if (phase == Component.RENDER) pagination.render((IFComponentRenderContext) subject);
-        else if (phase == Component.UPDATE) pagination.updated((IFComponentUpdateContext) subject);
-        else if (phase == Component.CLEAR) pagination.cleared((IFRenderContext) subject);
-        else if (phase == Component.CLICK) pagination.clicked((IFSlotClickContext) subject);
     }
 }

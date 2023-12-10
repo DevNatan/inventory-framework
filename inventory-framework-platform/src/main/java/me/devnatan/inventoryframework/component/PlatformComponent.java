@@ -68,4 +68,16 @@ public abstract class PlatformComponent extends AbstractComponent implements Com
         return clickHandler;
     }
     // endregion
+
+    @Override
+    public String toString() {
+        return "PlatformComponent{" + "cancelOnClick="
+                + cancelOnClick + ", closeOnClick="
+                + closeOnClick + ", updateOnClick="
+                + updateOnClick + ", renderHandler="
+                + renderHandler + ", updateHandler="
+                + updateHandler + ", clickHandler="
+                + clickHandler + "} "
+                + super.toString();
+    }
 }

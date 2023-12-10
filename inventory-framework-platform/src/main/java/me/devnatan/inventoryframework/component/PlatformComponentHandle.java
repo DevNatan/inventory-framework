@@ -13,13 +13,13 @@ import me.devnatan.inventoryframework.state.StateAccessImpl;
 import me.devnatan.inventoryframework.state.StateRegistry;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class AbstractComponentHandle<CONTEXT, COMPONENT_BUILDER> extends ComponentHandle
+public abstract class PlatformComponentHandle<CONTEXT, COMPONENT_BUILDER> extends ComponentHandle
         implements StateAccess<CONTEXT, COMPONENT_BUILDER>, VirtualView {
 
     private final StateRegistry stateRegistry = new StateRegistry();
     private final StateAccess<CONTEXT, COMPONENT_BUILDER> stateAccess = new StateAccessImpl<>(this, stateRegistry);
 
-    protected AbstractComponentHandle() {}
+    protected PlatformComponentHandle() {}
 
     public abstract COMPONENT_BUILDER builder();
 

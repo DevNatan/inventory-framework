@@ -158,6 +158,11 @@ public final class RenderContext extends PlatformRenderContext<BukkitItemCompone
     IFComponentUpdateContext createComponentUpdateContext(Component component, boolean force, UpdateReason reason) {
         return new ComponentUpdateContext(this, component, getViewer());
     }
+
+    @Override
+    IFComponentClearContext createComponentClearContext(Component component) {
+        return new ComponentClearContext(this, component, getViewer());
+    }
     // endregion
 
     @Override

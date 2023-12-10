@@ -1,11 +1,11 @@
 package me.devnatan.inventoryframework.component;
 
 import me.devnatan.inventoryframework.InventoryFrameworkException;
+import me.devnatan.inventoryframework.context.ComponentClearContext;
 import me.devnatan.inventoryframework.context.ComponentRenderContext;
-import me.devnatan.inventoryframework.context.IFComponentContext;
-import me.devnatan.inventoryframework.context.IFComponentUpdateContext;
+import me.devnatan.inventoryframework.context.ComponentUpdateContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
-import me.devnatan.inventoryframework.context.IFSlotClickContext;
+import me.devnatan.inventoryframework.context.SlotClickContext;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -57,7 +57,7 @@ public final class BukkitItemComponentImplHandle extends BukkitComponentHandle<B
     }
 
     @Override
-    public void updated(@NotNull IFComponentUpdateContext context) {
+    protected void updated(ComponentUpdateContext context) {
         if (context.isCancelled()) return;
 
         final PlatformComponent component = (PlatformComponent) context.getComponent();
@@ -75,14 +75,17 @@ public final class BukkitItemComponentImplHandle extends BukkitComponentHandle<B
     }
 
     @Override
-    public void cleared(@NotNull IFComponentContext context) {
+    protected void cleared(ComponentClearContext context) {
         final Component component = context.getComponent();
         component.getContainer().removeItem(((ItemComponent) component).getPosition());
     }
 
     @Override
-    public void clicked(@NotNull IFSlotClickContext context) {
+    protected void clicked(SlotClickContext context) {
         final PlatformComponent component = (PlatformComponent) context.getComponent();
+        if (component.getClickHandler() != null) {
+            component.getClickHandler().accept(context);
+        }
         if (component.isUpdateOnClick()) context.update();
     }
 

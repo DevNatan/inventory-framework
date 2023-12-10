@@ -201,7 +201,8 @@ public final class StateAccessImpl<CONTEXT, ITEM_BUILDER> implements StateAccess
 
     <V> State<Pagination> createPaginationState(@NotNull PaginationBuilder<CONTEXT, ITEM_BUILDER, V> builder) {
         final long id = State.next();
-        final StateValueFactory factory = (host, state) -> (PaginationImpl) builder.buildComponent((VirtualView) host);
+        final StateValueFactory factory =
+                (host, state) -> (PaginationImpl) builder.buildComponent0(id, (VirtualView) host);
         final State<Pagination> state = new PaginationState(id, factory);
         this.stateRegistry.registerState(state, caller);
 

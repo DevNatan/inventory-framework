@@ -68,12 +68,12 @@ public final class PaginationBuilder<CONTEXT, BUILDER, V>
             @NotNull PaginationValueConsumer<CONTEXT, BUILDER, V> elementConsumer) {
         this.paginationElementFactory = (pagination, index, slot, value) -> {
             CONTEXT context = (CONTEXT) pagination.getRoot();
-            BUILDER builder = (BUILDER) PlatformUtils.getFactory().createItemComponentBuilder(pagination);
-            if (builder instanceof ItemComponentBuilder) ((ItemComponentBuilder) builder).setPosition(slot);
+            ItemComponentBuilder builder = PlatformUtils.getFactory().createItemComponentBuilder(pagination);
+            builder.setPosition(slot);
 
-            elementConsumer.accept(context, builder, index, value);
+            elementConsumer.accept(context, (BUILDER) builder, index, value);
 
-            return ((ComponentBuilder) builder).buildComponent(pagination);
+            return builder.buildComponent(pagination);
         };
         return this;
     }
@@ -119,10 +119,18 @@ public final class PaginationBuilder<CONTEXT, BUILDER, V>
         return stateFactory.apply(this);
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     public Component buildComponent(VirtualView root) {
-        long stateId = State.next();
+        throw new UnsupportedOperationException("PaginationBuilder component cannot be built");
+    }
+
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public Pagination buildComponent0(long stateId, VirtualView root) {
         return new PaginationImpl(
                 Long.toString(stateId),
                 root,
