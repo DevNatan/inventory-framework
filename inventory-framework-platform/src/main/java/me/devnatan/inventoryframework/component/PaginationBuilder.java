@@ -16,6 +16,7 @@ public final class PaginationBuilder<CONTEXT, BUILDER, V>
     private PaginationElementFactory<V> paginationElementFactory;
     private BiConsumer<CONTEXT, Pagination> pageSwitchHandler;
     private final boolean async, computed;
+    private Pagination.KeyFactory<V> keyFactory;
 
     /**
      * <b><i> This is an internal inventory-framework API that should not be used from outside of
@@ -103,6 +104,16 @@ public final class PaginationBuilder<CONTEXT, BUILDER, V>
         return this;
     }
 
+    /**
+     * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     */
+    @ApiStatus.Experimental
+    public PaginationBuilder<CONTEXT, BUILDER, V> key(Pagination.KeyFactory<V> keyFactory) {
+        this.keyFactory = keyFactory;
+        return this;
+    }
+
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     public Component buildComponent(VirtualView root) {
@@ -119,6 +130,7 @@ public final class PaginationBuilder<CONTEXT, BUILDER, V>
                 (PaginationElementFactory) paginationElementFactory,
                 (BiConsumer) pageSwitchHandler,
                 async,
-                computed);
+                computed,
+                keyFactory);
     }
 }

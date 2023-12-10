@@ -30,19 +30,20 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
 import org.jetbrains.annotations.VisibleForTesting;
 
-// TODO add "key" to child pagination components and check if it needs to be updated based on it
 @VisibleForTesting
 public class PaginationImpl extends AbstractComponent implements Pagination, StateValue {
 
-    private List<Component> components = new ArrayList<>();
+    private static final KeyFactory<?> DEFAULT_KEY_FACTORY = (index, value) -> index;
 
     // --- User provided ---
     private final char layoutTarget;
     private final Object sourceProvider;
     private final PaginationElementFactory<Object> elementFactory;
     private final BiConsumer<VirtualView, Pagination> pageSwitchHandler;
+    private final Pagination.KeyFactory<?> keyFactory;
 
     // --- Internal ---
+    private List<Component> components = new ArrayList<>();
     private final long internalStateId;
     private int currPageIndex;
     private final boolean isLazy, isStatic, isComputed, isAsync;
@@ -80,7 +81,8 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
             PaginationElementFactory<Object> elementFactory,
             BiConsumer<VirtualView, Pagination> pageSwitchHandler,
             boolean isAsync,
-            boolean isComputed) {
+            boolean isComputed,
+            Pagination.KeyFactory<?> keyFactory) {
         super(key, root, reference, watchingStates, displayCondition);
         this.internalStateId = internalStateId;
         this.layoutTarget = layoutTarget;
@@ -93,6 +95,7 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
         this.isStatic = sourceProvider instanceof Collection;
         this.isLazy =
                 !isStatic && !isComputed && (sourceProvider instanceof Function || sourceProvider instanceof Supplier);
+        this.keyFactory = keyFactory == null ? DEFAULT_KEY_FACTORY : keyFactory;
         setHandle(new Handle(this));
     }
 
@@ -546,6 +549,11 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
     @Override
     public boolean isLoading() {
         return isLoading;
+    }
+
+    @Override
+    public KeyFactory<?> getKeyFactory() {
+        return keyFactory;
     }
 
     @NotNull

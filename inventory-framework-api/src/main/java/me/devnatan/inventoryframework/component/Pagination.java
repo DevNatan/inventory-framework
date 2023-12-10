@@ -240,4 +240,17 @@ public interface Pagination extends ComponentComposition {
 
         return contents;
     }
+
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
+    KeyFactory<?> getKeyFactory();
+
+    @FunctionalInterface
+    interface KeyFactory<V> {
+
+        Object create(int index, V value);
+    }
 }
