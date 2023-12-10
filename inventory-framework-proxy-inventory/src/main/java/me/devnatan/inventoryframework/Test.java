@@ -27,7 +27,7 @@ class TestView extends View {
 		open.modifyConfig()
 			.title("Piroca de foice")
 			.cancelOnClick()
-			.use(Proxy.createProxy(open.getPlayer().getInventory()));
+			.use(ProxyInventory.createProxy(open.getPlayer().getInventory()));
 	}
 
 	@Override

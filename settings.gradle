@@ -22,4 +22,4 @@ include 'inventory-framework-api',
         'inventory-framework-platform-paper',
         'inventory-framework-platform-bukkit',
         'inventory-framework-anvil-input',
-        'inventory-framework-proxy'
+        'inventory-framework-proxy-inventory'

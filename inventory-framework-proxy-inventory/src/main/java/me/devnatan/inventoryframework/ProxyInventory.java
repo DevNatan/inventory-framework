@@ -7,11 +7,11 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unused")
-public final class Proxy implements ViewConfig.Modifier {
+public final class ProxyInventory implements ViewConfig.Modifier {
 
     private final ViewContainer proxiedContainer;
 
-    private Proxy(ViewContainer proxiedContainer) {
+    private ProxyInventory(ViewContainer proxiedContainer) {
         this.proxiedContainer = proxiedContainer;
     }
 
@@ -32,7 +32,7 @@ public final class Proxy implements ViewConfig.Modifier {
      * such API may be changed or may be removed completely in any further release. </i></b>
      */
     @ApiStatus.Experimental
-    public static Proxy createProxy(Inventory inventory) {
-        return new Proxy(new BukkitViewContainer(inventory, ViewType.PLAYER, true, false));
+    public static ProxyInventory createProxy(Inventory inventory) {
+        return new ProxyInventory(new BukkitViewContainer(inventory, ViewType.PLAYER, true, false));
     }
 }
