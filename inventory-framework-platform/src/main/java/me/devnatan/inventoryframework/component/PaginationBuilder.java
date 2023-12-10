@@ -68,7 +68,7 @@ public final class PaginationBuilder<CONTEXT, BUILDER, V>
             @NotNull PaginationValueConsumer<CONTEXT, BUILDER, V> elementConsumer) {
         this.paginationElementFactory = (pagination, index, slot, value) -> {
             CONTEXT context = (CONTEXT) pagination.getRoot();
-            BUILDER builder = (BUILDER) PlatformUtils.getFactory().createComponentBuilder(pagination);
+            BUILDER builder = (BUILDER) PlatformUtils.getFactory().createItemComponentBuilder(pagination);
             if (builder instanceof ItemComponentBuilder) ((ItemComponentBuilder) builder).setPosition(slot);
 
             elementConsumer.accept(context, builder, index, value);
