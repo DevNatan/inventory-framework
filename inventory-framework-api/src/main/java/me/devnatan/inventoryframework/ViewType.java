@@ -20,7 +20,7 @@ public final class ViewType {
     public static final ViewType SHULKER_BOX = new ViewType("shulker-box", 27, 3, 9);
     public static final ViewType SMOKER = new ViewType("smoker", 3, 2, 2, false, new int[] {2});
     public static final ViewType VILLAGER_TRADING = new ViewType("villager-trading", 3, 1, 3, false, new int[] {2});
-    public static final ViewType PLAYER = new ViewType("player", 54, 3, 9, false);
+    public static final ViewType PLAYER = new ViewType("player", 36, 3, 9, false);
 
     private static final int[] EMPTY_RESULT_SLOTS = new int[0];
 

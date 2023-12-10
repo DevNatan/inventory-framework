@@ -16,6 +16,7 @@ public abstract class PlatformContext extends AbstractIFContext implements Compo
 
     private boolean endless;
     private boolean active = true;
+    private String updatedTitle;
 
     PlatformContext() {}
 
@@ -45,16 +46,22 @@ public abstract class PlatformContext extends AbstractIFContext implements Compo
      */
     @Nullable
     public final String getUpdatedTitle() {
-        return getContainerOrThrow().getTitle();
+        return updatedTitle;
+    }
+
+    protected void setUpdatedTitle(String updatedTitle) {
+        this.updatedTitle = updatedTitle;
     }
 
     @Override
     public final void updateTitleForEveryone(@NotNull String title) {
+        setUpdatedTitle(title);
         for (final Viewer viewer : getViewers()) getContainerOrThrow().changeTitle(title, viewer);
     }
 
     @Override
     public final void resetTitleForEveryone() {
+        setUpdatedTitle(null);
         for (final Viewer viewer : getViewers()) getContainerOrThrow().changeTitle(null, viewer);
     }
     // endregion
@@ -104,13 +111,18 @@ public abstract class PlatformContext extends AbstractIFContext implements Compo
      * @throws InventoryFrameworkException If there's no container available in the current context.
      */
     protected final @NotNull ViewContainer getContainerOrThrow() {
-        if (this instanceof IFRenderContext) return ((IFRenderContext) this).getContainer();
-        if (this instanceof IFCloseContext) return ((IFCloseContext) this).getContainer();
-        if (this instanceof IFSlotContext) return ((IFSlotContext) this).getContainer();
+        final ViewContainer container;
+        if (this instanceof IFRenderContext) container = ((IFRenderContext) this).getContainer();
+        else if (this instanceof IFCloseContext) container = ((IFCloseContext) this).getContainer();
+        else if (this instanceof IFSlotContext) container = ((IFSlotContext) this).getContainer();
+        else if (this instanceof IFComponentContext)
+            container = ((IFComponentContext) this).getComponent().getContainer();
+        else
+            throw new InventoryFrameworkException(String.format(
+                    "Container is not available in the current context: %s",
+                    getClass().getName()));
 
-        throw new InventoryFrameworkException(String.format(
-                "Container is not available in the current context: %s",
-                getClass().getName()));
+        return container.unproxied();
     }
     // endregion
 

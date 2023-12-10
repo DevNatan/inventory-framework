@@ -1,5 +1,6 @@
 package me.devnatan.inventoryframework.component;
 
+import me.devnatan.inventoryframework.VirtualView;
 import org.bukkit.inventory.ItemStack;
 
 public class BukkitItemComponentBuilder<SELF> extends BukkitComponentBuilder<SELF> implements ItemComponentBuilder {
@@ -9,6 +10,26 @@ public class BukkitItemComponentBuilder<SELF> extends BukkitComponentBuilder<SEL
     private ItemStack item;
 
     public BukkitItemComponentBuilder() {}
+
+    @Override
+    public Component buildComponent(VirtualView root) {
+        final Component component = new BukkitItemComponentImpl(
+                getPosition(),
+                getItem(),
+                getKey(),
+                root,
+                getReference(),
+                getWatchingStates(),
+                getDisplayCondition(),
+                getRenderHandler(),
+                getUpdateHandler(),
+                getClickHandler(),
+                isCancelOnClick(),
+                isCloseOnClick(),
+                isUpdateOnClick());
+        component.setHandle(new BukkitItemComponentImplHandle());
+        return component;
+    }
 
     protected final int getPosition() {
         return position;

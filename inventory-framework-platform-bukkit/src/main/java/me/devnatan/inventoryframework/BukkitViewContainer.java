@@ -6,7 +6,6 @@ import me.devnatan.inventoryframework.runtime.thirdparty.InventoryUpdate;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.NotNull;
@@ -15,23 +14,22 @@ import org.jetbrains.annotations.Nullable;
 public final class BukkitViewContainer implements ViewContainer {
 
     private final Inventory inventory;
-    private final boolean shared;
     private final ViewType type;
-    private final boolean proxied;
+    private final boolean proxied, external;
 
-    public BukkitViewContainer(@NotNull Inventory inventory, boolean shared, ViewType type, boolean proxied) {
+    public BukkitViewContainer(@NotNull Inventory inventory, ViewType type) {
+        this(inventory, type, false, false);
+    }
+
+    public BukkitViewContainer(@NotNull Inventory inventory, ViewType type, boolean proxied, boolean external) {
         this.inventory = inventory;
-        this.shared = shared;
         this.type = type;
         this.proxied = proxied;
+        this.external = external;
     }
 
     public Inventory getInventory() {
         return inventory;
-    }
-
-    public boolean isShared() {
-        return shared;
     }
 
     @Override
@@ -40,17 +38,13 @@ public final class BukkitViewContainer implements ViewContainer {
     }
 
     @Override
-    public String getTitle() {
-        final boolean diffTitle = inventory.getViewers().stream()
-                .map(HumanEntity::getOpenInventory)
-                .map(InventoryView::getTitle)
-                .distinct()
-                .findAny()
-                .isPresent();
+    public ViewContainer unproxied() {
+        return this;
+    }
 
-        if (diffTitle && shared) throw new IllegalStateException("Cannot get unique title of shared inventory");
-
-        return inventory.getViewers().get(0).getOpenInventory().getTitle();
+    @Override
+    public boolean isExternal() {
+        return external;
     }
 
     @Override
@@ -78,6 +72,12 @@ public final class BukkitViewContainer implements ViewContainer {
         inventory.setItem(slot, null);
     }
 
+    @Override
+    public void renderItem(int slot, Object platformItem) {
+        final int fixedSlot = isEntityContainer() && isProxied() ? getLastSlot() - slot : slot;
+        inventory.setItem(fixedSlot, (ItemStack) platformItem);
+    }
+
     private void requireSupportedItem(Object item) {
         if (item == null || item instanceof ItemStack) return;
 
@@ -102,11 +102,13 @@ public final class BukkitViewContainer implements ViewContainer {
 
     @Override
     public int getFirstSlot() {
-        return 0;
+        return getType() == ViewType.PLAYER ? 45 : 0;
     }
 
     @Override
     public int getLastSlot() {
+        if (isEntityContainer()) return inventory.getSize() - 1;
+
         final int[] resultSlots = getType().getResultSlots();
         int lastSlot = getSlotsCount();
         if (resultSlots != null) {
@@ -152,18 +154,16 @@ public final class BukkitViewContainer implements ViewContainer {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         BukkitViewContainer that = (BukkitViewContainer) o;
-        return shared == that.shared
-                && Objects.equals(inventory, that.inventory)
-                && Objects.equals(getType(), that.getType());
+        return Objects.equals(inventory, that.inventory) && Objects.equals(getType(), that.getType());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(inventory, shared, getType());
+        return Objects.hash(inventory, getType());
     }
 
     @Override
     public String toString() {
-        return "BukkitViewContainer{" + "inventory=" + inventory + ", shared=" + shared + ", type=" + type + '}';
+        return "BukkitViewContainer{" + "inventory=" + inventory + ", type=" + type + '}';
     }
 }

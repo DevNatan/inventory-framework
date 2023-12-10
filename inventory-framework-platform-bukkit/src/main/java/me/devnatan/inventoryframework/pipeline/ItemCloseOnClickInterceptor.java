@@ -23,7 +23,7 @@ public final class ItemCloseOnClickInterceptor implements PipelineInterceptor<Vi
 
         @SuppressWarnings("rawtypes")
         final PlatformComponent component = (PlatformComponent) context.getComponent();
-        if (!component.isVisible()) return;
+        if (component == null || !component.isVisible()) return;
 
         if (component.isCloseOnClick()) {
             context.closeForPlayer();
