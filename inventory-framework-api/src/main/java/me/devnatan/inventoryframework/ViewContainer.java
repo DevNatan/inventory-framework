@@ -37,7 +37,7 @@ public interface ViewContainer {
 
     void removeItem(int slot);
 
-	void renderItem(int slot, Object platformItem);
+    void renderItem(int slot, Object platformItem);
 
     /**
      * The number of slots in this container.
@@ -79,7 +79,7 @@ public interface ViewContainer {
 
     boolean isProxied();
 
-	ViewContainer unproxied();
+    ViewContainer unproxied();
 
-	boolean isExternal();
+    boolean isExternal();
 }

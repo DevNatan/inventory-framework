@@ -1,8 +1,6 @@
 package me.devnatan.inventoryframework.context;
 
-import me.devnatan.inventoryframework.BukkitViewContainer;
 import me.devnatan.inventoryframework.BukkitViewer;
-import me.devnatan.inventoryframework.View;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.component.Component;

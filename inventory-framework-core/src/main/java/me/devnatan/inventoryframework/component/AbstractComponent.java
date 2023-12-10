@@ -129,13 +129,13 @@ public abstract class AbstractComponent implements Component {
 
     @Override
     public final void setHandle(ComponentHandle handle) {
-		if (this.handle != null) getPipeline().removeInterceptor(this.handle);
+        if (this.handle != null) getPipeline().removeInterceptor(this.handle);
         if (handle != null) {
             for (final PipelinePhase phase :
                     new PipelinePhase[] {Component.RENDER, Component.UPDATE, Component.CLEAR, Component.CLICK}) {
 
-				getPipeline().intercept(phase, handle);
-			}
+                getPipeline().intercept(phase, handle);
+            }
         }
 
         this.handle = handle;

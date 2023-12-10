@@ -1,9 +1,8 @@
 package me.devnatan.inventoryframework;
 
+import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Objects;
 
 public class ProxyContainer implements ViewContainer {
 
@@ -37,21 +36,17 @@ public class ProxyContainer implements ViewContainer {
 
     @Override
     public void removeItem(int slot) {
-        if (slot <= top.getLastSlot())
-			top.removeItem(slot);
-        else
-			bottom.removeItem(slot);
+        if (slot <= top.getLastSlot()) top.removeItem(slot);
+        else bottom.removeItem(slot);
     }
 
-	@Override
-	public void renderItem(int slot, Object platformItem) {
-		if (slot <= top.getLastSlot())
-			top.renderItem(slot, platformItem);
-		else
-			bottom.renderItem(slot, platformItem);
-	}
+    @Override
+    public void renderItem(int slot, Object platformItem) {
+        if (slot <= top.getLastSlot()) top.renderItem(slot, platformItem);
+        else bottom.renderItem(slot, platformItem);
+    }
 
-	@Override
+    @Override
     public int getSize() {
         return top.getSize() + bottom.getSize();
     }
@@ -101,34 +96,31 @@ public class ProxyContainer implements ViewContainer {
         return true;
     }
 
-	@Override
-	public ViewContainer unproxied() {
-		return top;
-	}
+    @Override
+    public ViewContainer unproxied() {
+        return top;
+    }
 
-	@Override
-	public boolean isExternal() {
-		return false;
-	}
+    @Override
+    public boolean isExternal() {
+        return false;
+    }
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-		ProxyContainer that = (ProxyContainer) o;
-		return Objects.equals(top, that.top) && Objects.equals(bottom, that.bottom);
-	}
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ProxyContainer that = (ProxyContainer) o;
+        return Objects.equals(top, that.top) && Objects.equals(bottom, that.bottom);
+    }
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(top, bottom);
-	}
+    @Override
+    public int hashCode() {
+        return Objects.hash(top, bottom);
+    }
 
-	@Override
-	public String toString() {
-		return "ProxyContainer{" +
-			"top=" + top +
-			", bottom=" + bottom +
-			'}';
-	}
+    @Override
+    public String toString() {
+        return "ProxyContainer{" + "top=" + top + ", bottom=" + bottom + '}';
+    }
 }

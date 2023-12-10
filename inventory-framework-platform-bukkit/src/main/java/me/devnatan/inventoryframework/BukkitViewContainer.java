@@ -6,7 +6,6 @@ import me.devnatan.inventoryframework.runtime.thirdparty.InventoryUpdate;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.NotNull;
@@ -18,15 +17,15 @@ public final class BukkitViewContainer implements ViewContainer {
     private final ViewType type;
     private final boolean proxied, external;
 
-	public BukkitViewContainer(@NotNull Inventory inventory, ViewType type) {
-		this(inventory, type, false, false);
-	}
+    public BukkitViewContainer(@NotNull Inventory inventory, ViewType type) {
+        this(inventory, type, false, false);
+    }
 
     public BukkitViewContainer(@NotNull Inventory inventory, ViewType type, boolean proxied, boolean external) {
         this.inventory = inventory;
         this.type = type;
         this.proxied = proxied;
-		this.external = external;
+        this.external = external;
     }
 
     public Inventory getInventory() {
@@ -38,17 +37,17 @@ public final class BukkitViewContainer implements ViewContainer {
         return proxied;
     }
 
-	@Override
-	public ViewContainer unproxied() {
-		return this;
-	}
+    @Override
+    public ViewContainer unproxied() {
+        return this;
+    }
 
-	@Override
-	public boolean isExternal() {
-		return external;
-	}
+    @Override
+    public boolean isExternal() {
+        return external;
+    }
 
-	@Override
+    @Override
     public @NotNull ViewType getType() {
         return type;
     }
@@ -73,15 +72,15 @@ public final class BukkitViewContainer implements ViewContainer {
         inventory.setItem(slot, null);
     }
 
-	@Override
-	public void renderItem(int slot, Object platformItem) {
-		System.out.println("slot = " + slot);
-		final int fixedSlot = isEntityContainer() && isProxied() ? getLastSlot() - slot : slot;
-		System.out.println("fixedSlot = " + fixedSlot);
-		inventory.setItem(fixedSlot, (ItemStack) platformItem);
-	}
+    @Override
+    public void renderItem(int slot, Object platformItem) {
+        System.out.println("slot = " + slot);
+        final int fixedSlot = isEntityContainer() && isProxied() ? getLastSlot() - slot : slot;
+        System.out.println("fixedSlot = " + fixedSlot);
+        inventory.setItem(fixedSlot, (ItemStack) platformItem);
+    }
 
-	private void requireSupportedItem(Object item) {
+    private void requireSupportedItem(Object item) {
         if (item == null || item instanceof ItemStack) return;
 
         throw new IllegalStateException(
@@ -110,10 +109,9 @@ public final class BukkitViewContainer implements ViewContainer {
 
     @Override
     public int getLastSlot() {
-		System.out.println("isEntityContainer() = " + isEntityContainer());
-		System.out.println("inventory.getSize() = " + inventory.getSize());
-		if (isEntityContainer())
-			return inventory.getSize() - 1;
+        System.out.println("isEntityContainer() = " + isEntityContainer());
+        System.out.println("inventory.getSize() = " + inventory.getSize());
+        if (isEntityContainer()) return inventory.getSize() - 1;
 
         final int[] resultSlots = getType().getResultSlots();
         int lastSlot = getSlotsCount();
@@ -160,8 +158,7 @@ public final class BukkitViewContainer implements ViewContainer {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         BukkitViewContainer that = (BukkitViewContainer) o;
-        return Objects.equals(inventory, that.inventory)
-                && Objects.equals(getType(), that.getType());
+        return Objects.equals(inventory, that.inventory) && Objects.equals(getType(), that.getType());
     }
 
     @Override

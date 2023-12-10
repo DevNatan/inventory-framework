@@ -146,8 +146,8 @@ public abstract class PlatformRenderContext<ITEM_BUILDER extends ItemComponentBu
      * @return An item builder to configure the item.
      */
     public final @NotNull ITEM_BUILDER lastSlot() {
-		System.out.println("getContainer().getLastSlot() = " + getContainer().getLastSlot());
-		return createRegisteredBuilderInPosition(getContainer().getLastSlot());
+        System.out.println("getContainer().getLastSlot() = " + getContainer().getLastSlot());
+        return createRegisteredBuilderInPosition(getContainer().getLastSlot());
     }
 
     /**
@@ -354,7 +354,7 @@ public abstract class PlatformRenderContext<ITEM_BUILDER extends ItemComponentBu
 
     @Override
     public final void renderComponent(@NotNull Component component) {
-		if (!component.shouldRender(this)) {
+        if (!component.shouldRender(this)) {
             component.setVisible(false);
 
             final Optional<Component> overlapOptional = getOverlappingComponentToRender(this, component);

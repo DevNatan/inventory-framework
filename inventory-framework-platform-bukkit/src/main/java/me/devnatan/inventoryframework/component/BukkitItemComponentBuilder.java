@@ -11,27 +11,27 @@ public class BukkitItemComponentBuilder<SELF> extends BukkitComponentBuilder<SEL
 
     public BukkitItemComponentBuilder() {}
 
-	@Override
-	public Component buildComponent(VirtualView root) {
-		final Component component = new BukkitItemComponentImpl(
-			getPosition(),
-			getItem(),
-			getKey(),
-			root,
-			getReference(),
-			getWatchingStates(),
-			getDisplayCondition(),
-			getRenderHandler(),
-			getUpdateHandler(),
-			getClickHandler(),
-			isCancelOnClick(),
-			isCloseOnClick(),
-			isUpdateOnClick());
-		component.setHandle(new BukkitItemComponentImplHandle());
-		return component;
-	}
+    @Override
+    public Component buildComponent(VirtualView root) {
+        final Component component = new BukkitItemComponentImpl(
+                getPosition(),
+                getItem(),
+                getKey(),
+                root,
+                getReference(),
+                getWatchingStates(),
+                getDisplayCondition(),
+                getRenderHandler(),
+                getUpdateHandler(),
+                getClickHandler(),
+                isCancelOnClick(),
+                isCloseOnClick(),
+                isUpdateOnClick());
+        component.setHandle(new BukkitItemComponentImplHandle());
+        return component;
+    }
 
-	protected final int getPosition() {
+    protected final int getPosition() {
         return position;
     }
 
