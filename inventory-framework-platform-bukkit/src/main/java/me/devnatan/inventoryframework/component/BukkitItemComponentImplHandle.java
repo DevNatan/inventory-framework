@@ -10,7 +10,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 @ApiStatus.Internal
-public final class BukkitItemComponentImplHandle extends BukkitComponentHandle<BukkitItemComponentBuilder<Void>> {
+public final class BukkitItemComponentImplHandle extends BukkitComponentHandle<BukkitItemComponentBuilder> {
 
     @Override
     public void rendered(@NotNull ComponentRenderContext context) {
