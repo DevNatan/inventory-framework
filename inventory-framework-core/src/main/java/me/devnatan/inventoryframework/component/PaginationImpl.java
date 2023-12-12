@@ -12,7 +12,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -34,7 +33,7 @@ import org.jetbrains.annotations.VisibleForTesting;
 @VisibleForTesting
 public class PaginationImpl extends AbstractComponent implements Pagination, StateValue {
 
-    private List<Component> components = new ArrayList<>();
+    List<Component> components = new ArrayList<>();
 
     // --- User provided ---
     private final char layoutTarget;
@@ -46,8 +45,8 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
     private final long internalStateId;
     private int currPageIndex;
     private final boolean isLazy, isStatic, isComputed, isAsync;
-    private boolean pageWasChanged;
-    private boolean initialized;
+    boolean pageWasChanged;
+    boolean initialized;
     private int pagesCount;
     private LayoutSlot currentLayoutSlot;
 
@@ -148,7 +147,7 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
         simulateStateUpdate();
 
         // TODO Do some error treatment here, even if we expect to the user to handle it
-        return createProvidedNewSource().handle((result, exception) -> {
+        return createNewProvidedSource().handle((result, exception) -> {
             if (exception != null) {
                 debug("[Pagination] An error occurred on data source computation: %s", exception.getMessage());
                 exception.printStackTrace();
@@ -166,8 +165,10 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
     }
 
     @SuppressWarnings("unchecked")
-    private CompletableFuture<List<?>> createProvidedNewSource() {
+    private CompletableFuture<List<?>> createNewProvidedSource() {
         CompletableFuture<List<?>> job = new CompletableFuture<>();
+
+        System.out.println("getRoot() = " + getRoot());
 
         final Object source = _srcFactory.apply(getRoot());
         if (isAsync()) job = (CompletableFuture<List<?>>) source;
@@ -259,7 +260,7 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
         return (int) Math.ceil((double) source.size() / getPageSize());
     }
 
-    private void renderChild(IFRenderContext context) {
+    void renderChild(IFRenderContext context) {
         getInternalComponents().forEach(context::renderComponent);
     }
 
@@ -269,7 +270,7 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
      * @param context The render context.
      * @return A CompletableFuture with the completion stage of the current page.
      */
-    private CompletableFuture<?> loadCurrentPage(IFRenderContext context) {
+    CompletableFuture<?> loadCurrentPage(IFRenderContext context) {
         return loadSourceForTheCurrentPage().thenAccept(pageContents -> {
             if (pageContents.isEmpty()) {
                 debug("[Pagination] Empty page contents (page %d of %d)", currentPageIndex(), getPagesCount());
@@ -356,7 +357,7 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
      *
      * @param context The render context.
      */
-    private void updatePageSize(IFRenderContext context) {
+    void updatePageSize(IFRenderContext context) {
         final boolean useLayout = context.getConfig().getLayout() != null;
         if (useLayout) pageSize = getLayoutSlotForCurrentTarget(context).getPositions().length;
         else pageSize = context.getContainer().getSize();
@@ -383,20 +384,15 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
         // do nothing since Pagination is not immutable but unmodifiable directly
     }
 
-    private void accessStateHost(Consumer<StateValueHost> consumer) {
-        if (!(getRoot() instanceof StateValueHost)) return;
-        consumer.accept((StateValueHost) getRoot());
-    }
-
     /**
      * Simulate state update to call listeners thus calling watches in parent components.
      * <p>
      * Used when something changes in pagination. It allows the end user and developers to "listen"
      * for changes in {@link #isLoading()} and current page states.
      */
-    private void simulateStateUpdate() {
-        debug("[Pagination] State update simulation triggered on %d", internalStateId);
-        accessStateHost(host -> host.updateState(internalStateId, this));
+    void simulateStateUpdate() {
+        debug("[Pagination] State update simulation triggered on %d", internalId());
+        ((StateValueHost) getRoot()).updateState(internalId(), this);
     }
     // endregion
 
@@ -560,85 +556,6 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
         getInternalComponents().forEach(component -> component.setVisible(isVisible()));
     }
 
-    // region Pipelining
-    void render(@NotNull IFComponentRenderContext context) {
-        final IFRenderContext root = context.getParent();
-        if (!initialized || pageWasChanged) {
-            if (!initialized) updatePageSize(root);
-            loadCurrentPage(root).thenRun(() -> {
-                renderChild(root);
-                simulateStateUpdate();
-            });
-            setVisible(true);
-            initialized = true;
-            return;
-        }
-
-        renderChild(root);
-    }
-
-    void updated(@NotNull IFComponentUpdateContext context) {
-        final IFRenderContext root = (IFRenderContext) context.getTopLevelContext();
-
-        debug(
-                "[Pagination] #updated(IFSlotRenderContext) called (forceUpdated = %b, pageWasChanged = %b)",
-                wasForceUpdated(), pageWasChanged);
-
-        // If page was changed all components will be removed, so don't trigger update on them
-        if (wasForceUpdated() || pageWasChanged) {
-            cleared(root);
-            components = new ArrayList<>();
-            root.renderComponent(this);
-            pageWasChanged = false;
-            return;
-        }
-
-        if (!isVisible()) return;
-        getInternalComponents().forEach(child -> root.updateComponent(child, context.isForceUpdate(), null));
-    }
-
-    void clicked(@NotNull IFSlotClickContext context) {
-        // Lock child interactions while page is changing (specially for async pagination cases)
-        if (pageWasChanged) {
-            context.setCancelled(true);
-            return;
-        }
-
-        for (final Component child : getInternalComponents()) {
-            if (!child.isVisible()) {
-                continue;
-            }
-
-            if (child.isContainedWithin(context.getClickedSlot())) {
-                context.getParent()
-                        .performClickInComponent(
-                                child,
-                                context.getViewer(),
-                                context.getClickedContainer(),
-                                context.getPlatformEvent(),
-                                context.getClickedSlot(),
-                                true);
-                break;
-            }
-        }
-    }
-
-    void cleared(@NotNull IFRenderContext context) {
-        debug("[Pagination] #clear(IFRenderContext) called (pageWasChanged = %b)", pageWasChanged);
-        if (!pageWasChanged) {
-            getInternalComponents().forEach(context::clearComponent);
-            return;
-        }
-
-        final Iterator<Component> childIterator = getInternalComponents().iterator();
-        while (childIterator.hasNext()) {
-            Component child = childIterator.next();
-            context.clearComponent(child);
-            childIterator.remove();
-        }
-    }
-    // endregion
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -646,7 +563,7 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
         PaginationImpl that = (PaginationImpl) o;
         return getLayoutTarget() == that.getLayoutTarget()
                 && currPageIndex == that.currPageIndex
-                && getPageSize() == that.getPageSize()
+                && pageSize == that.pageSize
                 && isLazy() == that.isLazy()
                 && pageWasChanged == that.pageWasChanged
                 && Objects.equals(sourceProvider, that.sourceProvider)
@@ -660,7 +577,7 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
                 sourceProvider,
                 pageSwitchHandler,
                 currPageIndex,
-                getPageSize(),
+                pageSize,
                 isLazy(),
                 pageWasChanged);
     }
@@ -691,13 +608,90 @@ class Handle extends ComponentHandle {
         this.pagination = pagination;
     }
 
+    void render(@NotNull IFComponentRenderContext context) {
+        final IFRenderContext root = context.getParent();
+        if (!pagination.initialized || pagination.pageWasChanged) {
+            if (!pagination.initialized) pagination.updatePageSize(root);
+            pagination.loadCurrentPage(root).thenRun(() -> {
+                pagination.renderChild(root);
+                pagination.simulateStateUpdate();
+            });
+            pagination.setVisible(true);
+            pagination.initialized = true;
+            return;
+        }
+
+        pagination.renderChild(root);
+    }
+
+    void updated(@NotNull IFComponentUpdateContext context) {
+        final IFRenderContext root = (IFRenderContext) context.getTopLevelContext();
+
+        debug(
+                "[Pagination] #updated(IFSlotRenderContext) called (forceUpdated = %b, pageWasChanged = %b)",
+                pagination.wasForceUpdated(), pagination.pageWasChanged);
+
+        // If page was changed all components will be removed, so don't trigger update on them
+        if (pagination.wasForceUpdated() || pagination.pageWasChanged) {
+            cleared(root);
+            pagination.components = new ArrayList<>();
+            root.renderComponent(pagination);
+            pagination.pageWasChanged = false;
+            return;
+        }
+
+        if (!pagination.isVisible()) return;
+        pagination.getInternalComponents().forEach(child -> root.updateComponent(child, context.isForceUpdate(), null));
+    }
+
+    void clicked(@NotNull IFSlotClickContext context) {
+        // Lock child interactions while page is changing (specially for async pagination cases)
+        if (pagination.pageWasChanged) {
+            context.setCancelled(true);
+            return;
+        }
+
+        for (final Component child : pagination.getInternalComponents()) {
+            if (!child.isVisible()) {
+                continue;
+            }
+
+            if (child.isContainedWithin(context.getClickedSlot())) {
+                context.getParent()
+                        .performClickInComponent(
+                                child,
+                                context.getViewer(),
+                                context.getClickedContainer(),
+                                context.getPlatformEvent(),
+                                context.getClickedSlot(),
+                                true);
+                break;
+            }
+        }
+    }
+
+    void cleared(@NotNull IFRenderContext context) {
+        debug("[Pagination] #clear(IFRenderContext) called (pageWasChanged = %b)", pagination.pageWasChanged);
+        if (!pagination.pageWasChanged) {
+            pagination.getInternalComponents().forEach(context::clearComponent);
+            return;
+        }
+
+        final Iterator<Component> childIterator =
+                pagination.getInternalComponents().iterator();
+        while (childIterator.hasNext()) {
+            Component child = childIterator.next();
+            context.clearComponent(child);
+            childIterator.remove();
+        }
+    }
+
     @Override
     public void intercept(PipelineContext<VirtualView> pipeline, VirtualView subject) {
-        final PipelinePhase phase = Objects.requireNonNull(
-                pipeline.getPhase(), "Pipeline phase cannot be null in ComponentHandle interceptor");
-        if (phase == Component.RENDER) pagination.render((IFComponentRenderContext) subject);
-        else if (phase == Component.UPDATE) pagination.updated((IFComponentUpdateContext) subject);
-        else if (phase == Component.CLEAR) pagination.cleared((IFRenderContext) subject);
-        else if (phase == Component.CLICK) pagination.clicked((IFSlotClickContext) subject);
+        final PipelinePhase phase = Objects.requireNonNull(pipeline.getPhase());
+        if (phase.equals(Component.RENDER)) render((IFComponentRenderContext) subject);
+        if (phase.equals(Component.UPDATE)) updated((IFComponentUpdateContext) subject);
+        if (phase.equals(Component.CLEAR)) cleared(((IFComponentClearContext) subject).getParent());
+        if (phase.equals(Component.CLICK)) clicked((IFSlotClickContext) subject);
     }
 }

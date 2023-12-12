@@ -3,7 +3,7 @@ package me.devnatan.inventoryframework.internal;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.function.IntFunction;
-import me.devnatan.inventoryframework.component.ComponentFactory;
+import me.devnatan.inventoryframework.component.ComponentBuilder;
 import org.jetbrains.annotations.Nullable;
 
 public final class LayoutSlot {
@@ -11,10 +11,10 @@ public final class LayoutSlot {
     public static final char DEFAULT_SLOT_FILL_CHAR = 'O';
 
     private final char character;
-    private final IntFunction<ComponentFactory> factory;
+    private final IntFunction<ComponentBuilder> factory;
     private final int[] positions;
 
-    public LayoutSlot(char character, @Nullable IntFunction<ComponentFactory> factory, int[] positions) {
+    public LayoutSlot(char character, @Nullable IntFunction<ComponentBuilder> factory, int[] positions) {
         this.character = character;
         this.factory = factory;
         this.positions = positions;
@@ -24,11 +24,11 @@ public final class LayoutSlot {
         return character;
     }
 
-    public IntFunction<ComponentFactory> getFactory() {
+    public IntFunction<ComponentBuilder> getFactory() {
         return factory;
     }
 
-    public LayoutSlot withFactory(@Nullable IntFunction<ComponentFactory> factory) {
+    public LayoutSlot withFactory(@Nullable IntFunction<ComponentBuilder> factory) {
         return new LayoutSlot(character, factory, positions);
     }
 

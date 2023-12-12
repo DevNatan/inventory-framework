@@ -18,12 +18,11 @@ import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.ViewType;
 import me.devnatan.inventoryframework.Viewer;
-import me.devnatan.inventoryframework.component.AbstractComponentHandle;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.ComponentBuilder;
-import me.devnatan.inventoryframework.component.ComponentFactory;
 import me.devnatan.inventoryframework.component.ItemComponentBuilder;
 import me.devnatan.inventoryframework.component.PlatformComponentBuilder;
+import me.devnatan.inventoryframework.component.PlatformComponentHandle;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -131,7 +130,7 @@ public abstract class PlatformRenderContext<ITEM_BUILDER extends ItemComponentBu
      */
     @ApiStatus.Experimental
     public final @NotNull <
-                    T extends AbstractComponentHandle<CONTEXT, B>, B extends PlatformComponentBuilder<B, CONTEXT>>
+                    T extends PlatformComponentHandle<CONTEXT, B>, B extends PlatformComponentBuilder<B, CONTEXT>>
             B firstSlot(@NotNull T componentHandle) {
         final B builder = componentHandle.builder();
         final Component component = builder.buildComponent(this);
@@ -196,7 +195,7 @@ public abstract class PlatformRenderContext<ITEM_BUILDER extends ItemComponentBu
                 .orElseThrow(() -> new InventoryFrameworkException("Missing layout character: " + character));
 
         final ITEM_BUILDER builder = createBuilder();
-        getLayoutSlots().add(layoutSlot.withFactory($ -> (ComponentFactory) builder));
+        getLayoutSlots().add(layoutSlot.withFactory($ -> builder));
         return builder;
     }
 
@@ -219,7 +218,7 @@ public abstract class PlatformRenderContext<ITEM_BUILDER extends ItemComponentBu
         getLayoutSlots().add(layoutSlot.withFactory(index -> {
             final ITEM_BUILDER builder = createBuilder();
             factory.accept(index, builder);
-            return (ComponentFactory) builder;
+            return builder;
         }));
     }
 
@@ -364,8 +363,8 @@ public abstract class PlatformRenderContext<ITEM_BUILDER extends ItemComponentBu
                 if (overlap.isVisible()) return;
             }
 
-            component.getPipeline().execute(Component.CLEAR, this);
-            clearComponent(component);
+            final IFComponentClearContext clearContext = createComponentClearContext(component);
+            component.getPipeline().execute(Component.CLEAR, clearContext);
             return;
         }
 
@@ -401,6 +400,15 @@ public abstract class PlatformRenderContext<ITEM_BUILDER extends ItemComponentBu
     @ApiStatus.Internal
     abstract IFComponentUpdateContext createComponentUpdateContext(
             Component component, boolean force, UpdateReason reason);
+
+    /**
+     * Creates a IFComponentClearContext for the current platform.
+     *
+     * @param component The component.
+     * @return A new IFComponentClearContext instance.
+     */
+    @ApiStatus.Internal
+    abstract IFComponentClearContext createComponentClearContext(Component component);
 
     /**
      * Creates a new platform builder instance.

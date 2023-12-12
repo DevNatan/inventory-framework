@@ -48,7 +48,6 @@ public class DefaultStateValueHost implements StateValueHost {
         if (value == null) {
             value = state.factory().create(this, state);
             initializeState(id, value);
-            IFDebug.debug("State %s initialized (initialValue = %s)", id, value.toString());
         }
 
         return value;
@@ -57,6 +56,8 @@ public class DefaultStateValueHost implements StateValueHost {
     @Override
     public void initializeState(long id, @NotNull StateValue value) {
         valuesMap.put(id, value);
+        IFDebug.debug(
+                "State %s initialized in %s (initialValue = %s)", id, getClass().getName(), value.toString());
     }
 
     @Override

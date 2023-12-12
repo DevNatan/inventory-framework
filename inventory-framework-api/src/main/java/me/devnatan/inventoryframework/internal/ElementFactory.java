@@ -9,13 +9,12 @@ import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.component.Component;
-import me.devnatan.inventoryframework.component.ComponentBuilder;
+import me.devnatan.inventoryframework.component.ItemComponentBuilder;
 import me.devnatan.inventoryframework.context.IFCloseContext;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFOpenContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.context.IFSlotClickContext;
-import me.devnatan.inventoryframework.context.IFSlotRenderContext;
 import me.devnatan.inventoryframework.logging.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -67,9 +66,6 @@ public abstract class ElementFactory {
             @NotNull Object origin,
             boolean combined);
 
-    public abstract IFSlotRenderContext createSlotRenderContext(
-            int slot, @NotNull IFRenderContext parent, @Nullable Viewer viewer);
-
     /**
      * Creates a new close context for the current platform.
      *
@@ -83,7 +79,7 @@ public abstract class ElementFactory {
      *
      * @return A new platform builder instance.
      */
-    public abstract ComponentBuilder createComponentBuilder(@NotNull VirtualView root);
+    public abstract ItemComponentBuilder createItemComponentBuilder(@NotNull VirtualView root);
 
     public abstract boolean worksInCurrentPlatform();
 

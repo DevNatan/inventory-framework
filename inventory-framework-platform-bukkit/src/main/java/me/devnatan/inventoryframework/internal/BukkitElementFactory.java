@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 import me.devnatan.inventoryframework.*;
 import me.devnatan.inventoryframework.component.BukkitItemComponentBuilder;
 import me.devnatan.inventoryframework.component.Component;
-import me.devnatan.inventoryframework.component.ComponentBuilder;
+import me.devnatan.inventoryframework.component.ItemComponentBuilder;
 import me.devnatan.inventoryframework.context.*;
 import me.devnatan.inventoryframework.logging.Logger;
 import me.devnatan.inventoryframework.logging.NoopLogger;
@@ -106,19 +106,13 @@ public class BukkitElementFactory extends ElementFactory {
     }
 
     @Override
-    public IFSlotRenderContext createSlotRenderContext(
-            int slot, @NotNull IFRenderContext parent, @Nullable Viewer viewer) {
-        return new SlotRenderContext(slot, parent, viewer);
-    }
-
-    @Override
     public IFCloseContext createCloseContext(@NotNull Viewer viewer, @NotNull IFRenderContext parent) {
         return new CloseContext(viewer, parent);
     }
 
     @Override
-    public ComponentBuilder createComponentBuilder(@NotNull VirtualView root) {
-        return new BukkitItemComponentBuilder<>();
+    public ItemComponentBuilder createItemComponentBuilder(@NotNull VirtualView root) {
+        return new BukkitItemComponentBuilder();
     }
 
     @Override

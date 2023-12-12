@@ -3,7 +3,8 @@ package me.devnatan.inventoryframework.component;
 import me.devnatan.inventoryframework.VirtualView;
 import org.bukkit.inventory.ItemStack;
 
-public class BukkitItemComponentBuilder<SELF> extends BukkitComponentBuilder<SELF> implements ItemComponentBuilder {
+public class BukkitItemComponentBuilder extends BukkitComponentBuilder<BukkitItemComponentBuilder>
+        implements ItemComponentBuilder {
 
     private int position;
     private int row = -1, column = -1;
@@ -13,7 +14,7 @@ public class BukkitItemComponentBuilder<SELF> extends BukkitComponentBuilder<SEL
 
     @Override
     public Component buildComponent(VirtualView root) {
-        final Component component = new BukkitItemComponentImpl(
+        return new BukkitItemComponentImpl(
                 getPosition(),
                 getItem(),
                 getKey(),
@@ -27,8 +28,6 @@ public class BukkitItemComponentBuilder<SELF> extends BukkitComponentBuilder<SEL
                 isCancelOnClick(),
                 isCloseOnClick(),
                 isUpdateOnClick());
-        component.setHandle(new BukkitItemComponentImplHandle());
-        return component;
     }
 
     protected final int getPosition() {
@@ -69,23 +68,20 @@ public class BukkitItemComponentBuilder<SELF> extends BukkitComponentBuilder<SEL
         this.item = item;
     }
 
-    @SuppressWarnings("unchecked")
-    public final SELF withSlot(int slot) {
+    public final BukkitItemComponentBuilder withSlot(int slot) {
         setPosition(slot);
-        return (SELF) this;
+        return this;
     }
 
-    @SuppressWarnings("unchecked")
-    public final SELF withSlot(int row, int column) {
+    public final BukkitItemComponentBuilder withSlot(int row, int column) {
         setRow(row);
         setColumn(column);
-        return (SELF) this;
+        return this;
     }
 
-    @SuppressWarnings("unchecked")
-    public final SELF withItem(ItemStack item) {
+    public final BukkitItemComponentBuilder withItem(ItemStack item) {
         setItem(item);
-        return (SELF) this;
+        return this;
     }
 
     @Override

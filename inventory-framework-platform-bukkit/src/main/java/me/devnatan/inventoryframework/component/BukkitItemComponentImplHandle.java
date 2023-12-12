@@ -1,16 +1,16 @@
 package me.devnatan.inventoryframework.component;
 
 import me.devnatan.inventoryframework.InventoryFrameworkException;
+import me.devnatan.inventoryframework.context.ComponentClearContext;
 import me.devnatan.inventoryframework.context.ComponentRenderContext;
-import me.devnatan.inventoryframework.context.IFComponentContext;
-import me.devnatan.inventoryframework.context.IFComponentUpdateContext;
+import me.devnatan.inventoryframework.context.ComponentUpdateContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
-import me.devnatan.inventoryframework.context.IFSlotClickContext;
+import me.devnatan.inventoryframework.context.SlotClickContext;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 @ApiStatus.Internal
-public final class BukkitItemComponentImplHandle extends BukkitComponentHandle<BukkitItemComponentBuilder<Void>> {
+public final class BukkitItemComponentImplHandle extends BukkitComponentHandle<BukkitItemComponentBuilder> {
 
     @Override
     public void rendered(@NotNull ComponentRenderContext context) {
@@ -39,25 +39,25 @@ public final class BukkitItemComponentImplHandle extends BukkitComponentHandle<B
                 }
             }
 
-            // context.getContainer().renderItem(getPosition(), context.getResult());
+            context.getContainer().renderItem(component.getPosition(), context.getItem());
             component.setVisible(true);
             return;
         }
 
-        if (component.getItemStack() == null) {
+        if (context.getItem() == null) {
             if (context.getContainer().getType().isResultSlot(component.getPosition())) {
-                component.show();
+                component.setVisible(true);
                 return;
             }
             throw new IllegalStateException("At least one fallback item or render handler must be provided");
         }
 
-        context.getContainer().renderItem(component.getPosition(), component.getItemStack());
-        component.show();
+        context.getContainer().renderItem(component.getPosition(), context.getItem());
+        component.setVisible(true);
     }
 
     @Override
-    public void updated(@NotNull IFComponentUpdateContext context) {
+    protected void updated(ComponentUpdateContext context) {
         if (context.isCancelled()) return;
 
         final PlatformComponent component = (PlatformComponent) context.getComponent();
@@ -75,19 +75,24 @@ public final class BukkitItemComponentImplHandle extends BukkitComponentHandle<B
     }
 
     @Override
-    public void cleared(@NotNull IFComponentContext context) {
+    protected void cleared(ComponentClearContext context) {
+        if (context.isCancelled()) return;
         final Component component = context.getComponent();
         component.getContainer().removeItem(((ItemComponent) component).getPosition());
     }
 
     @Override
-    public void clicked(@NotNull IFSlotClickContext context) {
+    protected void clicked(SlotClickContext context) {
         final PlatformComponent component = (PlatformComponent) context.getComponent();
-        if (component.isUpdateOnClick()) context.update();
+        if (component.getClickHandler() != null) component.getClickHandler().accept(context);
+
+        if (context.isCancelled()) return;
+        if (component.isUpdateOnClick()) component.update();
+        if (component.isCloseOnClick()) context.closeForPlayer();
     }
 
     @Override
-    public BukkitItemComponentBuilder<Void> builder() {
-        return new BukkitItemComponentBuilder<>();
+    public BukkitItemComponentBuilder builder() {
+        return new BukkitItemComponentBuilder();
     }
 }

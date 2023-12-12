@@ -26,7 +26,7 @@ public class View
         extends PlatformView<
                 ViewFrame,
                 Player,
-                BukkitItemComponentBuilder<BukkitItemComponentBuilder<?>>,
+                BukkitItemComponentBuilder,
                 Context,
                 OpenContext,
                 CloseContext,

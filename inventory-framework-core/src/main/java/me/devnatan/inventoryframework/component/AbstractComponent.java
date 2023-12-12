@@ -18,8 +18,6 @@ import org.jetbrains.annotations.UnmodifiableView;
 
 public abstract class AbstractComponent implements Component {
 
-    private static final ComponentHandle NOOP_HANDLE = new NoopComponentHandle();
-
     private final String key;
     private final VirtualView root;
     private final Ref<Component> reference;
@@ -43,6 +41,7 @@ public abstract class AbstractComponent implements Component {
         this.reference = reference;
         this.watchingStates = watchingStates;
         this.displayCondition = displayCondition;
+        setHandle(NoopComponentHandle.INSTANCE);
     }
 
     @Override
@@ -124,20 +123,20 @@ public abstract class AbstractComponent implements Component {
 
     @Override
     public final @NotNull ComponentHandle getHandle() {
-        return handle == null ? NOOP_HANDLE : handle;
+        return handle;
     }
 
     @Override
     public final void setHandle(ComponentHandle handle) {
         if (this.handle != null) getPipeline().removeInterceptor(this.handle);
-        if (handle != null) {
-            for (final PipelinePhase phase :
-                    new PipelinePhase[] {Component.RENDER, Component.UPDATE, Component.CLEAR, Component.CLICK}) {
+        if (handle == null)
+            throw new IllegalArgumentException("Component handle argument in #setHandle cannot be null");
 
-                getPipeline().intercept(phase, handle);
-            }
+        for (final PipelinePhase phase :
+                new PipelinePhase[] {Component.RENDER, Component.UPDATE, Component.CLEAR, Component.CLICK}) {
+
+            getPipeline().intercept(phase, handle);
         }
-
         this.handle = handle;
     }
 
@@ -162,9 +161,25 @@ public abstract class AbstractComponent implements Component {
         return wasForceUpdated;
     }
     // endregion
+
+    @Override
+    public String toString() {
+        return "AbstractComponent{" + "key='"
+                + key + '\'' + ", root="
+                + root + ", reference="
+                + reference + ", watchingStates="
+                + watchingStates + ", displayCondition="
+                + displayCondition + ", pipeline="
+                + pipeline + ", handle="
+                + handle + ", isVisible="
+                + isVisible + ", wasForceUpdated="
+                + wasForceUpdated + '}';
+    }
 }
 
-final class NoopComponentHandle extends ComponentHandle {
+class NoopComponentHandle extends ComponentHandle {
+
+    static final ComponentHandle INSTANCE = new NoopComponentHandle();
 
     @Override
     public void intercept(PipelineContext<VirtualView> pipeline, VirtualView subject) {}
