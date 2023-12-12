@@ -83,7 +83,7 @@ public final class BukkitItemComponentImplHandle extends BukkitComponentHandle<B
     @Override
     protected void clicked(SlotClickContext context) {
         final PlatformComponent component = (PlatformComponent) context.getComponent();
-        if (component.getClickHandler() != null) {
+		if (component.getClickHandler() != null) {
             component.getClickHandler().accept(context);
         }
         if (component.isUpdateOnClick()) context.update();
