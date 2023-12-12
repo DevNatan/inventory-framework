@@ -3,11 +3,11 @@ package me.devnatan.inventoryframework.component;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import me.devnatan.inventoryframework.VirtualView;
+import me.devnatan.inventoryframework.context.ComponentRenderContext;
 import me.devnatan.inventoryframework.context.Context;
 import me.devnatan.inventoryframework.context.IFComponentRenderContext;
 import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.context.SlotClickContext;
-import me.devnatan.inventoryframework.context.SlotRenderContext;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,7 +24,7 @@ public abstract class BukkitComponentBuilder<SELF> extends PlatformComponentBuil
      * @return This component builder.
      */
     @SuppressWarnings("unchecked")
-    public final SELF onRender(@Nullable Consumer<? super SlotRenderContext> renderHandler) {
+    public final SELF onRender(@Nullable Consumer<? super ComponentRenderContext> renderHandler) {
         setRenderHandler((Consumer<? super IFComponentRenderContext>) renderHandler);
         return (SELF) this;
     }

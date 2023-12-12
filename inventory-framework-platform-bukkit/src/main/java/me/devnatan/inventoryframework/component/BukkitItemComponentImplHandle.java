@@ -39,21 +39,21 @@ public final class BukkitItemComponentImplHandle extends BukkitComponentHandle<B
                 }
             }
 
-            // context.getContainer().renderItem(getPosition(), context.getResult());
+            context.getContainer().renderItem(component.getPosition(), context.getItem());
             component.setVisible(true);
             return;
         }
 
-        if (component.getItemStack() == null) {
+        if (context.getItem() == null) {
             if (context.getContainer().getType().isResultSlot(component.getPosition())) {
-                component.show();
+                component.setVisible(true);
                 return;
             }
             throw new IllegalStateException("At least one fallback item or render handler must be provided");
         }
 
-        context.getContainer().renderItem(component.getPosition(), component.getItemStack());
-        component.show();
+        context.getContainer().renderItem(component.getPosition(), context.getItem());
+        component.setVisible(true);
     }
 
     @Override
@@ -76,6 +76,7 @@ public final class BukkitItemComponentImplHandle extends BukkitComponentHandle<B
 
     @Override
     protected void cleared(ComponentClearContext context) {
+        if (context.isCancelled()) return;
         final Component component = context.getComponent();
         component.getContainer().removeItem(((ItemComponent) component).getPosition());
     }
@@ -83,10 +84,11 @@ public final class BukkitItemComponentImplHandle extends BukkitComponentHandle<B
     @Override
     protected void clicked(SlotClickContext context) {
         final PlatformComponent component = (PlatformComponent) context.getComponent();
-		if (component.getClickHandler() != null) {
-            component.getClickHandler().accept(context);
-        }
-        if (component.isUpdateOnClick()) context.update();
+        if (component.getClickHandler() != null) component.getClickHandler().accept(context);
+
+        if (context.isCancelled()) return;
+        if (component.isUpdateOnClick()) component.update();
+        if (component.isCloseOnClick()) context.closeForPlayer();
     }
 
     @Override

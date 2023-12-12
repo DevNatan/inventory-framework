@@ -106,12 +106,6 @@ public class BukkitElementFactory extends ElementFactory {
     }
 
     @Override
-    public IFSlotRenderContext createSlotRenderContext(
-            int slot, @NotNull IFRenderContext parent, @Nullable Viewer viewer) {
-        return new SlotRenderContext(slot, parent, viewer);
-    }
-
-    @Override
     public IFCloseContext createCloseContext(@NotNull Viewer viewer, @NotNull IFRenderContext parent) {
         return new CloseContext(viewer, parent);
     }

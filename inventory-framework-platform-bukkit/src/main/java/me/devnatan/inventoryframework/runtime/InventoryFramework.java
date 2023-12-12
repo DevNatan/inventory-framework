@@ -7,7 +7,6 @@ import me.devnatan.inventoryframework.ViewConfigBuilder;
 import me.devnatan.inventoryframework.ViewFrame;
 import me.devnatan.inventoryframework.component.Pagination;
 import me.devnatan.inventoryframework.context.RenderContext;
-import me.devnatan.inventoryframework.context.SlotClickContext;
 import me.devnatan.inventoryframework.context.SlotContext;
 import me.devnatan.inventoryframework.state.State;
 import org.bukkit.Material;
@@ -45,18 +44,12 @@ class TestView extends View {
 
     final State<Pagination> paginationState = lazyPaginationState(
             (context) -> IntStream.range(0, 100).boxed().collect(Collectors.toList()),
-            (context, builder, index, value) -> {
-                builder.renderWith(() -> new ItemStack(Material.GOLD_INGOT));
-                builder.onClick(click -> test(click, value));
-            });
-
-    private void test(SlotClickContext context, int value) {
-        context.getPlayer().sendMessage("clicked on " + value);
-    }
+            (context, builder, index, value) -> builder.renderWith(() -> new ItemStack(Material.GOLD_INGOT))
+                    .onClick(click -> click.getPlayer().sendMessage("clicked on " + value)));
 
     @Override
     public void onInit(@NotNull ViewConfigBuilder config) {
-        config.layout("AAAAAAAAA", "OOOOOOOOO", "UAAAAAAAA");
+        config.cancelOnClick().layout("AAAAAAAAA", "OOOOOOOOO", "UAAAAAAAA");
     }
 
     @Override

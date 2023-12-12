@@ -365,7 +365,6 @@ public abstract class PlatformRenderContext<ITEM_BUILDER extends ItemComponentBu
 
             final IFComponentClearContext clearContext = createComponentClearContext(component);
             component.getPipeline().execute(Component.CLEAR, clearContext);
-            if (!clearContext.isCancelled()) clearComponent(component);
             return;
         }
 

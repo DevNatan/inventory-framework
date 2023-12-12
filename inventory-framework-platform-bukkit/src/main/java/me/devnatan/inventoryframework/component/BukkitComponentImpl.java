@@ -38,7 +38,7 @@ public final class BukkitComponentImpl extends PlatformComponent {
                 cancelOnClick,
                 closeOnClick,
                 updateOnClick);
-		setHandle(new BukkitItemComponentImplHandle());
+        setHandle(new BukkitItemComponentImplHandle());
     }
 
     @Override

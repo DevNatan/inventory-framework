@@ -50,7 +50,7 @@ public final class BukkitItemComponentImpl extends PlatformComponent implements 
                 updateOnClick);
         this.position = position;
         this.stack = itemStack;
-		setHandle(new BukkitItemComponentImplHandle());
+        setHandle(new BukkitItemComponentImplHandle());
     }
 
     @Override
