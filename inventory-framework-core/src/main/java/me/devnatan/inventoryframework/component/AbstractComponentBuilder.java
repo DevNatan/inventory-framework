@@ -5,8 +5,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 import me.devnatan.inventoryframework.Ref;
+import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.state.State;
+import org.jetbrains.annotations.ApiStatus;
 
 public abstract class AbstractComponentBuilder implements ComponentBuilder {
 
@@ -91,6 +93,10 @@ public abstract class AbstractComponentBuilder implements ComponentBuilder {
     protected final void setKey(String key) {
         this.key = key;
     }
+
+    @Override
+    @ApiStatus.OverrideOnly
+    public abstract Component buildComponent(VirtualView root);
 
     @Override
     public String toString() {

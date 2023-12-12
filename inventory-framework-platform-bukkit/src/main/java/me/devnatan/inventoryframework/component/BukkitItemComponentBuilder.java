@@ -3,7 +3,7 @@ package me.devnatan.inventoryframework.component;
 import me.devnatan.inventoryframework.VirtualView;
 import org.bukkit.inventory.ItemStack;
 
-public class BukkitItemComponentBuilder extends BukkitComponentBuilder<BukkitItemComponentBuilder>
+public final class BukkitItemComponentBuilder extends BukkitComponentBuilder<BukkitItemComponentBuilder>
         implements ItemComponentBuilder {
 
     private int position;
@@ -13,10 +13,15 @@ public class BukkitItemComponentBuilder extends BukkitComponentBuilder<BukkitIte
     public BukkitItemComponentBuilder() {}
 
     @Override
+    public ComponentHandle buildHandle() {
+        return new BukkitItemComponentImplHandle();
+    }
+
+    @Override
     public Component buildComponent(VirtualView root) {
         return new BukkitItemComponentImpl(
-                getPosition(),
-                getItem(),
+                position,
+                item,
                 getKey(),
                 root,
                 getReference(),
@@ -30,62 +35,45 @@ public class BukkitItemComponentBuilder extends BukkitComponentBuilder<BukkitIte
                 isUpdateOnClick());
     }
 
-    protected final int getPosition() {
-        return position;
-    }
-
     @Override
-    public final void setPosition(int position) {
+    public void setPosition(int position) {
         this.position = position;
     }
 
-    protected final int getRow() {
-        return row;
-    }
-
-    protected final void setRow(int row) {
-        this.row = row;
-    }
-
-    protected final int getColumn() {
-        return column;
-    }
-
-    protected final void setColumn(int column) {
-        this.column = column;
+    @Override
+    public ItemComponentBuilder withPosition(int position) {
+        setPosition(position);
+        return this;
     }
 
     @Override
-    public final boolean isContainedWithin(int position) {
+    public boolean isContainedWithin(int position) {
         return this.position == position;
     }
 
-    protected final ItemStack getItem() {
-        return item;
-    }
-
-    protected final void setItem(ItemStack item) {
-        this.item = item;
-    }
-
-    public final BukkitItemComponentBuilder withSlot(int slot) {
+    public BukkitItemComponentBuilder withSlot(int slot) {
         setPosition(slot);
         return this;
     }
 
-    public final BukkitItemComponentBuilder withSlot(int row, int column) {
-        setRow(row);
-        setColumn(column);
+    public BukkitItemComponentBuilder withSlot(int row, int column) {
+        this.row = row;
+        this.column = column;
         return this;
     }
 
-    public final BukkitItemComponentBuilder withItem(ItemStack item) {
-        setItem(item);
+    public BukkitItemComponentBuilder withItem(ItemStack item) {
+        this.item = item;
         return this;
     }
 
     @Override
+    public ItemComponentBuilder withPlatformItem(Object item) {
+        return withItem((ItemStack) item);
+    }
+
+    @Override
     public String toString() {
-        return "BukkitItemComponentBuilder{" + "item=" + item + "} " + super.toString();
+        return "BukkitItemComponentBuilder{" + "item=" + item + ", position=" + position + "} " + super.toString();
     }
 }

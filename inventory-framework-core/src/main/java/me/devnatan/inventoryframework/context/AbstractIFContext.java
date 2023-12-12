@@ -3,7 +3,6 @@ package me.devnatan.inventoryframework.context;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -126,12 +125,6 @@ abstract class AbstractIFContext extends DefaultStateValueHost implements IFCont
     @Override
     public final boolean isShared() {
         return getIndexedViewers().size() > 1;
-    }
-
-    @NotNull
-    @Override
-    public final Iterator<Component> iterator() {
-        return getComponents().iterator();
     }
 
     /**

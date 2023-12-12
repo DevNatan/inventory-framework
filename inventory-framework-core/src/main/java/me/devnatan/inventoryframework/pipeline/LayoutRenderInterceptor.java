@@ -17,22 +17,30 @@ public final class LayoutRenderInterceptor implements PipelineInterceptor<Virtua
 
         final IFRenderContext renderContext = (IFRenderContext) subject;
         for (final LayoutSlot layoutSlot : renderContext.getLayoutSlots()) {
-            final IntFunction<ComponentBuilder> factory = layoutSlot.getFactory();
-            if (factory == null) {
+            final IntFunction<Component> componentFactory = layoutSlot.getComponentFactory();
+            final IntFunction<ComponentBuilder> builderFactory = layoutSlot.getBuilderFactory();
+            if (builderFactory == null && componentFactory == null) {
                 if (layoutSlot.isDefinedByTheUser())
                     throw new InventoryFrameworkException(
                             "#layoutSlot(...) factory cannot be null when defined by the user");
                 continue;
             }
 
-            int iterationIndex = 0;
+            int index = 0;
             for (final int slot : layoutSlot.getPositions()) {
-                final ComponentBuilder componentFactory = factory.apply(iterationIndex++);
-                if (componentFactory instanceof ItemComponentBuilder)
-                    ((ItemComponentBuilder) componentFactory).setPosition(slot);
+                final Component component;
+                if (builderFactory != null) {
+                    final ComponentBuilder factory = builderFactory.apply(index);
+                    if (factory instanceof ItemComponentBuilder)
+                        ((ItemComponentBuilder) componentFactory).setPosition(slot);
 
-                final Component component = componentFactory.buildComponent(renderContext);
+                    component = factory.buildComponent(renderContext);
+                } else {
+                    component = componentFactory.apply(index);
+                }
+
                 renderContext.addComponent(component);
+                index++;
             }
         }
     }

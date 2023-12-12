@@ -92,7 +92,7 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
         this.isStatic = sourceProvider instanceof Collection;
         this.isLazy =
                 !isStatic && !isComputed && (sourceProvider instanceof Function || sourceProvider instanceof Supplier);
-        setHandle(new Handle(this));
+        setHandle(new PaginationHandle(this));
     }
 
     // region Source Retrieval & Assignment
@@ -600,11 +600,11 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
     }
 }
 
-class Handle extends ComponentHandle {
+class PaginationHandle extends ComponentHandle {
 
     private final PaginationImpl pagination;
 
-    public Handle(PaginationImpl pagination) {
+    public PaginationHandle(PaginationImpl pagination) {
         this.pagination = pagination;
     }
 

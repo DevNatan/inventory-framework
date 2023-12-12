@@ -9,7 +9,6 @@ import me.devnatan.inventoryframework.component.ComponentBuilder;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.UnmodifiableView;
 
 public interface IFRenderContext extends IFConfinedContext {
 
@@ -17,7 +16,6 @@ public interface IFRenderContext extends IFConfinedContext {
      * <b><i> This is an internal inventory-framework API that should not be used from outside of
      * this library. No compatibility guarantees are provided. </i></b>
      */
-    @UnmodifiableView
     @ApiStatus.Internal
     List<ComponentBuilder> getNotRenderedComponents();
 

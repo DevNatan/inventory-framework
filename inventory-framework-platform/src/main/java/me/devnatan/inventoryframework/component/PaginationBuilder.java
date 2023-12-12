@@ -9,15 +9,15 @@ import me.devnatan.inventoryframework.state.State;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
-public final class PaginationBuilder<CONTEXT, BUILDER, V>
-        extends PlatformComponentBuilder<PaginationBuilder<CONTEXT, BUILDER, V>, CONTEXT> {
+public final class PaginationBuilder<CONTEXT, ITEM_BUILDER, V>
+        extends PlatformComponentBuilder<PaginationBuilder<CONTEXT, ITEM_BUILDER, V>, CONTEXT> {
 
     private final Object sourceProvider;
     private char layoutTarget = LayoutSlot.DEFAULT_SLOT_FILL_CHAR;
-    private PaginationElementFactory<V> paginationElementFactory;
+    private PaginationElementFactory<V> elementFactory;
     private BiConsumer<CONTEXT, Pagination> pageSwitchHandler;
     private final boolean async, computed;
-    private final Function<PaginationBuilder<CONTEXT, BUILDER, V>, State<Pagination>> stateFactory;
+    private final Function<PaginationBuilder<CONTEXT, ITEM_BUILDER, V>, State<Pagination>> stateFactory;
 
     /**
      * <b><i> This is an internal inventory-framework API that should not be used from outside of
@@ -28,7 +28,7 @@ public final class PaginationBuilder<CONTEXT, BUILDER, V>
             Object sourceProvider,
             boolean async,
             boolean computed,
-            Function<PaginationBuilder<CONTEXT, BUILDER, V>, State<Pagination>> stateFactory) {
+            Function<PaginationBuilder<CONTEXT, ITEM_BUILDER, V>, State<Pagination>> stateFactory) {
         this.sourceProvider = sourceProvider;
         this.async = async;
         this.computed = computed;
@@ -47,8 +47,15 @@ public final class PaginationBuilder<CONTEXT, BUILDER, V>
      * @param itemFactory The item factory.
      * @return This pagination state builder.
      */
-    public PaginationBuilder<CONTEXT, BUILDER, V> itemFactory(@NotNull BiConsumer<BUILDER, V> itemFactory) {
-        return elementFactory(((context, builder, index, value) -> itemFactory.accept(builder, value)));
+    @SuppressWarnings("unchecked")
+    public PaginationBuilder<CONTEXT, ITEM_BUILDER, V> itemFactory(@NotNull BiConsumer<ITEM_BUILDER, V> itemFactory) {
+        this.elementFactory = (pagination, index, slot, value) -> {
+            ItemComponentBuilder builder = PlatformUtils.getFactory().createItemComponentBuilder(pagination);
+            builder.setPosition(slot);
+            itemFactory.accept((ITEM_BUILDER) builder, value);
+            return builder.buildComponent(pagination);
+        };
+        return this;
     }
 
     /**
@@ -64,15 +71,27 @@ public final class PaginationBuilder<CONTEXT, BUILDER, V>
      * @return This pagination state builder.
      */
     @SuppressWarnings("unchecked")
-    public PaginationBuilder<CONTEXT, BUILDER, V> elementFactory(
-            @NotNull PaginationValueConsumer<CONTEXT, BUILDER, V> elementConsumer) {
-        this.paginationElementFactory = (pagination, index, slot, value) -> {
-            CONTEXT context = (CONTEXT) pagination.getRoot();
+    public PaginationBuilder<CONTEXT, ITEM_BUILDER, V> elementFactory(
+            @NotNull PaginationValueConsumer<CONTEXT, ITEM_BUILDER, V> elementConsumer) {
+        this.elementFactory = (pagination, index, slot, value) -> {
+            CONTEXT context = (CONTEXT) pagination.getContext();
             ItemComponentBuilder builder = PlatformUtils.getFactory().createItemComponentBuilder(pagination);
             builder.setPosition(slot);
 
-            elementConsumer.accept(context, (BUILDER) builder, index, value);
+            elementConsumer.accept(context, (ITEM_BUILDER) builder, index, value);
 
+            return builder.buildComponent(pagination);
+        };
+        return this;
+    }
+
+    @ApiStatus.Experimental
+    public PaginationBuilder<CONTEXT, ITEM_BUILDER, V> componentFactory(
+            PaginationValueComponentFactory<CONTEXT, V> factory) {
+        this.elementFactory = (pagination, index, slot, value) -> {
+            @SuppressWarnings("unchecked")
+            ComponentBuilder builder = factory.accept((CONTEXT) pagination.getContext(), index, value);
+            if (builder instanceof ItemComponentBuilder) ((ItemComponentBuilder) builder).withPosition(slot);
             return builder.buildComponent(pagination);
         };
         return this;
@@ -90,7 +109,7 @@ public final class PaginationBuilder<CONTEXT, BUILDER, V>
      * @param layoutTarget The target layout character.
      * @return This pagination state builder.
      */
-    public PaginationBuilder<CONTEXT, BUILDER, V> layoutTarget(char layoutTarget) {
+    public PaginationBuilder<CONTEXT, ITEM_BUILDER, V> layoutTarget(char layoutTarget) {
         this.layoutTarget = layoutTarget;
         return this;
     }
@@ -104,7 +123,7 @@ public final class PaginationBuilder<CONTEXT, BUILDER, V>
      * @param pageSwitchHandler The page switch handler.
      * @return This pagination state builder.
      */
-    public PaginationBuilder<CONTEXT, BUILDER, V> onPageSwitch(
+    public PaginationBuilder<CONTEXT, ITEM_BUILDER, V> onPageSwitch(
             @NotNull BiConsumer<CONTEXT, Pagination> pageSwitchHandler) {
         this.pageSwitchHandler = pageSwitchHandler;
         return this;
@@ -124,6 +143,11 @@ public final class PaginationBuilder<CONTEXT, BUILDER, V>
         throw new UnsupportedOperationException("PaginationBuilder component cannot be built");
     }
 
+    @Override
+    public ComponentHandle buildHandle() {
+        throw new UnsupportedOperationException("PaginationBuilder component cannot be built");
+    }
+
     /**
      * <b><i> This is an internal inventory-framework API that should not be used from outside of
      * this library. No compatibility guarantees are provided. </i></b>
@@ -140,7 +164,7 @@ public final class PaginationBuilder<CONTEXT, BUILDER, V>
                 stateId,
                 layoutTarget,
                 sourceProvider,
-                (PaginationElementFactory) paginationElementFactory,
+                (PaginationElementFactory) elementFactory,
                 (BiConsumer) pageSwitchHandler,
                 async,
                 computed);

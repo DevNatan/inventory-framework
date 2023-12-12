@@ -4,7 +4,7 @@ import java.util.List;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.UnmodifiableView;
 
-public interface ComponentContainer extends Iterable<Component> {
+public interface ComponentContainer {
 
     /**
      * All components in this container.

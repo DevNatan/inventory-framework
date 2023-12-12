@@ -2,29 +2,28 @@ package me.devnatan.inventoryframework.component;
 
 import me.devnatan.inventoryframework.InventoryFrameworkException;
 import me.devnatan.inventoryframework.context.ComponentClearContext;
-import me.devnatan.inventoryframework.context.ComponentRenderContext;
 import me.devnatan.inventoryframework.context.ComponentUpdateContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
+import me.devnatan.inventoryframework.context.PublicPlatformRenderContext;
 import me.devnatan.inventoryframework.context.SlotClickContext;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
 
 @ApiStatus.Internal
 public final class BukkitItemComponentImplHandle extends BukkitComponentHandle<BukkitItemComponentBuilder> {
 
     @Override
-    public void rendered(@NotNull ComponentRenderContext context) {
+    public void rendered(PublicPlatformRenderContext context) {
         final BukkitItemComponentImpl component = (BukkitItemComponentImpl) context.getComponent();
 
         if (component.getRenderHandler() != null) {
             final int initialSlot = component.getPosition();
-            component.getRenderHandler().accept(context);
+            component.getRenderHandler().accept(context.getConfinedContext());
 
             // Externally managed components have its own displacement measures
             // FIXME Missing implementation
             // TODO Component-based context do not need displacement measures?
             if (!component.isManagedExternally()) {
-                final int updatedSlot = ((BukkitItemComponentImpl) context.getComponent()).getPosition();
+                final int updatedSlot = context.getComponent().getPosition();
                 component.setPosition(updatedSlot);
 
                 if (updatedSlot == -1 && initialSlot == -1) {

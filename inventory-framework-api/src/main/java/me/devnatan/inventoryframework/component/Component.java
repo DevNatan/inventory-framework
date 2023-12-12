@@ -37,6 +37,8 @@ public interface Component extends VirtualView, Pipelined {
     @NotNull
     VirtualView getRoot();
 
+    IFContext getContext();
+
     ViewContainer getContainer();
 
     /**

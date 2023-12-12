@@ -3,6 +3,7 @@ package me.devnatan.inventoryframework.internal;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.function.IntFunction;
+import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.ComponentBuilder;
 import org.jetbrains.annotations.Nullable;
 
@@ -11,12 +12,18 @@ public final class LayoutSlot {
     public static final char DEFAULT_SLOT_FILL_CHAR = 'O';
 
     private final char character;
-    private final IntFunction<ComponentBuilder> factory;
+    private final IntFunction<ComponentBuilder> builderFactory;
+    private final IntFunction<Component> componentFactory;
     private final int[] positions;
 
-    public LayoutSlot(char character, @Nullable IntFunction<ComponentBuilder> factory, int[] positions) {
+    public LayoutSlot(
+            char character,
+            IntFunction<ComponentBuilder> builderFactory,
+            IntFunction<Component> componentFactory,
+            int[] positions) {
         this.character = character;
-        this.factory = factory;
+        this.builderFactory = builderFactory;
+        this.componentFactory = componentFactory;
         this.positions = positions;
     }
 
@@ -24,12 +31,20 @@ public final class LayoutSlot {
         return character;
     }
 
-    public IntFunction<ComponentBuilder> getFactory() {
-        return factory;
+    public IntFunction<ComponentBuilder> getBuilderFactory() {
+        return builderFactory;
     }
 
-    public LayoutSlot withFactory(@Nullable IntFunction<ComponentBuilder> factory) {
-        return new LayoutSlot(character, factory, positions);
+    public IntFunction<Component> getComponentFactory() {
+        return componentFactory;
+    }
+
+    public LayoutSlot withBuilderFactory(@Nullable IntFunction<ComponentBuilder> factory) {
+        return new LayoutSlot(character, factory, componentFactory, positions);
+    }
+
+    public LayoutSlot withComponentFactory(@Nullable IntFunction<Component> factory) {
+        return new LayoutSlot(character, builderFactory, factory, positions);
     }
 
     public int[] getPositions() {
@@ -44,7 +59,7 @@ public final class LayoutSlot {
     }
 
     public boolean isDefinedByTheUser() {
-        return factory != null;
+        return builderFactory != null;
     }
 
     @Override
@@ -62,7 +77,7 @@ public final class LayoutSlot {
 
     @Override
     public String toString() {
-        return "LayoutSlot{" + "character=" + character + ", factory=" + factory + ", positions="
-                + Arrays.toString(positions) + '}';
+        return "LayoutSlot{" + "character=" + character + ", builderFactory=" + builderFactory + ", componentFactory="
+                + componentFactory + ", positions=" + Arrays.toString(positions) + '}';
     }
 }

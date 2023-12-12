@@ -55,6 +55,11 @@ public abstract class AbstractComponent implements Component {
     }
 
     @Override
+    public final IFContext getContext() {
+        return getRootAsContext();
+    }
+
+    @Override
     public final ViewContainer getContainer() {
         return getRootAsContext().getContainer();
     }

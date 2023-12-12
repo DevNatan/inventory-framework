@@ -275,4 +275,7 @@ public abstract class PlatformComponentBuilder<SELF, CONTEXT> extends AbstractCo
         setKey(key);
         return (SELF) this;
     }
+
+    @ApiStatus.OverrideOnly
+    public abstract ComponentHandle buildHandle();
 }
