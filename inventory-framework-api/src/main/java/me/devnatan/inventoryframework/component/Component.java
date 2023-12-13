@@ -148,4 +148,6 @@ public interface Component extends VirtualView, Pipelined {
      */
     @ApiStatus.Internal
     void setHandle(ComponentHandle handle);
+
+    int getPosition();
 }

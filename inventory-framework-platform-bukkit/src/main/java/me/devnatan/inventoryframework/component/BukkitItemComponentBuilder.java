@@ -6,8 +6,6 @@ import org.bukkit.inventory.ItemStack;
 public final class BukkitItemComponentBuilder extends BukkitComponentBuilder<BukkitItemComponentBuilder>
         implements ItemComponentBuilder {
 
-    private int position;
-    private int row = -1, column = -1;
     private ItemStack item;
 
     public BukkitItemComponentBuilder() {}
@@ -20,7 +18,7 @@ public final class BukkitItemComponentBuilder extends BukkitComponentBuilder<Buk
     @Override
     public Component buildComponent(VirtualView root) {
         return new BukkitItemComponentImpl(
-                position,
+                getPosition(),
                 item,
                 getKey(),
                 root,
@@ -37,7 +35,7 @@ public final class BukkitItemComponentBuilder extends BukkitComponentBuilder<Buk
 
     @Override
     public void setPosition(int position) {
-        this.position = position;
+        super.withSlot(position);
     }
 
     @Override
@@ -48,18 +46,7 @@ public final class BukkitItemComponentBuilder extends BukkitComponentBuilder<Buk
 
     @Override
     public boolean isContainedWithin(int position) {
-        return this.position == position;
-    }
-
-    public BukkitItemComponentBuilder withSlot(int slot) {
-        setPosition(slot);
-        return this;
-    }
-
-    public BukkitItemComponentBuilder withSlot(int row, int column) {
-        this.row = row;
-        this.column = column;
-        return this;
+        return super.getPosition() == position;
     }
 
     public BukkitItemComponentBuilder withItem(ItemStack item) {
@@ -74,6 +61,6 @@ public final class BukkitItemComponentBuilder extends BukkitComponentBuilder<Buk
 
     @Override
     public String toString() {
-        return "BukkitItemComponentBuilder{" + "item=" + item + ", position=" + position + "} " + super.toString();
+        return "BukkitItemComponentBuilder{" + "item=" + item + ", position=" + getPosition() + "} " + super.toString();
     }
 }

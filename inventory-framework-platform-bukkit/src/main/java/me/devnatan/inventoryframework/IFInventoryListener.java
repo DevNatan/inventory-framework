@@ -46,6 +46,7 @@ final class IFInventoryListener implements Listener {
                 .filter(Component::isVisible)
                 .findFirst()
                 .orElse(null);
+        IFDebug.debug("event.getRawSlot() = %d", event.getRawSlot());
         final ViewContainer clickedContainer = event.getClickedInventory() instanceof PlayerInventory
                 ? viewer.getSelfContainer()
                 : context.getContainer();

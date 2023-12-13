@@ -15,6 +15,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import me.devnatan.inventoryframework.IFDebug;
 import me.devnatan.inventoryframework.Ref;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.VirtualView;
@@ -261,7 +262,16 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
     }
 
     void renderChild(IFRenderContext context) {
-        getInternalComponents().forEach(context::renderComponent);
+        IFDebug.debug(
+                "renderChild(IFRenderContext) (%d): %s", getInternalComponents().size(), getInternalComponents());
+        getInternalComponents().forEach(component -> {
+            IFDebug.debug("renderChild(Component): %s", component);
+            try {
+                context.renderComponent(component);
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     /**
@@ -557,6 +567,11 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
     }
 
     @Override
+    public int getPosition() {
+        throw new UnsupportedOperationException("Pagination position cannot be accessed");
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -584,7 +599,7 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
 
     @Override
     public String toString() {
-        return "PaginationImpl{" + ", root="
+        return "PaginationImpl{root="
                 + getRoot() + ", layoutTarget="
                 + layoutTarget + ", sourceProvider="
                 + sourceProvider + ", elementFactory="
@@ -609,7 +624,7 @@ class PaginationHandle extends ComponentHandle {
     }
 
     void render(@NotNull IFComponentRenderContext context) {
-        final IFRenderContext root = context.getParent();
+        final IFRenderContext root = (IFRenderContext) context.getTopLevelContext();
         if (!pagination.initialized || pagination.pageWasChanged) {
             if (!pagination.initialized) pagination.updatePageSize(root);
             pagination.loadCurrentPage(root).thenRun(() -> {

@@ -5,6 +5,7 @@ import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.ComponentClearContext;
 import me.devnatan.inventoryframework.context.ComponentUpdateContext;
 import me.devnatan.inventoryframework.context.Context;
+import me.devnatan.inventoryframework.context.IFComponentRenderContext;
 import me.devnatan.inventoryframework.context.PublicPlatformRenderContext;
 import me.devnatan.inventoryframework.context.SlotClickContext;
 import me.devnatan.inventoryframework.pipeline.PipelineContext;
@@ -49,7 +50,7 @@ public abstract class BukkitComponentHandle<T> extends PlatformComponentHandle<C
         final PipelinePhase phase = Objects.requireNonNull(
                 pipeline.getPhase(), "Pipeline phase cannot be null in ComponentHandle interceptor");
 
-        if (phase == Component.RENDER) rendered((PublicPlatformRenderContext) subject);
+        if (phase == Component.RENDER) rendered(new PublicPlatformRenderContext((IFComponentRenderContext) subject));
         if (phase == Component.UPDATE) updated((ComponentUpdateContext) subject);
         if (phase == Component.CLEAR) cleared((ComponentClearContext) subject);
         if (phase == Component.CLICK) clicked((SlotClickContext) subject);

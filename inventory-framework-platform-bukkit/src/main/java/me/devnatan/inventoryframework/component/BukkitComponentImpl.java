@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 public final class BukkitComponentImpl extends PlatformComponent {
 
     BukkitComponentImpl(
+            int position,
             String key,
             VirtualView root,
             Ref<Component> reference,
@@ -27,6 +28,7 @@ public final class BukkitComponentImpl extends PlatformComponent {
             boolean closeOnClick,
             boolean updateOnClick) {
         super(
+                position,
                 key,
                 root,
                 reference,
@@ -43,11 +45,16 @@ public final class BukkitComponentImpl extends PlatformComponent {
 
     @Override
     public boolean isContainedWithin(int position) {
-        return false;
+        return getPosition() == position;
     }
 
     @Override
     public boolean intersects(@NotNull Component other) {
         return false;
+    }
+
+    @Override
+    public String toString() {
+        return "BukkitComponentImpl{} " + super.toString();
     }
 }

@@ -13,7 +13,7 @@ public final class BukkitItemComponentImplHandle extends BukkitComponentHandle<B
 
     @Override
     public void rendered(PublicPlatformRenderContext context) {
-        final BukkitItemComponentImpl component = (BukkitItemComponentImpl) context.getComponent();
+        final PlatformComponent component = (PlatformComponent) context.getComponent();
 
         if (component.getRenderHandler() != null) {
             final int initialSlot = component.getPosition();
@@ -23,8 +23,8 @@ public final class BukkitItemComponentImplHandle extends BukkitComponentHandle<B
             // FIXME Missing implementation
             // TODO Component-based context do not need displacement measures?
             if (!component.isManagedExternally()) {
-                final int updatedSlot = context.getComponent().getPosition();
-                component.setPosition(updatedSlot);
+                final int updatedSlot = component.getPosition();
+                //                context.setPosition(updatedSlot);
 
                 if (updatedSlot == -1 && initialSlot == -1) {
                     // TODO needs more user-friendly "do something"-like message
@@ -48,7 +48,9 @@ public final class BukkitItemComponentImplHandle extends BukkitComponentHandle<B
                 component.setVisible(true);
                 return;
             }
-            throw new IllegalStateException("At least one fallback item or render handler must be provided");
+            if (!component.isManagedExternally())
+                throw new IllegalStateException("At least one fallback item or render handler must be provided");
+            return;
         }
 
         context.getContainer().renderItem(component.getPosition(), context.getItem());
@@ -77,7 +79,7 @@ public final class BukkitItemComponentImplHandle extends BukkitComponentHandle<B
     protected void cleared(ComponentClearContext context) {
         if (context.isCancelled()) return;
         final Component component = context.getComponent();
-        component.getContainer().removeItem(((ItemComponent) component).getPosition());
+        component.getContainer().removeItem(component.getPosition());
     }
 
     @Override

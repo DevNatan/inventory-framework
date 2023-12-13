@@ -19,7 +19,6 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class BukkitItemComponentImpl extends PlatformComponent implements ItemComponent {
 
-    private int position;
     private final ItemStack stack;
 
     BukkitItemComponentImpl(
@@ -37,6 +36,7 @@ public final class BukkitItemComponentImpl extends PlatformComponent implements 
             boolean closeOnClick,
             boolean updateOnClick) {
         super(
+                position,
                 key,
                 root,
                 reference,
@@ -48,18 +48,8 @@ public final class BukkitItemComponentImpl extends PlatformComponent implements 
                 cancelOnClick,
                 closeOnClick,
                 updateOnClick);
-        this.position = position;
         this.stack = itemStack;
         setHandle(new BukkitItemComponentImplHandle());
-    }
-
-    @Override
-    public int getPosition() {
-        return position;
-    }
-
-    void setPosition(int position) {
-        this.position = position;
     }
 
     public ItemStack getItemStack() {
@@ -99,6 +89,6 @@ public final class BukkitItemComponentImpl extends PlatformComponent implements 
 
     @Override
     public String toString() {
-        return "BukkitItemComponentImpl{" + "position=" + position + ", itemStack=" + stack + "} " + super.toString();
+        return "BukkitItemComponentImpl{" + "itemStack=" + stack + "} " + super.toString();
     }
 }

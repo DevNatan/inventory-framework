@@ -180,7 +180,7 @@ public abstract class PlatformRenderContext<CONTEXT, ITEM_BUILDER extends ItemCo
             return;
         }
 
-        IFDebug.debug("renderComponent(Component): %s", component);
+        IFDebug.debug("renderComponent(): %s", component);
         component.getPipeline().execute(Component.RENDER, createComponentRenderContext(component, false));
     }
 

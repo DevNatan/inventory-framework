@@ -27,7 +27,7 @@ public abstract class AbstractComponent implements Component {
             new Pipeline<>(Component.RENDER, Component.UPDATE, Component.CLICK, Component.CLEAR);
 
     private ComponentHandle handle;
-    private boolean isVisible;
+    private boolean isVisible = true;
     private boolean wasForceUpdated;
 
     protected AbstractComponent(

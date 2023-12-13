@@ -13,6 +13,7 @@ import me.devnatan.inventoryframework.state.State;
 
 public abstract class PlatformComponent extends AbstractComponent implements Component {
 
+    private final int position;
     private final boolean cancelOnClick;
     private final boolean closeOnClick;
     private final boolean updateOnClick;
@@ -21,6 +22,7 @@ public abstract class PlatformComponent extends AbstractComponent implements Com
     private final Consumer<? super IFSlotClickContext> clickHandler;
 
     protected PlatformComponent(
+            int position,
             String key,
             VirtualView root,
             Ref<Component> reference,
@@ -33,12 +35,17 @@ public abstract class PlatformComponent extends AbstractComponent implements Com
             boolean closeOnClick,
             boolean updateOnClick) {
         super(key, root, reference, watchingStates, displayCondition);
+        this.position = position;
         this.renderHandler = renderHandler;
         this.updateHandler = updateHandler;
         this.clickHandler = clickHandler;
         this.cancelOnClick = cancelOnClick;
         this.closeOnClick = closeOnClick;
         this.updateOnClick = updateOnClick;
+    }
+
+    public final int getPosition() {
+        return position;
     }
 
     // region Public Builder Methods
@@ -71,7 +78,8 @@ public abstract class PlatformComponent extends AbstractComponent implements Com
 
     @Override
     public String toString() {
-        return "PlatformComponent{" + "cancelOnClick="
+        return "PlatformComponent{position="
+                + position + ", cancelOnClick="
                 + cancelOnClick + ", closeOnClick="
                 + closeOnClick + ", updateOnClick="
                 + updateOnClick + ", renderHandler="

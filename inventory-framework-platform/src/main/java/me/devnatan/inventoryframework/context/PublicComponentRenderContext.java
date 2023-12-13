@@ -6,7 +6,7 @@ import me.devnatan.inventoryframework.PlatformView;
 import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
-import me.devnatan.inventoryframework.component.ItemComponent;
+import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.ItemComponentBuilder;
 import me.devnatan.inventoryframework.component.PlatformComponentBuilder;
 import org.jetbrains.annotations.NotNull;
@@ -15,59 +15,67 @@ public abstract class PublicComponentRenderContext<CONTEXT, ITEM_BUILDER extends
         extends PlatformConfinedContext
         implements IFComponentRenderContext, PublicSlotComponentRenderer<CONTEXT, ITEM_BUILDER, ITEM> {
 
-    private final PublicSlotComponentRenderer<CONTEXT, ITEM_BUILDER, ITEM> publicSlotComponentRenderer =
-            new DefaultPublicSlotComponentRenderer<>(this, getParent(), this::createItemBuilder);
+    private final IFComponentRenderContext componentContext;
+    private final PublicSlotComponentRenderer<CONTEXT, ITEM_BUILDER, ITEM> publicSlotComponentRenderer;
 
-    @Override
-    public IFContext getTopLevelContext() {
-        return null;
+    public PublicComponentRenderContext(IFComponentRenderContext componentContext) {
+        this.componentContext = componentContext;
+        publicSlotComponentRenderer = new DefaultPublicSlotComponentRenderer<>(
+                this, (IFRenderContext) getTopLevelContext(), this::createItemBuilder);
     }
 
     @Override
-    public ItemComponent getComponent() {
-        return null;
+    public final IFContext getTopLevelContext() {
+        return componentContext.getComponent().getContext();
     }
 
     @Override
-    public IFRenderContext getParent() {
-        return null;
-    }
-
-    public IFComponentRenderContext getConfinedContext() {
-        throw new UnsupportedOperationException();
+    public final Component getComponent() {
+        return componentContext.getComponent();
     }
 
     @Override
-    public ViewContainer getContainer() {
-        return null;
+    public final IFRenderContext getParent() {
+        return componentContext.getParent();
+    }
+
+    public final IFComponentRenderContext getConfinedContext() {
+        return componentContext;
     }
 
     @Override
-    public @NotNull UUID getId() {
-        return null;
+    public final ViewContainer getContainer() {
+        return componentContext.getContainer();
     }
 
     @Override
-    public @NotNull ViewConfig getConfig() {
-        return null;
+    public final @NotNull UUID getId() {
+        return componentContext.getId();
     }
 
     @Override
-    public Object getInitialData() {
-        return null;
+    public final @NotNull ViewConfig getConfig() {
+        return componentContext.getConfig();
     }
 
     @Override
-    public void setInitialData(Object initialData) {}
-
-    @Override
-    public Viewer getViewer() {
-        return null;
+    public final Object getInitialData() {
+        return componentContext.getInitialData();
     }
 
     @Override
-    public @NotNull PlatformView getRoot() {
-        return null;
+    public final void setInitialData(Object initialData) {
+        componentContext.setInitialData(initialData);
+    }
+
+    @Override
+    public final Viewer getViewer() {
+        return componentContext.getViewer();
+    }
+
+    @Override
+    public final @NotNull PlatformView getRoot() {
+        return (PlatformView) componentContext.getRoot();
     }
 
     @Override
@@ -187,4 +195,12 @@ public abstract class PublicComponentRenderContext<CONTEXT, ITEM_BUILDER extends
     }
 
     protected abstract ITEM_BUILDER createItemBuilder();
+
+    @Override
+    public String toString() {
+        return "PublicComponentRenderContext{" + "componentContext="
+                + componentContext + ", publicSlotComponentRenderer="
+                + publicSlotComponentRenderer + "} "
+                + super.toString();
+    }
 }

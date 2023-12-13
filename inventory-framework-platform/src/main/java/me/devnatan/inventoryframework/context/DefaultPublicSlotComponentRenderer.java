@@ -67,7 +67,7 @@ public final class DefaultPublicSlotComponentRenderer<CONTEXT, BUILDER extends C
      * @param slot The slot in which the item will be positioned.
      * @return An item builder to configure the item.
      */
-    public @NotNull BUILDER slot(int slot) {
+    public BUILDER slot(int slot) {
         return (BUILDER) createRegisteredBuilder().withPosition(slot);
     }
 
@@ -79,7 +79,7 @@ public final class DefaultPublicSlotComponentRenderer<CONTEXT, BUILDER extends C
      * @return An item builder to configure the item.
      */
     @NotNull
-    public final BUILDER slot(int row, int column) {
+    public BUILDER slot(int row, int column) {
         checkAlignedContainerTypeForSlotAssignment();
         return slot(convertSlot(
                 row,
@@ -289,9 +289,7 @@ public final class DefaultPublicSlotComponentRenderer<CONTEXT, BUILDER extends C
 
     // region Component Assignment Methods
     private <B extends PlatformComponentBuilder<B, CONTEXT>> void slotComponent(int position, B builder) {
-        if (position > 0 && builder instanceof ItemComponentBuilder)
-            ((ItemComponentBuilder) builder).setPosition(position);
-
+        ((PlatformComponentBuilder) builder).withSlot(position);
         final Component component = builder.buildComponent(root);
         component.setHandle(builder.buildHandle());
         renderContext.addComponent(component);
