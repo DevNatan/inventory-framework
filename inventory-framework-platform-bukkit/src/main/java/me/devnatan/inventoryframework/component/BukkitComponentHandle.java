@@ -8,7 +8,6 @@ import me.devnatan.inventoryframework.context.ComponentRenderContext;
 import me.devnatan.inventoryframework.context.ComponentUpdateContext;
 import me.devnatan.inventoryframework.context.Context;
 import me.devnatan.inventoryframework.context.IFComponentClearContext;
-import me.devnatan.inventoryframework.context.IFComponentUpdateContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.context.PublicComponentRenderContext;
 import me.devnatan.inventoryframework.context.SlotClickContext;
@@ -64,13 +63,13 @@ public abstract class BukkitComponentHandle<T> extends PlatformComponentHandle<C
                 component.getRenderHandler().accept(context);
                 rendered(publicContext);
 
-                if (position > 0) context.getContainer().renderItem(component.getPosition(), context.getItem());
+                if (position >= 0) context.getContainer().renderItem(component.getPosition(), context.getItem());
                 component.setVisible(true);
                 return;
             }
 
             rendered(publicContext);
-            if (position > 0) {
+            if (position >= 0) {
                 if (context.getItem() == null) {
                     if (context.getContainer().getType().isResultSlot(position)) {
                         component.setVisible(true);
@@ -92,12 +91,15 @@ public abstract class BukkitComponentHandle<T> extends PlatformComponentHandle<C
         }
 
         if (phase == Component.UPDATE) {
-            final IFComponentUpdateContext context = (IFComponentUpdateContext) subject;
+            final ComponentUpdateContext context = (ComponentUpdateContext) subject;
             final PlatformComponent component = (PlatformComponent) context.getComponent();
+            updated(context);
+
             if (context.isCancelled()) return;
 
             // Static item with no `displayIf` must not even reach the update handler
-            if (!context.isForceUpdate()
+            if (!component.isSelfManaged()
+                    && !context.isForceUpdate()
                     && component.getDisplayCondition() == null
                     && component.getRenderHandler() == null) return;
 
@@ -106,7 +108,6 @@ public abstract class BukkitComponentHandle<T> extends PlatformComponentHandle<C
                 if (context.isCancelled()) return;
             }
 
-            updated((ComponentUpdateContext) subject);
             if (context.isCancelled()) return;
 
             ((IFRenderContext) component.getContext()).renderComponent(component);

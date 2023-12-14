@@ -36,13 +36,12 @@ public final class BukkitItemComponentBuilder extends BukkitComponentBuilder<Buk
 
     @Override
     public void setPosition(int position) {
-        super.withSlot(position);
+        withSlot(position);
     }
 
     @Override
     public ItemComponentBuilder withPosition(int position) {
-        setPosition(position);
-        return this;
+        return withSlot(position);
     }
 
     @Override
