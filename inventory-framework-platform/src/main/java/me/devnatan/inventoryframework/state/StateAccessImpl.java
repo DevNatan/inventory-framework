@@ -9,6 +9,7 @@ import me.devnatan.inventoryframework.component.Pagination;
 import me.devnatan.inventoryframework.component.PaginationBuilder;
 import me.devnatan.inventoryframework.component.PaginationImpl;
 import me.devnatan.inventoryframework.component.PaginationValueConsumer;
+import me.devnatan.inventoryframework.context.IFRenderContext;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -201,8 +202,8 @@ public final class StateAccessImpl<CONTEXT, ITEM_BUILDER> implements StateAccess
 
     <V> State<Pagination> createPaginationState(@NotNull PaginationBuilder<CONTEXT, ITEM_BUILDER, V> builder) {
         final long id = State.next();
-        final StateValueFactory factory =
-                (host, state) -> (PaginationImpl) builder.buildComponent0(id, (VirtualView) host);
+        final StateValueFactory factory = (host, state) -> (PaginationImpl)
+                builder.withSelfManaged(!(caller instanceof IFRenderContext)).buildComponent0(id, (VirtualView) host);
         final State<Pagination> state = new PaginationState(id, factory);
         this.stateRegistry.registerState(state, caller);
 

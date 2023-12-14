@@ -77,9 +77,12 @@ public abstract class BukkitComponentHandle<T> extends PlatformComponentHandle<C
                         return;
                     }
 
+                    // TODO This error must be in slot creation and not on render
+                    //      so the developer will know where the error is
                     if (!component.isSelfManaged())
                         throw new IllegalStateException(
-                                "At least one fallback item or render handler must be provided");
+                                "At least one fallback item or render handler must be provided for "
+                                        + component.getClass().getName());
                     return;
                 }
 

@@ -97,10 +97,6 @@ public abstract class AbstractComponent implements Component {
 
     @Override
     public final void update() {
-        if (isSelfManaged())
-            throw new IllegalStateException(
-                    "This component is externally managed by another component and cannot be updated directly");
-
         getRootAsContext().updateComponent(this, false, null);
     }
 
@@ -179,7 +175,7 @@ public abstract class AbstractComponent implements Component {
                 + displayCondition + ", pipeline="
                 + pipeline + ", handle="
                 + handle + ", isVisible="
-                + isVisible + ", isManagedExternally="
+                + isVisible + ", isSelfManaged="
                 + isSelfManaged + ", wasForceUpdated="
                 + wasForceUpdated + '}';
     }

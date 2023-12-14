@@ -3,7 +3,6 @@ package me.devnatan.inventoryframework.component;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import me.devnatan.inventoryframework.VirtualView;
-import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
 import me.devnatan.inventoryframework.internal.PlatformUtils;
 import me.devnatan.inventoryframework.state.State;
@@ -96,10 +95,12 @@ public final class PaginationBuilder<CONTEXT, ITEM_BUILDER, V>
             PaginationValueComponentFactory<CONTEXT, V> factory) {
         this.elementFactory = (pagination, index, slot, value) -> {
             @SuppressWarnings("unchecked")
-            final ComponentBuilder builder = factory.accept((CONTEXT) pagination.getContext(), index, value);
-            ((PlatformComponentBuilder) builder).withSlot(slot);
+            final PlatformComponentBuilder builder =
+                    (PlatformComponentBuilder) factory.accept((CONTEXT) pagination.getContext(), index, value);
+            builder.withSlot(slot);
+            builder.withSelfManaged(PaginationBuilder.this.isSelfManaged());
             final Component component = builder.buildComponent(pagination);
-            component.setHandle(((PlatformComponentBuilder) builder).buildHandle());
+            component.setHandle(builder.buildHandle());
             return component;
         };
         return this;
@@ -176,6 +177,6 @@ public final class PaginationBuilder<CONTEXT, ITEM_BUILDER, V>
                 (BiConsumer) pageSwitchHandler,
                 async,
                 computed,
-                !(root instanceof IFContext));
+                isSelfManaged());
     }
 }
