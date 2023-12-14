@@ -289,8 +289,7 @@ public final class DefaultPublicSlotComponentRenderer<CONTEXT, BUILDER extends C
 
     // region Component Assignment Methods
     private <B extends PlatformComponentBuilder<B, CONTEXT>> void slotComponent(int position, B builder) {
-        ((PlatformComponentBuilder) builder).withSlot(position);
-        final Component component = builder.buildComponent(root);
+        final Component component = builder.withSlot(position).buildComponent(root);
         component.setHandle(builder.buildHandle());
         renderContext.addComponent(component);
     }

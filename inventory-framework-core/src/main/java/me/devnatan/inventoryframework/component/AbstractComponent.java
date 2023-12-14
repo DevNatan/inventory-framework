@@ -25,6 +25,7 @@ public abstract class AbstractComponent implements Component {
     private final Predicate<? extends IFContext> displayCondition;
     private final Pipeline<VirtualView> pipeline =
             new Pipeline<>(Component.RENDER, Component.UPDATE, Component.CLICK, Component.CLEAR);
+    private final boolean isSelfManaged;
 
     private ComponentHandle handle;
     private boolean isVisible = true;
@@ -35,12 +36,14 @@ public abstract class AbstractComponent implements Component {
             VirtualView root,
             Ref<Component> reference,
             Set<State<?>> watchingStates,
-            Predicate<? extends IFContext> displayCondition) {
+            Predicate<? extends IFContext> displayCondition,
+            boolean isSelfManaged) {
         this.key = key;
         this.root = root;
         this.reference = reference;
         this.watchingStates = watchingStates;
         this.displayCondition = displayCondition;
+        this.isSelfManaged = isSelfManaged;
         setHandle(NoopComponentHandle.INSTANCE);
     }
 
@@ -82,9 +85,8 @@ public abstract class AbstractComponent implements Component {
     }
 
     @Override
-    public final boolean isManagedExternally() {
-        // TODO remove this from API
-        return false;
+    public final boolean isSelfManaged() {
+        return isSelfManaged;
     }
 
     @SuppressWarnings("unchecked")
@@ -95,7 +97,7 @@ public abstract class AbstractComponent implements Component {
 
     @Override
     public final void update() {
-        if (isManagedExternally())
+        if (isSelfManaged())
             throw new IllegalStateException(
                     "This component is externally managed by another component and cannot be updated directly");
 
@@ -177,7 +179,8 @@ public abstract class AbstractComponent implements Component {
                 + displayCondition + ", pipeline="
                 + pipeline + ", handle="
                 + handle + ", isVisible="
-                + isVisible + ", wasForceUpdated="
+                + isVisible + ", isManagedExternally="
+                + isSelfManaged + ", wasForceUpdated="
                 + wasForceUpdated + '}';
     }
 }

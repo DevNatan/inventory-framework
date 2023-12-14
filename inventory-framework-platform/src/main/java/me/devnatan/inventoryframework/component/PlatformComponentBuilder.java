@@ -231,8 +231,8 @@ public abstract class PlatformComponentBuilder<SELF, CONTEXT> extends AbstractCo
      * this library. No compatibility guarantees are provided.</i></b>
      */
     @ApiStatus.Internal
-    public final SELF withExternallyManaged(boolean isExternallyManaged) {
-        setManagedExternally(isExternallyManaged);
+    public final SELF withSelfManaged(boolean isSelfManaged) {
+        setSelfManaged(isSelfManaged);
         return (SELF) this;
     }
 

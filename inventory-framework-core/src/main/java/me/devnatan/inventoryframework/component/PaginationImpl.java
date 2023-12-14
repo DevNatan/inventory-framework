@@ -15,7 +15,6 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import me.devnatan.inventoryframework.IFDebug;
 import me.devnatan.inventoryframework.Ref;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.VirtualView;
@@ -80,8 +79,9 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
             PaginationElementFactory<Object> elementFactory,
             BiConsumer<VirtualView, Pagination> pageSwitchHandler,
             boolean isAsync,
-            boolean isComputed) {
-        super(key, root, reference, watchingStates, displayCondition);
+            boolean isComputed,
+            boolean isSelfManaged) {
+        super(key, root, reference, watchingStates, displayCondition, isSelfManaged);
         this.internalStateId = internalStateId;
         this.layoutTarget = layoutTarget;
         this.sourceProvider = sourceProvider;
@@ -262,16 +262,7 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
     }
 
     void renderChild(IFRenderContext context) {
-        IFDebug.debug(
-                "renderChild(IFRenderContext) (%d): %s", getInternalComponents().size(), getInternalComponents());
-        getInternalComponents().forEach(component -> {
-            IFDebug.debug("renderChild(Component): %s", component);
-            try {
-                context.renderComponent(component);
-            } catch (Throwable e) {
-                e.printStackTrace();
-            }
-        });
+        getInternalComponents().forEach(context::renderComponent);
     }
 
     /**
@@ -281,18 +272,24 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
      * @return A CompletableFuture with the completion stage of the current page.
      */
     CompletableFuture<?> loadCurrentPage(IFRenderContext context) {
-        return loadSourceForTheCurrentPage().thenAccept(pageContents -> {
-            if (pageContents.isEmpty()) {
-                debug("[Pagination] Empty page contents (page %d of %d)", currentPageIndex(), getPagesCount());
-                return;
-            }
+        return loadSourceForTheCurrentPage()
+                .thenAccept(pageContents -> {
+                    if (pageContents.isEmpty()) {
+                        debug("[Pagination] Empty page contents (page %d of %d)", currentPageIndex(), getPagesCount());
+                        return;
+                    }
 
-            final boolean useLayout = context.getConfig().getLayout() != null;
-            debug("[Pagination] Adding components.. (useLayout = %b)", useLayout);
+                    final boolean useLayout = context.getConfig().getLayout() != null;
+                    debug("[Pagination] Adding components.. (useLayout = %b)", useLayout);
 
-            if (useLayout) addComponentsForLayeredPagination(context, pageContents);
-            else addComponentsForUnconstrainedPagination(context, pageContents);
-        });
+                    if (useLayout) addComponentsForLayeredPagination(context, pageContents);
+                    else addComponentsForUnconstrainedPagination(context, pageContents);
+                })
+                .exceptionally(error -> {
+                    debug("[Pagination] An error occurred while loading the current page");
+                    error.printStackTrace();
+                    return null;
+                });
     }
 
     /**
@@ -667,21 +664,23 @@ class PaginationHandle extends ComponentHandle {
         }
 
         for (final Component child : pagination.getInternalComponents()) {
-            if (!child.isVisible()) {
-                continue;
-            }
+            if (!child.isContainedWithin(context.getClickedSlot())) continue;
 
-            if (child.isContainedWithin(context.getClickedSlot())) {
-                context.getParent()
-                        .performClickInComponent(
-                                child,
-                                context.getViewer(),
-                                context.getClickedContainer(),
-                                context.getPlatformEvent(),
-                                context.getClickedSlot(),
-                                true);
-                break;
-            }
+            // Hidden components that are not self-managed e.g.: managed by user-provided handle
+            // must handle visibility issues by its own to ensure that clicks are not superimposed
+            // by the root component. This ensures that when a child component that is hidden
+            // and is self-managed is clicked the click will be propagated to handlers of the
+            // child component itself and not to its root
+            if (!child.isVisible() && !child.isSelfManaged()) continue;
+
+            context.getParent()
+                    .performClickInComponent(
+                            child,
+                            context.getViewer(),
+                            context.getClickedContainer(),
+                            context.getPlatformEvent(),
+                            context.getClickedSlot(),
+                            true);
         }
     }
 

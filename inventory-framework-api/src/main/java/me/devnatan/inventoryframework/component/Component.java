@@ -89,7 +89,7 @@ public interface Component extends VirtualView, Pipelined {
      * this library. No compatibility guarantees are provided.</i></b>
      */
     @ApiStatus.Internal
-    boolean isManagedExternally();
+    boolean isSelfManaged();
 
     boolean shouldRender(IFContext context);
 

@@ -42,14 +42,12 @@ public final class ComponentRenderContext extends ComponentContext implements IF
     }
 
     public void setItem(ItemStack item) {
-        if (!(getComponent() instanceof ItemComponent))
-            throw new IllegalStateException("setItem(ItemStack) cannot be called in non-ItemComponent components");
-
         this.item = item;
     }
 
     @Override
     public String toString() {
-        return "ComponentRenderContext{" + "viewer=" + viewer + ", player=" + player + "} " + super.toString();
+        return "ComponentRenderContext{" + "viewer=" + viewer + ", player=" + player + ", item=" + item + "} "
+                + super.toString();
     }
 }

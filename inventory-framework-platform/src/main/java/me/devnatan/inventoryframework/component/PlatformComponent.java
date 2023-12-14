@@ -33,8 +33,9 @@ public abstract class PlatformComponent extends AbstractComponent implements Com
             Consumer<? super IFSlotClickContext> clickHandler,
             boolean cancelOnClick,
             boolean closeOnClick,
-            boolean updateOnClick) {
-        super(key, root, reference, watchingStates, displayCondition);
+            boolean updateOnClick,
+            boolean isSelfManaged) {
+        super(key, root, reference, watchingStates, displayCondition, isSelfManaged);
         this.position = position;
         this.renderHandler = renderHandler;
         this.updateHandler = updateHandler;

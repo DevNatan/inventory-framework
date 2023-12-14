@@ -26,7 +26,8 @@ public final class BukkitComponentImpl extends PlatformComponent {
             Consumer<? super IFSlotClickContext> clickHandler,
             boolean cancelOnClick,
             boolean closeOnClick,
-            boolean updateOnClick) {
+            boolean updateOnClick,
+            boolean isSelfManaged) {
         super(
                 position,
                 key,
@@ -39,7 +40,8 @@ public final class BukkitComponentImpl extends PlatformComponent {
                 clickHandler,
                 cancelOnClick,
                 closeOnClick,
-                updateOnClick);
+                updateOnClick,
+                isSelfManaged);
         setHandle(new BukkitItemComponentImplHandle());
     }
 

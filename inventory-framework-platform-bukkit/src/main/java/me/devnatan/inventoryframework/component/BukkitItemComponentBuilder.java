@@ -30,7 +30,8 @@ public final class BukkitItemComponentBuilder extends BukkitComponentBuilder<Buk
                 getClickHandler(),
                 isCancelOnClick(),
                 isCloseOnClick(),
-                isUpdateOnClick());
+                isUpdateOnClick(),
+                isSelfManaged());
     }
 
     @Override

@@ -79,6 +79,7 @@ public abstract class BukkitComponentBuilder<SELF> extends PlatformComponentBuil
                 getClickHandler(),
                 isCancelOnClick(),
                 isCloseOnClick(),
-                isUpdateOnClick());
+                isUpdateOnClick(),
+                isSelfManaged());
     }
 }

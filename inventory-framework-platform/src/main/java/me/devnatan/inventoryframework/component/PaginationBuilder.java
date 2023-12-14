@@ -3,6 +3,7 @@ package me.devnatan.inventoryframework.component;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import me.devnatan.inventoryframework.VirtualView;
+import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
 import me.devnatan.inventoryframework.internal.PlatformUtils;
 import me.devnatan.inventoryframework.state.State;
@@ -89,14 +90,17 @@ public final class PaginationBuilder<CONTEXT, ITEM_BUILDER, V>
      * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
      * such API may be changed or may be removed completely in any further release. </i></b>
      */
+    @SuppressWarnings("rawtypes")
     @ApiStatus.Experimental
     public PaginationBuilder<CONTEXT, ITEM_BUILDER, V> componentFactory(
             PaginationValueComponentFactory<CONTEXT, V> factory) {
         this.elementFactory = (pagination, index, slot, value) -> {
             @SuppressWarnings("unchecked")
-            ComponentBuilder builder = factory.accept((CONTEXT) pagination.getContext(), index, value);
-            if (builder instanceof ItemComponentBuilder) ((ItemComponentBuilder) builder).withPosition(slot);
-            return builder.buildComponent(pagination);
+            final ComponentBuilder builder = factory.accept((CONTEXT) pagination.getContext(), index, value);
+            ((PlatformComponentBuilder) builder).withSlot(slot);
+            final Component component = builder.buildComponent(pagination);
+            component.setHandle(((PlatformComponentBuilder) builder).buildHandle());
+            return component;
         };
         return this;
     }
@@ -171,6 +175,7 @@ public final class PaginationBuilder<CONTEXT, ITEM_BUILDER, V>
                 (PaginationElementFactory) elementFactory,
                 (BiConsumer) pageSwitchHandler,
                 async,
-                computed);
+                computed,
+                !(root instanceof IFContext));
     }
 }

@@ -91,7 +91,6 @@ abstract class AbstractIFContext extends DefaultStateValueHost implements IFCont
     public final void addComponent(@NotNull Component component) {
         synchronized (getInternalComponents()) {
             getInternalComponents().add(0, component);
-            IFDebug.debug("addComponent: %s", component);
         }
     }
 

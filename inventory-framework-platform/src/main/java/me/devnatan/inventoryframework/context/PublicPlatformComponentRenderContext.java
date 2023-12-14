@@ -11,14 +11,14 @@ import me.devnatan.inventoryframework.component.ItemComponentBuilder;
 import me.devnatan.inventoryframework.component.PlatformComponentBuilder;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class PublicComponentRenderContext<CONTEXT, ITEM_BUILDER extends ItemComponentBuilder, ITEM>
+public abstract class PublicPlatformComponentRenderContext<CONTEXT, ITEM_BUILDER extends ItemComponentBuilder, ITEM>
         extends PlatformConfinedContext
         implements IFComponentRenderContext, PublicSlotComponentRenderer<CONTEXT, ITEM_BUILDER, ITEM> {
 
     private final IFComponentRenderContext componentContext;
     private final PublicSlotComponentRenderer<CONTEXT, ITEM_BUILDER, ITEM> publicSlotComponentRenderer;
 
-    public PublicComponentRenderContext(IFComponentRenderContext componentContext) {
+    public PublicPlatformComponentRenderContext(IFComponentRenderContext componentContext) {
         this.componentContext = componentContext;
         publicSlotComponentRenderer = new DefaultPublicSlotComponentRenderer<>(
                 this, (IFRenderContext) getTopLevelContext(), this::createItemBuilder);
@@ -73,6 +73,7 @@ public abstract class PublicComponentRenderContext<CONTEXT, ITEM_BUILDER extends
         return componentContext.getViewer();
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
     public final @NotNull PlatformView getRoot() {
         return (PlatformView) componentContext.getRoot();
