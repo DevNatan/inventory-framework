@@ -162,7 +162,7 @@ public abstract class PlatformContext extends AbstractIFContext implements Compo
     // endregion
 
     @Override
-    protected void callStateListeners(@NotNull StateValue value, Consumer<StateWatcher> call) {
+    protected final void callStateListeners(@NotNull StateValue value, Consumer<StateWatcher> call) {
         super.callStateListeners(value, call);
         for (final State<?> state : getRoot().getStateRegistry()) {
             if (!(state instanceof StateWatcher)) continue;

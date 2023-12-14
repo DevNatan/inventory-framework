@@ -28,7 +28,7 @@ public abstract class AbstractComponent implements Component {
     private final boolean isSelfManaged;
 
     private ComponentHandle handle;
-    private boolean isVisible = true;
+    private boolean isVisible = false;
     private boolean wasForceUpdated;
 
     protected AbstractComponent(
@@ -92,7 +92,7 @@ public abstract class AbstractComponent implements Component {
     @SuppressWarnings("unchecked")
     @Override
     public final boolean shouldRender(IFContext context) {
-        return displayCondition == null || ((Predicate<? super IFContext>) displayCondition).test(context);
+        return getDisplayCondition() == null || ((Predicate<? super IFContext>) getDisplayCondition()).test(context);
     }
 
     @Override

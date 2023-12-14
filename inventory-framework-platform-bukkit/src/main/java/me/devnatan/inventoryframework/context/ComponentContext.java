@@ -3,19 +3,16 @@ package me.devnatan.inventoryframework.context;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.function.Consumer;
 import me.devnatan.inventoryframework.PlatformView;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.component.Component;
-import me.devnatan.inventoryframework.state.State;
 import me.devnatan.inventoryframework.state.StateValue;
 import me.devnatan.inventoryframework.state.StateWatcher;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.UnmodifiableView;
 
 public abstract class ComponentContext extends PlatformConfinedContext implements IFComponentRenderContext, Context {
 
@@ -55,11 +52,6 @@ public abstract class ComponentContext extends PlatformConfinedContext implement
     @Override
     public final void setEndless(boolean endless) {
         getParent().setEndless(endless);
-    }
-
-    @Override
-    protected final void callStateListeners(@NotNull StateValue value, Consumer<StateWatcher> call) {
-        getParent().callStateListeners(value, call);
     }
 
     @Override
@@ -119,38 +111,13 @@ public abstract class ComponentContext extends PlatformConfinedContext implement
     }
 
     @Override
-    public final @UnmodifiableView Map<Long, StateValue> getStateValues() {
+    public final Map<Long, StateValue> getStateValues() {
         return getParent().getStateValues();
     }
 
     @Override
-    public final StateValue getUninitializedStateValue(long stateId) {
-        return getParent().getUninitializedStateValue(stateId);
-    }
-
-    @Override
-    public final Object getRawStateValue(State<?> state) {
-        return getParent().getRawStateValue(state);
-    }
-
-    @Override
-    public final StateValue getInternalStateValue(State<?> state) {
-        return getParent().getInternalStateValue(state);
-    }
-
-    @Override
-    public final void initializeState(long id, @NotNull StateValue value) {
-        getParent().initializeState(id, value);
-    }
-
-    @Override
-    public final void updateState(long id, Object value) {
-        getParent().updateState(id, value);
-    }
-
-    @Override
-    public final void watchState(long id, StateWatcher listener) {
-        getParent().watchState(id, listener);
+    public final Map<Long, List<StateWatcher>> getStateWatchers() {
+        return getParent().getStateWatchers();
     }
 
     @Override

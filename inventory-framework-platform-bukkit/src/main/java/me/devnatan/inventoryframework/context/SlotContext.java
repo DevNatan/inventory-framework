@@ -3,11 +3,12 @@ package me.devnatan.inventoryframework.context;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.View;
 import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
-import me.devnatan.inventoryframework.state.State;
+import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.state.StateValue;
 import me.devnatan.inventoryframework.state.StateWatcher;
 import org.bukkit.entity.Player;
@@ -57,36 +58,6 @@ public abstract class SlotContext extends PlatformContext implements IFSlotConte
     @Override
     public final void update() {
         getParent().update();
-    }
-
-    @Override
-    public final Object getRawStateValue(State<?> state) {
-        return getParent().getRawStateValue(state);
-    }
-
-    @Override
-    public StateValue getInternalStateValue(State<?> state) {
-        return getParent().getInternalStateValue(state);
-    }
-
-    @Override
-    public StateValue getUninitializedStateValue(long stateId) {
-        return getParent().getUninitializedStateValue(stateId);
-    }
-
-    @Override
-    public final void initializeState(long id, @NotNull StateValue value) {
-        getParent().initializeState(id, value);
-    }
-
-    @Override
-    public final void updateState(long id, Object value) {
-        getParent().updateState(id, value);
-    }
-
-    @Override
-    public final void watchState(long id, StateWatcher listener) {
-        getParent().watchState(id, listener);
     }
 
     @Override
@@ -155,17 +126,68 @@ public abstract class SlotContext extends PlatformContext implements IFSlotConte
     }
 
     @Override
-    public void back() {
+    public final void back() {
         getParent().back();
     }
 
     @Override
-    public void back(Object initialData) {
+    public final void back(Object initialData) {
         getParent().back(initialData);
     }
 
     @Override
-    public boolean canBack() {
+    public final boolean canBack() {
         return getParent().canBack();
+    }
+
+    @Override
+    public final void closeForPlayer() {
+        getParent().closeForPlayer();
+    }
+
+    @Override
+    public final void openForPlayer(@NotNull Class<? extends RootView> other) {
+        getParent().openForPlayer(other);
+    }
+
+    @Override
+    public final void openForPlayer(@NotNull Class<? extends RootView> other, Object initialData) {
+        getParent().openForPlayer(other, initialData);
+    }
+
+    @Override
+    public final void updateTitleForPlayer(@NotNull String title) {
+        getParent().updateTitleForPlayer(title);
+    }
+
+    @Override
+    public final void resetTitleForPlayer() {
+        getParent().resetTitleForPlayer();
+    }
+
+    @Override
+    public final void performClickInComponent(
+            @NotNull Component component,
+            @NotNull Viewer viewer,
+            @NotNull ViewContainer clickedContainer,
+            Object platformEvent,
+            int clickedSlot,
+            boolean combined) {
+        getParent().performClickInComponent(component, viewer, clickedContainer, platformEvent, clickedSlot, combined);
+    }
+
+    @Override
+    public final Map<Long, StateValue> getStateValues() {
+        return getParent().getStateValues();
+    }
+
+    @Override
+    protected final void setUpdatedTitle(String updatedTitle) {
+        getParent().setUpdatedTitle(updatedTitle);
+    }
+
+    @Override
+    public final Map<Long, List<StateWatcher>> getStateWatchers() {
+        return getParent().getStateWatchers();
     }
 }

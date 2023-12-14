@@ -1,7 +1,6 @@
 package me.devnatan.inventoryframework.component;
 
 import java.util.Objects;
-import me.devnatan.inventoryframework.IFDebug;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.ComponentClearContext;
 import me.devnatan.inventoryframework.context.ComponentRenderContext;
@@ -63,7 +62,7 @@ public abstract class BukkitComponentHandle<T> extends PlatformComponentHandle<C
                 component.getRenderHandler().accept(context);
                 rendered(publicContext);
 
-                if (position >= 0) context.getContainer().renderItem(component.getPosition(), context.getItem());
+                if (position >= 0) context.getContainer().renderItem(position, context.getItem());
                 component.setVisible(true);
                 return;
             }
@@ -125,7 +124,6 @@ public abstract class BukkitComponentHandle<T> extends PlatformComponentHandle<C
         if (phase == Component.CLICK) {
             final SlotClickContext context = (SlotClickContext) subject;
             final PlatformComponent component = (PlatformComponent) context.getComponent();
-            IFDebug.debug("component: %s", component);
             if (component.getClickHandler() != null) component.getClickHandler().accept(context);
 
             clicked(context);

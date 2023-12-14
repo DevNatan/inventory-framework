@@ -1,9 +1,9 @@
 package me.devnatan.inventoryframework.state;
 
+import java.util.List;
 import java.util.Map;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.UnmodifiableView;
 
 /**
  * StateHost is an entity capable of storing current data from multiple states.
@@ -14,8 +14,15 @@ public interface StateValueHost {
      * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
      * this library. No compatibility guarantees are provided.</i></b>
      */
-    @UnmodifiableView
+    @ApiStatus.Internal
     Map<Long, StateValue> getStateValues();
+
+    /**
+     * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided.</i></b>
+     */
+    @ApiStatus.Internal
+    Map<Long, List<StateWatcher>> getStateWatchers();
 
     /**
      * <p><b><i>This is an internal inventory-framework API that should not be used from outside of

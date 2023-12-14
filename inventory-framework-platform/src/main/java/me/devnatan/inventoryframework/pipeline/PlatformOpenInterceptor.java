@@ -6,6 +6,7 @@ import me.devnatan.inventoryframework.context.IFOpenContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.exception.InvalidLayoutException;
 import me.devnatan.inventoryframework.internal.ElementFactory;
+import me.devnatan.inventoryframework.state.State;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 
@@ -20,9 +21,10 @@ public final class PlatformOpenInterceptor implements PipelineInterceptor<Virtua
         if (!(subject instanceof IFOpenContext)) return;
         final IFOpenContext openContext = (IFOpenContext) subject;
 
-        if (openContext.getRoot() instanceof PlatformView) {
-            ((PlatformView) openContext.getRoot()).onOpen(openContext);
-        }
+        final PlatformView root = (PlatformView) openContext.getRoot();
+        for (final State<?> state : root.getStateRegistry())
+            openContext.initializeState(state.internalId(), state.factory().create(openContext, state));
+        root.onOpen(openContext);
 
         if (openContext.getAsyncOpenJob() == null) {
             finishOpen(pipeline, openContext);
@@ -84,11 +86,10 @@ public final class PlatformOpenInterceptor implements PipelineInterceptor<Virtua
                 openContext.getInitialData());
 
         renderContext.setEndless(openContext.isEndless());
-        openContext.getStateValues().forEach(renderContext::initializeState);
+        renderContext.getStateValues().putAll(openContext.getStateValues());
 
         for (final Viewer viewer : openContext.getIndexedViewers().values()) {
             if (!viewer.isTransitioning()) viewer.setActiveContext(renderContext);
-            // TODO Pass viewer object as parameter instead
             root.onViewerAdded(renderContext, viewer.getPlatformInstance(), renderContext.getInitialData());
             renderContext.addViewer(viewer);
         }

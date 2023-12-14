@@ -164,11 +164,14 @@ public abstract class PlatformRenderContext<CONTEXT, ITEM_BUILDER extends ItemCo
 
     @Override
     public final void renderComponent(@NotNull Component component) {
-        // Custom components can use show()/hide() to change the visibility state of its components and
-        // `component.shouldRender(this)` only handles `displayIf`/`hideIf` that is used by
+        // Custom components can use show()/hide() to change the visibility state of its components
+        // and `component.shouldRender(this)` only handles `displayIf`/`hideIf` that is used by
         // regular components by non-custom component developers instead
         final boolean wasVisibilityProgrammaticallySet = component.isSelfManaged() && !component.isVisible();
-        if (!component.shouldRender(this) || wasVisibilityProgrammaticallySet) {
+        if (isRendered() && (!component.shouldRender(this) || wasVisibilityProgrammaticallySet)) {
+            IFDebug.debug(
+                    "!component.shouldRender: isSelfManaged=%b, isVisible=%b component=%s",
+                    component.isSelfManaged(), component.isVisible(), component);
             component.setVisible(false);
 
             final Optional<Component> overlapOptional = getOverlappingComponentToRender(this, component);
@@ -184,7 +187,6 @@ public abstract class PlatformRenderContext<CONTEXT, ITEM_BUILDER extends ItemCo
             return;
         }
 
-        IFDebug.debug("renderComponent(): %s", component);
         component.getPipeline().execute(Component.RENDER, createComponentRenderContext(component, false));
     }
 

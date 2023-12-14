@@ -633,6 +633,7 @@ class PaginationHandle extends ComponentHandle {
             return;
         }
 
+        pagination.setVisible(true);
         pagination.renderChild(root);
     }
 

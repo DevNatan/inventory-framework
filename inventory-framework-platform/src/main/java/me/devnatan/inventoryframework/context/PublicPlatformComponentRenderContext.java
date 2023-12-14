@@ -1,5 +1,6 @@
 package me.devnatan.inventoryframework.context;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.BiConsumer;
@@ -10,11 +11,9 @@ import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.ItemComponentBuilder;
 import me.devnatan.inventoryframework.component.PlatformComponentBuilder;
-import me.devnatan.inventoryframework.state.State;
 import me.devnatan.inventoryframework.state.StateValue;
 import me.devnatan.inventoryframework.state.StateWatcher;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.UnmodifiableView;
 
 public abstract class PublicPlatformComponentRenderContext<CONTEXT, ITEM_BUILDER extends ItemComponentBuilder, ITEM>
         extends PlatformConfinedContext
@@ -203,38 +202,13 @@ public abstract class PublicPlatformComponentRenderContext<CONTEXT, ITEM_BUILDER
     }
 
     @Override
-    public @UnmodifiableView Map<Long, StateValue> getStateValues() {
+    public Map<Long, StateValue> getStateValues() {
         return componentContext.getStateValues();
     }
 
     @Override
-    public StateValue getUninitializedStateValue(long stateId) {
-        return componentContext.getUninitializedStateValue(stateId);
-    }
-
-    @Override
-    public Object getRawStateValue(State<?> state) {
-        return componentContext.getRawStateValue(state);
-    }
-
-    @Override
-    public StateValue getInternalStateValue(State<?> state) {
-        return componentContext.getInternalStateValue(state);
-    }
-
-    @Override
-    public void initializeState(long id, @NotNull StateValue value) {
-        componentContext.initializeState(id, value);
-    }
-
-    @Override
-    public void updateState(long id, Object value) {
-        componentContext.updateState(id, value);
-    }
-
-    @Override
-    public void watchState(long id, StateWatcher listener) {
-        componentContext.watchState(id, listener);
+    public Map<Long, List<StateWatcher>> getStateWatchers() {
+        return componentContext.getStateWatchers();
     }
 
     @Override
