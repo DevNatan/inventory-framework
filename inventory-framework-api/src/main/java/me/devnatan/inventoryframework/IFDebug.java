@@ -1,5 +1,6 @@
 package me.devnatan.inventoryframework;
 
+import java.util.Objects;
 import java.util.function.Supplier;
 import org.intellij.lang.annotations.PrintFormat;
 import org.jetbrains.annotations.ApiStatus;
@@ -11,10 +12,9 @@ import org.jetbrains.annotations.ApiStatus;
 @ApiStatus.Internal
 public final class IFDebug {
 
-    private static final String PREFIX = "[IF]";
     private static final String SYSTEM_PROPERTY = "me.devnatan.inventoryframework.debug";
 
-    private static Boolean DEBUG_ENABLED = null;
+    private static Boolean DEBUG_ENABLED = Objects.equals(System.getenv("DEVELOPMENT"), "true");
 
     private IFDebug() {}
 
@@ -46,7 +46,7 @@ public final class IFDebug {
      */
     public static void debug(Supplier<String> message, Object... args) {
         if (!isDebugEnabled()) return;
-        System.out.println(PREFIX + " " + String.format(message.get(), args));
+        System.out.printf((message.get()) + "%n", args);
     }
 
     /**
@@ -57,6 +57,6 @@ public final class IFDebug {
      */
     public static void debug(@PrintFormat String message, Object... args) {
         if (!isDebugEnabled()) return;
-        System.out.println(PREFIX + " " + String.format(message, args));
+        System.out.printf((message) + "%n", args);
     }
 }
