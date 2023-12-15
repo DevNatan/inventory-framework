@@ -19,8 +19,7 @@ import org.jetbrains.annotations.Nullable;
 @SuppressWarnings("unchecked")
 public abstract class PlatformComponentBuilder<SELF, CONTEXT> extends AbstractComponentBuilder {
 
-    private int position;
-    private int row, column;
+    private int position = -1, row = -1, column = -1;
     private Consumer<? super IFComponentRenderContext> renderHandler;
     private Consumer<? super IFComponentUpdateContext> updateHandler;
     private Consumer<? super IFSlotClickContext> clickHandler;
