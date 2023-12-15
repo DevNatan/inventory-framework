@@ -287,7 +287,7 @@ public final class DefaultPublicSlotComponentRenderer<CONTEXT, BUILDER extends C
     }
 
     private <B extends PlatformComponentBuilder<B, CONTEXT>> void slotComponent(int position, B builder) {
-        final Component component = builder.withSlot(position).buildComponent(root);
+        final Component component = builder.withSlot(position).withSelfManaged(true).buildComponent(root);
         component.setHandle(builder.buildHandle());
         renderContext.addComponent(component);
     }
