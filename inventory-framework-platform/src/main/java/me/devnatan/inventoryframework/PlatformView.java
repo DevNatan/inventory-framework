@@ -11,7 +11,11 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import me.devnatan.inventoryframework.component.*;
+
+import me.devnatan.inventoryframework.component.ItemComponentBuilder;
+import me.devnatan.inventoryframework.component.Pagination;
+import me.devnatan.inventoryframework.component.PaginationBuilder;
+import me.devnatan.inventoryframework.component.PaginationValueConsumer;
 import me.devnatan.inventoryframework.context.IFCloseContext;
 import me.devnatan.inventoryframework.context.IFConfinedContext;
 import me.devnatan.inventoryframework.context.IFContext;

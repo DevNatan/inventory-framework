@@ -7,13 +7,29 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import me.devnatan.inventoryframework.*;
+
+import me.devnatan.inventoryframework.BukkitViewContainer;
+import me.devnatan.inventoryframework.BukkitViewer;
+import me.devnatan.inventoryframework.RootView;
+import me.devnatan.inventoryframework.View;
+import me.devnatan.inventoryframework.ViewConfig;
+import me.devnatan.inventoryframework.ViewContainer;
+import me.devnatan.inventoryframework.ViewFrame;
+import me.devnatan.inventoryframework.ViewType;
+import me.devnatan.inventoryframework.Viewer;
+import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.component.BukkitItemComponentBuilder;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.ItemComponentBuilder;
-import me.devnatan.inventoryframework.context.*;
-import me.devnatan.inventoryframework.logging.Logger;
-import me.devnatan.inventoryframework.logging.NoopLogger;
+import me.devnatan.inventoryframework.context.CloseContext;
+import me.devnatan.inventoryframework.context.IFCloseContext;
+import me.devnatan.inventoryframework.context.IFContext;
+import me.devnatan.inventoryframework.context.IFOpenContext;
+import me.devnatan.inventoryframework.context.IFRenderContext;
+import me.devnatan.inventoryframework.context.IFSlotClickContext;
+import me.devnatan.inventoryframework.context.OpenContext;
+import me.devnatan.inventoryframework.context.RenderContext;
+import me.devnatan.inventoryframework.context.SlotClickContext;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
@@ -21,15 +37,24 @@ import org.bukkit.inventory.InventoryHolder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.plaf.metal.MetalIconFactory;
+
 public class BukkitElementFactory extends ElementFactory {
 
     private static final ViewType defaultType = ViewType.CHEST;
     private Boolean worksInCurrentPlatform = null;
+	private static final boolean FOLIA_SUPPORTED;
 
-    @Override
-    public @NotNull RootView createUninitializedRoot() {
-        return new View();
-    }
+	static {
+		boolean folia;
+		try {
+			Class.forName("io.papermc.paper.threadedregions.scheduler.AsyncScheduler");
+			folia = true;
+		} catch (ClassNotFoundException e) {
+			folia = false;
+		}
+		FOLIA_SUPPORTED = folia;
+	}
 
     @Override
     public @NotNull ViewContainer createContainer(@NotNull IFContext context) {
@@ -66,7 +91,7 @@ public class BukkitElementFactory extends ElementFactory {
 
     @Override
     public IFOpenContext createOpenContext(
-            @NotNull RootView root, @Nullable Viewer subject, @NotNull List<Viewer> viewers, Object initialData) {
+		@NotNull RootView root, @Nullable Viewer subject, @NotNull List<Viewer> viewers, Object initialData) {
         return new OpenContext(
                 (View) root,
                 subject,
@@ -128,11 +153,6 @@ public class BukkitElementFactory extends ElementFactory {
         }
 
         return worksInCurrentPlatform;
-    }
-
-    @Override
-    public Logger getLogger() {
-        return new NoopLogger();
     }
 
     @Override

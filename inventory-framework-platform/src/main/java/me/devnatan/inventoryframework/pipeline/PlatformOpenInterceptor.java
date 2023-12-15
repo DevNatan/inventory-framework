@@ -1,7 +1,12 @@
 package me.devnatan.inventoryframework.pipeline;
 
 import java.util.HashMap;
-import me.devnatan.inventoryframework.*;
+
+import me.devnatan.inventoryframework.InventoryFrameworkException;
+import me.devnatan.inventoryframework.PlatformView;
+import me.devnatan.inventoryframework.ViewConfig;
+import me.devnatan.inventoryframework.Viewer;
+import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.IFOpenContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.exception.InvalidLayoutException;

@@ -11,7 +11,6 @@ import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.LAY
 import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.OPEN;
 import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.UPDATE;
 
-import java.util.*;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.internal.ElementFactory;
 import me.devnatan.inventoryframework.internal.Job;
@@ -19,6 +18,11 @@ import me.devnatan.inventoryframework.pipeline.Pipeline;
 import me.devnatan.inventoryframework.state.StateRegistry;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Set;
+import java.util.UUID;
 
 @ApiStatus.NonExtendable
 public abstract class DefaultRootView implements RootView {

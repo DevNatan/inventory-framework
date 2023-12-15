@@ -16,23 +16,18 @@ import me.devnatan.inventoryframework.context.IFOpenContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.logging.Logger;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * Element creation factory for the current platform.
+ * <p>
+ * <b><i> This is an internal inventory-framework API that should not be used from outside of
+ * this library. No compatibility guarantees are provided. </i></b>
  */
+@ApiStatus.Internal
 public abstract class ElementFactory {
-
-    public abstract Logger getLogger();
-
-    /**
-     * Creates a new root view for the current platform.
-     *
-     * @return An uninitialized configured view for the current platform.
-     */
-    @NotNull
-    public abstract RootView createUninitializedRoot();
 
     /**
      * Create a new current platform container for the specified context.
@@ -40,30 +35,28 @@ public abstract class ElementFactory {
      * @param context The context.
      * @return A new ViewContainer.
      */
-    @NotNull
-    public abstract ViewContainer createContainer(@NotNull IFContext context);
+    public abstract ViewContainer createContainer(IFContext context);
 
-    @NotNull
-    public abstract Viewer createViewer(@NotNull Object entity, IFRenderContext context);
+    public abstract Viewer createViewer(Object entity, IFRenderContext context);
 
     public abstract IFOpenContext createOpenContext(
-            @NotNull RootView root, @Nullable Viewer subject, @NotNull List<Viewer> viewers, Object initialData);
+            RootView root, Viewer subject, List<Viewer> viewers, Object initialData);
 
     public abstract IFRenderContext createRenderContext(
-            @NotNull UUID id,
-            @NotNull RootView root,
-            @NotNull ViewConfig config,
-            @NotNull ViewContainer container,
-            @NotNull Map<String, Viewer> viewers,
+            UUID id,
+            RootView root,
+            ViewConfig config,
+            ViewContainer container,
+            Map<String, Viewer> viewers,
             Viewer subject,
             Object initialData);
 
     public abstract IFSlotClickContext createSlotClickContext(
             int slotClicked,
-            @NotNull Viewer whoClicked,
-            @NotNull ViewContainer interactionContainer,
-            @Nullable Component componentClicked,
-            @NotNull Object origin,
+            Viewer whoClicked,
+            ViewContainer interactionContainer,
+            Component componentClicked,
+            Object origin,
             boolean combined);
 
     /**
@@ -72,16 +65,16 @@ public abstract class ElementFactory {
      * @param viewer The viewer that is currently the subject of the event of close.
      * @return A new close context instance.
      */
-    public abstract IFCloseContext createCloseContext(@NotNull Viewer viewer, @NotNull IFRenderContext parent);
+    public abstract IFCloseContext createCloseContext(Viewer viewer, IFRenderContext parent);
 
     /**
      * Creates a new platform builder instance.
      *
      * @return A new platform builder instance.
      */
-    public abstract ItemComponentBuilder createItemComponentBuilder(@NotNull VirtualView root);
+    public abstract ItemComponentBuilder createItemComponentBuilder(VirtualView root);
 
     public abstract boolean worksInCurrentPlatform();
 
-    public abstract Job scheduleJobInterval(@NotNull RootView root, long intervalInTicks, @NotNull Runnable execution);
+    public abstract Job scheduleJobInterval(RootView root, long intervalInTicks, Runnable task);
 }

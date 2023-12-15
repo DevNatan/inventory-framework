@@ -3,7 +3,12 @@ package me.devnatan.inventoryframework.context;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
-import me.devnatan.inventoryframework.*;
+
+import me.devnatan.inventoryframework.InventoryFrameworkException;
+import me.devnatan.inventoryframework.PlatformView;
+import me.devnatan.inventoryframework.RootView;
+import me.devnatan.inventoryframework.ViewContainer;
+import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.ComponentComposition;
 import me.devnatan.inventoryframework.component.ComponentContainer;
