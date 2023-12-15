@@ -111,13 +111,13 @@ public abstract class PublicPlatformComponentRenderContext<CONTEXT, ITEM_BUILDER
     }
 
     @Override
-    public final <T extends PlatformComponentBuilder<T, CONTEXT>> void slot(int slot, T componentBuilder) {
-        publicSlotComponentRenderer.slot(slot, componentBuilder);
+    public final <T extends PlatformComponentBuilder<T, CONTEXT>> void slotComponent(int slot, T componentBuilder) {
+        publicSlotComponentRenderer.slotComponent(slot, componentBuilder);
     }
 
     @Override
-    public final <T extends PlatformComponentBuilder<T, CONTEXT>> void slot(int row, int column, T componentBuilder) {
-        publicSlotComponentRenderer.slot(row, column, componentBuilder);
+    public final <T extends PlatformComponentBuilder<T, CONTEXT>> void slotComponent(int row, int column, T componentBuilder) {
+        publicSlotComponentRenderer.slotComponent(row, column, componentBuilder);
     }
 
     @Override
@@ -131,8 +131,8 @@ public abstract class PublicPlatformComponentRenderContext<CONTEXT, ITEM_BUILDER
     }
 
     @Override
-    public final <T extends PlatformComponentBuilder<T, CONTEXT>> void firstSlot(T componentBuilder) {
-        publicSlotComponentRenderer.firstSlot(componentBuilder);
+    public final <T extends PlatformComponentBuilder<T, CONTEXT>> void firstSlotComponent(T componentBuilder) {
+        publicSlotComponentRenderer.firstSlotComponent(componentBuilder);
     }
 
     @Override
@@ -146,8 +146,8 @@ public abstract class PublicPlatformComponentRenderContext<CONTEXT, ITEM_BUILDER
     }
 
     @Override
-    public final <T extends PlatformComponentBuilder<T, CONTEXT>> void lastSlot(T componentBuilder) {
-        publicSlotComponentRenderer.lastSlot(componentBuilder);
+    public final <T extends PlatformComponentBuilder<T, CONTEXT>> void lastSlotComponent(T componentBuilder) {
+        publicSlotComponentRenderer.lastSlotComponent(componentBuilder);
     }
 
     @Override
@@ -156,8 +156,8 @@ public abstract class PublicPlatformComponentRenderContext<CONTEXT, ITEM_BUILDER
     }
 
     @Override
-    public final <T extends PlatformComponentBuilder<T, CONTEXT>> void availableSlot(T componentBuilder) {
-        publicSlotComponentRenderer.availableSlot(componentBuilder);
+    public final <T extends PlatformComponentBuilder<T, CONTEXT>> void availableSlotComponent(T componentBuilder) {
+        publicSlotComponentRenderer.availableSlotComponent(componentBuilder);
     }
 
     @Override
@@ -186,9 +186,9 @@ public abstract class PublicPlatformComponentRenderContext<CONTEXT, ITEM_BUILDER
     }
 
     @Override
-    public final <T extends PlatformComponentBuilder<T, CONTEXT>> void layoutSlotComponent(
+    public final <T extends PlatformComponentBuilder<T, CONTEXT>> void layoutSlot(
             char character, T componentBuilder) {
-        publicSlotComponentRenderer.layoutSlotComponent(character, componentBuilder);
+        publicSlotComponentRenderer.layoutSlot(character, componentBuilder);
     }
 
     @Override

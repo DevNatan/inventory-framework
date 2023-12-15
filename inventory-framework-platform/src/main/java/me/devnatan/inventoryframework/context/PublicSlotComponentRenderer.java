@@ -73,14 +73,14 @@ public interface PublicSlotComponentRenderer<CONTEXT, BUILDER, ITEM> {
      * such API may be changed or may be removed completely in any further release. </i></b>
      */
     @ApiStatus.Experimental
-    <T extends PlatformComponentBuilder<T, CONTEXT>> void slot(int slot, T componentBuilder);
+    <T extends PlatformComponentBuilder<T, CONTEXT>> void slotComponent(int slot, T componentBuilder);
 
     /**
      * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
      * such API may be changed or may be removed completely in any further release. </i></b>
      */
     @ApiStatus.Experimental
-    <T extends PlatformComponentBuilder<T, CONTEXT>> void slot(int row, int column, T componentBuilder);
+    <T extends PlatformComponentBuilder<T, CONTEXT>> void slotComponent(int row, int column, T componentBuilder);
 
     /**
      * Sets an item in the first slot of this context's container.
@@ -102,7 +102,7 @@ public interface PublicSlotComponentRenderer<CONTEXT, BUILDER, ITEM> {
      * such API may be changed or may be removed completely in any further release. </i></b>
      */
     @ApiStatus.Experimental
-    <T extends PlatformComponentBuilder<T, CONTEXT>> void firstSlot(T componentBuilder);
+    <T extends PlatformComponentBuilder<T, CONTEXT>> void firstSlotComponent(T componentBuilder);
 
     /**
      * Sets an item in the last slot of this context's container.
@@ -124,7 +124,7 @@ public interface PublicSlotComponentRenderer<CONTEXT, BUILDER, ITEM> {
      * such API may be changed or may be removed completely in any further release. </i></b>
      */
     @ApiStatus.Experimental
-    <T extends PlatformComponentBuilder<T, CONTEXT>> void lastSlot(T componentBuilder);
+    <T extends PlatformComponentBuilder<T, CONTEXT>> void lastSlotComponent(T componentBuilder);
 
     /**
      * Adds an item in the next available slot of this context's container.
@@ -138,7 +138,7 @@ public interface PublicSlotComponentRenderer<CONTEXT, BUILDER, ITEM> {
      * such API may be changed or may be removed completely in any further release. </i></b>
      */
     @ApiStatus.Experimental
-    <T extends PlatformComponentBuilder<T, CONTEXT>> void availableSlot(T componentBuilder);
+    <T extends PlatformComponentBuilder<T, CONTEXT>> void availableSlotComponent(T componentBuilder);
 
     /**
      * Adds an item in the next available slot of this context's container.
@@ -193,7 +193,7 @@ public interface PublicSlotComponentRenderer<CONTEXT, BUILDER, ITEM> {
      * such API may be changed or may be removed completely in any further release. </i></b>
      */
     @ApiStatus.Experimental
-    <T extends PlatformComponentBuilder<T, CONTEXT>> void layoutSlotComponent(char character, T componentBuilder);
+    <T extends PlatformComponentBuilder<T, CONTEXT>> void layoutSlot(char character, T componentBuilder);
 
     /**
      * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees

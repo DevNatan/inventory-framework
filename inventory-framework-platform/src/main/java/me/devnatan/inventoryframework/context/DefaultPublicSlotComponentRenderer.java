@@ -106,13 +106,13 @@ public final class DefaultPublicSlotComponentRenderer<CONTEXT, BUILDER extends C
     }
 
     @Override
-    public <T extends PlatformComponentBuilder<T, CONTEXT>> void slot(int slot, T builder) {
-        slotComponent(slot, builder);
+    public <T extends PlatformComponentBuilder<T, CONTEXT>> void slotComponent(int slot, T builder) {
+		internalSlotComponent(slot, builder);
     }
 
     @Override
-    public <T extends PlatformComponentBuilder<T, CONTEXT>> void slot(int row, int column, T builder) {
-        slotComponent(
+    public <T extends PlatformComponentBuilder<T, CONTEXT>> void slotComponent(int row, int column, T builder) {
+		internalSlotComponent(
                 SlotConverter.convertSlot(
                         row,
                         column,
@@ -136,8 +136,8 @@ public final class DefaultPublicSlotComponentRenderer<CONTEXT, BUILDER extends C
     }
 
     @Override
-    public <T extends PlatformComponentBuilder<T, CONTEXT>> void firstSlot(T builder) {
-        slotComponent(renderContext.getContainer().getFirstSlot(), builder);
+    public <T extends PlatformComponentBuilder<T, CONTEXT>> void firstSlotComponent(T builder) {
+		internalSlotComponent(renderContext.getContainer().getFirstSlot(), builder);
     }
 
     /**
@@ -155,8 +155,8 @@ public final class DefaultPublicSlotComponentRenderer<CONTEXT, BUILDER extends C
     }
 
     @Override
-    public <T extends PlatformComponentBuilder<T, CONTEXT>> void lastSlot(T builder) {
-        slotComponent(renderContext.getContainer().getLastSlot(), builder);
+    public <T extends PlatformComponentBuilder<T, CONTEXT>> void lastSlotComponent(T builder) {
+		internalSlotComponent(renderContext.getContainer().getLastSlot(), builder);
     }
 
     /**
@@ -214,7 +214,9 @@ public final class DefaultPublicSlotComponentRenderer<CONTEXT, BUILDER extends C
     }
 
     @Override
-    public <T extends PlatformComponentBuilder<T, CONTEXT>> void availableSlot(T builder) {}
+    public <T extends PlatformComponentBuilder<T, CONTEXT>> void availableSlotComponent(T builder) {
+		throw new UnsupportedOperationException("Missing availableSlotComponent(T) implementation");
+	}
 
     @Override
     public BUILDER availableSlot(ITEM item) {
@@ -273,7 +275,7 @@ public final class DefaultPublicSlotComponentRenderer<CONTEXT, BUILDER extends C
     }
 
     @Override
-    public <T extends PlatformComponentBuilder<T, CONTEXT>> void layoutSlotComponent(char character, T builder) {
+    public <T extends PlatformComponentBuilder<T, CONTEXT>> void layoutSlot(char character, T builder) {
         final LayoutSlot layoutSlot = renderContext.getLayoutSlots().stream()
                 .filter(value -> value.getCharacter() == character)
                 .findFirst()
@@ -286,7 +288,7 @@ public final class DefaultPublicSlotComponentRenderer<CONTEXT, BUILDER extends C
         }));
     }
 
-    private <B extends PlatformComponentBuilder<B, CONTEXT>> void slotComponent(int position, B builder) {
+    private <B extends PlatformComponentBuilder<B, CONTEXT>> void internalSlotComponent(int position, B builder) {
         final Component component = builder.withSlot(position).withSelfManaged(true).buildComponent(root);
         component.setHandle(builder.buildHandle());
         renderContext.addComponent(component);
@@ -294,7 +296,7 @@ public final class DefaultPublicSlotComponentRenderer<CONTEXT, BUILDER extends C
 
     @Override
     public <T extends PlatformComponentBuilder<T, CONTEXT>> void unsetSlotComponent(T componentBuilder) {
-        slotComponent(-1, componentBuilder);
+		internalSlotComponent(-1, componentBuilder);
     }
     // endregion
 
