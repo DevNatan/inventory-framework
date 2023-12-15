@@ -14,6 +14,7 @@ import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.component.Component;
+import me.devnatan.inventoryframework.pipeline.Pipeline;
 import me.devnatan.inventoryframework.pipeline.StandardPipelinePhases;
 import me.devnatan.inventoryframework.state.DefaultStateValueHost;
 import org.jetbrains.annotations.NotNull;
@@ -25,6 +26,7 @@ abstract class AbstractIFContext extends DefaultStateValueHost implements IFCont
     private final List<Component> components = new LinkedList<>();
     private final Map<String, Viewer> indexedViewers = new HashMap<>();
     protected ViewConfig config;
+	private final Pipeline<IFContext> pipeline = new Pipeline<>();
 
     @Override
     public final @NotNull String getInitialTitle() {
