@@ -19,11 +19,10 @@ public final class ItemClickInterceptor implements PipelineInterceptor<VirtualVi
         final SlotClickContext context = (SlotClickContext) subject;
         final InventoryClickEvent event = context.getClickOrigin();
         if (event.getSlotType() == InventoryType.SlotType.OUTSIDE) return;
-
-        final PlatformComponent component = (PlatformComponent) context.getComponent();
-        if (component == null) return;
+        if (context.getComponent() == null) return;
+        if (!(context.getComponent() instanceof PlatformComponent)) return;
 
         // inherit cancellation so we can un-cancel it
-        context.setCancelled(component.isCancelOnClick());
+        context.setCancelled(((PlatformComponent) context.getComponent()).isCancelOnClick());
     }
 }

@@ -1,5 +1,9 @@
 package me.devnatan.inventoryframework;
 
+import me.devnatan.inventoryframework.component.Component;
+import me.devnatan.inventoryframework.context.IFComponentContext;
+import me.devnatan.inventoryframework.context.IFRenderContext;
+import me.devnatan.inventoryframework.context.IFSlotContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -82,4 +86,15 @@ public interface ViewContainer {
     ViewContainer unproxied();
 
     boolean isExternal();
+
+    static ViewContainer from(VirtualView view) {
+        if (view instanceof IFRenderContext) return ((IFRenderContext) view).getContainer();
+        if (view instanceof IFSlotContext) return ((IFSlotContext) view).getContainer();
+        if (view instanceof IFComponentContext)
+            return ((IFComponentContext) view).getComponent().getContainer();
+        if (view instanceof Component) return ((Component) view).getContainer();
+
+        throw new IllegalArgumentException(
+                "Unable to get ViewContainer from root: " + view.getClass().getName());
+    }
 }

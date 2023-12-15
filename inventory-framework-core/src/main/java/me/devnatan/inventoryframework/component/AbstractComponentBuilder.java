@@ -5,8 +5,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 import me.devnatan.inventoryframework.Ref;
+import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.state.State;
+import org.jetbrains.annotations.ApiStatus;
 
 public abstract class AbstractComponentBuilder implements ComponentBuilder {
 
@@ -14,7 +16,7 @@ public abstract class AbstractComponentBuilder implements ComponentBuilder {
     private Map<String, Object> data;
     private boolean cancelOnClick, closeOnClick, updateOnClick;
     private Set<State<?>> watchingStates = new HashSet<>();
-    private boolean isManagedExternally;
+    private boolean isSelfManaged;
     private Predicate<? extends IFContext> displayCondition;
     private String key;
 
@@ -68,12 +70,22 @@ public abstract class AbstractComponentBuilder implements ComponentBuilder {
         this.watchingStates = watchingStates;
     }
 
-    protected final boolean isManagedExternally() {
-        return isManagedExternally;
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
+    protected final boolean isSelfManaged() {
+        return isSelfManaged;
     }
 
-    protected final void setManagedExternally(boolean managedExternally) {
-        isManagedExternally = managedExternally;
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
+    protected final void setSelfManaged(boolean selfManaged) {
+        isSelfManaged = selfManaged;
     }
 
     protected final Predicate<? extends IFContext> getDisplayCondition() {
@@ -93,6 +105,10 @@ public abstract class AbstractComponentBuilder implements ComponentBuilder {
     }
 
     @Override
+    @ApiStatus.OverrideOnly
+    public abstract Component buildComponent(VirtualView root);
+
+    @Override
     public String toString() {
         return "AbstractComponentBuilder{" + "reference="
                 + reference + ", data="
@@ -100,8 +116,8 @@ public abstract class AbstractComponentBuilder implements ComponentBuilder {
                 + cancelOnClick + ", closeOnClick="
                 + closeOnClick + ", updateOnClick="
                 + updateOnClick + ", watchingStates="
-                + watchingStates + ", isManagedExternally="
-                + isManagedExternally + ", displayCondition="
+                + watchingStates + ", isSelfManaged="
+                + isSelfManaged + ", displayCondition="
                 + displayCondition + ", key='"
                 + key + '\'' + '}';
     }

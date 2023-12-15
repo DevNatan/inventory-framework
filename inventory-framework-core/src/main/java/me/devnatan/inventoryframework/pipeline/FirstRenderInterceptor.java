@@ -2,10 +2,12 @@ package me.devnatan.inventoryframework.pipeline;
 
 import static me.devnatan.inventoryframework.IFDebug.debug;
 
+import java.util.Iterator;
 import java.util.List;
 import me.devnatan.inventoryframework.Ref;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.component.Component;
+import me.devnatan.inventoryframework.component.ComponentBuilder;
 import me.devnatan.inventoryframework.component.ComponentComposition;
 import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.state.State;
@@ -49,10 +51,15 @@ public final class FirstRenderInterceptor implements PipelineInterceptor<Virtual
      * @param context The context.
      */
     private void registerComponents(IFRenderContext context) {
-        context.getNotRenderedComponents().stream()
-                .map(builder -> builder.buildComponent(context))
-                .peek(this::assignReference)
-                .forEach(context::addComponent);
+        final Iterator<ComponentBuilder> iterator =
+                context.getNotRenderedComponents().iterator();
+        while (iterator.hasNext()) {
+            final ComponentBuilder builder = iterator.next();
+            final Component component = builder.buildComponent(context);
+            assignReference(component);
+            context.addComponent(component);
+            iterator.remove();
+        }
     }
 
     /**

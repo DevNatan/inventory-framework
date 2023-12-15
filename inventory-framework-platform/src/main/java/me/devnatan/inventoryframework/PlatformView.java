@@ -316,6 +316,7 @@ public abstract class PlatformView<
      *
      * @param context The context to render.
      */
+    @SuppressWarnings("rawtypes")
     @ApiStatus.Internal
     public void renderContext(@NotNull RENDER_CONTEXT context) {
         getPipeline().execute(context);

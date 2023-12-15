@@ -1,7 +1,6 @@
 package me.devnatan.inventoryframework.state;
 
 import java.util.concurrent.atomic.AtomicLong;
-import me.devnatan.inventoryframework.IFDebug;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -55,8 +54,6 @@ public interface State<T> {
      * @return A new unique state id.
      */
     static long next() {
-        final long id = ids.getAndIncrement();
-        IFDebug.debug("New state id generated: %d", id);
-        return id;
+        return ids.getAndIncrement();
     }
 }

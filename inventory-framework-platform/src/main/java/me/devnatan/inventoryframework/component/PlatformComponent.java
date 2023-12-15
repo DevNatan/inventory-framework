@@ -13,6 +13,7 @@ import me.devnatan.inventoryframework.state.State;
 
 public abstract class PlatformComponent extends AbstractComponent implements Component {
 
+    private int position;
     private final boolean cancelOnClick;
     private final boolean closeOnClick;
     private final boolean updateOnClick;
@@ -21,6 +22,7 @@ public abstract class PlatformComponent extends AbstractComponent implements Com
     private final Consumer<? super IFSlotClickContext> clickHandler;
 
     protected PlatformComponent(
+            int position,
             String key,
             VirtualView root,
             Ref<Component> reference,
@@ -31,8 +33,10 @@ public abstract class PlatformComponent extends AbstractComponent implements Com
             Consumer<? super IFSlotClickContext> clickHandler,
             boolean cancelOnClick,
             boolean closeOnClick,
-            boolean updateOnClick) {
-        super(key, root, reference, watchingStates, displayCondition);
+            boolean updateOnClick,
+            boolean isSelfManaged) {
+        super(key, root, reference, watchingStates, displayCondition, isSelfManaged);
+        this.position = position;
         this.renderHandler = renderHandler;
         this.updateHandler = updateHandler;
         this.clickHandler = clickHandler;
@@ -56,6 +60,21 @@ public abstract class PlatformComponent extends AbstractComponent implements Com
     // endregion
 
     // region Internal Components API
+    @Override
+    public final int getPosition() {
+        return position;
+    }
+
+    @Override
+    public final void setPosition(int position) {
+        this.position = position;
+    }
+
+    @Override
+    public boolean isPositionSet() {
+        return getPosition() != -1;
+    }
+
     public final Consumer<? super IFComponentRenderContext> getRenderHandler() {
         return renderHandler;
     }
@@ -71,7 +90,8 @@ public abstract class PlatformComponent extends AbstractComponent implements Com
 
     @Override
     public String toString() {
-        return "PlatformComponent{" + "cancelOnClick="
+        return "PlatformComponent{position="
+                + position + ", cancelOnClick="
                 + cancelOnClick + ", closeOnClick="
                 + closeOnClick + ", updateOnClick="
                 + updateOnClick + ", renderHandler="

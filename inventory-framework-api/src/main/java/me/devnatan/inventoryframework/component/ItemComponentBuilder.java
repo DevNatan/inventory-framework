@@ -8,5 +8,11 @@ public interface ItemComponentBuilder extends ComponentBuilder {
     void setPosition(int position);
 
     @ApiStatus.Internal
+    ItemComponentBuilder withPosition(int position);
+
+    @ApiStatus.Internal
+    ItemComponentBuilder withPlatformItem(Object item);
+
+    @ApiStatus.Internal
     boolean isContainedWithin(int position);
 }

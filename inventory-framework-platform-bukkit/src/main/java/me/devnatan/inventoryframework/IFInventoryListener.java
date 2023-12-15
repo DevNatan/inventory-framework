@@ -8,7 +8,6 @@ import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.pipeline.StandardPipelinePhases;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -33,7 +32,7 @@ final class IFInventoryListener implements Listener {
         viewFrame.unregister();
     }
 
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    @EventHandler
     public void onInventoryClick(final InventoryClickEvent event) {
         if (!(event.getWhoClicked() instanceof Player)) return;
 
@@ -58,7 +57,7 @@ final class IFInventoryListener implements Listener {
     }
 
     @SuppressWarnings("unused")
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = true)
     public void onInventoryClose(final InventoryCloseEvent event) {
         if (!(event.getPlayer() instanceof Player)) return;
 
@@ -74,8 +73,8 @@ final class IFInventoryListener implements Listener {
     }
 
     @SuppressWarnings("deprecation")
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onItemPickup(PlayerPickupItemEvent event) {
+    @EventHandler(ignoreCancelled = true)
+    public void onItemPickup(final PlayerPickupItemEvent event) {
         final Viewer viewer = viewFrame.getViewer(event.getPlayer());
         if (viewer == null) return;
 
@@ -85,8 +84,8 @@ final class IFInventoryListener implements Listener {
         event.setCancelled(context.getConfig().getOptionValue(ViewConfig.CANCEL_ON_PICKUP));
     }
 
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onItemDrop(PlayerDropItemEvent event) {
+    @EventHandler(ignoreCancelled = true)
+    public void onItemDrop(final PlayerDropItemEvent event) {
         final Viewer viewer = viewFrame.getViewer(event.getPlayer());
         if (viewer == null) return;
 
@@ -96,8 +95,8 @@ final class IFInventoryListener implements Listener {
         event.setCancelled(context.getConfig().getOptionValue(ViewConfig.CANCEL_ON_DROP));
     }
 
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onInventoryDrag(InventoryDragEvent event) {
+    @EventHandler(ignoreCancelled = true)
+    public void onInventoryDrag(final InventoryDragEvent event) {
         if (!(event.getWhoClicked() instanceof Player)) return;
 
         final Viewer viewer = viewFrame.getViewer((Player) event.getWhoClicked());

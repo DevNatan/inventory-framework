@@ -19,37 +19,24 @@ import org.jetbrains.annotations.Nullable;
 @SuppressWarnings("unchecked")
 public abstract class PlatformComponentBuilder<SELF, CONTEXT> extends AbstractComponentBuilder {
 
+    private int position = -1, row = -1, column = -1;
     private Consumer<? super IFComponentRenderContext> renderHandler;
     private Consumer<? super IFComponentUpdateContext> updateHandler;
     private Consumer<? super IFSlotClickContext> clickHandler;
 
     protected PlatformComponentBuilder() {}
 
-    // region Protected ComponentBuilder API
-    protected final Consumer<? super IFComponentRenderContext> getRenderHandler() {
-        return renderHandler;
+    // region Public ComponentBuilder API
+    public final SELF withSlot(int slot) {
+        this.position = slot;
+        return (SELF) this;
     }
 
-    protected final void setRenderHandler(Consumer<? super IFComponentRenderContext> renderHandler) {
-        this.renderHandler = renderHandler;
+    public final SELF withSlot(int row, int column) {
+        this.row = row;
+        this.column = column;
+        return (SELF) this;
     }
-
-    protected final Consumer<? super IFComponentUpdateContext> getUpdateHandler() {
-        return updateHandler;
-    }
-
-    protected final void setUpdateHandler(Consumer<? super IFComponentUpdateContext> updateHandler) {
-        this.updateHandler = updateHandler;
-    }
-
-    protected final Consumer<? super IFSlotClickContext> getClickHandler() {
-        return clickHandler;
-    }
-
-    protected final void setClickHandler(Consumer<? super IFSlotClickContext> clickHandler) {
-        this.clickHandler = clickHandler;
-    }
-    // endregion
 
     /**
      * Called when the component is updated.
@@ -243,8 +230,8 @@ public abstract class PlatformComponentBuilder<SELF, CONTEXT> extends AbstractCo
      * this library. No compatibility guarantees are provided.</i></b>
      */
     @ApiStatus.Internal
-    public final SELF withExternallyManaged(boolean isExternallyManaged) {
-        setManagedExternally(isExternallyManaged);
+    public final SELF withSelfManaged(boolean isSelfManaged) {
+        setSelfManaged(isSelfManaged);
         return (SELF) this;
     }
 
@@ -274,5 +261,50 @@ public abstract class PlatformComponentBuilder<SELF, CONTEXT> extends AbstractCo
     public final SELF key(String key) {
         setKey(key);
         return (SELF) this;
+    }
+    // endregion
+
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
+    @ApiStatus.OverrideOnly
+    public abstract ComponentHandle buildHandle();
+
+    protected final int getPosition() {
+        return position;
+    }
+
+    protected final int getRowPosition() {
+        return row;
+    }
+
+    protected final int getColumnPosition() {
+        return column;
+    }
+
+    protected final Consumer<? super IFComponentRenderContext> getRenderHandler() {
+        return renderHandler;
+    }
+
+    protected final void setRenderHandler(Consumer<? super IFComponentRenderContext> renderHandler) {
+        this.renderHandler = renderHandler;
+    }
+
+    protected final Consumer<? super IFComponentUpdateContext> getUpdateHandler() {
+        return updateHandler;
+    }
+
+    protected final void setUpdateHandler(Consumer<? super IFComponentUpdateContext> updateHandler) {
+        this.updateHandler = updateHandler;
+    }
+
+    protected final Consumer<? super IFSlotClickContext> getClickHandler() {
+        return clickHandler;
+    }
+
+    protected final void setClickHandler(Consumer<? super IFSlotClickContext> clickHandler) {
+        this.clickHandler = clickHandler;
     }
 }

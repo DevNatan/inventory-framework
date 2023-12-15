@@ -12,14 +12,12 @@ import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.state.State;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * {@link ItemComponent} implementation for Bukkit platform.
  */
 public final class BukkitItemComponentImpl extends PlatformComponent implements ItemComponent {
 
-    private int position;
     private final ItemStack stack;
 
     BukkitItemComponentImpl(
@@ -35,9 +33,11 @@ public final class BukkitItemComponentImpl extends PlatformComponent implements 
             Consumer<? super IFSlotClickContext> clickHandler,
             boolean cancelOnClick,
             boolean closeOnClick,
-            boolean updateOnClick) {
+            boolean updateOnClick,
+            boolean isSelfManaged) {
         super(
-                key,
+                position,
+                key == null ? String.valueOf(itemStack.hashCode()) : key,
                 root,
                 reference,
                 watchingStates,
@@ -47,19 +47,10 @@ public final class BukkitItemComponentImpl extends PlatformComponent implements 
                 clickHandler,
                 cancelOnClick,
                 closeOnClick,
-                updateOnClick);
-        this.position = position;
+                updateOnClick,
+                isSelfManaged);
         this.stack = itemStack;
         setHandle(new BukkitItemComponentImplHandle());
-    }
-
-    @Override
-    public int getPosition() {
-        return position;
-    }
-
-    void setPosition(int position) {
-        this.position = position;
     }
 
     public ItemStack getItemStack() {
@@ -69,19 +60,6 @@ public final class BukkitItemComponentImpl extends PlatformComponent implements 
     @Override
     public Object getPlatformItem() {
         return getItemStack();
-    }
-
-    @Override
-    public boolean intersects(@NotNull Component other) {
-        if (other == this) return true;
-        if (other instanceof ItemComponent) return getPosition() == ((ItemComponent) other).getPosition();
-
-        return other.intersects(this);
-    }
-
-    @Override
-    public boolean isContainedWithin(int position) {
-        return getPosition() == position;
     }
 
     @Override
@@ -99,6 +77,6 @@ public final class BukkitItemComponentImpl extends PlatformComponent implements 
 
     @Override
     public String toString() {
-        return "BukkitItemComponentImpl{" + "position=" + position + ", itemStack=" + stack + "} " + super.toString();
+        return "BukkitItemComponentImpl{" + "itemStack=" + stack + "} " + super.toString();
     }
 }

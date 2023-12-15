@@ -10,7 +10,6 @@ import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
-import me.devnatan.inventoryframework.pipeline.PipelineContext;
 import me.devnatan.inventoryframework.pipeline.PipelinePhase;
 import me.devnatan.inventoryframework.state.State;
 import org.jetbrains.annotations.NotNull;
@@ -25,9 +24,10 @@ public abstract class AbstractComponent implements Component {
     private final Predicate<? extends IFContext> displayCondition;
     private final Pipeline<VirtualView> pipeline =
             new Pipeline<>(Component.RENDER, Component.UPDATE, Component.CLICK, Component.CLEAR);
+    private final boolean isSelfManaged;
 
     private ComponentHandle handle;
-    private boolean isVisible;
+    private boolean isVisible = true;
     private boolean wasForceUpdated;
 
     protected AbstractComponent(
@@ -35,13 +35,14 @@ public abstract class AbstractComponent implements Component {
             VirtualView root,
             Ref<Component> reference,
             Set<State<?>> watchingStates,
-            Predicate<? extends IFContext> displayCondition) {
+            Predicate<? extends IFContext> displayCondition,
+            boolean isSelfManaged) {
         this.key = key;
         this.root = root;
         this.reference = reference;
         this.watchingStates = watchingStates;
         this.displayCondition = displayCondition;
-        setHandle(NoopComponentHandle.INSTANCE);
+        this.isSelfManaged = isSelfManaged;
     }
 
     @Override
@@ -52,6 +53,11 @@ public abstract class AbstractComponent implements Component {
     @Override
     public final @NotNull VirtualView getRoot() {
         return root;
+    }
+
+    @Override
+    public final IFContext getContext() {
+        return getRootAsContext();
     }
 
     @Override
@@ -77,23 +83,18 @@ public abstract class AbstractComponent implements Component {
     }
 
     @Override
-    public final boolean isManagedExternally() {
-        // TODO remove this from API
-        return false;
+    public final boolean isSelfManaged() {
+        return isSelfManaged;
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public final boolean shouldRender(IFContext context) {
-        return displayCondition == null || ((Predicate<? super IFContext>) displayCondition).test(context);
+        return getDisplayCondition() == null || ((Predicate<? super IFContext>) getDisplayCondition()).test(context);
     }
 
     @Override
     public final void update() {
-        if (isManagedExternally())
-            throw new IllegalStateException(
-                    "This component is externally managed by another component and cannot be updated directly");
-
         getRootAsContext().updateComponent(this, false, null);
     }
 
@@ -128,9 +129,9 @@ public abstract class AbstractComponent implements Component {
 
     @Override
     public final void setHandle(ComponentHandle handle) {
-        if (this.handle != null) getPipeline().removeInterceptor(this.handle);
         if (handle == null)
             throw new IllegalArgumentException("Component handle argument in #setHandle cannot be null");
+        if (this.handle != null) getPipeline().removeInterceptor(this.handle);
 
         for (final PipelinePhase phase :
                 new PipelinePhase[] {Component.RENDER, Component.UPDATE, Component.CLEAR, Component.CLICK}) {
@@ -138,6 +139,7 @@ public abstract class AbstractComponent implements Component {
             getPipeline().intercept(phase, handle);
         }
         this.handle = handle;
+        this.handle.setComponent(this);
     }
 
     @Override
@@ -172,15 +174,8 @@ public abstract class AbstractComponent implements Component {
                 + displayCondition + ", pipeline="
                 + pipeline + ", handle="
                 + handle + ", isVisible="
-                + isVisible + ", wasForceUpdated="
+                + isVisible + ", isSelfManaged="
+                + isSelfManaged + ", wasForceUpdated="
                 + wasForceUpdated + '}';
     }
-}
-
-class NoopComponentHandle extends ComponentHandle {
-
-    static final ComponentHandle INSTANCE = new NoopComponentHandle();
-
-    @Override
-    public void intercept(PipelineContext<VirtualView> pipeline, VirtualView subject) {}
 }

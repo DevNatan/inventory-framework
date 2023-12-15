@@ -1,6 +1,5 @@
 package me.devnatan.inventoryframework.context;
 
-import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.component.Component;
@@ -141,31 +140,6 @@ public class SlotClickContext extends SlotContext implements IFSlotClickContext 
     @Override
     public final Viewer getViewer() {
         return whoClicked;
-    }
-
-    @Override
-    public final void closeForPlayer() {
-        getParent().closeForPlayer();
-    }
-
-    @Override
-    public final void openForPlayer(@NotNull Class<? extends RootView> other) {
-        getParent().openForPlayer(other);
-    }
-
-    @Override
-    public final void openForPlayer(@NotNull Class<? extends RootView> other, Object initialData) {
-        getParent().openForPlayer(other, initialData);
-    }
-
-    @Override
-    public final void updateTitleForPlayer(@NotNull String title) {
-        getParent().updateTitleForPlayer(title);
-    }
-
-    @Override
-    public final void resetTitleForPlayer() {
-        getParent().resetTitleForPlayer();
     }
 
     @Override

@@ -48,7 +48,7 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
     boolean pageWasChanged;
     boolean initialized;
     private int pagesCount;
-    private LayoutSlot currentLayoutSlot;
+    LayoutSlot currentLayoutSlot;
 
     // Number of elements that each page can have. -1 means uninitialized.
     private int pageSize = -1;
@@ -79,8 +79,9 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
             PaginationElementFactory<Object> elementFactory,
             BiConsumer<VirtualView, Pagination> pageSwitchHandler,
             boolean isAsync,
-            boolean isComputed) {
-        super(key, root, reference, watchingStates, displayCondition);
+            boolean isComputed,
+            boolean isSelfManaged) {
+        super(key, root, reference, watchingStates, displayCondition, isSelfManaged);
         this.internalStateId = internalStateId;
         this.layoutTarget = layoutTarget;
         this.sourceProvider = sourceProvider;
@@ -92,7 +93,7 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
         this.isStatic = sourceProvider instanceof Collection;
         this.isLazy =
                 !isStatic && !isComputed && (sourceProvider instanceof Function || sourceProvider instanceof Supplier);
-        setHandle(new Handle(this));
+        setHandle(new PaginationHandle(this));
     }
 
     // region Source Retrieval & Assignment
@@ -271,18 +272,24 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
      * @return A CompletableFuture with the completion stage of the current page.
      */
     CompletableFuture<?> loadCurrentPage(IFRenderContext context) {
-        return loadSourceForTheCurrentPage().thenAccept(pageContents -> {
-            if (pageContents.isEmpty()) {
-                debug("[Pagination] Empty page contents (page %d of %d)", currentPageIndex(), getPagesCount());
-                return;
-            }
+        return loadSourceForTheCurrentPage()
+                .thenAccept(pageContents -> {
+                    if (pageContents.isEmpty()) {
+                        debug("[Pagination] Empty page contents (page %d of %d)", currentPageIndex(), getPagesCount());
+                        return;
+                    }
 
-            final boolean useLayout = context.getConfig().getLayout() != null;
-            debug("[Pagination] Adding components.. (useLayout = %b)", useLayout);
+                    final boolean useLayout = context.getConfig().getLayout() != null;
+                    debug("[Pagination] Adding components.. (useLayout = %b)", useLayout);
 
-            if (useLayout) addComponentsForLayeredPagination(context, pageContents);
-            else addComponentsForUnconstrainedPagination(context, pageContents);
-        });
+                    if (useLayout) addComponentsForLayeredPagination(context, pageContents);
+                    else addComponentsForUnconstrainedPagination(context, pageContents);
+                })
+                .exceptionally(error -> {
+                    debug("[Pagination] An error occurred while loading the current page");
+                    error.printStackTrace();
+                    return null;
+                });
     }
 
     /**
@@ -404,26 +411,6 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
     @Override
     public List<Component> getInternalComponents() {
         return components;
-    }
-
-    @Override
-    public boolean isContainedWithin(int position) {
-        if (currentLayoutSlot != null) {
-            for (int slot : currentLayoutSlot.getPositions()) {
-                if (slot == position) return true;
-            }
-            return false;
-        }
-
-        for (final Component component : getInternalComponents()) {
-            if (component.isContainedWithin(position)) return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean intersects(@NotNull Component other) {
-        throw new UnsupportedOperationException("Missing #intersects(Component) implementation.");
     }
 
     @Override
@@ -557,6 +544,19 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
     }
 
     @Override
+    public int getPosition() {
+        return -1;
+    }
+
+    @Override
+    public void setPosition(int position) {}
+
+    @Override
+    public boolean isPositionSet() {
+        return true;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -584,7 +584,7 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
 
     @Override
     public String toString() {
-        return "PaginationImpl{" + ", root="
+        return "PaginationImpl{root="
                 + getRoot() + ", layoutTarget="
                 + layoutTarget + ", sourceProvider="
                 + sourceProvider + ", elementFactory="
@@ -600,16 +600,16 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
     }
 }
 
-class Handle extends ComponentHandle {
+class PaginationHandle extends ComponentHandle {
 
     private final PaginationImpl pagination;
 
-    public Handle(PaginationImpl pagination) {
+    public PaginationHandle(PaginationImpl pagination) {
         this.pagination = pagination;
     }
 
     void render(@NotNull IFComponentRenderContext context) {
-        final IFRenderContext root = context.getParent();
+        final IFRenderContext root = (IFRenderContext) context.getTopLevelContext();
         if (!pagination.initialized || pagination.pageWasChanged) {
             if (!pagination.initialized) pagination.updatePageSize(root);
             pagination.loadCurrentPage(root).thenRun(() -> {
@@ -621,6 +621,7 @@ class Handle extends ComponentHandle {
             return;
         }
 
+        pagination.setVisible(true);
         pagination.renderChild(root);
     }
 
@@ -652,21 +653,23 @@ class Handle extends ComponentHandle {
         }
 
         for (final Component child : pagination.getInternalComponents()) {
-            if (!child.isVisible()) {
-                continue;
-            }
+            if (!child.getHandle().isContainedWithin(context.getClickedSlot())) continue;
 
-            if (child.isContainedWithin(context.getClickedSlot())) {
-                context.getParent()
-                        .performClickInComponent(
-                                child,
-                                context.getViewer(),
-                                context.getClickedContainer(),
-                                context.getPlatformEvent(),
-                                context.getClickedSlot(),
-                                true);
-                break;
-            }
+            // Hidden components that are not self-managed e.g.: managed by user-provided handle
+            // must handle visibility issues by its own to ensure that clicks are not superimposed
+            // by the root component. This ensures that when a child component that is hidden
+            // and is self-managed is clicked the click will be propagated to handlers of the
+            // child component itself and not to its root
+            if (!child.isVisible() && !child.isSelfManaged()) continue;
+
+            context.getParent()
+                    .performClickInComponent(
+                            child,
+                            context.getViewer(),
+                            context.getClickedContainer(),
+                            context.getPlatformEvent(),
+                            context.getClickedSlot(),
+                            true);
         }
     }
 
@@ -693,5 +696,28 @@ class Handle extends ComponentHandle {
         if (phase.equals(Component.UPDATE)) updated((IFComponentUpdateContext) subject);
         if (phase.equals(Component.CLEAR)) cleared(((IFComponentClearContext) subject).getParent());
         if (phase.equals(Component.CLICK)) clicked((IFSlotClickContext) subject);
+    }
+
+    @Override
+    public boolean isContainedWithin(int position) {
+        // fast path -- if layout is defined we can use it as measurement
+        if (pagination.currentLayoutSlot != null) {
+            for (int slot : pagination.currentLayoutSlot.getPositions()) {
+                if (slot == position) return true;
+            }
+            return false;
+        }
+
+        for (final Component component : pagination.getInternalComponents()) {
+            if (component.getHandle().isContainedWithin(position)) return true;
+        }
+        return super.isContainedWithin(position);
+    }
+
+    @Override
+    public boolean intersects(@NotNull Component other) {
+        for (final Component component : pagination.getInternalComponents())
+            if (component.getHandle().intersects(other)) return true;
+        return super.intersects(other);
     }
 }

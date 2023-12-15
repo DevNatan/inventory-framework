@@ -132,7 +132,6 @@ public abstract class PlatformContext extends AbstractIFContext implements Compo
         // TODO Support recursive overlapping (more than two components overlapping each other)
         for (final Component child : container.getInternalComponents()) {
             if (!child.isVisible()) continue;
-            if (Objects.equals(child.getKey(), subject.getKey())) continue;
             if (child instanceof ComponentComposition) {
                 // This prevents from child being compared with its own root that would cause an
                 // infinite rendering loop causing the root being re-rendered entirely, thus the
@@ -147,14 +146,18 @@ public abstract class PlatformContext extends AbstractIFContext implements Compo
                 // child will have its own overlapping checks
                 for (final Component deepChild : ((ComponentComposition) child).getInternalComponents()) {
                     if (!deepChild.isVisible()) continue;
-                    if (deepChild.intersects(subject)) return Optional.of(deepChild);
+                    if (Objects.equals(deepChild.getKey(), subject.getKey())) continue;
+                    if (deepChild.getHandle().intersects(subject)) return Optional.of(deepChild);
                 }
 
                 // Ignore ComponentComposition, we want to check intersections only with children
                 continue;
             }
 
-            if (child.intersects(subject)) return Optional.of(child);
+            if (Objects.equals(child.getKey(), subject.getKey())) continue;
+            if (!child.getHandle().intersects(subject)) continue;
+
+            return Optional.of(child);
         }
 
         return Optional.empty();
@@ -162,7 +165,7 @@ public abstract class PlatformContext extends AbstractIFContext implements Compo
     // endregion
 
     @Override
-    protected void callStateListeners(@NotNull StateValue value, Consumer<StateWatcher> call) {
+    protected final void callStateListeners(@NotNull StateValue value, Consumer<StateWatcher> call) {
         super.callStateListeners(value, call);
         for (final State<?> state : getRoot().getStateRegistry()) {
             if (!(state instanceof StateWatcher)) continue;

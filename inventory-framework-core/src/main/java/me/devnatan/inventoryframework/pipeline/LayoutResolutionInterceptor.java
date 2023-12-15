@@ -26,6 +26,7 @@ public final class LayoutResolutionInterceptor implements PipelineInterceptor<Vi
             final LayoutSlot layoutSlot = new LayoutSlot(
                     entry.getKey(),
                     null,
+                    null,
                     entry.getValue().stream().mapToInt($ -> $).toArray());
             renderContext.addLayoutSlot(layoutSlot);
         }

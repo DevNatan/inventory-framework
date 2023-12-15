@@ -19,7 +19,7 @@ public final class ViewerLastInteractionTrackerInterceptor implements PipelineIn
 
         final Viewer viewer = click.getViewer();
         if (!click.isCombined() && viewer.isBlockedByInteractionDelay()) {
-            IFDebug.debug("ViewerLastInteractionTrackerInterceptor: pipeline finished due to interaction delay");
+            IFDebug.debug("Pipeline finished due to interaction delay");
             click.setCancelled(true);
             pipeline.finish();
             return;

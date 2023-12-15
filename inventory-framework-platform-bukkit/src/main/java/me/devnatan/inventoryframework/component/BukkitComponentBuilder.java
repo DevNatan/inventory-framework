@@ -2,15 +2,18 @@ package me.devnatan.inventoryframework.component;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.ComponentRenderContext;
 import me.devnatan.inventoryframework.context.Context;
 import me.devnatan.inventoryframework.context.IFComponentRenderContext;
 import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.context.SlotClickContext;
+import me.devnatan.inventoryframework.utils.SlotConverter;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
+@SuppressWarnings("unchecked")
 public abstract class BukkitComponentBuilder<SELF> extends PlatformComponentBuilder<SELF, Context> {
 
     protected BukkitComponentBuilder() {}
@@ -23,7 +26,6 @@ public abstract class BukkitComponentBuilder<SELF> extends PlatformComponentBuil
      * @param renderHandler The render handler.
      * @return This component builder.
      */
-    @SuppressWarnings("unchecked")
     public final SELF onRender(@Nullable Consumer<? super ComponentRenderContext> renderHandler) {
         setRenderHandler((Consumer<? super IFComponentRenderContext>) renderHandler);
         return (SELF) this;
@@ -50,7 +52,6 @@ public abstract class BukkitComponentBuilder<SELF> extends PlatformComponentBuil
      * @param clickHandler The click handler.
      * @return This item builder.
      */
-    @SuppressWarnings("unchecked")
     public final SELF onClick(@Nullable Consumer<? super SlotClickContext> clickHandler) {
         setClickHandler((Consumer<? super IFSlotClickContext>) clickHandler);
         return (SELF) this;
@@ -59,7 +60,15 @@ public abstract class BukkitComponentBuilder<SELF> extends PlatformComponentBuil
     /** {@inheritDoc} */
     @Override
     public Component buildComponent(VirtualView root) {
-        return new BukkitComponentImpl(
+        final int pos;
+        if (getRowPosition() > 0 && getColumnPosition() > 0) {
+            final ViewContainer container = ViewContainer.from(root);
+            pos = SlotConverter.convertSlot(
+                    getRowPosition(), getColumnPosition(), container.getRowsCount(), container.getColumnsCount());
+        } else pos = getPosition();
+
+        return new BukkitCustomComponentImpl(
+                pos,
                 getKey(),
                 root,
                 getReference(),
@@ -70,6 +79,7 @@ public abstract class BukkitComponentBuilder<SELF> extends PlatformComponentBuil
                 getClickHandler(),
                 isCancelOnClick(),
                 isCloseOnClick(),
-                isUpdateOnClick());
+                isUpdateOnClick(),
+                isSelfManaged());
     }
 }

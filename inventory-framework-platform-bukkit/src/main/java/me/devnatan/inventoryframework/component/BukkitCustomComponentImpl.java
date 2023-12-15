@@ -10,11 +10,11 @@ import me.devnatan.inventoryframework.context.IFComponentUpdateContext;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.state.State;
-import org.jetbrains.annotations.NotNull;
 
-public final class BukkitComponentImpl extends PlatformComponent {
+public final class BukkitCustomComponentImpl extends PlatformComponent {
 
-    BukkitComponentImpl(
+    BukkitCustomComponentImpl(
+            int position,
             String key,
             VirtualView root,
             Ref<Component> reference,
@@ -25,8 +25,10 @@ public final class BukkitComponentImpl extends PlatformComponent {
             Consumer<? super IFSlotClickContext> clickHandler,
             boolean cancelOnClick,
             boolean closeOnClick,
-            boolean updateOnClick) {
+            boolean updateOnClick,
+            boolean isSelfManaged) {
         super(
+                position,
                 key,
                 root,
                 reference,
@@ -37,17 +39,13 @@ public final class BukkitComponentImpl extends PlatformComponent {
                 clickHandler,
                 cancelOnClick,
                 closeOnClick,
-                updateOnClick);
+                updateOnClick,
+                isSelfManaged);
         setHandle(new BukkitItemComponentImplHandle());
     }
 
     @Override
-    public boolean isContainedWithin(int position) {
-        return false;
-    }
-
-    @Override
-    public boolean intersects(@NotNull Component other) {
-        return false;
+    public String toString() {
+        return "BukkitComponentImpl{} " + super.toString();
     }
 }
