@@ -1,5 +1,6 @@
 package me.devnatan.inventoryframework.context;
 
+import java.util.List;
 import me.devnatan.inventoryframework.component.BukkitItemComponentBuilder;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -7,11 +8,10 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnknownNullability;
 
-import java.util.List;
-
 public final class PublicComponentRenderContext
-	extends PublicPlatformComponentRenderContext<PublicComponentRenderContext, BukkitItemComponentBuilder, ItemStack>
-	implements Context {
+        extends PublicPlatformComponentRenderContext<
+                PublicComponentRenderContext, BukkitItemComponentBuilder, ItemStack>
+        implements Context {
 
     @ApiStatus.Internal
     public PublicComponentRenderContext(IFComponentRenderContext componentContext) {
@@ -52,23 +52,23 @@ public final class PublicComponentRenderContext
         return "PublicPlatformRenderContext{} " + super.toString();
     }
 
-	@Override
-	public @UnknownNullability Player getPlayer() {
-		return delegate().getPlayer();
-	}
+    @Override
+    public @UnknownNullability Player getPlayer() {
+        return delegate().getPlayer();
+    }
 
-	@Override
-	public List<Player> getAllPlayers() {
-		return delegate().getAllPlayers();
-	}
+    @Override
+    public List<Player> getAllPlayers() {
+        return delegate().getAllPlayers();
+    }
 
-	@Override
-	public void updateTitleForPlayer(@NotNull String title, @NotNull Player player) {
-		delegate().updateTitleForPlayer(title, player);
-	}
+    @Override
+    public void updateTitleForPlayer(@NotNull String title, @NotNull Player player) {
+        delegate().updateTitleForPlayer(title, player);
+    }
 
-	@Override
-	public void resetTitleForPlayer(@NotNull Player player) {
-		delegate().resetTitleForPlayer(player);
-	}
+    @Override
+    public void resetTitleForPlayer(@NotNull Player player) {
+        delegate().resetTitleForPlayer(player);
+    }
 }
