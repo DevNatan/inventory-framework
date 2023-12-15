@@ -146,6 +146,7 @@ public abstract class PlatformContext extends AbstractIFContext implements Compo
                 // child will have its own overlapping checks
                 for (final Component deepChild : ((ComponentComposition) child).getInternalComponents()) {
                     if (!deepChild.isVisible()) continue;
+                    if (Objects.equals(deepChild.getKey(), subject.getKey())) continue;
                     if (deepChild.intersects(subject)) return Optional.of(deepChild);
                 }
 

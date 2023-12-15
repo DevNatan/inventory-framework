@@ -52,7 +52,7 @@ public final class BukkitCustomComponentImpl extends PlatformComponent {
 
     @Override
     public boolean intersects(@NotNull Component other) {
-        throw new UnsupportedOperationException("Missing #intersects(Component) implementation");
+        return getPosition() == other.getPosition();
     }
 
     @Override

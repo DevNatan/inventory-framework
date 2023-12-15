@@ -92,7 +92,7 @@ public final class PlatformOpenInterceptor implements PipelineInterceptor<Virtua
         renderContext.setEndless(openContext.isEndless());
 
         // We need to recreate all state values here (with the same value) to ensure that the
-		// StateValueHost used in the StateValueFactory is a render context and not an open context
+        // StateValueHost used in the StateValueFactory is a render context and not an open context
         openContext.getStateValues().forEach((id, value) -> {
             final State<?> state = root.getStateRegistry().getState(id);
             final StateValue recreatedValue = state.factory().create(renderContext, state);
