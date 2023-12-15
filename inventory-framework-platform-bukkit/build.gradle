@@ -10,6 +10,7 @@ dependencies {
     api projects.inventoryFrameworkPlatform
     runtimeOnly projects.inventoryFrameworkAnvilInput
     compileOnly libs.spigot
+    compileOnly libs.folia
 }
 
 shadowJar {
