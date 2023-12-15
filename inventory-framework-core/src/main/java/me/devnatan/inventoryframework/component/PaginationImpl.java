@@ -169,8 +169,6 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
     private CompletableFuture<List<?>> createNewProvidedSource() {
         CompletableFuture<List<?>> job = new CompletableFuture<>();
 
-        System.out.println("getRoot() = " + getRoot());
-
         final Object source = _srcFactory.apply(getRoot());
         if (isAsync()) job = (CompletableFuture<List<?>>) source;
         else if (isComputed() || isLazy()) job.complete((List<?>) source);
