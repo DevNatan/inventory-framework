@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 
 import me.devnatan.inventoryframework.BukkitViewContainer;
 import me.devnatan.inventoryframework.BukkitViewer;
+import me.devnatan.inventoryframework.PlatformView;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.View;
 import me.devnatan.inventoryframework.ViewConfig;
@@ -34,6 +35,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -41,21 +43,10 @@ public class BukkitElementFactory extends ElementFactory {
 
     private static final ViewType defaultType = ViewType.CHEST;
     private Boolean worksInCurrentPlatform = null;
-	private static final boolean FOLIA_SUPPORTED;
 
-	static {
-		boolean folia;
-		try {
-			Class.forName("io.papermc.paper.threadedregions.scheduler.AsyncScheduler");
-			folia = true;
-		} catch (ClassNotFoundException e) {
-			folia = false;
-		}
-		FOLIA_SUPPORTED = folia;
-	}
 
     @Override
-    public @NotNull ViewContainer createContainer(@NotNull IFContext context) {
+    public ViewContainer createContainer(IFContext context) {
         final ViewConfig config = context.getConfig();
         final ViewType finalType = config.getType() == null ? defaultType : config.getType();
         checkInventoryTypeSupport(finalType);
@@ -80,7 +71,7 @@ public class BukkitElementFactory extends ElementFactory {
     }
 
     @Override
-    public @NotNull Viewer createViewer(@NotNull Object entity, IFRenderContext context) {
+    public Viewer createViewer(Object entity, IFRenderContext context) {
         if (!(entity instanceof Player))
             throw new IllegalArgumentException("createViewer(...) first parameter must be a Player");
 
@@ -89,7 +80,7 @@ public class BukkitElementFactory extends ElementFactory {
 
     @Override
     public IFOpenContext createOpenContext(
-		@NotNull RootView root, @Nullable Viewer subject, @NotNull List<Viewer> viewers, Object initialData) {
+		RootView root, Viewer subject, List<Viewer> viewers, Object initialData) {
         return new OpenContext(
                 (View) root,
                 subject,
@@ -99,11 +90,11 @@ public class BukkitElementFactory extends ElementFactory {
 
     @Override
     public IFRenderContext createRenderContext(
-            @NotNull UUID id,
-            @NotNull RootView root,
-            @NotNull ViewConfig config,
-            @NotNull ViewContainer container,
-            @NotNull Map<String, Viewer> viewers,
+            UUID id,
+            RootView root,
+            ViewConfig config,
+            ViewContainer container,
+            Map<String, Viewer> viewers,
             Viewer subject,
             Object initialData) {
         return new RenderContext(id, (View) root, config, container, viewers, subject, initialData);
@@ -112,10 +103,10 @@ public class BukkitElementFactory extends ElementFactory {
     @Override
     public IFSlotClickContext createSlotClickContext(
             int slotClicked,
-            @NotNull Viewer whoClicked,
-            @NotNull ViewContainer interactionContainer,
-            @Nullable Component componentClicked,
-            @NotNull Object origin,
+            Viewer whoClicked,
+            ViewContainer interactionContainer,
+            Component componentClicked,
+            Object origin,
             boolean combined) {
         final IFRenderContext context = whoClicked.getActiveContext();
         return new SlotClickContext(
@@ -129,12 +120,12 @@ public class BukkitElementFactory extends ElementFactory {
     }
 
     @Override
-    public IFCloseContext createCloseContext(@NotNull Viewer viewer, @NotNull IFRenderContext parent) {
+    public IFCloseContext createCloseContext(Viewer viewer, IFRenderContext parent) {
         return new CloseContext(viewer, parent);
     }
 
     @Override
-    public ItemComponentBuilder createItemComponentBuilder(@NotNull VirtualView root) {
+    public ItemComponentBuilder createItemComponentBuilder(VirtualView root) {
         return new BukkitItemComponentBuilder();
     }
 
@@ -154,9 +145,11 @@ public class BukkitElementFactory extends ElementFactory {
     }
 
     @Override
-    public Job scheduleJobInterval(@NotNull RootView root, long intervalInTicks, @NotNull Runnable execution) {
-        final View platformRoot = (View) root;
-        final ViewFrame platformFramework = (ViewFrame) platformRoot.getFramework();
-        return new BukkitTaskJobImpl(platformFramework.getOwner(), intervalInTicks, execution);
+    public Job scheduleJobInterval(IFContext context, long intervalInTicks, Runnable execution) {
+		@SuppressWarnings("rawtypes")
+		final PlatformView root = (PlatformView) context.getRoot();
+		final Plugin plugin = ((ViewFrame) root.getFramework()).getOwner();
+
+        return new BukkitTaskJobImpl(plugin, intervalInTicks, execution);
     }
 }

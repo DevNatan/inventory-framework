@@ -1,5 +1,6 @@
 package me.devnatan.inventoryframework.internal;
 
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -7,11 +8,14 @@ class BukkitTaskJobImpl implements Job {
 
     private final Plugin plugin;
     private final long intervalInTicks;
+	private final HumanEntity entity;
     private final Runnable execution;
+
     private BukkitTask task;
 
-    public BukkitTaskJobImpl(Plugin plugin, long intervalInTicks, Runnable execution) {
+    public BukkitTaskJobImpl(Plugin plugin, HumanEntity entity, long intervalInTicks, Runnable execution) {
         this.plugin = plugin;
+		this.entity = entity;
         this.intervalInTicks = intervalInTicks;
         this.execution = execution;
     }
@@ -24,6 +28,10 @@ class BukkitTaskJobImpl implements Job {
     @Override
     public void start() {
         if (isStarted()) return;
+
+		if (entity != null) {
+		}
+
         task = plugin.getServer().getScheduler().runTaskTimer(plugin, this::loop, intervalInTicks, intervalInTicks);
     }
 

@@ -73,5 +73,5 @@ public abstract class ElementFactory {
 
     public abstract boolean worksInCurrentPlatform();
 
-    public abstract Job scheduleJobInterval(RootView root, long intervalInTicks, Runnable task);
+    public abstract Job scheduleJobInterval(IFContext context, long intervalInTicks, Runnable task);
 }
