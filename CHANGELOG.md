@@ -1,5 +1,18 @@
 # Changelog
 
+# 3.1.0-beta (12-15-2023)
+
+* Vertical pagination support (#387)
+* Per-player state management for Shared Contexts (#411)
+* isLayoutSlot(...) in click context to check if click was in a character of the layout (#562)
+* New "Proxy" feature to use external inventories (like player inventory) as a extension of the view (#561)
+* Do not call methods in Shared Contexts that are not supported (#545)
+* Config maxSize() implementation (#584)
+* Human-friendly public Components API (#498, #599)
+* Components pipelining (#558)
+* Using Paper as inventory factory (#544)
+* Remove reserved layout character restriction (#580)
+
 # 3.0.8 (11-28-2023)
 
 * Interaction delay intercepting re-propagated interactions (#543)
