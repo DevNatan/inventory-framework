@@ -13,12 +13,28 @@ public final class PublicComponentRenderContext
         super(componentContext);
     }
 
+    private ComponentRenderContext delegate() {
+        return (ComponentRenderContext) getConfinedContext();
+    }
+
     public ItemStack getItem() {
-        return ((ComponentRenderContext) getConfinedContext()).getItem();
+        return delegate().getItem();
     }
 
     public void setItem(ItemStack item) {
-        ((ComponentRenderContext) getConfinedContext()).setItem(item);
+        delegate().setItem(item);
+    }
+
+    public int getSlot() {
+        return delegate().getSlot();
+    }
+
+    public void setSlot(int slot) {
+        delegate().setSlot(slot);
+    }
+
+    public void setSlot(int row, int column) {
+        delegate().setSlot(row, column);
     }
 
     @Override

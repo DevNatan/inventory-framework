@@ -3,10 +3,9 @@ package me.devnatan.inventoryframework.component;
 import java.util.Objects;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.ComponentClearContext;
-import me.devnatan.inventoryframework.context.ComponentRenderContext;
 import me.devnatan.inventoryframework.context.ComponentUpdateContext;
 import me.devnatan.inventoryframework.context.Context;
-import me.devnatan.inventoryframework.context.IFComponentClearContext;
+import me.devnatan.inventoryframework.context.IFComponentRenderContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.context.PublicComponentRenderContext;
 import me.devnatan.inventoryframework.context.SlotClickContext;
@@ -16,121 +15,106 @@ import org.jetbrains.annotations.ApiStatus;
 
 public abstract class BukkitComponentHandle<T> extends PlatformComponentHandle<Context, BukkitItemComponentBuilder> {
 
+    protected boolean renderItemOnContainerInDefaultBehavior = true;
+
     @ApiStatus.OverrideOnly
     public abstract T builder();
+
+    /**
+     * If the item must be rendered in the container when {@link #rendered(PublicComponentRenderContext)}
+     * default behavior is called, disabling this calls component render handler but do not render
+     * the component in the container.
+     *
+     * @param renderItemOnContainerInDefaultBehavior If the item should be rendered in the container.
+     */
+    protected final void setRenderItemOnContainerInDefaultBehavior(boolean renderItemOnContainerInDefaultBehavior) {
+        this.renderItemOnContainerInDefaultBehavior = renderItemOnContainerInDefaultBehavior;
+    }
 
     /**
      * Renders the component in the given context.
      *
      * @param render The context that this component will be rendered on.
      */
-    protected abstract void rendered(PublicComponentRenderContext render);
+    protected void rendered(PublicComponentRenderContext render) {
+        final PlatformComponent component = (PlatformComponent) render.getComponent();
+        if (component.getRenderHandler() != null) {
+            component.getRenderHandler().accept(render.getConfinedContext());
+        }
+
+        if (!renderItemOnContainerInDefaultBehavior) return;
+
+        component.setPosition(render.getSlot());
+
+        if (!component.isPositionSet())
+            throw new IllegalStateException("Component position is not set. A position for the component must be "
+                    + "assigned via #withSlot(...) in ComponentBuilder or programmatically before render");
+
+        render.getContainer().renderItem(component.getPosition(), render.getItem());
+        component.setVisible(true);
+    }
 
     /**
      * Called when the component is updated in the given context.
      *
      * @param update The update context.
      */
-    protected void updated(ComponentUpdateContext update) {}
+    protected void updated(ComponentUpdateContext update) {
+        final PlatformComponent component = (PlatformComponent) update.getComponent();
+
+        if (update.isCancelled()) return;
+
+        // Static item with no `displayIf` must not even reach the update handler
+        if (!component.isSelfManaged()
+                && !update.isForceUpdate()
+                && component.getDisplayCondition() == null
+                && component.getRenderHandler() == null) return;
+
+        if (component.isVisible() && component.getUpdateHandler() != null) {
+            component.getUpdateHandler().accept(update);
+            if (update.isCancelled()) return;
+        }
+
+        if (update.isCancelled()) return;
+
+        ((IFRenderContext) component.getContext()).renderComponent(component);
+    }
 
     /**
      * Called when the component is cleared from the given context.
      *
      * @param clear The context that this component will be cleared from.
      */
-    protected void cleared(ComponentClearContext clear) {}
+    protected void cleared(ComponentClearContext clear) {
+        if (clear.isCancelled()) return;
+
+        final PlatformComponent component = (PlatformComponent) clear.getComponent();
+        component.getContainer().removeItem(component.getPosition());
+    }
 
     /**
      * Called when a viewer clicks in the component.
      *
      * @param click The click context.
      */
-    protected void clicked(SlotClickContext click) {}
+    protected void clicked(SlotClickContext click) {
+        final PlatformComponent component = (PlatformComponent) click.getComponent();
+        if (component.getClickHandler() != null) component.getClickHandler().accept(click);
+
+        if (click.isCancelled()) return;
+
+        if (component.isUpdateOnClick()) component.update();
+        if (component.isCloseOnClick()) click.closeForPlayer();
+    }
 
     @Override
     public final void intercept(PipelineContext<VirtualView> pipeline, VirtualView subject) {
         final PipelinePhase phase = Objects.requireNonNull(
                 pipeline.getPhase(), "Pipeline phase cannot be null in ComponentHandle interceptor");
 
-        if (phase == Component.RENDER) {
-            final ComponentRenderContext context = (ComponentRenderContext) subject;
-            final PlatformComponent component = (PlatformComponent) context.getComponent();
-            final PublicComponentRenderContext publicContext = new PublicComponentRenderContext(context);
-            final int position = component.getPosition();
-
-            if (component.getRenderHandler() != null) {
-                component.getRenderHandler().accept(context);
-                rendered(publicContext);
-
-                if (position >= 0) context.getContainer().renderItem(position, context.getItem());
-                component.setVisible(true);
-                return;
-            }
-
-            rendered(publicContext);
-            if (position >= 0) {
-                if (context.getItem() == null) {
-                    if (context.getContainer().getType().isResultSlot(position)) {
-                        component.setVisible(true);
-                        return;
-                    }
-
-                    // TODO This error must be in slot creation and not on render
-                    //      so the developer will know where the error is
-                    if (!component.isSelfManaged())
-                        throw new IllegalStateException(
-                                "At least one fallback item or render handler must be provided for "
-                                        + component.getClass().getName());
-                    return;
-                }
-
-                context.getContainer().renderItem(position, context.getItem());
-            }
-            component.setVisible(true);
-        }
-
-        if (phase == Component.UPDATE) {
-            final ComponentUpdateContext context = (ComponentUpdateContext) subject;
-            final PlatformComponent component = (PlatformComponent) context.getComponent();
-            updated(context);
-
-            if (context.isCancelled()) return;
-
-            // Static item with no `displayIf` must not even reach the update handler
-            if (!component.isSelfManaged()
-                    && !context.isForceUpdate()
-                    && component.getDisplayCondition() == null
-                    && component.getRenderHandler() == null) return;
-
-            if (component.isVisible() && component.getUpdateHandler() != null) {
-                component.getUpdateHandler().accept(context);
-                if (context.isCancelled()) return;
-            }
-
-            if (context.isCancelled()) return;
-
-            ((IFRenderContext) component.getContext()).renderComponent(component);
-        }
-
-        if (phase == Component.CLEAR) {
-            final IFComponentClearContext context = (IFComponentClearContext) subject;
-            if (context.isCancelled()) return;
-
-            final PlatformComponent component = (PlatformComponent) context.getComponent();
-            component.getContainer().removeItem(component.getPosition());
-            cleared((ComponentClearContext) context);
-        }
-
-        if (phase == Component.CLICK) {
-            final SlotClickContext context = (SlotClickContext) subject;
-            final PlatformComponent component = (PlatformComponent) context.getComponent();
-            if (component.getClickHandler() != null) component.getClickHandler().accept(context);
-
-            clicked(context);
-            if (context.isCancelled()) return;
-
-            if (component.isUpdateOnClick()) component.update();
-            if (component.isCloseOnClick()) context.closeForPlayer();
-        }
+        if (phase == Component.RENDER) rendered(new PublicComponentRenderContext((IFComponentRenderContext) subject));
+        if (phase == Component.CLICK) clicked((SlotClickContext) subject);
+        if (phase == Component.CLEAR) cleared((ComponentClearContext) subject);
+        if (phase == Component.UPDATE) updated((ComponentUpdateContext) subject);
     }
 }

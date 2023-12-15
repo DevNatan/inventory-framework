@@ -347,4 +347,9 @@ public abstract class PlatformRenderContext<CONTEXT, ITEM_BUILDER extends ItemCo
     public final ITEM_BUILDER resultSlot(ITEM item) {
         return publicSlotComponentRenderer.resultSlot(item);
     }
+
+    @Override
+    public final <T extends PlatformComponentBuilder<T, CONTEXT>> void unsetSlotComponent(T componentBuilder) {
+        publicSlotComponentRenderer.unsetSlotComponent(componentBuilder);
+    }
 }

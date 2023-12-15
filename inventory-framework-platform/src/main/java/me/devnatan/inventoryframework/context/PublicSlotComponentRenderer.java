@@ -27,6 +27,13 @@ public interface PublicSlotComponentRenderer<CONTEXT, BUILDER, ITEM> {
     BUILDER unsetSlot();
 
     /**
+     * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     */
+    @ApiStatus.Experimental
+    <T extends PlatformComponentBuilder<T, CONTEXT>> void unsetSlotComponent(T componentBuilder);
+
+    /**
      * Adds an item to a specific slot in the context container.
      *
      * @param slot The slot in which the item will be positioned.

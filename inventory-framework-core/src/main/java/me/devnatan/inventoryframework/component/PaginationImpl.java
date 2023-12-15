@@ -545,7 +545,15 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
 
     @Override
     public int getPosition() {
-        throw new UnsupportedOperationException("Pagination position cannot be accessed");
+        return -1;
+    }
+
+    @Override
+    public void setPosition(int position) {}
+
+    @Override
+    public boolean isPositionSet() {
+        return true;
     }
 
     @Override

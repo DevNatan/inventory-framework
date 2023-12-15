@@ -13,7 +13,7 @@ import me.devnatan.inventoryframework.state.State;
 
 public abstract class PlatformComponent extends AbstractComponent implements Component {
 
-    private final int position;
+    private int position;
     private final boolean cancelOnClick;
     private final boolean closeOnClick;
     private final boolean updateOnClick;
@@ -45,10 +45,6 @@ public abstract class PlatformComponent extends AbstractComponent implements Com
         this.updateOnClick = updateOnClick;
     }
 
-    public final int getPosition() {
-        return position;
-    }
-
     // region Public Builder Methods
     public final boolean isCancelOnClick() {
         return cancelOnClick;
@@ -64,6 +60,21 @@ public abstract class PlatformComponent extends AbstractComponent implements Com
     // endregion
 
     // region Internal Components API
+    @Override
+    public final int getPosition() {
+        return position;
+    }
+
+    @Override
+    public final void setPosition(int position) {
+        this.position = position;
+    }
+
+    @Override
+    public boolean isPositionSet() {
+        return getPosition() != -1;
+    }
+
     public final Consumer<? super IFComponentRenderContext> getRenderHandler() {
         return renderHandler;
     }

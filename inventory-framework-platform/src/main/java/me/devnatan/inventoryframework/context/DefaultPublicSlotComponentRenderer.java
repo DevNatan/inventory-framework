@@ -285,13 +285,16 @@ public final class DefaultPublicSlotComponentRenderer<CONTEXT, BUILDER extends C
             return component;
         }));
     }
-    // endregion
 
-    // region Component Assignment Methods
     private <B extends PlatformComponentBuilder<B, CONTEXT>> void slotComponent(int position, B builder) {
         final Component component = builder.withSlot(position).buildComponent(root);
         component.setHandle(builder.buildHandle());
         renderContext.addComponent(component);
+    }
+
+    @Override
+    public <T extends PlatformComponentBuilder<T, CONTEXT>> void unsetSlotComponent(T componentBuilder) {
+        slotComponent(-1, componentBuilder);
     }
     // endregion
 

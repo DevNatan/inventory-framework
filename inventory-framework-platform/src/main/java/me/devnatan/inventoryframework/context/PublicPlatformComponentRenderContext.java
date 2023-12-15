@@ -202,6 +202,11 @@ public abstract class PublicPlatformComponentRenderContext<CONTEXT, ITEM_BUILDER
     }
 
     @Override
+    public <T extends PlatformComponentBuilder<T, CONTEXT>> void unsetSlotComponent(T componentBuilder) {
+        publicSlotComponentRenderer.unsetSlotComponent(componentBuilder);
+    }
+
+    @Override
     public Map<Long, StateValue> getStateValues() {
         return componentContext.getStateValues();
     }

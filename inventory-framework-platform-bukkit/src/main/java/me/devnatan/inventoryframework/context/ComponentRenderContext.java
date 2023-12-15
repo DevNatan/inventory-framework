@@ -5,6 +5,7 @@ import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.ItemComponent;
+import me.devnatan.inventoryframework.utils.SlotConverter;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -13,6 +14,7 @@ public final class ComponentRenderContext extends ComponentContext implements IF
     private final Viewer viewer;
     private final Player player;
     private ItemStack item;
+    private int slot;
 
     public ComponentRenderContext(RenderContext parent, Component component, Viewer viewer) {
         super(parent, component);
@@ -20,6 +22,7 @@ public final class ComponentRenderContext extends ComponentContext implements IF
         this.player = viewer == null ? null : ((BukkitViewer) viewer).getPlayer();
         this.item =
                 component instanceof ItemComponent ? (ItemStack) ((ItemComponent) component).getPlatformItem() : null;
+        this.slot = component.getPosition();
     }
 
     @Override
@@ -43,6 +46,19 @@ public final class ComponentRenderContext extends ComponentContext implements IF
 
     public void setItem(ItemStack item) {
         this.item = item;
+    }
+
+    public int getSlot() {
+        return slot;
+    }
+
+    public void setSlot(int slot) {
+        this.slot = slot;
+    }
+
+    public void setSlot(int row, int column) {
+        setSlot(SlotConverter.convertSlot(
+                row, column, getContainer().getRowsCount(), getContainer().getColumnsCount()));
     }
 
     @Override
