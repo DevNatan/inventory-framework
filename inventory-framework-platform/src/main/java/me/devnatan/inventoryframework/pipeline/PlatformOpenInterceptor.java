@@ -7,6 +7,7 @@ import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.exception.InvalidLayoutException;
 import me.devnatan.inventoryframework.internal.ElementFactory;
 import me.devnatan.inventoryframework.state.State;
+import me.devnatan.inventoryframework.state.StateValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 
@@ -22,8 +23,11 @@ public final class PlatformOpenInterceptor implements PipelineInterceptor<Virtua
         final IFOpenContext openContext = (IFOpenContext) subject;
 
         final PlatformView root = (PlatformView) openContext.getRoot();
+
+        // Initialize all states to allow them to be modified in open handler
         for (final State<?> state : root.getStateRegistry())
             openContext.initializeState(state.internalId(), state.factory().create(openContext, state));
+
         root.onOpen(openContext);
 
         if (openContext.getAsyncOpenJob() == null) {
@@ -86,7 +90,16 @@ public final class PlatformOpenInterceptor implements PipelineInterceptor<Virtua
                 openContext.getInitialData());
 
         renderContext.setEndless(openContext.isEndless());
-        renderContext.getStateValues().putAll(openContext.getStateValues());
+
+        // We need to recreate all state values here (with the same value) to ensure that the
+		// StateValueHost used in the StateValueFactory is a render context and not an open context
+        openContext.getStateValues().forEach((id, value) -> {
+            final State<?> state = root.getStateRegistry().getState(id);
+            final StateValue recreatedValue = state.factory().create(renderContext, state);
+            recreatedValue.set(value.get());
+
+            renderContext.initializeState(id, recreatedValue);
+        });
 
         for (final Viewer viewer : openContext.getIndexedViewers().values()) {
             if (!viewer.isTransitioning()) viewer.setActiveContext(renderContext);

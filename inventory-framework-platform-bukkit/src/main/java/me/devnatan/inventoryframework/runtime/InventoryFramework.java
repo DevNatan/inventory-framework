@@ -1,5 +1,6 @@
 package me.devnatan.inventoryframework.runtime;
 
+import java.util.Arrays;
 import me.devnatan.inventoryframework.View;
 import me.devnatan.inventoryframework.ViewConfigBuilder;
 import me.devnatan.inventoryframework.ViewFrame;
@@ -35,13 +36,13 @@ public final class InventoryFramework extends JavaPlugin {
 
 class TestView extends View {
 
-    //    {
-    //        buildPaginationState(Arrays.asList("A", "B", "C", "D", "E"))
-    //                .componentFactory((item, index, value) -> new HeadComponent.Builder()
-    //                        .skullName(value)
-    //                        .onClick(click -> click.getPlayer().sendMessage("Head " + value)))
-    //                .build();
-    //    }
+    {
+        buildPaginationState(Arrays.asList("A", "B", "C", "D", "E"))
+                .componentFactory((item, index, value) -> new HeadComponent.Builder()
+                        .skullName(value)
+                        .onClick(click -> click.getPlayer().sendMessage("Head " + value)))
+                .build();
+    }
 
     private final MutableState<Boolean> showGoldAxeState = mutableState(false);
 

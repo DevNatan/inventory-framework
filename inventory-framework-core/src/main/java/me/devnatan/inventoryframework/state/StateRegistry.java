@@ -20,6 +20,16 @@ public final class StateRegistry implements Iterable<State<?>> {
     private final Map<Long, State<?>> stateMap = new HashMap<>();
 
     /**
+     * Returns a state from the states map that have the specified id.
+     *
+     * @param id The id of the state.
+     * @return A State of the specified id.
+     */
+    public State<?> getState(long id) {
+        return stateMap.get(id);
+    }
+
+    /**
      * Adds a new state to the states' collection.
      *
      * @param state The state to be added.
