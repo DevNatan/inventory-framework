@@ -12,7 +12,6 @@ import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.state.State;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * {@link ItemComponent} implementation for Bukkit platform.
@@ -61,17 +60,6 @@ public final class BukkitItemComponentImpl extends PlatformComponent implements 
     @Override
     public Object getPlatformItem() {
         return getItemStack();
-    }
-
-    @Override
-    public boolean intersects(@NotNull Component other) {
-        if (other instanceof ItemComponent) return getPosition() == other.getPosition();
-        else return other.intersects(this);
-    }
-
-    @Override
-    public boolean isContainedWithin(int position) {
-        return getPosition() == position;
     }
 
     @Override

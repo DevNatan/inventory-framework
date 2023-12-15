@@ -42,22 +42,6 @@ public interface Component extends VirtualView, Pipelined {
     ViewContainer getContainer();
 
     /**
-     * Checks if this component is in a specific position.
-     *
-     * @param position The position.
-     * @return If this component is contained in the given position.
-     */
-    boolean isContainedWithin(int position);
-
-    /**
-     * If this component are intersects with other component.
-     *
-     * @param other The other component.
-     * @return If both this and other component intersects in area.
-     */
-    boolean intersects(@NotNull Component other);
-
-    /**
      * An unmodifiable set of all states that this component is watching.
      *
      * @return All states that this component is watching.

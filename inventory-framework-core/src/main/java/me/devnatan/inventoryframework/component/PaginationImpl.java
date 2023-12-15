@@ -48,7 +48,7 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
     boolean pageWasChanged;
     boolean initialized;
     private int pagesCount;
-    private LayoutSlot currentLayoutSlot;
+    LayoutSlot currentLayoutSlot;
 
     // Number of elements that each page can have. -1 means uninitialized.
     private int pageSize = -1;
@@ -414,26 +414,6 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
     }
 
     @Override
-    public boolean isContainedWithin(int position) {
-        if (currentLayoutSlot != null) {
-            for (int slot : currentLayoutSlot.getPositions()) {
-                if (slot == position) return true;
-            }
-            return false;
-        }
-
-        for (final Component component : getInternalComponents()) {
-            if (component.isContainedWithin(position)) return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean intersects(@NotNull Component other) {
-        throw new UnsupportedOperationException("Missing #intersects(Component) implementation");
-    }
-
-    @Override
     public int currentPage() {
         return currentPageIndex() + 1;
     }
@@ -665,7 +645,7 @@ class PaginationHandle extends ComponentHandle {
         }
 
         for (final Component child : pagination.getInternalComponents()) {
-            if (!child.isContainedWithin(context.getClickedSlot())) continue;
+            if (!child.getHandle().isContainedWithin(context.getClickedSlot())) continue;
 
             // Hidden components that are not self-managed e.g.: managed by user-provided handle
             // must handle visibility issues by its own to ensure that clicks are not superimposed
@@ -708,5 +688,28 @@ class PaginationHandle extends ComponentHandle {
         if (phase.equals(Component.UPDATE)) updated((IFComponentUpdateContext) subject);
         if (phase.equals(Component.CLEAR)) cleared(((IFComponentClearContext) subject).getParent());
         if (phase.equals(Component.CLICK)) clicked((IFSlotClickContext) subject);
+    }
+
+    @Override
+    public boolean isContainedWithin(int position) {
+        // fast path -- if layout is defined we can use it as measurement
+        if (pagination.currentLayoutSlot != null) {
+            for (int slot : pagination.currentLayoutSlot.getPositions()) {
+                if (slot == position) return true;
+            }
+            return false;
+        }
+
+        for (final Component component : pagination.getInternalComponents()) {
+            if (component.getHandle().isContainedWithin(position)) return true;
+        }
+        return super.isContainedWithin(position);
+    }
+
+    @Override
+    public boolean intersects(@NotNull Component other) {
+        for (final Component component : pagination.getInternalComponents())
+            if (component.getHandle().intersects(other)) return true;
+        return super.intersects(other);
     }
 }

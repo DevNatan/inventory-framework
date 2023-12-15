@@ -147,7 +147,7 @@ public abstract class PlatformContext extends AbstractIFContext implements Compo
                 for (final Component deepChild : ((ComponentComposition) child).getInternalComponents()) {
                     if (!deepChild.isVisible()) continue;
                     if (Objects.equals(deepChild.getKey(), subject.getKey())) continue;
-                    if (deepChild.intersects(subject)) return Optional.of(deepChild);
+                    if (deepChild.getHandle().intersects(subject)) return Optional.of(deepChild);
                 }
 
                 // Ignore ComponentComposition, we want to check intersections only with children
@@ -155,7 +155,7 @@ public abstract class PlatformContext extends AbstractIFContext implements Compo
             }
 
             if (Objects.equals(child.getKey(), subject.getKey())) continue;
-            if (!child.intersects(subject)) continue;
+            if (!child.getHandle().intersects(subject)) continue;
 
             return Optional.of(child);
         }

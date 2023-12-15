@@ -10,7 +10,6 @@ import me.devnatan.inventoryframework.context.IFComponentUpdateContext;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.state.State;
-import org.jetbrains.annotations.NotNull;
 
 public final class BukkitCustomComponentImpl extends PlatformComponent {
 
@@ -43,16 +42,6 @@ public final class BukkitCustomComponentImpl extends PlatformComponent {
                 updateOnClick,
                 isSelfManaged);
         setHandle(new BukkitItemComponentImplHandle());
-    }
-
-    @Override
-    public boolean isContainedWithin(int position) {
-        return getPosition() == position;
-    }
-
-    @Override
-    public boolean intersects(@NotNull Component other) {
-        return getPosition() == other.getPosition();
     }
 
     @Override

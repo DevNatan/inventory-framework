@@ -10,7 +10,6 @@ import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
-import me.devnatan.inventoryframework.pipeline.PipelineContext;
 import me.devnatan.inventoryframework.pipeline.PipelinePhase;
 import me.devnatan.inventoryframework.state.State;
 import org.jetbrains.annotations.NotNull;
@@ -44,7 +43,6 @@ public abstract class AbstractComponent implements Component {
         this.watchingStates = watchingStates;
         this.displayCondition = displayCondition;
         this.isSelfManaged = isSelfManaged;
-        setHandle(NoopComponentHandle.INSTANCE);
     }
 
     @Override
@@ -131,9 +129,9 @@ public abstract class AbstractComponent implements Component {
 
     @Override
     public final void setHandle(ComponentHandle handle) {
-        if (this.handle != null) getPipeline().removeInterceptor(this.handle);
         if (handle == null)
             throw new IllegalArgumentException("Component handle argument in #setHandle cannot be null");
+        if (this.handle != null) getPipeline().removeInterceptor(this.handle);
 
         for (final PipelinePhase phase :
                 new PipelinePhase[] {Component.RENDER, Component.UPDATE, Component.CLEAR, Component.CLICK}) {
@@ -141,6 +139,7 @@ public abstract class AbstractComponent implements Component {
             getPipeline().intercept(phase, handle);
         }
         this.handle = handle;
+        this.handle.setComponent(this);
     }
 
     @Override
@@ -179,12 +178,4 @@ public abstract class AbstractComponent implements Component {
                 + isSelfManaged + ", wasForceUpdated="
                 + wasForceUpdated + '}';
     }
-}
-
-class NoopComponentHandle extends ComponentHandle {
-
-    static final ComponentHandle INSTANCE = new NoopComponentHandle();
-
-    @Override
-    public void intercept(PipelineContext<VirtualView> pipeline, VirtualView subject) {}
 }
