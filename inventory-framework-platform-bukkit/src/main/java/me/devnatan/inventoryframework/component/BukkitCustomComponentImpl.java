@@ -12,9 +12,9 @@ import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.state.State;
 import org.jetbrains.annotations.NotNull;
 
-public final class BukkitComponentImpl extends PlatformComponent {
+public final class BukkitCustomComponentImpl extends PlatformComponent {
 
-    BukkitComponentImpl(
+    BukkitCustomComponentImpl(
             int position,
             String key,
             VirtualView root,
@@ -52,7 +52,7 @@ public final class BukkitComponentImpl extends PlatformComponent {
 
     @Override
     public boolean intersects(@NotNull Component other) {
-        return false;
+        throw new UnsupportedOperationException("Missing #intersects(Component) implementation");
     }
 
     @Override

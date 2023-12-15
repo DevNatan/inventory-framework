@@ -28,7 +28,7 @@ public abstract class AbstractComponent implements Component {
     private final boolean isSelfManaged;
 
     private ComponentHandle handle;
-    private boolean isVisible = false;
+    private boolean isVisible = true;
     private boolean wasForceUpdated;
 
     protected AbstractComponent(

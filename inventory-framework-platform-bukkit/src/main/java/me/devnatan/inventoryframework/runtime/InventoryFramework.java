@@ -1,6 +1,5 @@
 package me.devnatan.inventoryframework.runtime;
 
-import java.util.Arrays;
 import me.devnatan.inventoryframework.View;
 import me.devnatan.inventoryframework.ViewConfigBuilder;
 import me.devnatan.inventoryframework.ViewFrame;
@@ -12,6 +11,8 @@ import me.devnatan.inventoryframework.context.ComponentUpdateContext;
 import me.devnatan.inventoryframework.context.PublicComponentRenderContext;
 import me.devnatan.inventoryframework.context.RenderContext;
 import me.devnatan.inventoryframework.context.SlotClickContext;
+import me.devnatan.inventoryframework.state.MutableIntState;
+import me.devnatan.inventoryframework.state.MutableState;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -34,13 +35,15 @@ public final class InventoryFramework extends JavaPlugin {
 
 class TestView extends View {
 
-    {
-        buildPaginationState(Arrays.asList("A", "B", "C", "D", "E"))
-                .componentFactory((item, index, value) -> new HeadComponent.Builder()
-                        .skullName(value)
-                        .onClick(click -> click.getPlayer().sendMessage("Head " + value)))
-                .build();
-    }
+    //    {
+    //        buildPaginationState(Arrays.asList("A", "B", "C", "D", "E"))
+    //                .componentFactory((item, index, value) -> new HeadComponent.Builder()
+    //                        .skullName(value)
+    //                        .onClick(click -> click.getPlayer().sendMessage("Head " + value)))
+    //                .build();
+    //    }
+
+    private final MutableState<Boolean> showGoldAxeState = mutableState(false);
 
     @Override
     public void onInit(@NotNull ViewConfigBuilder config) {
@@ -50,36 +53,53 @@ class TestView extends View {
     @Override
     public void onFirstRender(@NotNull RenderContext render) {
         render.firstSlot()
-                .withSlot(3)
                 .withItem(new ItemStack(Material.IRON_AXE))
-                .onClick(click -> click.getPlayer().sendMessage("Clicked on IRON_AXE"));
+                .onClick(click -> {
+                    click.getPlayer().sendMessage("Clicked on IRON_AXE");
+                    showGoldAxeState.set(true, click);
+                })
+                .hideIf(showGoldAxeState::get)
+                .updateOnStateChange(showGoldAxeState);
+
+        render.firstSlot()
+                .withItem(new ItemStack(Material.GOLDEN_AXE))
+                .onClick(click -> {
+                    click.getPlayer().sendMessage("Clicked on GOLDEN_AXE");
+                    showGoldAxeState.set(false, click);
+                })
+                .displayIf(showGoldAxeState::get)
+                .updateOnStateChange(showGoldAxeState);
     }
 }
 
 class HeadComponent extends BukkitComponentHandle<HeadComponent.Builder> {
 
+    // region Init & Properties
     private final String skullName;
 
     public HeadComponent(String skullName) {
         this.skullName = skullName;
     }
+    // endregion
 
+    // region States
+    private final MutableIntState clicksState = mutableState(0);
+    // endregion
+
+    // region Handlers
     @Override
     protected void rendered(PublicComponentRenderContext render) {
         final ItemStack item = new ItemStack(Material.PLAYER_HEAD);
         final ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(skullName);
+        meta.setDisplayName(String.format("%s (%d clicks)", skullName, clicksState.get(render)));
         item.setItemMeta(meta);
         render.setItem(item);
     }
 
     @Override
     protected void clicked(SlotClickContext click) {
-        final Component component = click.getComponent();
-        click.getPlayer().sendMessage(String.format("clicked: %b", component.isSelfManaged()));
-
-        if (component.isVisible()) component.hide();
-        else component.show();
+        clicksState.increment(click);
+        click.getComponent().update();
     }
 
     @Override
@@ -87,7 +107,9 @@ class HeadComponent extends BukkitComponentHandle<HeadComponent.Builder> {
         final Component component = update.getComponent();
         update.getPlayer().sendMessage(String.format("updated: %b", component.isVisible()));
     }
+    // endregion
 
+    // region Builder
     @Override
     public HeadComponent.Builder builder() {
         return new HeadComponent.Builder();
@@ -107,4 +129,5 @@ class HeadComponent extends BukkitComponentHandle<HeadComponent.Builder> {
             return new HeadComponent(skullName);
         }
     }
+    // endregion
 }

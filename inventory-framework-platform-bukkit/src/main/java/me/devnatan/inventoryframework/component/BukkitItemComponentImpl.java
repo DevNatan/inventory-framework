@@ -38,7 +38,7 @@ public final class BukkitItemComponentImpl extends PlatformComponent implements 
             boolean isSelfManaged) {
         super(
                 position,
-                key,
+                key == null ? String.valueOf(itemStack.hashCode()) : key,
                 root,
                 reference,
                 watchingStates,
@@ -65,10 +65,8 @@ public final class BukkitItemComponentImpl extends PlatformComponent implements 
 
     @Override
     public boolean intersects(@NotNull Component other) {
-        if (other == this) return true;
-        if (other instanceof ItemComponent) return getPosition() == ((ItemComponent) other).getPosition();
-
-        return other.intersects(this);
+        if (other instanceof ItemComponent) return getPosition() == other.getPosition();
+        else return other.intersects(this);
     }
 
     @Override

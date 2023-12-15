@@ -67,7 +67,7 @@ public abstract class BukkitComponentBuilder<SELF> extends PlatformComponentBuil
                     getRowPosition(), getColumnPosition(), container.getRowsCount(), container.getColumnsCount());
         } else pos = getPosition();
 
-        return new BukkitComponentImpl(
+        return new BukkitCustomComponentImpl(
                 pos,
                 getKey(),
                 root,

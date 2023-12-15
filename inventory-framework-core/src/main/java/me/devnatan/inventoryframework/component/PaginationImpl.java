@@ -430,7 +430,7 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
 
     @Override
     public boolean intersects(@NotNull Component other) {
-        throw new UnsupportedOperationException("Missing #intersects(Component) implementation.");
+        throw new UnsupportedOperationException("Missing #intersects(Component) implementation");
     }
 
     @Override

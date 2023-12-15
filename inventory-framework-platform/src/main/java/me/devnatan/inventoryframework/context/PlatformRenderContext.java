@@ -7,7 +7,6 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
-import me.devnatan.inventoryframework.IFDebug;
 import me.devnatan.inventoryframework.PlatformView;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.UpdateReason;
@@ -16,6 +15,7 @@ import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.ComponentBuilder;
+import me.devnatan.inventoryframework.component.ComponentContainer;
 import me.devnatan.inventoryframework.component.ItemComponentBuilder;
 import me.devnatan.inventoryframework.component.PlatformComponentBuilder;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
@@ -169,12 +169,10 @@ public abstract class PlatformRenderContext<CONTEXT, ITEM_BUILDER extends ItemCo
         // regular components by non-custom component developers instead
         final boolean wasVisibilityProgrammaticallySet = component.isSelfManaged() && !component.isVisible();
         if (isRendered() && (!component.shouldRender(this) || wasVisibilityProgrammaticallySet)) {
-            IFDebug.debug(
-                    "!component.shouldRender: isSelfManaged=%b, isVisible=%b component=%s",
-                    component.isSelfManaged(), component.isVisible(), component);
             component.setVisible(false);
 
-            final Optional<Component> overlapOptional = getOverlappingComponentToRender(this, component);
+            final Optional<Component> overlapOptional = getOverlappingComponentToRender(
+                    component instanceof ComponentContainer ? (ComponentContainer) component : this, component);
             if (overlapOptional.isPresent()) {
                 Component overlap = overlapOptional.get();
                 renderComponent(overlap);

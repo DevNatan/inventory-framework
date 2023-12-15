@@ -132,7 +132,6 @@ public abstract class PlatformContext extends AbstractIFContext implements Compo
         // TODO Support recursive overlapping (more than two components overlapping each other)
         for (final Component child : container.getInternalComponents()) {
             if (!child.isVisible()) continue;
-            if (Objects.equals(child.getKey(), subject.getKey())) continue;
             if (child instanceof ComponentComposition) {
                 // This prevents from child being compared with its own root that would cause an
                 // infinite rendering loop causing the root being re-rendered entirely, thus the
@@ -154,7 +153,10 @@ public abstract class PlatformContext extends AbstractIFContext implements Compo
                 continue;
             }
 
-            if (child.intersects(subject)) return Optional.of(child);
+            if (Objects.equals(child.getKey(), subject.getKey())) continue;
+            if (!child.intersects(subject)) continue;
+
+            return Optional.of(child);
         }
 
         return Optional.empty();
