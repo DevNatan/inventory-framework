@@ -84,7 +84,9 @@ public interface PipelinePhase {
          */
         CONTEXT_LAYOUT_RESOLUTION,
 
-        CONTEXT_SLOT_CLICK
+        CONTEXT_SLOT_CLICK,
+
+        CONTEXT_COMPONENT_RENDER,
     }
 
     enum Component implements PipelinePhase {

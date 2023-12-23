@@ -1,13 +1,13 @@
 package me.devnatan.inventoryframework;
 
 import me.devnatan.inventoryframework.component.BukkitItemComponentBuilder;
+import me.devnatan.inventoryframework.component.pipeline.ComponentClickInterceptor;
 import me.devnatan.inventoryframework.context.CloseContext;
 import me.devnatan.inventoryframework.context.Context;
 import me.devnatan.inventoryframework.context.OpenContext;
 import me.devnatan.inventoryframework.context.RenderContext;
 import me.devnatan.inventoryframework.context.SlotClickContext;
 import me.devnatan.inventoryframework.internal.ElementFactory;
-import me.devnatan.inventoryframework.pipeline.ComponentClickInterceptor;
 import me.devnatan.inventoryframework.pipeline.ComponentCloseOnClickInterceptor;
 import me.devnatan.inventoryframework.pipeline.ContextClickInterceptor;
 import me.devnatan.inventoryframework.pipeline.ContextHandleCancelledCloseInterceptor;
