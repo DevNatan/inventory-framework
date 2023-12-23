@@ -9,6 +9,7 @@ import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.component.Component;
+import me.devnatan.inventoryframework.pipeline.Pipeline;
 import me.devnatan.inventoryframework.state.StateValue;
 import me.devnatan.inventoryframework.state.StateWatcher;
 import org.bukkit.entity.Player;
@@ -43,6 +44,11 @@ public abstract class SlotContext extends PlatformContext implements IFSlotConte
     @Override
     public final void setSlot(int slot) {
         this.slot = slot;
+    }
+
+    @Override
+    public @NotNull Pipeline<IFContext> getPipeline() {
+        return getParent().getPipeline();
     }
 
     @Override

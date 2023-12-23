@@ -2,7 +2,6 @@ package me.devnatan.inventoryframework;
 
 import static java.util.Objects.requireNonNull;
 import static me.devnatan.inventoryframework.AnvilInput.defaultConfig;
-import static me.devnatan.inventoryframework.IFViewFrame.FRAME_REGISTERED;
 
 import java.util.Map;
 import java.util.Optional;
@@ -18,7 +17,7 @@ import me.devnatan.inventoryframework.context.OpenContext;
 import me.devnatan.inventoryframework.context.SlotClickContext;
 import me.devnatan.inventoryframework.feature.Feature;
 import me.devnatan.inventoryframework.pipeline.PipelineInterceptor;
-import me.devnatan.inventoryframework.pipeline.StandardPipelinePhases;
+import me.devnatan.inventoryframework.pipeline.PipelinePhase;
 import me.devnatan.inventoryframework.state.State;
 import me.devnatan.inventoryframework.state.StateValue;
 import me.devnatan.inventoryframework.state.StateValueHost;
@@ -54,13 +53,15 @@ public final class AnvilInputFeature implements Feature<AnvilInputConfig, Void, 
     @Override
     public @NotNull Void install(ViewFrame framework, UnaryOperator<AnvilInputConfig> configure) {
         config = configure.apply(defaultConfig());
-        framework.getPipeline().intercept(FRAME_REGISTERED, (frameInterceptor = createFrameworkInterceptor()));
+        framework
+                .getPipeline()
+                .intercept(PipelinePhase.Frame.FRAME_REGISTERED, (frameInterceptor = createFrameworkInterceptor()));
         return null;
     }
 
     @Override
     public void uninstall(ViewFrame framework) {
-        framework.getPipeline().removeInterceptor(FRAME_REGISTERED, frameInterceptor);
+        framework.getPipeline().removeInterceptor(PipelinePhase.Frame.FRAME_REGISTERED, frameInterceptor);
     }
 
     private PipelineInterceptor createFrameworkInterceptor() {
@@ -97,7 +98,7 @@ public final class AnvilInputFeature implements Feature<AnvilInputConfig, Void, 
     }
 
     private void handleClick(PlatformView view) {
-        view.getPipeline().intercept(StandardPipelinePhases.CLICK, (pipeline, subject) -> {
+        view.getPipeline().intercept(PipelinePhase.Context.CONTEXT_SLOT_CLICK, (pipeline, subject) -> {
             if (!(subject instanceof IFSlotClickContext)) return;
 
             final SlotClickContext context = (SlotClickContext) subject;
@@ -127,7 +128,7 @@ public final class AnvilInputFeature implements Feature<AnvilInputConfig, Void, 
     }
 
     private void handleOpen(PlatformView view) {
-        view.getPipeline().intercept(StandardPipelinePhases.OPEN, (pipeline, subject) -> {
+        view.getPipeline().intercept(PipelinePhase.Context.CONTEXT_OPEN, (pipeline, subject) -> {
             if (!(subject instanceof IFOpenContext)) return;
 
             final OpenContext context = (OpenContext) subject;
@@ -174,7 +175,7 @@ public final class AnvilInputFeature implements Feature<AnvilInputConfig, Void, 
     }
 
     private void handleClose(PlatformView view) {
-        view.getPipeline().intercept(StandardPipelinePhases.CLOSE, (pipeline, subject) -> {
+        view.getPipeline().intercept(PipelinePhase.Context.CONTEXT_CLOSE, (pipeline, subject) -> {
             if (!(subject instanceof IFCloseContext)) return;
 
             final CloseContext context = (CloseContext) subject;

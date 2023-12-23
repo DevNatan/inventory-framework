@@ -10,55 +10,12 @@ import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.ComponentContainer;
-import me.devnatan.inventoryframework.pipeline.Pipeline;
-import me.devnatan.inventoryframework.pipeline.PipelinePhase;
 import me.devnatan.inventoryframework.pipeline.Pipelined;
 import me.devnatan.inventoryframework.state.StateValueHost;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
-public interface IFContext extends VirtualView, StateValueHost, ComponentContainer, Pipelined {
-
-	/**
-	 * Called when a context is rendered for the first time.
-	 * <p>
-	 * At this phase the pipeline interceptor subject is a {@link IFRenderContext}.
-	 */
-	PipelinePhase RENDER = new PipelinePhase("context-render");
-
-	/**
-	 * Called when a context is about to open to a viewer.
-	 * <p>
-	 * This phase is called once in a Shared Context.
-	 * <p>
-	 * At this phase the pipeline interceptor subject is a {@link IFOpenContext}.
-	 */
-	public static final PipelinePhase OPEN = new PipelinePhase("before-open");
-
-	/**
-	 * Called when a context is closed for a viewer.
-	 * <p>
-	 * This phase is called several times in a Shared Context.
-	 * <p>
-	 * At this phase the pipeline interceptor subject is a {@link IFCloseContext}.
-	 */
-	PipelinePhase CLOSE = new PipelinePhase("context-close");
-
-	/**
-	 * Called when a context is invalidated.
-	 * <p>
-	 * A context is invalidated, or considered invalidated, when there are no more viewers in it.
-	 * <p>
-	 * At this phase the pipeline interceptor subject is a {@link IFRenderContext}.
-	 */
-	PipelinePhase INVALIDATION = new PipelinePhase("context-invalidation");
-
-	/**
-	 * Called when a context is updated.
-	 * <p>
-	 * At this phase the pipeline interceptor subject is a {@link IFRenderContext}.
-	 */
-	PipelinePhase UPDATE = new PipelinePhase("context-update");
+public interface IFContext extends VirtualView, StateValueHost, ComponentContainer, Pipelined<IFContext> {
 
     /**
      * An unique id for this context.
@@ -183,9 +140,9 @@ public interface IFContext extends VirtualView, StateValueHost, ComponentContain
      */
     @ApiStatus.Internal
     void performClickInComponent(
-            @NotNull Component component,
-            @NotNull Viewer viewer,
-            @NotNull ViewContainer clickedContainer,
+            Component component,
+            Viewer viewer,
+            ViewContainer clickedContainer,
             Object platformEvent,
             int clickedSlot,
             boolean combined);

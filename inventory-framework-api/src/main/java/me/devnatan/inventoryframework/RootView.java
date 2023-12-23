@@ -5,19 +5,13 @@ import java.util.UUID;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.internal.ElementFactory;
 import me.devnatan.inventoryframework.internal.Job;
-import me.devnatan.inventoryframework.pipeline.PipelinePhase;
 import me.devnatan.inventoryframework.pipeline.Pipelined;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 public interface RootView extends VirtualView, Pipelined {
 
-	/**
-	 * Called when a {@link RootView root view} is initialized.
-	 */
-	PipelinePhase INIT = new PipelinePhase("init");
-
-	/**
+    /**
      * The unique identifier of this view.
      *
      * @return The unique id of this view.

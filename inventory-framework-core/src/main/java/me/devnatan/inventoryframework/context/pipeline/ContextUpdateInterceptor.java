@@ -1,17 +1,19 @@
-package me.devnatan.inventoryframework.pipeline;
+package me.devnatan.inventoryframework.context.pipeline;
 
 import java.util.List;
-import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.component.Component;
+import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
+import me.devnatan.inventoryframework.pipeline.PipelineContext;
+import me.devnatan.inventoryframework.pipeline.PipelineInterceptor;
 
 /**
  * Intercepts the update phase of a context.
  */
-public final class UpdateInterceptor implements PipelineInterceptor<VirtualView> {
+public final class ContextUpdateInterceptor implements PipelineInterceptor<IFContext> {
 
     @Override
-    public void intercept(PipelineContext<VirtualView> pipeline, VirtualView subject) {
+    public void intercept(PipelineContext<IFContext> pipeline, IFContext subject) {
         if (!(subject instanceof IFRenderContext)) return;
 
         final IFRenderContext context = (IFRenderContext) subject;

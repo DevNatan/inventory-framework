@@ -5,7 +5,7 @@ import me.devnatan.inventoryframework.context.IFCloseContext;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.context.IFSlotClickContext;
-import me.devnatan.inventoryframework.pipeline.StandardPipelinePhases;
+import me.devnatan.inventoryframework.pipeline.PipelinePhase;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -17,6 +17,7 @@ import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.inventory.PlayerInventory;
 
+@SuppressWarnings("unused")
 final class IFInventoryListener implements Listener {
 
     private final ViewFrame viewFrame;
@@ -32,7 +33,7 @@ final class IFInventoryListener implements Listener {
         viewFrame.unregister();
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onInventoryClick(final InventoryClickEvent event) {
         if (!(event.getWhoClicked() instanceof Player)) return;
 
@@ -53,10 +54,9 @@ final class IFInventoryListener implements Listener {
         final IFSlotClickContext clickContext = root.getElementFactory()
                 .createSlotClickContext(event.getRawSlot(), viewer, clickedContainer, clickedComponent, event, false);
 
-        root.getPipeline().execute(StandardPipelinePhases.CLICK, clickContext);
+        context.getPipeline().execute(PipelinePhase.Context.CONTEXT_SLOT_CLICK, clickContext);
     }
 
-    @SuppressWarnings("unused")
     @EventHandler(ignoreCancelled = true)
     public void onInventoryClose(final InventoryCloseEvent event) {
         if (!(event.getPlayer() instanceof Player)) return;
@@ -69,7 +69,7 @@ final class IFInventoryListener implements Listener {
         final RootView root = (RootView) context.getRoot();
         final IFCloseContext closeContext = root.getElementFactory().createCloseContext(viewer, context);
 
-        root.getPipeline().execute(StandardPipelinePhases.CLOSE, closeContext);
+        context.getPipeline().execute(PipelinePhase.Context.CONTEXT_CLOSE, closeContext);
     }
 
     @SuppressWarnings("deprecation")

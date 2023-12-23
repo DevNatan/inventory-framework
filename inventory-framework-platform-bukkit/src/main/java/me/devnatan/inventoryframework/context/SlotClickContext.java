@@ -66,6 +66,11 @@ public class SlotClickContext extends SlotContext implements IFSlotClickContext 
     }
 
     @Override
+    public final IFContext getTopLevelContext() {
+        return getParent();
+    }
+
+    @Override
     public final Component getComponent() {
         return clickedComponent;
     }

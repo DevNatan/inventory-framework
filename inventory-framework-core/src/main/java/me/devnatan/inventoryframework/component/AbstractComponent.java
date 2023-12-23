@@ -7,6 +7,7 @@ import me.devnatan.inventoryframework.Ref;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.VirtualView;
+import me.devnatan.inventoryframework.context.IFComponentContext;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
@@ -22,8 +23,7 @@ public abstract class AbstractComponent implements Component {
     private final Ref<Component> reference;
     private final Set<State<?>> watchingStates;
     private final Predicate<? extends IFContext> displayCondition;
-    private final Pipeline<VirtualView> pipeline =
-            new Pipeline<>(Component.RENDER, Component.UPDATE, Component.CLICK, Component.CLEAR);
+    private final Pipeline<IFComponentContext> pipeline = new Pipeline<>(PipelinePhase.Component.values());
     private final boolean isSelfManaged;
 
     private ComponentHandle handle;
@@ -133,17 +133,13 @@ public abstract class AbstractComponent implements Component {
             throw new IllegalArgumentException("Component handle argument in #setHandle cannot be null");
         if (this.handle != null) getPipeline().removeInterceptor(this.handle);
 
-        for (final PipelinePhase phase :
-                new PipelinePhase[] {Component.RENDER, Component.UPDATE, Component.CLEAR, Component.CLICK}) {
-
-            getPipeline().intercept(phase, handle);
-        }
+        getPipeline().addInterceptor(handle);
         this.handle = handle;
         this.handle.setComponent(this);
     }
 
     @Override
-    public final @NotNull Pipeline<VirtualView> getPipeline() {
+    public final @NotNull Pipeline<IFComponentContext> getPipeline() {
         return pipeline;
     }
 

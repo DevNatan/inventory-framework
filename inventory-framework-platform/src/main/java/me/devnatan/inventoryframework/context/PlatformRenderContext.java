@@ -18,7 +18,23 @@ import me.devnatan.inventoryframework.component.ComponentBuilder;
 import me.devnatan.inventoryframework.component.ComponentContainer;
 import me.devnatan.inventoryframework.component.ItemComponentBuilder;
 import me.devnatan.inventoryframework.component.PlatformComponentBuilder;
+import me.devnatan.inventoryframework.context.pipeline.AvailableSlotResolutionInterceptor;
+import me.devnatan.inventoryframework.context.pipeline.ContextFirstRenderInterceptor;
+import me.devnatan.inventoryframework.context.pipeline.ContextInvalidateInterceptor;
+import me.devnatan.inventoryframework.context.pipeline.ContextOpenInterceptor;
+import me.devnatan.inventoryframework.context.pipeline.ContextPlatformCloseHandlerCallInterceptor;
+import me.devnatan.inventoryframework.context.pipeline.ContextPlatformRenderHandlerCallInterceptor;
+import me.devnatan.inventoryframework.context.pipeline.ContextPlatformUpdateHandlerCallInterceptor;
+import me.devnatan.inventoryframework.context.pipeline.ContextUpdateInterceptor;
+import me.devnatan.inventoryframework.context.pipeline.LayoutRenderInterceptor;
+import me.devnatan.inventoryframework.context.pipeline.LayoutResolutionInterceptor;
+import me.devnatan.inventoryframework.context.pipeline.ScheduledUpdateFinishInterceptor;
+import me.devnatan.inventoryframework.context.pipeline.ScheduledUpdateStartInterceptor;
+import me.devnatan.inventoryframework.context.pipeline.SlotClickToComponentClickCallInterceptor;
+import me.devnatan.inventoryframework.context.pipeline.ViewerLastInteractionTrackerInterceptor;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
+import me.devnatan.inventoryframework.pipeline.Pipeline;
+import me.devnatan.inventoryframework.pipeline.PipelinePhase;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -60,6 +76,22 @@ public abstract class PlatformRenderContext<CONTEXT, ITEM_BUILDER extends ItemCo
         this.viewers = viewers;
         this.subject = subject;
         this.initialData = initialData;
+
+        final Pipeline<IFContext> pipeline = getPipeline();
+        pipeline.intercept(PipelinePhase.Context.CONTEXT_OPEN, new ContextOpenInterceptor());
+        pipeline.intercept(PipelinePhase.Context.CONTEXT_LAYOUT_RESOLUTION, new LayoutResolutionInterceptor());
+        pipeline.intercept(PipelinePhase.Context.CONTEXT_RENDER, new ContextPlatformRenderHandlerCallInterceptor());
+        pipeline.intercept(PipelinePhase.Context.CONTEXT_RENDER, new LayoutRenderInterceptor());
+        pipeline.intercept(PipelinePhase.Context.CONTEXT_RENDER, new AvailableSlotResolutionInterceptor());
+        pipeline.intercept(PipelinePhase.Context.CONTEXT_RENDER, new ContextFirstRenderInterceptor());
+        pipeline.intercept(PipelinePhase.Context.CONTEXT_VIEWER_ADDED, new ScheduledUpdateStartInterceptor());
+        pipeline.intercept(PipelinePhase.Context.CONTEXT_VIEWER_REMOVED, new ScheduledUpdateFinishInterceptor());
+        pipeline.intercept(PipelinePhase.Context.CONTEXT_UPDATE, new ContextPlatformUpdateHandlerCallInterceptor());
+        pipeline.intercept(PipelinePhase.Context.CONTEXT_UPDATE, new ContextUpdateInterceptor());
+        pipeline.intercept(PipelinePhase.Context.CONTEXT_CLOSE, new ContextPlatformCloseHandlerCallInterceptor());
+        pipeline.intercept(PipelinePhase.Context.CONTEXT_CLOSE, new ContextInvalidateInterceptor());
+        pipeline.intercept(PipelinePhase.Context.CONTEXT_SLOT_CLICK, new ViewerLastInteractionTrackerInterceptor());
+        pipeline.intercept(PipelinePhase.Context.CONTEXT_SLOT_CLICK, new SlotClickToComponentClickCallInterceptor());
     }
 
     @Override
@@ -181,16 +213,22 @@ public abstract class PlatformRenderContext<CONTEXT, ITEM_BUILDER extends ItemCo
             }
 
             final IFComponentClearContext clearContext = createComponentClearContext(component);
-            component.getPipeline().execute(Component.CLEAR, clearContext);
+            component.getPipeline().execute(PipelinePhase.Component.COMPONENT_CLEAR, clearContext);
             return;
         }
 
-        component.getPipeline().execute(Component.RENDER, createComponentRenderContext(component, false));
+        component
+                .getPipeline()
+                .execute(PipelinePhase.Component.COMPONENT_RENDER, createComponentRenderContext(component, false));
     }
 
     @Override
     public final void updateComponent(Component component, boolean force, UpdateReason reason) {
-        component.getPipeline().execute(Component.UPDATE, createComponentUpdateContext(component, force, reason));
+        component
+                .getPipeline()
+                .execute(
+                        PipelinePhase.Component.COMPONENT_UPDATE,
+                        createComponentUpdateContext(component, force, reason));
     }
 
     @Override

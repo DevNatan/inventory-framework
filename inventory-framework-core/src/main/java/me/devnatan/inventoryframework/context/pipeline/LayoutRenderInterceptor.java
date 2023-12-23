@@ -1,18 +1,20 @@
-package me.devnatan.inventoryframework.pipeline;
+package me.devnatan.inventoryframework.context.pipeline;
 
 import java.util.function.IntFunction;
 import me.devnatan.inventoryframework.InventoryFrameworkException;
-import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.ComponentBuilder;
 import me.devnatan.inventoryframework.component.ItemComponentBuilder;
+import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
+import me.devnatan.inventoryframework.pipeline.PipelineContext;
+import me.devnatan.inventoryframework.pipeline.PipelineInterceptor;
 
-public final class LayoutRenderInterceptor implements PipelineInterceptor<VirtualView> {
+public final class LayoutRenderInterceptor implements PipelineInterceptor<IFContext> {
 
     @Override
-    public void intercept(PipelineContext<VirtualView> pipeline, VirtualView subject) {
+    public void intercept(PipelineContext<IFContext> pipeline, IFContext subject) {
         if (!(subject instanceof IFRenderContext)) return;
 
         final IFRenderContext renderContext = (IFRenderContext) subject;

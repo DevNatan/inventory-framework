@@ -1,7 +1,6 @@
 package me.devnatan.inventoryframework.pipeline;
 
 import me.devnatan.inventoryframework.VirtualView;
-import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.PlatformComponent;
 import me.devnatan.inventoryframework.context.SlotClickContext;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -9,10 +8,9 @@ import org.bukkit.event.inventory.InventoryType;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Intercepted when a player clicks on an item the view container. Checks if the container should be
- * closed when the item is clicked.
+ * Intercepted when a player clicks on an item the view container.
  */
-public final class ItemCloseOnClickInterceptor implements PipelineInterceptor<VirtualView> {
+public final class ComponentClickInterceptor implements PipelineInterceptor<VirtualView> {
 
     @Override
     public void intercept(@NotNull PipelineContext<VirtualView> pipeline, @NotNull VirtualView subject) {
@@ -20,14 +18,11 @@ public final class ItemCloseOnClickInterceptor implements PipelineInterceptor<Vi
 
         final SlotClickContext context = (SlotClickContext) subject;
         final InventoryClickEvent event = context.getClickOrigin();
-        if (event.getSlotType() == InventoryType.SlotType.OUTSIDE) return;
+        if (event.getSlotType() == InventoryType.SlotType.OUTSIDE || context.getComponent() == null) return;
 
-        final Component component = context.getComponent();
-        if (component == null || !component.isVisible()) return;
-        if (!(component instanceof PlatformComponent)) return;
-        if (!((PlatformComponent) component).isCloseOnClick()) return;
+        final PlatformComponent component = (PlatformComponent) context.getComponent();
 
-        context.closeForPlayer();
-        pipeline.finish();
+        // inherit cancellation so we can un-cancel it
+        context.setCancelled(component.isCancelOnClick());
     }
 }

@@ -1,10 +1,9 @@
 package me.devnatan.inventoryframework.pipeline;
 
-import me.devnatan.inventoryframework.VirtualView;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
-public interface Pipelined {
+public interface Pipelined<T> {
 
     /**
      * <b><i> This is an internal inventory-framework API that should not be used from outside of
@@ -12,5 +11,5 @@ public interface Pipelined {
      */
     @ApiStatus.Internal
     @NotNull
-    Pipeline<VirtualView> getPipeline();
+    Pipeline<T> getPipeline();
 }

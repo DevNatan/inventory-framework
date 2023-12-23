@@ -5,10 +5,12 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 import me.devnatan.inventoryframework.Ref;
 import me.devnatan.inventoryframework.VirtualView;
+import me.devnatan.inventoryframework.context.IFComponentContext;
 import me.devnatan.inventoryframework.context.IFComponentRenderContext;
 import me.devnatan.inventoryframework.context.IFComponentUpdateContext;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFSlotClickContext;
+import me.devnatan.inventoryframework.pipeline.Pipeline;
 import me.devnatan.inventoryframework.state.State;
 
 public final class BukkitCustomComponentImpl extends PlatformComponent {
@@ -42,6 +44,8 @@ public final class BukkitCustomComponentImpl extends PlatformComponent {
                 updateOnClick,
                 isSelfManaged);
         setHandle(new BukkitItemComponentImplHandle());
+
+        final Pipeline<IFComponentContext> pipeline = getPipeline();
     }
 
     @Override

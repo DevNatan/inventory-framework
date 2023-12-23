@@ -688,12 +688,22 @@ class PaginationHandle extends ComponentHandle {
     }
 
     @Override
-    public void intercept(PipelineContext<VirtualView> pipeline, VirtualView subject) {
-        final PipelinePhase phase = Objects.requireNonNull(pipeline.getPhase());
-        if (phase.equals(Component.RENDER)) render((IFComponentRenderContext) subject);
-        if (phase.equals(Component.UPDATE)) updated((IFComponentUpdateContext) subject);
-        if (phase.equals(Component.CLEAR)) cleared(((IFComponentClearContext) subject).getParent());
-        if (phase.equals(Component.CLICK)) clicked((IFSlotClickContext) subject);
+    public void intercept(PipelineContext<IFComponentContext> pipeline, IFComponentContext subject) {
+        final PipelinePhase.Component phase = (PipelinePhase.Component) Objects.requireNonNull(pipeline.getPhase());
+        switch (phase) {
+            case COMPONENT_RENDER:
+                render((IFComponentRenderContext) subject);
+                break;
+            case COMPONENT_UPDATE:
+                updated((IFComponentUpdateContext) subject);
+                break;
+            case COMPONENT_CLICK:
+                clicked((IFSlotClickContext) subject);
+                break;
+            case COMPONENT_CLEAR:
+                cleared(((IFComponentClearContext) subject).getParent());
+                break;
+        }
     }
 
     @Override

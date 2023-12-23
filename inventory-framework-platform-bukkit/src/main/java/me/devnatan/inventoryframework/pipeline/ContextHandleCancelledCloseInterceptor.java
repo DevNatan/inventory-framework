@@ -7,7 +7,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-public class CancelledCloseInterceptor implements PipelineInterceptor<VirtualView> {
+public class ContextHandleCancelledCloseInterceptor implements PipelineInterceptor<VirtualView> {
 
     @SuppressWarnings("ConstantValue")
     @Override

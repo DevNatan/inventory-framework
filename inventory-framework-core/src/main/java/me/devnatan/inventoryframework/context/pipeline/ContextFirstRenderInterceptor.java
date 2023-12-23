@@ -1,15 +1,17 @@
-package me.devnatan.inventoryframework.pipeline;
+package me.devnatan.inventoryframework.context.pipeline;
 
 import static me.devnatan.inventoryframework.IFDebug.debug;
 
 import java.util.Iterator;
 import java.util.List;
 import me.devnatan.inventoryframework.Ref;
-import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.ComponentBuilder;
 import me.devnatan.inventoryframework.component.ComponentComposition;
+import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
+import me.devnatan.inventoryframework.pipeline.PipelineContext;
+import me.devnatan.inventoryframework.pipeline.PipelineInterceptor;
 import me.devnatan.inventoryframework.state.State;
 import me.devnatan.inventoryframework.state.StateValue;
 import me.devnatan.inventoryframework.state.StateValueHost;
@@ -19,10 +21,10 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Intercepts the rendering phase of a context and renders all components on it.
  */
-public final class FirstRenderInterceptor implements PipelineInterceptor<VirtualView> {
+public final class ContextFirstRenderInterceptor implements PipelineInterceptor<IFContext> {
 
     @Override
-    public void intercept(PipelineContext<VirtualView> pipeline, VirtualView subject) {
+    public void intercept(PipelineContext<IFContext> pipeline, IFContext subject) {
         if (!(subject instanceof IFRenderContext)) return;
 
         final IFRenderContext context = (IFRenderContext) subject;

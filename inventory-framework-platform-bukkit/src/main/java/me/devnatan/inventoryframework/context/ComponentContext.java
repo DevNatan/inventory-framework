@@ -9,6 +9,7 @@ import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.component.Component;
+import me.devnatan.inventoryframework.pipeline.Pipeline;
 import me.devnatan.inventoryframework.state.StateValue;
 import me.devnatan.inventoryframework.state.StateWatcher;
 import org.bukkit.entity.Player;
@@ -22,6 +23,11 @@ public abstract class ComponentContext extends PlatformConfinedContext implement
     public ComponentContext(RenderContext parent, Component component) {
         this.parent = parent;
         this.component = component;
+    }
+
+    @Override
+    public @NotNull Pipeline<IFContext> getPipeline() {
+        return getParent().getPipeline();
     }
 
     @Override

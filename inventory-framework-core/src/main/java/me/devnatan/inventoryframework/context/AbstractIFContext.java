@@ -15,7 +15,7 @@ import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
-import me.devnatan.inventoryframework.pipeline.StandardPipelinePhases;
+import me.devnatan.inventoryframework.pipeline.PipelinePhase;
 import me.devnatan.inventoryframework.state.DefaultStateValueHost;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
@@ -26,7 +26,13 @@ abstract class AbstractIFContext extends DefaultStateValueHost implements IFCont
     private final List<Component> components = new LinkedList<>();
     private final Map<String, Viewer> indexedViewers = new HashMap<>();
     protected ViewConfig config;
-	private final Pipeline<IFContext> pipeline = new Pipeline<>();
+    private final Pipeline<IFContext> pipeline = new Pipeline<>(PipelinePhase.Context.values());
+
+    @NotNull
+    @Override
+    public Pipeline<IFContext> getPipeline() {
+        return pipeline;
+    }
 
     @Override
     public final @NotNull String getInitialTitle() {
@@ -115,13 +121,13 @@ abstract class AbstractIFContext extends DefaultStateValueHost implements IFCont
         final IFSlotClickContext clickContext = root.getElementFactory()
                 .createSlotClickContext(clickedSlot, viewer, clickedContainer, component, platformEvent, combined);
 
-        root.getPipeline().execute(StandardPipelinePhases.CLICK, clickContext);
+        root.getPipeline().execute(PipelinePhase.Component.COMPONENT_CLICK, clickContext);
     }
     // endregion
 
     @Override
     public void update() {
-        ((RootView) getRoot()).getPipeline().execute(StandardPipelinePhases.UPDATE, this);
+        ((RootView) getRoot()).getPipeline().execute(PipelinePhase.Component.COMPONENT_UPDATE, this);
     }
 
     @Override

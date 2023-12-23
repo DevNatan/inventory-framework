@@ -1,7 +1,5 @@
 package me.devnatan.inventoryframework.state;
 
-import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.LAYOUT_RESOLUTION;
-
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.component.Pagination;
 import me.devnatan.inventoryframework.context.IFContext;
@@ -21,29 +19,30 @@ import org.jetbrains.annotations.NotNull;
 @ApiStatus.Internal
 public final class PaginationState extends BaseState<Pagination> implements StateWatcher {
 
-    @ApiStatus.Internal
-    public static final PipelinePhase PAGINATION_RENDER = new PipelinePhase("pagination-render");
-
     private final PipelineInterceptor<VirtualView> pipelineInterceptor = new Interceptor(this);
 
     public PaginationState(long id, @NotNull StateValueFactory valueFactory) {
         super(id, valueFactory);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void stateRegistered(@NotNull State<?> state, Object caller) {
         if (!(caller instanceof Pipelined))
             throw new IllegalArgumentException(
                     "Caller of Pagination state must be a pipeline-based entity: " + caller.getClass());
 
-        final Pipeline<VirtualView> pipeline = ((Pipelined) caller).getPipeline();
-        pipeline.insertPhaseAfter(LAYOUT_RESOLUTION, PAGINATION_RENDER);
-        pipeline.intercept(PAGINATION_RENDER, pipelineInterceptor);
+        @SuppressWarnings({"rawtypes"})
+        final Pipeline pipeline = ((Pipelined) caller).getPipeline();
+        pipeline.intercept(PipelinePhase.Component.COMPONENT_RENDER, pipelineInterceptor);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void stateUnregistered(@NotNull State<?> state, Object caller) {
-        (((Pipelined) caller)).getPipeline().removeInterceptor(PAGINATION_RENDER, pipelineInterceptor);
+        @SuppressWarnings({"rawtypes"})
+        final Pipeline pipeline = ((Pipelined) caller).getPipeline();
+        pipeline.removeInterceptor(PipelinePhase.Component.COMPONENT_RENDER, pipelineInterceptor);
     }
 
     @Override

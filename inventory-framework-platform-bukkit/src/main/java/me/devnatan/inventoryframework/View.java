@@ -7,12 +7,12 @@ import me.devnatan.inventoryframework.context.OpenContext;
 import me.devnatan.inventoryframework.context.RenderContext;
 import me.devnatan.inventoryframework.context.SlotClickContext;
 import me.devnatan.inventoryframework.internal.ElementFactory;
-import me.devnatan.inventoryframework.pipeline.CancelledCloseInterceptor;
-import me.devnatan.inventoryframework.pipeline.GlobalClickInterceptor;
-import me.devnatan.inventoryframework.pipeline.ItemClickInterceptor;
-import me.devnatan.inventoryframework.pipeline.ItemCloseOnClickInterceptor;
+import me.devnatan.inventoryframework.pipeline.ComponentClickInterceptor;
+import me.devnatan.inventoryframework.pipeline.ComponentCloseOnClickInterceptor;
+import me.devnatan.inventoryframework.pipeline.ContextClickInterceptor;
+import me.devnatan.inventoryframework.pipeline.ContextHandleCancelledCloseInterceptor;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
-import me.devnatan.inventoryframework.pipeline.StandardPipelinePhases;
+import me.devnatan.inventoryframework.pipeline.PipelinePhase;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.ApiStatus;
@@ -41,10 +41,10 @@ public class View
     @Override
     public final void registerPlatformInterceptors() {
         final Pipeline<? super VirtualView> pipeline = getPipeline();
-        pipeline.intercept(StandardPipelinePhases.CLICK, new ItemClickInterceptor());
-        pipeline.intercept(StandardPipelinePhases.CLICK, new GlobalClickInterceptor());
-        pipeline.intercept(StandardPipelinePhases.CLICK, new ItemCloseOnClickInterceptor());
-        pipeline.intercept(StandardPipelinePhases.CLOSE, new CancelledCloseInterceptor());
+        pipeline.intercept(PipelinePhase.Component.COMPONENT_CLICK, new ComponentClickInterceptor());
+        pipeline.intercept(PipelinePhase.Component.COMPONENT_CLICK, new ComponentCloseOnClickInterceptor());
+        pipeline.intercept(PipelinePhase.Context.CONTEXT_SLOT_CLICK, new ContextClickInterceptor());
+        pipeline.intercept(PipelinePhase.Context.CONTEXT_CLOSE, new ContextHandleCancelledCloseInterceptor());
     }
 
     @Override
