@@ -1,14 +1,12 @@
-package me.devnatan.inventoryframework.context.pipeline;
+package me.devnatan.inventoryframework.context;
 
 import me.devnatan.inventoryframework.PlatformView;
-import me.devnatan.inventoryframework.context.IFCloseContext;
-import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.pipeline.PipelineContext;
 import me.devnatan.inventoryframework.pipeline.PipelineInterceptor;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unchecked")
-public final class ContextPlatformCloseHandlerCallInterceptor implements PipelineInterceptor<IFContext> {
+final class ContextPlatformCloseHandlerCallInterceptor implements PipelineInterceptor<IFContext> {
 
     @SuppressWarnings("rawtypes")
     @Override

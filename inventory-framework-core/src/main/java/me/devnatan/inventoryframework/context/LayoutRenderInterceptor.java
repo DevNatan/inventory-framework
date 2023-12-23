@@ -1,17 +1,15 @@
-package me.devnatan.inventoryframework.context.pipeline;
+package me.devnatan.inventoryframework.context;
 
 import java.util.function.IntFunction;
 import me.devnatan.inventoryframework.InventoryFrameworkException;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.ComponentBuilder;
 import me.devnatan.inventoryframework.component.ItemComponentBuilder;
-import me.devnatan.inventoryframework.context.IFContext;
-import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
 import me.devnatan.inventoryframework.pipeline.PipelineContext;
 import me.devnatan.inventoryframework.pipeline.PipelineInterceptor;
 
-public final class LayoutRenderInterceptor implements PipelineInterceptor<IFContext> {
+final class LayoutRenderInterceptor implements PipelineInterceptor<IFContext> {
 
     @Override
     public void intercept(PipelineContext<IFContext> pipeline, IFContext subject) {

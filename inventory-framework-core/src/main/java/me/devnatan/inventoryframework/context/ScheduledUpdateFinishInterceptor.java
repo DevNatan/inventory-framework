@@ -1,12 +1,10 @@
-package me.devnatan.inventoryframework.context.pipeline;
+package me.devnatan.inventoryframework.context;
 
 import me.devnatan.inventoryframework.RootView;
-import me.devnatan.inventoryframework.context.IFCloseContext;
-import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.pipeline.PipelineContext;
 import me.devnatan.inventoryframework.pipeline.PipelineInterceptor;
 
-public final class ScheduledUpdateFinishInterceptor implements PipelineInterceptor<IFContext> {
+final class ScheduledUpdateFinishInterceptor implements PipelineInterceptor<IFContext> {
 
     @Override
     public void intercept(PipelineContext<IFContext> pipeline, IFContext subject) {

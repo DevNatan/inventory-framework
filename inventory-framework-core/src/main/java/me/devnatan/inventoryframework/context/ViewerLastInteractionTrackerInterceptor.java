@@ -1,14 +1,12 @@
-package me.devnatan.inventoryframework.context.pipeline;
+package me.devnatan.inventoryframework.context;
 
 import me.devnatan.inventoryframework.IFDebug;
 import me.devnatan.inventoryframework.Viewer;
-import me.devnatan.inventoryframework.context.IFContext;
-import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.pipeline.PipelineContext;
 import me.devnatan.inventoryframework.pipeline.PipelineInterceptor;
 import org.jetbrains.annotations.NotNull;
 
-public final class ViewerLastInteractionTrackerInterceptor implements PipelineInterceptor<IFContext> {
+final class ViewerLastInteractionTrackerInterceptor implements PipelineInterceptor<IFContext> {
 
     @Override
     public void intercept(@NotNull PipelineContext<IFContext> pipeline, @NotNull IFContext subject) {

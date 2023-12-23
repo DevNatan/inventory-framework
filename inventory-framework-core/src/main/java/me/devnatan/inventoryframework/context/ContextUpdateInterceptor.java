@@ -1,16 +1,14 @@
-package me.devnatan.inventoryframework.context.pipeline;
+package me.devnatan.inventoryframework.context;
 
 import java.util.List;
 import me.devnatan.inventoryframework.component.Component;
-import me.devnatan.inventoryframework.context.IFContext;
-import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.pipeline.PipelineContext;
 import me.devnatan.inventoryframework.pipeline.PipelineInterceptor;
 
 /**
  * Intercepts the update phase of a context.
  */
-public final class ContextUpdateInterceptor implements PipelineInterceptor<IFContext> {
+final class ContextUpdateInterceptor implements PipelineInterceptor<IFContext> {
 
     @Override
     public void intercept(PipelineContext<IFContext> pipeline, IFContext subject) {

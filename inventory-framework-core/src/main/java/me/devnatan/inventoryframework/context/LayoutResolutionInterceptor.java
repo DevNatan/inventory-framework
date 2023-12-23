@@ -1,4 +1,4 @@
-package me.devnatan.inventoryframework.context.pipeline;
+package me.devnatan.inventoryframework.context;
 
 import static java.lang.String.format;
 
@@ -6,14 +6,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import me.devnatan.inventoryframework.context.IFContext;
-import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.exception.InvalidLayoutException;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
 import me.devnatan.inventoryframework.pipeline.PipelineContext;
 import me.devnatan.inventoryframework.pipeline.PipelineInterceptor;
 
-public final class LayoutResolutionInterceptor implements PipelineInterceptor<IFContext> {
+final class LayoutResolutionInterceptor implements PipelineInterceptor<IFContext> {
 
     @Override
     public void intercept(PipelineContext<IFContext> pipeline, IFContext subject) {

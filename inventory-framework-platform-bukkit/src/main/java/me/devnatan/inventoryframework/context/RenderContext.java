@@ -14,12 +14,13 @@ import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.component.BukkitItemComponentBuilder;
 import me.devnatan.inventoryframework.component.Component;
+import me.devnatan.inventoryframework.pipeline.BukkitCloseCancellationInterceptor;
+import me.devnatan.inventoryframework.pipeline.PipelinePhase;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
-@SuppressWarnings("rawtypes")
 public final class RenderContext extends PlatformRenderContext<Context, BukkitItemComponentBuilder, ItemStack>
         implements Context {
 
@@ -39,6 +40,9 @@ public final class RenderContext extends PlatformRenderContext<Context, BukkitIt
             Viewer subject,
             Object initialData) {
         super(id, root, config, container, viewers, subject, initialData);
+
+        getPipeline().intercept(PipelinePhase.Context.CONTEXT_CLOSE, new BukkitCloseCancellationInterceptor());
+
         this.player = subject != null ? ((BukkitViewer) subject).getPlayer() : null;
     }
 

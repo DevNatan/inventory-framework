@@ -1,12 +1,10 @@
-package me.devnatan.inventoryframework.pipeline;
+package me.devnatan.inventoryframework;
 
-import me.devnatan.inventoryframework.PlatformView;
-import me.devnatan.inventoryframework.RootView;
-import me.devnatan.inventoryframework.ViewConfigBuilder;
-import me.devnatan.inventoryframework.VirtualView;
+import me.devnatan.inventoryframework.pipeline.PipelineContext;
+import me.devnatan.inventoryframework.pipeline.PipelineInterceptor;
 import org.jetbrains.annotations.NotNull;
 
-public final class ViewPlatformInitHandlerInterceptor implements PipelineInterceptor<VirtualView> {
+final class ViewPlatformInitHandlerInterceptor implements PipelineInterceptor<VirtualView> {
 
     public void intercept(@NotNull PipelineContext<VirtualView> pipeline, VirtualView view) {
         if (!(view instanceof RootView)) return;

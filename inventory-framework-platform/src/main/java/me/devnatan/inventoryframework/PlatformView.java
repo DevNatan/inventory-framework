@@ -24,7 +24,6 @@ import me.devnatan.inventoryframework.internal.ElementFactory;
 import me.devnatan.inventoryframework.internal.PlatformUtils;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
 import me.devnatan.inventoryframework.pipeline.PipelinePhase;
-import me.devnatan.inventoryframework.pipeline.ViewPlatformInitHandlerInterceptor;
 import me.devnatan.inventoryframework.state.InitialDataStateValue;
 import me.devnatan.inventoryframework.state.MutableIntState;
 import me.devnatan.inventoryframework.state.MutableState;
@@ -578,11 +577,8 @@ public abstract class PlatformView<
 
         final Pipeline<? super VirtualView> pipeline = getPipeline();
         pipeline.intercept(PipelinePhase.View.VIEW_INIT, new ViewPlatformInitHandlerInterceptor());
-        registerPlatformInterceptors();
         pipeline.execute(PipelinePhase.View.VIEW_INIT, this);
     }
-
-    abstract void registerPlatformInterceptors();
     // endregion
 
     @ApiStatus.Internal
