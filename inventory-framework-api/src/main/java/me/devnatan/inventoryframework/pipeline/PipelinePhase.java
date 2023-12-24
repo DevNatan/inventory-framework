@@ -5,6 +5,7 @@ import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.context.IFCloseContext;
 import me.devnatan.inventoryframework.context.IFOpenContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
+import me.devnatan.inventoryframework.state.StateValueHost;
 
 /**
  * Phases are groups of interceptors that can be ordered topologically, defining relationships
@@ -94,5 +95,27 @@ public interface PipelinePhase {
         COMPONENT_UPDATE,
         COMPONENT_CLICK,
         COMPONENT_CLEAR
+    }
+
+    enum State implements PipelinePhase {
+		/**
+		 * Called when a state is registered in a state registry.
+		 */
+		STATE_REGISTERED,
+
+		/**
+		 * Called when a state is unregistered from a state registry.
+		 */
+        STATE_UNREGISTERED,
+
+		/**
+		 * Called when the value of a state is retrieved from a {@link StateValueHost}.
+		 */
+        STATE_VALUE_GET,
+
+		/**
+		 * Called when the value of a state is updated in a {@link StateValueHost}.
+		 */
+		STATE_VALUE_SET
     }
 }
