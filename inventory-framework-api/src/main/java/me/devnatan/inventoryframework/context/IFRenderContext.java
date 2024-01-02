@@ -79,6 +79,13 @@ public interface IFRenderContext extends IFConfinedContext {
     void simulateClick(int rawSlot, Viewer whoClicked, Object platformEvent, boolean isCombined);
 
     /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
+    void simulateRender();
+
+    /**
      * Adds a new component to this context.
      *
      * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
