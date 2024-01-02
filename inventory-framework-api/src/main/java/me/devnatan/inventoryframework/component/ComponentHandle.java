@@ -2,12 +2,12 @@ package me.devnatan.inventoryframework.component;
 
 import java.util.Objects;
 import me.devnatan.inventoryframework.IFDebug;
-import me.devnatan.inventoryframework.VirtualView;
+import me.devnatan.inventoryframework.context.IFComponentContext;
 import me.devnatan.inventoryframework.pipeline.PipelineInterceptor;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class ComponentHandle implements PipelineInterceptor<VirtualView> {
+public abstract class ComponentHandle implements PipelineInterceptor<IFComponentContext> {
 
     private Component component;
 

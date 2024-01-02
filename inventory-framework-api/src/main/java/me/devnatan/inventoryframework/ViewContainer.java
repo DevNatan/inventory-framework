@@ -83,9 +83,9 @@ public interface ViewContainer {
 
     boolean isProxied();
 
-    ViewContainer unproxied();
-
     boolean isExternal();
+
+    ViewContainer at(int slot);
 
     static ViewContainer from(VirtualView view) {
         if (view instanceof IFRenderContext) return ((IFRenderContext) view).getContainer();

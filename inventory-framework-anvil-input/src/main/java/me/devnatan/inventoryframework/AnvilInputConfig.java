@@ -3,7 +3,7 @@ package me.devnatan.inventoryframework;
 import java.util.function.UnaryOperator;
 import org.jetbrains.annotations.Contract;
 
-public class AnvilInputConfig {
+public final class AnvilInputConfig {
 
     String initialInput = "";
     boolean closeOnSelect;

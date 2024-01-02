@@ -19,13 +19,16 @@ import me.devnatan.inventoryframework.component.ComponentContainer;
 import me.devnatan.inventoryframework.component.ItemComponentBuilder;
 import me.devnatan.inventoryframework.component.PlatformComponentBuilder;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
+import me.devnatan.inventoryframework.pipeline.Pipeline;
+import me.devnatan.inventoryframework.pipeline.PipelinePhase;
+import me.devnatan.inventoryframework.pipeline.Pipelined;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("rawtypes")
 public abstract class PlatformRenderContext<CONTEXT, ITEM_BUILDER extends ItemComponentBuilder, ITEM>
         extends PlatformConfinedContext
-        implements IFRenderContext, PublicSlotComponentRenderer<CONTEXT, ITEM_BUILDER, ITEM> {
+        implements IFRenderContext, PublicSlotComponentRenderer<CONTEXT, ITEM_BUILDER, ITEM>, Pipelined {
 
     private final UUID id;
     protected final PlatformView root;
@@ -60,6 +63,22 @@ public abstract class PlatformRenderContext<CONTEXT, ITEM_BUILDER extends ItemCo
         this.viewers = viewers;
         this.subject = subject;
         this.initialData = initialData;
+
+        final Pipeline<IFContext> pipeline = getPipeline();
+        pipeline.intercept(PipelinePhase.Context.CONTEXT_OPEN, new ContextOpenInterceptor());
+        pipeline.intercept(PipelinePhase.Context.CONTEXT_LAYOUT_RESOLUTION, new LayoutResolutionInterceptor());
+        pipeline.intercept(PipelinePhase.Context.CONTEXT_RENDER, new ContextPlatformRenderHandlerCallInterceptor());
+        pipeline.intercept(PipelinePhase.Context.CONTEXT_RENDER, new LayoutRenderInterceptor());
+        pipeline.intercept(PipelinePhase.Context.CONTEXT_RENDER, new AvailableSlotResolutionInterceptor());
+        pipeline.intercept(PipelinePhase.Context.CONTEXT_RENDER, new ContextFirstRenderInterceptor());
+        pipeline.intercept(PipelinePhase.Context.CONTEXT_VIEWER_ADDED, new ScheduledUpdateStartInterceptor());
+        pipeline.intercept(PipelinePhase.Context.CONTEXT_VIEWER_REMOVED, new ScheduledUpdateFinishInterceptor());
+        pipeline.intercept(PipelinePhase.Context.CONTEXT_UPDATE, new ContextPlatformUpdateHandlerCallInterceptor());
+        pipeline.intercept(PipelinePhase.Context.CONTEXT_UPDATE, new ContextUpdateInterceptor());
+        pipeline.intercept(PipelinePhase.Context.CONTEXT_CLOSE, new ContextPlatformCloseHandlerCallInterceptor());
+        pipeline.intercept(PipelinePhase.Context.CONTEXT_CLOSE, new ContextInvalidateInterceptor());
+        pipeline.intercept(PipelinePhase.Context.CONTEXT_SLOT_CLICK, new ViewerLastInteractionTrackerInterceptor());
+        pipeline.intercept(PipelinePhase.Context.CONTEXT_SLOT_CLICK, new SlotClickToComponentClickCallInterceptor());
     }
 
     @Override
@@ -124,6 +143,11 @@ public abstract class PlatformRenderContext<CONTEXT, ITEM_BUILDER extends ItemCo
     }
 
     @Override
+    public void simulateCloseForPlayer() {
+        super.simulateCloseForPlayer();
+    }
+
+    @Override
     public final void openForPlayer(@NotNull Class<? extends RootView> other) {
         tryThrowDoNotWorkWithSharedContext("openForEveryone(Class)");
         super.openForPlayer(other);
@@ -147,59 +171,42 @@ public abstract class PlatformRenderContext<CONTEXT, ITEM_BUILDER extends ItemCo
         super.resetTitleForPlayer();
     }
 
+    // region Internals
     @Override
     public final boolean isRendered() {
         return rendered;
     }
 
-    // region Internals
+    @Override
+    public final void markRendered() {
+        this.rendered = true;
+    }
+
+    @Override
+    public void simulateClick(int rawSlot, Viewer whoClicked, Object platformEvent, boolean isCombined) {
+        ViewContainer clickedContainer = getContainer().at(rawSlot);
+        if (clickedContainer == null) clickedContainer = whoClicked.getSelfContainer();
+
+        final Component clickedComponent = getComponentsAt(rawSlot).stream()
+                .filter(Component::isVisible)
+                .findFirst()
+                .orElse(null);
+
+        final IFSlotClickContext clickContext = getRoot()
+                .getElementFactory()
+                .createSlotClickContext(
+                        rawSlot, whoClicked, clickedContainer, clickedComponent, platformEvent, isCombined);
+
+        getPipeline().execute(PipelinePhase.Context.CONTEXT_SLOT_CLICK, clickContext);
+    }
+
     /**
      * <b><i> This is an internal inventory-framework API that should not be used from outside of
      * this library. No compatibility guarantees are provided. </i></b>
      */
     @ApiStatus.Internal
-    public final void setRendered() {
-        this.rendered = true;
-    }
+    abstract ITEM_BUILDER createItemBuilder();
 
-    @Override
-    public final void renderComponent(@NotNull Component component) {
-        // Custom components can use show()/hide() to change the visibility state of its components
-        // and `component.shouldRender(this)` only handles `displayIf`/`hideIf` that is used by
-        // regular components by non-custom component developers instead
-        final boolean wasVisibilityProgrammaticallySet = component.isSelfManaged() && !component.isVisible();
-        if (isRendered() && (!component.shouldRender(this) || wasVisibilityProgrammaticallySet)) {
-            component.setVisible(false);
-
-            final Optional<Component> overlapOptional = getOverlappingComponentToRender(
-                    component instanceof ComponentContainer ? (ComponentContainer) component : this, component);
-            if (overlapOptional.isPresent()) {
-                Component overlap = overlapOptional.get();
-                renderComponent(overlap);
-
-                if (overlap.isVisible()) return;
-            }
-
-            final IFComponentClearContext clearContext = createComponentClearContext(component);
-            component.getPipeline().execute(Component.CLEAR, clearContext);
-            return;
-        }
-
-        component.getPipeline().execute(Component.RENDER, createComponentRenderContext(component, false));
-    }
-
-    @Override
-    public final void updateComponent(Component component, boolean force, UpdateReason reason) {
-        component.getPipeline().execute(Component.UPDATE, createComponentUpdateContext(component, force, reason));
-    }
-
-    @Override
-    public final void clearComponent(@NotNull Component component) {}
-
-    protected abstract ITEM_BUILDER createItemBuilder();
-    // endregion
-
-    // region Platform Contexts Factory
     /**
      * Creates a IFComponentRenderContext for the current platform.
      *
@@ -230,6 +237,76 @@ public abstract class PlatformRenderContext<CONTEXT, ITEM_BUILDER extends ItemCo
      */
     @ApiStatus.Internal
     abstract IFComponentClearContext createComponentClearContext(Component component);
+    // endregion
+
+    // region Components API
+    @Override
+    public final void addComponent(@NotNull Component component) {
+        synchronized (getInternalComponents()) {
+            getInternalComponents().add(0, component);
+        }
+    }
+
+    @Override
+    public final void removeComponent(@NotNull Component component) {
+        synchronized (getInternalComponents()) {
+            getInternalComponents().remove(component);
+        }
+    }
+
+    @Override
+    public void clickComponent(
+            @NotNull Component component,
+            @NotNull Viewer viewer,
+            @NotNull ViewContainer clickedContainer,
+            Object platformEvent,
+            int clickedSlot,
+            boolean combined) {
+        final RootView root = getRoot();
+        final IFSlotClickContext clickContext = root.getElementFactory()
+                .createSlotClickContext(clickedSlot, viewer, clickedContainer, component, platformEvent, combined);
+
+        getPipeline().execute(PipelinePhase.Component.COMPONENT_CLICK, clickContext);
+    }
+
+    @Override
+    public final void updateComponent(Component component, boolean force, UpdateReason reason) {
+        getPipeline()
+                .execute(
+                        PipelinePhase.Component.COMPONENT_UPDATE,
+                        createComponentUpdateContext(component, force, reason));
+    }
+
+    @Override
+    public final void renderComponent(@NotNull Component component) {
+        // Custom components can use show()/hide() to change the visibility state of its components
+        // and `component.shouldRender(this)` only handles `displayIf`/`hideIf` that is used by
+        // regular components by non-custom component developers instead
+        final boolean wasVisibilityProgrammaticallySet = component.isSelfManaged() && !component.isVisible();
+        if (isRendered() && (!component.shouldRender(this) || wasVisibilityProgrammaticallySet)) {
+            component.setVisible(false);
+
+            final Optional<Component> overlapOptional = getOverlappingComponentToRender(
+                    component instanceof ComponentContainer ? (ComponentContainer) component : this, component);
+            if (overlapOptional.isPresent()) {
+                Component overlap = overlapOptional.get();
+                renderComponent(overlap);
+
+                if (overlap.isVisible()) return;
+            }
+
+            final IFComponentClearContext clearContext = createComponentClearContext(component);
+            getPipeline().execute(PipelinePhase.Component.COMPONENT_CLEAR, clearContext);
+            return;
+        }
+
+        getPipeline().execute(PipelinePhase.Component.COMPONENT_RENDER, createComponentRenderContext(component, false));
+    }
+
+    @Override
+    public final void clearComponent(@NotNull Component component) {
+        getPipeline().execute(PipelinePhase.Component.COMPONENT_CLEAR, createComponentClearContext(component));
+    }
     // endregion
 
     @Override

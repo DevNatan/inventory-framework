@@ -2,14 +2,10 @@ package me.devnatan.inventoryframework.context;
 
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Consumer;
 import me.devnatan.inventoryframework.*;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.ComponentComposition;
 import me.devnatan.inventoryframework.component.ComponentContainer;
-import me.devnatan.inventoryframework.state.State;
-import me.devnatan.inventoryframework.state.StateValue;
-import me.devnatan.inventoryframework.state.StateWatcher;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -111,19 +107,10 @@ public abstract class PlatformContext extends AbstractIFContext implements Compo
      * @return The container of this context.
      * @throws InventoryFrameworkException If there's no container available in the current context.
      */
-    protected final @NotNull ViewContainer getContainerOrThrow() {
-        final ViewContainer container;
-        if (this instanceof IFRenderContext) container = ((IFRenderContext) this).getContainer();
-        else if (this instanceof IFCloseContext) container = ((IFCloseContext) this).getContainer();
-        else if (this instanceof IFSlotContext) container = ((IFSlotContext) this).getContainer();
-        else if (this instanceof IFComponentContext)
-            container = ((IFComponentContext) this).getComponent().getContainer();
-        else
-            throw new InventoryFrameworkException(String.format(
-                    "Container is not available in the current context: %s",
-                    getClass().getName()));
-
-        return container.unproxied();
+    protected ViewContainer getContainerOrThrow() {
+        throw new InventoryFrameworkException(String.format(
+                "Container is not available in the current context: %s",
+                getClass().getName()));
     }
     // endregion
 
@@ -163,15 +150,6 @@ public abstract class PlatformContext extends AbstractIFContext implements Compo
         return Optional.empty();
     }
     // endregion
-
-    @Override
-    protected final void callStateListeners(@NotNull StateValue value, Consumer<StateWatcher> call) {
-        super.callStateListeners(value, call);
-        for (final State<?> state : getRoot().getStateRegistry()) {
-            if (!(state instanceof StateWatcher)) continue;
-            call.accept((StateWatcher) state);
-        }
-    }
 
     @Override
     public String toString() {

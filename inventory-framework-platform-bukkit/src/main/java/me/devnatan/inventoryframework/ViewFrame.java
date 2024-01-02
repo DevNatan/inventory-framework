@@ -13,6 +13,7 @@ import me.devnatan.inventoryframework.feature.Feature;
 import me.devnatan.inventoryframework.feature.FeatureInstaller;
 import me.devnatan.inventoryframework.internal.BukkitElementFactory;
 import me.devnatan.inventoryframework.internal.PlatformUtils;
+import me.devnatan.inventoryframework.pipeline.PipelinePhase;
 import me.devnatan.inventoryframework.runtime.thirdparty.Metrics;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -187,7 +188,7 @@ public class ViewFrame extends IFViewFrame<ViewFrame, View> {
         tryEnableMetrics();
         checkRelocationIssues();
         setRegistered(true);
-        getPipeline().execute(IFViewFrame.FRAME_REGISTERED, this);
+        getPipeline().execute(PipelinePhase.Frame.FRAME_REGISTERED, this);
         initializeViews();
         getOwner().getServer().getPluginManager().registerEvents(new IFInventoryListener(this), getOwner());
         return this;
@@ -209,7 +210,7 @@ public class ViewFrame extends IFViewFrame<ViewFrame, View> {
             }
             iterator.remove();
         }
-        getPipeline().execute(IFViewFrame.FRAME_UNREGISTERED, this);
+        getPipeline().execute(PipelinePhase.Frame.FRAME_UNREGISTERED, this);
     }
 
     // region Internals

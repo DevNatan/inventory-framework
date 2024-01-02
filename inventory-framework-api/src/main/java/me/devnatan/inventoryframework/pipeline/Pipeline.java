@@ -95,6 +95,10 @@ public final class Pipeline<S> {
         interceptors.computeIfAbsent(phase, $ -> new ArrayList<>()).add((PipelineInterceptor<S>) interceptor);
     }
 
+    public void addInterceptor(PipelineInterceptor<? extends S> interceptor) {
+        for (final PipelinePhase phase : _phases) intercept(phase, interceptor);
+    }
+
     public void removeInterceptor(@NotNull PipelineInterceptor<? extends S> interceptor) {
         for (Map.Entry<PipelinePhase, List<PipelineInterceptor<S>>> registeredInterceptor : interceptors.entrySet())
             registeredInterceptor.getValue().remove(interceptor);

@@ -1,22 +1,22 @@
-package me.devnatan.inventoryframework.pipeline;
+package me.devnatan.inventoryframework.context;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
-import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.component.ComponentBuilder;
 import me.devnatan.inventoryframework.component.ItemComponentBuilder;
-import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.exception.SlotFillExceededException;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
+import me.devnatan.inventoryframework.pipeline.PipelineContext;
+import me.devnatan.inventoryframework.pipeline.PipelineInterceptor;
 import org.jetbrains.annotations.VisibleForTesting;
 
-public final class AvailableSlotInterceptor implements PipelineInterceptor<VirtualView> {
+final class AvailableSlotResolutionInterceptor implements PipelineInterceptor<IFContext> {
 
     @Override
-    public void intercept(PipelineContext<VirtualView> pipeline, VirtualView subject) {
+    public void intercept(PipelineContext<IFContext> pipeline, IFContext subject) {
         if (!(subject instanceof IFRenderContext)) return;
 
         final IFRenderContext context = (IFRenderContext) subject;

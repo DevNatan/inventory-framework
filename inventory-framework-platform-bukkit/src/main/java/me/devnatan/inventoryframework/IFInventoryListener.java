@@ -1,11 +1,8 @@
 package me.devnatan.inventoryframework;
 
-import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.context.IFCloseContext;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
-import me.devnatan.inventoryframework.context.IFSlotClickContext;
-import me.devnatan.inventoryframework.pipeline.StandardPipelinePhases;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -15,8 +12,8 @@ import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.server.PluginDisableEvent;
-import org.bukkit.inventory.PlayerInventory;
 
+@SuppressWarnings("unused")
 final class IFInventoryListener implements Listener {
 
     private final ViewFrame viewFrame;
@@ -32,7 +29,7 @@ final class IFInventoryListener implements Listener {
         viewFrame.unregister();
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onInventoryClick(final InventoryClickEvent event) {
         if (!(event.getWhoClicked() instanceof Player)) return;
 
@@ -40,23 +37,9 @@ final class IFInventoryListener implements Listener {
         final Viewer viewer = viewFrame.getViewer(player);
         if (viewer == null) return;
 
-        final IFRenderContext context = viewer.getActiveContext();
-        final Component clickedComponent = context.getComponentsAt(event.getRawSlot()).stream()
-                .filter(Component::isVisible)
-                .findFirst()
-                .orElse(null);
-        final ViewContainer clickedContainer = event.getClickedInventory() instanceof PlayerInventory
-                ? viewer.getSelfContainer()
-                : context.getContainer();
-
-        final RootView root = (RootView) context.getRoot();
-        final IFSlotClickContext clickContext = root.getElementFactory()
-                .createSlotClickContext(event.getRawSlot(), viewer, clickedContainer, clickedComponent, event, false);
-
-        root.getPipeline().execute(StandardPipelinePhases.CLICK, clickContext);
+        viewer.getActiveContext().simulateClick(event.getRawSlot(), viewer, event, false);
     }
 
-    @SuppressWarnings("unused")
     @EventHandler(ignoreCancelled = true)
     public void onInventoryClose(final InventoryCloseEvent event) {
         if (!(event.getPlayer() instanceof Player)) return;
@@ -69,7 +52,7 @@ final class IFInventoryListener implements Listener {
         final RootView root = (RootView) context.getRoot();
         final IFCloseContext closeContext = root.getElementFactory().createCloseContext(viewer, context);
 
-        root.getPipeline().execute(StandardPipelinePhases.CLOSE, closeContext);
+        context.simulateCloseForPlayer();
     }
 
     @SuppressWarnings("deprecation")

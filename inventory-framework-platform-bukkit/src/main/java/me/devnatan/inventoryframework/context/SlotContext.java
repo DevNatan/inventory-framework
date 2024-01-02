@@ -8,9 +8,8 @@ import me.devnatan.inventoryframework.View;
 import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
-import me.devnatan.inventoryframework.component.Component;
+import me.devnatan.inventoryframework.pipeline.Pipeline;
 import me.devnatan.inventoryframework.state.StateValue;
-import me.devnatan.inventoryframework.state.StateWatcher;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -43,6 +42,11 @@ public abstract class SlotContext extends PlatformContext implements IFSlotConte
     @Override
     public final void setSlot(int slot) {
         this.slot = slot;
+    }
+
+    @Override
+    public @NotNull Pipeline<IFContext> getPipeline() {
+        return getParent().getPipeline();
     }
 
     @Override
@@ -146,6 +150,11 @@ public abstract class SlotContext extends PlatformContext implements IFSlotConte
     }
 
     @Override
+    public final void simulateCloseForPlayer() {
+        getParent().simulateCloseForPlayer();
+    }
+
+    @Override
     public final void openForPlayer(@NotNull Class<? extends RootView> other) {
         getParent().openForPlayer(other);
     }
@@ -166,17 +175,6 @@ public abstract class SlotContext extends PlatformContext implements IFSlotConte
     }
 
     @Override
-    public final void performClickInComponent(
-            @NotNull Component component,
-            @NotNull Viewer viewer,
-            @NotNull ViewContainer clickedContainer,
-            Object platformEvent,
-            int clickedSlot,
-            boolean combined) {
-        getParent().performClickInComponent(component, viewer, clickedContainer, platformEvent, clickedSlot, combined);
-    }
-
-    @Override
     public final Map<Long, StateValue> getStateValues() {
         return getParent().getStateValues();
     }
@@ -184,10 +182,5 @@ public abstract class SlotContext extends PlatformContext implements IFSlotConte
     @Override
     protected final void setUpdatedTitle(String updatedTitle) {
         getParent().setUpdatedTitle(updatedTitle);
-    }
-
-    @Override
-    public final Map<Long, List<StateWatcher>> getStateWatchers() {
-        return getParent().getStateWatchers();
     }
 }

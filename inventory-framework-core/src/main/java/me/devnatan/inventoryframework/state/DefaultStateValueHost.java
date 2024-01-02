@@ -1,13 +1,12 @@
 package me.devnatan.inventoryframework.state;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 import me.devnatan.inventoryframework.IFDebug;
+import me.devnatan.inventoryframework.pipeline.Pipeline;
+import me.devnatan.inventoryframework.pipeline.PipelineInterceptor;
+import me.devnatan.inventoryframework.pipeline.PipelinePhase;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * HashMap-backed Default implementation for StateHost.
@@ -19,12 +18,7 @@ import org.jetbrains.annotations.NotNull;
 public class DefaultStateValueHost implements StateValueHost {
 
     private final Map<Long, StateValue> valuesMap = new HashMap<>();
-    private final Map<Long, List<StateWatcher>> watchers = new HashMap<>();
-
-    @ApiStatus.Internal
-    public Map<Long, List<StateWatcher>> getStateWatchers() {
-        return watchers;
-    }
+    private final Pipeline<StateValue> pipeline = new Pipeline<>(PipelinePhase.State.values());
 
     @Override
     public Map<Long, StateValue> getStateValues() {
@@ -44,7 +38,7 @@ public class DefaultStateValueHost implements StateValueHost {
     public final Object getRawStateValue(State<?> state) {
         final StateValue value = getInternalStateValue(state);
         final Object result = value.get();
-        callStateListeners(value, listener -> listener.stateValueGet(state, this, value, result));
+        getPipeline().execute(PipelinePhase.StateValue.STATE_VALUE_GET, value);
         return result;
     }
 
@@ -61,7 +55,7 @@ public class DefaultStateValueHost implements StateValueHost {
     }
 
     @Override
-    public final void initializeState(long id, @NotNull StateValue value) {
+    public final void initializeState(long id, StateValue value) {
         getStateValues().put(id, value);
         IFDebug.debug(
                 "State value initialized in %s (id = %s, initialValue = %s)",
@@ -78,18 +72,22 @@ public class DefaultStateValueHost implements StateValueHost {
         IFDebug.debug(
                 "State value updated in %s (id = %s, oldValue = %s, newValue = %s)",
                 getClass().getName(), id, oldValue, newValue);
-        callStateListeners(stateValue, listener -> listener.stateValueSet(this, stateValue, oldValue, newValue));
+
+        getPipeline().execute(PipelinePhase.StateValue.STATE_VALUE_SET, stateValue);
     }
 
     @Override
-    public final void watchState(long id, StateWatcher listener) {
-        getStateWatchers().computeIfAbsent(id, $ -> new ArrayList<>()).add(listener);
+    public final void watchState(long id, StateWatcher watcher) {
+        interceptPipelineCall(PipelinePhase.StateValue.STATE_VALUE_SET, watcher);
     }
 
-    protected void callStateListeners(@NotNull StateValue value, Consumer<StateWatcher> call) {
-        if (value instanceof StateWatcher) call.accept((StateWatcher) value);
+    Pipeline<StateValue> getPipeline() {
+        return pipeline;
+    }
 
-        if (getStateWatchers().containsKey(value.internalId()))
-            getStateWatchers().get(value.internalId()).forEach(call);
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    @Override
+    public final void interceptPipelineCall(PipelinePhase phase, PipelineInterceptor<?> interceptor) {
+        getPipeline().intercept(phase, (PipelineInterceptor) interceptor);
     }
 }

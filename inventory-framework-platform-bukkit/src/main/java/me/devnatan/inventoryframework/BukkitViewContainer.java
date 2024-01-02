@@ -38,8 +38,8 @@ public final class BukkitViewContainer implements ViewContainer {
     }
 
     @Override
-    public ViewContainer unproxied() {
-        return this;
+    public ViewContainer at(int slot) {
+        return slot >= getFirstSlot() && slot <= getLastSlot() ? this : null;
     }
 
     @Override

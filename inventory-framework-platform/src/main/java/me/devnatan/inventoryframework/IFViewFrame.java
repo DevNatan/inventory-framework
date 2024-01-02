@@ -11,42 +11,34 @@ import java.util.stream.Collectors;
 import me.devnatan.inventoryframework.context.EndlessContextInfo;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
+import me.devnatan.inventoryframework.pipeline.PipelineInterceptor;
 import me.devnatan.inventoryframework.pipeline.PipelinePhase;
+import me.devnatan.inventoryframework.pipeline.Pipelined;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
 
-abstract class IFViewFrame<S extends IFViewFrame<S, V>, V extends PlatformView<S, ?, ?, ?, ?, ?, ?, ?>> {
-
-    /**
-     * Called when a {@link IFViewFrame} is registered.
-     */
-    public static final PipelinePhase FRAME_REGISTERED = new PipelinePhase("frame-registered");
-
-    /**
-     * Called when a {@link IFViewFrame} is unregistered.
-     */
-    public static final PipelinePhase FRAME_UNREGISTERED = new PipelinePhase("frame-unregistered");
+abstract class IFViewFrame<S extends IFViewFrame<S, V>, V extends PlatformView<S, ?, ?, ?, ?, ?, ?, ?>>
+        implements Pipelined {
 
     private boolean registered;
     protected final Map<UUID, V> registeredViews = new HashMap<>();
     protected final Map<String, Viewer> viewerById = new HashMap<>();
     protected Consumer<ViewConfigBuilder> defaultConfig;
-
-    @SuppressWarnings("rawtypes")
-    private final Pipeline<IFViewFrame> pipeline = new Pipeline<>(FRAME_REGISTERED, FRAME_UNREGISTERED);
+    protected ViewConfig config;
+    private final Pipeline<S> pipeline = new Pipeline<>(PipelinePhase.Frame.values());
 
     protected IFViewFrame() {}
 
-    /**
-     * <b><i> This is an internal inventory-framework API that should not be used from outside of
-     * this library. No compatibility guarantees are provided. </i></b>
-     */
-    @ApiStatus.Internal
-    @SuppressWarnings("rawtypes")
-    public final @NotNull Pipeline<IFViewFrame> getPipeline() {
+    Pipeline<S> getPipeline() {
         return pipeline;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public final void interceptPipelineCall(PipelinePhase phase, PipelineInterceptor<?> interceptor) {
+        pipeline.intercept(phase, (PipelineInterceptor<? extends S>) interceptor);
     }
 
     /**
@@ -223,6 +215,22 @@ abstract class IFViewFrame<S extends IFViewFrame<S, V>, V extends PlatformView<S
             viewerById.remove(viewer.getId());
         }
         IFDebug.debug("Viewer removed globally %s", viewer.getId());
+    }
+
+    /**
+     * Sets the default configuration that will be used for all views registered from this framework.
+     * <p>
+     * <b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     *
+     * @return This framework instance.
+     * @see <a href="https://github.com/DevNatan/inventory-framework/wiki/basic-usage#default-configuration">Default Configuration on Wiki</a>
+     */
+    @SuppressWarnings("unchecked")
+    @ApiStatus.Experimental
+    public final S defaultConfig(@NotNull ViewConfig config) {
+        this.config = config;
+        return (S) this;
     }
 
     /**

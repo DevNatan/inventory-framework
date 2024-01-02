@@ -7,6 +7,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import me.devnatan.inventoryframework.VirtualView;
+import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.state.MutableIntState;
 import me.devnatan.inventoryframework.state.MutableState;
 import me.devnatan.inventoryframework.state.State;
@@ -160,6 +161,22 @@ public abstract class PlatformComponentHandle<CONTEXT, ITEM_BUILDER> extends Com
     public final <T> PaginationBuilder<CONTEXT, ITEM_BUILDER, T> buildLazyAsyncPaginationState(
             @NotNull Function<CONTEXT, CompletableFuture<List<T>>> sourceProvider) {
         return stateAccess.buildLazyAsyncPaginationState(sourceProvider);
+    }
+    // endregion
+
+    // region Convenience
+    /**
+     * Updates the component.
+     */
+    protected final void update() {
+        ((IFRenderContext) getComponent().getContext()).updateComponent(getComponent(), false, null);
+    }
+
+    /**
+     * Forces the component to be updated.
+     */
+    protected final void forceUpdate() {
+        ((IFRenderContext) getComponent().getContext()).updateComponent(getComponent(), true, null);
     }
     // endregion
 }

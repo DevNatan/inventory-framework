@@ -11,9 +11,9 @@ import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.state.State;
 
-public final class BukkitCustomComponentImpl extends PlatformComponent {
+public final class BukkitComponentImpl extends PlatformComponent {
 
-    BukkitCustomComponentImpl(
+    BukkitComponentImpl(
             int position,
             String key,
             VirtualView root,

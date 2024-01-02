@@ -118,11 +118,12 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
          * the original one, and not the source for the switched page.
          */
         final boolean reuseLazy = isLazy() && initialized;
+        final boolean force = false; // TODO Implements this
         debug(
-                "[Pagination] Loading page %d (reuseLazy = %b, isStatic = %b, isComputed = %b, forceUpdated = %b)",
-                currentPageIndex(), reuseLazy, isStatic(), isComputed(), wasForceUpdated());
+                "[Pagination] Loading page %d (reuseLazy = %b, isStatic = %b, isComputed = %b, force = %b)",
+                currentPageIndex(), reuseLazy, isStatic(), isComputed(), force);
 
-        if ((isStatic() || reuseLazy) && !isComputed() && !wasForceUpdated()) {
+        if ((isStatic() || reuseLazy) && !isComputed() && !force) {
             // For unknown reasons already initialized but source is null, external modification?
             if (initialized && currSource == null)
                 throw new IllegalStateException("User provided pagination source cannot be null");
@@ -473,8 +474,6 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
         if (pageSwitchHandler != null) {
             pageSwitchHandler.accept(getRoot(), this);
         }
-
-        update();
     }
 
     @Override
@@ -527,6 +526,11 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
     @Override
     public boolean isLoading() {
         return isLoading;
+    }
+
+    @Override
+    public void forceUpdate() {
+        throw new UnsupportedOperationException();
     }
 
     @NotNull
@@ -626,12 +630,10 @@ class PaginationHandle extends ComponentHandle {
     void updated(@NotNull IFComponentUpdateContext context) {
         final IFRenderContext root = (IFRenderContext) context.getTopLevelContext();
 
-        debug(
-                "[Pagination] #updated(IFSlotRenderContext) called (forceUpdated = %b, pageWasChanged = %b)",
-                pagination.wasForceUpdated(), pagination.pageWasChanged);
+        debug("[Pagination] #updated(IFSlotRenderContext) called (pageWasChanged = %b)", pagination.pageWasChanged);
 
         // If page was changed all components will be removed, so don't trigger update on them
-        if (pagination.wasForceUpdated() || pagination.pageWasChanged) {
+        if (pagination.pageWasChanged) {
             cleared(root);
             pagination.components = new ArrayList<>();
             root.renderComponent(pagination);
@@ -640,7 +642,10 @@ class PaginationHandle extends ComponentHandle {
         }
 
         if (!pagination.isVisible()) return;
-        pagination.getInternalComponents().forEach(child -> root.updateComponent(child, context.isForceUpdate(), null));
+
+        pagination
+                .getInternalComponents()
+                .forEach(child -> root.updateComponent(child, context.isForceUpdate(), context.getUpdateReason()));
     }
 
     void clicked(@NotNull IFSlotClickContext context) {
@@ -661,7 +666,7 @@ class PaginationHandle extends ComponentHandle {
             if (!child.isVisible() && !child.isSelfManaged()) continue;
 
             context.getParent()
-                    .performClickInComponent(
+                    .clickComponent(
                             child,
                             context.getViewer(),
                             context.getClickedContainer(),
@@ -688,12 +693,22 @@ class PaginationHandle extends ComponentHandle {
     }
 
     @Override
-    public void intercept(PipelineContext<VirtualView> pipeline, VirtualView subject) {
-        final PipelinePhase phase = Objects.requireNonNull(pipeline.getPhase());
-        if (phase.equals(Component.RENDER)) render((IFComponentRenderContext) subject);
-        if (phase.equals(Component.UPDATE)) updated((IFComponentUpdateContext) subject);
-        if (phase.equals(Component.CLEAR)) cleared(((IFComponentClearContext) subject).getParent());
-        if (phase.equals(Component.CLICK)) clicked((IFSlotClickContext) subject);
+    public void intercept(PipelineContext<IFComponentContext> pipeline, IFComponentContext subject) {
+        final PipelinePhase.Component phase = (PipelinePhase.Component) Objects.requireNonNull(pipeline.getPhase());
+        switch (phase) {
+            case COMPONENT_RENDER:
+                render((IFComponentRenderContext) subject);
+                break;
+            case COMPONENT_UPDATE:
+                updated((IFComponentUpdateContext) subject);
+                break;
+            case COMPONENT_CLICK:
+                clicked((IFSlotClickContext) subject);
+                break;
+            case COMPONENT_CLEAR:
+                cleared(((IFComponentClearContext) subject).getParent());
+                break;
+        }
     }
 
     @Override

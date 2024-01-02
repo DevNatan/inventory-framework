@@ -53,6 +53,7 @@ public class SlotClickContext extends SlotContext implements IFSlotClickContext 
      * this library. No compatibility guarantees are provided.
      */
     @NotNull
+    @ApiStatus.Internal
     public InventoryClickEvent getClickOrigin() {
         return clickOrigin;
     }
@@ -63,6 +64,11 @@ public class SlotClickContext extends SlotContext implements IFSlotClickContext 
     @Override
     public final ItemStack getItem() {
         return clickOrigin.getCurrentItem();
+    }
+
+    @Override
+    public final IFContext getTopLevelContext() {
+        return getParent();
     }
 
     @Override

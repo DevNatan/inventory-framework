@@ -1,24 +1,24 @@
-package me.devnatan.inventoryframework.pipeline;
+package me.devnatan.inventoryframework.context;
 
 import java.util.HashMap;
 import me.devnatan.inventoryframework.*;
-import me.devnatan.inventoryframework.context.IFOpenContext;
-import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.exception.InvalidLayoutException;
 import me.devnatan.inventoryframework.internal.ElementFactory;
+import me.devnatan.inventoryframework.pipeline.PipelineContext;
+import me.devnatan.inventoryframework.pipeline.PipelineInterceptor;
 import me.devnatan.inventoryframework.state.State;
 import me.devnatan.inventoryframework.state.StateValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 
-public final class PlatformOpenInterceptor implements PipelineInterceptor<VirtualView> {
+final class ContextOpenInterceptor implements PipelineInterceptor<IFContext> {
 
     @TestOnly
     boolean skipOpen = false;
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
-    public void intercept(@NotNull PipelineContext<VirtualView> pipeline, VirtualView subject) {
+    public void intercept(@NotNull PipelineContext<IFContext> pipeline, IFContext subject) {
         if (!(subject instanceof IFOpenContext)) return;
         final IFOpenContext openContext = (IFOpenContext) subject;
 
@@ -46,7 +46,7 @@ public final class PlatformOpenInterceptor implements PipelineInterceptor<Virtua
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    private void finishOpen(@NotNull PipelineContext<VirtualView> pipeline, @NotNull IFOpenContext openContext) {
+    private void finishOpen(@NotNull PipelineContext<IFContext> pipeline, @NotNull IFOpenContext openContext) {
         if (openContext.isCancelled()) {
             pipeline.finish();
             return;

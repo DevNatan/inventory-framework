@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @see IFSlotContext
  */
-public interface IFSlotClickContext extends IFSlotContext, IFConfinedContext {
+public interface IFSlotClickContext extends IFSlotContext, IFConfinedContext, IFComponentContext {
 
     @NotNull
     ViewContainer getClickedContainer();

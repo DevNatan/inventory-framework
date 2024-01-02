@@ -1,6 +1,7 @@
 package me.devnatan.inventoryframework.context;
 
 import me.devnatan.inventoryframework.BukkitViewer;
+import me.devnatan.inventoryframework.UpdateReason;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.component.Component;
@@ -11,11 +12,13 @@ public final class ComponentUpdateContext extends ComponentContext implements IF
     private final Viewer viewer;
     private final Player player;
     private boolean forceUpdate, cancelled;
+    private UpdateReason updateReason;
 
-    public ComponentUpdateContext(RenderContext parent, Component component, Viewer viewer) {
+    public ComponentUpdateContext(RenderContext parent, Component component, Viewer viewer, UpdateReason updateReason) {
         super(parent, component);
         this.viewer = viewer;
         this.player = viewer == null ? null : ((BukkitViewer) viewer).getPlayer();
+        this.updateReason = updateReason;
     }
 
     @Override
@@ -54,12 +57,23 @@ public final class ComponentUpdateContext extends ComponentContext implements IF
     }
 
     @Override
+    public UpdateReason getUpdateReason() {
+        return updateReason;
+    }
+
+    @Override
+    public void setUpdateReason(UpdateReason updateReason) {
+        this.updateReason = updateReason;
+    }
+
+    @Override
     public String toString() {
         return "ComponentUpdateContext{" + "viewer="
                 + viewer + ", player="
                 + player + ", forceUpdate="
                 + forceUpdate + ", cancelled="
-                + cancelled + "} "
+                + cancelled + ", updateReason="
+                + updateReason + "} "
                 + super.toString();
     }
 }

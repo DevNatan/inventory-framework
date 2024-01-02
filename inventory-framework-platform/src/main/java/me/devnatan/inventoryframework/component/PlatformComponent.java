@@ -9,6 +9,7 @@ import me.devnatan.inventoryframework.context.IFComponentRenderContext;
 import me.devnatan.inventoryframework.context.IFComponentUpdateContext;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFSlotClickContext;
+import me.devnatan.inventoryframework.pipeline.PipelinePhase;
 import me.devnatan.inventoryframework.state.State;
 
 public abstract class PlatformComponent extends AbstractComponent implements Component {
@@ -43,6 +44,8 @@ public abstract class PlatformComponent extends AbstractComponent implements Com
         this.cancelOnClick = cancelOnClick;
         this.closeOnClick = closeOnClick;
         this.updateOnClick = updateOnClick;
+        getPipeline().intercept(PipelinePhase.Component.COMPONENT_CLICK, new ComponentClickInterceptor());
+        getPipeline().intercept(PipelinePhase.Component.COMPONENT_CLICK, new ComponentCloseOnClickInterceptor());
     }
 
     // region Public Builder Methods

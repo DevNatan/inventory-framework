@@ -2,27 +2,19 @@ package me.devnatan.inventoryframework;
 
 import static java.util.Objects.requireNonNull;
 import static me.devnatan.inventoryframework.AnvilInput.defaultConfig;
-import static me.devnatan.inventoryframework.IFViewFrame.FRAME_REGISTERED;
 
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.UnaryOperator;
-import me.devnatan.inventoryframework.context.CloseContext;
 import me.devnatan.inventoryframework.context.IFCloseContext;
 import me.devnatan.inventoryframework.context.IFContext;
-import me.devnatan.inventoryframework.context.IFOpenContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
-import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.context.OpenContext;
 import me.devnatan.inventoryframework.context.SlotClickContext;
 import me.devnatan.inventoryframework.feature.Feature;
 import me.devnatan.inventoryframework.pipeline.PipelineInterceptor;
-import me.devnatan.inventoryframework.pipeline.StandardPipelinePhases;
-import me.devnatan.inventoryframework.state.State;
-import me.devnatan.inventoryframework.state.StateValue;
-import me.devnatan.inventoryframework.state.StateValueHost;
-import me.devnatan.inventoryframework.state.StateWatcher;
+import me.devnatan.inventoryframework.pipeline.PipelinePhase;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -54,13 +46,15 @@ public final class AnvilInputFeature implements Feature<AnvilInputConfig, Void, 
     @Override
     public @NotNull Void install(ViewFrame framework, UnaryOperator<AnvilInputConfig> configure) {
         config = configure.apply(defaultConfig());
-        framework.getPipeline().intercept(FRAME_REGISTERED, (frameInterceptor = createFrameworkInterceptor()));
+        framework
+                .getPipeline()
+                .intercept(PipelinePhase.Frame.FRAME_REGISTERED, (frameInterceptor = createFrameworkInterceptor()));
         return null;
     }
 
     @Override
     public void uninstall(ViewFrame framework) {
-        framework.getPipeline().removeInterceptor(FRAME_REGISTERED, frameInterceptor);
+        framework.getPipeline().removeInterceptor(PipelinePhase.Frame.FRAME_REGISTERED, frameInterceptor);
     }
 
     private PipelineInterceptor createFrameworkInterceptor() {
@@ -97,9 +91,7 @@ public final class AnvilInputFeature implements Feature<AnvilInputConfig, Void, 
     }
 
     private void handleClick(PlatformView view) {
-        view.getPipeline().intercept(StandardPipelinePhases.CLICK, (pipeline, subject) -> {
-            if (!(subject instanceof IFSlotClickContext)) return;
-
+        view.getPipeline().intercept(PipelinePhase.Context.CONTEXT_SLOT_CLICK, (pipeline, subject) -> {
             final SlotClickContext context = (SlotClickContext) subject;
             final AnvilInput anvilInput = getAnvilInput(context);
             if (anvilInput == null) return;
@@ -127,38 +119,18 @@ public final class AnvilInputFeature implements Feature<AnvilInputConfig, Void, 
     }
 
     private void handleOpen(PlatformView view) {
-        view.getPipeline().intercept(StandardPipelinePhases.OPEN, (pipeline, subject) -> {
-            if (!(subject instanceof IFOpenContext)) return;
-
+        view.getPipeline().intercept(PipelinePhase.Context.CONTEXT_OPEN, (pipeline, subject) -> {
             final OpenContext context = (OpenContext) subject;
             final AnvilInput anvilInput = getAnvilInput(context);
             if (anvilInput == null) return;
 
             // Forces internal state initialization
             context.getInternalStateValue(anvilInput);
-            context.watchState(anvilInput.internalId(), new StateWatcher() {
-                @Override
-                public void stateRegistered(@NotNull State<?> state, Object caller) {}
 
-                @Override
-                public void stateUnregistered(@NotNull State<?> state, Object caller) {}
-
-                @Override
-                public void stateValueGet(
-                        @NotNull State<?> state,
-                        @NotNull StateValueHost host,
-                        @NotNull StateValue internalValue,
-                        Object rawValue) {}
-
-                @Override
-                public void stateValueSet(
-                        @NotNull StateValueHost host,
-                        @NotNull StateValue value,
-                        Object rawOldValue,
-                        Object rawNewValue) {
-                    updatePhysicalResult((String) rawNewValue, ((IFRenderContext) host).getContainer());
-                }
-            });
+            context.watchState(
+                    anvilInput.internalId(),
+                    (pipelineContext, diff) -> updatePhysicalResult(
+                            (String) diff.getNewValue(), ((IFRenderContext) diff.getHost()).getContainer()));
 
             final String globalInitialInput = config.initialInput;
             final String scopedInitialInput = anvilInput.get(context);
@@ -174,10 +146,8 @@ public final class AnvilInputFeature implements Feature<AnvilInputConfig, Void, 
     }
 
     private void handleClose(PlatformView view) {
-        view.getPipeline().intercept(StandardPipelinePhases.CLOSE, (pipeline, subject) -> {
-            if (!(subject instanceof IFCloseContext)) return;
-
-            final CloseContext context = (CloseContext) subject;
+        view.getPipeline().intercept(PipelinePhase.Context.CONTEXT_CLOSE, (pipeline, subject) -> {
+            final IFCloseContext context = (IFCloseContext) subject;
             final AnvilInput anvilInput = getAnvilInput(context);
             if (anvilInput == null) return;
 

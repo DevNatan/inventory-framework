@@ -7,9 +7,14 @@ import me.devnatan.inventoryframework.Ref;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.VirtualView;
+import me.devnatan.inventoryframework.context.IFComponentClearContext;
+import me.devnatan.inventoryframework.context.IFComponentContext;
+import me.devnatan.inventoryframework.context.IFComponentRenderContext;
+import me.devnatan.inventoryframework.context.IFComponentUpdateContext;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
+import me.devnatan.inventoryframework.pipeline.PipelineInterceptor;
 import me.devnatan.inventoryframework.pipeline.PipelinePhase;
 import me.devnatan.inventoryframework.state.State;
 import org.jetbrains.annotations.NotNull;
@@ -22,8 +27,7 @@ public abstract class AbstractComponent implements Component {
     private final Ref<Component> reference;
     private final Set<State<?>> watchingStates;
     private final Predicate<? extends IFContext> displayCondition;
-    private final Pipeline<VirtualView> pipeline =
-            new Pipeline<>(Component.RENDER, Component.UPDATE, Component.CLICK, Component.CLEAR);
+    private final Pipeline<IFComponentContext> pipeline = new Pipeline<>(PipelinePhase.Component.values());
     private final boolean isSelfManaged;
 
     private ComponentHandle handle;
@@ -94,32 +98,18 @@ public abstract class AbstractComponent implements Component {
     }
 
     @Override
-    public final void update() {
-        getRootAsContext().updateComponent(this, false, null);
-    }
-
-    @Override
     public final Ref<Component> getReference() {
         return reference;
     }
 
     @Override
-    public final void forceUpdate() {
-        wasForceUpdated = true;
-        getRootAsContext().updateComponent(this, true, null);
-        wasForceUpdated = false;
-    }
-
-    @Override
     public final void show() {
         setVisible(true);
-        update();
     }
 
     @Override
     public final void hide() {
         setVisible(false);
-        update();
     }
 
     @Override
@@ -133,18 +123,19 @@ public abstract class AbstractComponent implements Component {
             throw new IllegalArgumentException("Component handle argument in #setHandle cannot be null");
         if (this.handle != null) getPipeline().removeInterceptor(this.handle);
 
-        for (final PipelinePhase phase :
-                new PipelinePhase[] {Component.RENDER, Component.UPDATE, Component.CLEAR, Component.CLICK}) {
-
-            getPipeline().intercept(phase, handle);
-        }
+        getPipeline().addInterceptor(handle);
         this.handle = handle;
         this.handle.setComponent(this);
     }
 
-    @Override
-    public final @NotNull Pipeline<VirtualView> getPipeline() {
+    final Pipeline<IFComponentContext> getPipeline() {
         return pipeline;
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    @Override
+    public final void interceptPipelineCall(PipelinePhase phase, PipelineInterceptor<?> interceptor) {
+        getPipeline().intercept(phase, (PipelineInterceptor) interceptor);
     }
 
     protected final Predicate<? extends IFContext> getDisplayCondition() {
@@ -159,9 +150,15 @@ public abstract class AbstractComponent implements Component {
         return (IFRenderContext) getRoot();
     }
 
-    protected final boolean wasForceUpdated() {
-        return wasForceUpdated;
-    }
+    @Override
+    public void render(IFComponentRenderContext context) {}
+
+    @Override
+    public void update(IFComponentUpdateContext context) {}
+
+    @Override
+    public void clear(IFComponentClearContext context) {}
+
     // endregion
 
     @Override
@@ -175,7 +172,6 @@ public abstract class AbstractComponent implements Component {
                 + pipeline + ", handle="
                 + handle + ", isVisible="
                 + isVisible + ", isSelfManaged="
-                + isSelfManaged + ", wasForceUpdated="
-                + wasForceUpdated + '}';
+                + isSelfManaged + '}';
     }
 }

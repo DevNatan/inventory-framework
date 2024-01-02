@@ -1,15 +1,15 @@
-package me.devnatan.inventoryframework.pipeline;
+package me.devnatan.inventoryframework.context;
 
 import me.devnatan.inventoryframework.PlatformView;
 import me.devnatan.inventoryframework.Viewer;
-import me.devnatan.inventoryframework.VirtualView;
-import me.devnatan.inventoryframework.context.IFCloseContext;
+import me.devnatan.inventoryframework.pipeline.PipelineContext;
+import me.devnatan.inventoryframework.pipeline.PipelineInterceptor;
 
-public final class ContextInvalidationOnCloseInterceptor implements PipelineInterceptor<VirtualView> {
+final class ContextInvalidateInterceptor implements PipelineInterceptor<IFContext> {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
-    public void intercept(PipelineContext<VirtualView> pipeline, VirtualView subject) {
+    public void intercept(PipelineContext<IFContext> pipeline, IFContext subject) {
         if (!(subject instanceof IFCloseContext)) return;
 
         final IFCloseContext context = (IFCloseContext) subject;

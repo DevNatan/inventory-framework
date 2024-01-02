@@ -19,26 +19,10 @@ import me.devnatan.inventoryframework.context.IFOpenContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.context.IFSlotContext;
-import me.devnatan.inventoryframework.context.PlatformRenderContext;
 import me.devnatan.inventoryframework.internal.ElementFactory;
 import me.devnatan.inventoryframework.internal.PlatformUtils;
-import me.devnatan.inventoryframework.pipeline.AvailableSlotInterceptor;
-import me.devnatan.inventoryframework.pipeline.ComponentClickHandlerCallInterceptor;
-import me.devnatan.inventoryframework.pipeline.ContextInvalidationOnCloseInterceptor;
-import me.devnatan.inventoryframework.pipeline.FirstRenderInterceptor;
-import me.devnatan.inventoryframework.pipeline.LayoutRenderInterceptor;
-import me.devnatan.inventoryframework.pipeline.LayoutResolutionInterceptor;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
-import me.devnatan.inventoryframework.pipeline.PlatformCloseInterceptor;
-import me.devnatan.inventoryframework.pipeline.PlatformInitInterceptor;
-import me.devnatan.inventoryframework.pipeline.PlatformOpenInterceptor;
-import me.devnatan.inventoryframework.pipeline.PlatformRenderInterceptor;
-import me.devnatan.inventoryframework.pipeline.PlatformUpdateHandlerInterceptor;
-import me.devnatan.inventoryframework.pipeline.ScheduledUpdateAfterCloseInterceptor;
-import me.devnatan.inventoryframework.pipeline.ScheduledUpdateAfterRenderInterceptor;
-import me.devnatan.inventoryframework.pipeline.StandardPipelinePhases;
-import me.devnatan.inventoryframework.pipeline.UpdateInterceptor;
-import me.devnatan.inventoryframework.pipeline.ViewerLastInteractionTrackerInterceptor;
+import me.devnatan.inventoryframework.pipeline.PipelinePhase;
 import me.devnatan.inventoryframework.state.InitialDataStateValue;
 import me.devnatan.inventoryframework.state.MutableIntState;
 import me.devnatan.inventoryframework.state.MutableState;
@@ -81,9 +65,8 @@ public abstract class PlatformView<
      */
     final String createEndless(Object initialData) {
         final IFOpenContext context = getElementFactory().createOpenContext(this, null, new ArrayList<>(), initialData);
-
         context.setEndless(true);
-        getPipeline().execute(StandardPipelinePhases.OPEN, context);
+        context.simulateOpen();
         return context.getId().toString();
     }
 
@@ -99,8 +82,7 @@ public abstract class PlatformView<
 
         final Viewer subject = viewers.size() == 1 ? viewers.get(0) : null;
         final IFOpenContext context = getElementFactory().createOpenContext(this, subject, viewers, initialData);
-
-        getPipeline().execute(StandardPipelinePhases.OPEN, context);
+        context.simulateOpen();
         return context.getId().toString();
     }
 
@@ -220,10 +202,10 @@ public abstract class PlatformView<
      * @return A new ViewConfigBuilder instance.
      */
     public final @NotNull ViewConfigBuilder createConfig() {
-        final ViewConfigBuilder configBuilder = new ViewConfigBuilder().type(ViewType.CHEST);
-        if (getFramework().getDefaultConfig() != null)
-            getFramework().getDefaultConfig().accept(configBuilder);
-        return configBuilder;
+        final ViewConfigBuilder baseConfig = new ViewConfigBuilder().type(ViewType.CHEST);
+        final FRAMEWORK framework = getFramework();
+        if (framework.getDefaultConfig() != null) framework.getDefaultConfig().accept(baseConfig);
+        return baseConfig;
     }
 
     // region Contexts
@@ -319,8 +301,9 @@ public abstract class PlatformView<
     @SuppressWarnings("rawtypes")
     @ApiStatus.Internal
     public void renderContext(@NotNull RENDER_CONTEXT context) {
-        getPipeline().execute(context);
-        ((PlatformRenderContext) context).setRendered();
+        IFDebug.debug("Rendering context %s", context.getId());
+        // TODO Execute PipelinePhase.Context.CONTEXT_RENDER pipeline phase
+        //        getPipeline().execute(context);
 
         @SuppressWarnings("rawtypes")
         final PlatformView view = (PlatformView) context.getRoot();
@@ -330,7 +313,7 @@ public abstract class PlatformView<
             if (!context.getContainer().isExternal()) context.getContainer().open(viewer);
             viewer.setTransitioning(false);
         });
-        IFDebug.debug("Rendering context %s", context.getId());
+        context.markRendered();
     }
 
     @SuppressWarnings("rawtypes")
@@ -590,27 +573,10 @@ public abstract class PlatformView<
 
         this.framework = (FRAMEWORK) framework;
 
-        final Pipeline<? super VirtualView> pipeline = getPipeline();
-        pipeline.intercept(StandardPipelinePhases.INIT, new PlatformInitInterceptor());
-        pipeline.intercept(StandardPipelinePhases.OPEN, new PlatformOpenInterceptor());
-        pipeline.intercept(StandardPipelinePhases.LAYOUT_RESOLUTION, new LayoutResolutionInterceptor());
-        pipeline.intercept(StandardPipelinePhases.FIRST_RENDER, new PlatformRenderInterceptor());
-        pipeline.intercept(StandardPipelinePhases.FIRST_RENDER, new LayoutRenderInterceptor());
-        pipeline.intercept(StandardPipelinePhases.FIRST_RENDER, new AvailableSlotInterceptor());
-        pipeline.intercept(StandardPipelinePhases.FIRST_RENDER, new FirstRenderInterceptor());
-        pipeline.intercept(StandardPipelinePhases.FIRST_RENDER, new ScheduledUpdateAfterRenderInterceptor());
-        pipeline.intercept(StandardPipelinePhases.UPDATE, new PlatformUpdateHandlerInterceptor());
-        pipeline.intercept(StandardPipelinePhases.UPDATE, new UpdateInterceptor());
-        pipeline.intercept(StandardPipelinePhases.CLOSE, new PlatformCloseInterceptor());
-        pipeline.intercept(StandardPipelinePhases.CLOSE, new ScheduledUpdateAfterCloseInterceptor());
-        pipeline.intercept(StandardPipelinePhases.CLOSE, new ContextInvalidationOnCloseInterceptor());
-        pipeline.intercept(StandardPipelinePhases.CLICK, new ViewerLastInteractionTrackerInterceptor());
-        pipeline.intercept(StandardPipelinePhases.CLICK, new ComponentClickHandlerCallInterceptor());
-        registerPlatformInterceptors();
-        pipeline.execute(StandardPipelinePhases.INIT, this);
+        final Pipeline<RootView> pipeline = getPipeline();
+        pipeline.intercept(PipelinePhase.View.VIEW_INIT, new ViewPlatformInitHandlerInterceptor());
+        pipeline.execute(PipelinePhase.View.VIEW_INIT, this);
     }
-
-    abstract void registerPlatformInterceptors();
     // endregion
 
     @ApiStatus.Internal

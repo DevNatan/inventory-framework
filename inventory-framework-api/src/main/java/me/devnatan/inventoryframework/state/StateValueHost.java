@@ -1,14 +1,13 @@
 package me.devnatan.inventoryframework.state;
 
-import java.util.List;
 import java.util.Map;
+import me.devnatan.inventoryframework.pipeline.Pipelined;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * StateHost is an entity capable of storing current data from multiple states.
  */
-public interface StateValueHost {
+public interface StateValueHost extends Pipelined {
 
     /**
      * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
@@ -16,13 +15,6 @@ public interface StateValueHost {
      */
     @ApiStatus.Internal
     Map<Long, StateValue> getStateValues();
-
-    /**
-     * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
-     * this library. No compatibility guarantees are provided.</i></b>
-     */
-    @ApiStatus.Internal
-    Map<Long, List<StateWatcher>> getStateWatchers();
 
     /**
      * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
@@ -60,7 +52,7 @@ public interface StateValueHost {
      * @param value The initial state value.
      */
     @ApiStatus.Internal
-    void initializeState(long id, @NotNull StateValue value);
+    void initializeState(long id, StateValue value);
 
     /**
      * Updates the value of an initialized state in this value host.
@@ -74,6 +66,10 @@ public interface StateValueHost {
     @ApiStatus.Internal
     void updateState(long id, Object value);
 
+    /**
+     * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided.</i></b>
+     */
     @ApiStatus.Internal
-    void watchState(long id, StateWatcher listener);
+    void watchState(long id, StateWatcher watcher);
 }

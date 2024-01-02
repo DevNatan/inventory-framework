@@ -79,4 +79,11 @@ public interface IFOpenContext extends IFConfinedContext {
      */
     @ApiStatus.Internal
     void setContainer(ViewContainer container);
+
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
+    void simulateOpen();
 }

@@ -190,6 +190,7 @@ public class ViewConfig {
 
             this.name = name;
             this.defaultValue = defaultValue;
+            registeredNames.add(name);
         }
 
         @Override

@@ -1,10 +1,11 @@
 package me.devnatan.inventoryframework.component;
 
 import java.util.Objects;
-import me.devnatan.inventoryframework.VirtualView;
+import me.devnatan.inventoryframework.UpdateReason;
 import me.devnatan.inventoryframework.context.ComponentClearContext;
 import me.devnatan.inventoryframework.context.ComponentUpdateContext;
 import me.devnatan.inventoryframework.context.Context;
+import me.devnatan.inventoryframework.context.IFComponentContext;
 import me.devnatan.inventoryframework.context.IFComponentRenderContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.context.PublicComponentRenderContext;
@@ -103,18 +104,30 @@ public abstract class BukkitComponentHandle<T> extends PlatformComponentHandle<C
 
         if (click.isCancelled()) return;
 
-        if (component.isUpdateOnClick()) component.update();
+        if (component.isUpdateOnClick())
+            click.getParent().updateComponent(component, false, new UpdateReason.UpdateOnClick());
+
         if (component.isCloseOnClick()) click.closeForPlayer();
     }
 
     @Override
-    public final void intercept(PipelineContext<VirtualView> pipeline, VirtualView subject) {
-        final PipelinePhase phase = Objects.requireNonNull(
+    public final void intercept(PipelineContext<IFComponentContext> pipeline, IFComponentContext subject) {
+        final PipelinePhase.Component phase = (PipelinePhase.Component) Objects.requireNonNull(
                 pipeline.getPhase(), "Pipeline phase cannot be null in ComponentHandle interceptor");
 
-        if (phase == Component.RENDER) rendered(new PublicComponentRenderContext((IFComponentRenderContext) subject));
-        if (phase == Component.CLICK) clicked((SlotClickContext) subject);
-        if (phase == Component.CLEAR) cleared((ComponentClearContext) subject);
-        if (phase == Component.UPDATE) updated((ComponentUpdateContext) subject);
+        switch (phase) {
+            case COMPONENT_RENDER:
+                rendered(new PublicComponentRenderContext((IFComponentRenderContext) subject));
+                break;
+            case COMPONENT_UPDATE:
+                updated((ComponentUpdateContext) subject);
+                break;
+            case COMPONENT_CLICK:
+                clicked((SlotClickContext) subject);
+                break;
+            case COMPONENT_CLEAR:
+                cleared((ComponentClearContext) subject);
+                break;
+        }
     }
 }
