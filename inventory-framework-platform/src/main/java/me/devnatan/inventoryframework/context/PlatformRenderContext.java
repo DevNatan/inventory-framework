@@ -205,6 +205,12 @@ public abstract class PlatformRenderContext<CONTEXT, ITEM_BUILDER extends ItemCo
     public void simulateRender() {
         IFDebug.debug("Rendering context %s", getId());
         getPipeline().execute(PipelinePhase.Context.CONTEXT_RENDER, this);
+        resolveLayout();
+    }
+
+    @Override
+    public void resolveLayout() {
+        getPipeline().execute(PipelinePhase.Context.CONTEXT_LAYOUT_RESOLUTION, this);
     }
 
     /**

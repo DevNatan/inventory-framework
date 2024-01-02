@@ -302,6 +302,7 @@ public abstract class PlatformView<
     @ApiStatus.Internal
     public void renderContext(@NotNull RENDER_CONTEXT context) {
         context.simulateRender();
+
         @SuppressWarnings("rawtypes")
         final PlatformView view = (PlatformView) context.getRoot();
         context.getViewers().forEach(viewer -> {

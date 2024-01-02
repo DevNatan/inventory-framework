@@ -86,6 +86,13 @@ public interface IFRenderContext extends IFConfinedContext {
     void simulateRender();
 
     /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
+    void resolveLayout();
+
+    /**
      * Adds a new component to this context.
      *
      * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
