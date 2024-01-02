@@ -19,7 +19,6 @@ import me.devnatan.inventoryframework.context.IFOpenContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.context.IFSlotContext;
-import me.devnatan.inventoryframework.context.PlatformRenderContext;
 import me.devnatan.inventoryframework.internal.ElementFactory;
 import me.devnatan.inventoryframework.internal.PlatformUtils;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
@@ -66,9 +65,8 @@ public abstract class PlatformView<
      */
     final String createEndless(Object initialData) {
         final IFOpenContext context = getElementFactory().createOpenContext(this, null, new ArrayList<>(), initialData);
-
         context.setEndless(true);
-        getPipeline().execute(PipelinePhase.Context.CONTEXT_OPEN, context);
+        context.simulateOpen();
         return context.getId().toString();
     }
 
@@ -84,8 +82,7 @@ public abstract class PlatformView<
 
         final Viewer subject = viewers.size() == 1 ? viewers.get(0) : null;
         final IFOpenContext context = getElementFactory().createOpenContext(this, subject, viewers, initialData);
-
-        getPipeline().execute(PipelinePhase.Context.CONTEXT_OPEN, context);
+        context.simulateOpen();
         return context.getId().toString();
     }
 
@@ -205,10 +202,10 @@ public abstract class PlatformView<
      * @return A new ViewConfigBuilder instance.
      */
     public final @NotNull ViewConfigBuilder createConfig() {
-        final ViewConfigBuilder configBuilder = new ViewConfigBuilder().type(ViewType.CHEST);
-        if (getFramework().getDefaultConfig() != null)
-            getFramework().getDefaultConfig().accept(configBuilder);
-        return configBuilder;
+        final ViewConfigBuilder baseConfig = new ViewConfigBuilder().type(ViewType.CHEST);
+        final FRAMEWORK framework = getFramework();
+        if (framework.getDefaultConfig() != null) framework.getDefaultConfig().accept(baseConfig);
+        return baseConfig;
     }
 
     // region Contexts
@@ -304,8 +301,9 @@ public abstract class PlatformView<
     @SuppressWarnings("rawtypes")
     @ApiStatus.Internal
     public void renderContext(@NotNull RENDER_CONTEXT context) {
-        getPipeline().execute(context);
-        ((PlatformRenderContext) context).setRendered();
+        IFDebug.debug("Rendering context %s", context.getId());
+        // TODO Execute PipelinePhase.Context.CONTEXT_RENDER pipeline phase
+        //        getPipeline().execute(context);
 
         @SuppressWarnings("rawtypes")
         final PlatformView view = (PlatformView) context.getRoot();
@@ -315,7 +313,7 @@ public abstract class PlatformView<
             if (!context.getContainer().isExternal()) context.getContainer().open(viewer);
             viewer.setTransitioning(false);
         });
-        IFDebug.debug("Rendering context %s", context.getId());
+        context.markRendered();
     }
 
     @SuppressWarnings("rawtypes")
@@ -575,7 +573,7 @@ public abstract class PlatformView<
 
         this.framework = (FRAMEWORK) framework;
 
-        final Pipeline<? super VirtualView> pipeline = getPipeline();
+        final Pipeline<RootView> pipeline = getPipeline();
         pipeline.intercept(PipelinePhase.View.VIEW_INIT, new ViewPlatformInitHandlerInterceptor());
         pipeline.execute(PipelinePhase.View.VIEW_INIT, this);
     }

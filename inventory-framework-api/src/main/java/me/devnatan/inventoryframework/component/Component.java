@@ -4,7 +4,9 @@ import java.util.Set;
 import me.devnatan.inventoryframework.Ref;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.VirtualView;
-import me.devnatan.inventoryframework.context.IFComponentContext;
+import me.devnatan.inventoryframework.context.IFComponentClearContext;
+import me.devnatan.inventoryframework.context.IFComponentRenderContext;
+import me.devnatan.inventoryframework.context.IFComponentUpdateContext;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.pipeline.Pipelined;
 import me.devnatan.inventoryframework.state.State;
@@ -15,7 +17,7 @@ import org.jetbrains.annotations.UnmodifiableView;
 /**
  * A component represents one or {@link ComponentComposition more} items within a {@link VirtualView}.
  */
-public interface Component extends VirtualView, Pipelined<IFComponentContext> {
+public interface Component extends VirtualView, Pipelined {
 
     /**
      * <b><i> This is an internal inventory-framework API that should not be used from outside of
@@ -73,11 +75,6 @@ public interface Component extends VirtualView, Pipelined<IFComponentContext> {
     boolean shouldRender(IFContext context);
 
     /**
-     * Updates this component.
-     */
-    void update();
-
-    /**
      * Returns the reference assigned to this component.
      * <p>
      * <b><i> This API is experimental and is not subject to the general compatibility guarantees
@@ -87,16 +84,7 @@ public interface Component extends VirtualView, Pipelined<IFComponentContext> {
     Ref<Component> getReference();
 
     /**
-     * Forces this component to be updated.
-     *
-     * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
-     * such API may be changed or may be removed completely in any further release. </i></b>
-     */
-    @ApiStatus.Experimental
-    void forceUpdate();
-
-    /**
-     * Shows this component.
+     * Shows this component. Update is needed after this method call.
      * <p>
      * <b><i> This API is experimental and is not subject to the general compatibility guarantees
      * such API may be changed or may be removed completely in any further release. </i></b>
@@ -105,13 +93,34 @@ public interface Component extends VirtualView, Pipelined<IFComponentContext> {
     void show();
 
     /**
-     * Hides this component.
+     * Hides this component. Update is needed after this method call.
      * <p>
      * <b><i> This API is experimental and is not subject to the general compatibility guarantees
      * such API may be changed or may be removed completely in any further release. </i></b>
      */
     @ApiStatus.Experimental
     void hide();
+
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
+    void render(IFComponentRenderContext context);
+
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
+    void update(IFComponentUpdateContext context);
+
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
+    void clear(IFComponentClearContext context);
 
     /**
      * <b><i> This is an internal inventory-framework API that should not be used from outside of

@@ -6,12 +6,10 @@ import java.util.UUID;
 import me.devnatan.inventoryframework.PlatformView;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewConfig;
-import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
 import me.devnatan.inventoryframework.state.StateValue;
-import me.devnatan.inventoryframework.state.StateWatcher;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -122,24 +120,8 @@ public abstract class ComponentContext extends PlatformConfinedContext implement
     }
 
     @Override
-    public final Map<Long, List<StateWatcher>> getStateWatchers() {
-        return getParent().getStateWatchers();
-    }
-
-    @Override
     public final @NotNull Map<String, Viewer> getIndexedViewers() {
         return getParent().getIndexedViewers();
-    }
-
-    @Override
-    public final void performClickInComponent(
-            @NotNull Component component,
-            @NotNull Viewer viewer,
-            @NotNull ViewContainer clickedContainer,
-            Object platformEvent,
-            int clickedSlot,
-            boolean combined) {
-        getParent().performClickInComponent(component, viewer, clickedContainer, platformEvent, clickedSlot, combined);
     }
 
     @Override

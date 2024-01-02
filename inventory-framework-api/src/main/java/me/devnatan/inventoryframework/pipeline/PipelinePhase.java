@@ -14,7 +14,9 @@ import me.devnatan.inventoryframework.state.StateValueHost;
  * @see Pipeline
  */
 public interface PipelinePhase {
+
     enum Frame implements PipelinePhase {
+
         /**
          * Called when a view frame is registered.
          */
@@ -23,17 +25,23 @@ public interface PipelinePhase {
         /**
          * Called when a view frame is unregistered.
          */
-        FRAME_UNREGISTERED;
+        FRAME_UNREGISTERED,
+
+        FRAME_CONFIG_CHECK,
     }
 
     enum View implements PipelinePhase {
+
         /**
          * Called when a {@link RootView root view} is initialized.
          */
-        VIEW_INIT
+        VIEW_INIT,
+
+        VIEW_CONFIG_CHECK,
     }
 
     enum Context implements PipelinePhase {
+
         /**
          * Called when a context is rendered for the first time.
          * At this phase the pipeline interceptor subject is a {@link IFRenderContext}.
@@ -87,7 +95,7 @@ public interface PipelinePhase {
 
         CONTEXT_SLOT_CLICK,
 
-        CONTEXT_COMPONENT_RENDER,
+        CONTEXT_CONFIG_CHECK,
     }
 
     enum Component implements PipelinePhase {
@@ -98,24 +106,28 @@ public interface PipelinePhase {
     }
 
     enum State implements PipelinePhase {
-		/**
-		 * Called when a state is registered in a state registry.
-		 */
-		STATE_REGISTERED,
 
-		/**
-		 * Called when a state is unregistered from a state registry.
-		 */
-        STATE_UNREGISTERED,
+        /**
+         * Called when a state is registered in a state registry.
+         */
+        STATE_REGISTERED,
 
-		/**
-		 * Called when the value of a state is retrieved from a {@link StateValueHost}.
-		 */
+        /**
+         * Called when a state is unregistered from a state registry.
+         */
+        STATE_UNREGISTERED
+    }
+
+    enum StateValue implements PipelinePhase {
+
+        /**
+         * Called when the value of a state is retrieved from a {@link StateValueHost}.
+         */
         STATE_VALUE_GET,
 
-		/**
-		 * Called when the value of a state is updated in a {@link StateValueHost}.
-		 */
-		STATE_VALUE_SET
+        /**
+         * Called when the value of a state is updated in a {@link StateValueHost}.
+         */
+        STATE_VALUE_SET
     }
 }

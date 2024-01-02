@@ -1,6 +1,5 @@
 package me.devnatan.inventoryframework.context;
 
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.BiConsumer;
@@ -12,7 +11,6 @@ import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.ItemComponentBuilder;
 import me.devnatan.inventoryframework.component.PlatformComponentBuilder;
 import me.devnatan.inventoryframework.state.StateValue;
-import me.devnatan.inventoryframework.state.StateWatcher;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class PublicPlatformComponentRenderContext<CONTEXT, ITEM_BUILDER extends ItemComponentBuilder, ITEM>
@@ -209,11 +207,6 @@ public abstract class PublicPlatformComponentRenderContext<CONTEXT, ITEM_BUILDER
     @Override
     public Map<Long, StateValue> getStateValues() {
         return componentContext.getStateValues();
-    }
-
-    @Override
-    public Map<Long, List<StateWatcher>> getStateWatchers() {
-        return componentContext.getStateWatchers();
     }
 
     @Override

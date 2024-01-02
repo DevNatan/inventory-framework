@@ -17,6 +17,7 @@ public interface IFConfinedContext extends IFContext {
      * The viewer in current scope of execution.
      *
      * @return The {@link Viewer} in the current scope of execution.
+     * Returns {@code null} if {@link #isShared()} is true.
      */
     Viewer getViewer();
 
@@ -24,6 +25,13 @@ public interface IFConfinedContext extends IFContext {
      * Closes this context's container for the player in the current scope of execution.
      */
     void closeForPlayer();
+
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
+    void simulateCloseForPlayer();
 
     /**
      * Opens a new view only for the player that is in the current scope of execution.

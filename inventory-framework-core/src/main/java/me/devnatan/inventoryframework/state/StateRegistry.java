@@ -42,7 +42,6 @@ public final class StateRegistry implements Iterable<State<?>> {
                     state.getClass().getName(),
                     state.internalId(),
                     caller.getClass().getName());
-            if (state instanceof StateWatcher) ((StateWatcher) state).stateRegistered(state, caller);
         }
     }
 
@@ -57,7 +56,6 @@ public final class StateRegistry implements Iterable<State<?>> {
             IFDebug.debug(
                     "State %s unregistered from %s",
                     state.internalId(), caller.getClass().getName());
-            if (state instanceof StateWatcher) ((StateWatcher) state).stateUnregistered(state, caller);
         }
     }
 

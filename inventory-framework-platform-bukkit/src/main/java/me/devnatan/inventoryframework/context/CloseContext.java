@@ -8,13 +8,13 @@ import me.devnatan.inventoryframework.View;
 import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
+import me.devnatan.inventoryframework.pipeline.PipelinePhase;
 import me.devnatan.inventoryframework.state.StateValue;
-import me.devnatan.inventoryframework.state.StateWatcher;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
-public class CloseContext extends PlatformConfinedContext implements IFCloseContext, Context {
+public final class CloseContext extends PlatformConfinedContext implements IFCloseContext, Context {
 
     private final Viewer subject;
     private final Player player;
@@ -29,8 +29,13 @@ public class CloseContext extends PlatformConfinedContext implements IFCloseCont
         this.parent = parent;
     }
 
-    public final @NotNull Player getPlayer() {
+    public @NotNull Player getPlayer() {
         return player;
+    }
+
+    @Override
+    public void simulateCloseForPlayer() {
+        getPipeline().execute(PipelinePhase.Context.CONTEXT_CLOSE, this);
     }
 
     @Override
@@ -59,37 +64,37 @@ public class CloseContext extends PlatformConfinedContext implements IFCloseCont
     }
 
     @Override
-    public final @NotNull Viewer getViewer() {
+    public @NotNull Viewer getViewer() {
         return subject;
     }
 
     @Override
-    public final RenderContext getParent() {
+    public RenderContext getParent() {
         return (RenderContext) parent;
     }
 
     @Override
-    public final @NotNull UUID getId() {
+    public @NotNull UUID getId() {
         return getParent().getId();
     }
 
     @Override
-    public final @NotNull ViewConfig getConfig() {
+    public @NotNull ViewConfig getConfig() {
         return getParent().getConfig();
     }
 
     @Override
-    public final @NotNull ViewContainer getContainer() {
+    public @NotNull ViewContainer getContainer() {
         return getParent().getContainer();
     }
 
     @Override
-    public final @NotNull View getRoot() {
+    public @NotNull View getRoot() {
         return getParent().getRoot();
     }
 
     @Override
-    public final Object getInitialData() {
+    public Object getInitialData() {
         return getParent().getInitialData();
     }
 
@@ -99,13 +104,8 @@ public class CloseContext extends PlatformConfinedContext implements IFCloseCont
     }
 
     @Override
-    public final Map<Long, StateValue> getStateValues() {
+    public Map<Long, StateValue> getStateValues() {
         return getParent().getStateValues();
-    }
-
-    @Override
-    public final Map<Long, List<StateWatcher>> getStateWatchers() {
-        return getParent().getStateWatchers();
     }
 
     @Override

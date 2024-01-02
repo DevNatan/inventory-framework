@@ -2,8 +2,10 @@ package me.devnatan.inventoryframework.context;
 
 import java.util.List;
 import java.util.function.BiFunction;
+import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.UpdateReason;
 import me.devnatan.inventoryframework.ViewContainer;
+import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.ComponentBuilder;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
@@ -63,6 +65,42 @@ public interface IFRenderContext extends IFConfinedContext {
     boolean isRendered();
 
     /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
+    void markRendered();
+
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
+    void simulateClick(int rawSlot, Viewer whoClicked, Object platformEvent, boolean isCombined);
+
+    /**
+     * Adds a new component to this context.
+     *
+     * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided.</i></b>
+     *
+     * @param component The component to be added.
+     */
+    @ApiStatus.Internal
+    void addComponent(@NotNull Component component);
+
+    /**
+     * Removes a component from this context.
+     *
+     * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided.</i></b>
+     *
+     * @param component The component to be removed.
+     */
+    @ApiStatus.Internal
+    void removeComponent(@NotNull Component component);
+
+    /**
      * Renders a component in this context.
      *
      * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
@@ -94,4 +132,24 @@ public interface IFRenderContext extends IFConfinedContext {
      */
     @ApiStatus.Internal
     void clearComponent(@NotNull Component component);
+
+    /**
+     * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided.</i></b>
+     *
+     * @param component The clicked component.
+     */
+    @ApiStatus.Internal
+    void clickComponent(
+            Component component,
+            Viewer viewer,
+            ViewContainer clickedContainer,
+            Object platformEvent,
+            int clickedSlot,
+            boolean combined);
+
+    /** {@inheritDoc } */
+    @Override
+    @NotNull
+    RootView getRoot();
 }

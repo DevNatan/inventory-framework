@@ -1,11 +1,8 @@
 package me.devnatan.inventoryframework;
 
-import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.context.IFCloseContext;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
-import me.devnatan.inventoryframework.context.IFSlotClickContext;
-import me.devnatan.inventoryframework.pipeline.PipelinePhase;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -15,7 +12,6 @@ import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.server.PluginDisableEvent;
-import org.bukkit.inventory.PlayerInventory;
 
 @SuppressWarnings("unused")
 final class IFInventoryListener implements Listener {
@@ -41,20 +37,7 @@ final class IFInventoryListener implements Listener {
         final Viewer viewer = viewFrame.getViewer(player);
         if (viewer == null) return;
 
-        final IFRenderContext context = viewer.getActiveContext();
-        final Component clickedComponent = context.getComponentsAt(event.getRawSlot()).stream()
-                .filter(Component::isVisible)
-                .findFirst()
-                .orElse(null);
-        final ViewContainer clickedContainer = event.getClickedInventory() instanceof PlayerInventory
-                ? viewer.getSelfContainer()
-                : context.getContainer();
-
-        final RootView root = (RootView) context.getRoot();
-        final IFSlotClickContext clickContext = root.getElementFactory()
-                .createSlotClickContext(event.getRawSlot(), viewer, clickedContainer, clickedComponent, event, false);
-
-        context.getPipeline().execute(PipelinePhase.Context.CONTEXT_SLOT_CLICK, clickContext);
+        viewer.getActiveContext().simulateClick(event.getRawSlot(), viewer, event, false);
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -69,7 +52,7 @@ final class IFInventoryListener implements Listener {
         final RootView root = (RootView) context.getRoot();
         final IFCloseContext closeContext = root.getElementFactory().createCloseContext(viewer, context);
 
-        context.getPipeline().execute(PipelinePhase.Context.CONTEXT_CLOSE, closeContext);
+        context.simulateCloseForPlayer();
     }
 
     @SuppressWarnings("deprecation")

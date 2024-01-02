@@ -1,6 +1,7 @@
 package me.devnatan.inventoryframework.component;
 
 import java.util.Objects;
+import me.devnatan.inventoryframework.UpdateReason;
 import me.devnatan.inventoryframework.context.ComponentClearContext;
 import me.devnatan.inventoryframework.context.ComponentUpdateContext;
 import me.devnatan.inventoryframework.context.Context;
@@ -103,7 +104,9 @@ public abstract class BukkitComponentHandle<T> extends PlatformComponentHandle<C
 
         if (click.isCancelled()) return;
 
-        if (component.isUpdateOnClick()) component.update();
+        if (component.isUpdateOnClick())
+            click.getParent().updateComponent(component, false, new UpdateReason.UpdateOnClick());
+
         if (component.isCloseOnClick()) click.closeForPlayer();
     }
 

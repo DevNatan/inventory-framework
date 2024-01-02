@@ -1,13 +1,12 @@
-package me.devnatan.inventoryframework.pipeline;
+package me.devnatan.inventoryframework.context;
 
-import me.devnatan.inventoryframework.context.CloseContext;
-import me.devnatan.inventoryframework.context.IFCloseContext;
-import me.devnatan.inventoryframework.context.IFContext;
+import me.devnatan.inventoryframework.pipeline.PipelineContext;
+import me.devnatan.inventoryframework.pipeline.PipelineInterceptor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-public class BukkitCloseCancellationInterceptor implements PipelineInterceptor<IFContext> {
+class BukkitCloseCancellationInterceptor implements PipelineInterceptor<IFContext> {
 
     @SuppressWarnings("ConstantValue")
     @Override

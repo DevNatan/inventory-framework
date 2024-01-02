@@ -5,16 +5,14 @@ import static me.devnatan.inventoryframework.IFDebug.debug;
 import java.util.Iterator;
 import java.util.List;
 import me.devnatan.inventoryframework.Ref;
+import me.devnatan.inventoryframework.UpdateReason;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.ComponentBuilder;
-import me.devnatan.inventoryframework.component.ComponentComposition;
+import me.devnatan.inventoryframework.component.ComponentContainer;
 import me.devnatan.inventoryframework.pipeline.PipelineContext;
 import me.devnatan.inventoryframework.pipeline.PipelineInterceptor;
 import me.devnatan.inventoryframework.state.State;
-import me.devnatan.inventoryframework.state.StateValue;
-import me.devnatan.inventoryframework.state.StateValueHost;
 import me.devnatan.inventoryframework.state.StateWatcher;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Intercepts the rendering phase of a context and renders all components on it.
@@ -32,13 +30,12 @@ final class ContextFirstRenderInterceptor implements PipelineInterceptor<IFConte
 
         for (int i = componentList.size(); i > 0; i--) {
             final Component component = componentList.get(i - 1);
-            // TODO Setup watches on context initialization not on first render
-            setupWatchers(context, component);
+            watchStates(context, component);
             context.renderComponent(component);
 
-            if (component instanceof ComponentComposition) {
-                for (final Component child : (ComponentComposition) component) {
-                    setupWatchers(context, child);
+            if (component instanceof ComponentContainer) {
+                for (final Component child : ((ComponentContainer) component).getComponents()) {
+                    watchStates(context, child);
                 }
             }
         }
@@ -84,50 +81,12 @@ final class ContextFirstRenderInterceptor implements PipelineInterceptor<IFConte
      * @param context   The context.
      * @param component The component.
      */
-    private void setupWatchers(IFRenderContext context, Component component) {
-        for (final State<?> stateBeingWatched : component.getWatchingStates()) {
-            final StateWatcher watcher;
-            if (component instanceof StateWatcher) watcher = (StateWatcher) component;
-            else watcher = new SingleComponentStateWatcherUpdater(context, component);
-
-            context.watchState(stateBeingWatched.internalId(), watcher);
+    private void watchStates(IFRenderContext context, Component component) {
+        for (final State<?> state : component.getWatchingStates()) {
+            context.watchState(
+                    state.internalId(),
+                    (pipeline, subject) ->
+                            context.updateComponent(component, false, new UpdateReason.StateWatch(state)));
         }
-    }
-}
-
-class SingleComponentStateWatcherUpdater implements StateWatcher {
-
-    private final IFRenderContext root;
-    private final Component componentToUpdate;
-
-    public SingleComponentStateWatcherUpdater(IFRenderContext root, Component componentToUpdate) {
-        this.root = root;
-        this.componentToUpdate = componentToUpdate;
-    }
-
-    @Override
-    public void stateRegistered(@NotNull State<?> state, Object caller) {}
-
-    @Override
-    public void stateUnregistered(@NotNull State<?> state, Object caller) {}
-
-    @Override
-    public void stateValueGet(
-            @NotNull State<?> state,
-            @NotNull StateValueHost host,
-            @NotNull StateValue internalValue,
-            Object rawValue) {}
-
-    @Override
-    public void stateValueSet(
-            @NotNull StateValueHost host, @NotNull StateValue value, Object rawOldValue, Object rawNewValue) {
-        root.updateComponent(componentToUpdate, false, null);
-    }
-
-    @Override
-    public String toString() {
-        return "SingleComponentStateWatcherUpdater{" + "root="
-                + root + ", componentToUpdate="
-                + componentToUpdate + '}';
     }
 }

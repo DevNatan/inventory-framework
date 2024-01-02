@@ -11,6 +11,7 @@ import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.internal.ElementFactory;
 import me.devnatan.inventoryframework.internal.Job;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
+import me.devnatan.inventoryframework.pipeline.PipelineInterceptor;
 import me.devnatan.inventoryframework.pipeline.PipelinePhase;
 import me.devnatan.inventoryframework.state.StateRegistry;
 import org.jetbrains.annotations.ApiStatus;
@@ -21,10 +22,20 @@ public abstract class DefaultRootView implements RootView {
 
     private final UUID id = UUID.randomUUID();
     private ViewConfig config;
-    private final Pipeline<VirtualView> pipeline = new Pipeline<>(PipelinePhase.View.values());
+    private final Pipeline<RootView> pipeline = new Pipeline<>(PipelinePhase.View.values());
     private final Set<IFContext> contexts = newSetFromMap(synchronizedMap(new HashMap<>()));
     private final StateRegistry stateRegistry = new StateRegistry();
     private Job scheduledUpdateJob;
+
+    Pipeline<RootView> getPipeline() {
+        return pipeline;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public void interceptPipelineCall(PipelinePhase phase, PipelineInterceptor<?> interceptor) {
+        getPipeline().intercept(phase, (PipelineInterceptor<? extends RootView>) interceptor);
+    }
 
     @Override
     public final @NotNull UUID getUniqueId() {
@@ -50,11 +61,6 @@ public abstract class DefaultRootView implements RootView {
         if (this.config != null) throw new IllegalStateException("Configuration was already set on initialization");
 
         this.config = config;
-    }
-
-    @Override
-    public final @NotNull Pipeline<VirtualView> getPipeline() {
-        return pipeline;
     }
 
     @ApiStatus.Internal

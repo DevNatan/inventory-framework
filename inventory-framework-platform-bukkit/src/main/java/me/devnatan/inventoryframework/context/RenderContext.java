@@ -14,7 +14,6 @@ import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.component.BukkitItemComponentBuilder;
 import me.devnatan.inventoryframework.component.Component;
-import me.devnatan.inventoryframework.pipeline.BukkitCloseCancellationInterceptor;
 import me.devnatan.inventoryframework.pipeline.PipelinePhase;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -87,7 +86,7 @@ public final class RenderContext extends PlatformRenderContext<Context, BukkitIt
 
     @Override
     IFComponentUpdateContext createComponentUpdateContext(Component component, boolean force, UpdateReason reason) {
-        return new ComponentUpdateContext(this, component, getViewer());
+        return new ComponentUpdateContext(this, component, getViewer(), reason);
     }
 
     @Override

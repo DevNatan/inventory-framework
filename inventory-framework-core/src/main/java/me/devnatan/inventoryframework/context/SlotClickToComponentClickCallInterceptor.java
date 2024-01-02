@@ -16,12 +16,13 @@ final class SlotClickToComponentClickCallInterceptor implements PipelineIntercep
 
         if (component == null) return;
 
-        click.performClickInComponent(
-                component,
-                click.isShared() ? null : click.getViewer(),
-                click.getClickedContainer(),
-                click.getPlatformEvent(),
-                click.getClickedSlot(),
-                click.isCombined());
+        click.getParent()
+                .clickComponent(
+                        component,
+                        click.getViewer(),
+                        click.getClickedContainer(),
+                        click.getPlatformEvent(),
+                        click.getClickedSlot(),
+                        click.isCombined());
     }
 }

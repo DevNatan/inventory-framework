@@ -8,10 +8,8 @@ import java.util.List;
 import java.util.Map;
 import me.devnatan.inventoryframework.IFDebug;
 import me.devnatan.inventoryframework.InventoryFrameworkException;
-import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.UnsupportedOperationInSharedContextException;
 import me.devnatan.inventoryframework.ViewConfig;
-import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
@@ -28,10 +26,18 @@ abstract class AbstractIFContext extends DefaultStateValueHost implements IFCont
     protected ViewConfig config;
     private final Pipeline<IFContext> pipeline = new Pipeline<>(PipelinePhase.Context.values());
 
-    @NotNull
-    @Override
-    public Pipeline<IFContext> getPipeline() {
+    Pipeline<IFContext> getPipeline() {
         return pipeline;
+    }
+
+    @Override
+    public void update() {
+        getPipeline().execute(PipelinePhase.Context.CONTEXT_UPDATE, this);
+    }
+
+    @Override
+    public final boolean isShared() {
+        return getIndexedViewers().size() > 1;
     }
 
     @Override
@@ -94,46 +100,7 @@ abstract class AbstractIFContext extends DefaultStateValueHost implements IFCont
         }
         return componentList;
     }
-
-    @Override
-    public final void addComponent(@NotNull Component component) {
-        synchronized (getInternalComponents()) {
-            getInternalComponents().add(0, component);
-        }
-    }
-
-    @Override
-    public final void removeComponent(@NotNull Component component) {
-        synchronized (getInternalComponents()) {
-            getInternalComponents().remove(component);
-        }
-    }
-
-    @Override
-    public void performClickInComponent(
-            @NotNull Component component,
-            @NotNull Viewer viewer,
-            @NotNull ViewContainer clickedContainer,
-            Object platformEvent,
-            int clickedSlot,
-            boolean combined) {
-        final RootView root = (RootView) getRoot();
-        final IFSlotClickContext clickContext = root.getElementFactory()
-                .createSlotClickContext(clickedSlot, viewer, clickedContainer, component, platformEvent, combined);
-
-        root.getPipeline().execute(PipelinePhase.Component.COMPONENT_CLICK, clickContext);
-    }
     // endregion
-
-    @Override
-    public void update() {
-        ((RootView) getRoot()).getPipeline().execute(PipelinePhase.Component.COMPONENT_UPDATE, this);
-    }
-
-    @Override
-    public final boolean isShared() {
-        return getIndexedViewers().size() > 1;
-    }
 
     /**
      * Throws a {@link InventoryFrameworkException} saying that the method that's being executed is

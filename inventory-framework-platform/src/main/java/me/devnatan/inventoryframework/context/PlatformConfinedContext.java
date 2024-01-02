@@ -20,6 +20,11 @@ abstract class PlatformConfinedContext extends PlatformContext implements IFConf
     }
 
     @Override
+    public void simulateCloseForPlayer() {
+        throw new UnsupportedOperationException("Close can only be simulated in close context");
+    }
+
+    @Override
     public void openForPlayer(@NotNull Class<? extends RootView> other) {
         openForPlayer(other, getConfig().isTransitiveInitialData() ? getInitialData() : null, false);
     }

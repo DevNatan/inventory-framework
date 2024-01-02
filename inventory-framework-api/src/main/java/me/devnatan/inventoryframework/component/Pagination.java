@@ -138,7 +138,7 @@ public interface Pagination extends ComponentComposition {
      * but will never change again.
      * <p>
      * So, when this method returns <code>true</code> the only way to update the current source as a
-     * whole is triggering an update somehow e.g. by calling {@link #update()}.
+     * whole is triggering an update somehow e.g. by calling component update.
      * <p>
      * Page switches will not trigger the source provider to re-apply the current internal source.
      * <p>

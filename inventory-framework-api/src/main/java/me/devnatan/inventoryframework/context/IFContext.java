@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.UUID;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewConfig;
-import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.component.Component;
@@ -15,7 +14,7 @@ import me.devnatan.inventoryframework.state.StateValueHost;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
-public interface IFContext extends VirtualView, StateValueHost, ComponentContainer, Pipelined<IFContext> {
+public interface IFContext extends VirtualView, StateValueHost, ComponentContainer, Pipelined {
 
     /**
      * An unique id for this context.
@@ -111,44 +110,7 @@ public interface IFContext extends VirtualView, StateValueHost, ComponentContain
     List<Component> getComponentsAt(int position);
 
     /**
-     * Adds a new component to this context.
-     *
-     * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
-     * this library. No compatibility guarantees are provided.</i></b>
-     *
-     * @param component The component to be added.
-     */
-    @ApiStatus.Internal
-    void addComponent(@NotNull Component component);
-
-    /**
-     * Removes a component from this context.
-     *
-     * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
-     * this library. No compatibility guarantees are provided.</i></b>
-     *
-     * @param component The component to be removed.
-     */
-    @ApiStatus.Internal
-    void removeComponent(@NotNull Component component);
-
-    /**
-     * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
-     * this library. No compatibility guarantees are provided.</i></b>
-     *
-     * @param component The clicked component.
-     */
-    @ApiStatus.Internal
-    void performClickInComponent(
-            Component component,
-            Viewer viewer,
-            ViewContainer clickedContainer,
-            Object platformEvent,
-            int clickedSlot,
-            boolean combined);
-
-    /**
-     * Updates all components for all viewers in this context.
+     * Updates all components.
      */
     void update();
 

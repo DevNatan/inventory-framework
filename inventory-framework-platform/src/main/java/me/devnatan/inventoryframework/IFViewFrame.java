@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import me.devnatan.inventoryframework.context.EndlessContextInfo;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
+import me.devnatan.inventoryframework.pipeline.PipelineInterceptor;
 import me.devnatan.inventoryframework.pipeline.PipelinePhase;
 import me.devnatan.inventoryframework.pipeline.Pipelined;
 import org.jetbrains.annotations.ApiStatus;
@@ -19,20 +20,25 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
 
 abstract class IFViewFrame<S extends IFViewFrame<S, V>, V extends PlatformView<S, ?, ?, ?, ?, ?, ?, ?>>
-        implements Pipelined<S> {
+        implements Pipelined {
 
     private boolean registered;
     protected final Map<UUID, V> registeredViews = new HashMap<>();
     protected final Map<String, Viewer> viewerById = new HashMap<>();
     protected Consumer<ViewConfigBuilder> defaultConfig;
+    protected ViewConfig config;
     private final Pipeline<S> pipeline = new Pipeline<>(PipelinePhase.Frame.values());
 
     protected IFViewFrame() {}
 
-    @NotNull
-    @Override
-    public Pipeline<S> getPipeline() {
+    Pipeline<S> getPipeline() {
         return pipeline;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public final void interceptPipelineCall(PipelinePhase phase, PipelineInterceptor<?> interceptor) {
+        pipeline.intercept(phase, (PipelineInterceptor<? extends S>) interceptor);
     }
 
     /**
@@ -209,6 +215,22 @@ abstract class IFViewFrame<S extends IFViewFrame<S, V>, V extends PlatformView<S
             viewerById.remove(viewer.getId());
         }
         IFDebug.debug("Viewer removed globally %s", viewer.getId());
+    }
+
+    /**
+     * Sets the default configuration that will be used for all views registered from this framework.
+     * <p>
+     * <b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     *
+     * @return This framework instance.
+     * @see <a href="https://github.com/DevNatan/inventory-framework/wiki/basic-usage#default-configuration">Default Configuration on Wiki</a>
+     */
+    @SuppressWarnings("unchecked")
+    @ApiStatus.Experimental
+    public final S defaultConfig(@NotNull ViewConfig config) {
+        this.config = config;
+        return (S) this;
     }
 
     /**

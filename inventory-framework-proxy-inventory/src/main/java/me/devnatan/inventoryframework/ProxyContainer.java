@@ -97,13 +97,13 @@ public class ProxyContainer implements ViewContainer {
     }
 
     @Override
-    public ViewContainer unproxied() {
-        return top;
+    public boolean isExternal() {
+        return false;
     }
 
     @Override
-    public boolean isExternal() {
-        return false;
+    public ViewContainer at(int slot) {
+        return slot >= top.getFirstSlot() && slot <= top.getLastSlot() ? top : bottom;
     }
 
     @Override

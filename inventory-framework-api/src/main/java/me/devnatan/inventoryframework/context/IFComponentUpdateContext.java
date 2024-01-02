@@ -1,5 +1,6 @@
 package me.devnatan.inventoryframework.context;
 
+import me.devnatan.inventoryframework.UpdateReason;
 import org.jetbrains.annotations.ApiStatus;
 
 public interface IFComponentUpdateContext extends IFComponentContext, IFConfinedContext {
@@ -31,4 +32,8 @@ public interface IFComponentUpdateContext extends IFComponentContext, IFConfined
      * @param cancelled If component update must be cancelled.
      */
     void setCancelled(boolean cancelled);
+
+    UpdateReason getUpdateReason();
+
+    void setUpdateReason(UpdateReason updateReason);
 }
