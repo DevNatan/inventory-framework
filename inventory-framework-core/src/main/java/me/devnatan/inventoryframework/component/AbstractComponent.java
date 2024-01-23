@@ -1,6 +1,7 @@
 package me.devnatan.inventoryframework.component;
 
 import java.util.Collections;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
 import me.devnatan.inventoryframework.Ref;
@@ -22,44 +23,35 @@ import org.jetbrains.annotations.UnmodifiableView;
 
 public abstract class AbstractComponent implements Component {
 
-    private final String key;
-    private final VirtualView root;
-    private final Ref<Component> reference;
-    private final Set<State<?>> watchingStates;
-    private final Predicate<? extends IFContext> displayCondition;
-    private final Pipeline<IFComponentContext> pipeline = new Pipeline<>(PipelinePhase.Component.values());
-    private final boolean isSelfManaged;
+	private final Pipeline<IFComponentContext> pipeline = new Pipeline<>(PipelinePhase.Component.values());
 
-    private ComponentHandle handle;
-    private boolean isVisible = true;
-    private boolean wasForceUpdated;
-
-    protected AbstractComponent(
-            String key,
-            VirtualView root,
-            Ref<Component> reference,
-            Set<State<?>> watchingStates,
-            Predicate<? extends IFContext> displayCondition,
-            boolean isSelfManaged) {
-        this.key = key;
-        this.root = root;
-        this.reference = reference;
-        this.watchingStates = watchingStates;
-        this.displayCondition = displayCondition;
-        this.isSelfManaged = isSelfManaged;
-    }
+	private VirtualView root;
+    private String key;
+    private Ref<Component> reference;
+    private Set<State<?>> watchingStates;
+    private Predicate<? extends IFContext> displayCondition;
+    private boolean isSelfManaged;
+	private boolean isVisible = true;
 
     @Override
     public final String getKey() {
         return key;
     }
 
-    @Override
+	protected final void setKey(String key) {
+		this.key = key;
+	}
+
+	@Override
     public final @NotNull VirtualView getRoot() {
-        return root;
+        return Objects.requireNonNull(root, "Component root cannot be null");
     }
 
-    @Override
+	protected final void setRoot(VirtualView root) {
+		this.root = root;
+	}
+
+	@Override
     public final IFContext getContext() {
         return getRootAsContext();
     }
@@ -74,7 +66,11 @@ public abstract class AbstractComponent implements Component {
         return Collections.unmodifiableSet(watchingStates);
     }
 
-    @Override
+	protected final void setWatchingStates(Set<State<?>> watchingStates) {
+		this.watchingStates = watchingStates;
+	}
+
+	@Override
     public final boolean isVisible() {
         if (getRoot() instanceof Component) return ((Component) getRoot()).isVisible() && isVisible;
 
@@ -82,7 +78,7 @@ public abstract class AbstractComponent implements Component {
     }
 
     @Override
-    public void setVisible(boolean visible) {
+    public final void setVisible(boolean visible) {
         this.isVisible = visible;
     }
 
@@ -91,18 +87,34 @@ public abstract class AbstractComponent implements Component {
         return isSelfManaged;
     }
 
-    @SuppressWarnings("unchecked")
+	protected final void setSelfManaged(boolean selfManaged) {
+		isSelfManaged = selfManaged;
+	}
+
+	@SuppressWarnings("unchecked")
     @Override
     public final boolean shouldRender(IFContext context) {
         return getDisplayCondition() == null || ((Predicate<? super IFContext>) getDisplayCondition()).test(context);
     }
 
-    @Override
+	protected final Predicate<? extends IFContext> getDisplayCondition() {
+		return displayCondition;
+	}
+
+	protected final void setDisplayCondition(Predicate<? extends IFContext> displayCondition) {
+		this.displayCondition = displayCondition;
+	}
+
+	@Override
     public final Ref<Component> getReference() {
         return reference;
     }
 
-    @Override
+	protected final void setReference(Ref<Component> reference) {
+		this.reference = reference;
+	}
+
+	@Override
     public final void show() {
         setVisible(true);
     }
@@ -112,23 +124,7 @@ public abstract class AbstractComponent implements Component {
         setVisible(false);
     }
 
-    @Override
-    public final @NotNull ComponentHandle getHandle() {
-        return handle;
-    }
-
-    @Override
-    public final void setHandle(ComponentHandle handle) {
-        if (handle == null)
-            throw new IllegalArgumentException("Component handle argument in #setHandle cannot be null");
-        if (this.handle != null) getPipeline().removeInterceptor(this.handle);
-
-        getPipeline().addInterceptor(handle);
-        this.handle = handle;
-        this.handle.setComponent(this);
-    }
-
-    final Pipeline<IFComponentContext> getPipeline() {
+    protected final Pipeline<IFComponentContext> getPipeline() {
         return pipeline;
     }
 
@@ -136,10 +132,6 @@ public abstract class AbstractComponent implements Component {
     @Override
     public final void interceptPipelineCall(PipelinePhase phase, PipelineInterceptor<?> interceptor) {
         getPipeline().intercept(phase, (PipelineInterceptor) interceptor);
-    }
-
-    protected final Predicate<? extends IFContext> getDisplayCondition() {
-        return displayCondition;
     }
 
     // region Internals
@@ -169,8 +161,7 @@ public abstract class AbstractComponent implements Component {
                 + reference + ", watchingStates="
                 + watchingStates + ", displayCondition="
                 + displayCondition + ", pipeline="
-                + pipeline + ", handle="
-                + handle + ", isVisible="
+                + pipeline + ", isVisible="
                 + isVisible + ", isSelfManaged="
                 + isSelfManaged + '}';
     }
