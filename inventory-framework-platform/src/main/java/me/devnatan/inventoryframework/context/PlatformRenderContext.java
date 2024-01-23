@@ -137,8 +137,8 @@ public abstract class PlatformRenderContext<CONTEXT, ITEM_BUILDER extends ItemCo
 
     @Override
     public final void updateTitleForPlayer(@NotNull String title) {
-        tryThrowDoNotWorkWithSharedContext("updateTitleForEveryone(String)");
-        super.updateTitleForEveryone(title);
+        tryThrowDoNotWorkWithSharedContext("updateTitleForPlayer(String)");
+        super.updateTitleForPlayer(title);
     }
 
     @Override
