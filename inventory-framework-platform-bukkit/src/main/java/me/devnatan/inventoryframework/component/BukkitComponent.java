@@ -38,19 +38,19 @@ public abstract class BukkitComponent extends PlatformComponent<Context, BukkitI
      * Lifecycle event handler for the {@link PipelinePhase.Component#COMPONENT_RENDER} phase.
      * This method is called when the component needs to be rendered.
      *
-     * @param ctx The rendering context associated with this component.
+     * @param render The render event as a context.
      */
     @ApiStatus.OverrideOnly
-    protected abstract void onRender(ComponentRenderContext ctx);
+    protected abstract void onRender(ComponentRenderContext render);
 
     /**
      * Lifecycle event handler for the {@link PipelinePhase.Component#COMPONENT_UPDATE} phase.
      * This method is called when the component needs to be updated.
      *
-     * @param ctx The update context associated with this component.
+     * @param update The update event as a context.
      */
     @ApiStatus.OverrideOnly
-    protected void onUpdate(ComponentUpdateContext ctx) {}
+    protected void onUpdate(ComponentUpdateContext update) {}
 
     /**
      * Lifecycle event handler for the {@link PipelinePhase.Component#COMPONENT_CLICK} phase.
@@ -58,17 +58,17 @@ public abstract class BukkitComponent extends PlatformComponent<Context, BukkitI
      * <p>
      * You can retrieve the component instance from {@link SlotClickContext#getComponent()} as well.
      *
-     * @param ctx The click context associated with this component.
+     * @param click The click event as a context.
      */
     @ApiStatus.OverrideOnly
-    protected void onClick(SlotClickContext ctx) {}
+    protected void onClick(SlotClickContext click) {}
 
     /**
      * Lifecycle event handler for the {@link PipelinePhase.Component#COMPONENT_CLEAR} phase.
      * This method is called when the component needs to be cleared.
      *
-     * @param ctx The clear context associated with this component.
+     * @param clear The clear event as a context.
      */
     @ApiStatus.OverrideOnly
-    protected void onClear(ComponentClearContext ctx) {}
+    protected void onClear(ComponentClearContext clear) {}
 }

@@ -52,7 +52,7 @@ public abstract class AbstractComponent implements Component {
     }
 
     @Override
-    public final IFContext getContext() {
+    public IFContext getContext() {
         return getRootAsContext();
     }
 
