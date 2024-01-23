@@ -13,7 +13,6 @@ import me.devnatan.inventoryframework.context.IFComponentContext;
 import me.devnatan.inventoryframework.context.SlotClickContext;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
 import me.devnatan.inventoryframework.pipeline.PipelinePhase;
-import me.devnatan.inventoryframework.state.MutableIntState;
 import org.jetbrains.annotations.ApiStatus;
 
 /**
@@ -72,6 +71,4 @@ public abstract class BukkitComponent extends PlatformComponent<Context, BukkitI
      */
     @ApiStatus.OverrideOnly
     protected void onClear(ComponentClearContext clear) {}
-
-
 }
