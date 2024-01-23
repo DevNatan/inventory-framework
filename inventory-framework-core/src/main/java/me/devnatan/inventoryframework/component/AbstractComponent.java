@@ -23,35 +23,35 @@ import org.jetbrains.annotations.UnmodifiableView;
 
 public abstract class AbstractComponent implements Component {
 
-	private final Pipeline<IFComponentContext> pipeline = new Pipeline<>(PipelinePhase.Component.values());
+    private final Pipeline<IFComponentContext> pipeline = new Pipeline<>(PipelinePhase.Component.values());
 
-	private VirtualView root;
+    private VirtualView root;
     private String key;
     private Ref<Component> reference;
     private Set<State<?>> watchingStates;
     private Predicate<? extends IFContext> displayCondition;
     private boolean isSelfManaged;
-	private boolean isVisible = true;
+    private boolean isVisible = true;
 
     @Override
     public final String getKey() {
         return key;
     }
 
-	protected final void setKey(String key) {
-		this.key = key;
-	}
+    protected final void setKey(String key) {
+        this.key = key;
+    }
 
-	@Override
+    @Override
     public final @NotNull VirtualView getRoot() {
         return Objects.requireNonNull(root, "Component root cannot be null");
     }
 
-	protected final void setRoot(VirtualView root) {
-		this.root = root;
-	}
+    protected final void setRoot(VirtualView root) {
+        this.root = root;
+    }
 
-	@Override
+    @Override
     public final IFContext getContext() {
         return getRootAsContext();
     }
@@ -66,11 +66,11 @@ public abstract class AbstractComponent implements Component {
         return Collections.unmodifiableSet(watchingStates);
     }
 
-	protected final void setWatchingStates(Set<State<?>> watchingStates) {
-		this.watchingStates = watchingStates;
-	}
+    protected final void setWatchingStates(Set<State<?>> watchingStates) {
+        this.watchingStates = watchingStates;
+    }
 
-	@Override
+    @Override
     public final boolean isVisible() {
         if (getRoot() instanceof Component) return ((Component) getRoot()).isVisible() && isVisible;
 
@@ -87,34 +87,34 @@ public abstract class AbstractComponent implements Component {
         return isSelfManaged;
     }
 
-	protected final void setSelfManaged(boolean selfManaged) {
-		isSelfManaged = selfManaged;
-	}
+    protected final void setSelfManaged(boolean selfManaged) {
+        isSelfManaged = selfManaged;
+    }
 
-	@SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked")
     @Override
     public final boolean shouldRender(IFContext context) {
         return getDisplayCondition() == null || ((Predicate<? super IFContext>) getDisplayCondition()).test(context);
     }
 
-	protected final Predicate<? extends IFContext> getDisplayCondition() {
-		return displayCondition;
-	}
+    protected final Predicate<? extends IFContext> getDisplayCondition() {
+        return displayCondition;
+    }
 
-	protected final void setDisplayCondition(Predicate<? extends IFContext> displayCondition) {
-		this.displayCondition = displayCondition;
-	}
+    protected final void setDisplayCondition(Predicate<? extends IFContext> displayCondition) {
+        this.displayCondition = displayCondition;
+    }
 
-	@Override
+    @Override
     public final Ref<Component> getReference() {
         return reference;
     }
 
-	protected final void setReference(Ref<Component> reference) {
-		this.reference = reference;
-	}
+    protected final void setReference(Ref<Component> reference) {
+        this.reference = reference;
+    }
 
-	@Override
+    @Override
     public final void show() {
         setVisible(true);
     }
