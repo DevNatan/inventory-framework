@@ -27,7 +27,6 @@ import java.lang.invoke.MethodType;
 import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import me.devnatan.inventoryframework.IFDebug;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -147,7 +146,7 @@ public final class ReflectionUtils {
             PATCH_NUMBER = 0;
         }
 
-		IFDebug.debug("Running on v%s (minor %d, patch %d)", Bukkit.getBukkitVersion(), MINOR_NUMBER, PATCH_NUMBER);
+        IFDebug.debug("Running on v%s (minor %d, patch %d)", Bukkit.getBukkitVersion(), MINOR_NUMBER, PATCH_NUMBER);
     }
 
     /**

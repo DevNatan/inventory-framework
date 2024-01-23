@@ -29,7 +29,6 @@ import java.lang.invoke.MethodType;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.Set;
-
 import me.devnatan.inventoryframework.IFDebug;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
@@ -107,8 +106,7 @@ public final class InventoryUpdate {
         windowId = getField(CONTAINER, int.class, "windowId", "j", "containerId");
     }
 
-	public static void resetTitle(Player player) {}
-
+    public static void resetTitle(Player player) {}
 
     /**
      * Update the player inventory, so you can change the title.
@@ -130,9 +128,9 @@ public final class InventoryUpdate {
             if (ReflectionUtils.supports(20)) {
                 InventoryView open = player.getOpenInventory();
                 if (UNOPENABLES.contains(open.getType().name())) {
-					IFDebug.debug("Tried to update inventory title but %s is unopenable", open.getType());
-					return;
-				}
+                    IFDebug.debug("Tried to update inventory title but %s is unopenable", open.getType());
+                    return;
+                }
 
                 open.setTitle(newTitle);
                 return;
