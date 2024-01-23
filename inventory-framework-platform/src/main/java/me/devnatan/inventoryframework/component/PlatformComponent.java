@@ -3,11 +3,20 @@ package me.devnatan.inventoryframework.component;
 import static me.devnatan.inventoryframework.pipeline.PipelinePhase.Component.COMPONENT_CLICK;
 
 import java.util.function.Consumer;
+
+import lombok.Getter;
+import lombok.experimental.Accessors;
+import lombok.experimental.Delegate;
+import lombok.experimental.FieldDefaults;
+import me.devnatan.inventoryframework.PlatformView;
+import me.devnatan.inventoryframework.context.IFComponentContext;
 import me.devnatan.inventoryframework.context.IFComponentRenderContext;
 import me.devnatan.inventoryframework.context.IFComponentUpdateContext;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFSlotClickContext;
+import me.devnatan.inventoryframework.pipeline.Pipeline;
 import me.devnatan.inventoryframework.state.StateAccess;
+import me.devnatan.inventoryframework.state.StateAccessImpl;
 import org.jetbrains.annotations.ApiStatus;
 
 /**
@@ -16,8 +25,11 @@ import org.jetbrains.annotations.ApiStatus;
  * @param <C> The type of the context associated with this component.
  * @param <B> The type of the builder for creating components.
  */
-public abstract class PlatformComponent<C extends IFContext, B> extends AbstractComponent
-        implements ComponentComposition, StateAccess<C, B> {
+@Accessors(makeFinal = true)
+public abstract class PlatformComponent<C extends IFContext, B> extends AbstractComponent implements StateAccess<C, B> {
+
+	@Delegate
+	private final StateAccess<C, B> stateAccess;
 
     private C context;
     private boolean cancelOnClick;
@@ -28,8 +40,13 @@ public abstract class PlatformComponent<C extends IFContext, B> extends Abstract
     private Consumer<? super IFSlotClickContext> clickHandler;
 
     PlatformComponent() {
-        getPipeline().intercept(COMPONENT_CLICK, new ComponentClickInterceptor());
-        getPipeline().intercept(COMPONENT_CLICK, new ComponentCloseOnClickInterceptor());
+		@SuppressWarnings("rawtypes")
+		final PlatformView root = (PlatformView) getRootAsContext().getRoot();
+		stateAccess = new StateAccessImpl<>(this, root.getStateRegistry());
+
+		final Pipeline<IFComponentContext> pipeline = getPipeline();
+		pipeline.intercept(COMPONENT_CLICK, new ComponentClickInterceptor());
+		pipeline.intercept(COMPONENT_CLICK, new ComponentCloseOnClickInterceptor());
     }
 
     /**
