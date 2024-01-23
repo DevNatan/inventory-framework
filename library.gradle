@@ -5,6 +5,8 @@ group rootProject.group
 version rootProject.version
 
 dependencies {
+    annotationProcessor libs.lombok
+    compileOnly libs.lombok
     compileOnly libs.jetbrains.annotations
     testCompileOnly libs.jetbrains.annotations
     testRuntimeOnly libs.junit.engine
