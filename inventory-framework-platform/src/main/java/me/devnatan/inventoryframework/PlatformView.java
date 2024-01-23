@@ -437,7 +437,19 @@ public abstract class PlatformView<
     @ApiStatus.OverrideOnly
     public void onFirstRender(@NotNull RENDER_CONTEXT render) {}
 
-    /**
+	/**
+	 * Called everytime that a context is rendered to a player.
+	 * <p>
+	 * <b><i> This API is experimental and is not subject to the general compatibility guarantees
+	 * such API may be changed or may be removed completely in any further release. </i></b>
+	 *
+	 * @param render The rendering context.
+	 */
+	@ApiStatus.OverrideOnly
+	@ApiStatus.Experimental
+	public void onRender(@NotNull RENDER_CONTEXT render) {}
+
+	/**
      * Called when the view is updated for a player.
      *
      * <p>This is a rendering function and can modify the view's inventory.
