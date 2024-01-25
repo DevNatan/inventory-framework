@@ -27,6 +27,7 @@ import java.lang.invoke.MethodType;
 import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import me.devnatan.inventoryframework.IFDebug;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
@@ -144,6 +145,8 @@ public final class ReflectionUtils {
             // 1.8-R0.1-SNAPSHOT
             PATCH_NUMBER = 0;
         }
+
+        IFDebug.debug("Running on v%s (minor %d, patch %d)", Bukkit.getBukkitVersion(), MINOR_NUMBER, PATCH_NUMBER);
     }
 
     /**

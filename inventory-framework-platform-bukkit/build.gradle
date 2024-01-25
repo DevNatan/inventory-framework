@@ -29,6 +29,5 @@ bukkit {
     version = project.version
     description = "Minecraft Inventory API framework"
     website = "https://github.com/DevNatan/inventory-framework"
-    apiVersion = "1.20"
     authors = ['SaiintBrisson', 'DevNatan', 'sasuked']
 }
