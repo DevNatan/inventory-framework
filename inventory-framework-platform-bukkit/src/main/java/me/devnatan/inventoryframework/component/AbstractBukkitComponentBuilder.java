@@ -21,6 +21,17 @@ public abstract class AbstractBukkitComponentBuilder<SELF> extends PlatformCompo
     protected AbstractBukkitComponentBuilder() {}
 
     /**
+     * Sets the item that will be rendered in the component.
+     *
+     * @param item The item to be rendered.
+     * @return This component builder.
+     */
+    public SELF withItem(ItemStack item) {
+        this.item = item;
+        return (SELF) this;
+    }
+
+    /**
      * Called when the item is rendered.
      * <p>
      * This handler is called every time the item or the view that owns it is updated.
