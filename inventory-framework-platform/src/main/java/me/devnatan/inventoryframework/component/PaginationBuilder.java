@@ -39,7 +39,7 @@ public final class PaginationBuilder<CONTEXT, ITEM_BUILDER, V>
      * Sets the item factory for pagination.
      * <p>
      * It consists of a function whose first parameter is a derivation of the
-     * {@link ItemComponentBuilder} that must be used to configure the item, and the second
+     * {@link ComponentBuilder} that must be used to configure the item, and the second
      * parameter is the current element being paginated.
      * <p>
      * This function is called for every single paginated element.
@@ -50,8 +50,7 @@ public final class PaginationBuilder<CONTEXT, ITEM_BUILDER, V>
     @SuppressWarnings("unchecked")
     public PaginationBuilder<CONTEXT, ITEM_BUILDER, V> itemFactory(@NotNull BiConsumer<ITEM_BUILDER, V> itemFactory) {
         this.elementFactory = (pagination, index, slot, value) -> {
-            ItemComponentBuilder builder = PlatformUtils.getFactory().createItemComponentBuilder(pagination);
-            builder.setPosition(slot);
+            final ComponentBuilder builder = PlatformUtils.getFactory().createDefaultComponentBuilder(pagination);
             itemFactory.accept((ITEM_BUILDER) builder, value);
             return builder.buildComponent(pagination);
         };
@@ -62,7 +61,7 @@ public final class PaginationBuilder<CONTEXT, ITEM_BUILDER, V>
      * Sets the item factory for pagination.
      * <p>
      * It consists of a function whose first parameter is a derivation of the
-     * {@link ItemComponentBuilder} that must be used to configure the item, and the second
+     * {@link ComponentBuilder} that must be used to configure the item, and the second
      * parameter is the current element being paginated.
      * <p>
      * This function is called for every single paginated element.
@@ -74,9 +73,8 @@ public final class PaginationBuilder<CONTEXT, ITEM_BUILDER, V>
     public PaginationBuilder<CONTEXT, ITEM_BUILDER, V> elementFactory(
             @NotNull PaginationValueConsumer<CONTEXT, ITEM_BUILDER, V> elementConsumer) {
         this.elementFactory = (pagination, index, slot, value) -> {
-            CONTEXT context = (CONTEXT) pagination.getContext();
-            ItemComponentBuilder builder = PlatformUtils.getFactory().createItemComponentBuilder(pagination);
-            builder.setPosition(slot);
+            final CONTEXT context = (CONTEXT) pagination.getContext();
+            final ComponentBuilder builder = PlatformUtils.getFactory().createDefaultComponentBuilder(pagination);
 
             elementConsumer.accept(context, (ITEM_BUILDER) builder, index, value);
 

@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 import me.devnatan.inventoryframework.*;
 import me.devnatan.inventoryframework.component.BukkitDefaultComponentBuilder;
 import me.devnatan.inventoryframework.component.Component;
-import me.devnatan.inventoryframework.component.ItemComponentBuilder;
+import me.devnatan.inventoryframework.component.ComponentBuilder;
 import me.devnatan.inventoryframework.context.*;
 import me.devnatan.inventoryframework.logging.Logger;
 import me.devnatan.inventoryframework.logging.NoopLogger;
@@ -111,7 +111,7 @@ public class BukkitElementFactory extends ElementFactory {
     }
 
     @Override
-    public ItemComponentBuilder createItemComponentBuilder(@NotNull VirtualView root) {
+    public ComponentBuilder createDefaultComponentBuilder(@NotNull VirtualView root) {
         return new BukkitDefaultComponentBuilder();
     }
 
