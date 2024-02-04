@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Intercepted when a player clicks on an item the view container.
  */
-final class ComponentClickInterceptor implements PipelineInterceptor<IFComponentContext> {
+final class ComponentCancelOnClickInterceptor implements PipelineInterceptor<IFComponentContext> {
 
     @Override
     public void intercept(@NotNull PipelineContext<IFComponentContext> pipeline, @NotNull IFComponentContext subject) {
@@ -18,9 +18,7 @@ final class ComponentClickInterceptor implements PipelineInterceptor<IFComponent
         final IFSlotClickContext click = (IFSlotClickContext) subject;
         if (click.isOutsideClick()) return;
 
-        final PlatformComponent component = (PlatformComponent) click.getComponent();
-
         // inherit cancellation so we can un-cancel it
-        click.setCancelled(component.isCancelOnClick());
+        click.setCancelled(((PlatformComponent<?, ?>) click.getComponent()).isCancelOnClick());
     }
 }

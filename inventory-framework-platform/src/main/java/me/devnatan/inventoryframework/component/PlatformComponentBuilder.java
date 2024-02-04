@@ -39,6 +39,15 @@ public abstract class PlatformComponentBuilder<SELF, CONTEXT> extends AbstractCo
     }
 
     /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
+    public boolean isContainedWithin(int position) {
+        return this.position == position;
+    }
+
+    /**
      * Called when the component is updated.
      *
      * @param updateHandler The update handler.
@@ -66,7 +75,7 @@ public abstract class PlatformComponentBuilder<SELF, CONTEXT> extends AbstractCo
     /**
      * Only shows the component if a given condition is satisfied.
      *
-     * @param displayCondition Component display condition.
+     * @param displayCondition ComponentPhase display condition.
      * @return This component builder.
      * @see #hideIf(Predicate)
      */
@@ -78,7 +87,7 @@ public abstract class PlatformComponentBuilder<SELF, CONTEXT> extends AbstractCo
     /**
      * Only shows the component if a given condition is satisfied.
      *
-     * @param displayCondition Component display condition.
+     * @param displayCondition ComponentPhase display condition.
      * @return This component builder.
      * @see #hideIf(BooleanSupplier)
      */
@@ -112,7 +121,7 @@ public abstract class PlatformComponentBuilder<SELF, CONTEXT> extends AbstractCo
     /**
      * Assigns {@link Ref a reference} to this component.
      *
-     * @param reference Component reference key.
+     * @param reference ComponentPhase reference key.
      * @return This component builder.
      * @see <a href="https://github.com/DevNatan/inventory-framework/wiki/refs-api">Refs API on Wiki</a>
      */
@@ -263,14 +272,6 @@ public abstract class PlatformComponentBuilder<SELF, CONTEXT> extends AbstractCo
         return (SELF) this;
     }
     // endregion
-
-    /**
-     * <b><i> This is an internal inventory-framework API that should not be used from outside of
-     * this library. No compatibility guarantees are provided. </i></b>
-     */
-    @ApiStatus.Internal
-    @ApiStatus.OverrideOnly
-    public abstract ComponentHandle buildHandle();
 
     protected final int getPosition() {
         return position;

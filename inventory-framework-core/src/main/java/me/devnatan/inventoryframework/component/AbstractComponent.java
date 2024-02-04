@@ -1,6 +1,12 @@
 package me.devnatan.inventoryframework.component;
 
+import static me.devnatan.inventoryframework.pipeline.PipelinePhase.ComponentPhase.COMPONENT_CLEAR;
+import static me.devnatan.inventoryframework.pipeline.PipelinePhase.ComponentPhase.COMPONENT_CLICK;
+import static me.devnatan.inventoryframework.pipeline.PipelinePhase.ComponentPhase.COMPONENT_RENDER;
+import static me.devnatan.inventoryframework.pipeline.PipelinePhase.ComponentPhase.COMPONENT_UPDATE;
+
 import java.util.Collections;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
 import me.devnatan.inventoryframework.Ref;
@@ -13,6 +19,7 @@ import me.devnatan.inventoryframework.context.IFComponentRenderContext;
 import me.devnatan.inventoryframework.context.IFComponentUpdateContext;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
+import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
 import me.devnatan.inventoryframework.pipeline.PipelineInterceptor;
 import me.devnatan.inventoryframework.pipeline.PipelinePhase;
@@ -22,45 +29,52 @@ import org.jetbrains.annotations.UnmodifiableView;
 
 public abstract class AbstractComponent implements Component {
 
-    private final String key;
-    private final VirtualView root;
-    private final Ref<Component> reference;
-    private final Set<State<?>> watchingStates;
-    private final Predicate<? extends IFContext> displayCondition;
-    private final Pipeline<IFComponentContext> pipeline = new Pipeline<>(PipelinePhase.Component.values());
-    private final boolean isSelfManaged;
+    private final Pipeline<IFComponentContext> pipeline = new Pipeline<>(PipelinePhase.ComponentPhase.values());
 
-    private ComponentHandle handle;
-    private boolean isVisible = true;
-    private boolean wasForceUpdated;
+    private VirtualView root;
+    private String key;
+    private Ref<Component> reference;
+    private Set<State<?>> watchingStates;
+    private Predicate<? extends IFContext> displayCondition;
+    private boolean selfManaged;
+    private boolean visible = true;
 
-    protected AbstractComponent(
-            String key,
-            VirtualView root,
-            Ref<Component> reference,
-            Set<State<?>> watchingStates,
-            Predicate<? extends IFContext> displayCondition,
-            boolean isSelfManaged) {
-        this.key = key;
-        this.root = root;
-        this.reference = reference;
-        this.watchingStates = watchingStates;
-        this.displayCondition = displayCondition;
-        this.isSelfManaged = isSelfManaged;
+    protected AbstractComponent() {
+        final Pipeline<IFComponentContext> pipeline = getPipeline();
+        pipeline.intercept(COMPONENT_RENDER, ($, ctx) -> render((IFComponentRenderContext) ctx));
+        pipeline.intercept(COMPONENT_UPDATE, ($, ctx) -> update((IFComponentUpdateContext) ctx));
+        pipeline.intercept(COMPONENT_CLICK, ($, ctx) -> clicked((IFSlotClickContext) ctx));
+        pipeline.intercept(COMPONENT_CLEAR, ($, ctx) -> clear((IFComponentClearContext) ctx));
     }
+
+    abstract boolean render(IFComponentRenderContext context);
+
+    abstract boolean update(IFComponentUpdateContext context);
+
+    abstract boolean clear(IFComponentClearContext context);
+
+    abstract boolean clicked(IFSlotClickContext context);
 
     @Override
     public final String getKey() {
         return key;
     }
 
-    @Override
-    public final @NotNull VirtualView getRoot() {
-        return root;
+    protected final void setKey(String key) {
+        this.key = key;
     }
 
     @Override
-    public final IFContext getContext() {
+    public final @NotNull VirtualView getRoot() {
+        return Objects.requireNonNull(root, "ComponentPhase root cannot be null");
+    }
+
+    protected final void setRoot(VirtualView root) {
+        this.root = root;
+    }
+
+    @Override
+    public IFContext getContext() {
         return getRootAsContext();
     }
 
@@ -74,21 +88,29 @@ public abstract class AbstractComponent implements Component {
         return Collections.unmodifiableSet(watchingStates);
     }
 
+    protected final void setWatchingStates(Set<State<?>> watchingStates) {
+        this.watchingStates = watchingStates;
+    }
+
     @Override
     public final boolean isVisible() {
-        if (getRoot() instanceof Component) return ((Component) getRoot()).isVisible() && isVisible;
+        if (getRoot() instanceof Component) return ((Component) getRoot()).isVisible() && visible;
 
-        return isVisible;
+        return visible;
     }
 
     @Override
     public void setVisible(boolean visible) {
-        this.isVisible = visible;
+        this.visible = visible;
     }
 
     @Override
     public final boolean isSelfManaged() {
-        return isSelfManaged;
+        return selfManaged;
+    }
+
+    protected final void setSelfManaged(boolean selfManaged) {
+        this.selfManaged = selfManaged;
     }
 
     @SuppressWarnings("unchecked")
@@ -97,9 +119,21 @@ public abstract class AbstractComponent implements Component {
         return getDisplayCondition() == null || ((Predicate<? super IFContext>) getDisplayCondition()).test(context);
     }
 
+    protected final Predicate<? extends IFContext> getDisplayCondition() {
+        return displayCondition;
+    }
+
+    protected final void setDisplayCondition(Predicate<? extends IFContext> displayCondition) {
+        this.displayCondition = displayCondition;
+    }
+
     @Override
     public final Ref<Component> getReference() {
         return reference;
+    }
+
+    protected final void setReference(Ref<Component> reference) {
+        this.reference = reference;
     }
 
     @Override
@@ -112,23 +146,7 @@ public abstract class AbstractComponent implements Component {
         setVisible(false);
     }
 
-    @Override
-    public final @NotNull ComponentHandle getHandle() {
-        return handle;
-    }
-
-    @Override
-    public final void setHandle(ComponentHandle handle) {
-        if (handle == null)
-            throw new IllegalArgumentException("Component handle argument in #setHandle cannot be null");
-        if (this.handle != null) getPipeline().removeInterceptor(this.handle);
-
-        getPipeline().addInterceptor(handle);
-        this.handle = handle;
-        this.handle.setComponent(this);
-    }
-
-    final Pipeline<IFComponentContext> getPipeline() {
+    protected final Pipeline<IFComponentContext> getPipeline() {
         return pipeline;
     }
 
@@ -138,10 +156,6 @@ public abstract class AbstractComponent implements Component {
         getPipeline().intercept(phase, (PipelineInterceptor) interceptor);
     }
 
-    protected final Predicate<? extends IFContext> getDisplayCondition() {
-        return displayCondition;
-    }
-
     // region Internals
     protected final IFRenderContext getRootAsContext() {
         if (getRoot() instanceof AbstractComponent) return ((AbstractComponent) getRoot()).getRootAsContext();
@@ -149,16 +163,6 @@ public abstract class AbstractComponent implements Component {
 
         return (IFRenderContext) getRoot();
     }
-
-    @Override
-    public void render(IFComponentRenderContext context) {}
-
-    @Override
-    public void update(IFComponentUpdateContext context) {}
-
-    @Override
-    public void clear(IFComponentClearContext context) {}
-
     // endregion
 
     @Override
@@ -169,9 +173,8 @@ public abstract class AbstractComponent implements Component {
                 + reference + ", watchingStates="
                 + watchingStates + ", displayCondition="
                 + displayCondition + ", pipeline="
-                + pipeline + ", handle="
-                + handle + ", isVisible="
-                + isVisible + ", isSelfManaged="
-                + isSelfManaged + '}';
+                + pipeline + ", isVisible="
+                + visible + ", isSelfManaged="
+                + selfManaged + '}';
     }
 }

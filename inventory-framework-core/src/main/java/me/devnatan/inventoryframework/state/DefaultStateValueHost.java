@@ -18,7 +18,7 @@ import org.jetbrains.annotations.ApiStatus;
 public class DefaultStateValueHost implements StateValueHost {
 
     private final Map<Long, StateValue> valuesMap = new HashMap<>();
-    private final Pipeline<StateValue> pipeline = new Pipeline<>(PipelinePhase.State.values());
+    private final Pipeline<StateValue> pipeline = new Pipeline<>(PipelinePhase.StatePhase.values());
 
     @Override
     public Map<Long, StateValue> getStateValues() {
@@ -29,7 +29,7 @@ public class DefaultStateValueHost implements StateValueHost {
     public final StateValue getUninitializedStateValue(long stateId) {
         final StateValue value = getStateValues().get(stateId);
         if (value == null) {
-            IFDebug.debug("State %s not found in %s", stateId, getStateValues());
+            IFDebug.debug("StatePhase %s not found in %s", stateId, getStateValues());
         }
         return value;
     }
@@ -58,7 +58,7 @@ public class DefaultStateValueHost implements StateValueHost {
     public final void initializeState(long id, StateValue value) {
         getStateValues().put(id, value);
         IFDebug.debug(
-                "State value initialized in %s (id = %s, initialValue = %s)",
+                "StatePhase value initialized in %s (id = %s, initialValue = %s)",
                 getClass().getName(), id, value.toString());
     }
 
@@ -70,7 +70,7 @@ public class DefaultStateValueHost implements StateValueHost {
 
         final Object newValue = stateValue.get();
         IFDebug.debug(
-                "State value updated in %s (id = %s, oldValue = %s, newValue = %s)",
+                "StatePhase value updated in %s (id = %s, oldValue = %s, newValue = %s)",
                 getClass().getName(), id, oldValue, newValue);
 
         getPipeline().execute(PipelinePhase.StateValue.STATE_VALUE_SET, stateValue);

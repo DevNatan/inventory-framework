@@ -9,6 +9,7 @@ import me.devnatan.inventoryframework.UpdateReason;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.ComponentBuilder;
 import me.devnatan.inventoryframework.component.ComponentContainer;
+import me.devnatan.inventoryframework.component.PlatformComponentBuilder;
 import me.devnatan.inventoryframework.pipeline.PipelineContext;
 import me.devnatan.inventoryframework.pipeline.PipelineInterceptor;
 import me.devnatan.inventoryframework.state.State;
@@ -51,8 +52,8 @@ final class ContextFirstRenderInterceptor implements PipelineInterceptor<IFConte
         final Iterator<ComponentBuilder> iterator =
                 context.getNotRenderedComponents().iterator();
         while (iterator.hasNext()) {
-            final ComponentBuilder builder = iterator.next();
-            final Component component = builder.buildComponent(context);
+            final PlatformComponentBuilder<?, ?> builder = (PlatformComponentBuilder<?, ?>) iterator.next();
+            final Component component = builder.internalBuildComponent(context);
             assignReference(component);
             context.addComponent(component);
             iterator.remove();

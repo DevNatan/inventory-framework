@@ -30,7 +30,7 @@ public interface PipelinePhase {
         FRAME_CONFIG_CHECK,
     }
 
-    enum View implements PipelinePhase {
+    enum ViewPhase implements PipelinePhase {
 
         /**
          * Called when a {@link RootView root view} is initialized.
@@ -98,14 +98,14 @@ public interface PipelinePhase {
         CONTEXT_CONFIG_CHECK,
     }
 
-    enum Component implements PipelinePhase {
+    enum ComponentPhase implements PipelinePhase {
         COMPONENT_RENDER,
         COMPONENT_UPDATE,
         COMPONENT_CLICK,
         COMPONENT_CLEAR
     }
 
-    enum State implements PipelinePhase {
+    enum StatePhase implements PipelinePhase {
 
         /**
          * Called when a state is registered in a state registry.

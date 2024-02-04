@@ -5,7 +5,7 @@ import me.devnatan.inventoryframework.component.PlatformComponentBuilder;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
-public interface PublicSlotComponentRenderer<CONTEXT, BUILDER, ITEM> {
+public interface PublicSlotComponentRenderer<CONTEXT, BUILDER> {
 
     /**
      * Creates a new item builder without a specified slot.
@@ -42,14 +42,6 @@ public interface PublicSlotComponentRenderer<CONTEXT, BUILDER, ITEM> {
     BUILDER slot(int slot);
 
     /**
-     * Adds an item to a specific slot in the context container.
-     *
-     * @param slot The slot in which the item will be positioned.
-     * @return An item builder to configure the item.
-     */
-    BUILDER slot(int slot, ITEM item);
-
-    /**
      * Adds an item at the specific column and ROW (X, Y) in that context's container.
      *
      * @param row    The row (Y) in which the item will be positioned.
@@ -57,16 +49,6 @@ public interface PublicSlotComponentRenderer<CONTEXT, BUILDER, ITEM> {
      * @return An item builder to configure the item.
      */
     BUILDER slot(int row, int column);
-
-    /**
-     * Adds an item at the specific column and ROW (X, Y) in that context's container.
-     *
-     * @param row    The row (Y) in which the item will be positioned.
-     * @param column The column (X) in which the item will be positioned.
-     * @param item The item to set in the specified row and column.
-     * @return An item builder to configure the item.
-     */
-    BUILDER slot(int row, int column, ITEM item);
 
     /**
      * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
@@ -90,14 +72,6 @@ public interface PublicSlotComponentRenderer<CONTEXT, BUILDER, ITEM> {
     BUILDER firstSlot();
 
     /**
-     * Sets an item in the first slot of this context's container.
-     *
-     * @param item The item that'll be set.
-     * @return An item builder to configure the item.
-     */
-    BUILDER firstSlot(ITEM item);
-
-    /**
      * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
      * such API may be changed or may be removed completely in any further release. </i></b>
      */
@@ -110,14 +84,6 @@ public interface PublicSlotComponentRenderer<CONTEXT, BUILDER, ITEM> {
      * @return An item builder to configure the item.
      */
     BUILDER lastSlot();
-
-    /**
-     * Sets an item in the last slot of this context's container.
-     *
-     * @param item The item that'll be set.
-     * @return An item builder to configure the item.
-     */
-    BUILDER lastSlot(ITEM item);
 
     /**
      * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
@@ -143,14 +109,6 @@ public interface PublicSlotComponentRenderer<CONTEXT, BUILDER, ITEM> {
     /**
      * Adds an item in the next available slot of this context's container.
      *
-     * @param item The item that'll be added.
-     * @return An item builder to configure the item.
-     */
-    BUILDER availableSlot(ITEM item);
-
-    /**
-     * Adds an item in the next available slot of this context's container.
-     *
      * <pre>{@code
      * availableSlot((index, builder) -> builder.withItem(...));
      * }</pre>
@@ -167,15 +125,6 @@ public interface PublicSlotComponentRenderer<CONTEXT, BUILDER, ITEM> {
      * @return An item builder to configure the item.
      */
     BUILDER layoutSlot(char character);
-
-    /**
-     * Defines the item that will represent a character provided in the context layout.
-     *
-     * @param character The layout character target.
-     * @param item      The item that'll represent the layout character.
-     * @return An item builder to configure the item.
-     */
-    BUILDER layoutSlot(char character, ITEM item);
 
     /**
      * Defines the item that will represent a character provided in the context layout.
@@ -201,11 +150,4 @@ public interface PublicSlotComponentRenderer<CONTEXT, BUILDER, ITEM> {
      */
     @ApiStatus.Experimental
     BUILDER resultSlot();
-
-    /**
-     * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
-     * such API may be changed or may be removed completely in any further release. </i></b>
-     */
-    @ApiStatus.Experimental
-    BUILDER resultSlot(ITEM item);
 }

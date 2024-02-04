@@ -1,6 +1,6 @@
 package me.devnatan.inventoryframework;
 
-import me.devnatan.inventoryframework.component.BukkitItemComponentBuilder;
+import me.devnatan.inventoryframework.component.BukkitComponentBuilder;
 import me.devnatan.inventoryframework.context.CloseContext;
 import me.devnatan.inventoryframework.context.Context;
 import me.devnatan.inventoryframework.context.OpenContext;
@@ -20,7 +20,7 @@ public class View
         extends PlatformView<
                 ViewFrame,
                 Player,
-                BukkitItemComponentBuilder,
+                BukkitComponentBuilder,
                 Context,
                 OpenContext,
                 CloseContext,

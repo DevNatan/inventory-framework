@@ -22,7 +22,7 @@ public abstract class DefaultRootView implements RootView {
 
     private final UUID id = UUID.randomUUID();
     private ViewConfig config;
-    private final Pipeline<RootView> pipeline = new Pipeline<>(PipelinePhase.View.values());
+    private final Pipeline<RootView> pipeline = new Pipeline<>(PipelinePhase.ViewPhase.values());
     private final Set<IFContext> contexts = newSetFromMap(synchronizedMap(new HashMap<>()));
     private final StateRegistry stateRegistry = new StateRegistry();
     private Job scheduledUpdateJob;

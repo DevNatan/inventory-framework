@@ -18,7 +18,7 @@ final class ComponentCloseOnClickInterceptor implements PipelineInterceptor<IFCo
         final IFSlotClickContext click = (IFSlotClickContext) subject;
         if (click.isOutsideClick()) return;
 
-        final PlatformComponent component = (PlatformComponent) click.getComponent();
+        final PlatformComponent<?, ?> component = (PlatformComponent<?, ?>) click.getComponent();
         if (!component.isVisible() || !component.isCloseOnClick()) return;
 
         click.closeForPlayer();
