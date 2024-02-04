@@ -262,7 +262,8 @@ public interface StateAccess<CONTEXT, DEFAULT_PLATFORM_COMPONENT_BUILDER> {
      * @param <T>            The pagination data type.
      * @return A new pagination state builder.
      */
-    <T> PaginationBuilder<CONTEXT, DEFAULT_PLATFORM_COMPONENT_BUILDER, T> buildPaginationState(@NotNull List<? super T> sourceProvider);
+    <T> PaginationBuilder<CONTEXT, DEFAULT_PLATFORM_COMPONENT_BUILDER, T> buildPaginationState(
+            @NotNull List<? super T> sourceProvider);
 
     /**
      * Creates a new unmodifiable dynamic pagination state builder.

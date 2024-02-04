@@ -1,22 +1,12 @@
 package me.devnatan.inventoryframework.component;
 
-import static me.devnatan.inventoryframework.pipeline.PipelinePhase.Component.COMPONENT_CLEAR;
-import static me.devnatan.inventoryframework.pipeline.PipelinePhase.Component.COMPONENT_CLICK;
-import static me.devnatan.inventoryframework.pipeline.PipelinePhase.Component.COMPONENT_RENDER;
-import static me.devnatan.inventoryframework.pipeline.PipelinePhase.Component.COMPONENT_UPDATE;
-
 import me.devnatan.inventoryframework.context.ComponentClearContext;
 import me.devnatan.inventoryframework.context.ComponentRenderContext;
 import me.devnatan.inventoryframework.context.ComponentUpdateContext;
 import me.devnatan.inventoryframework.context.Context;
 import me.devnatan.inventoryframework.context.IFComponentClearContext;
-import me.devnatan.inventoryframework.context.IFComponentContext;
 import me.devnatan.inventoryframework.context.IFComponentRenderContext;
-import me.devnatan.inventoryframework.context.IFComponentUpdateContext;
-import me.devnatan.inventoryframework.context.IFSlotClickContext;
-import me.devnatan.inventoryframework.context.RenderContext;
 import me.devnatan.inventoryframework.context.SlotClickContext;
-import me.devnatan.inventoryframework.pipeline.Pipeline;
 import me.devnatan.inventoryframework.pipeline.PipelinePhase;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
@@ -69,13 +59,44 @@ public abstract class BukkitComponent extends PlatformComponent<Context, BukkitD
 	// region Internal Implementation
 	@Override
 	final boolean render(IFComponentRenderContext context) {
-		if (!super.render(context)) return false;
-
 		final ComponentRenderContext platformContext = (ComponentRenderContext) context;
 		if (getRenderHandler() != null) {
 			getRenderHandler().accept(context);
 		}
+
+		setPosition(platformContext.getSlot());
+		setItem(platformContext.getItem());
+
+		if (!isPositionSet())
+			throw new IllegalStateException("Component position is not set. A position for the component must be "
+				+ "assigned via #withSlot(...) in ComponentBuilder or programmatically before render");
+
+		if (getItem() == null) {
+			if (context.getContainer().getType().isResultSlot(getPosition())) {
+				setVisible(true);
+				return true;
+			}
+
+			// TODO This error must be in slot creation and not on render
+			//      so the developer will know where the error is
+			throw new IllegalStateException("At least one fallback item or render handler must be provided for "
+				+ getClass().getName());
+		}
+
+		getContainer().renderItem(getPosition(), getItem());
+		setVisible(true);
+		return true;
 	}
+
+	@Override
+	boolean clear(IFComponentClearContext context) {
+		if (context.isCancelled()) return false;
+		if (!isPositionSet()) return false;
+
+		getContainer().removeItem(getPosition());
+		return true;
+	}
+
 	// endregion
 
 	// region Builder Methods

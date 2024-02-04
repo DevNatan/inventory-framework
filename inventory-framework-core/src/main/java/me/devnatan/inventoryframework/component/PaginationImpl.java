@@ -542,7 +542,7 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
         getInternalComponents().forEach(component -> component.setVisible(isVisible()));
     }
 
-    public void render(IFComponentRenderContext context) {
+    boolean render(IFComponentRenderContext context) {
         final IFRenderContext root = (IFRenderContext) context.getTopLevelContext();
         if (!initialized || pageWasChanged) {
             if (!initialized) updatePageSize(root);
@@ -550,16 +550,17 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
                 renderChild(root);
                 simulateStateUpdate();
             });
-            this.setVisible(true);
+            setVisible(true);
             initialized = true;
-            return;
+            return true;
         }
 
-        this.setVisible(true);
+        setVisible(true);
         renderChild(root);
+        return true;
     }
 
-    public void update(IFComponentUpdateContext context) {
+    boolean update(IFComponentUpdateContext context) {
         final IFRenderContext root = (IFRenderContext) context.getTopLevelContext();
 
         debug("[Pagination] #updated(IFSlotRenderContext) called (pageWasChanged = %b)", pageWasChanged);
@@ -570,20 +571,21 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
             components = new ArrayList<>();
             root.renderComponent(this);
             pageWasChanged = false;
-            return;
+            return true;
         }
 
-        if (!isVisible()) return;
+        if (!isVisible()) return false;
 
         getInternalComponents()
                 .forEach(child -> root.updateComponent(child, context.isForceUpdate(), context.getUpdateReason()));
+        return true;
     }
 
-    public void clicked(IFSlotClickContext context) {
+    boolean clicked(IFSlotClickContext context) {
         // Lock child interactions while page is changing (specially for async pagination cases)
         if (pageWasChanged) {
             context.setCancelled(true);
-            return;
+            return false;
         }
 
         for (final Component child : getInternalComponents()) {
@@ -605,10 +607,11 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
                             context.getClickedSlot(),
                             true);
         }
+        return true;
     }
 
     @Override
-	boolean clear(@NotNull IFComponentClearContext context) {
+    boolean clear(@NotNull IFComponentClearContext context) {
         debug("[Pagination] #clear(IFRenderContext) called (pageWasChanged = %b)", pageWasChanged);
         final IFRenderContext root = context.getParent();
         if (!pageWasChanged) {
@@ -622,7 +625,7 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
             root.clearComponent(child);
             childIterator.remove();
         }
-		return true;
+        return true;
     }
 
     @Override

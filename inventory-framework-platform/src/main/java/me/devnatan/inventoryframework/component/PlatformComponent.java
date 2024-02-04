@@ -31,7 +31,7 @@ public abstract class PlatformComponent<C extends IFContext, B> extends Abstract
     @Delegate
     private final StateAccess<C, B> stateAccess;
 
-	private int position = -1;
+    private int position = -1;
     private C context;
     private boolean cancelOnClick;
     private boolean closeOnClick;
@@ -41,7 +41,7 @@ public abstract class PlatformComponent<C extends IFContext, B> extends Abstract
     private Consumer<? super IFSlotClickContext> clickHandler;
 
     PlatformComponent() {
-		super();
+        super();
         @SuppressWarnings("rawtypes")
         final PlatformView root = (PlatformView) getRootAsContext().getRoot();
         stateAccess = new StateAccessImpl<>(this, root.getStateRegistry());
@@ -51,59 +51,51 @@ public abstract class PlatformComponent<C extends IFContext, B> extends Abstract
         pipeline.intercept(COMPONENT_CLICK, new ComponentCloseOnClickInterceptor());
     }
 
-	@Override
-	boolean render(IFComponentRenderContext context) {
-		return false;
-	}
+    @Override
+    boolean update(IFComponentUpdateContext context) {
+        if (context.isCancelled()) return false;
 
-	@Override
-	boolean update(IFComponentUpdateContext context) {
-		if (context.isCancelled()) return false;
+        // Static item with no `displayIf` must not even reach the update handler
+        if (!isSelfManaged() && !context.isForceUpdate() && getDisplayCondition() == null && getRenderHandler() == null)
+            return false;
 
-		// Static item with no `displayIf` must not even reach the update handler
-		if (!isSelfManaged()
-			&& !context.isForceUpdate()
-			&& getDisplayCondition() == null
-			&& getRenderHandler() == null) return false;
+        if (isVisible() && getUpdateHandler() != null) {
+            getUpdateHandler().accept(context);
+            if (context.isCancelled()) return false;
+        }
 
-		if (isVisible() && getUpdateHandler() != null) {
-			getUpdateHandler().accept(context);
-			if (context.isCancelled()) return false;
-		}
+        ((IFRenderContext) getContext()).renderComponent(this);
+        return true;
+    }
 
-		((IFRenderContext) getContext()).renderComponent(this);
-		return true;
-	}
+    @Override
+    boolean clicked(IFSlotClickContext context) {
+        if (context.isCancelled()) return false;
+        if (getClickHandler() != null) {
+            getClickHandler().accept(context);
+            if (context.isCancelled()) return false;
+        }
 
+        if (isCloseOnClick()) {
+            context.closeForPlayer();
+            return true;
+        }
 
-	@Override
-	boolean clicked(IFSlotClickContext context) {
-		if (getClickHandler() != null) {
-			getClickHandler().accept(context);
-			if (context.isCancelled()) return false;
-		}
+        if (isUpdateOnClick()) context.getParent().updateComponent(this, false, new UpdateReason.UpdateOnClick());
+        return true;
+    }
 
-		if (isCloseOnClick()) {
-			context.closeForPlayer();
-			return true;
-		}
+    @Override
+    public boolean isContainedWithin(int position) {
+        return getPosition() == position;
+    }
 
-		if (isUpdateOnClick())
-			context.getParent().updateComponent(this, false, new UpdateReason.UpdateOnClick());
-		return true;
-	}
+    @Override
+    public boolean intersects(@NotNull Component other) {
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public boolean isContainedWithin(int position) {
-		return getPosition() == position;
-	}
-
-	@Override
-	public boolean intersects(@NotNull Component other) {
-		throw new UnsupportedOperationException();
-	}
-
-	/**
+    /**
      * Lifecycle event handler for setting up the component.
      * This method is called during the setup phase of the component's lifecycle.
      *
@@ -241,34 +233,34 @@ public abstract class PlatformComponent<C extends IFContext, B> extends Abstract
         this.clickHandler = clickHandler;
     }
 
-	/**
-	 * The position of this component.
-	 * <p>
-	 * Platform components may not have a defined position if they are not buildable, that is,
-	 * if they were "assigned" to a context without the use of a {@link ComponentBuilder}.
-	 *
-	 * @return The position of this component, returns {@code -1} if no position was set.
-	 * @see #hasPosition()
-	 */
-	public final int getPosition() {
-		return position;
-	}
+    /**
+     * The position of this component.
+     * <p>
+     * Platform components may not have a defined position if they are not buildable, that is,
+     * if they were "assigned" to a context without the use of a {@link ComponentBuilder}.
+     *
+     * @return The position of this component, returns {@code -1} if no position was set.
+     * @see #isPositionSet()
+     */
+    public final int getPosition() {
+        return position;
+    }
 
-	/**
-	 * Sets the position of this component.
-	 *
-	 * @param position The new position of this component.
-	 */
-	public final void setPosition(int position) {
-		this.position = position;
-	}
+    /**
+     * Sets the position of this component.
+     *
+     * @param position The new position of this component.
+     */
+    public final void setPosition(int position) {
+        this.position = position;
+    }
 
-	/**
-	 * Checks if a position was set for this component.
-	 *
-	 * @return If a position was set for this component.
-	 */
-	public final boolean hasPosition() {
-		return getPosition() != -1;
-	}
+    /**
+     * Checks if a position was set for this component.
+     *
+     * @return If a position was set for this component.
+     */
+    public final boolean isPositionSet() {
+        return getPosition() != -1;
+    }
 }
