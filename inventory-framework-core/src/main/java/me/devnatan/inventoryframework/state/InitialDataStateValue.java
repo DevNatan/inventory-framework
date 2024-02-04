@@ -21,7 +21,7 @@ public final class InitialDataStateValue extends AbstractStateValue {
         super(internalId);
         this.key = key;
         if (!(host instanceof IFContext))
-            throw new IllegalArgumentException("State host for initial data must be a IFContext");
+            throw new IllegalArgumentException("StatePhase host for initial data must be a IFContext");
 
         this.context = (IFContext) host;
         this.backingValue = createBackingValue(internalId, (IFContext) host, key);

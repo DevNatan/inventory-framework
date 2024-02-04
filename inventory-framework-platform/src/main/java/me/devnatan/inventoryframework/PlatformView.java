@@ -8,9 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-import java.util.function.Function;
-import java.util.function.Supplier;
+import lombok.experimental.Delegate;
 import me.devnatan.inventoryframework.component.*;
 import me.devnatan.inventoryframework.context.IFCloseContext;
 import me.devnatan.inventoryframework.context.IFConfinedContext;
@@ -24,11 +22,8 @@ import me.devnatan.inventoryframework.internal.PlatformUtils;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
 import me.devnatan.inventoryframework.pipeline.PipelinePhase;
 import me.devnatan.inventoryframework.state.InitialDataStateValue;
-import me.devnatan.inventoryframework.state.MutableIntState;
-import me.devnatan.inventoryframework.state.MutableState;
-import me.devnatan.inventoryframework.state.State;
+import me.devnatan.inventoryframework.state.PlatformStateAccessImpl;
 import me.devnatan.inventoryframework.state.StateAccess;
-import me.devnatan.inventoryframework.state.StateAccessImpl;
 import me.devnatan.inventoryframework.state.StateValue;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -36,18 +31,20 @@ import org.jetbrains.annotations.NotNull;
 public abstract class PlatformView<
                 FRAMEWORK extends IFViewFrame<?, ?>,
                 VIEWER,
-                ITEM_BUILDER extends ItemComponentBuilder,
+                PLATFORM_BUILDER extends PlatformComponentBuilder<PLATFORM_BUILDER, PLATFORM_CONTEXT>,
                 PLATFORM_CONTEXT extends IFContext,
                 OPEN_CONTEXT extends IFOpenContext,
                 CLOSE_CONTEXT extends IFCloseContext,
                 RENDER_CONTEXT extends IFRenderContext,
                 SLOT_CLICK_CONTEXT extends IFSlotClickContext>
-        extends DefaultRootView implements Iterable<PLATFORM_CONTEXT>, StateAccess<PLATFORM_CONTEXT, ITEM_BUILDER> {
+        extends DefaultRootView implements Iterable<PLATFORM_CONTEXT>, StateAccess<PLATFORM_CONTEXT> {
 
     private FRAMEWORK framework;
     private boolean initialized;
-    private final StateAccess<PLATFORM_CONTEXT, ITEM_BUILDER> stateAccess =
-            new StateAccessImpl<>(this, getStateRegistry());
+
+    @Delegate
+    private final PlatformStateAccessImpl<PLATFORM_CONTEXT, PLATFORM_BUILDER> stateAccess =
+            new PlatformStateAccessImpl<>(this, getStateRegistry());
 
     // region Open & Close
     /**
@@ -410,7 +407,7 @@ public abstract class PlatformView<
      * Called before a context is rendered, used to set up it.
      *
      * <p>This handler is often called "pre-rendering" because it is possible to set the title and
-     * size of the inventory and also cancel the opening of the View without even doing any handling
+     * size of the inventory and also cancel the opening of the ViewPhase without even doing any handling
      * related to the inventory.
      *
      * <p>It is not possible to manipulate the inventory in this handler, if it happens an exception
@@ -547,17 +544,6 @@ public abstract class PlatformView<
     }
 
     /**
-     * Throws an exception if this view is already initialized.
-     *
-     * @throws IllegalStateException if this view is already initialized.
-     */
-    private void requireNotInitialized() {
-        if (!isInitialized()) return;
-        throw new IllegalStateException(
-                "View is already initialized, please move this method call to class constructor or #onInit.");
-    }
-
-    /**
      * Called internally before the first initialization.
      * <p>
      * Use it to register pipeline interceptors.
@@ -572,159 +558,13 @@ public abstract class PlatformView<
         this.framework = (FRAMEWORK) framework;
 
         final Pipeline<RootView> pipeline = getPipeline();
-        pipeline.intercept(PipelinePhase.View.VIEW_INIT, new ViewPlatformInitHandlerInterceptor());
-        pipeline.execute(PipelinePhase.View.VIEW_INIT, this);
+        pipeline.intercept(PipelinePhase.ViewPhase.VIEW_INIT, new ViewPlatformInitHandlerInterceptor());
+        pipeline.execute(PipelinePhase.ViewPhase.VIEW_INIT, this);
     }
-    // endregion
 
     @ApiStatus.Internal
     public @NotNull ElementFactory getElementFactory() {
         return PlatformUtils.getFactory();
-    }
-
-    // region State Management
-    @Override
-    public final <T> State<T> state(T initialValue) {
-        requireNotInitialized();
-        return stateAccess.state(initialValue);
-    }
-
-    @Override
-    public final <T> MutableState<T> mutableState(T initialValue) {
-        requireNotInitialized();
-        return stateAccess.mutableState(initialValue);
-    }
-
-    @Override
-    public final MutableIntState mutableState(int initialValue) {
-        requireNotInitialized();
-        return stateAccess.mutableState(initialValue);
-    }
-
-    @Override
-    public final <T> State<T> computedState(@NotNull Function<PLATFORM_CONTEXT, T> computation) {
-        requireNotInitialized();
-        return stateAccess.computedState(computation);
-    }
-
-    @Override
-    public final <T> State<T> computedState(@NotNull Supplier<T> computation) {
-        requireNotInitialized();
-        return stateAccess.computedState(computation);
-    }
-
-    @Override
-    public final <T> State<T> lazyState(@NotNull Function<PLATFORM_CONTEXT, T> computation) {
-        requireNotInitialized();
-        return stateAccess.lazyState(computation);
-    }
-
-    @Override
-    public final <T> State<T> lazyState(@NotNull Supplier<T> computation) {
-        requireNotInitialized();
-        return stateAccess.lazyState(computation);
-    }
-
-    @Override
-    public final <T> MutableState<T> initialState() {
-        requireNotInitialized();
-        return stateAccess.initialState();
-    }
-
-    @Override
-    public final <T> MutableState<T> initialState(@NotNull String key) {
-        requireNotInitialized();
-        return stateAccess.initialState(key);
-    }
-
-    @Override
-    public final <T> State<Pagination> paginationState(
-            @NotNull List<? super T> sourceProvider,
-            @NotNull PaginationValueConsumer<PLATFORM_CONTEXT, ITEM_BUILDER, T> elementConsumer) {
-        requireNotInitialized();
-        return stateAccess.paginationState(sourceProvider, elementConsumer);
-    }
-
-    @Override
-    public final <T> State<Pagination> computedPaginationState(
-            @NotNull Function<PLATFORM_CONTEXT, List<? super T>> sourceProvider,
-            @NotNull PaginationValueConsumer<PLATFORM_CONTEXT, ITEM_BUILDER, T> valueConsumer) {
-        requireNotInitialized();
-        return stateAccess.computedPaginationState(sourceProvider, valueConsumer);
-    }
-
-    @Override
-    public final <T> State<Pagination> computedAsyncPaginationState(
-            @NotNull Function<PLATFORM_CONTEXT, CompletableFuture<List<T>>> sourceProvider,
-            @NotNull PaginationValueConsumer<PLATFORM_CONTEXT, ITEM_BUILDER, T> valueConsumer) {
-        requireNotInitialized();
-        return stateAccess.computedAsyncPaginationState(sourceProvider, valueConsumer);
-    }
-
-    @Override
-    public final <T> State<Pagination> lazyPaginationState(
-            @NotNull Function<PLATFORM_CONTEXT, List<? super T>> sourceProvider,
-            @NotNull PaginationValueConsumer<PLATFORM_CONTEXT, ITEM_BUILDER, T> valueConsumer) {
-        requireNotInitialized();
-        return stateAccess.lazyPaginationState(sourceProvider, valueConsumer);
-    }
-
-    @Override
-    public final <T> State<Pagination> lazyPaginationState(
-            @NotNull Supplier<List<? super T>> sourceProvider,
-            @NotNull PaginationValueConsumer<PLATFORM_CONTEXT, ITEM_BUILDER, T> valueConsumer) {
-        requireNotInitialized();
-        return stateAccess.lazyPaginationState(sourceProvider, valueConsumer);
-    }
-
-    @Override
-    public final <T> State<Pagination> lazyAsyncPaginationState(
-            @NotNull Function<PLATFORM_CONTEXT, CompletableFuture<List<T>>> sourceProvider,
-            @NotNull PaginationValueConsumer<PLATFORM_CONTEXT, ITEM_BUILDER, T> valueConsumer) {
-        requireNotInitialized();
-        return stateAccess.lazyAsyncPaginationState(sourceProvider, valueConsumer);
-    }
-
-    @Override
-    public final <T> PaginationBuilder<PLATFORM_CONTEXT, ITEM_BUILDER, T> buildPaginationState(
-            @NotNull List<? super T> sourceProvider) {
-        requireNotInitialized();
-        return stateAccess.buildPaginationState(sourceProvider);
-    }
-
-    @Override
-    public final <T> PaginationBuilder<PLATFORM_CONTEXT, ITEM_BUILDER, T> buildComputedPaginationState(
-            @NotNull Function<PLATFORM_CONTEXT, List<? super T>> sourceProvider) {
-        requireNotInitialized();
-        return stateAccess.buildComputedPaginationState(sourceProvider);
-    }
-
-    @Override
-    public final <T> PaginationBuilder<PLATFORM_CONTEXT, ITEM_BUILDER, T> buildComputedAsyncPaginationState(
-            @NotNull Function<PLATFORM_CONTEXT, CompletableFuture<List<T>>> sourceProvider) {
-        requireNotInitialized();
-        return stateAccess.buildComputedAsyncPaginationState(sourceProvider);
-    }
-
-    @Override
-    public final <T> PaginationBuilder<PLATFORM_CONTEXT, ITEM_BUILDER, T> buildLazyPaginationState(
-            @NotNull Supplier<List<? super T>> sourceProvider) {
-        requireNotInitialized();
-        return stateAccess.buildLazyPaginationState(sourceProvider);
-    }
-
-    @Override
-    public final <T> PaginationBuilder<PLATFORM_CONTEXT, ITEM_BUILDER, T> buildLazyPaginationState(
-            @NotNull Function<PLATFORM_CONTEXT, List<? super T>> sourceProvider) {
-        requireNotInitialized();
-        return stateAccess.buildLazyPaginationState(sourceProvider);
-    }
-
-    @Override
-    public final <T> PaginationBuilder<PLATFORM_CONTEXT, ITEM_BUILDER, T> buildLazyAsyncPaginationState(
-            @NotNull Function<PLATFORM_CONTEXT, CompletableFuture<List<T>>> sourceProvider) {
-        requireNotInitialized();
-        return stateAccess.buildLazyAsyncPaginationState(sourceProvider);
     }
     // endregion
 }

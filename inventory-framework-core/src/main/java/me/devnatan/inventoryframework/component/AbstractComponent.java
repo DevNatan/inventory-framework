@@ -1,9 +1,9 @@
 package me.devnatan.inventoryframework.component;
 
-import static me.devnatan.inventoryframework.pipeline.PipelinePhase.Component.COMPONENT_CLEAR;
-import static me.devnatan.inventoryframework.pipeline.PipelinePhase.Component.COMPONENT_CLICK;
-import static me.devnatan.inventoryframework.pipeline.PipelinePhase.Component.COMPONENT_RENDER;
-import static me.devnatan.inventoryframework.pipeline.PipelinePhase.Component.COMPONENT_UPDATE;
+import static me.devnatan.inventoryframework.pipeline.PipelinePhase.ComponentPhase.COMPONENT_CLEAR;
+import static me.devnatan.inventoryframework.pipeline.PipelinePhase.ComponentPhase.COMPONENT_CLICK;
+import static me.devnatan.inventoryframework.pipeline.PipelinePhase.ComponentPhase.COMPONENT_RENDER;
+import static me.devnatan.inventoryframework.pipeline.PipelinePhase.ComponentPhase.COMPONENT_UPDATE;
 
 import java.util.Collections;
 import java.util.Objects;
@@ -29,7 +29,7 @@ import org.jetbrains.annotations.UnmodifiableView;
 
 public abstract class AbstractComponent implements Component {
 
-    private final Pipeline<IFComponentContext> pipeline = new Pipeline<>(PipelinePhase.Component.values());
+    private final Pipeline<IFComponentContext> pipeline = new Pipeline<>(PipelinePhase.ComponentPhase.values());
 
     private VirtualView root;
     private String key;
@@ -45,22 +45,6 @@ public abstract class AbstractComponent implements Component {
         pipeline.intercept(COMPONENT_UPDATE, ($, ctx) -> update((IFComponentUpdateContext) ctx));
         pipeline.intercept(COMPONENT_CLICK, ($, ctx) -> clicked((IFSlotClickContext) ctx));
         pipeline.intercept(COMPONENT_CLEAR, ($, ctx) -> clear((IFComponentClearContext) ctx));
-    }
-
-    protected AbstractComponent(
-            VirtualView root,
-            String key,
-            Ref<Component> reference,
-            Set<State<?>> watchingStates,
-            Predicate<? extends IFContext> displayCondition,
-            boolean selfManaged) {
-        this();
-        this.root = root;
-        this.key = key;
-        this.reference = reference;
-        this.watchingStates = watchingStates;
-        this.displayCondition = displayCondition;
-        this.selfManaged = selfManaged;
     }
 
     abstract boolean render(IFComponentRenderContext context);
@@ -82,7 +66,7 @@ public abstract class AbstractComponent implements Component {
 
     @Override
     public final @NotNull VirtualView getRoot() {
-        return Objects.requireNonNull(root, "Component root cannot be null");
+        return Objects.requireNonNull(root, "ComponentPhase root cannot be null");
     }
 
     protected final void setRoot(VirtualView root) {

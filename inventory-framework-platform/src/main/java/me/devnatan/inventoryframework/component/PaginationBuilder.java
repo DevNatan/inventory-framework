@@ -3,21 +3,23 @@ package me.devnatan.inventoryframework.component;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import me.devnatan.inventoryframework.VirtualView;
+import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
 import me.devnatan.inventoryframework.internal.PlatformUtils;
 import me.devnatan.inventoryframework.state.State;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
-public final class PaginationBuilder<CONTEXT, ITEM_BUILDER, V>
-        extends PlatformComponentBuilder<PaginationBuilder<CONTEXT, ITEM_BUILDER, V>, CONTEXT> {
+public final class PaginationBuilder<
+                CONTEXT extends IFContext, BUILDER extends PlatformComponentBuilder<BUILDER, CONTEXT>, V>
+        extends PlatformComponentBuilder<PaginationBuilder<CONTEXT, BUILDER, V>, CONTEXT> {
 
     private final Object sourceProvider;
     private char layoutTarget = LayoutSlot.DEFAULT_SLOT_FILL_CHAR;
     private PaginationElementFactory<V> elementFactory;
     private BiConsumer<CONTEXT, Pagination> pageSwitchHandler;
     private final boolean async, computed;
-    private final Function<PaginationBuilder<CONTEXT, ITEM_BUILDER, V>, State<Pagination>> stateFactory;
+    private final Function<PaginationBuilder<CONTEXT, BUILDER, V>, State<Pagination>> stateFactory;
 
     /**
      * <b><i> This is an internal inventory-framework API that should not be used from outside of
@@ -28,7 +30,7 @@ public final class PaginationBuilder<CONTEXT, ITEM_BUILDER, V>
             Object sourceProvider,
             boolean async,
             boolean computed,
-            Function<PaginationBuilder<CONTEXT, ITEM_BUILDER, V>, State<Pagination>> stateFactory) {
+            Function<PaginationBuilder<CONTEXT, BUILDER, V>, State<Pagination>> stateFactory) {
         this.sourceProvider = sourceProvider;
         this.async = async;
         this.computed = computed;
@@ -48,11 +50,11 @@ public final class PaginationBuilder<CONTEXT, ITEM_BUILDER, V>
      * @return This pagination state builder.
      */
     @SuppressWarnings("unchecked")
-    public PaginationBuilder<CONTEXT, ITEM_BUILDER, V> itemFactory(@NotNull BiConsumer<ITEM_BUILDER, V> itemFactory) {
+    public PaginationBuilder<CONTEXT, BUILDER, V> itemFactory(@NotNull BiConsumer<BUILDER, V> itemFactory) {
         this.elementFactory = (pagination, index, slot, value) -> {
-            final ComponentBuilder builder = PlatformUtils.getFactory().createDefaultComponentBuilder(pagination);
-            itemFactory.accept((ITEM_BUILDER) builder, value);
-            return builder.buildComponent(pagination);
+            final BUILDER builder = (BUILDER) PlatformUtils.getFactory().createDefaultComponentBuilder(pagination);
+            itemFactory.accept(builder, value);
+            return builder.internalBuildComponent(pagination);
         };
         return this;
     }
@@ -70,15 +72,15 @@ public final class PaginationBuilder<CONTEXT, ITEM_BUILDER, V>
      * @return This pagination state builder.
      */
     @SuppressWarnings("unchecked")
-    public PaginationBuilder<CONTEXT, ITEM_BUILDER, V> elementFactory(
-            @NotNull PaginationValueConsumer<CONTEXT, ITEM_BUILDER, V> elementConsumer) {
+    public PaginationBuilder<CONTEXT, BUILDER, V> elementFactory(
+            @NotNull PaginationValueConsumer<CONTEXT, BUILDER, V> elementConsumer) {
         this.elementFactory = (pagination, index, slot, value) -> {
             final CONTEXT context = (CONTEXT) pagination.getContext();
-            final ComponentBuilder builder = PlatformUtils.getFactory().createDefaultComponentBuilder(pagination);
+            final BUILDER builder = (BUILDER) PlatformUtils.getFactory().createDefaultComponentBuilder(pagination);
 
-            elementConsumer.accept(context, (ITEM_BUILDER) builder, index, value);
+            elementConsumer.accept(context, builder, index, value);
 
-            return builder.buildComponent(pagination);
+            return builder.internalBuildComponent(pagination);
         };
         return this;
     }
@@ -89,7 +91,7 @@ public final class PaginationBuilder<CONTEXT, ITEM_BUILDER, V>
      */
     @SuppressWarnings("rawtypes")
     @ApiStatus.Experimental
-    public PaginationBuilder<CONTEXT, ITEM_BUILDER, V> componentFactory(
+    public PaginationBuilder<CONTEXT, BUILDER, V> componentFactory(
             PaginationValueComponentFactory<CONTEXT, V> factory) {
         this.elementFactory = (pagination, index, slot, value) -> {
             @SuppressWarnings("unchecked")
@@ -97,7 +99,7 @@ public final class PaginationBuilder<CONTEXT, ITEM_BUILDER, V>
                     (PlatformComponentBuilder) factory.accept((CONTEXT) pagination.getContext(), index, value);
             builder.withSlot(slot);
             builder.withSelfManaged(PaginationBuilder.this.isSelfManaged());
-            return builder.buildComponent(pagination);
+            return builder.internalBuildComponent(pagination);
         };
         return this;
     }
@@ -114,7 +116,7 @@ public final class PaginationBuilder<CONTEXT, ITEM_BUILDER, V>
      * @param layoutTarget The target layout character.
      * @return This pagination state builder.
      */
-    public PaginationBuilder<CONTEXT, ITEM_BUILDER, V> layoutTarget(char layoutTarget) {
+    public PaginationBuilder<CONTEXT, BUILDER, V> layoutTarget(char layoutTarget) {
         this.layoutTarget = layoutTarget;
         return this;
     }
@@ -128,7 +130,7 @@ public final class PaginationBuilder<CONTEXT, ITEM_BUILDER, V>
      * @param pageSwitchHandler The page switch handler.
      * @return This pagination state builder.
      */
-    public PaginationBuilder<CONTEXT, ITEM_BUILDER, V> onPageSwitch(
+    public PaginationBuilder<CONTEXT, BUILDER, V> onPageSwitch(
             @NotNull BiConsumer<CONTEXT, Pagination> pageSwitchHandler) {
         this.pageSwitchHandler = pageSwitchHandler;
         return this;
@@ -145,7 +147,7 @@ public final class PaginationBuilder<CONTEXT, ITEM_BUILDER, V>
 
     @Override
     public Component buildComponent(VirtualView root) {
-        throw new UnsupportedOperationException("PaginationBuilder component cannot be built");
+        throw new UnsupportedOperationException("PaginationBuilder component cannot be build directory");
     }
 
     /**
@@ -154,20 +156,14 @@ public final class PaginationBuilder<CONTEXT, ITEM_BUILDER, V>
      */
     @ApiStatus.Internal
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public Pagination buildComponent0(long stateId, VirtualView root) {
+    public Pagination buildComponent0(long stateId) {
         return new PaginationImpl(
-                root,
-                Long.toString(stateId),
-                getReference(),
-                getWatchingStates(),
-                getDisplayCondition(),
                 stateId,
                 layoutTarget,
                 sourceProvider,
                 (PaginationElementFactory) elementFactory,
                 (BiConsumer) pageSwitchHandler,
                 async,
-                computed,
-                isSelfManaged());
+                computed);
     }
 }

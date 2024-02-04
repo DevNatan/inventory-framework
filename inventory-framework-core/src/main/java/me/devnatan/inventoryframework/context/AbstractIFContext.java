@@ -1,7 +1,6 @@
 package me.devnatan.inventoryframework.context;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -16,7 +15,6 @@ import me.devnatan.inventoryframework.pipeline.Pipeline;
 import me.devnatan.inventoryframework.pipeline.PipelinePhase;
 import me.devnatan.inventoryframework.state.DefaultStateValueHost;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.UnmodifiableView;
 
 abstract class AbstractIFContext extends DefaultStateValueHost implements IFContext {
 
@@ -79,20 +77,15 @@ abstract class AbstractIFContext extends DefaultStateValueHost implements IFCont
 
     // region Components API
     @Override
-    public final @UnmodifiableView @NotNull List<Component> getComponents() {
-        return Collections.unmodifiableList(getInternalComponents());
-    }
-
-    @Override
-    public final List<Component> getInternalComponents() {
+    public final List<Component> getComponents() {
         return components;
     }
 
     @Override
     public final List<Component> getComponentsAt(int position) {
         final List<Component> componentList = new ArrayList<>();
-        synchronized (getInternalComponents()) {
-            for (final Component component : getInternalComponents()) {
+        synchronized (this.getComponents()) {
+            for (final Component component : this.getComponents()) {
                 if (component.isContainedWithin(position)) {
                     componentList.add(component);
                 }

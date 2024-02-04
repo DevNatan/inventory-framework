@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
+import lombok.experimental.Delegate;
 import me.devnatan.inventoryframework.IFDebug;
 import me.devnatan.inventoryframework.PlatformView;
 import me.devnatan.inventoryframework.RootView;
@@ -17,7 +17,6 @@ import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.ComponentBuilder;
 import me.devnatan.inventoryframework.component.ComponentContainer;
-import me.devnatan.inventoryframework.component.ItemComponentBuilder;
 import me.devnatan.inventoryframework.component.PlatformComponentBuilder;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
@@ -27,9 +26,9 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("rawtypes")
-public abstract class PlatformRenderContext<CONTEXT, ITEM_BUILDER extends ItemComponentBuilder, ITEM>
+public abstract class PlatformRenderContext<CONTEXT, BUILDER extends PlatformComponentBuilder<BUILDER, CONTEXT>>
         extends PlatformConfinedContext
-        implements IFRenderContext, PublicSlotComponentRenderer<CONTEXT, ITEM_BUILDER, ITEM>, Pipelined {
+        implements IFRenderContext, PublicSlotComponentRenderer<CONTEXT, BUILDER>, Pipelined {
 
     private final UUID id;
     protected final PlatformView root;
@@ -46,8 +45,10 @@ public abstract class PlatformRenderContext<CONTEXT, ITEM_BUILDER extends ItemCo
     private final List<ComponentBuilder> componentBuilders = new ArrayList<>();
     private final List<LayoutSlot> layoutSlots = new ArrayList<>();
     private final List<BiFunction<Integer, Integer, ComponentBuilder>> availableSlotFactories = new ArrayList<>();
-    private final PublicSlotComponentRenderer<CONTEXT, ITEM_BUILDER, ITEM> publicSlotComponentRenderer =
-            new DefaultPublicSlotComponentRenderer<>(this, this, this::createItemBuilder);
+
+    @Delegate
+    private final PublicSlotComponentRenderer<CONTEXT, BUILDER> publicSlotComponentRenderer =
+            new DefaultPublicSlotComponentRenderer<>(this, this, this::createComponentBuilder);
 
     PlatformRenderContext(
             @NotNull UUID id,
@@ -218,7 +219,7 @@ public abstract class PlatformRenderContext<CONTEXT, ITEM_BUILDER extends ItemCo
      * this library. No compatibility guarantees are provided. </i></b>
      */
     @ApiStatus.Internal
-    abstract ITEM_BUILDER createItemBuilder();
+    abstract BUILDER createComponentBuilder();
 
     /**
      * Creates a IFComponentRenderContext for the current platform.
@@ -255,15 +256,15 @@ public abstract class PlatformRenderContext<CONTEXT, ITEM_BUILDER extends ItemCo
     // region Components API
     @Override
     public final void addComponent(@NotNull Component component) {
-        synchronized (getInternalComponents()) {
-            getInternalComponents().add(0, component);
+        synchronized (getComponents()) {
+            this.getComponents().add(0, component);
         }
     }
 
     @Override
     public final void removeComponent(@NotNull Component component) {
-        synchronized (getInternalComponents()) {
-            getInternalComponents().remove(component);
+        synchronized (this.getComponents()) {
+            this.getComponents().remove(component);
         }
     }
 
@@ -279,14 +280,14 @@ public abstract class PlatformRenderContext<CONTEXT, ITEM_BUILDER extends ItemCo
         final IFSlotClickContext clickContext = root.getElementFactory()
                 .createSlotClickContext(clickedSlot, viewer, clickedContainer, component, platformEvent, combined);
 
-        getPipeline().execute(PipelinePhase.Component.COMPONENT_CLICK, clickContext);
+        getPipeline().execute(PipelinePhase.ComponentPhase.COMPONENT_CLICK, clickContext);
     }
 
     @Override
     public final void updateComponent(Component component, boolean force, UpdateReason reason) {
         getPipeline()
                 .execute(
-                        PipelinePhase.Component.COMPONENT_UPDATE,
+                        PipelinePhase.ComponentPhase.COMPONENT_UPDATE,
                         createComponentUpdateContext(component, force, reason));
     }
 
@@ -309,137 +310,17 @@ public abstract class PlatformRenderContext<CONTEXT, ITEM_BUILDER extends ItemCo
             }
 
             final IFComponentClearContext clearContext = createComponentClearContext(component);
-            getPipeline().execute(PipelinePhase.Component.COMPONENT_CLEAR, clearContext);
+            getPipeline().execute(PipelinePhase.ComponentPhase.COMPONENT_CLEAR, clearContext);
             return;
         }
 
-        getPipeline().execute(PipelinePhase.Component.COMPONENT_RENDER, createComponentRenderContext(component, false));
+        getPipeline()
+                .execute(PipelinePhase.ComponentPhase.COMPONENT_RENDER, createComponentRenderContext(component, false));
     }
 
     @Override
     public final void clearComponent(@NotNull Component component) {
-        getPipeline().execute(PipelinePhase.Component.COMPONENT_CLEAR, createComponentClearContext(component));
+        getPipeline().execute(PipelinePhase.ComponentPhase.COMPONENT_CLEAR, createComponentClearContext(component));
     }
     // endregion
-
-    @Override
-    public final ITEM_BUILDER unsetSlot() {
-        return publicSlotComponentRenderer.unsetSlot();
-    }
-
-    @Override
-    public final ITEM_BUILDER slot(int slot) {
-        return publicSlotComponentRenderer.slot(slot);
-    }
-
-    @Override
-    public final ITEM_BUILDER slot(int slot, ITEM item) {
-        return publicSlotComponentRenderer.slot(slot, item);
-    }
-
-    @Override
-    public final ITEM_BUILDER slot(int row, int column) {
-        return publicSlotComponentRenderer.slot(row, column);
-    }
-
-    @Override
-    public final ITEM_BUILDER slot(int row, int column, ITEM item) {
-        return publicSlotComponentRenderer.slot(row, column, item);
-    }
-
-    @Override
-    public final <T extends PlatformComponentBuilder<T, CONTEXT>> void slotComponent(int slot, T componentBuilder) {
-        publicSlotComponentRenderer.slotComponent(slot, componentBuilder);
-    }
-
-    @Override
-    public final <T extends PlatformComponentBuilder<T, CONTEXT>> void slotComponent(
-            int row, int column, T componentBuilder) {
-        publicSlotComponentRenderer.slotComponent(row, column, componentBuilder);
-    }
-
-    @Override
-    public final ITEM_BUILDER firstSlot() {
-        return publicSlotComponentRenderer.firstSlot();
-    }
-
-    @Override
-    public final ITEM_BUILDER firstSlot(ITEM item) {
-        return publicSlotComponentRenderer.firstSlot(item);
-    }
-
-    @Override
-    public final <T extends PlatformComponentBuilder<T, CONTEXT>> void firstSlotComponent(T componentBuilder) {
-        publicSlotComponentRenderer.firstSlotComponent(componentBuilder);
-    }
-
-    @Override
-    public final ITEM_BUILDER lastSlot() {
-        return publicSlotComponentRenderer.lastSlot();
-    }
-
-    @Override
-    public final ITEM_BUILDER lastSlot(ITEM item) {
-        return publicSlotComponentRenderer.lastSlot(item);
-    }
-
-    @Override
-    public final <T extends PlatformComponentBuilder<T, CONTEXT>> void lastSlotComponent(T componentBuilder) {
-        publicSlotComponentRenderer.lastSlotComponent(componentBuilder);
-    }
-
-    @Override
-    public final ITEM_BUILDER availableSlot() {
-        return publicSlotComponentRenderer.availableSlot();
-    }
-
-    @Override
-    public final <T extends PlatformComponentBuilder<T, CONTEXT>> void availableSlotComponent(T componentBuilder) {
-        publicSlotComponentRenderer.availableSlotComponent(componentBuilder);
-    }
-
-    @Override
-    public final ITEM_BUILDER availableSlot(ITEM item) {
-        return publicSlotComponentRenderer.availableSlot();
-    }
-
-    @Override
-    public final void availableSlot(@NotNull BiConsumer<Integer, ITEM_BUILDER> factory) {
-        publicSlotComponentRenderer.availableSlot(factory);
-    }
-
-    @Override
-    public final ITEM_BUILDER layoutSlot(char character) {
-        return publicSlotComponentRenderer.layoutSlot(character);
-    }
-
-    @Override
-    public final ITEM_BUILDER layoutSlot(char character, ITEM item) {
-        return publicSlotComponentRenderer.layoutSlot(character, item);
-    }
-
-    @Override
-    public final void layoutSlot(char character, BiConsumer<Integer, ITEM_BUILDER> factory) {
-        publicSlotComponentRenderer.layoutSlot(character, factory);
-    }
-
-    @Override
-    public final <T extends PlatformComponentBuilder<T, CONTEXT>> void layoutSlot(char character, T componentBuilder) {
-        publicSlotComponentRenderer.layoutSlot(character, componentBuilder);
-    }
-
-    @Override
-    public final ITEM_BUILDER resultSlot() {
-        return publicSlotComponentRenderer.resultSlot();
-    }
-
-    @Override
-    public final ITEM_BUILDER resultSlot(ITEM item) {
-        return publicSlotComponentRenderer.resultSlot(item);
-    }
-
-    @Override
-    public final <T extends PlatformComponentBuilder<T, CONTEXT>> void unsetSlotComponent(T componentBuilder) {
-        publicSlotComponentRenderer.unsetSlotComponent(componentBuilder);
-    }
 }

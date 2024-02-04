@@ -4,7 +4,7 @@ import java.util.function.IntFunction;
 import me.devnatan.inventoryframework.InventoryFrameworkException;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.ComponentBuilder;
-import me.devnatan.inventoryframework.component.ItemComponentBuilder;
+import me.devnatan.inventoryframework.component.PlatformComponentBuilder;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
 import me.devnatan.inventoryframework.pipeline.PipelineContext;
 import me.devnatan.inventoryframework.pipeline.PipelineInterceptor;
@@ -30,14 +30,12 @@ final class LayoutRenderInterceptor implements PipelineInterceptor<IFContext> {
             for (final int slot : layoutSlot.getPositions()) {
                 final Component component;
                 if (builderFactory != null) {
-                    final ComponentBuilder factory = builderFactory.apply(index);
-                    if (factory instanceof ItemComponentBuilder)
-                        ((ItemComponentBuilder) componentFactory).setPosition(slot);
+                    final PlatformComponentBuilder<?, ?> builder =
+                            (PlatformComponentBuilder<?, ?>) builderFactory.apply(index);
+                    builder.withSlot(slot);
 
-                    component = factory.buildComponent(renderContext);
-                } else {
-                    component = componentFactory.apply(index);
-                }
+                    component = builder.internalBuildComponent(renderContext);
+                } else component = componentFactory.apply(index);
 
                 renderContext.addComponent(component);
                 index++;

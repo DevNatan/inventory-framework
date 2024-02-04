@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import me.devnatan.inventoryframework.component.ComponentBuilder;
-import me.devnatan.inventoryframework.component.ItemComponentBuilder;
+import me.devnatan.inventoryframework.component.PlatformComponentBuilder;
 import me.devnatan.inventoryframework.exception.SlotFillExceededException;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
 import me.devnatan.inventoryframework.pipeline.PipelineContext;
@@ -26,7 +26,8 @@ final class AvailableSlotResolutionInterceptor implements PipelineInterceptor<IF
                 ? resolveFromInitialSlot(context)
                 : resolveFromLayoutSlot(context);
 
-        slotComponents.forEach(componentFactory -> context.addComponent(componentFactory.buildComponent(context)));
+        slotComponents.forEach(componentFactory -> context.addComponent(
+                ((PlatformComponentBuilder<?, ?>) componentFactory).internalBuildComponent(context)));
     }
 
     /**
@@ -124,8 +125,8 @@ final class AvailableSlotResolutionInterceptor implements PipelineInterceptor<IF
         // TODO Find a better way to check this "noneMatch" to remove isContainedWithin from builder
         //      since slot can be re-defined on render and this interceptor runs before it
         return context.getNotRenderedComponents().stream()
-                .filter(componentFactory -> componentFactory instanceof ItemComponentBuilder)
-                .map(componentFactory -> (ItemComponentBuilder) componentFactory)
+                .filter(componentFactory -> componentFactory instanceof PlatformComponentBuilder)
+                .map(componentFactory -> (PlatformComponentBuilder<?, ?>) componentFactory)
                 .anyMatch(itemBuilder -> itemBuilder.isContainedWithin(slot));
     }
 }

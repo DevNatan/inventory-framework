@@ -1,6 +1,6 @@
 package me.devnatan.inventoryframework.component;
 
-import static me.devnatan.inventoryframework.pipeline.PipelinePhase.Component.COMPONENT_CLICK;
+import static me.devnatan.inventoryframework.pipeline.PipelinePhase.ComponentPhase.COMPONENT_CLICK;
 
 import java.util.function.Consumer;
 import lombok.experimental.Accessors;
@@ -14,8 +14,11 @@ import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
+import me.devnatan.inventoryframework.pipeline.Pipelined;
+import me.devnatan.inventoryframework.state.DefaultStateValueHost;
+import me.devnatan.inventoryframework.state.PlatformStateAccessImpl;
 import me.devnatan.inventoryframework.state.StateAccess;
-import me.devnatan.inventoryframework.state.StateAccessImpl;
+import me.devnatan.inventoryframework.state.StateValueHost;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,12 +29,16 @@ import org.jetbrains.annotations.NotNull;
  * @param <B> The type of the builder for creating components.
  */
 @Accessors(makeFinal = true)
-public abstract class PlatformComponent<C extends IFContext, B> extends AbstractComponent implements StateAccess<C, B> {
+public abstract class PlatformComponent<C extends IFContext, B extends PlatformComponentBuilder<B, C>>
+        extends AbstractComponent implements StateAccess<C>, StateValueHost {
 
     @Delegate
-    private final StateAccess<C, B> stateAccess;
+    private PlatformStateAccessImpl<C, B> stateAccess;
 
-    private int position = -1;
+    @Delegate(excludes = Pipelined.class)
+    private StateValueHost stateValueHost;
+
+    private int position;
     private C context;
     private boolean cancelOnClick;
     private boolean closeOnClick;
@@ -41,14 +48,20 @@ public abstract class PlatformComponent<C extends IFContext, B> extends Abstract
     private Consumer<? super IFSlotClickContext> clickHandler;
 
     PlatformComponent() {
-        super();
+        this(-1);
         @SuppressWarnings("rawtypes")
         final PlatformView root = (PlatformView) getRootAsContext().getRoot();
-        stateAccess = new StateAccessImpl<>(this, root.getStateRegistry());
+        stateAccess = new PlatformStateAccessImpl<>(this, root.getStateRegistry());
+        stateValueHost = new DefaultStateValueHost();
 
         final Pipeline<IFComponentContext> pipeline = getPipeline();
         pipeline.intercept(COMPONENT_CLICK, new ComponentCancelOnClickInterceptor());
         pipeline.intercept(COMPONENT_CLICK, new ComponentCloseOnClickInterceptor());
+    }
+
+    PlatformComponent(int position) {
+        super();
+        this.position = position;
     }
 
     @Override

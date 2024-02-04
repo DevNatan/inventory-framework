@@ -9,22 +9,17 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
-import me.devnatan.inventoryframework.Ref;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.*;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
-import me.devnatan.inventoryframework.state.State;
 import me.devnatan.inventoryframework.state.StateValue;
 import me.devnatan.inventoryframework.state.StateValueHost;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.UnmodifiableView;
 import org.jetbrains.annotations.VisibleForTesting;
 
 // TODO add "key" to child pagination components and check if it needs to be updated based on it
@@ -66,20 +61,13 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
     private List<?> currSource;
 
     public PaginationImpl(
-            VirtualView root,
-            String key,
-            Ref<Component> reference,
-            Set<State<?>> watchingStates,
-            Predicate<? extends IFContext> displayCondition,
             long internalStateId,
             char layoutTarget,
             Object sourceProvider,
             PaginationElementFactory<Object> elementFactory,
             BiConsumer<VirtualView, Pagination> pageSwitchHandler,
             boolean isAsync,
-            boolean isComputed,
-            boolean isSelfManaged) {
-        super(root, key, reference, watchingStates, displayCondition, isSelfManaged);
+            boolean isComputed) {
         this.internalStateId = internalStateId;
         this.layoutTarget = layoutTarget;
         this.sourceProvider = sourceProvider;
@@ -258,7 +246,7 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
     }
 
     void renderChild(IFRenderContext context) {
-        getInternalComponents().forEach(context::renderComponent);
+        this.getComponents().forEach(context::renderComponent);
     }
 
     /**
@@ -308,7 +296,7 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
         for (int i = container.getFirstSlot(); i < lastSlot; i++) {
             final Object value = pageContents.get(i);
             final Component component = elementFactory.create(this, i, i, value);
-            getInternalComponents().add(component);
+            this.getComponents().add(component);
         }
     }
 
@@ -339,7 +327,7 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
                         position,
                         iterationIndex,
                         component.getClass().getSimpleName());
-                getInternalComponents().add(component);
+                this.getComponents().add(component);
             } catch (final Exception exception) {
                 debug(() -> "  @ failed to add %d (index %d) = %s", position, iterationIndex, exception.getMessage());
                 exception.printStackTrace();
@@ -371,7 +359,7 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
     }
     // endregion
 
-    // region State Management
+    // region StatePhase Management
     @Override
     public long internalId() {
         return internalStateId;
@@ -394,18 +382,13 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
      * for changes in {@link #isLoading()} and current page states.
      */
     void simulateStateUpdate() {
-        debug("[Pagination] State update simulation triggered on %d", internalId());
+        debug("[Pagination] StatePhase update simulation triggered on %d", internalId());
         ((StateValueHost) getRoot()).updateState(internalId(), this);
     }
     // endregion
 
     @Override
-    public @UnmodifiableView List<Component> getComponents() {
-        return Collections.unmodifiableList(getInternalComponents());
-    }
-
-    @Override
-    public List<Component> getInternalComponents() {
+    public List<Component> getComponents() {
         return components;
     }
 
@@ -539,7 +522,7 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
     @Override
     public void setVisible(boolean visible) {
         super.setVisible(visible);
-        getInternalComponents().forEach(component -> component.setVisible(isVisible()));
+        this.getComponents().forEach(component -> component.setVisible(isVisible()));
     }
 
     boolean render(IFComponentRenderContext context) {
@@ -576,7 +559,7 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
 
         if (!isVisible()) return false;
 
-        getInternalComponents()
+        this.getComponents()
                 .forEach(child -> root.updateComponent(child, context.isForceUpdate(), context.getUpdateReason()));
         return true;
     }
@@ -588,7 +571,7 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
             return false;
         }
 
-        for (final Component child : getInternalComponents()) {
+        for (final Component child : this.getComponents()) {
             if (!child.isContainedWithin(context.getClickedSlot())) continue;
 
             // Hidden components that are not self-managed e.g.: managed by user-provided handle
@@ -615,11 +598,11 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
         debug("[Pagination] #clear(IFRenderContext) called (pageWasChanged = %b)", pageWasChanged);
         final IFRenderContext root = context.getParent();
         if (!pageWasChanged) {
-            getInternalComponents().forEach(root::clearComponent);
+            this.getComponents().forEach(root::clearComponent);
             return false;
         }
 
-        final Iterator<Component> childIterator = getInternalComponents().iterator();
+        final Iterator<Component> childIterator = this.getComponents().iterator();
         while (childIterator.hasNext()) {
             Component child = childIterator.next();
             root.clearComponent(child);
@@ -638,7 +621,7 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
             return false;
         }
 
-        for (final Component component : getInternalComponents()) {
+        for (final Component component : this.getComponents()) {
             if (component.isContainedWithin(position)) return true;
         }
 
@@ -647,7 +630,7 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
 
     @Override
     public boolean intersects(@NotNull Component other) {
-        for (final Component component : getInternalComponents()) if (component.intersects(other)) return true;
+        for (final Component component : this.getComponents()) if (component.intersects(other)) return true;
         return false;
     }
 

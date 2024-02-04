@@ -23,7 +23,7 @@ public final class StateRegistry implements Iterable<State<?>> {
      * Returns a state from the states map that have the specified id.
      *
      * @param id The id of the state.
-     * @return A State of the specified id.
+     * @return A StatePhase of the specified id.
      */
     public State<?> getState(long id) {
         return stateMap.get(id);
@@ -38,7 +38,7 @@ public final class StateRegistry implements Iterable<State<?>> {
         synchronized (stateMap) {
             stateMap.put(state.internalId(), state);
             IFDebug.debug(
-                    "State %s (id: %d) registered in %s",
+                    "StatePhase %s (id: %d) registered in %s",
                     state.getClass().getName(),
                     state.internalId(),
                     caller.getClass().getName());
@@ -54,7 +54,7 @@ public final class StateRegistry implements Iterable<State<?>> {
         synchronized (stateMap) {
             final State<?> state = stateMap.remove(stateId);
             IFDebug.debug(
-                    "State %s unregistered from %s",
+                    "StatePhase %s unregistered from %s",
                     state.internalId(), caller.getClass().getName());
         }
     }

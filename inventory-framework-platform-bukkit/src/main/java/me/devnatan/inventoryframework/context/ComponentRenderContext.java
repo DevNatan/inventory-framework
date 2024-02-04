@@ -3,8 +3,7 @@ package me.devnatan.inventoryframework.context;
 import me.devnatan.inventoryframework.BukkitViewer;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
-import me.devnatan.inventoryframework.component.BukkitComponent;
-import me.devnatan.inventoryframework.component.Component;
+import me.devnatan.inventoryframework.component.AbstractBukkitComponent;
 import me.devnatan.inventoryframework.utils.SlotConverter;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -16,7 +15,7 @@ public final class ComponentRenderContext extends ComponentContext implements IF
     private ItemStack item;
     private int slot;
 
-    public ComponentRenderContext(RenderContext parent, BukkitComponent component, Viewer viewer) {
+    public ComponentRenderContext(RenderContext parent, AbstractBukkitComponent component, Viewer viewer) {
         super(parent, component);
         this.viewer = viewer;
         this.player = viewer == null ? null : ((BukkitViewer) viewer).getPlayer();

@@ -12,17 +12,15 @@ import me.devnatan.inventoryframework.View;
 import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
-import me.devnatan.inventoryframework.component.BukkitComponent;
-import me.devnatan.inventoryframework.component.BukkitDefaultComponentBuilder;
+import me.devnatan.inventoryframework.component.AbstractBukkitComponent;
+import me.devnatan.inventoryframework.component.BukkitComponentBuilder;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.pipeline.PipelinePhase;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
-public final class RenderContext extends PlatformRenderContext<Context, BukkitDefaultComponentBuilder, ItemStack>
-        implements Context {
+public final class RenderContext extends PlatformRenderContext<Context, BukkitComponentBuilder> implements Context {
 
     private final Player player;
 
@@ -75,14 +73,14 @@ public final class RenderContext extends PlatformRenderContext<Context, BukkitDe
     }
 
     @Override
-    protected BukkitDefaultComponentBuilder createItemBuilder() {
-        return new BukkitDefaultComponentBuilder();
+    protected BukkitComponentBuilder createComponentBuilder() {
+        return new BukkitComponentBuilder();
     }
 
     // region Platform Contexts Factory
     @Override
     IFComponentRenderContext createComponentRenderContext(Component component, boolean force) {
-        return new ComponentRenderContext(this, (BukkitComponent) component, getViewer());
+        return new ComponentRenderContext(this, (AbstractBukkitComponent<?>) component, getViewer());
     }
 
     @Override

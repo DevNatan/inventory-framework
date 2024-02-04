@@ -16,7 +16,7 @@ public abstract class AbstractComponentBuilder implements ComponentBuilder {
     private Map<String, Object> data;
     private boolean cancelOnClick, closeOnClick, updateOnClick;
     private Set<State<?>> watchingStates = new HashSet<>();
-    private boolean isSelfManaged;
+    private boolean selfManaged;
     private Predicate<? extends IFContext> displayCondition;
     private String key;
 
@@ -76,7 +76,7 @@ public abstract class AbstractComponentBuilder implements ComponentBuilder {
      */
     @ApiStatus.Internal
     protected final boolean isSelfManaged() {
-        return isSelfManaged;
+        return selfManaged;
     }
 
     /**
@@ -85,7 +85,7 @@ public abstract class AbstractComponentBuilder implements ComponentBuilder {
      */
     @ApiStatus.Internal
     protected final void setSelfManaged(boolean selfManaged) {
-        isSelfManaged = selfManaged;
+        this.selfManaged = selfManaged;
     }
 
     protected final Predicate<? extends IFContext> getDisplayCondition() {
@@ -104,6 +104,31 @@ public abstract class AbstractComponentBuilder implements ComponentBuilder {
         this.key = key;
     }
 
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
+    public void prepareComponent(VirtualView root, AbstractComponent component) {
+        component.setRoot(root);
+        component.setKey(key);
+        component.setReference(reference);
+        component.setWatchingStates(watchingStates);
+        component.setDisplayCondition(displayCondition);
+        component.setSelfManaged(selfManaged);
+    }
+
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
+    public final Component internalBuildComponent(VirtualView root) {
+        final Component component = buildComponent(root);
+        prepareComponent(root, (AbstractComponent) component);
+        return component;
+    }
+
     @Override
     @ApiStatus.OverrideOnly
     public abstract Component buildComponent(VirtualView root);
@@ -117,7 +142,7 @@ public abstract class AbstractComponentBuilder implements ComponentBuilder {
                 + closeOnClick + ", updateOnClick="
                 + updateOnClick + ", watchingStates="
                 + watchingStates + ", isSelfManaged="
-                + isSelfManaged + ", displayCondition="
+                + selfManaged + ", displayCondition="
                 + displayCondition + ", key='"
                 + key + '\'' + '}';
     }

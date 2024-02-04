@@ -49,8 +49,8 @@ public class SlotClickContext extends SlotContext implements IFSlotClickContext 
     /**
      * The event that triggered this context.
      * <p>
-     * This is an internal inventory-framework API that should not be used from outside of
-     * this library. No compatibility guarantees are provided.
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
      */
     @NotNull
     @ApiStatus.Internal

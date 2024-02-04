@@ -117,7 +117,7 @@ public abstract class PlatformContext extends AbstractIFContext implements Compo
     // region Internal Components Rendering
     final Optional<Component> getOverlappingComponentToRender(ComponentContainer container, Component subject) {
         // TODO Support recursive overlapping (more than two components overlapping each other)
-        for (final Component child : container.getInternalComponents()) {
+        for (final Component child : container.getComponents()) {
             if (!child.isVisible()) continue;
             if (child instanceof ComponentComposition) {
                 // This prevents from child being compared with its own root that would cause an
@@ -131,10 +131,10 @@ public abstract class PlatformContext extends AbstractIFContext implements Compo
                 // We skip ComponentComposition here because is expected to ComponentComposition,
                 // on its render handler use #renderComponent to render its children so each
                 // child will have its own overlapping checks
-                for (final Component deepChild : ((ComponentComposition) child).getInternalComponents()) {
+                for (final Component deepChild : ((ComponentComposition) child).getComponents()) {
                     if (!deepChild.isVisible()) continue;
                     if (Objects.equals(deepChild.getKey(), subject.getKey())) continue;
-                    if (deepChild.getHandle().intersects(subject)) return Optional.of(deepChild);
+                    if (deepChild.intersects(subject)) return Optional.of(deepChild);
                 }
 
                 // Ignore ComponentComposition, we want to check intersections only with children
@@ -142,7 +142,7 @@ public abstract class PlatformContext extends AbstractIFContext implements Compo
             }
 
             if (Objects.equals(child.getKey(), subject.getKey())) continue;
-            if (!child.getHandle().intersects(subject)) continue;
+            if (!child.intersects(subject)) continue;
 
             return Optional.of(child);
         }

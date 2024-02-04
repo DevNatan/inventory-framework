@@ -8,7 +8,7 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import me.devnatan.inventoryframework.*;
-import me.devnatan.inventoryframework.component.BukkitDefaultComponentBuilder;
+import me.devnatan.inventoryframework.component.BukkitComponentBuilder;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.ComponentBuilder;
 import me.devnatan.inventoryframework.context.*;
@@ -112,7 +112,7 @@ public class BukkitElementFactory extends ElementFactory {
 
     @Override
     public ComponentBuilder createDefaultComponentBuilder(@NotNull VirtualView root) {
-        return new BukkitDefaultComponentBuilder();
+        return new BukkitComponentBuilder();
     }
 
     @Override
