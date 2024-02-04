@@ -3,6 +3,7 @@ package me.devnatan.inventoryframework.context;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import lombok.ToString;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.View;
 import me.devnatan.inventoryframework.ViewConfig;
@@ -14,12 +15,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+@ToString(onlyExplicitlyIncluded = true)
 public abstract class SlotContext extends PlatformContext implements IFSlotContext, Context {
 
     // --- Inherited ---
     private final IFRenderContext parent;
 
     // --- Properties ---
+    @ToString.Include
     private int slot;
 
     protected SlotContext(int slot, @NotNull IFRenderContext parent) {

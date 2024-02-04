@@ -31,7 +31,7 @@ public final class DefaultPublicSlotComponentRenderer<
     private PlatformComponentBuilder<?, ?> createRegisteredBuilder() {
         final BUILDER builder = builderFactory.get();
         renderContext.getNotRenderedComponents().add(builder);
-        return (PlatformComponentBuilder<?, ?>) builder;
+        return builder;
     }
 
     /**

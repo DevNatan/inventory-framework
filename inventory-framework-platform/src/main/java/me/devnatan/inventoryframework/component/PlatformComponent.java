@@ -3,6 +3,7 @@ package me.devnatan.inventoryframework.component;
 import static me.devnatan.inventoryframework.pipeline.PipelinePhase.ComponentPhase.COMPONENT_CLICK;
 
 import java.util.function.Consumer;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.experimental.Delegate;
 import me.devnatan.inventoryframework.PlatformView;
@@ -16,6 +17,7 @@ import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
 import me.devnatan.inventoryframework.pipeline.Pipelined;
 import me.devnatan.inventoryframework.state.DefaultStateValueHost;
+import me.devnatan.inventoryframework.state.DelegatingStateRegistry;
 import me.devnatan.inventoryframework.state.PlatformStateAccessImpl;
 import me.devnatan.inventoryframework.state.StateAccess;
 import me.devnatan.inventoryframework.state.StateValueHost;
@@ -29,17 +31,23 @@ import org.jetbrains.annotations.NotNull;
  * @param <B> The type of the builder for creating components.
  */
 @Accessors(makeFinal = true)
+@ToString
 public abstract class PlatformComponent<C extends IFContext, B extends PlatformComponentBuilder<B, C>>
         extends AbstractComponent implements StateAccess<C>, StateValueHost {
 
     @Delegate
+    @ToString.Exclude
     private PlatformStateAccessImpl<C, B> stateAccess;
 
     @Delegate(excludes = Pipelined.class)
+    @ToString.Exclude
     private StateValueHost stateValueHost;
 
     private int position;
+
+    @ToString.Exclude
     private C context;
+
     private boolean cancelOnClick;
     private boolean closeOnClick;
     private boolean updateOnClick;
@@ -47,11 +55,12 @@ public abstract class PlatformComponent<C extends IFContext, B extends PlatformC
     private Consumer<? super IFComponentUpdateContext> updateHandler;
     private Consumer<? super IFSlotClickContext> clickHandler;
 
+    @SuppressWarnings("rawtypes")
     PlatformComponent() {
         this(-1);
-        @SuppressWarnings("rawtypes")
-        final PlatformView root = (PlatformView) getRootAsContext().getRoot();
-        stateAccess = new PlatformStateAccessImpl<>(this, root.getStateRegistry());
+        stateAccess = new PlatformStateAccessImpl<>(this, new DelegatingStateRegistry(() -> ((PlatformView)
+                        getRootAsContext().getRoot())
+                .getStateRegistry()));
         stateValueHost = new DefaultStateValueHost();
 
         final Pipeline<IFComponentContext> pipeline = getPipeline();
@@ -83,12 +92,12 @@ public abstract class PlatformComponent<C extends IFContext, B extends PlatformC
 
     @Override
     boolean clicked(IFSlotClickContext context) {
-        if (context.isCancelled()) return false;
         if (getClickHandler() != null) {
             getClickHandler().accept(context);
             if (context.isCancelled()) return false;
         }
 
+        if (context.isCancelled()) return false;
         if (isCloseOnClick()) {
             context.closeForPlayer();
             return true;
