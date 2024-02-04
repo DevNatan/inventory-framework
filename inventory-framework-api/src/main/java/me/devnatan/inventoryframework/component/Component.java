@@ -4,7 +4,9 @@ import java.util.Set;
 import me.devnatan.inventoryframework.Ref;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.VirtualView;
+import me.devnatan.inventoryframework.context.IFComponentContext;
 import me.devnatan.inventoryframework.context.IFContext;
+import me.devnatan.inventoryframework.pipeline.Pipeline;
 import me.devnatan.inventoryframework.pipeline.Pipelined;
 import me.devnatan.inventoryframework.state.State;
 import org.jetbrains.annotations.ApiStatus;
@@ -15,6 +17,8 @@ import org.jetbrains.annotations.UnmodifiableView;
  * A component represents one or {@link ComponentComposition more} items within a {@link VirtualView}.
  */
 public interface Component extends VirtualView, Pipelined {
+
+    Pipeline<IFComponentContext> getPipeline();
 
     /**
      * <b><i> This is an internal inventory-framework API that should not be used from outside of

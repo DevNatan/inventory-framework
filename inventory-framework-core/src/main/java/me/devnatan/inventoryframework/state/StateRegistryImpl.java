@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
  * this library. No compatibility guarantees are provided. </i></b>
  */
 @ApiStatus.Internal
-public final class StateRegistry implements Iterable<State<?>> {
+public final class StateRegistryImpl implements StateRegistry {
 
     private final Map<Long, State<?>> stateMap = new HashMap<>();
 

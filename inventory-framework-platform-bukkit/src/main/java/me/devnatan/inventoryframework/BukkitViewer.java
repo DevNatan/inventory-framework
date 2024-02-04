@@ -3,6 +3,7 @@ package me.devnatan.inventoryframework;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.Objects;
+import lombok.Getter;
 import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.state.DefaultStateValueHost;
 import org.bukkit.entity.Player;
@@ -10,7 +11,9 @@ import org.jetbrains.annotations.NotNull;
 
 public final class BukkitViewer extends DefaultStateValueHost implements Viewer {
 
+    @Getter
     private final Player player;
+
     private ViewContainer selfContainer;
     private IFRenderContext activeContext;
     private final Deque<IFRenderContext> previousContexts = new LinkedList<>();
@@ -20,10 +23,6 @@ public final class BukkitViewer extends DefaultStateValueHost implements Viewer 
     public BukkitViewer(@NotNull Player player, IFRenderContext activeContext) {
         this.player = player;
         this.activeContext = activeContext;
-    }
-
-    public Player getPlayer() {
-        return player;
     }
 
     @NotNull

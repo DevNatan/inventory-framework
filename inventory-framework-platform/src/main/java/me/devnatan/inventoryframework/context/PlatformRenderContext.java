@@ -67,7 +67,6 @@ public abstract class PlatformRenderContext<CONTEXT, BUILDER extends PlatformCom
         this.initialData = initialData;
 
         final Pipeline<IFContext> pipeline = getPipeline();
-        pipeline.intercept(PipelinePhase.Context.CONTEXT_OPEN, new ContextOpenInterceptor());
         pipeline.intercept(PipelinePhase.Context.CONTEXT_LAYOUT_RESOLUTION, new LayoutResolutionInterceptor());
         pipeline.intercept(PipelinePhase.Context.CONTEXT_RENDER, new ContextPlatformRenderHandlerCallInterceptor());
         pipeline.intercept(PipelinePhase.Context.CONTEXT_RENDER, new LayoutRenderInterceptor());
@@ -280,12 +279,13 @@ public abstract class PlatformRenderContext<CONTEXT, BUILDER extends PlatformCom
         final IFSlotClickContext clickContext = root.getElementFactory()
                 .createSlotClickContext(clickedSlot, viewer, clickedContainer, component, platformEvent, combined);
 
-        getPipeline().execute(PipelinePhase.ComponentPhase.COMPONENT_CLICK, clickContext);
+        component.getPipeline().execute(PipelinePhase.ComponentPhase.COMPONENT_CLICK, clickContext);
     }
 
     @Override
     public final void updateComponent(Component component, boolean force, UpdateReason reason) {
-        getPipeline()
+        component
+                .getPipeline()
                 .execute(
                         PipelinePhase.ComponentPhase.COMPONENT_UPDATE,
                         createComponentUpdateContext(component, force, reason));
@@ -310,17 +310,20 @@ public abstract class PlatformRenderContext<CONTEXT, BUILDER extends PlatformCom
             }
 
             final IFComponentClearContext clearContext = createComponentClearContext(component);
-            getPipeline().execute(PipelinePhase.ComponentPhase.COMPONENT_CLEAR, clearContext);
+            component.getPipeline().execute(PipelinePhase.ComponentPhase.COMPONENT_CLEAR, clearContext);
             return;
         }
 
-        getPipeline()
+        component
+                .getPipeline()
                 .execute(PipelinePhase.ComponentPhase.COMPONENT_RENDER, createComponentRenderContext(component, false));
     }
 
     @Override
     public final void clearComponent(@NotNull Component component) {
-        getPipeline().execute(PipelinePhase.ComponentPhase.COMPONENT_CLEAR, createComponentClearContext(component));
+        component
+                .getPipeline()
+                .execute(PipelinePhase.ComponentPhase.COMPONENT_CLEAR, createComponentClearContext(component));
     }
     // endregion
 }

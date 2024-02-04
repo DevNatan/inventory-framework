@@ -43,17 +43,17 @@ public interface PipelinePhase {
     enum Context implements PipelinePhase {
 
         /**
-         * Called when a context is rendered for the first time.
-         * At this phase the pipeline interceptor subject is a {@link IFRenderContext}.
-         */
-        CONTEXT_RENDER,
-
-        /**
          * Called when a context is about to open to a viewer.
          * This phase is called once in a Shared Context.
          * At this phase the pipeline interceptor subject is a {@link IFOpenContext}.
          */
         CONTEXT_OPEN,
+
+        /**
+         * Called when a context is rendered for the first time.
+         * At this phase the pipeline interceptor subject is a {@link IFRenderContext}.
+         */
+        CONTEXT_RENDER,
 
         /**
          * Called when a context is closed for a viewer.

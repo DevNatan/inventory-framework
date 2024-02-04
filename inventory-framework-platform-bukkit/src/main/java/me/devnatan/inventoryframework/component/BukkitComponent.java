@@ -32,9 +32,4 @@ public class BukkitComponent extends AbstractBukkitComponent<BukkitComponentBuil
 
     @Override
     protected void onClear(ComponentClearContext clear) {}
-
-    @Override
-    public BukkitComponentBuilder builder() {
-        return new BukkitComponentBuilder();
-    }
 }

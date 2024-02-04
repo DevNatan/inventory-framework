@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.UUID;
+import lombok.Getter;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.internal.ElementFactory;
 import me.devnatan.inventoryframework.internal.Job;
@@ -14,6 +15,7 @@ import me.devnatan.inventoryframework.pipeline.Pipeline;
 import me.devnatan.inventoryframework.pipeline.PipelineInterceptor;
 import me.devnatan.inventoryframework.pipeline.PipelinePhase;
 import me.devnatan.inventoryframework.state.StateRegistry;
+import me.devnatan.inventoryframework.state.StateRegistryImpl;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,7 +26,10 @@ public abstract class DefaultRootView implements RootView {
     private ViewConfig config;
     private final Pipeline<RootView> pipeline = new Pipeline<>(PipelinePhase.ViewPhase.values());
     private final Set<IFContext> contexts = newSetFromMap(synchronizedMap(new HashMap<>()));
-    private final StateRegistry stateRegistry = new StateRegistry();
+
+    @Getter
+    private final StateRegistry stateRegistry = new StateRegistryImpl();
+
     private Job scheduledUpdateJob;
 
     Pipeline<RootView> getPipeline() {
@@ -81,9 +86,5 @@ public abstract class DefaultRootView implements RootView {
     @Override
     public final void setScheduledUpdateJob(@NotNull Job job) {
         this.scheduledUpdateJob = job;
-    }
-
-    public StateRegistry getStateRegistry() {
-        return stateRegistry;
     }
 }

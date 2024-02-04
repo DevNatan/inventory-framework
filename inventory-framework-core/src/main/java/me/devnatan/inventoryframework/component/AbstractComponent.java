@@ -146,7 +146,8 @@ public abstract class AbstractComponent implements Component {
         setVisible(false);
     }
 
-    protected final Pipeline<IFComponentContext> getPipeline() {
+    @Override
+    public final Pipeline<IFComponentContext> getPipeline() {
         return pipeline;
     }
 

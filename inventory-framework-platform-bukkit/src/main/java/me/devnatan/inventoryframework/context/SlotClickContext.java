@@ -1,5 +1,6 @@
 package me.devnatan.inventoryframework.context;
 
+import lombok.ToString;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.component.Component;
@@ -13,13 +14,20 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+@ToString(onlyExplicitlyIncluded = true)
 public class SlotClickContext extends SlotContext implements IFSlotClickContext {
 
     private final Viewer whoClicked;
     private final ViewContainer clickedContainer;
-    private final Component clickedComponent;
     private final InventoryClickEvent clickOrigin;
+
+    @ToString.Include
     private final boolean combined;
+
+    @ToString.Include
+    private final Component clickedComponent;
+
+    @ToString.Include
     private boolean cancelled;
 
     @ApiStatus.Internal
