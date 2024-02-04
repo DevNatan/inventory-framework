@@ -8,15 +8,25 @@ import me.devnatan.inventoryframework.Ref;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.VirtualView;
+import me.devnatan.inventoryframework.context.IFComponentClearContext;
 import me.devnatan.inventoryframework.context.IFComponentContext;
+import me.devnatan.inventoryframework.context.IFComponentRenderContext;
+import me.devnatan.inventoryframework.context.IFComponentUpdateContext;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
+import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
 import me.devnatan.inventoryframework.pipeline.PipelineInterceptor;
 import me.devnatan.inventoryframework.pipeline.PipelinePhase;
 import me.devnatan.inventoryframework.state.State;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
+
+import static me.devnatan.inventoryframework.pipeline.PipelinePhase.Component.COMPONENT_CLEAR;
+import static me.devnatan.inventoryframework.pipeline.PipelinePhase.Component.COMPONENT_CLICK;
+import static me.devnatan.inventoryframework.pipeline.PipelinePhase.Component.COMPONENT_RENDER;
+import static me.devnatan.inventoryframework.pipeline.PipelinePhase.Component.COMPONENT_UPDATE;
 
 public abstract class AbstractComponent implements Component {
 
@@ -30,7 +40,13 @@ public abstract class AbstractComponent implements Component {
     private boolean selfManaged;
     private boolean visible = true;
 
-    protected AbstractComponent() {}
+    protected AbstractComponent() {
+		final Pipeline<IFComponentContext> pipeline = getPipeline();
+		pipeline.intercept(COMPONENT_RENDER, ($, ctx) -> render((IFComponentRenderContext) ctx));
+		pipeline.intercept(COMPONENT_UPDATE, ($, ctx) -> update((IFComponentUpdateContext) ctx));
+		pipeline.intercept(COMPONENT_CLICK, ($, ctx) -> clicked((IFSlotClickContext) ctx));
+		pipeline.intercept(COMPONENT_CLEAR, ($, ctx) -> clear((IFComponentClearContext) ctx));
+	}
 
     protected AbstractComponent(
             VirtualView root,
@@ -39,6 +55,7 @@ public abstract class AbstractComponent implements Component {
             Set<State<?>> watchingStates,
             Predicate<? extends IFContext> displayCondition,
             boolean selfManaged) {
+		this();
         this.root = root;
         this.key = key;
         this.reference = reference;
@@ -46,6 +63,14 @@ public abstract class AbstractComponent implements Component {
         this.displayCondition = displayCondition;
         this.selfManaged = selfManaged;
     }
+
+	abstract boolean render(IFComponentRenderContext context);
+
+	abstract boolean update(IFComponentUpdateContext context);
+
+	abstract boolean clear(IFComponentClearContext context);
+
+	abstract boolean clicked(IFSlotClickContext context);
 
     @Override
     public final String getKey() {

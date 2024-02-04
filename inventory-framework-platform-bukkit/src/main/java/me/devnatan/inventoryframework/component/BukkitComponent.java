@@ -9,39 +9,33 @@ import me.devnatan.inventoryframework.context.ComponentClearContext;
 import me.devnatan.inventoryframework.context.ComponentRenderContext;
 import me.devnatan.inventoryframework.context.ComponentUpdateContext;
 import me.devnatan.inventoryframework.context.Context;
+import me.devnatan.inventoryframework.context.IFComponentClearContext;
 import me.devnatan.inventoryframework.context.IFComponentContext;
+import me.devnatan.inventoryframework.context.IFComponentRenderContext;
+import me.devnatan.inventoryframework.context.IFComponentUpdateContext;
+import me.devnatan.inventoryframework.context.IFSlotClickContext;
+import me.devnatan.inventoryframework.context.RenderContext;
 import me.devnatan.inventoryframework.context.SlotClickContext;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
 import me.devnatan.inventoryframework.pipeline.PipelinePhase;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
 
 /**
  * Base class for components designed for the Bukkit platform.
  */
-public abstract class BukkitComponent extends PlatformComponent<Context, BukkitItemComponentBuilder> {
+public abstract class BukkitComponent extends PlatformComponent<Context, BukkitDefaultComponentBuilder> {
 
-    /**
-     * Constructs a new BukkitComponent.
-     * Initializes and sets up the pipeline for handling lifecycle events.
-     */
-    protected BukkitComponent() {
-        super();
-        final Pipeline<IFComponentContext> pipeline = getPipeline();
+	private ItemStack item;
 
-        pipeline.intercept(COMPONENT_RENDER, ($, ctx) -> onRender((ComponentRenderContext) ctx));
-        pipeline.intercept(COMPONENT_UPDATE, ($, ctx) -> onUpdate((ComponentUpdateContext) ctx));
-        pipeline.intercept(COMPONENT_CLICK, ($, ctx) -> onClick((SlotClickContext) ctx));
-        pipeline.intercept(COMPONENT_CLEAR, ($, ctx) -> onClear((ComponentClearContext) ctx));
-    }
-
-    /**
+	/**
      * Lifecycle event handler for the {@link PipelinePhase.Component#COMPONENT_RENDER} phase.
      * This method is called when the component needs to be rendered.
      *
      * @param render The render event as a context.
      */
     @ApiStatus.OverrideOnly
-    protected abstract void onRender(ComponentRenderContext render);
+    protected abstract void onFirstRender(ComponentRenderContext render);
 
     /**
      * Lifecycle event handler for the {@link PipelinePhase.Component#COMPONENT_UPDATE} phase.
@@ -71,4 +65,30 @@ public abstract class BukkitComponent extends PlatformComponent<Context, BukkitI
      */
     @ApiStatus.OverrideOnly
     protected void onClear(ComponentClearContext clear) {}
+
+	// region Internal Implementation
+	@Override
+	final boolean render(IFComponentRenderContext context) {
+		if (!super.render(context)) return false;
+
+		final ComponentRenderContext platformContext = (ComponentRenderContext) context;
+		if (getRenderHandler() != null) {
+			getRenderHandler().accept(context);
+		}
+	}
+	// endregion
+
+	// region Builder Methods
+	public final ItemStack getItem() {
+		return item;
+	}
+
+	public final void setItem(ItemStack item) {
+		this.item = item;
+	}
+
+	public final boolean hasItem() {
+		return getItem() != null;
+	}
+	// endregion
 }

@@ -608,12 +608,12 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
     }
 
     @Override
-    public void clear(@NotNull IFComponentClearContext context) {
+	boolean clear(@NotNull IFComponentClearContext context) {
         debug("[Pagination] #clear(IFRenderContext) called (pageWasChanged = %b)", pageWasChanged);
         final IFRenderContext root = context.getParent();
         if (!pageWasChanged) {
             getInternalComponents().forEach(root::clearComponent);
-            return;
+            return false;
         }
 
         final Iterator<Component> childIterator = getInternalComponents().iterator();
@@ -622,6 +622,7 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
             root.clearComponent(child);
             childIterator.remove();
         }
+		return true;
     }
 
     @Override

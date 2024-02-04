@@ -1,7 +1,8 @@
 package me.devnatan.inventoryframework.context;
 
 import java.util.List;
-import me.devnatan.inventoryframework.component.BukkitItemComponentBuilder;
+
+import me.devnatan.inventoryframework.component.BukkitDefaultComponentBuilder;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
@@ -10,7 +11,7 @@ import org.jetbrains.annotations.UnknownNullability;
 
 public final class PublicComponentRenderContext
         extends PublicPlatformComponentRenderContext<
-                PublicComponentRenderContext, BukkitItemComponentBuilder, ItemStack>
+                PublicComponentRenderContext, BukkitDefaultComponentBuilder, ItemStack>
         implements Context {
 
     @ApiStatus.Internal
@@ -43,8 +44,8 @@ public final class PublicComponentRenderContext
     }
 
     @Override
-    protected BukkitItemComponentBuilder createItemBuilder() {
-        return new BukkitItemComponentBuilder().withSelfManaged(true);
+    protected BukkitDefaultComponentBuilder createItemBuilder() {
+        return new BukkitDefaultComponentBuilder().withSelfManaged(true);
     }
 
     @Override

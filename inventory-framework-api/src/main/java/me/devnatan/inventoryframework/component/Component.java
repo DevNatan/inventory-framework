@@ -105,31 +105,4 @@ public interface Component extends VirtualView, Pipelined {
      */
     @ApiStatus.Experimental
     void hide();
-
-    /**
-     * <b><i> This is an internal inventory-framework API that should not be used from outside of
-     * this library. No compatibility guarantees are provided. </i></b>
-     */
-    @ApiStatus.Internal
-    void render(IFComponentRenderContext context);
-
-    /**
-     * <b><i> This is an internal inventory-framework API that should not be used from outside of
-     * this library. No compatibility guarantees are provided. </i></b>
-     */
-    @ApiStatus.Internal
-    void update(IFComponentUpdateContext context);
-
-    /**
-     * <b><i> This is an internal inventory-framework API that should not be used from outside of
-     * this library. No compatibility guarantees are provided. </i></b>
-     */
-    @ApiStatus.Internal
-    void clear(IFComponentClearContext context);
-
-    /**
-     * <b><i> This is an internal inventory-framework API that should not be used from outside of
-     * this library. No compatibility guarantees are provided. </i></b>
-     */
-    void clicked(IFSlotClickContext context);
 }

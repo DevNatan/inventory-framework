@@ -93,7 +93,7 @@ abstract class AbstractIFContext extends DefaultStateValueHost implements IFCont
         final List<Component> componentList = new ArrayList<>();
         synchronized (getInternalComponents()) {
             for (final Component component : getInternalComponents()) {
-                if (component.getHandle().isContainedWithin(position)) {
+                if (component.isContainedWithin(position)) {
                     componentList.add(component);
                 }
             }

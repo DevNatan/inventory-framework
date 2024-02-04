@@ -3,17 +3,11 @@ package me.devnatan.inventoryframework.component;
 import me.devnatan.inventoryframework.VirtualView;
 import org.bukkit.inventory.ItemStack;
 
-public final class BukkitItemComponentBuilder extends BukkitComponentBuilder<BukkitItemComponentBuilder>
-        implements ItemComponentBuilder {
+public class BukkitDefaultComponentBuilder extends BukkitComponentBuilder<BukkitDefaultComponentBuilder> {
 
     private ItemStack item;
 
-    public BukkitItemComponentBuilder() {}
-
-    @Override
-    public ComponentHandle buildHandle() {
-        return new BukkitItemComponentImplHandle();
-    }
+    public BukkitDefaultComponentBuilder() {}
 
     @Override
     public Component buildComponent(VirtualView root) {
@@ -49,7 +43,7 @@ public final class BukkitItemComponentBuilder extends BukkitComponentBuilder<Buk
         return super.getPosition() == position;
     }
 
-    public BukkitItemComponentBuilder withItem(ItemStack item) {
+    public BukkitDefaultComponentBuilder withItem(ItemStack item) {
         this.item = item;
         return this;
     }
@@ -61,6 +55,6 @@ public final class BukkitItemComponentBuilder extends BukkitComponentBuilder<Buk
 
     @Override
     public String toString() {
-        return "BukkitItemComponentBuilder{" + "item=" + item + ", position=" + getPosition() + "} " + super.toString();
+        return "BukkitDefaultComponentBuilder{" + "item=" + item + ", position=" + getPosition() + "} " + super.toString();
     }
 }

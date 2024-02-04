@@ -11,7 +11,7 @@ import me.devnatan.inventoryframework.context.IFOpenContext;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
-public interface StateAccess<CONTEXT, ITEM_BUILDER> {
+public interface StateAccess<CONTEXT, DEFAULT_PLATFORM_COMPONENT_BUILDER> {
 
     /**
      * Creates an immutable state with an initial value.
@@ -180,7 +180,7 @@ public interface StateAccess<CONTEXT, ITEM_BUILDER> {
      */
     <T> State<Pagination> paginationState(
             @NotNull List<? super T> sourceProvider,
-            @NotNull PaginationValueConsumer<CONTEXT, ITEM_BUILDER, T> elementConsumer);
+            @NotNull PaginationValueConsumer<CONTEXT, DEFAULT_PLATFORM_COMPONENT_BUILDER, T> elementConsumer);
 
     /**
      * Creates a new unmodifiable computed pagination state.
@@ -193,7 +193,7 @@ public interface StateAccess<CONTEXT, ITEM_BUILDER> {
      */
     <T> State<Pagination> computedPaginationState(
             @NotNull Function<CONTEXT, List<? super T>> sourceProvider,
-            @NotNull PaginationValueConsumer<CONTEXT, ITEM_BUILDER, T> valueConsumer);
+            @NotNull PaginationValueConsumer<CONTEXT, DEFAULT_PLATFORM_COMPONENT_BUILDER, T> valueConsumer);
 
     /**
      * Creates a new unmodifiable computed pagination state with asynchronous data source.
@@ -210,7 +210,7 @@ public interface StateAccess<CONTEXT, ITEM_BUILDER> {
     @ApiStatus.Experimental
     <T> State<Pagination> computedAsyncPaginationState(
             @NotNull Function<CONTEXT, CompletableFuture<List<T>>> sourceProvider,
-            @NotNull PaginationValueConsumer<CONTEXT, ITEM_BUILDER, T> valueConsumer);
+            @NotNull PaginationValueConsumer<CONTEXT, DEFAULT_PLATFORM_COMPONENT_BUILDER, T> valueConsumer);
 
     /**
      * Creates a new unmodifiable lazy pagination state.
@@ -223,7 +223,7 @@ public interface StateAccess<CONTEXT, ITEM_BUILDER> {
      */
     <T> State<Pagination> lazyPaginationState(
             @NotNull Function<CONTEXT, List<? super T>> sourceProvider,
-            @NotNull PaginationValueConsumer<CONTEXT, ITEM_BUILDER, T> valueConsumer);
+            @NotNull PaginationValueConsumer<CONTEXT, DEFAULT_PLATFORM_COMPONENT_BUILDER, T> valueConsumer);
 
     /**
      * Creates a new unmodifiable lazy pagination state.
@@ -236,7 +236,7 @@ public interface StateAccess<CONTEXT, ITEM_BUILDER> {
      */
     <T> State<Pagination> lazyPaginationState(
             @NotNull Supplier<List<? super T>> sourceProvider,
-            @NotNull PaginationValueConsumer<CONTEXT, ITEM_BUILDER, T> valueConsumer);
+            @NotNull PaginationValueConsumer<CONTEXT, DEFAULT_PLATFORM_COMPONENT_BUILDER, T> valueConsumer);
 
     /**
      * Creates a new unmodifiable lazy pagination state with asynchronous data source.
@@ -253,7 +253,7 @@ public interface StateAccess<CONTEXT, ITEM_BUILDER> {
     @ApiStatus.Experimental
     <T> State<Pagination> lazyAsyncPaginationState(
             @NotNull Function<CONTEXT, CompletableFuture<List<T>>> sourceProvider,
-            @NotNull PaginationValueConsumer<CONTEXT, ITEM_BUILDER, T> valueConsumer);
+            @NotNull PaginationValueConsumer<CONTEXT, DEFAULT_PLATFORM_COMPONENT_BUILDER, T> valueConsumer);
 
     /**
      * Creates a new unmodifiable static pagination state builder.
@@ -262,7 +262,7 @@ public interface StateAccess<CONTEXT, ITEM_BUILDER> {
      * @param <T>            The pagination data type.
      * @return A new pagination state builder.
      */
-    <T> PaginationBuilder<CONTEXT, ITEM_BUILDER, T> buildPaginationState(@NotNull List<? super T> sourceProvider);
+    <T> PaginationBuilder<CONTEXT, DEFAULT_PLATFORM_COMPONENT_BUILDER, T> buildPaginationState(@NotNull List<? super T> sourceProvider);
 
     /**
      * Creates a new unmodifiable dynamic pagination state builder.
@@ -271,7 +271,7 @@ public interface StateAccess<CONTEXT, ITEM_BUILDER> {
      * @param <T>            The pagination data type.
      * @return A new pagination state builder.
      */
-    <T> PaginationBuilder<CONTEXT, ITEM_BUILDER, T> buildComputedPaginationState(
+    <T> PaginationBuilder<CONTEXT, DEFAULT_PLATFORM_COMPONENT_BUILDER, T> buildComputedPaginationState(
             @NotNull Function<CONTEXT, List<? super T>> sourceProvider);
 
     /**
@@ -285,7 +285,7 @@ public interface StateAccess<CONTEXT, ITEM_BUILDER> {
      * @return A new pagination state builder.
      */
     @ApiStatus.Experimental
-    <T> PaginationBuilder<CONTEXT, ITEM_BUILDER, T> buildComputedAsyncPaginationState(
+    <T> PaginationBuilder<CONTEXT, DEFAULT_PLATFORM_COMPONENT_BUILDER, T> buildComputedAsyncPaginationState(
             @NotNull Function<CONTEXT, CompletableFuture<List<T>>> sourceProvider);
 
     /**
@@ -295,7 +295,7 @@ public interface StateAccess<CONTEXT, ITEM_BUILDER> {
      * @param <T>            The pagination data type.
      * @return A new pagination state builder.
      */
-    <T> PaginationBuilder<CONTEXT, ITEM_BUILDER, T> buildLazyPaginationState(
+    <T> PaginationBuilder<CONTEXT, DEFAULT_PLATFORM_COMPONENT_BUILDER, T> buildLazyPaginationState(
             @NotNull Supplier<List<? super T>> sourceProvider);
 
     /**
@@ -305,7 +305,7 @@ public interface StateAccess<CONTEXT, ITEM_BUILDER> {
      * @param <T>            The pagination data type.
      * @return A new pagination state builder.
      */
-    <T> PaginationBuilder<CONTEXT, ITEM_BUILDER, T> buildLazyPaginationState(
+    <T> PaginationBuilder<CONTEXT, DEFAULT_PLATFORM_COMPONENT_BUILDER, T> buildLazyPaginationState(
             @NotNull Function<CONTEXT, List<? super T>> sourceProvider);
 
     /**
@@ -319,6 +319,6 @@ public interface StateAccess<CONTEXT, ITEM_BUILDER> {
      * @return A new pagination state builder.
      */
     @ApiStatus.Experimental
-    <T> PaginationBuilder<CONTEXT, ITEM_BUILDER, T> buildLazyAsyncPaginationState(
+    <T> PaginationBuilder<CONTEXT, DEFAULT_PLATFORM_COMPONENT_BUILDER, T> buildLazyAsyncPaginationState(
             @NotNull Function<CONTEXT, CompletableFuture<List<T>>> sourceProvider);
 }
