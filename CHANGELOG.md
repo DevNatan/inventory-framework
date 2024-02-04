@@ -1,5 +1,15 @@
 # Changelog
 
+# 3.1.0-rc (02-04-2024)
+
+* Minecraft v1.20.4 support (#620)
+* New ViewFrame register(View...) overload (#626)
+* Check if state is mutable before redefine value on open (#629)
+* Major changes to components API design (#618)
+* Bump net.kyori:adventure-api from 4.14.0 to 4.15.0 (#610)
+* Bump org.gradle.toolchains.foojay-resolver-convention from 0.7.0 to 0.8.0 (#617)
+* Bump org.jetbrains.kotlin.jvm from 1.9.10 to 1.9.22 (#611)
+
 # 3.1.0-beta (12-15-2023)
 
 * Vertical pagination support (#387)
