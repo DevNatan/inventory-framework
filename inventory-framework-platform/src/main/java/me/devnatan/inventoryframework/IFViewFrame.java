@@ -110,7 +110,7 @@ abstract class IFViewFrame<S extends IFViewFrame<S, V>, V extends PlatformView<S
      * @return This platform view frame.
      * @throws IllegalStateException If this view frame is already registered.
      */
-    public abstract S register();
+    public abstract S register(V... views);
 
     /**
      * Unregisters this view frame and closes all registered views.

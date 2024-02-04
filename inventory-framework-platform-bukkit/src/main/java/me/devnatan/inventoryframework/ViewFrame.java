@@ -182,8 +182,13 @@ public class ViewFrame extends IFViewFrame<ViewFrame, View> {
     // endregion
 
     @Override
-    public final ViewFrame register() {
-        if (isRegistered()) throw new IllegalStateException("This view frame is already registered");
+    public final ViewFrame register(View... views) {
+        if (isRegistered()) {
+            throw new IllegalStateException(
+                    "This view frame is already registered. " + "View frame #register cannot be called twice");
+        }
+
+        for (final View view : views) with(view);
 
         tryEnableMetrics();
         checkRelocationIssues();
