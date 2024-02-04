@@ -70,8 +70,6 @@ public abstract class AbstractBukkitComponent<B extends AbstractBukkitComponentB
     @ApiStatus.OverrideOnly
     protected abstract void onClear(ComponentClearContext clear);
 
-    public abstract B builder();
-
     // region Internal Implementation
     @Override
     final boolean render(IFComponentRenderContext context) {
