@@ -17,6 +17,7 @@ import me.devnatan.inventoryframework.component.BukkitComponentBuilder;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.pipeline.PipelinePhase;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -91,6 +92,65 @@ public final class RenderContext extends PlatformRenderContext<Context, BukkitCo
     @Override
     IFComponentClearContext createComponentClearContext(Component component) {
         return new ComponentClearContext(this, component, getViewer());
+    }
+    // endregion
+
+    // region Components Rendering
+    /**
+     * Adds an item to a specific slot in the context container.
+     *
+     * @param slot The slot in which the item will be positioned.
+     * @return An item builder to configure the item.
+     */
+    public BukkitComponentBuilder slot(int slot, ItemStack item) {
+        return slot(slot).withItem(item);
+    }
+
+    /**
+     * Adds an item at the specific column and ROW (X, Y) in that context's container.
+     *
+     * @param row    The row (Y) in which the item will be positioned.
+     * @param column The column (X) in which the item will be positioned.
+     * @return An item builder to configure the item.
+     */
+    public BukkitComponentBuilder slot(int row, int column, ItemStack item) {
+        return slot(row, column).withItem(item);
+    }
+
+    /**
+     * Sets an item in the first slot of this context's container.
+     *
+     * @return An item builder to configure the item.
+     */
+    public BukkitComponentBuilder firstSlot(ItemStack item) {
+        return firstSlot().withItem(item);
+    }
+
+    /**
+     * Sets an item in the last slot of this context's container.
+     *
+     * @return An item builder to configure the item.
+     */
+    public BukkitComponentBuilder lastSlot(ItemStack item) {
+        return lastSlot().withItem(item);
+    }
+
+    /**
+     * Adds an item in the next available slot of this context's container.
+     *
+     * @return An item builder to configure the item.
+     */
+    public BukkitComponentBuilder availableSlot(ItemStack item) {
+        return availableSlot().withItem(item);
+    }
+
+    /**
+     * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     */
+    @ApiStatus.Experimental
+    public BukkitComponentBuilder resultSlot(ItemStack item) {
+        return resultSlot().withItem(item);
     }
     // endregion
 
