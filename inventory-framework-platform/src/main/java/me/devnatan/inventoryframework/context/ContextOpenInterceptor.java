@@ -6,6 +6,7 @@ import me.devnatan.inventoryframework.exception.InvalidLayoutException;
 import me.devnatan.inventoryframework.internal.ElementFactory;
 import me.devnatan.inventoryframework.pipeline.PipelineContext;
 import me.devnatan.inventoryframework.pipeline.PipelineInterceptor;
+import me.devnatan.inventoryframework.state.MutableValue;
 import me.devnatan.inventoryframework.state.State;
 import me.devnatan.inventoryframework.state.StateValue;
 import org.jetbrains.annotations.NotNull;
@@ -96,7 +97,9 @@ final class ContextOpenInterceptor implements PipelineInterceptor<IFContext> {
         openContext.getStateValues().forEach((id, value) -> {
             final State<?> state = root.getStateRegistry().getState(id);
             final StateValue recreatedValue = state.factory().create(renderContext, state);
-            recreatedValue.set(value.get());
+
+			if (recreatedValue instanceof MutableValue)
+				recreatedValue.set(value.get());
 
             renderContext.initializeState(id, recreatedValue);
         });
