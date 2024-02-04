@@ -8,10 +8,7 @@ import me.devnatan.inventoryframework.Ref;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.VirtualView;
-import me.devnatan.inventoryframework.context.IFComponentClearContext;
 import me.devnatan.inventoryframework.context.IFComponentContext;
-import me.devnatan.inventoryframework.context.IFComponentRenderContext;
-import me.devnatan.inventoryframework.context.IFComponentUpdateContext;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.pipeline.Pipeline;
@@ -30,8 +27,25 @@ public abstract class AbstractComponent implements Component {
     private Ref<Component> reference;
     private Set<State<?>> watchingStates;
     private Predicate<? extends IFContext> displayCondition;
-    private boolean isSelfManaged;
-    private boolean isVisible = true;
+    private boolean selfManaged;
+    private boolean visible = true;
+
+    protected AbstractComponent() {}
+
+    protected AbstractComponent(
+            VirtualView root,
+            String key,
+            Ref<Component> reference,
+            Set<State<?>> watchingStates,
+            Predicate<? extends IFContext> displayCondition,
+            boolean selfManaged) {
+        this.root = root;
+        this.key = key;
+        this.reference = reference;
+        this.watchingStates = watchingStates;
+        this.displayCondition = displayCondition;
+        this.selfManaged = selfManaged;
+    }
 
     @Override
     public final String getKey() {
@@ -72,23 +86,23 @@ public abstract class AbstractComponent implements Component {
 
     @Override
     public final boolean isVisible() {
-        if (getRoot() instanceof Component) return ((Component) getRoot()).isVisible() && isVisible;
+        if (getRoot() instanceof Component) return ((Component) getRoot()).isVisible() && visible;
 
-        return isVisible;
+        return visible;
     }
 
     @Override
-    public final void setVisible(boolean visible) {
-        this.isVisible = visible;
+    public void setVisible(boolean visible) {
+        this.visible = visible;
     }
 
     @Override
     public final boolean isSelfManaged() {
-        return isSelfManaged;
+        return selfManaged;
     }
 
     protected final void setSelfManaged(boolean selfManaged) {
-        isSelfManaged = selfManaged;
+        this.selfManaged = selfManaged;
     }
 
     @SuppressWarnings("unchecked")
@@ -141,16 +155,6 @@ public abstract class AbstractComponent implements Component {
 
         return (IFRenderContext) getRoot();
     }
-
-    @Override
-    public void render(IFComponentRenderContext context) {}
-
-    @Override
-    public void update(IFComponentUpdateContext context) {}
-
-    @Override
-    public void clear(IFComponentClearContext context) {}
-
     // endregion
 
     @Override
@@ -162,7 +166,7 @@ public abstract class AbstractComponent implements Component {
                 + watchingStates + ", displayCondition="
                 + displayCondition + ", pipeline="
                 + pipeline + ", isVisible="
-                + isVisible + ", isSelfManaged="
-                + isSelfManaged + '}';
+                + visible + ", isSelfManaged="
+                + selfManaged + '}';
     }
 }

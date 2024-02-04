@@ -264,14 +264,6 @@ public abstract class PlatformComponentBuilder<SELF, CONTEXT> extends AbstractCo
     }
     // endregion
 
-    /**
-     * <b><i> This is an internal inventory-framework API that should not be used from outside of
-     * this library. No compatibility guarantees are provided. </i></b>
-     */
-    @ApiStatus.Internal
-    @ApiStatus.OverrideOnly
-    public abstract ComponentHandle buildHandle();
-
     protected final int getPosition() {
         return position;
     }

@@ -8,6 +8,7 @@ import me.devnatan.inventoryframework.context.IFComponentClearContext;
 import me.devnatan.inventoryframework.context.IFComponentRenderContext;
 import me.devnatan.inventoryframework.context.IFComponentUpdateContext;
 import me.devnatan.inventoryframework.context.IFContext;
+import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.pipeline.Pipelined;
 import me.devnatan.inventoryframework.state.State;
 import org.jetbrains.annotations.ApiStatus;
@@ -72,6 +73,10 @@ public interface Component extends VirtualView, Pipelined {
     @ApiStatus.Internal
     boolean isSelfManaged();
 
+    boolean isContainedWithin(int position);
+
+    boolean intersects(@NotNull Component other);
+
     boolean shouldRender(IFContext context);
 
     /**
@@ -121,4 +126,10 @@ public interface Component extends VirtualView, Pipelined {
      */
     @ApiStatus.Internal
     void clear(IFComponentClearContext context);
+
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    void clicked(IFSlotClickContext context);
 }

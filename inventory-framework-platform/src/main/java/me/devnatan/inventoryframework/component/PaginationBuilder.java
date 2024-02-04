@@ -99,9 +99,7 @@ public final class PaginationBuilder<CONTEXT, ITEM_BUILDER, V>
                     (PlatformComponentBuilder) factory.accept((CONTEXT) pagination.getContext(), index, value);
             builder.withSlot(slot);
             builder.withSelfManaged(PaginationBuilder.this.isSelfManaged());
-            final Component component = builder.buildComponent(pagination);
-            component.setHandle(builder.buildHandle());
-            return component;
+            return builder.buildComponent(pagination);
         };
         return this;
     }
@@ -152,11 +150,6 @@ public final class PaginationBuilder<CONTEXT, ITEM_BUILDER, V>
         throw new UnsupportedOperationException("PaginationBuilder component cannot be built");
     }
 
-    @Override
-    public ComponentHandle buildHandle() {
-        throw new UnsupportedOperationException("PaginationBuilder component cannot be built");
-    }
-
     /**
      * <b><i> This is an internal inventory-framework API that should not be used from outside of
      * this library. No compatibility guarantees are provided. </i></b>
@@ -165,8 +158,8 @@ public final class PaginationBuilder<CONTEXT, ITEM_BUILDER, V>
     @SuppressWarnings({"unchecked", "rawtypes"})
     public Pagination buildComponent0(long stateId, VirtualView root) {
         return new PaginationImpl(
-                Long.toString(stateId),
                 root,
+                Long.toString(stateId),
                 getReference(),
                 getWatchingStates(),
                 getDisplayCondition(),

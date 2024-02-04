@@ -20,8 +20,6 @@ import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.*;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
-import me.devnatan.inventoryframework.pipeline.PipelineContext;
-import me.devnatan.inventoryframework.pipeline.PipelinePhase;
 import me.devnatan.inventoryframework.state.State;
 import me.devnatan.inventoryframework.state.StateValue;
 import me.devnatan.inventoryframework.state.StateValueHost;
@@ -68,8 +66,8 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
     private List<?> currSource;
 
     public PaginationImpl(
-            String key,
             VirtualView root,
+            String key,
             Ref<Component> reference,
             Set<State<?>> watchingStates,
             Predicate<? extends IFContext> displayCondition,
@@ -81,7 +79,7 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
             boolean isAsync,
             boolean isComputed,
             boolean isSelfManaged) {
-        super(key, root, reference, watchingStates, displayCondition, isSelfManaged);
+        super(root, key, reference, watchingStates, displayCondition, isSelfManaged);
         this.internalStateId = internalStateId;
         this.layoutTarget = layoutTarget;
         this.sourceProvider = sourceProvider;
@@ -93,7 +91,6 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
         this.isStatic = sourceProvider instanceof Collection;
         this.isLazy =
                 !isStatic && !isComputed && (sourceProvider instanceof Function || sourceProvider instanceof Supplier);
-        setHandle(new PaginationHandle(this));
     }
 
     // region Source Retrieval & Assignment
@@ -545,17 +542,109 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
         getInternalComponents().forEach(component -> component.setVisible(isVisible()));
     }
 
-    @Override
-    public int getPosition() {
-        return -1;
+    public void render(IFComponentRenderContext context) {
+        final IFRenderContext root = (IFRenderContext) context.getTopLevelContext();
+        if (!initialized || pageWasChanged) {
+            if (!initialized) updatePageSize(root);
+            loadCurrentPage(root).thenRun(() -> {
+                renderChild(root);
+                simulateStateUpdate();
+            });
+            this.setVisible(true);
+            initialized = true;
+            return;
+        }
+
+        this.setVisible(true);
+        renderChild(root);
+    }
+
+    public void update(IFComponentUpdateContext context) {
+        final IFRenderContext root = (IFRenderContext) context.getTopLevelContext();
+
+        debug("[Pagination] #updated(IFSlotRenderContext) called (pageWasChanged = %b)", pageWasChanged);
+
+        // If page was changed all components will be removed, so don't trigger update on them
+        if (pageWasChanged) {
+            root.clearComponent(this);
+            components = new ArrayList<>();
+            root.renderComponent(this);
+            pageWasChanged = false;
+            return;
+        }
+
+        if (!isVisible()) return;
+
+        getInternalComponents()
+                .forEach(child -> root.updateComponent(child, context.isForceUpdate(), context.getUpdateReason()));
+    }
+
+    public void clicked(IFSlotClickContext context) {
+        // Lock child interactions while page is changing (specially for async pagination cases)
+        if (pageWasChanged) {
+            context.setCancelled(true);
+            return;
+        }
+
+        for (final Component child : getInternalComponents()) {
+            if (!child.isContainedWithin(context.getClickedSlot())) continue;
+
+            // Hidden components that are not self-managed e.g.: managed by user-provided handle
+            // must handle visibility issues by its own to ensure that clicks are not superimposed
+            // by the root component. This ensures that when a child component that is hidden
+            // and is self-managed is clicked the click will be propagated to handlers of the
+            // child component itself and not to its root
+            if (!child.isVisible() && !child.isSelfManaged()) continue;
+
+            context.getParent()
+                    .clickComponent(
+                            child,
+                            context.getViewer(),
+                            context.getClickedContainer(),
+                            context.getPlatformEvent(),
+                            context.getClickedSlot(),
+                            true);
+        }
     }
 
     @Override
-    public void setPosition(int position) {}
+    public void clear(@NotNull IFComponentClearContext context) {
+        debug("[Pagination] #clear(IFRenderContext) called (pageWasChanged = %b)", pageWasChanged);
+        final IFRenderContext root = context.getParent();
+        if (!pageWasChanged) {
+            getInternalComponents().forEach(root::clearComponent);
+            return;
+        }
+
+        final Iterator<Component> childIterator = getInternalComponents().iterator();
+        while (childIterator.hasNext()) {
+            Component child = childIterator.next();
+            root.clearComponent(child);
+            childIterator.remove();
+        }
+    }
 
     @Override
-    public boolean isPositionSet() {
-        return true;
+    public boolean isContainedWithin(int position) {
+        // fast path -- if layout is defined we can use it as measurement
+        if (currentLayoutSlot != null) {
+            for (int slot : currentLayoutSlot.getPositions()) {
+                if (slot == position) return true;
+            }
+            return false;
+        }
+
+        for (final Component component : getInternalComponents()) {
+            if (component.isContainedWithin(position)) return true;
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean intersects(@NotNull Component other) {
+        for (final Component component : getInternalComponents()) if (component.intersects(other)) return true;
+        return false;
     }
 
     @Override
@@ -599,138 +688,5 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
                 + _srcFactory + ", currSource="
                 + currSource + "} "
                 + super.toString();
-    }
-}
-
-class PaginationHandle extends ComponentHandle {
-
-    private final PaginationImpl pagination;
-
-    public PaginationHandle(PaginationImpl pagination) {
-        this.pagination = pagination;
-    }
-
-    void render(@NotNull IFComponentRenderContext context) {
-        final IFRenderContext root = (IFRenderContext) context.getTopLevelContext();
-        if (!pagination.initialized || pagination.pageWasChanged) {
-            if (!pagination.initialized) pagination.updatePageSize(root);
-            pagination.loadCurrentPage(root).thenRun(() -> {
-                pagination.renderChild(root);
-                pagination.simulateStateUpdate();
-            });
-            pagination.setVisible(true);
-            pagination.initialized = true;
-            return;
-        }
-
-        pagination.setVisible(true);
-        pagination.renderChild(root);
-    }
-
-    void updated(@NotNull IFComponentUpdateContext context) {
-        final IFRenderContext root = (IFRenderContext) context.getTopLevelContext();
-
-        debug("[Pagination] #updated(IFSlotRenderContext) called (pageWasChanged = %b)", pagination.pageWasChanged);
-
-        // If page was changed all components will be removed, so don't trigger update on them
-        if (pagination.pageWasChanged) {
-            cleared(root);
-            pagination.components = new ArrayList<>();
-            root.renderComponent(pagination);
-            pagination.pageWasChanged = false;
-            return;
-        }
-
-        if (!pagination.isVisible()) return;
-
-        pagination
-                .getInternalComponents()
-                .forEach(child -> root.updateComponent(child, context.isForceUpdate(), context.getUpdateReason()));
-    }
-
-    void clicked(@NotNull IFSlotClickContext context) {
-        // Lock child interactions while page is changing (specially for async pagination cases)
-        if (pagination.pageWasChanged) {
-            context.setCancelled(true);
-            return;
-        }
-
-        for (final Component child : pagination.getInternalComponents()) {
-            if (!child.getHandle().isContainedWithin(context.getClickedSlot())) continue;
-
-            // Hidden components that are not self-managed e.g.: managed by user-provided handle
-            // must handle visibility issues by its own to ensure that clicks are not superimposed
-            // by the root component. This ensures that when a child component that is hidden
-            // and is self-managed is clicked the click will be propagated to handlers of the
-            // child component itself and not to its root
-            if (!child.isVisible() && !child.isSelfManaged()) continue;
-
-            context.getParent()
-                    .clickComponent(
-                            child,
-                            context.getViewer(),
-                            context.getClickedContainer(),
-                            context.getPlatformEvent(),
-                            context.getClickedSlot(),
-                            true);
-        }
-    }
-
-    void cleared(@NotNull IFRenderContext context) {
-        debug("[Pagination] #clear(IFRenderContext) called (pageWasChanged = %b)", pagination.pageWasChanged);
-        if (!pagination.pageWasChanged) {
-            pagination.getInternalComponents().forEach(context::clearComponent);
-            return;
-        }
-
-        final Iterator<Component> childIterator =
-                pagination.getInternalComponents().iterator();
-        while (childIterator.hasNext()) {
-            Component child = childIterator.next();
-            context.clearComponent(child);
-            childIterator.remove();
-        }
-    }
-
-    @Override
-    public void intercept(PipelineContext<IFComponentContext> pipeline, IFComponentContext subject) {
-        final PipelinePhase.Component phase = (PipelinePhase.Component) Objects.requireNonNull(pipeline.getPhase());
-        switch (phase) {
-            case COMPONENT_RENDER:
-                render((IFComponentRenderContext) subject);
-                break;
-            case COMPONENT_UPDATE:
-                updated((IFComponentUpdateContext) subject);
-                break;
-            case COMPONENT_CLICK:
-                clicked((IFSlotClickContext) subject);
-                break;
-            case COMPONENT_CLEAR:
-                cleared(((IFComponentClearContext) subject).getParent());
-                break;
-        }
-    }
-
-    @Override
-    public boolean isContainedWithin(int position) {
-        // fast path -- if layout is defined we can use it as measurement
-        if (pagination.currentLayoutSlot != null) {
-            for (int slot : pagination.currentLayoutSlot.getPositions()) {
-                if (slot == position) return true;
-            }
-            return false;
-        }
-
-        for (final Component component : pagination.getInternalComponents()) {
-            if (component.getHandle().isContainedWithin(position)) return true;
-        }
-        return super.isContainedWithin(position);
-    }
-
-    @Override
-    public boolean intersects(@NotNull Component other) {
-        for (final Component component : pagination.getInternalComponents())
-            if (component.getHandle().intersects(other)) return true;
-        return super.intersects(other);
     }
 }
