@@ -26,9 +26,9 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("rawtypes")
-public abstract class PlatformRenderContext<CONTEXT, BUILDER extends PlatformComponentBuilder<BUILDER, CONTEXT>>
+public abstract class PlatformRenderContext<BUILDER extends PlatformComponentBuilder<BUILDER, ?>>
         extends PlatformConfinedContext
-        implements IFRenderContext, PublicSlotComponentRenderer<CONTEXT, BUILDER>, Pipelined {
+        implements IFRenderContext, PublicSlotComponentRenderer<BUILDER>, Pipelined {
 
     private final UUID id;
     protected final PlatformView root;
@@ -47,8 +47,8 @@ public abstract class PlatformRenderContext<CONTEXT, BUILDER extends PlatformCom
     private final List<BiFunction<Integer, Integer, ComponentBuilder>> availableSlotFactories = new ArrayList<>();
 
     @Delegate
-    private final PublicSlotComponentRenderer<CONTEXT, BUILDER> publicSlotComponentRenderer =
-            new DefaultPublicSlotComponentRenderer<>(this, this, this::createComponentBuilder);
+    private final PublicSlotComponentRenderer<BUILDER> publicSlotComponentRenderer =
+            new DefaultPublicSlotComponentRenderer<>(this, this::createComponentBuilder);
 
     PlatformRenderContext(
             @NotNull UUID id,

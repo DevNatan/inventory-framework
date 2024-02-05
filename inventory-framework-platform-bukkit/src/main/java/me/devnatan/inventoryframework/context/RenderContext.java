@@ -21,7 +21,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
-public final class RenderContext extends PlatformRenderContext<Context, BukkitComponentBuilder> implements Context {
+public final class RenderContext extends PlatformRenderContext<BukkitComponentBuilder> implements Context {
 
     private final Player player;
 

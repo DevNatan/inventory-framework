@@ -11,7 +11,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 public final class PaginationBuilder<
-                CONTEXT extends IFContext, BUILDER extends PlatformComponentBuilder<BUILDER, CONTEXT>, V>
+                CONTEXT, BUILDER extends PlatformComponentBuilder<BUILDER, CONTEXT>, V>
         extends PlatformComponentBuilder<PaginationBuilder<CONTEXT, BUILDER, V>, CONTEXT> {
 
     private final Object sourceProvider;
