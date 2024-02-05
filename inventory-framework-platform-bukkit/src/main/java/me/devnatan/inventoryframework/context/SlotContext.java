@@ -48,7 +48,7 @@ public abstract class SlotContext extends PlatformContext implements IFSlotConte
     }
 
     @Override
-    public @NotNull Pipeline<IFContext> getPipeline() {
+    public final Pipeline<IFContext> getPipeline() {
         return getParent().getPipeline();
     }
 

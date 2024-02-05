@@ -24,7 +24,7 @@ public abstract class DefaultRootView implements RootView {
 
     private final UUID id = UUID.randomUUID();
     private ViewConfig config;
-    private final Pipeline<RootView> pipeline = new Pipeline<>(PipelinePhase.ViewPhase.values());
+    private final Pipeline<VirtualView> pipeline = new Pipeline<>(PipelinePhase.ViewPhase.values());
     private final Set<IFContext> contexts = newSetFromMap(synchronizedMap(new HashMap<>()));
 
     @Getter
@@ -32,7 +32,7 @@ public abstract class DefaultRootView implements RootView {
 
     private Job scheduledUpdateJob;
 
-    Pipeline<RootView> getPipeline() {
+    public final Pipeline<VirtualView> getPipeline() {
         return pipeline;
     }
 

@@ -1,7 +1,9 @@
-package me.devnatan.inventoryframework.context;
+package me.devnatan.inventoryframework;
 
 import java.util.HashMap;
-import me.devnatan.inventoryframework.*;
+import me.devnatan.inventoryframework.context.IFContext;
+import me.devnatan.inventoryframework.context.IFOpenContext;
+import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.exception.InvalidLayoutException;
 import me.devnatan.inventoryframework.internal.ElementFactory;
 import me.devnatan.inventoryframework.pipeline.PipelineContext;
@@ -12,7 +14,7 @@ import me.devnatan.inventoryframework.state.StateValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 
-final class ContextOpenInterceptor implements PipelineInterceptor<IFContext> {
+public final class ViewContextOpenInterceptor implements PipelineInterceptor<IFContext> {
 
     @TestOnly
     boolean skipOpen = false;

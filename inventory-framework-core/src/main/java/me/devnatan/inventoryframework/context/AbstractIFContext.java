@@ -24,7 +24,8 @@ abstract class AbstractIFContext extends DefaultStateValueHost implements IFCont
     protected ViewConfig config;
     private final Pipeline<IFContext> pipeline = new Pipeline<>(PipelinePhase.Context.values());
 
-    Pipeline<IFContext> getPipeline() {
+    @Override
+    public Pipeline<IFContext> getPipeline() {
         return pipeline;
     }
 

@@ -10,6 +10,7 @@ final class ContextPlatformRenderHandlerCallInterceptor implements PipelineInter
     @SuppressWarnings({"rawtypes", "unchecked"})
     public void intercept(@NotNull PipelineContext<IFContext> pipeline, IFContext subject) {
         if (!(subject instanceof IFRenderContext)) return;
+
         ((PlatformView) subject.getRoot()).onFirstRender((IFRenderContext) subject);
     }
 }

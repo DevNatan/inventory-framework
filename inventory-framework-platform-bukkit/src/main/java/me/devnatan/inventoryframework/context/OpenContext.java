@@ -13,7 +13,6 @@ import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewConfigBuilder;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
-import me.devnatan.inventoryframework.pipeline.Pipeline;
 import me.devnatan.inventoryframework.pipeline.PipelinePhase;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.ApiStatus;
@@ -56,9 +55,6 @@ public class OpenContext extends PlatformConfinedContext implements IFOpenContex
     public OpenContext(
             @NotNull View root, @Nullable Viewer subject, @NotNull Map<String, Viewer> viewers, Object initialData) {
         super();
-        final Pipeline<IFContext> pipeline = getPipeline();
-        pipeline.intercept(PipelinePhase.Context.CONTEXT_OPEN, new ContextOpenInterceptor());
-
         this.id = UUID.randomUUID();
         this.subject = subject;
         this.root = root;
@@ -184,6 +180,6 @@ public class OpenContext extends PlatformConfinedContext implements IFOpenContex
 
     @Override
     public void simulateOpen() {
-        getPipeline().execute(PipelinePhase.Context.CONTEXT_OPEN, this);
+        getRoot().getPipeline().execute(PipelinePhase.ViewPhase.CONTEXT_OPEN, this);
     }
 }

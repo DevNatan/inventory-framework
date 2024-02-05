@@ -38,9 +38,6 @@ public interface PipelinePhase {
         VIEW_INIT,
 
         VIEW_CONFIG_CHECK,
-    }
-
-    enum Context implements PipelinePhase {
 
         /**
          * Called when a context is about to open to a viewer.
@@ -48,6 +45,12 @@ public interface PipelinePhase {
          * At this phase the pipeline interceptor subject is a {@link IFOpenContext}.
          */
         CONTEXT_OPEN,
+    }
+
+    enum Context implements PipelinePhase {
+        CONTEXT_CREATE,
+
+        CONTEXT_BEFORE_RENDER,
 
         /**
          * Called when a context is rendered for the first time.
