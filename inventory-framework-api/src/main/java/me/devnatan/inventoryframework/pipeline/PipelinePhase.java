@@ -48,8 +48,6 @@ public interface PipelinePhase {
     }
 
     enum Context implements PipelinePhase {
-        CONTEXT_CREATE,
-
         CONTEXT_BEFORE_RENDER,
 
         /**
