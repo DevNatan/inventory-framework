@@ -291,15 +291,11 @@ public abstract class PlatformView<
 
     /**
      * Renders a given context in this view.
-     * <p>
-     * <b><i> This is an internal inventory-framework API that should not be used from outside of
-     * this library. No compatibility guarantees are provided. </i></b>
      *
      * @param context The context to render.
      */
     @SuppressWarnings("rawtypes")
-    @ApiStatus.Internal
-    public void renderContext(@NotNull RENDER_CONTEXT context) {
+    void renderContext(@NotNull RENDER_CONTEXT context) {
         IFDebug.debug("Rendering context %s", context.getId());
         context.resolveLayout();
         context.render();
