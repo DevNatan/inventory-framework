@@ -38,7 +38,7 @@ public final class StateRegistryImpl implements StateRegistry {
         synchronized (stateMap) {
             stateMap.put(state.internalId(), state);
             IFDebug.debug(
-                    "StatePhase %s (id: %d) registered in %s",
+                    "State  %s (id: %d) registered in %s",
                     state.getClass().getName(),
                     state.internalId(),
                     caller.getClass().getName());
@@ -54,7 +54,7 @@ public final class StateRegistryImpl implements StateRegistry {
         synchronized (stateMap) {
             final State<?> state = stateMap.remove(stateId);
             IFDebug.debug(
-                    "StatePhase %s unregistered from %s",
+                    "State %s unregistered from %s",
                     state.internalId(), caller.getClass().getName());
         }
     }

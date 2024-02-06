@@ -13,23 +13,21 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unchecked")
-public final class DefaultPublicSlotComponentRenderer<
-                CONTEXT, BUILDER extends PlatformComponentBuilder<BUILDER, CONTEXT>>
-        implements PublicSlotComponentRenderer<CONTEXT, BUILDER> {
+public final class DefaultSlotComponentRenderer<C, B extends PlatformComponentBuilder<B, C>>
+        implements SlotComponentRenderer<C, B> {
 
     private final VirtualView root;
     private final IFRenderContext renderContext;
-    private final Supplier<BUILDER> builderFactory;
+    private final Supplier<B> builderFactory;
 
-    public DefaultPublicSlotComponentRenderer(
-            VirtualView root, IFRenderContext renderContext, Supplier<BUILDER> builderFactory) {
+    public DefaultSlotComponentRenderer(VirtualView root, IFRenderContext renderContext, Supplier<B> builderFactory) {
         this.root = root;
         this.renderContext = renderContext;
         this.builderFactory = builderFactory;
     }
 
     private PlatformComponentBuilder<?, ?> createRegisteredBuilder() {
-        final BUILDER builder = builderFactory.get();
+        final B builder = builderFactory.get();
         renderContext.getNotRenderedComponents().add(builder);
         return builder;
     }
@@ -51,8 +49,8 @@ public final class DefaultPublicSlotComponentRenderer<
      * @return An item builder to configure the item.
      */
     @ApiStatus.Experimental
-    public BUILDER unsetSlot() {
-        return (BUILDER) createRegisteredBuilder();
+    public B unsetSlot() {
+        return (B) createRegisteredBuilder();
     }
 
     /**
@@ -61,8 +59,8 @@ public final class DefaultPublicSlotComponentRenderer<
      * @param slot The slot in which the item will be positioned.
      * @return An item builder to configure the item.
      */
-    public BUILDER slot(int slot) {
-        return (BUILDER) createRegisteredBuilder().withSlot(slot);
+    public B slot(int slot) {
+        return (B) createRegisteredBuilder().withSlot(slot);
     }
 
     /**
@@ -73,18 +71,18 @@ public final class DefaultPublicSlotComponentRenderer<
      * @return An item builder to configure the item.
      */
     @NotNull
-    public BUILDER slot(int row, int column) {
+    public B slot(int row, int column) {
         checkAlignedContainerTypeForSlotAssignment();
-        return (BUILDER) createRegisteredBuilder().withSlot(row, column);
+        return (B) createRegisteredBuilder().withSlot(row, column);
     }
 
     @Override
-    public <T extends PlatformComponentBuilder<T, CONTEXT>> void slotComponent(int slot, T builder) {
+    public <T extends PlatformComponentBuilder<T, C>> void slotComponent(int slot, T builder) {
         internalSlotComponent(slot, builder);
     }
 
     @Override
-    public <T extends PlatformComponentBuilder<T, CONTEXT>> void slotComponent(int row, int column, T builder) {
+    public <T extends PlatformComponentBuilder<T, C>> void slotComponent(int row, int column, T builder) {
         internalSlotComponent(
                 SlotConverter.convertSlot(
                         row,
@@ -99,12 +97,12 @@ public final class DefaultPublicSlotComponentRenderer<
      *
      * @return An item builder to configure the item.
      */
-    public BUILDER firstSlot() {
+    public B firstSlot() {
         return slot(renderContext.getContainer().getFirstSlot());
     }
 
     @Override
-    public <T extends PlatformComponentBuilder<T, CONTEXT>> void firstSlotComponent(T builder) {
+    public <T extends PlatformComponentBuilder<T, C>> void firstSlotComponent(T builder) {
         internalSlotComponent(renderContext.getContainer().getFirstSlot(), builder);
     }
 
@@ -113,12 +111,12 @@ public final class DefaultPublicSlotComponentRenderer<
      *
      * @return An item builder to configure the item.
      */
-    public BUILDER lastSlot() {
+    public B lastSlot() {
         return slot(renderContext.getContainer().getLastSlot());
     }
 
     @Override
-    public <T extends PlatformComponentBuilder<T, CONTEXT>> void lastSlotComponent(T builder) {
+    public <T extends PlatformComponentBuilder<T, C>> void lastSlotComponent(T builder) {
         internalSlotComponent(renderContext.getContainer().getLastSlot(), builder);
     }
 
@@ -127,7 +125,7 @@ public final class DefaultPublicSlotComponentRenderer<
      * such API may be changed or may be removed completely in any further release. </i></b>
      */
     @ApiStatus.Experimental
-    public BUILDER resultSlot() {
+    public B resultSlot() {
         final ViewType containerType = renderContext.getContainer().getType();
         final int[] resultSlots = containerType.getResultSlots();
         if (resultSlots == null) throw new InventoryFrameworkException("No result slots available: " + containerType);
@@ -143,8 +141,8 @@ public final class DefaultPublicSlotComponentRenderer<
      *
      * @return An item builder to configure the item.
      */
-    public BUILDER availableSlot() {
-        final BUILDER builder = builderFactory.get();
+    public B availableSlot() {
+        final B builder = builderFactory.get();
         renderContext.getAvailableSlotFactories().add((index, slot) -> {
             ((PlatformComponentBuilder<?, ?>) builder).withSlot(slot);
             return builder;
@@ -162,9 +160,9 @@ public final class DefaultPublicSlotComponentRenderer<
      * @param factory A factory to create the item builder to configure the item.
      *                The first parameter is the iteration index of the available slot.
      */
-    public void availableSlot(@NotNull BiConsumer<Integer, BUILDER> factory) {
+    public void availableSlot(@NotNull BiConsumer<Integer, B> factory) {
         renderContext.getAvailableSlotFactories().add((index, slot) -> {
-            final BUILDER builder = builderFactory.get();
+            final B builder = builderFactory.get();
             ((PlatformComponentBuilder<?, ?>) builder).withSlot(slot);
             factory.accept(index, builder);
             return builder;
@@ -172,7 +170,7 @@ public final class DefaultPublicSlotComponentRenderer<
     }
 
     @Override
-    public <T extends PlatformComponentBuilder<T, CONTEXT>> void availableSlotComponent(T builder) {
+    public <T extends PlatformComponentBuilder<T, C>> void availableSlotComponent(T builder) {
         throw new UnsupportedOperationException("Missing availableSlotComponent(T) implementation");
     }
 
@@ -182,14 +180,14 @@ public final class DefaultPublicSlotComponentRenderer<
      * @param character The layout character target.
      * @return An item builder to configure the item.
      */
-    public BUILDER layoutSlot(char character) {
+    public B layoutSlot(char character) {
         // TODO More detailed exception message
         final LayoutSlot layoutSlot = renderContext.getLayoutSlots().stream()
                 .filter(value -> value.getCharacter() == character)
                 .findFirst()
                 .orElseThrow(() -> new InventoryFrameworkException("Missing layout character: " + character));
 
-        final BUILDER builder = builderFactory.get();
+        final B builder = builderFactory.get();
         renderContext.getLayoutSlots().add(layoutSlot.withBuilderFactory($ -> builder));
         return builder;
     }
@@ -203,7 +201,7 @@ public final class DefaultPublicSlotComponentRenderer<
      *
      * @param character The layout character target.
      */
-    public void layoutSlot(char character, @NotNull BiConsumer<Integer, BUILDER> factory) {
+    public void layoutSlot(char character, @NotNull BiConsumer<Integer, B> factory) {
         // TODO More detailed exception message
         final LayoutSlot layoutSlot = renderContext.getLayoutSlots().stream()
                 .filter(value -> value.getCharacter() == character)
@@ -211,14 +209,14 @@ public final class DefaultPublicSlotComponentRenderer<
                 .orElseThrow(() -> new InventoryFrameworkException("Missing layout character: " + character));
 
         renderContext.getLayoutSlots().add(layoutSlot.withBuilderFactory(index -> {
-            final BUILDER builder = builderFactory.get();
+            final B builder = builderFactory.get();
             factory.accept(index, builder);
             return builder;
         }));
     }
 
     @Override
-    public <T extends PlatformComponentBuilder<T, CONTEXT>> void layoutSlot(char character, T builder) {
+    public <T extends PlatformComponentBuilder<T, C>> void layoutSlot(char character, T builder) {
         final LayoutSlot layoutSlot = renderContext.getLayoutSlots().stream()
                 .filter(value -> value.getCharacter() == character)
                 .findFirst()
@@ -229,14 +227,14 @@ public final class DefaultPublicSlotComponentRenderer<
                 .add(layoutSlot.withComponentFactory(index -> builder.internalBuildComponent(root)));
     }
 
-    private <B extends PlatformComponentBuilder<B, CONTEXT>> void internalSlotComponent(int position, B builder) {
+    private <B extends PlatformComponentBuilder<B, C>> void internalSlotComponent(int position, B builder) {
         final Component component =
                 builder.withSlot(position).withSelfManaged(true).internalBuildComponent(root);
         renderContext.addComponent(component);
     }
 
     @Override
-    public <T extends PlatformComponentBuilder<T, CONTEXT>> void unsetSlotComponent(T componentBuilder) {
+    public <T extends PlatformComponentBuilder<T, C>> void unsetSlotComponent(T componentBuilder) {
         internalSlotComponent(-1, componentBuilder);
     }
     // endregion
