@@ -106,6 +106,8 @@ public abstract class PlatformView<
         targetContext.addViewer(viewer);
         getFramework().addViewer(viewer);
         viewer.setActiveContext(targetContext);
+
+        targetContext.getPipeline().execute(PipelinePhase.Context.CONTEXT_BEFORE_RENDER, targetContext);
         viewer.open(targetContext.getContainer());
         onViewerAdded((PLATFORM_CONTEXT) targetContext, (VIEWER) viewer.getPlatformInstance(), initialData);
     }
@@ -557,8 +559,9 @@ public abstract class PlatformView<
 
         this.framework = (FRAMEWORK) framework;
 
-        final Pipeline<RootView> pipeline = getPipeline();
+        final Pipeline<VirtualView> pipeline = getPipeline();
         pipeline.intercept(PipelinePhase.ViewPhase.VIEW_INIT, new ViewPlatformInitHandlerInterceptor());
+        pipeline.intercept(PipelinePhase.ViewPhase.CONTEXT_OPEN, new ViewContextOpenInterceptor());
         pipeline.execute(PipelinePhase.ViewPhase.VIEW_INIT, this);
     }
 

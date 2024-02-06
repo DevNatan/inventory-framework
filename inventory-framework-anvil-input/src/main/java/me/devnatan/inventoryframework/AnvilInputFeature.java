@@ -63,8 +63,11 @@ public final class AnvilInputFeature implements Feature<AnvilInputConfig, Void, 
 
             for (final PlatformView view : views.values()) {
                 handleOpen(view);
-                handleClose(view);
-                handleClick(view);
+
+                view.getPipeline().intercept(PipelinePhase.Context.CONTEXT_BEFORE_RENDER, (__, renderContext) -> {
+                    handleClose((IFContext) renderContext);
+                    handleClick((IFContext) renderContext);
+                });
             }
         };
     }
@@ -90,36 +93,36 @@ public final class AnvilInputFeature implements Feature<AnvilInputConfig, Void, 
         ingredientItem.setItemMeta(ingredientMeta);
     }
 
-    private void handleClick(PlatformView view) {
-        view.getPipeline().intercept(PipelinePhase.Context.CONTEXT_SLOT_CLICK, (pipeline, subject) -> {
-            final SlotClickContext context = (SlotClickContext) subject;
+    private void handleClick(IFContext context) {
+        context.getPipeline().intercept(PipelinePhase.Context.CONTEXT_SLOT_CLICK, (pipeline, subject) -> {
+            final SlotClickContext clickContext = (SlotClickContext) subject;
             final AnvilInput anvilInput = getAnvilInput(context);
             if (anvilInput == null) return;
 
-            final int resultSlot = context.getContainer().getType().getResultSlots()[0];
-            if (context.getClickedSlot() != resultSlot) return;
+            final int resultSlot = clickContext.getContainer().getType().getResultSlots()[0];
+            if (clickContext.getClickedSlot() != resultSlot) return;
 
-            final ItemStack resultItem = context.getItem();
+            final ItemStack resultItem = clickContext.getItem();
             if (resultItem == null || resultItem.getType() == Material.AIR) return;
 
             final ItemMeta resultMeta = requireNonNull(resultItem.getItemMeta());
             final String text = resultMeta.getDisplayName();
-            final Inventory clickedInventory =
-                    requireNonNull(context.getClickOrigin().getClickedInventory(), "Clicked inventory cannot be null");
+            final Inventory clickedInventory = requireNonNull(
+                    clickContext.getClickOrigin().getClickedInventory(), "Clicked inventory cannot be null");
             final ItemStack ingredientItem = requireNonNull(clickedInventory.getItem(INGREDIENT_SLOT));
             final ItemMeta ingredientMeta = requireNonNull(ingredientItem.getItemMeta());
             ingredientMeta.setDisplayName(text);
-            context.updateState(anvilInput.internalId(), text);
+            clickContext.updateState(anvilInput.internalId(), text);
             ingredientItem.setItemMeta(ingredientMeta);
 
             if (config.closeOnSelect) {
-                context.closeForPlayer();
+                clickContext.closeForPlayer();
             }
         });
     }
 
     private void handleOpen(PlatformView view) {
-        view.getPipeline().intercept(PipelinePhase.Context.CONTEXT_OPEN, (pipeline, subject) -> {
+        view.getPipeline().intercept(PipelinePhase.ViewPhase.CONTEXT_OPEN, (pipeline, subject) -> {
             final OpenContext context = (OpenContext) subject;
             final AnvilInput anvilInput = getAnvilInput(context);
             if (anvilInput == null) return;
@@ -145,20 +148,20 @@ public final class AnvilInputFeature implements Feature<AnvilInputConfig, Void, 
         });
     }
 
-    private void handleClose(PlatformView view) {
-        view.getPipeline().intercept(PipelinePhase.Context.CONTEXT_CLOSE, (pipeline, subject) -> {
-            final IFCloseContext context = (IFCloseContext) subject;
-            final AnvilInput anvilInput = getAnvilInput(context);
+    private void handleClose(IFContext context) {
+        context.getPipeline().intercept(PipelinePhase.Context.CONTEXT_CLOSE, (pipeline, subject) -> {
+            final IFCloseContext closeContext = (IFCloseContext) subject;
+            final AnvilInput anvilInput = getAnvilInput(closeContext);
             if (anvilInput == null) return;
 
-            final BukkitViewContainer container = (BukkitViewContainer) context.getContainer();
+            final BukkitViewContainer container = (BukkitViewContainer) closeContext.getContainer();
             final int slot = container.getType().getResultSlots()[0];
             final ItemStack item = container.getInventory().getItem(slot);
 
             if (item == null || item.getType() == Material.AIR) return;
 
             final String input = requireNonNull(item.getItemMeta()).getDisplayName();
-            context.updateState(anvilInput.internalId(), input);
+            closeContext.updateState(anvilInput.internalId(), input);
         });
     }
 }

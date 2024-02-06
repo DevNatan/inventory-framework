@@ -38,9 +38,6 @@ public interface PipelinePhase {
         VIEW_INIT,
 
         VIEW_CONFIG_CHECK,
-    }
-
-    enum Context implements PipelinePhase {
 
         /**
          * Called when a context is about to open to a viewer.
@@ -48,11 +45,17 @@ public interface PipelinePhase {
          * At this phase the pipeline interceptor subject is a {@link IFOpenContext}.
          */
         CONTEXT_OPEN,
+    }
+
+    enum Context implements PipelinePhase {
+        // TODO Rename to CONTEXT_CREATE
+        CONTEXT_BEFORE_RENDER,
 
         /**
          * Called when a context is rendered for the first time.
          * At this phase the pipeline interceptor subject is a {@link IFRenderContext}.
          */
+        // TODO Rename to CONTEXT_SETUP
         CONTEXT_RENDER,
 
         /**
@@ -93,8 +96,12 @@ public interface PipelinePhase {
          */
         CONTEXT_LAYOUT_RESOLUTION,
 
+        /**
+         * Called when the player interacts with the container of a context.
+         */
         CONTEXT_SLOT_CLICK,
 
+        // TODO Call this pipeline phase somewhere
         CONTEXT_CONFIG_CHECK,
     }
 
