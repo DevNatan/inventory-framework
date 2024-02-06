@@ -7,7 +7,6 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.BiFunction;
 import lombok.experimental.Delegate;
-import me.devnatan.inventoryframework.IFDebug;
 import me.devnatan.inventoryframework.PlatformView;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.UpdateReason;
@@ -27,8 +26,7 @@ import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("rawtypes")
 public abstract class PlatformRenderContext<CONTEXT, BUILDER extends PlatformComponentBuilder<BUILDER, CONTEXT>>
-        extends PlatformConfinedContext
-        implements IFRenderContext, PublicSlotComponentRenderer<CONTEXT, BUILDER>, Pipelined {
+        extends PlatformConfinedContext implements IFRenderContext, SlotComponentRenderer<CONTEXT, BUILDER>, Pipelined {
 
     private final UUID id;
     protected final PlatformView root;
@@ -47,8 +45,8 @@ public abstract class PlatformRenderContext<CONTEXT, BUILDER extends PlatformCom
     private final List<BiFunction<Integer, Integer, ComponentBuilder>> availableSlotFactories = new ArrayList<>();
 
     @Delegate
-    private final PublicSlotComponentRenderer<CONTEXT, BUILDER> publicSlotComponentRenderer =
-            new DefaultPublicSlotComponentRenderer<>(this, this, this::createComponentBuilder);
+    private final SlotComponentRenderer<CONTEXT, BUILDER> slotComponentRenderer =
+            new DefaultSlotComponentRenderer<>(this, this, this::createComponentBuilder);
 
     PlatformRenderContext(
             @NotNull UUID id,
@@ -202,10 +200,8 @@ public abstract class PlatformRenderContext<CONTEXT, BUILDER extends PlatformCom
     }
 
     @Override
-    public void simulateRender() {
-        IFDebug.debug("Rendering context %s", getId());
+    public void render() {
         getPipeline().execute(PipelinePhase.Context.CONTEXT_RENDER, this);
-        resolveLayout();
     }
 
     @Override
