@@ -27,7 +27,7 @@ jobs:
             - name: Publish
               uses: gradle/gradle-build-action@cd3cedc781988c804f626f4cd2dc51d0bdf02a12
               with:
-                  arguments: publish
+                  arguments: publish -Dsnapshot=${{ github.ref_type != 'tag' }}
               env:
                   USERNAME: ${{ github.actor }}
                   TOKEN: ${{ secrets.GITHUB_TOKEN }}
