@@ -1,7 +1,7 @@
 apply plugin: 'maven-publish'
 apply plugin: 'signing'
 
-ext.isReleaseVersion = !version.endsWith('SNAPSHOT')
+ext.isReleaseVersion = System.getProperty("snapshot") != "true"
 
 publishing {
     publications {
@@ -9,6 +9,8 @@ publishing {
             groupId = rootProject.group
             artifactId = project.name
             version = rootProject.version
+            if (!isReleaseVersion)
+                version = "${version}-SNAPSHOT"
             from components.java
 
             pom {
