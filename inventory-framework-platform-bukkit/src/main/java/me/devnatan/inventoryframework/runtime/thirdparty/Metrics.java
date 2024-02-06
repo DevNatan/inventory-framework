@@ -41,7 +41,6 @@ import java.util.logging.Level;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPOutputStream;
 import javax.net.ssl.HttpsURLConnection;
-import me.devnatan.inventoryframework.runtime.InventoryFramework;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -131,7 +130,7 @@ public final class Metrics {
     }
 
     private void appendServiceData(JsonObjectBuilder builder) {
-        builder.appendField("pluginVersion", InventoryFramework.LIBRARY_VERSION);
+        builder.appendField("pluginVersion", plugin.getDescription().getVersion());
         boolean isShaded = !plugin.getDescription().getName().equals("InventoryFramework");
         builder.appendField("libraryOrShaded", isShaded ? "shaded" : "library");
         builder.appendField(

@@ -190,8 +190,9 @@ public class ViewFrame extends IFViewFrame<ViewFrame, View> {
 
         for (final View view : views) with(view);
 
-        tryEnableMetrics();
-        checkRelocationIssues();
+        final boolean libraryAsPluginEnabled = checkRelocationIssues();
+        if (libraryAsPluginEnabled) tryEnableMetrics();
+
         setRegistered(true);
         getPipeline().execute(PipelinePhase.Frame.FRAME_REGISTERED, this);
         initializeViews();
@@ -266,7 +267,7 @@ public class ViewFrame extends IFViewFrame<ViewFrame, View> {
         }
     }
 
-    private void checkRelocationIssues() {
+    private boolean checkRelocationIssues() {
         final Plugin plugin = getOwner();
         final boolean isLibraryAsPluginEnabled =
                 getOwner().getServer().getPluginManager().isPluginEnabled("InventoryFramework");
@@ -278,6 +279,7 @@ public class ViewFrame extends IFViewFrame<ViewFrame, View> {
         }
 
         if (!isLibraryAsPluginEnabled && isLibraryPresent) plugin.getLogger().warning(RELOCATION_MESSAGE);
+        return isLibraryAsPluginEnabled;
     }
     // endregion
 
