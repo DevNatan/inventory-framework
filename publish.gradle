@@ -10,7 +10,6 @@ publishing {
                 version = "${version}-SNAPSHOT"
             from components.java
 
-
             pom {
                 name = 'inventory-framework'
                 description = 'Inventory Framework is a Bukkit Inventory API framework that allows you to create custom inventories with varied interaction treatments'
