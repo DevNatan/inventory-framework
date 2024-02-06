@@ -7,7 +7,6 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.BiFunction;
 import lombok.experimental.Delegate;
-import me.devnatan.inventoryframework.IFDebug;
 import me.devnatan.inventoryframework.PlatformView;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.UpdateReason;
@@ -201,9 +200,7 @@ public abstract class PlatformRenderContext<CONTEXT, BUILDER extends PlatformCom
     }
 
     @Override
-    public void simulateRender() {
-        IFDebug.debug("Rendering context %s", getId());
-        resolveLayout();
+    public void render() {
         getPipeline().execute(PipelinePhase.Context.CONTEXT_RENDER, this);
     }
 

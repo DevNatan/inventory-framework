@@ -300,7 +300,9 @@ public abstract class PlatformView<
     @SuppressWarnings("rawtypes")
     @ApiStatus.Internal
     public void renderContext(@NotNull RENDER_CONTEXT context) {
-        context.simulateRender();
+        IFDebug.debug("Rendering context %s", context.getId());
+        context.resolveLayout();
+        context.render();
 
         @SuppressWarnings("rawtypes")
         final PlatformView view = (PlatformView) context.getRoot();
