@@ -128,7 +128,7 @@ public abstract class PlatformComponentBuilder<SELF, CONTEXT> extends AbstractCo
      * @see #hideIf(Predicate)
      */
     public final SELF displayIf(Predicate<CONTEXT> displayCondition) {
-        setDisplayCondition((Predicate<? extends IFContext>) displayCondition);
+        super.displayCondition = (Predicate<? extends IFContext>) displayCondition;
         return (SELF) this;
     }
 
@@ -140,7 +140,7 @@ public abstract class PlatformComponentBuilder<SELF, CONTEXT> extends AbstractCo
      * @see #hideIf(BooleanSupplier)
      */
     public final SELF displayIf(BooleanSupplier displayCondition) {
-        setDisplayCondition(displayCondition == null ? null : $ -> displayCondition.getAsBoolean());
+		displayIf(displayCondition == null ? null : $ -> displayCondition.getAsBoolean());
         return (SELF) this;
     }
 

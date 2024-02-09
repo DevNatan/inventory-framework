@@ -64,7 +64,7 @@ public final class AnvilInputFeature implements Feature<AnvilInputConfig, Void, 
             for (final PlatformView view : views.values()) {
                 handleOpen(view);
 
-                view.getPipeline().intercept(PipelinePhase.Context.CONTEXT_BEFORE_RENDER, (__, renderContext) -> {
+                view.getPipeline().intercept(PipelinePhase.ViewPhase.CONTEXT_BEFORE_RENDER, (__, renderContext) -> {
                     handleClose((IFContext) renderContext);
                     handleClick((IFContext) renderContext);
                 });

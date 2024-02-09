@@ -21,7 +21,7 @@ public abstract class AbstractComponentBuilder<SELF> implements ComponentBuilder
     private Map<String, Object> data;
     private Set<State<?>> watchingStates = new HashSet<>();
     private boolean selfManaged;
-    private Predicate<? extends IFContext> displayCondition;
+    protected Predicate<? extends IFContext> displayCondition;
     private String key;
 
     protected AbstractComponentBuilder() {}
@@ -137,10 +137,6 @@ public abstract class AbstractComponentBuilder<SELF> implements ComponentBuilder
     @ApiStatus.Internal
     protected final boolean isSelfManaged() {
         return selfManaged;
-    }
-
-    protected final void setDisplayCondition(Predicate<? extends IFContext> displayCondition) {
-        this.displayCondition = displayCondition;
     }
 
     /**

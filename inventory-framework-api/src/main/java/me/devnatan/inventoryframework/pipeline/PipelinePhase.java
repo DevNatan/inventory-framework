@@ -45,12 +45,12 @@ public interface PipelinePhase {
          * At this phase the pipeline interceptor subject is a {@link IFOpenContext}.
          */
         CONTEXT_OPEN,
+
+		// TODO Rename to CONTEXT_CREATE
+		CONTEXT_BEFORE_RENDER,
     }
 
     enum Context implements PipelinePhase {
-        // TODO Rename to CONTEXT_CREATE
-        CONTEXT_BEFORE_RENDER,
-
         /**
          * Called when a context is rendered for the first time.
          * At this phase the pipeline interceptor subject is a {@link IFRenderContext}.
