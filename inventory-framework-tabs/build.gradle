@@ -1,0 +1,6 @@
+apply from: '../library.gradle'
+apply from: '../publish.gradle'
+
+dependencies {
+    compileOnly projects.inventoryFrameworkPlatform
+}
