@@ -62,7 +62,7 @@ public final class ViewConfigBuilder {
     /**
      * Defines the title of the container.
      * <p>
-     * <a href="https://github.com/KyoriPowered/adventure">Kyori's Adventure Text ComponentPhase</a> is supported if your platform is PaperSpigot
+     * <a href="https://github.com/KyoriPowered/adventure">Kyori's Adventure Text Component</a> is supported if your platform is PaperSpigot
      * in a non-legacy version. Non-{@link String} titles will be converted to a plain text.
      *
      * @param title The container title.

@@ -662,8 +662,7 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
 
     @Override
     public String toString() {
-        return "PaginationImpl{root="
-                + getRoot() + ", layoutTarget="
+        return "PaginationImpl{layoutTarget="
                 + layoutTarget + ", sourceProvider="
                 + sourceProvider + ", elementFactory="
                 + elementFactory + ", pageSwitchHandler="

@@ -101,7 +101,7 @@ public abstract class AbstractComponentBuilder<SELF> implements ComponentBuilder
     /**
      * Assigns {@link Ref a reference} to this component.
      *
-     * @param reference ComponentPhase reference key.
+     * @param reference Component reference key.
      * @return This component builder.
      * @see <a href="https://github.com/DevNatan/inventory-framework/wiki/refs-api">Refs API on Wiki</a>
      */

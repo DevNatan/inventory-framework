@@ -15,7 +15,7 @@ public final class ComponentRenderContext extends ComponentContext implements IF
     private ItemStack item;
     private int slot;
 
-    public ComponentRenderContext(RenderContext parent, AbstractBukkitComponent component, Viewer viewer) {
+    public ComponentRenderContext(RenderContext parent, AbstractBukkitComponent<?> component, Viewer viewer) {
         super(parent, component);
         this.viewer = viewer;
         this.player = viewer == null ? null : ((BukkitViewer) viewer).getPlayer();

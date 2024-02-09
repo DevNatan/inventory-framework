@@ -3,11 +3,13 @@ package me.devnatan.inventoryframework.component;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.IFComponentRenderContext;
 import me.devnatan.inventoryframework.context.IFComponentUpdateContext;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFSlotClickContext;
+import me.devnatan.inventoryframework.utils.SlotConverter;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,9 +18,9 @@ public abstract class PlatformComponentBuilder<SELF, CONTEXT> extends AbstractCo
 
     private int position = -1, row = -1, column = -1;
     private boolean cancelOnClick, closeOnClick, updateOnClick;
-    private Consumer<? super IFComponentRenderContext> renderHandler;
-    private Consumer<? super IFComponentUpdateContext> updateHandler;
-    private Consumer<? super IFSlotClickContext> clickHandler;
+    protected Consumer<? super IFComponentRenderContext> renderHandler;
+    protected Consumer<? super IFComponentUpdateContext> updateHandler;
+    protected Consumer<? super IFSlotClickContext> clickHandler;
 
     protected PlatformComponentBuilder() {}
 
@@ -100,7 +102,7 @@ public abstract class PlatformComponentBuilder<SELF, CONTEXT> extends AbstractCo
      * @return This component builder.
      */
     public final SELF onUpdate(@Nullable Consumer<? super IFComponentUpdateContext> updateHandler) {
-        setUpdateHandler(updateHandler);
+        this.updateHandler = updateHandler;
         return (SELF) this;
     }
 
@@ -114,14 +116,14 @@ public abstract class PlatformComponentBuilder<SELF, CONTEXT> extends AbstractCo
      * @return This component builder.
      */
     public final SELF onClick(@Nullable Runnable clickHandler) {
-        setClickHandler(clickHandler == null ? null : $ -> clickHandler.run());
+        this.clickHandler = clickHandler == null ? null : $ -> clickHandler.run();
         return (SELF) this;
     }
 
     /**
      * Only shows the component if a given condition is satisfied.
      *
-     * @param displayCondition ComponentPhase display condition.
+     * @param displayCondition Component display condition.
      * @return This component builder.
      * @see #hideIf(Predicate)
      */
@@ -133,7 +135,7 @@ public abstract class PlatformComponentBuilder<SELF, CONTEXT> extends AbstractCo
     /**
      * Only shows the component if a given condition is satisfied.
      *
-     * @param displayCondition ComponentPhase display condition.
+     * @param displayCondition Component display condition.
      * @return This component builder.
      * @see #hideIf(BooleanSupplier)
      */
@@ -165,30 +167,6 @@ public abstract class PlatformComponentBuilder<SELF, CONTEXT> extends AbstractCo
     }
     // endregion
 
-    protected final int getPosition() {
-        return position;
-    }
-
-    protected final int getRowPosition() {
-        return row;
-    }
-
-    protected final int getColumnPosition() {
-        return column;
-    }
-
-    protected final void setRenderHandler(Consumer<? super IFComponentRenderContext> renderHandler) {
-        this.renderHandler = renderHandler;
-    }
-
-    protected final void setUpdateHandler(Consumer<? super IFComponentUpdateContext> updateHandler) {
-        this.updateHandler = updateHandler;
-    }
-
-    protected final void setClickHandler(Consumer<? super IFSlotClickContext> clickHandler) {
-        this.clickHandler = clickHandler;
-    }
-
     @Override
     public void prepareComponent(VirtualView root, AbstractComponent abstractComponent) {
         super.prepareComponent(root, abstractComponent);
@@ -200,5 +178,13 @@ public abstract class PlatformComponentBuilder<SELF, CONTEXT> extends AbstractCo
         component.setCancelOnClick(cancelOnClick);
         component.setUpdateOnClick(updateOnClick);
         component.setCloseOnClick(closeOnClick);
+
+        final int position;
+        if (row > 0 && column > 0) {
+            final ViewContainer container = ViewContainer.from(root);
+            position = SlotConverter.convertSlot(row, column, container.getRowsCount(), container.getColumnsCount());
+        } else position = this.position;
+
+        component.setPosition(position);
     }
 }
