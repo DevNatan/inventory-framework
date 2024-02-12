@@ -66,7 +66,7 @@ public abstract class AbstractComponent implements Component {
 
     @Override
     public final @NotNull VirtualView getRoot() {
-        return Objects.requireNonNull(root, "ComponentPhase root cannot be null");
+        return Objects.requireNonNull(root, "Component root cannot be null");
     }
 
     protected final void setRoot(VirtualView root) {

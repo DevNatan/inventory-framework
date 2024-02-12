@@ -82,19 +82,12 @@ public abstract class AbstractBukkitComponent<B extends AbstractBukkitComponentB
         setItem(platformContext.getItem());
 
         if (!isPositionSet())
-            throw new IllegalStateException("ComponentPhase position is not set. A position for the component must be "
+            throw new IllegalStateException("Component position is not set. A position for the component must be "
                     + "assigned via #withSlot(...) in ComponentBuilder or programmatically before render");
 
-        if (getItem() == null) {
-            if (context.getContainer().getType().isResultSlot(getPosition())) {
-                setVisible(true);
-                return true;
-            }
-
-            // TODO This error must be in slot creation and not on render
-            //      so the developer will know where the error is
-            throw new IllegalStateException("At least one fallback item or render handler must be provided for "
-                    + getClass().getName());
+        if (getItem() == null && context.getContainer().getType().isResultSlot(getPosition())) {
+            setVisible(true);
+            return true;
         }
 
         getContainer().renderItem(getPosition(), getItem());

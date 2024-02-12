@@ -14,6 +14,6 @@ public final class BukkitComponentBuilder extends AbstractBukkitComponentBuilder
 
     @Override
     public Component buildComponent(VirtualView root) {
-        return new BukkitComponent(getItem());
+        return new BukkitComponent();
     }
 }
