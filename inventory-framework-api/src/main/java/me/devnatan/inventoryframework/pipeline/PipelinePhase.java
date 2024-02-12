@@ -46,8 +46,8 @@ public interface PipelinePhase {
          */
         CONTEXT_OPEN,
 
-		// TODO Rename to CONTEXT_CREATE
-		CONTEXT_BEFORE_RENDER,
+        // TODO Rename to CONTEXT_CREATE
+        CONTEXT_BEFORE_RENDER,
     }
 
     enum Context implements PipelinePhase {

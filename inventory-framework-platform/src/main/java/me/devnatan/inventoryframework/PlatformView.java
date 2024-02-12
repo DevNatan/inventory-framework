@@ -107,7 +107,9 @@ public abstract class PlatformView<
         getFramework().addViewer(viewer);
         viewer.setActiveContext(targetContext);
 
-		((PlatformView) targetContext.getRoot()).getPipeline().execute(PipelinePhase.ViewPhase.CONTEXT_BEFORE_RENDER, targetContext);
+        ((PlatformView) targetContext.getRoot())
+                .getPipeline()
+                .execute(PipelinePhase.ViewPhase.CONTEXT_BEFORE_RENDER, targetContext);
         viewer.open(targetContext.getContainer());
         onViewerAdded((PLATFORM_CONTEXT) targetContext, (VIEWER) viewer.getPlatformInstance(), initialData);
     }
