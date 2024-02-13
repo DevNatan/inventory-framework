@@ -63,7 +63,7 @@ public abstract class PlatformView<
     final String createEndless(Object initialData) {
         final IFOpenContext context = getElementFactory().createOpenContext(this, null, new ArrayList<>(), initialData);
         context.setEndless(true);
-        context.simulateOpen();
+		getPipeline().execute(PipelinePhase.ViewPhase.CONTEXT_OPEN, context);
         return context.getId().toString();
     }
 
@@ -79,7 +79,7 @@ public abstract class PlatformView<
 
         final Viewer subject = viewers.size() == 1 ? viewers.get(0) : null;
         final IFOpenContext context = getElementFactory().createOpenContext(this, subject, viewers, initialData);
-        context.simulateOpen();
+		getPipeline().execute(PipelinePhase.ViewPhase.CONTEXT_OPEN, context);
         return context.getId().toString();
     }
 
