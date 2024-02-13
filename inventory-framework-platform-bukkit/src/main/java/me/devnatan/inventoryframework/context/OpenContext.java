@@ -177,9 +177,4 @@ public class OpenContext extends PlatformConfinedContext implements IFOpenContex
     public void setContainer(ViewContainer container) {
         this.container = container;
     }
-
-    @Override
-    public void simulateOpen() {
-        getRoot().getPipeline().execute(PipelinePhase.ViewPhase.CONTEXT_OPEN, this);
-    }
 }
