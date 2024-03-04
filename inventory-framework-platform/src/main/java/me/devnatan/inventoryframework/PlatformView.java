@@ -63,7 +63,7 @@ public abstract class PlatformView<
     final String createEndless(Object initialData) {
         final IFOpenContext context = getElementFactory().createOpenContext(this, null, new ArrayList<>(), initialData);
         context.setEndless(true);
-		getPipeline().execute(PipelinePhase.ViewPhase.CONTEXT_OPEN, context);
+        getPipeline().execute(PipelinePhase.ViewPhase.CONTEXT_OPEN, context);
         return context.getId().toString();
     }
 
@@ -79,7 +79,7 @@ public abstract class PlatformView<
 
         final Viewer subject = viewers.size() == 1 ? viewers.get(0) : null;
         final IFOpenContext context = getElementFactory().createOpenContext(this, subject, viewers, initialData);
-		getPipeline().execute(PipelinePhase.ViewPhase.CONTEXT_OPEN, context);
+        getPipeline().execute(PipelinePhase.ViewPhase.CONTEXT_OPEN, context);
         return context.getId().toString();
     }
 
@@ -409,7 +409,7 @@ public abstract class PlatformView<
      * Called before a context is rendered, used to set up it.
      *
      * <p>This handler is often called "pre-rendering" because it is possible to set the title and
-     * size of the inventory and also cancel the opening of the ViewPhase without even doing any handling
+     * size of the inventory and also cancel the opening of the view without even doing any handling
      * related to the inventory.
      *
      * <p>It is not possible to manipulate the inventory in this handler, if it happens an exception

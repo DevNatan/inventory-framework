@@ -1,11 +1,12 @@
 package me.devnatan.inventoryframework.context;
 
 import java.util.function.BiConsumer;
+import me.devnatan.inventoryframework.component.PlatformComponent;
 import me.devnatan.inventoryframework.component.PlatformComponentBuilder;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
-public interface SlotComponentRenderer<C, B> {
+public interface SlotComponentRenderer<C extends IFContext, B> {
 
     /**
      * Creates a new item builder without a specified slot.
@@ -76,7 +77,14 @@ public interface SlotComponentRenderer<C, B> {
      * such API may be changed or may be removed completely in any further release. </i></b>
      */
     @ApiStatus.Experimental
-    <T extends PlatformComponentBuilder<T, C>> void firstSlotComponent(T componentBuilder);
+    <U extends PlatformComponent<C, ?>> void firstSlot(U component);
+
+    /**
+     * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     */
+    @ApiStatus.Experimental
+    <T extends PlatformComponentBuilder<T, C>> void firstSlot(T componentBuilder);
 
     /**
      * Sets an item in the last slot of this context's container.
