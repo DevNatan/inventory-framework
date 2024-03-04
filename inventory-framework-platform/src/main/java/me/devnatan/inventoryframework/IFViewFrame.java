@@ -61,7 +61,8 @@ abstract class IFViewFrame<S extends IFViewFrame<S, V>, V extends PlatformView<S
         return getRegisteredViews().values().stream()
                 .filter(view -> view.getClass().equals(type))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException(String.format("ViewPhase not registered: %s", type)));
+                .orElseThrow(
+                        () -> new IllegalArgumentException(String.format("View not registered: %s", type.getName())));
     }
 
     /**
@@ -77,7 +78,7 @@ abstract class IFViewFrame<S extends IFViewFrame<S, V>, V extends PlatformView<S
             for (final V view : views) {
                 if (registeredViews.containsKey(view.getUniqueId()))
                     throw new IllegalStateException(String.format(
-                            "ViewPhase %s already registered. Maybe your are using #register() before #with(...).",
+                            "View %s already registered. Maybe your are using #register() before #with(...).",
                             view.getClass().getName()));
 
                 IFDebug.debug(

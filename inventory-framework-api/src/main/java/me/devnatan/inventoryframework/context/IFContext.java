@@ -84,7 +84,7 @@ public interface IFContext extends VirtualView, StateValueHost, ComponentContain
     void removeViewer(@NotNull Viewer viewer);
 
     /**
-     * ViewPhase root from which this context originated.
+     * View root from which this context originated.
      *
      * @return The root of this context.
      */

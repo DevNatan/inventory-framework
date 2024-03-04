@@ -25,7 +25,8 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("rawtypes")
-public abstract class PlatformRenderContext<CONTEXT, BUILDER extends PlatformComponentBuilder<BUILDER, CONTEXT>>
+public abstract class PlatformRenderContext<
+                CONTEXT extends IFContext, BUILDER extends PlatformComponentBuilder<BUILDER, CONTEXT>>
         extends PlatformConfinedContext implements IFRenderContext, SlotComponentRenderer<CONTEXT, BUILDER>, Pipelined {
 
     private final UUID id;
