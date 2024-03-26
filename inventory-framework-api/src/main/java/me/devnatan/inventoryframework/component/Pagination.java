@@ -90,7 +90,7 @@ public interface Pagination extends ComponentComposition {
 	 *
 	 * @return The total number of elements in this page
 	 */
-	int countElements();
+	int elementCount();
 
     /**
      * Checks if a page exists.
