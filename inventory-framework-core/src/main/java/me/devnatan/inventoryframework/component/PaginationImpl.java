@@ -1,18 +1,5 @@
 package me.devnatan.inventoryframework.component;
 
-import static me.devnatan.inventoryframework.IFDebug.debug;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
-import java.util.function.BiConsumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.*;
@@ -21,6 +8,14 @@ import me.devnatan.inventoryframework.state.StateValue;
 import me.devnatan.inventoryframework.state.StateValueHost;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.VisibleForTesting;
+
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
+
+import static me.devnatan.inventoryframework.IFDebug.debug;
 
 // TODO add "key" to child pagination components and check if it needs to be updated based on it
 @VisibleForTesting
@@ -432,7 +427,12 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
         return !canAdvance();
     }
 
-    @Override
+	@Override
+	public int countElements() {
+		return currSource == null ? 0 : currSource.size();
+	}
+
+	@Override
     public boolean hasPage(int pageIndex) {
         if (isComputed()) return true;
         if (pageIndex < 0) return false;
