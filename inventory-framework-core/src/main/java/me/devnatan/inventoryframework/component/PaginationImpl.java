@@ -433,6 +433,11 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
     }
 
     @Override
+    public int elementCount() {
+        return currSource == null ? 0 : currSource.size();
+    }
+
+    @Override
     public boolean hasPage(int pageIndex) {
         if (isComputed()) return true;
         if (pageIndex < 0) return false;
