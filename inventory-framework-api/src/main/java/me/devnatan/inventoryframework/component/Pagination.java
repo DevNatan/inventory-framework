@@ -1,12 +1,11 @@
 package me.devnatan.inventoryframework.component;
 
-import me.devnatan.inventoryframework.state.StateValueHost;
-import org.jetbrains.annotations.ApiStatus;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import me.devnatan.inventoryframework.state.StateValueHost;
+import org.jetbrains.annotations.ApiStatus;
 
 /**
  * Pagination is a host to multiple components that can be paginated, essentially it is a {@link
@@ -83,14 +82,14 @@ public interface Pagination extends ComponentComposition {
      */
     boolean isLastPage();
 
-	/**
-	 * Counts the total number of elements in this page
-	 * <p>
-	 * This method will return {@code 0} before the first render.
-	 *
-	 * @return The total number of elements in this page
-	 */
-	int elementCount();
+    /**
+     * Counts the total number of elements in this page
+     * <p>
+     * This method will return {@code 0} before the first render.
+     *
+     * @return The total number of elements in this page
+     */
+    int elementCount();
 
     /**
      * Checks if a page exists.
