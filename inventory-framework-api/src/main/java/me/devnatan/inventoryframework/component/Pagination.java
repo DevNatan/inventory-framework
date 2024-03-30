@@ -83,6 +83,15 @@ public interface Pagination extends ComponentComposition {
     boolean isLastPage();
 
     /**
+     * Counts the total number of elements in this page
+     * <p>
+     * This method will return {@code 0} before the first render.
+     *
+     * @return The total number of elements in this page
+     */
+    int elementCount();
+
+    /**
      * Checks if a page exists.
      *
      * @param pageIndex The page index to check.
