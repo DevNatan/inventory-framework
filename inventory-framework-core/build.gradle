@@ -1,6 +1,0 @@
-apply from: '../library.gradle'
-apply from: '../publish.gradle'
-
-dependencies {
-    api projects.inventoryFrameworkApi
-}
