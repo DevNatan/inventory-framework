@@ -7,7 +7,6 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
-import me.devnatan.inventoryframework.IFDebug;
 import me.devnatan.inventoryframework.PlatformView;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.UpdateReason;
@@ -199,18 +198,6 @@ public abstract class PlatformRenderContext<CONTEXT, ITEM_BUILDER extends ItemCo
                         rawSlot, whoClicked, clickedContainer, clickedComponent, platformEvent, isCombined);
 
         getPipeline().execute(PipelinePhase.Context.CONTEXT_SLOT_CLICK, clickContext);
-    }
-
-    @Override
-    public void simulateRender() {
-        IFDebug.debug("Rendering context %s", getId());
-        getPipeline().execute(PipelinePhase.Context.CONTEXT_RENDER, this);
-        resolveLayout();
-    }
-
-    @Override
-    public void resolveLayout() {
-        getPipeline().execute(PipelinePhase.Context.CONTEXT_LAYOUT_RESOLUTION, this);
     }
 
     /**
