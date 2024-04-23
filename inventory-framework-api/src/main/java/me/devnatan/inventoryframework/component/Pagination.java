@@ -222,6 +222,28 @@ public interface Pagination extends ComponentComposition {
     void forceUpdate();
 
     /**
+     * Gets the total number of pages.
+     *
+     * @return The total number of pages. Always <code>1</code> when {@link #isComputed()} is <code>true</code>.
+     */
+    int pagesCount();
+
+    /**
+     * Checks if there's any source in this pagination.
+     *
+     * @return Returns <code>true</code> if the pagination is empty, otherwise <code>true</code>.
+     */
+    boolean isEmpty();
+
+    /**
+     * Returns the list of paginated data loaded for the current page.
+     *
+     * @return Paginated data for the current page.
+     * @param <T> The paginated data type.
+     */
+    <T> List<T> currentSource();
+
+    /**
      * Gets all elements in a given page index based of the specified source.
      *
      * @param index The page index.

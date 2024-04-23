@@ -160,9 +160,9 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
             isLoading = false;
             simulateStateUpdate();
 
-            if (isLazy())
-                return Pagination.splitSourceForPage(currentPageIndex(), getPageSize(), getPagesCount(), result);
-            else return result;
+            return !isLazy()
+                    ? result
+                    : Pagination.splitSourceForPage(currentPageIndex(), getPageSize(), getPagesCount(), result);
         });
     }
 
@@ -536,6 +536,22 @@ public class PaginationImpl extends AbstractComponent implements Pagination, Sta
     @Override
     public void forceUpdate() {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public int pagesCount() {
+        return isComputed() ? 1 : getPagesCount();
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return currSource.isEmpty();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> List<T> currentSource() {
+        return (List<T>) currSource;
     }
 
     @NotNull
