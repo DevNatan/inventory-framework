@@ -98,8 +98,7 @@ final class ContextOpenInterceptor implements PipelineInterceptor<IFContext> {
             final State<?> state = root.getStateRegistry().getState(id);
             final StateValue recreatedValue = state.factory().create(renderContext, state);
 
-			if (recreatedValue instanceof MutableValue)
-				recreatedValue.set(value.get());
+            if (recreatedValue instanceof MutableValue) recreatedValue.set(value.get());
 
             renderContext.initializeState(id, recreatedValue);
         });
