@@ -5,3 +5,8 @@ plugins {
 
 group 'me.devnatan'
 version '3.0.9'
+
+subprojects {
+    group = rootProject.group
+    version = rootProject.version
+}

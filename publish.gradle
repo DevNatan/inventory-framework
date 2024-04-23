@@ -6,12 +6,10 @@ ext.isReleaseVersion = System.getProperty("snapshot") != "true"
 publishing {
     publications {
         javaOSSRH(MavenPublication) {
-            groupId = rootProject.group
-            artifactId = project.name
-            version = rootProject.version
             if (!isReleaseVersion)
                 version = "${version}-SNAPSHOT"
             from components.java
+
 
             pom {
                 name = 'inventory-framework'
