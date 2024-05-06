@@ -192,6 +192,15 @@ public final class ViewConfigBuilder {
     }
 
     /**
+     * Cancels all default interactions with the view.
+     *
+     * @return This configuration builder.
+     */
+    public ViewConfigBuilder cancelDefaults() {
+        return cancelOnClick().cancelOnPickup().cancelOnDrop().cancelOnDrag();
+    }
+
+    /**
      * Schedules the view to update every fixed interval.
      *
      * @param intervalInTicks The interval in ticks.
