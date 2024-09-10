@@ -160,11 +160,11 @@ public final class ViewConfigBuilder {
         return this;
     }
 
-	/**
-	 * Cancels any item click by the player while the view is open.
-	 *
-	 * @return This configuration builder.
-	 */
+    /**
+     * Cancels any item click by the player while the view is open.
+     *
+     * @return This configuration builder.
+     */
     public ViewConfigBuilder cancelOnClick() {
         return addOption(ViewConfig.CANCEL_ON_CLICK);
     }

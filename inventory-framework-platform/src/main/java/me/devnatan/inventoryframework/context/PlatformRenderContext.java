@@ -65,7 +65,6 @@ public abstract class PlatformRenderContext<CONTEXT, ITEM_BUILDER extends ItemCo
         this.initialData = initialData;
 
         final Pipeline<IFContext> pipeline = getPipeline();
-        pipeline.intercept(PipelinePhase.Context.CONTEXT_OPEN, new ContextOpenInterceptor());
         pipeline.intercept(PipelinePhase.Context.CONTEXT_LAYOUT_RESOLUTION, new LayoutResolutionInterceptor());
         pipeline.intercept(PipelinePhase.Context.CONTEXT_RENDER, new ContextPlatformRenderHandlerCallInterceptor());
         pipeline.intercept(PipelinePhase.Context.CONTEXT_RENDER, new LayoutRenderInterceptor());

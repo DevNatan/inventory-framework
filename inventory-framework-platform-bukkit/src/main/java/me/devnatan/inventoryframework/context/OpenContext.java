@@ -13,6 +13,7 @@ import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewConfigBuilder;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
+import me.devnatan.inventoryframework.pipeline.Pipeline;
 import me.devnatan.inventoryframework.pipeline.PipelinePhase;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.ApiStatus;
@@ -60,6 +61,9 @@ public class OpenContext extends PlatformConfinedContext implements IFOpenContex
         this.viewers = viewers;
         this.initialData = initialData;
         this.player = subject == null ? null : ((BukkitViewer) subject).getPlayer();
+
+        final Pipeline<IFContext> pipeline = getPipeline();
+        pipeline.intercept(PipelinePhase.Context.CONTEXT_OPEN, new ContextOpenInterceptor());
     }
 
     /**
