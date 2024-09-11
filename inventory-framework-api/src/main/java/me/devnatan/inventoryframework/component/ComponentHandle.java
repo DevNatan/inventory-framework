@@ -4,6 +4,7 @@ import java.util.Objects;
 import me.devnatan.inventoryframework.IFDebug;
 import me.devnatan.inventoryframework.context.IFComponentContext;
 import me.devnatan.inventoryframework.pipeline.PipelineInterceptor;
+import me.devnatan.inventoryframework.pipeline.PipelinePhase;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -33,6 +34,10 @@ public abstract class ComponentHandle implements PipelineInterceptor<IFComponent
 
         if (!Objects.equals(component.getHandle(), this))
             throw new IllegalArgumentException("Call #setHandle(this) before calling #setComponent(...)");
+
+        for (PipelinePhase.Component phase : PipelinePhase.Component.values()) {
+            component.interceptPipelineCall(phase, this);
+        }
 
         this.component = component;
         IFDebug.debug(
