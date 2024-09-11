@@ -15,9 +15,10 @@ public final class ContextInvalidationOnCloseInterceptor implements PipelineInte
 
         final IFCloseContext context = (IFCloseContext) subject;
         if (!context.isActive() || context.isCancelled()) {
-			IFDebug.debug("Invalidation skipped (active = %b, cancelled = %b)", context.isActive(), context.isCancelled());
-			return;
-		}
+            IFDebug.debug(
+                    "Invalidation skipped (active = %b, cancelled = %b)", context.isActive(), context.isCancelled());
+            return;
+        }
 
         final PlatformView root = (PlatformView) context.getRoot();
         final Viewer viewer = context.getViewer();

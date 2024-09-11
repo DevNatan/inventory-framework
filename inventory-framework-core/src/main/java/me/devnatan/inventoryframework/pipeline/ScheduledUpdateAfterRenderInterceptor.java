@@ -1,5 +1,7 @@
 package me.devnatan.inventoryframework.pipeline;
 
+import java.util.ArrayList;
+import java.util.List;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.IFContext;
@@ -19,10 +21,10 @@ public final class ScheduledUpdateAfterRenderInterceptor implements PipelineInte
         if (updateIntervalInTicks == 0) return;
         if (root.getScheduledUpdateJob() != null && root.getScheduledUpdateJob().isStarted()) return;
 
-        final Job updateJob = root.getElementFactory()
-                .scheduleJobInterval(root, updateIntervalInTicks, () -> root.getInternalContexts().stream()
-                        .filter(IFContext::isActive)
-                        .forEach(IFContext::update));
+        final Job updateJob = root.getElementFactory().scheduleJobInterval(root, updateIntervalInTicks, () -> {
+            final List<IFContext> contextList = new ArrayList<>(root.getInternalContexts());
+            contextList.stream().filter(IFContext::isActive).forEach(IFContext::update);
+        });
         updateJob.start();
         root.setScheduledUpdateJob(updateJob);
     }
