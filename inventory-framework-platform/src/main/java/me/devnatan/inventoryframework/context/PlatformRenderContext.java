@@ -299,7 +299,9 @@ public abstract class PlatformRenderContext<CONTEXT, ITEM_BUILDER extends ItemCo
             return;
         }
 
-        getPipeline().execute(PipelinePhase.Component.COMPONENT_RENDER, createComponentRenderContext(component, false));
+        ((AbstractComponent) component)
+                .getPipeline()
+                .execute(PipelinePhase.Component.COMPONENT_RENDER, createComponentRenderContext(component, false));
     }
 
     @Override

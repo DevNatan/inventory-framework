@@ -18,7 +18,7 @@ import me.devnatan.inventoryframework.state.DefaultStateValueHost;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
 
-abstract class AbstractIFContext extends DefaultStateValueHost implements IFContext {
+public abstract class AbstractIFContext extends DefaultStateValueHost implements IFContext {
 
     // TODO Reconsider usage of LinkedList - why its a LinkedList?? :clown:
     private final List<Component> components = new LinkedList<>();
@@ -26,7 +26,7 @@ abstract class AbstractIFContext extends DefaultStateValueHost implements IFCont
     protected ViewConfig config;
     private final Pipeline<IFContext> pipeline = new Pipeline<>(PipelinePhase.Context.values());
 
-    Pipeline<IFContext> getPipeline() {
+    public Pipeline<IFContext> getPipeline() {
         return pipeline;
     }
 

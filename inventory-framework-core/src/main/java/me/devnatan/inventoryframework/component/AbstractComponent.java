@@ -128,7 +128,7 @@ public abstract class AbstractComponent implements Component {
         this.handle.setComponent(this);
     }
 
-    final Pipeline<IFComponentContext> getPipeline() {
+    public final Pipeline<IFComponentContext> getPipeline() {
         return pipeline;
     }
 

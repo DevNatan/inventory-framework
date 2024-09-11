@@ -302,8 +302,7 @@ public abstract class PlatformView<
     @ApiStatus.Internal
     public void renderContext(@NotNull RENDER_CONTEXT context) {
         IFDebug.debug("Rendering context %s", context.getId());
-        // TODO Execute PipelinePhase.Context.CONTEXT_RENDER pipeline phase
-        //        getPipeline().execute(context);
+        ((AbstractIFContext) context).getPipeline().execute(PipelinePhase.Context.CONTEXT_RENDER, context);
 
         @SuppressWarnings("rawtypes")
         final PlatformView view = (PlatformView) context.getRoot();
