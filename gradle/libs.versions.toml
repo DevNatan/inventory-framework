@@ -7,7 +7,7 @@ mockito = "4.11.0"
 adventure-api = "4.16.0"
 kotlin = "1.9.23"
 plugin-shadowjar = "8.1.1"
-plugin-spotless = "6.12.0"
+plugin-spotless = "6.25.0"
 plugin-bukkit = "0.6.0"
 lombok = "1.18.32"
 
