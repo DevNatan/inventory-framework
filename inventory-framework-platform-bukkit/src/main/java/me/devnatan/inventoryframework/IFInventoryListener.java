@@ -49,10 +49,10 @@ final class IFInventoryListener implements Listener {
         if (viewer == null) return;
 
         final IFRenderContext context = viewer.getActiveContext();
-        final RootView root = (RootView) context.getRoot();
+        final RootView root = context.getRoot();
         final IFCloseContext closeContext = root.getElementFactory().createCloseContext(viewer, context);
 
-        context.simulateCloseForPlayer();
+        closeContext.simulateCloseForPlayer();
     }
 
     @SuppressWarnings("deprecation")
