@@ -343,8 +343,8 @@ public abstract class PlatformView<
         final IFRenderContext target =
                 viewer.isTransitioning() ? viewer.getPreviousContext() : viewer.getActiveContext();
 
-        if (target == null || target.isEndless()) return;
-        if (target.getViewers().isEmpty()) {
+		if (target == null || target.isEndless()) return;
+        if (target.getViewers().size() <= 1) {
             target.setActive(false);
             removeContext(target);
         }
