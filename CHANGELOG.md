@@ -1,5 +1,10 @@
 # Changelog
 
+# 3.0.11 (09-11-2023)
+
+* Fix scheduled update job cancellation check
+* Context invalidation viewers size check
+
 # 3.0.8 (11-28-2023)
 
 * Interaction delay intercepting re-propagated interactions (#543)
