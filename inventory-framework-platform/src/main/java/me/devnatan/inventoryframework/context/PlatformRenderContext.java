@@ -1,34 +1,38 @@
 package me.devnatan.inventoryframework.context;
 
-import static java.lang.String.format;
 import static me.devnatan.inventoryframework.utils.SlotConverter.convertSlot;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import me.devnatan.inventoryframework.InventoryFrameworkException;
 import me.devnatan.inventoryframework.PlatformView;
 import me.devnatan.inventoryframework.RootView;
+import me.devnatan.inventoryframework.UpdateReason;
 import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.ViewType;
 import me.devnatan.inventoryframework.Viewer;
+import me.devnatan.inventoryframework.component.AbstractComponentHandle;
+import me.devnatan.inventoryframework.component.Component;
+import me.devnatan.inventoryframework.component.ComponentBuilder;
 import me.devnatan.inventoryframework.component.ComponentFactory;
 import me.devnatan.inventoryframework.component.ItemComponentBuilder;
+import me.devnatan.inventoryframework.component.PlatformComponentBuilder;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
 
 @SuppressWarnings("rawtypes")
-public abstract class PlatformRenderContext<T extends ItemComponentBuilder<T, C>, C extends IFContext>
+public abstract class PlatformRenderContext<ITEM_BUILDER extends ItemComponentBuilder, CONTEXT extends IFContext>
         extends PlatformConfinedContext implements IFRenderContext {
 
-    // --- Must inherit from parent context ---
     private final UUID id;
     protected final PlatformView root;
     private final ViewConfig config;
@@ -41,9 +45,9 @@ public abstract class PlatformRenderContext<T extends ItemComponentBuilder<T, C>
     private boolean rendered;
 
     // --- Properties ---
-    private final List<ComponentFactory> componentBuilders = new ArrayList<>();
+    private final List<ComponentBuilder> componentBuilders = new ArrayList<>();
     private final List<LayoutSlot> layoutSlots = new ArrayList<>();
-    private final List<BiFunction<Integer, Integer, ComponentFactory>> availableSlotFactories = new ArrayList<>();
+    private final List<BiFunction<Integer, Integer, ComponentBuilder>> availableSlotFactories = new ArrayList<>();
 
     PlatformRenderContext(
             @NotNull UUID id,
@@ -80,7 +84,7 @@ public abstract class PlatformRenderContext<T extends ItemComponentBuilder<T, C>
      * @return An item builder to configure the item.
      */
     @ApiStatus.Experimental
-    public final T unsetSlot() {
+    public final ITEM_BUILDER unsetSlot() {
         return createRegisteredBuilder();
     }
 
@@ -90,8 +94,8 @@ public abstract class PlatformRenderContext<T extends ItemComponentBuilder<T, C>
      * @param slot The slot in which the item will be positioned.
      * @return An item builder to configure the item.
      */
-    public final @NotNull T slot(int slot) {
-        return createRegisteredBuilder().withSlot(slot);
+    public final @NotNull ITEM_BUILDER slot(int slot) {
+        return createRegisteredBuilderInPosition(slot);
     }
 
     /**
@@ -102,14 +106,10 @@ public abstract class PlatformRenderContext<T extends ItemComponentBuilder<T, C>
      * @return An item builder to configure the item.
      */
     @NotNull
-    public final T slot(int row, int column) {
+    public final ITEM_BUILDER slot(int row, int column) {
         checkAlignedContainerTypeForSlotAssignment();
-        return createRegisteredBuilder()
-                .withSlot(convertSlot(
-                        row,
-                        column,
-                        getContainer().getRowsCount(),
-                        getContainer().getColumnsCount()));
+        return createRegisteredBuilderInPosition(convertSlot(
+                row, column, getContainer().getRowsCount(), getContainer().getColumnsCount()));
     }
 
     /**
@@ -117,8 +117,27 @@ public abstract class PlatformRenderContext<T extends ItemComponentBuilder<T, C>
      *
      * @return An item builder to configure the item.
      */
-    public final @NotNull T firstSlot() {
-        return createRegisteredBuilder().withSlot(getContainer().getFirstSlot());
+    public final @NotNull ITEM_BUILDER firstSlot() {
+        return createRegisteredBuilderInPosition(getContainer().getFirstSlot());
+    }
+
+    /**
+     * Sets a component in the first slot of the container.
+     * <p>
+     * <b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     *
+     * @return An {@link ComponentBuilder} to configure the properties of the component.
+     */
+    @ApiStatus.Experimental
+    public final @NotNull <
+                    T extends AbstractComponentHandle<CONTEXT, B>, B extends PlatformComponentBuilder<B, CONTEXT>>
+            B firstSlot(@NotNull T componentHandle) {
+        final B builder = componentHandle.builder();
+        final Component component = builder.buildComponent(this);
+        component.setHandle(componentHandle);
+        addComponent(component);
+        return builder;
     }
 
     /**
@@ -126,8 +145,8 @@ public abstract class PlatformRenderContext<T extends ItemComponentBuilder<T, C>
      *
      * @return An item builder to configure the item.
      */
-    public final @NotNull T lastSlot() {
-        return createRegisteredBuilder().withSlot(getContainer().getLastSlot());
+    public final @NotNull ITEM_BUILDER lastSlot() {
+        return createRegisteredBuilderInPosition(getContainer().getLastSlot());
     }
 
     /**
@@ -135,10 +154,12 @@ public abstract class PlatformRenderContext<T extends ItemComponentBuilder<T, C>
      *
      * @return An item builder to configure the item.
      */
-    public final @NotNull T availableSlot() {
-        final T builder = createBuilder();
-        availableSlotFactories.add(
-                (index, slot) -> (ComponentFactory) builder.copy().withSlot(slot));
+    public final @NotNull ITEM_BUILDER availableSlot() {
+        final ITEM_BUILDER builder = createBuilder();
+        availableSlotFactories.add((index, slot) -> {
+            builder.setPosition(slot);
+            return builder;
+        });
         return builder;
     }
 
@@ -152,12 +173,12 @@ public abstract class PlatformRenderContext<T extends ItemComponentBuilder<T, C>
      * @param factory A factory to create the item builder to configure the item.
      *                The first parameter is the iteration index of the available slot.
      */
-    public final void availableSlot(@NotNull BiConsumer<Integer, T> factory) {
+    public final void availableSlot(@NotNull BiConsumer<Integer, ITEM_BUILDER> factory) {
         availableSlotFactories.add((index, slot) -> {
-            final T builder = createBuilder();
-            builder.withSlot(slot);
+            final ITEM_BUILDER builder = createBuilder();
+            builder.setPosition(slot);
             factory.accept(index, builder);
-            return (ComponentFactory) builder;
+            return builder;
         });
     }
 
@@ -167,16 +188,14 @@ public abstract class PlatformRenderContext<T extends ItemComponentBuilder<T, C>
      * @param character The layout character target.
      * @return An item builder to configure the item.
      */
-    public final @NotNull T layoutSlot(char character) {
-        requireNonReservedLayoutCharacter(character);
-
+    public final @NotNull ITEM_BUILDER layoutSlot(char character) {
         // TODO More detailed exception message
         final LayoutSlot layoutSlot = getLayoutSlots().stream()
                 .filter(value -> value.getCharacter() == character)
                 .findFirst()
                 .orElseThrow(() -> new InventoryFrameworkException("Missing layout character: " + character));
 
-        final T builder = createBuilder();
+        final ITEM_BUILDER builder = createBuilder();
         getLayoutSlots().add(layoutSlot.withFactory($ -> (ComponentFactory) builder));
         return builder;
     }
@@ -190,9 +209,7 @@ public abstract class PlatformRenderContext<T extends ItemComponentBuilder<T, C>
      *
      * @param character The layout character target.
      */
-    public final void layoutSlot(char character, @NotNull BiConsumer<Integer, T> factory) {
-        requireNonReservedLayoutCharacter(character);
-
+    public final void layoutSlot(char character, @NotNull BiConsumer<Integer, ITEM_BUILDER> factory) {
         // TODO More detailed exception message
         final LayoutSlot layoutSlot = getLayoutSlots().stream()
                 .filter(value -> value.getCharacter() == character)
@@ -200,7 +217,7 @@ public abstract class PlatformRenderContext<T extends ItemComponentBuilder<T, C>
                 .orElseThrow(() -> new InventoryFrameworkException("Missing layout character: " + character));
 
         getLayoutSlots().add(layoutSlot.withFactory(index -> {
-            final T builder = createBuilder();
+            final ITEM_BUILDER builder = createBuilder();
             factory.accept(index, builder);
             return (ComponentFactory) builder;
         }));
@@ -211,7 +228,7 @@ public abstract class PlatformRenderContext<T extends ItemComponentBuilder<T, C>
      * such API may be changed or may be removed completely in any further release. </i></b>
      */
     @ApiStatus.Experimental
-    public final @NotNull T resultSlot() {
+    public final @NotNull ITEM_BUILDER resultSlot() {
         final ViewType containerType = getContainer().getType();
         final int[] resultSlots = containerType.getResultSlots();
         if (resultSlots == null) throw new InventoryFrameworkException("No result slots available: " + containerType);
@@ -221,6 +238,17 @@ public abstract class PlatformRenderContext<T extends ItemComponentBuilder<T, C>
 
         return slot(resultSlots[0]);
     }
+
+    /**
+     * Renders a new component in that context.
+     * <p>
+     * <b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     *
+     * @param component The component to be rendered.
+     */
+    @ApiStatus.Experimental
+    public void component(@NotNull Component component) {}
     // endregion
 
     @Override
@@ -259,7 +287,7 @@ public abstract class PlatformRenderContext<T extends ItemComponentBuilder<T, C>
     }
 
     @Override
-    public final @NotNull @UnmodifiableView List<ComponentFactory> getComponentFactories() {
+    public final @NotNull @UnmodifiableView List<ComponentBuilder> getNotRenderedComponents() {
         return Collections.unmodifiableList(componentBuilders);
     }
 
@@ -274,7 +302,7 @@ public abstract class PlatformRenderContext<T extends ItemComponentBuilder<T, C>
     }
 
     @Override
-    public final List<BiFunction<Integer, Integer, ComponentFactory>> getAvailableSlotFactories() {
+    public final List<BiFunction<Integer, Integer, ComponentBuilder>> getAvailableSlotFactories() {
         return availableSlotFactories;
     }
 
@@ -323,21 +351,85 @@ public abstract class PlatformRenderContext<T extends ItemComponentBuilder<T, C>
         this.rendered = true;
     }
 
+    @Override
+    public final void renderComponent(@NotNull Component component) {
+        if (!component.shouldRender(this)) {
+            component.setVisible(false);
+
+            final Optional<Component> overlapOptional = getOverlappingComponentToRender(this, component);
+            if (overlapOptional.isPresent()) {
+                Component overlap = overlapOptional.get();
+                renderComponent(overlap);
+
+                if (overlap.isVisible()) return;
+            }
+
+            component.getPipeline().execute(Component.CLEAR, this);
+            clearComponent(component);
+            return;
+        }
+
+        component.getPipeline().execute(Component.RENDER, createComponentRenderContext(component, false));
+    }
+
+    @Override
+    public final void updateComponent(Component component, boolean force, UpdateReason reason) {
+        component.getPipeline().execute(Component.UPDATE, createComponentUpdateContext(component, force, reason));
+    }
+
+    @Override
+    public final void clearComponent(@NotNull Component component) {}
+
     /**
-     * Creates a new {@link T} instance for the current platform.
+     * Creates a IFComponentRenderContext for the current platform.
+     *
+     * @param component The component.
+     * @param force If the context was created due to usage of forceRender().
+     * @return A new IFComponentRenderContext instance.
+     */
+    @ApiStatus.Internal
+    abstract IFComponentRenderContext createComponentRenderContext(Component component, boolean force);
+
+    /**
+     * Creates a IFComponentUpdateContext for the current platform.
+     *
+     * @param component The component.
+     * @param force If the context was created due to usage of forceUpdate().
+     * @param reason Reason why this component was updated.
+     * @return A new IFComponentUpdateContext instance.
+     */
+    @ApiStatus.Internal
+    abstract IFComponentUpdateContext createComponentUpdateContext(
+            Component component, boolean force, UpdateReason reason);
+
+    /**
+     * Creates a new platform builder instance.
      *
      * @return A new platform builder instance.
      */
-    protected abstract T createBuilder();
+    // TODO use ElementFactory's `createBuilder` instead
+    protected abstract ITEM_BUILDER createBuilder();
 
     /**
      * Creates a new platform builder instance and registers it.
      *
      * @return A new registered platform builder instance.
      */
-    protected final T createRegisteredBuilder() {
-        final T builder = createBuilder();
-        componentBuilders.add((ComponentFactory) builder);
+    protected final ITEM_BUILDER createRegisteredBuilder() {
+        final ITEM_BUILDER builder = createBuilder();
+        componentBuilders.add(builder);
+        return builder;
+    }
+
+    /**
+     * Creates a new platform builder instance and registers it.
+     *
+     * @return A new registered platform builder instance.
+     */
+    protected final ITEM_BUILDER createRegisteredBuilderInPosition(int position) {
+        final ITEM_BUILDER builder = createBuilder();
+        builder.setPosition(position);
+        componentBuilders.add(builder);
         return builder;
     }
 
@@ -349,19 +441,6 @@ public abstract class PlatformRenderContext<T extends ItemComponentBuilder<T, C>
             throw new IllegalStateException(String.format(
                     "Non-aligned container type %s cannot use row-column slots, use absolute %s instead",
                     getContainer().getType().getIdentifier(), "#slot(n)"));
-    }
-
-    /**
-     * Checks if the character is a reserved layout character.
-     *
-     * @param character The character to be checked.
-     * @throws IllegalArgumentException If the given character is a reserved layout character.
-     */
-    private void requireNonReservedLayoutCharacter(char character) {
-        if (character == LayoutSlot.FILLED_RESERVED_CHAR)
-            throw new IllegalArgumentException(format(
-                    "The '%c' character cannot be used because it is only available for backwards compatibility. Please use another character.",
-                    character));
     }
     // endregion
 }

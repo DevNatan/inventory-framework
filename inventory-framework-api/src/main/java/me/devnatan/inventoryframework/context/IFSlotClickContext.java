@@ -13,7 +13,6 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface IFSlotClickContext extends IFSlotContext, IFConfinedContext {
 
-    // TODO needs documentation
     @NotNull
     ViewContainer getClickedContainer();
 
@@ -99,4 +98,19 @@ public interface IFSlotClickContext extends IFSlotContext, IFConfinedContext {
      */
     @ApiStatus.Internal
     boolean isCombined();
+
+    /**
+     * Checks whether the click was in a position represented by any character in the layout.
+     *
+     * @return {@code false} if there is no layout or the click was not on a position in the layout.
+     */
+    boolean isLayoutSlot();
+
+    /**
+     * Checks whether the click was in a given character in the layout.
+     *
+     * @param character The character in the layout.
+     * @return {@code false} if there is no layout or the click was in a character in the layout.
+     */
+    boolean isLayoutSlot(char character);
 }

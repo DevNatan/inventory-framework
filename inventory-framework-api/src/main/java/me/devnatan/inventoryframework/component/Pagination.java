@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import me.devnatan.inventoryframework.state.StateValue;
 import me.devnatan.inventoryframework.state.StateValueHost;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -21,7 +20,7 @@ import org.jetbrains.annotations.ApiStatus;
  * during rendering, this component is determined from the {@link #currentPageIndex() current page
  * index}.
  */
-public interface Pagination extends ComponentComposition, StateValue {
+public interface Pagination extends ComponentComposition {
 
     /**
      * The current page number.
@@ -240,5 +239,18 @@ public interface Pagination extends ComponentComposition, StateValue {
         for (int i = base; i < until; i++) contents.add(src.get(i));
 
         return contents;
+    }
+
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
+    KeyFactory<?> getKeyFactory();
+
+    @FunctionalInterface
+    interface KeyFactory<V> {
+
+        Object create(int index, V value);
     }
 }

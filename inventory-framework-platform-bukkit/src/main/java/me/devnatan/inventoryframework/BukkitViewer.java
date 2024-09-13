@@ -4,15 +4,16 @@ import java.util.Deque;
 import java.util.LinkedList;
 import java.util.Objects;
 import me.devnatan.inventoryframework.context.IFRenderContext;
+import me.devnatan.inventoryframework.state.DefaultStateValueHost;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public final class BukkitViewer implements Viewer {
+public final class BukkitViewer extends DefaultStateValueHost implements Viewer {
 
     private final Player player;
     private ViewContainer selfContainer;
     private IFRenderContext activeContext;
-    private Deque<IFRenderContext> previousContexts = new LinkedList<>();
+    private final Deque<IFRenderContext> previousContexts = new LinkedList<>();
     private long lastInteractionInMillis;
     private boolean transitioning;
 

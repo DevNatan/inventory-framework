@@ -86,9 +86,12 @@ public final class ViewConfigBuilder {
         return this;
     }
 
-    // TODO needs documentation
+    /**
+     * Sets the size of the container to the maximum possible.
+     * @return This configuration builder.
+     */
     public ViewConfigBuilder maxSize() {
-        throw new UnsupportedOperationException("TODO");
+        return size(Integer.MAX_VALUE);
     }
 
     /**

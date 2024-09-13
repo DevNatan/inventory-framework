@@ -7,8 +7,6 @@ public interface ViewContainer {
 
     String getTitle();
 
-    String getTitle(@NotNull Viewer viewer);
-
     /**
      * The type of this container.
      *
@@ -39,13 +37,7 @@ public interface ViewContainer {
      */
     boolean hasItem(int slot);
 
-    void renderItem(int slot, Object item);
-
     void removeItem(int slot);
-
-    boolean matchesItem(int slot, Object item, boolean exactly);
-
-    boolean isSupportedItem(Object item);
 
     /**
      * The number of slots in this container.

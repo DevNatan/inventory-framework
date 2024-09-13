@@ -118,7 +118,10 @@ public final class ViewType {
         final int fullSize;
 
         if (size <= getRows()) fullSize = size * getColumns();
-        else {
+        else if (size == Integer.MAX_VALUE) {
+            // used `maxSize()` in config builder
+            fullSize = getMaxSize();
+        } else {
             if (size % getColumns() != 0)
                 throw new IllegalArgumentException(
                         format("Container size must be a multiple of %d (given: %d)", getColumns(), size));

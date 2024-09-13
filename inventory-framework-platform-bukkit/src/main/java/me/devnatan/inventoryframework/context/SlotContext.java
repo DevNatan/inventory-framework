@@ -7,14 +7,12 @@ import me.devnatan.inventoryframework.View;
 import me.devnatan.inventoryframework.ViewConfig;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
-import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.state.State;
 import me.devnatan.inventoryframework.state.StateValue;
 import me.devnatan.inventoryframework.state.StateWatcher;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.UnmodifiableView;
 
 public abstract class SlotContext extends PlatformContext implements IFSlotContext, Context {
 
@@ -54,52 +52,6 @@ public abstract class SlotContext extends PlatformContext implements IFSlotConte
     @Override
     public final @NotNull String getTitle() {
         return getParent().getTitle();
-    }
-
-    @Override
-    public final @UnmodifiableView @NotNull List<Component> getComponents() {
-        return getParent().getComponents();
-    }
-
-    @Override
-    public List<Component> getInternalComponents() {
-        return getParent().getInternalComponents();
-    }
-
-    @Override
-    public final List<Component> getComponentsAt(int position) {
-        return getParent().getComponentsAt(position);
-    }
-
-    @Override
-    public final void addComponent(@NotNull Component component) {
-        getParent().addComponent(component);
-    }
-
-    @Override
-    public final void removeComponent(@NotNull Component component) {
-        getParent().removeComponent(component);
-    }
-
-    @Override
-    public final void renderComponent(@NotNull Component component) {
-        getParent().renderComponent(component);
-    }
-
-    @Override
-    public final void updateComponent(@NotNull Component component, boolean force) {
-        getParent().updateComponent(component, force);
-    }
-
-    @Override
-    public final void performClickInComponent(
-            @NotNull Component component,
-            @NotNull Viewer viewer,
-            @NotNull ViewContainer clickedContainer,
-            Object platformEvent,
-            int clickedSlot,
-            boolean combined) {
-        getParent().performClickInComponent(component, viewer, clickedContainer, platformEvent, clickedSlot, combined);
     }
 
     @Override

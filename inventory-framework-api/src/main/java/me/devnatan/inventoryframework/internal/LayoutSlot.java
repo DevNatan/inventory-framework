@@ -8,8 +8,7 @@ import org.jetbrains.annotations.Nullable;
 
 public final class LayoutSlot {
 
-    // Retro compatibility
-    public static final char FILLED_RESERVED_CHAR = 'O';
+    public static final char DEFAULT_SLOT_FILL_CHAR = 'O';
 
     private final char character;
     private final IntFunction<ComponentFactory> factory;
@@ -35,6 +34,13 @@ public final class LayoutSlot {
 
     public int[] getPositions() {
         return positions;
+    }
+
+    public boolean isInPosition(int position) {
+        for (final int layoutPosition : getPositions()) {
+            if (layoutPosition == position) return true;
+        }
+        return false;
     }
 
     public boolean isDefinedByTheUser() {

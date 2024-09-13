@@ -54,11 +54,6 @@ public final class BukkitViewContainer implements ViewContainer {
     }
 
     @Override
-    public String getTitle(@NotNull Viewer viewer) {
-        return ((BukkitViewer) viewer).getPlayer().getOpenInventory().getTitle();
-    }
-
-    @Override
     public @NotNull ViewType getType() {
         return type;
     }
@@ -73,10 +68,9 @@ public final class BukkitViewContainer implements ViewContainer {
         return type.getColumns();
     }
 
-    @Override
-    public void renderItem(int slot, Object item) {
+    public void renderItem(int slot, ItemStack item) {
         requireSupportedItem(item);
-        inventory.setItem(slot, (ItemStack) item);
+        inventory.setItem(slot, item);
     }
 
     @Override
@@ -84,23 +78,8 @@ public final class BukkitViewContainer implements ViewContainer {
         inventory.setItem(slot, null);
     }
 
-    @Override
-    public boolean matchesItem(int slot, Object item, boolean exactly) {
-        requireSupportedItem(item);
-        final ItemStack target = inventory.getItem(slot);
-        if (target == null) return item == null;
-        if (item instanceof ItemStack) return exactly ? target.equals(item) : target.isSimilar((ItemStack) item);
-
-        return false;
-    }
-
-    @Override
-    public boolean isSupportedItem(Object item) {
-        return item == null || item instanceof ItemStack;
-    }
-
     private void requireSupportedItem(Object item) {
-        if (isSupportedItem(item)) return;
+        if (item == null || item instanceof ItemStack) return;
 
         throw new IllegalStateException(
                 "Unsupported item type: " + item.getClass().getName());

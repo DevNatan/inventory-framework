@@ -12,8 +12,8 @@ public class MutableValue extends AbstractStateValue {
 
     private Object currValue;
 
-    public MutableValue(State<?> state, Object currValue) {
-        super(state);
+    public MutableValue(long internalId, Object currValue) {
+        super(internalId);
         this.currValue = currValue;
     }
 

@@ -13,7 +13,6 @@ import me.devnatan.inventoryframework.component.ComponentContainer;
 import me.devnatan.inventoryframework.state.StateValueHost;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.UnmodifiableView;
 
 public interface IFContext extends VirtualView, StateValueHost, ComponentContainer {
 
@@ -40,12 +39,11 @@ public interface IFContext extends VirtualView, StateValueHost, ComponentContain
     ViewConfig getConfig();
 
     /**
-     * An unmodifiable copy of all viewers that are tied to this context.
+     * An copy of all viewers that are tied to this context.
      *
      * @return All view of all viewers.
      */
     @NotNull
-    @UnmodifiableView
     List<Viewer> getViewers();
 
     /**
@@ -88,7 +86,7 @@ public interface IFContext extends VirtualView, StateValueHost, ComponentContain
      * @return The root of this context.
      */
     @NotNull
-    RootView getRoot();
+    VirtualView getRoot();
 
     /**
      * The initial title of this context, that is, even if it has been changed, it will return the
@@ -132,29 +130,6 @@ public interface IFContext extends VirtualView, StateValueHost, ComponentContain
      */
     @ApiStatus.Internal
     void removeComponent(@NotNull Component component);
-
-    /**
-     * Renders a component in this context.
-     *
-     * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
-     * this library. No compatibility guarantees are provided.</i></b>
-     *
-     * @param component The component to be rendered.
-     */
-    @ApiStatus.Internal
-    void renderComponent(@NotNull Component component);
-
-    /**
-     * Updates a component in this context.
-     *
-     * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
-     * this library. No compatibility guarantees are provided.</i></b>
-     *
-     * @param component The component to be updated.
-     * @param force If update should be forced.
-     */
-    @ApiStatus.Internal
-    void updateComponent(@NotNull Component component, boolean force);
 
     /**
      * <p><b><i>This is an internal inventory-framework API that should not be used from outside of

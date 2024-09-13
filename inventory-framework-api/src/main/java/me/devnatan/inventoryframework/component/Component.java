@@ -2,9 +2,11 @@ package me.devnatan.inventoryframework.component;
 
 import java.util.Set;
 import me.devnatan.inventoryframework.Ref;
+import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.IFContext;
-import me.devnatan.inventoryframework.context.IFSlotRenderContext;
+import me.devnatan.inventoryframework.pipeline.PipelinePhase;
+import me.devnatan.inventoryframework.pipeline.Pipelined;
 import me.devnatan.inventoryframework.state.State;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -13,7 +15,12 @@ import org.jetbrains.annotations.UnmodifiableView;
 /**
  * A component represents one or {@link ComponentComposition more} items within a {@link VirtualView}.
  */
-public interface Component extends VirtualView {
+public interface Component extends VirtualView, Pipelined {
+
+    PipelinePhase RENDER = new PipelinePhase("component-render");
+    PipelinePhase UPDATE = new PipelinePhase("component-update");
+    PipelinePhase CLICK = new PipelinePhase("component-click");
+    PipelinePhase CLEAR = new PipelinePhase("component-clear");
 
     /**
      * <b><i> This is an internal inventory-framework API that should not be used from outside of
@@ -30,12 +37,7 @@ public interface Component extends VirtualView {
     @NotNull
     VirtualView getRoot();
 
-    /**
-     * The current position of this component relative to its root view.
-     *
-     * @return The current position of this component.
-     */
-    int getPosition();
+    ViewContainer getContainer();
 
     /**
      * Checks if this component is in a specific position.
@@ -52,34 +54,6 @@ public interface Component extends VirtualView {
      * @return If both this and other component intersects in area.
      */
     boolean intersects(@NotNull Component other);
-
-    /**
-     * The interaction handler for this component.
-     *
-     * @return The interaction handler for this component.
-     */
-    InteractionHandler getInteractionHandler();
-
-    /**
-     * Renders this component to the given context.
-     *
-     * @param context The context that this component will be rendered on.
-     */
-    void render(@NotNull IFSlotRenderContext context);
-
-    /**
-     * Called when this component is updated in the given context.
-     *
-     * @param context The update context.
-     */
-    void updated(@NotNull IFSlotRenderContext context);
-
-    /**
-     * Clears this component from the given context.
-     *
-     * @param context The context that this component will be cleared from.
-     */
-    void clear(@NotNull IFContext context);
 
     /**
      * An unmodifiable set of all states that this component is watching.
@@ -115,32 +89,12 @@ public interface Component extends VirtualView {
     @ApiStatus.Internal
     boolean isManagedExternally();
 
-    // TODO Needs documentation
     boolean shouldRender(IFContext context);
 
     /**
      * Updates this component.
      */
     void update();
-
-    /**
-     * Checks if two components area intersects with each other.
-     *
-     * @param component The component A.
-     * @param other     The component B.
-     * @return If component B area conflicts with area of component A.
-     */
-    static boolean intersects(@NotNull Component component, @NotNull Component other) {
-        if (component instanceof ComponentComposition) return intersects(other, component);
-
-        if (other instanceof ComponentComposition) {
-            for (final Component otherChildren : (ComponentComposition) other) {
-                if (otherChildren.intersects(component)) return true;
-            }
-        }
-
-        return other.isContainedWithin(component.getPosition());
-    }
 
     /**
      * Returns the reference assigned to this component.
@@ -177,4 +131,19 @@ public interface Component extends VirtualView {
      */
     @ApiStatus.Experimental
     void hide();
+
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
+    @NotNull
+    ComponentHandle getHandle();
+
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
+    void setHandle(ComponentHandle handle);
 }

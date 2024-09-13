@@ -1,8 +1,7 @@
 package me.devnatan.inventoryframework.pipeline;
 
 import me.devnatan.inventoryframework.VirtualView;
-import me.devnatan.inventoryframework.component.Component;
-import me.devnatan.inventoryframework.component.ItemComponent;
+import me.devnatan.inventoryframework.component.PlatformComponent;
 import me.devnatan.inventoryframework.context.SlotClickContext;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
@@ -22,11 +21,11 @@ public final class ItemCloseOnClickInterceptor implements PipelineInterceptor<Vi
         final InventoryClickEvent event = context.getClickOrigin();
         if (event.getSlotType() == InventoryType.SlotType.OUTSIDE) return;
 
-        final Component component = context.getComponent();
-        if (!(component instanceof ItemComponent) || !component.isVisible()) return;
+        @SuppressWarnings("rawtypes")
+        final PlatformComponent component = (PlatformComponent) context.getComponent();
+        if (!component.isVisible()) return;
 
-        final ItemComponent item = (ItemComponent) component;
-        if (item.isCloseOnClick()) {
+        if (component.isCloseOnClick()) {
             context.closeForPlayer();
             pipeline.finish();
         }
