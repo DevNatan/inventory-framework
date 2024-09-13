@@ -2,8 +2,10 @@ package me.devnatan.inventoryframework.context;
 
 import java.util.List;
 import java.util.function.BiFunction;
+import me.devnatan.inventoryframework.UpdateReason;
 import me.devnatan.inventoryframework.ViewContainer;
-import me.devnatan.inventoryframework.component.ComponentFactory;
+import me.devnatan.inventoryframework.component.Component;
+import me.devnatan.inventoryframework.component.ComponentBuilder;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -17,7 +19,7 @@ public interface IFRenderContext extends IFConfinedContext {
      */
     @UnmodifiableView
     @ApiStatus.Internal
-    List<ComponentFactory> getComponentFactories();
+    List<ComponentBuilder> getNotRenderedComponents();
 
     /**
      * <b><i> This is an internal inventory-framework API that should not be used from outside of
@@ -38,7 +40,7 @@ public interface IFRenderContext extends IFConfinedContext {
      * this library. No compatibility guarantees are provided. </i></b>
      */
     @ApiStatus.Internal
-    List<BiFunction<Integer, Integer, ComponentFactory>> getAvailableSlotFactories();
+    List<BiFunction<Integer, Integer, ComponentBuilder>> getAvailableSlotFactories();
 
     /**
      * The container of this context.
@@ -61,4 +63,37 @@ public interface IFRenderContext extends IFConfinedContext {
      */
     @ApiStatus.Internal
     boolean isRendered();
+
+    /**
+     * Renders a component in this context.
+     *
+     * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided.</i></b>
+     *
+     * @param component The component to be rendered.
+     */
+    @ApiStatus.Internal
+    void renderComponent(@NotNull Component component);
+
+    /**
+     * Updates a component in this context.
+     *
+     * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided.</i></b>
+     *
+     * @param component The component to be updated.
+     * @param force If update should be forced.
+     * @param reason Reason why the component was updated.
+     */
+    @ApiStatus.Internal
+    void updateComponent(Component component, boolean force, UpdateReason reason);
+
+    /**
+     * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided.</i></b>
+     *
+     * @param component The component to be cleared.
+     */
+    @ApiStatus.Internal
+    void clearComponent(@NotNull Component component);
 }

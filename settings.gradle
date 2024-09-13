@@ -16,8 +16,7 @@ plugins {
 rootProject.name = 'inventory-framework'
 enableFeaturePreview('TYPESAFE_PROJECT_ACCESSORS')
 
-include 'inventory-framework-test',
-        'inventory-framework-api',
+include 'inventory-framework-api',
         'inventory-framework-core',
         'inventory-framework-platform',
         'inventory-framework-platform-paper',

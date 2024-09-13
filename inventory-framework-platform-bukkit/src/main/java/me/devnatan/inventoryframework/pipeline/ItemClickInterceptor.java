@@ -1,8 +1,7 @@
 package me.devnatan.inventoryframework.pipeline;
 
 import me.devnatan.inventoryframework.VirtualView;
-import me.devnatan.inventoryframework.component.Component;
-import me.devnatan.inventoryframework.component.ItemComponent;
+import me.devnatan.inventoryframework.component.PlatformComponent;
 import me.devnatan.inventoryframework.context.SlotClickContext;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
@@ -21,14 +20,12 @@ public final class ItemClickInterceptor implements PipelineInterceptor<VirtualVi
         final InventoryClickEvent event = context.getClickOrigin();
         if (event.getSlotType() == InventoryType.SlotType.OUTSIDE) return;
 
-        final Component component = context.getComponent();
+        @SuppressWarnings("rawtypes")
+        final PlatformComponent component = (PlatformComponent) context.getComponent();
         if (component == null) return;
 
-        if (component instanceof ItemComponent) {
-            final ItemComponent item = (ItemComponent) component;
-
-            // inherit cancellation so we can un-cancel it
-            context.setCancelled(item.isCancelOnClick());
-        }
+        // inherit cancellation so we can un-cancel it
+        context.setCancelled(component.isCancelOnClick());
+        component.clicked(context);
     }
 }

@@ -7,8 +7,6 @@ import me.devnatan.inventoryframework.Ref;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.component.Component;
 import me.devnatan.inventoryframework.component.ComponentComposition;
-import me.devnatan.inventoryframework.component.ComponentFactory;
-import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.state.State;
 import me.devnatan.inventoryframework.state.StateValue;
@@ -45,14 +43,14 @@ public final class FirstRenderInterceptor implements PipelineInterceptor<Virtual
     }
 
     /**
-     * Registers all components set up from {@link IFRenderContext#getComponentFactories() component factories}
+     * Registers all components set up from {@link IFRenderContext#getNotRenderedComponents() component factories}
      * to the rendering context.
      *
      * @param context The context.
      */
     private void registerComponents(IFRenderContext context) {
-        context.getComponentFactories().stream()
-                .map(ComponentFactory::create)
+        context.getNotRenderedComponents().stream()
+                .map(builder -> builder.build(context))
                 .peek(this::assignReference)
                 .forEach(context::addComponent);
     }
@@ -92,10 +90,10 @@ public final class FirstRenderInterceptor implements PipelineInterceptor<Virtual
 
 class SingleComponentStateWatcherUpdater implements StateWatcher {
 
-    private final IFContext root;
+    private final IFRenderContext root;
     private final Component componentToUpdate;
 
-    public SingleComponentStateWatcherUpdater(IFContext root, Component componentToUpdate) {
+    public SingleComponentStateWatcherUpdater(IFRenderContext root, Component componentToUpdate) {
         this.root = root;
         this.componentToUpdate = componentToUpdate;
     }
@@ -116,7 +114,7 @@ class SingleComponentStateWatcherUpdater implements StateWatcher {
     @Override
     public void stateValueSet(
             @NotNull StateValueHost host, @NotNull StateValue value, Object rawOldValue, Object rawNewValue) {
-        root.updateComponent(componentToUpdate, false);
+        root.updateComponent(componentToUpdate, false, null);
     }
 
     @Override

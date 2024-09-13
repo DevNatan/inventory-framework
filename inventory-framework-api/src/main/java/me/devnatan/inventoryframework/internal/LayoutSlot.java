@@ -37,6 +37,13 @@ public final class LayoutSlot {
         return positions;
     }
 
+    public boolean isInPosition(int position) {
+        for (final int layoutPosition : getPositions()) {
+            if (layoutPosition == position) return true;
+        }
+        return false;
+    }
+
     public boolean isDefinedByTheUser() {
         return factory != null;
     }
