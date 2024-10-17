@@ -3,6 +3,7 @@ package me.devnatan.inventoryframework.component;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
+import me.devnatan.inventoryframework.Ref;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.state.State;
 import org.jetbrains.annotations.NotNull;
@@ -17,7 +18,7 @@ public class TestItemComponentBuilder extends DefaultComponentBuilder<TestItemCo
     }
 
     protected TestItemComponentBuilder(
-            String referenceKey,
+            Ref<Component> referenceKey,
             Map<String, Object> data,
             boolean cancelOnClick,
             boolean closeOnClick,

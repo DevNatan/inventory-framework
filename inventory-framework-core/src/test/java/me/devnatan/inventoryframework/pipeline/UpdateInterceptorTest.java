@@ -14,7 +14,6 @@ import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.component.ItemComponent;
-import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
 import org.junit.jupiter.api.Test;
 
@@ -26,7 +25,7 @@ public class UpdateInterceptorTest {
         pipeline.intercept(StandardPipelinePhases.UPDATE, new UpdateInterceptor());
 
         RootView root = createRootMock();
-        IFContext context = createContextMock(root, IFRenderContext.class);
+        IFRenderContext context = createContextMock(root, IFRenderContext.class);
         when(context.isShared()).thenReturn(true);
         ViewContainer container = mock(ViewContainer.class);
         when(context.getContainer()).thenReturn(container);
@@ -35,7 +34,7 @@ public class UpdateInterceptorTest {
         when(component.getRenderHandler()).thenReturn(null);
 
         when(context.getComponents()).thenReturn(Collections.singletonList(component));
-        when(root.getContexts()).thenReturn(Collections.singleton(context));
+        when(root.getInternalContexts()).thenReturn(Collections.singleton(context));
 
         pipeline.execute(StandardPipelinePhases.UPDATE, context);
 

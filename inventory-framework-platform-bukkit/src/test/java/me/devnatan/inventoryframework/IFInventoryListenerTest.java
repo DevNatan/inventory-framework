@@ -1,13 +1,11 @@
 package me.devnatan.inventoryframework;
 
+import static me.devnatan.inventoryframework.BukkitTestUtils.createPlayerMock;
+import static me.devnatan.inventoryframework.BukkitTestUtils.createViewFrameMock;
 import static me.devnatan.inventoryframework.TestUtils.createRootMock;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
+import org.bukkit.entity.Item;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.junit.jupiter.api.Test;
@@ -38,12 +36,12 @@ public class IFInventoryListenerTest {
     @Test
     void skipItemDropEventIfRootIsNotFound() {
         RootView root = createRootMock();
-        PlayerDropItemEvent event = mock(PlayerDropItemEvent.class);
-        ViewFrame viewFrame = mock(ViewFrame.class);
-        when(viewFrame.getCurrentView(any())).thenReturn(null);
+        PlayerDropItemEvent event = new PlayerDropItemEvent(createPlayerMock(), mock(Item.class));
+        ViewFrame viewFrame = createViewFrameMock();
+        when(viewFrame.getViewer(createPlayerMock())).thenReturn(null);
 
         new IFInventoryListener(viewFrame).onItemDrop(event);
-        verify(root, never()).getContext(anyString());
+        verify(root, never()).getConfig();
     }
 
     //    @Test
@@ -90,12 +88,13 @@ public class IFInventoryListenerTest {
 
     @Test
     void skipItemPickupEventIfRootIsNotFound() {
+        PlayerPickupItemEvent event = new PlayerPickupItemEvent(createPlayerMock(), mock(Item.class), 10);
         RootView root = createRootMock();
-        ViewFrame viewFrame = mock(ViewFrame.class);
-        when(viewFrame.getCurrentView(any())).thenReturn(null);
+        ViewFrame viewFrame = createViewFrameMock();
+        when(viewFrame.getViewer(createPlayerMock())).thenReturn(null);
 
-        new IFInventoryListener(viewFrame).onItemPickup(mock(PlayerPickupItemEvent.class));
-        verify(root, never()).getContext(anyString());
+        new IFInventoryListener(viewFrame).onItemPickup(event);
+        verify(root, never()).getConfig();
     }
 
     //    @Test
