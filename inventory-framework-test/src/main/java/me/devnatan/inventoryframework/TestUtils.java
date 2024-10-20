@@ -5,11 +5,13 @@ import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
 import me.devnatan.inventoryframework.context.IFContext;
+import me.devnatan.inventoryframework.internal.MockElementFactory;
 
 public class TestUtils {
 
     public static RootView createRootMock() {
         RootView root = mock(RootView.class);
+        when(root.getElementFactory()).thenReturn(new MockElementFactory());
         return root;
     }
 
