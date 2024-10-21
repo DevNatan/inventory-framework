@@ -24,9 +24,7 @@ package me.devnatan.inventoryframework.runtime.thirdparty;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
-import java.util.Arrays;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Objects;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
@@ -87,9 +85,14 @@ public final class ReflectionUtils {
                 }
             }
         }
-        if (found == null)
-            throw new IllegalArgumentException(
-                    "Failed to parse server version. Could not find any package starting with name: 'org.bukkit.craftbukkit.v'");
+        if (found == null) {
+			try {
+				Class.forName("org.bukkit.craftbukkit.entity.CraftPlayer");
+			} catch (ClassNotFoundException e) {
+				throw new IllegalArgumentException(
+					"Failed to parse server version. 6Could not find any package starting with name: 'org.bukkit.craftbukkit.v'");
+			}
+		}
         NMS_VERSION = found;
     }
 
@@ -100,7 +103,7 @@ public final class ReflectionUtils {
      * @see #supports(int)
      * @since 4.0.0
      */
-    public static final int MINOR_NUMBER;
+    public static final int MINOR_NUMBER = McVersion.current().getMinor();
     /**
      * The raw patch version number.
      * E.g. {@code v1_17_R1} to {@code 1}
@@ -112,39 +115,7 @@ public final class ReflectionUtils {
      *
      * @since 7.0.0
      */
-    public static final int PATCH_NUMBER;
-
-    static {
-        String[] split = NMS_VERSION.substring(1).split("_");
-        if (split.length < 1) {
-            throw new IllegalStateException(
-                    "Version number division error: " + Arrays.toString(split) + ' ' + getVersionInformation());
-        }
-
-        String minorVer = split[1];
-        try {
-            MINOR_NUMBER = Integer.parseInt(minorVer);
-            if (MINOR_NUMBER < 0)
-                throw new IllegalStateException("Negative minor number? " + minorVer + ' ' + getVersionInformation());
-        } catch (Throwable ex) {
-            throw new RuntimeException("Failed to parse minor number: " + minorVer + ' ' + getVersionInformation(), ex);
-        }
-
-        // Bukkit.getBukkitVersion() = "1.12.2-R0.1-SNAPSHOT"
-        Matcher bukkitVer = Pattern.compile("^\\d+\\.\\d+\\.(\\d+)").matcher(Bukkit.getBukkitVersion());
-        if (bukkitVer.find()) { // matches() won't work, we just want to match the start using "^"
-            try {
-                // group(0) gives the whole matched string, we just want the captured group.
-                PATCH_NUMBER = Integer.parseInt(bukkitVer.group(1));
-            } catch (Throwable ex) {
-                throw new RuntimeException(
-                        "Failed to parse minor number: " + bukkitVer + ' ' + getVersionInformation(), ex);
-            }
-        } else {
-            // 1.8-R0.1-SNAPSHOT
-            PATCH_NUMBER = 0;
-        }
-    }
+    public static final int PATCH_NUMBER = McVersion.current().getPatch();
 
     /**
      * Gets the full version information of the server. Useful for including in errors.
@@ -160,8 +131,8 @@ public final class ReflectionUtils {
     /**
      * Mojang remapped their NMS in 1.17: <a href="https://www.spigotmc.org/threads/spigot-bungeecord-1-17.510208/#post-4184317">Spigot Thread</a>
      */
-    public static final String CRAFTBUKKIT_PACKAGE = "org.bukkit.craftbukkit." + NMS_VERSION + '.',
-            NMS_PACKAGE = v(17, "net.minecraft.").orElse("net.minecraft.server." + NMS_VERSION + '.');
+    public static final String CRAFTBUKKIT_PACKAGE = NMS_VERSION != null ? "org.bukkit.craftbukkit." + NMS_VERSION + '.' : "org.bukkit.craftbukkit.";
+	public static final String NMS_PACKAGE = v(17, "net.minecraft.").orElse("net.minecraft.server." + NMS_VERSION + '.');
     /**
      * A nullable public accessible field only available in {@code EntityPlayer}.
      * This can be null if the player is offline.
@@ -182,9 +153,9 @@ public final class ReflectionUtils {
     private static final MethodHandle SEND_PACKET;
 
     static {
-        Class<?> entityPlayer = getNMSClass("server.level", "EntityPlayer");
-        Class<?> craftPlayer = getCraftClass("entity.CraftPlayer");
-        Class<?> playerConnection = getNMSClass("server.network", "PlayerConnection");
+        Class<?> entityPlayer = Objects.requireNonNull(getNMSClass("server.level", "EntityPlayer"));
+        Class<?> craftPlayer = Objects.requireNonNull(getCraftClass("entity.CraftPlayer"));
+        Class<?> playerConnection = Objects.requireNonNull(getNMSClass("server.network", "PlayerConnection"));
 
         MethodHandles.Lookup lookup = MethodHandles.lookup();
         MethodHandle sendPacket = null, getHandle = null, connection = null;
@@ -197,7 +168,8 @@ public final class ReflectionUtils {
             final VersionHandler<String> methodVersion;
 
             // MC 1.20.2 obfuscated sendPacket is "b"
-            if (supportsMC1202()) methodVersion = v(20, "b");
+			if(McVersion.current().equals(McVersion.v1_21_1)) methodVersion = v(21, "send");
+			else if (supportsMC1202()) methodVersion = v(20, "b");
             else methodVersion = v(18, "a");
 
             sendPacket = lookup.findVirtual(
