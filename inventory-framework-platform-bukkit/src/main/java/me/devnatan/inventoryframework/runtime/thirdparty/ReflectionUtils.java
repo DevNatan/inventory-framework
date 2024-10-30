@@ -24,7 +24,6 @@ package me.devnatan.inventoryframework.runtime.thirdparty;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
-import java.util.Objects;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
@@ -90,7 +89,7 @@ public final class ReflectionUtils {
 				Class.forName("org.bukkit.craftbukkit.entity.CraftPlayer");
 			} catch (ClassNotFoundException e) {
 				throw new IllegalArgumentException(
-					"Failed to parse server version. 6Could not find any package starting with name: 'org.bukkit.craftbukkit.v'");
+					"Failed to parse server version. Could not find any package starting with name: 'org.bukkit.craftbukkit.v'");
 			}
 		}
         NMS_VERSION = found;
@@ -153,9 +152,9 @@ public final class ReflectionUtils {
     private static final MethodHandle SEND_PACKET;
 
     static {
-        Class<?> entityPlayer = Objects.requireNonNull(getNMSClass("server.level", "EntityPlayer"));
-        Class<?> craftPlayer = Objects.requireNonNull(getCraftClass("entity.CraftPlayer"));
-        Class<?> playerConnection = Objects.requireNonNull(getNMSClass("server.network", "PlayerConnection"));
+        Class<?> entityPlayer = getNMSClass("server.level", "EntityPlayer");
+        Class<?> craftPlayer = getCraftClass("entity.CraftPlayer");
+        Class<?> playerConnection = getNMSClass("server.network", "PlayerConnection");
 
         MethodHandles.Lookup lookup = MethodHandles.lookup();
         MethodHandle sendPacket = null, getHandle = null, connection = null;

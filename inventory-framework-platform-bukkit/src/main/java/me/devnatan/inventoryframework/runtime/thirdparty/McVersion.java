@@ -4,11 +4,6 @@ import org.bukkit.Bukkit;
 
 import java.util.Objects;
 
-/**
- * Represents a Minecraft version.
- *
- * @author mfnalex
- */
 public class McVersion implements Comparable<McVersion> {
 
 	private static final McVersion CURRENT_VERSION;
