@@ -85,13 +85,13 @@ public final class ReflectionUtils {
             }
         }
         if (found == null) {
-			try {
-				Class.forName("org.bukkit.craftbukkit.entity.CraftPlayer");
-			} catch (ClassNotFoundException e) {
-				throw new IllegalArgumentException(
-					"Failed to parse server version. Could not find any package starting with name: 'org.bukkit.craftbukkit.v'");
-			}
-		}
+            try {
+                Class.forName("org.bukkit.craftbukkit.entity.CraftPlayer");
+            } catch (ClassNotFoundException e) {
+                throw new IllegalArgumentException(
+                        "Failed to parse server version. Could not find any package starting with name: 'org.bukkit.craftbukkit.v'");
+            }
+        }
         NMS_VERSION = found;
     }
 
@@ -130,8 +130,11 @@ public final class ReflectionUtils {
     /**
      * Mojang remapped their NMS in 1.17: <a href="https://www.spigotmc.org/threads/spigot-bungeecord-1-17.510208/#post-4184317">Spigot Thread</a>
      */
-    public static final String CRAFTBUKKIT_PACKAGE = NMS_VERSION != null ? "org.bukkit.craftbukkit." + NMS_VERSION + '.' : "org.bukkit.craftbukkit.";
-	public static final String NMS_PACKAGE = v(17, "net.minecraft.").orElse("net.minecraft.server." + NMS_VERSION + '.');
+    public static final String CRAFTBUKKIT_PACKAGE =
+            NMS_VERSION != null ? "org.bukkit.craftbukkit." + NMS_VERSION + '.' : "org.bukkit.craftbukkit.";
+
+    public static final String NMS_PACKAGE =
+            v(17, "net.minecraft.").orElse("net.minecraft.server." + NMS_VERSION + '.');
     /**
      * A nullable public accessible field only available in {@code EntityPlayer}.
      * This can be null if the player is offline.
@@ -167,8 +170,8 @@ public final class ReflectionUtils {
             final VersionHandler<String> methodVersion;
 
             // MC 1.20.2 obfuscated sendPacket is "b"
-			if(McVersion.current().equals(McVersion.v1_21_1)) methodVersion = v(21, "send");
-			else if (supportsMC1202()) methodVersion = v(20, "b");
+            if (McVersion.current().equals(McVersion.v1_21_1)) methodVersion = v(21, "send");
+            else if (supportsMC1202()) methodVersion = v(20, "b");
             else methodVersion = v(18, "a");
 
             sendPacket = lookup.findVirtual(
