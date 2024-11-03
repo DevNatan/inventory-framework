@@ -33,6 +33,11 @@ spotless {
     }
 }
 
+tasks.register("lint") {
+    group = "verification"
+    dependsOn("spotlessJavaApply", "spotlessJavaCheck")
+}
+
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
 }
