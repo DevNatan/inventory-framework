@@ -47,3 +47,4 @@ shadowjar = { id = "com.github.johnrengelman.shadow", version.ref = "plugin-shad
 spotless = { id = "com.diffplug.spotless", version.ref = "plugin-spotless" }
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 bukkit = { id = "net.minecrell.plugin-yml.bukkit", version.ref = "plugin-bukkit" }
+run-paper = { id = "xyz.jpenilla.run-paper", version =  "2.3.1" }

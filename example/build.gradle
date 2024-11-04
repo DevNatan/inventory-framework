@@ -1,0 +1,45 @@
+
+plugins {
+    alias(libs.plugins.shadowjar)
+    alias(libs.plugins.bukkit)
+    alias(libs.plugins.run.paper)
+}
+
+apply from: '../library.gradle'
+
+dependencies {
+    implementation projects.inventoryFrameworkPlatformBukkit
+    compileOnly libs.spigot
+}
+
+shadowJar {
+    archiveBaseName.set('inventory-framework-example')
+    archiveAppendix.set('bukkit')
+
+    dependencies {
+        exclude(dependency {
+            it.moduleGroup == "org.jetbrains.kotlin"
+        })
+    }
+}
+
+runServer {
+    minecraftVersion("1.20.1")
+}
+
+bukkit {
+    main = "me.devnatan.inventoryframework.runtime.SamplePlugin"
+    name = "InventoryFrameworkExample"
+    version = project.version
+    description = "Minecraft Inventory API framework sample plugin"
+    website = "https://github.com/DevNatan/inventory-framework"
+    apiVersion = "1.20"
+    authors = ['SaiintBrisson', 'DevNatan', 'sasuked', 'nicolube']
+    commands {
+        ifexample {
+            description = 'This is a test command!'
+            permission = 'ifexample.run'
+            usage = 'Opens example views'
+        }
+    }
+}
