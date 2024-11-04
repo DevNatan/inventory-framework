@@ -137,7 +137,12 @@ public class ItemComponent implements Component, InteractionHandler {
     public void render(@NotNull IFSlotRenderContext context) {
         if (getRenderHandler() != null) {
             final int initialSlot = getPosition();
-            getRenderHandler().accept(context);
+
+            try {
+                getRenderHandler().accept(context);
+            } catch (Exception e) {
+                throw new InventoryFrameworkException("Failed to render item component", e);
+            }
 
             // Externally managed components have its own displacement measures
             if (!isManagedExternally()) {
