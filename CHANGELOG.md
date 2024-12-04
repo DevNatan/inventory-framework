@@ -1,5 +1,10 @@
 # Changelog
 
+# 3.0.12 (12-04-2024)
+
+* Prevent catastrophic when item render or click fails. Thanks to @nicolube (#686)
+* Add support for Paper 1.21+ to AnvilInput. Thanks to @mfnalex (#684)
+
 # 3.0.11 (09-11-2023)
 
 * Fix scheduled update job cancellation check
