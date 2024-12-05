@@ -9,6 +9,7 @@ apply from: '../library.gradle'
 
 dependencies {
     implementation projects.inventoryFrameworkPlatformBukkit
+    implementation projects.inventoryFrameworkAnvilInput
     compileOnly libs.spigot
 }
 
@@ -24,7 +25,7 @@ shadowJar {
 }
 
 runServer {
-    minecraftVersion("1.20.1")
+    minecraftVersion("1.21.3")
 }
 
 bukkit {
@@ -41,5 +42,11 @@ bukkit {
             permission = 'ifexample.run'
             usage = 'Opens example views'
         }
+    }
+}
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(21))
     }
 }

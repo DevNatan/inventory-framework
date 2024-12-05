@@ -5,9 +5,9 @@ paperSpigot = "1.20.1-R0.1-SNAPSHOT"
 junit = "5.10.1"
 mockito = "4.11.0"
 adventure-api = "4.14.0"
-kotlin = "1.9.10"
+kotlin = "2.0.21"
 plugin-shadowjar = "8.1.1"
-plugin-spotless = "6.12.0"
+plugin-spotless = "6.25.0"
 plugin-bukkit = "0.6.0"
 
 [libraries.spigot]

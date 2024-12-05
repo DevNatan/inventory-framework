@@ -163,14 +163,18 @@ public final class ReflectionUtils {
         MethodHandle sendPacket = null, getHandle = null, connection = null;
 
         try {
-            connection =
-                    lookup.findGetter(entityPlayer, v(20, "c").v(17, "b").orElse("playerConnection"), playerConnection);
+            if (McVersion.current().equals(McVersion.v1_21_3))
+                connection = lookup.findGetter(entityPlayer, "f", playerConnection);
+            else
+                connection = lookup.findGetter(
+                        entityPlayer, v(20, "c").v(17, "b").orElse("playerConnection"), playerConnection);
+
             getHandle = lookup.findVirtual(craftPlayer, "getHandle", MethodType.methodType(entityPlayer));
 
             final VersionHandler<String> methodVersion;
 
+            if (McVersion.current().getMinor() == 21) methodVersion = v(21, "send");
             // MC 1.20.2 obfuscated sendPacket is "b"
-            if (McVersion.current().equals(McVersion.v1_21_1)) methodVersion = v(21, "send");
             else if (supportsMC1202()) methodVersion = v(20, "b");
             else methodVersion = v(18, "a");
 

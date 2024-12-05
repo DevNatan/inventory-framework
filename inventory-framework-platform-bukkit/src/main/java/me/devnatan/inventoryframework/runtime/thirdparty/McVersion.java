@@ -8,6 +8,7 @@ public class McVersion implements Comparable<McVersion> {
     private static final McVersion CURRENT_VERSION;
     private static final McVersion v1_17 = new McVersion(1, 17);
     public static final McVersion v1_21_1 = new McVersion(1, 21, 1);
+    public static final McVersion v1_21_3 = new McVersion(1, 21, 3);
 
     static {
         final int currentMajor = Integer.parseInt(Bukkit.getBukkitVersion().split("\\.")[0]);
