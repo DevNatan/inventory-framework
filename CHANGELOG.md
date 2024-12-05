@@ -1,5 +1,9 @@
 # Changelog
 
+# 3.2.0 (12-05-2024)
+
+* Minecraft v1.21.3 support. Thanks to @nicolube (#688)
+
 # 3.0.12 (12-04-2024)
 
 * Prevent catastrophic when item render or click fails. Thanks to @nicolube (#686)
