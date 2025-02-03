@@ -5,6 +5,7 @@ buildscript {
             maven { url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
             maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
             maven { url 'https://repo.papermc.io/repository/maven-public/' }
+            maven { url 'https://jitpack.io' }
         }
     }
 }
@@ -22,6 +23,7 @@ include 'inventory-framework-test',
         'inventory-framework-platform',
         'inventory-framework-platform-paper',
         'inventory-framework-platform-bukkit',
+        'inventory-framework-platform-minestom',
         'inventory-framework-anvil-input',
         'example'
 

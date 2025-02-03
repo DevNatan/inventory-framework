@@ -13,7 +13,7 @@ import me.devnatan.inventoryframework.state.State;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unchecked")
-abstract class DefaultComponentBuilder<S extends ComponentBuilder<S, C>, C extends IFContext>
+public abstract class DefaultComponentBuilder<S extends ComponentBuilder<S, C>, C extends IFContext>
         implements ComponentBuilder<S, C> {
 
     protected Ref<Component> reference;
