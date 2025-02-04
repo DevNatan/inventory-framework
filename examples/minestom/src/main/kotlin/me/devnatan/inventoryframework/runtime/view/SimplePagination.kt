@@ -39,11 +39,11 @@ class SimplePagination : View() {
         val previousItem = displayItem(Material.ARROW, "Previous")
         val nextItem = displayItem(Material.ARROW, "Next")
         render.layoutSlot('P', previousItem)
-            .displayIf(BooleanSupplier { state[render].canBack() })
+            .displayIf({ctx -> state[ctx].canBack() })
             .updateOnStateChange(state)
             .onClick { ctx: SlotClickContext -> state[ctx].back() }
         render.layoutSlot('N', nextItem)
-            .displayIf(BooleanSupplier { state[render].canAdvance() })
+            .displayIf({ctx -> state[ctx].canAdvance()})
             .updateOnStateChange(state)
             .onClick { ctx: SlotClickContext -> state[ctx].advance() }
     }

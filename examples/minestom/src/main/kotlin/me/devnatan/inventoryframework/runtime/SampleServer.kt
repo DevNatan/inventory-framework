@@ -4,6 +4,7 @@ import me.devnatan.inventoryframework.ViewFrame
 import me.devnatan.inventoryframework.runtime.command.GamemodeCommand
 import me.devnatan.inventoryframework.runtime.command.IFExampleCommand
 import me.devnatan.inventoryframework.runtime.view.Failing
+import me.devnatan.inventoryframework.runtime.view.ScheduledView
 import me.devnatan.inventoryframework.runtime.view.SimplePagination
 import net.minestom.server.MinecraftServer
 import net.minestom.server.coordinate.Pos
@@ -46,12 +47,15 @@ class SampleServer {
         }
 
         val viewFrame = ViewFrame.create()
-            .with(Failing(), SimplePagination())
+            .with(
+                Failing(),
+                SimplePagination(),
+                ScheduledView())
             .register()
 
         MinecraftServer.getCommandManager().register(
             IFExampleCommand(viewFrame),
-            GamemodeCommand(viewFrame)
+            GamemodeCommand(viewFrame),
         )
 
 

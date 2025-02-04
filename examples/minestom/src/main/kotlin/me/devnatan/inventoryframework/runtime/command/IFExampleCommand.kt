@@ -2,6 +2,7 @@ package me.devnatan.inventoryframework.runtime.command
 
 import me.devnatan.inventoryframework.ViewFrame
 import me.devnatan.inventoryframework.runtime.view.Failing
+import me.devnatan.inventoryframework.runtime.view.ScheduledView
 import me.devnatan.inventoryframework.runtime.view.SimplePagination
 import net.minestom.server.command.CommandSender
 import net.minestom.server.command.builder.Command
@@ -16,7 +17,8 @@ class IFExampleCommand(private val viewFrame: ViewFrame) : Command("ifexample") 
 
     private val availableViews = mapOf(
         "failing" to Failing::class.java,
-        "simple-pagination" to SimplePagination::class.java
+        "simple-pagination" to SimplePagination::class.java,
+        "scheduled" to ScheduledView::class.java
     );
 
     private val arg: Argument<String> =
