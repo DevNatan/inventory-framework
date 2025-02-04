@@ -24,13 +24,12 @@ class OpenContext constructor(
     private val root: View,
     private val subject: Viewer?,
     private val viewers: Map<String, Viewer>,
-    initialData: Any
+    private var initialData: Any?
 ) : PlatformConfinedContext(), IFOpenContext, Context {
     private var container: ViewContainer? = null
 
     // --- Inherited ---
     private val id: UUID = UUID.randomUUID()
-    private var initialData: Any
 
     // --- User Provided ---
     private var waitTask: CompletableFuture<Void>? = null
@@ -79,8 +78,8 @@ class OpenContext constructor(
         this.cancelled = cancelled
     }
 
-    override fun getAsyncOpenJob(): CompletableFuture<Void> {
-        return waitTask!!
+    override fun getAsyncOpenJob(): CompletableFuture<Void>? {
+        return waitTask
     }
 
     override fun getRoot(): View {
@@ -95,11 +94,11 @@ class OpenContext constructor(
         return id
     }
 
-    override fun getInitialData(): Any {
+    override fun getInitialData(): Any? {
         return initialData
     }
 
-    override fun setInitialData(initialData: Any) {
+    override fun setInitialData(initialData: Any?) {
         this.initialData = initialData
     }
 

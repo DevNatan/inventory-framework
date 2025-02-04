@@ -5,19 +5,15 @@ import net.minestom.server.entity.Player
 import net.minestom.server.inventory.Inventory
 import java.util.*
 
-class MinestomViewer(val player: Player, activeContext: IFRenderContext) : Viewer {
+class MinestomViewer(val player: Player, private var activeContext: IFRenderContext?) : Viewer {
     private var selfContainer: ViewContainer? = null
-    private var activeContext: IFRenderContext
     private val previousContexts: Deque<IFRenderContext> = LinkedList()
     private var lastInteractionInMillis: Long = 0
     private var transitioning = false
 
-    init {
-        this.activeContext = activeContext
-    }
 
     override fun getActiveContext(): IFRenderContext {
-        return activeContext
+        return activeContext!!
     }
 
     override fun setActiveContext(context: IFRenderContext) {
@@ -52,7 +48,7 @@ class MinestomViewer(val player: Player, activeContext: IFRenderContext) : Viewe
     }
 
     override fun isBlockedByInteractionDelay(): Boolean {
-        val configuredDelay: Long = activeContext.getConfig().getInteractionDelayInMillis()
+        val configuredDelay: Long = activeContext?.getConfig()?.interactionDelayInMillis ?: return false
         if (configuredDelay <= 0 || getLastInteractionInMillis() <= 0) return false
 
         return getLastInteractionInMillis() + configuredDelay >= System.currentTimeMillis()

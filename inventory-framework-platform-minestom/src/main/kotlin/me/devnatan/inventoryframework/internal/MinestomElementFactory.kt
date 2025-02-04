@@ -70,14 +70,14 @@ class MinestomElementFactory : ElementFactory() {
         return MinestomViewContainer(inventory, false, finalType, false)
     }
 
-    override fun createViewer(entity: Any, context: IFRenderContext): Viewer {
+    override fun createViewer(entity: Any, context: IFRenderContext?): Viewer {
         require(entity is Player) { "createViewer(...) first parameter must be a Player" }
 
-        return MinestomViewer(entity as Player, context)
+        return MinestomViewer(entity, context)
     }
 
     override fun createOpenContext(
-        root: RootView, subject: Viewer?, viewers: List<Viewer>, initialData: Any
+        root: RootView, subject: Viewer?, viewers: List<Viewer>, initialData: Any?
     ): IFOpenContext {
         return OpenContext(
             root as View,
@@ -98,7 +98,7 @@ class MinestomElementFactory : ElementFactory() {
         container: ViewContainer,
         viewers: Map<String, Viewer>,
         subject: Viewer,
-        initialData: Any
+        initialData: Any?
     ): IFRenderContext {
         return RenderContext(id, root as View, config, container, viewers, subject, initialData)
     }

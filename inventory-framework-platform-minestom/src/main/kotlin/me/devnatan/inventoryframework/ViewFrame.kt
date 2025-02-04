@@ -166,6 +166,7 @@ class ViewFrame private constructor() : IFViewFrame<ViewFrame, View>() {
         check(!isRegistered) { "This view frame is already registered" }
 
         isRegistered = true
+        PlatformUtils.setFactory(MinestomElementFactory())
         pipeline.execute(FRAME_REGISTERED, this)
         initializeViews()
         IFInventoryListener(this)

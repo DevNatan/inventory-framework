@@ -11,7 +11,7 @@ import org.jetbrains.annotations.ApiStatus.OverrideOnly
  * Bukkit platform [PlatformView] implementation.
  */
 @OverrideOnly
-class View :
+open class View :
     PlatformView<ViewFrame, Player, MinestomIemComponentBuilder, Context, OpenContext, CloseContext, RenderContext, SlotClickContext>() {
 
     public override fun registerPlatformInterceptors() {
