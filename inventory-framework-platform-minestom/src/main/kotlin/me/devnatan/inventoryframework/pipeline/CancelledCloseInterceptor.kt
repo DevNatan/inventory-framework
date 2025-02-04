@@ -5,11 +5,11 @@ import me.devnatan.inventoryframework.context.CloseContext
 
 
 class CancelledCloseInterceptor : PipelineInterceptor<VirtualView> {
-    override fun intercept(pipeline: PipelineContext<VirtualView>, context: VirtualView) {
-        if (context !is CloseContext) return
+    override fun intercept(pipeline: PipelineContext<VirtualView>, subject: VirtualView) {
+        if (subject !is CloseContext) return
 
-        if (!context.isCancelled) return
+        if (!subject.isCancelled) return
 
-        context.root.nextTick { context.viewer.open(context.container) }
+        subject.root.nextTick { subject.viewer.open(subject.container) }
     }
 }

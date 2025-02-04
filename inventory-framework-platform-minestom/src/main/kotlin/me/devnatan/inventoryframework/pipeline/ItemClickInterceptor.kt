@@ -12,17 +12,16 @@ class ItemClickInterceptor : PipelineInterceptor<VirtualView> {
     override fun intercept(pipeline: PipelineContext<VirtualView>, subject: VirtualView) {
         if (subject !is SlotClickContext) return
 
-        val context = subject as SlotClickContext
-        val event: InventoryPreClickEvent = context.clickOrigin
+        val event: InventoryPreClickEvent = subject.clickOrigin
         event.inventory ?: return
 
-        val component = context.component ?: return
+        val component = subject.component ?: return
 
         if (component is ItemComponent) {
             val item: ItemComponent = component
 
             // inherit cancellation so we can un-cancel it
-            context.isCancelled = item.isCancelOnClick
+            subject.isCancelled = item.isCancelOnClick
         }
     }
 }

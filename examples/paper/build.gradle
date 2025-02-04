@@ -25,6 +25,7 @@ shadowJar {
 }
 
 runServer {
+    jvmArgs("-Dme.devnatan.inventoryframework.debug=true")
     minecraftVersion("1.21.3")
 }
 

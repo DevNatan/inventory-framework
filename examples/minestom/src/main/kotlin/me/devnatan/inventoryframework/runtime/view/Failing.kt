@@ -37,7 +37,7 @@ class Failing : View() {
             }
 
         render.layoutSlot('C', displayItem(Material.STONE, "Click me and I will fail"))
-            .onClick { ctx: SlotClickContext? ->
+            .onClick { _ ->
                 throw IllegalStateException("This is a failing inventory")
             }
     }

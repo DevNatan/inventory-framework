@@ -11,9 +11,10 @@ import net.minestom.server.event.EventFilter
 import net.minestom.server.event.EventNode
 import net.minestom.server.event.inventory.InventoryCloseEvent
 import net.minestom.server.event.inventory.InventoryPreClickEvent
-import net.minestom.server.event.item.ItemDropEvent
 import net.minestom.server.event.item.PickupItemEvent
 import net.minestom.server.inventory.PlayerInventory
+import net.minestom.server.inventory.click.ClickType
+import kotlin.jvm.optionals.getOrNull
 
 internal class IFInventoryListener(
     private val viewFrame: ViewFrame
@@ -25,16 +26,11 @@ internal class IFInventoryListener(
             .setPriority(10)
             .addListener(InventoryPreClickEvent::class.java, this::onInventoryClick)
             .addListener(InventoryCloseEvent::class.java, this::onInventoryClose)
-        val playerNode = EventNode.type("IF-player", EventFilter.PLAYER)
-        { _, p -> viewFrame.getViewer(p) != null }
-            .setPriority(10)
-            .addListener(ItemDropEvent::class.java, this::onItemDrop)
         val entityEvent = EventNode.type("IF-entity", EventFilter.ENTITY)
         { _, e -> e is Player && viewFrame.getViewer(e) != null }
             .setPriority(10)
             .addListener(PickupItemEvent::class.java, this::onItemPickup)
         handler.addChild(inventoryNode)
-        handler.addChild(playerNode)
         handler.addChild(entityEvent)
     }
 
@@ -44,12 +40,26 @@ internal class IFInventoryListener(
         val player = event.player
         val viewer = viewFrame.getViewer(player) ?: return
 
+        if (event.clickType == ClickType.DROP) {
+            val context: IFContext = viewer.activeContext
+            if (!context.config.isOptionSet(ViewConfig.CANCEL_ON_DROP)) return
+
+            event.isCancelled = context.config.getOptionValue(ViewConfig.CANCEL_ON_DROP)
+            return
+        }
+        if (event.clickType == ClickType.LEFT_DRAGGING || event.clickType == ClickType.RIGHT_DRAGGING) {
+            val context: IFContext = viewer.activeContext
+            if (!context.config.isOptionSet(ViewConfig.CANCEL_ON_DRAG)) return
+
+            event.isCancelled = context.config.getOptionValue(ViewConfig.CANCEL_ON_DRAG)
+            return
+        }
+
         val context: IFRenderContext = viewer.activeContext
-        val clickedComponent: me.devnatan.inventoryframework.component.Component =
-            context.getComponentsAt(event.slot).stream()
+        val clickedComponent = context.getComponentsAt(event.slot).stream()
                 .filter { obj: me.devnatan.inventoryframework.component.Component -> obj.isVisible }
                 .findFirst()
-                .orElse(null)
+                .getOrNull()
         val clickedContainer = if (event.inventory is PlayerInventory)
             viewer.selfContainer
         else
@@ -80,14 +90,5 @@ internal class IFInventoryListener(
         if (!context.getConfig().isOptionSet(ViewConfig.CANCEL_ON_PICKUP)) return
 
         event.isCancelled = context.getConfig().getOptionValue(ViewConfig.CANCEL_ON_PICKUP)
-    }
-
-    fun onItemDrop(event: ItemDropEvent) {
-        val viewer = viewFrame.getViewer(event.getPlayer()) ?: return
-
-        val context: IFContext = viewer.activeContext
-        if (!context.getConfig().isOptionSet(ViewConfig.CANCEL_ON_DROP)) return
-
-        event.isCancelled = context.getConfig().getOptionValue(ViewConfig.CANCEL_ON_DROP)
     }
 }

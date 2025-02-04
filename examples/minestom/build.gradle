@@ -25,5 +25,6 @@ java {
 }
 
 application {
+    applicationDefaultJvmArgs = ["-Dme.devnatan.inventoryframework.debug=true"]
     mainClass = 'me.devnatan.inventoryframework.runtime.SampleServerKt'
 }

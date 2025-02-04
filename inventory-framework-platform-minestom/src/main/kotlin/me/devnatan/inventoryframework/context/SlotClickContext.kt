@@ -67,7 +67,7 @@ class SlotClickContext constructor(
     }
 
     override fun isMiddleClick(): Boolean {
-        return clickOrigin.clickType == ClickType.CHANGE_HELD
+        return false
     }
 
     override fun isShiftClick(): Boolean {
@@ -80,7 +80,7 @@ class SlotClickContext constructor(
     }
 
     override fun isOutsideClick(): Boolean {
-        return clickOrigin.inventory == null;
+        return clickOrigin.slot < 0;
     }
 
     override fun getClickIdentifier(): String {

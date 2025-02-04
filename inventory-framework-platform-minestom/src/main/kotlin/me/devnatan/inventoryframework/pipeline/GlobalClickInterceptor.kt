@@ -13,12 +13,11 @@ class GlobalClickInterceptor : PipelineInterceptor<VirtualView> {
     override fun intercept(pipeline: PipelineContext<VirtualView>, subject: VirtualView) {
         if (subject !is SlotClickContext) return
 
-        val context = subject as SlotClickContext
-        val event: InventoryPreClickEvent = context.clickOrigin
+        val event: InventoryPreClickEvent = subject.clickOrigin
 
         // inherit cancellation so we can un-cancel it
-        context.isCancelled =
-            event.isCancelled || context.config.isOptionSet(ViewConfig.CANCEL_ON_CLICK, true)
-        context.root.onClick(context)
+        subject.isCancelled =
+            event.isCancelled || subject.config.isOptionSet(ViewConfig.CANCEL_ON_CLICK, true)
+        subject.root.onClick(subject)
     }
 }

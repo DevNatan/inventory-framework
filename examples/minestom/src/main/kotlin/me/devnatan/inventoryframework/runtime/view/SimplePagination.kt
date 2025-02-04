@@ -41,10 +41,10 @@ class SimplePagination : View() {
         render.layoutSlot('P', previousItem)
             .displayIf(BooleanSupplier { state[render].canBack() })
             .updateOnStateChange(state)
-            .onClick { ctx: SlotClickContext? -> state[ctx!!].back() }
+            .onClick { ctx: SlotClickContext -> state[ctx].back() }
         render.layoutSlot('N', nextItem)
             .displayIf(BooleanSupplier { state[render].canAdvance() })
             .updateOnStateChange(state)
-            .onClick { ctx: SlotClickContext? -> state[ctx!!].advance() }
+            .onClick { ctx: SlotClickContext -> state[ctx].advance() }
     }
 }
