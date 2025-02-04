@@ -5,7 +5,7 @@ plugins {
     alias(libs.plugins.run.paper)
 }
 
-apply from: '../library.gradle'
+apply from: '../../library.gradle'
 
 dependencies {
     implementation projects.inventoryFrameworkPlatformBukkit

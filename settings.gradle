@@ -25,6 +25,6 @@ include 'inventory-framework-test',
         'inventory-framework-platform-bukkit',
         'inventory-framework-platform-minestom',
         'inventory-framework-anvil-input',
-        'example-bukkit'
+        'example-paper'
 
-project(':example-bukkit').projectDir = new File('examples/bukkit')
+project(':example-paper').projectDir = new File('examples/paper')
