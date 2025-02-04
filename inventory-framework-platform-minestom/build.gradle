@@ -10,7 +10,6 @@ apply from: '../publish.gradle'
 
 dependencies {
     api projects.inventoryFrameworkPlatform
-    runtimeOnly projects.inventoryFrameworkAnvilInput
     compileOnly libs.minestom
     testCompileOnly libs.minestom
     testImplementation projects.inventoryFrameworkApi
@@ -23,7 +22,6 @@ shadowJar {
 
     dependencies {
         include(project(":inventory-framework-platform"))
-        include(project(":inventory-framework-anvil-input"))
     }
 }
 
