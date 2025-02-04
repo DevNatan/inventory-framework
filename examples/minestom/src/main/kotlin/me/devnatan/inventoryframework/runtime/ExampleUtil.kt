@@ -8,7 +8,7 @@ import java.util.*
 
 object ExampleUtil {
     @JvmStatic
-	fun getRandomItems(amount: Int): List<ItemStack> {
+    fun getRandomItems(amount: Int): List<ItemStack> {
         val materials = Material.values().toTypedArray()
         val random = Random()
 
@@ -22,7 +22,7 @@ object ExampleUtil {
     }
 
     @JvmStatic
-	fun displayItem(material: Material, displayName: String): ItemStack {
+    fun displayItem(material: Material, displayName: String): ItemStack {
         return ItemStack.of(material).withCustomName(Component.text(displayName))
     }
 }
