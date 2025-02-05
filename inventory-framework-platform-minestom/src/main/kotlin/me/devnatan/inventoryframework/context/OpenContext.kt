@@ -3,6 +3,7 @@ package me.devnatan.inventoryframework.context
 import me.devnatan.inventoryframework.*
 import net.kyori.adventure.text.Component
 import net.minestom.server.entity.Player
+import org.jetbrains.annotations.ApiStatus
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
@@ -20,7 +21,7 @@ import java.util.concurrent.CompletableFuture
  * Must be provided even in non-shared context cases.
  * @param initialData Initial data provided by the user.
  */
-class OpenContext constructor(
+class OpenContext @ApiStatus.Internal constructor(
     private val root: View,
     private val subject: Viewer?,
     private val viewers: Map<String, Viewer>,

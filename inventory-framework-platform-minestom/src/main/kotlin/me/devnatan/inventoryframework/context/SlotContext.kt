@@ -10,10 +10,11 @@ import me.devnatan.inventoryframework.state.StateValue
 import me.devnatan.inventoryframework.state.StateWatcher
 import net.minestom.server.entity.Player
 import net.minestom.server.item.ItemStack
+import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.annotations.UnmodifiableView
 import java.util.*
 
-abstract class SlotContext protected constructor(
+abstract class SlotContext @ApiStatus.Internal protected constructor(
     private var slot: Int,
     private val parent: IFRenderContext
 ) : PlatformContext(),

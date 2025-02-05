@@ -10,10 +10,11 @@ import me.devnatan.inventoryframework.state.StateValue
 import me.devnatan.inventoryframework.state.StateWatcher
 import net.kyori.adventure.text.Component
 import net.minestom.server.entity.Player
+import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.annotations.UnmodifiableView
 import java.util.*
 
-class CloseContext(subject: Viewer, private val parent: IFRenderContext) :
+class CloseContext @ApiStatus.Internal constructor(subject: Viewer, private val parent: IFRenderContext) :
     PlatformConfinedContext(),
     IFCloseContext, Context {
     private val subject: Viewer = subject

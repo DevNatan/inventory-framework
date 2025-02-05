@@ -9,8 +9,9 @@ import net.minestom.server.event.inventory.InventoryPreClickEvent
 import net.minestom.server.inventory.PlayerInventory
 import net.minestom.server.inventory.click.ClickType
 import net.minestom.server.item.ItemStack
+import org.jetbrains.annotations.ApiStatus
 
-class SlotClickContext constructor(
+class SlotClickContext @ApiStatus.Internal constructor(
     slot: Int,
     parent: IFRenderContext,
     private val whoClicked: Viewer,
