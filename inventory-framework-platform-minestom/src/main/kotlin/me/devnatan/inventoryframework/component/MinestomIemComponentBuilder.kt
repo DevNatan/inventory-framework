@@ -19,7 +19,7 @@ import java.util.function.Predicate
 import java.util.function.Supplier
 
 class MinestomIemComponentBuilder private constructor(
-    root: VirtualView,
+    private val root: VirtualView,
     slot: Int,
     item: ItemStack?,
     renderHandler: Consumer<in IFSlotRenderContext>?,
@@ -44,7 +44,6 @@ class MinestomIemComponentBuilder private constructor(
         displayCondition
     ), ItemComponentBuilder<MinestomIemComponentBuilder, Context>,
     ComponentFactory {
-    private val root: VirtualView = root
     private var slot: Int
     private var item: ItemStack?
     private var renderHandler: Consumer<in IFSlotRenderContext>?
@@ -124,6 +123,7 @@ class MinestomIemComponentBuilder private constructor(
      * @param renderHandler The render handler.
      * @return This item builder.
      */
+    @Suppress("UNCHECKED_CAST")
     fun onRender(renderHandler: Consumer<in SlotRenderContext>?): MinestomIemComponentBuilder {
         this.renderHandler = renderHandler as? Consumer<in IFSlotRenderContext>
         return this
@@ -154,6 +154,7 @@ class MinestomIemComponentBuilder private constructor(
      * @param clickHandler The click handler.
      * @return This item builder.
      */
+    @Suppress("UNCHECKED_CAST")
     fun onClick(clickHandler: Consumer<in SlotClickContext>?): MinestomIemComponentBuilder {
         this.clickHandler = clickHandler as? Consumer<in IFSlotClickContext>
         return this
@@ -179,6 +180,7 @@ class MinestomIemComponentBuilder private constructor(
      * @param updateHandler The update handler.
      * @return This item builder.
      */
+    @Suppress("UNCHECKED_CAST")
     fun onUpdate(updateHandler: Consumer<SlotContext>?): MinestomIemComponentBuilder {
         this.updateHandler = updateHandler as? Consumer<in IFSlotContext>
         return this
