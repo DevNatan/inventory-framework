@@ -5,33 +5,30 @@ import me.devnatan.inventoryframework.context.IFContext
 import me.devnatan.inventoryframework.context.IFRenderContext
 import me.devnatan.inventoryframework.context.IFSlotClickContext
 import me.devnatan.inventoryframework.pipeline.StandardPipelinePhases
-import net.minestom.server.MinecraftServer
 import net.minestom.server.entity.Player
 import net.minestom.server.event.EventFilter
 import net.minestom.server.event.EventNode
 import net.minestom.server.event.inventory.InventoryCloseEvent
 import net.minestom.server.event.inventory.InventoryPreClickEvent
 import net.minestom.server.event.item.PickupItemEvent
+import net.minestom.server.event.trait.EntityEvent
 import net.minestom.server.inventory.PlayerInventory
 import net.minestom.server.inventory.click.ClickType
 import kotlin.jvm.optionals.getOrNull
 
 internal class IFInventoryListener(
-    private val viewFrame: ViewFrame
+    private val viewFrame: ViewFrame,
+    handler: EventNode<in EntityEvent>
 ) {
 
     init {
-        val handler = MinecraftServer.getGlobalEventHandler()
-        val inventoryNode = EventNode.type("IF-inventory", EventFilter.INVENTORY)
-            .setPriority(10)
-            .addListener(InventoryPreClickEvent::class.java, this::onInventoryClick)
-            .addListener(InventoryCloseEvent::class.java, this::onInventoryClose)
-        val entityEvent = EventNode.type("IF-entity", EventFilter.ENTITY)
+        val node = EventNode.type("IF", EventFilter.ENTITY)
         { _, e -> e is Player && viewFrame.getViewer(e) != null }
             .setPriority(10)
             .addListener(PickupItemEvent::class.java, this::onItemPickup)
-        handler.addChild(inventoryNode)
-        handler.addChild(entityEvent)
+            .addListener(InventoryPreClickEvent::class.java, this::onInventoryClick)
+            .addListener(InventoryCloseEvent::class.java, this::onInventoryClose)
+        handler.addChild(node)
     }
 
     fun onInventoryClick(event: InventoryPreClickEvent) {

@@ -7,11 +7,13 @@ import me.devnatan.inventoryframework.feature.FeatureInstaller
 import me.devnatan.inventoryframework.internal.MinestomElementFactory
 import me.devnatan.inventoryframework.internal.PlatformUtils
 import net.minestom.server.entity.Player
+import net.minestom.server.event.EventNode
+import net.minestom.server.event.trait.EntityEvent
 import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.annotations.ApiStatus.Experimental
 import java.util.function.UnaryOperator
 
-class ViewFrame private constructor() : IFViewFrame<ViewFrame, View>() {
+class ViewFrame private constructor(private val parentNode: EventNode<in EntityEvent>) : IFViewFrame<ViewFrame, View>() {
 
     private val featureInstaller: FeatureInstaller<ViewFrame> = DefaultFeatureInstaller(
         this
@@ -57,7 +59,7 @@ class ViewFrame private constructor() : IFViewFrame<ViewFrame, View>() {
      * @return The id of the newly created [IFContext].
      */
     @Experimental
-    fun open(viewClass: Class<out View?>, players: Collection<Player?>): String {
+    fun open(viewClass: Class<out View>, players: Collection<Player>): String {
         return open(viewClass, players, null)
     }
 
@@ -78,8 +80,8 @@ class ViewFrame private constructor() : IFViewFrame<ViewFrame, View>() {
      */
     @Experimental
     fun open(
-        viewClass: Class<out View?>,
-        players: Collection<Player?>,
+        viewClass: Class<out View>,
+        players: Collection<Player>,
         initialData: Any?
     ): String {
         return internalOpen(viewClass, players, initialData)
@@ -97,7 +99,7 @@ class ViewFrame private constructor() : IFViewFrame<ViewFrame, View>() {
      */
     @Experimental
     fun openActive(
-        viewClass: Class<out View?>, contextId: String, player: Player
+        viewClass: Class<out View>, contextId: String, player: Player
     ) {
         openActive(viewClass, contextId, player, null)
     }
@@ -115,7 +117,7 @@ class ViewFrame private constructor() : IFViewFrame<ViewFrame, View>() {
      */
     @Experimental
     fun openActive(
-        viewClass: Class<out View?>,
+        viewClass: Class<out View>,
         contextId: String,
         player: Player,
         initialData: Any?
@@ -154,8 +156,8 @@ class ViewFrame private constructor() : IFViewFrame<ViewFrame, View>() {
         endlessContextInfo: EndlessContextInfo, player: Player, initialData: Any?
     ) {
         openActive(
-            endlessContextInfo.getView().javaClass as Class<out View?>,
-            endlessContextInfo.getContextId(),
+            endlessContextInfo.view.javaClass as Class<out View>,
+            endlessContextInfo.contextId,
             player,
             initialData
         )
@@ -169,7 +171,7 @@ class ViewFrame private constructor() : IFViewFrame<ViewFrame, View>() {
         PlatformUtils.setFactory(MinestomElementFactory())
         pipeline.execute(FRAME_REGISTERED, this)
         initializeViews()
-        IFInventoryListener(this)
+        IFInventoryListener(this, parentNode)
         return this
     }
 
@@ -229,9 +231,9 @@ class ViewFrame private constructor() : IFViewFrame<ViewFrame, View>() {
      * @return An instance of the installed feature.
     </R></C> */
     fun <C, R> install(
-        feature: Feature<C, R, ViewFrame?>, configure: UnaryOperator<C>
+        feature: Feature<C, R, ViewFrame>, configure: UnaryOperator<C>
     ): ViewFrame {
-        featureInstaller.install<C, R>(feature, configure)
+        featureInstaller.install(feature, configure)
         IFDebug.debug("Feature %s installed", feature.name())
         return this
     }
@@ -242,7 +244,7 @@ class ViewFrame private constructor() : IFViewFrame<ViewFrame, View>() {
      * @param feature The feature to be installed.
      * @return This view frame.
      */
-    fun install(feature: Feature<*, *, ViewFrame?>): ViewFrame {
+    fun install(feature: Feature<*, *, ViewFrame>): ViewFrame {
         install(feature, UnaryOperator.identity())
         return this
     }
@@ -284,8 +286,8 @@ class ViewFrame private constructor() : IFViewFrame<ViewFrame, View>() {
          * @param owner The plugin that owns this view frame.
          * @return A new ViewFrame instance.
          */
-        fun create(): ViewFrame {
-            return ViewFrame()
+        fun create(parentNode: EventNode<in EntityEvent>): ViewFrame {
+            return ViewFrame(parentNode)
         }
 
         private val LOGGER = java.util.logging.Logger.getLogger("IF")
