@@ -8,7 +8,7 @@ import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.internal.Job;
 
-public final class ScheduledUpdateAfterRenderInterceptor implements PipelineInterceptor<VirtualView> {
+public final class ScheduledUpdateStartInterceptor implements PipelineInterceptor<VirtualView> {
 
     @Override
     public void intercept(PipelineContext<VirtualView> pipeline, VirtualView subject) {

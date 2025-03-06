@@ -59,6 +59,10 @@ public final class StandardPipelinePhases {
      */
     public static final PipelinePhase INVALIDATION = new PipelinePhase("invalidation");
 
+    public static final PipelinePhase VIEWER_ADDED = new PipelinePhase("viewer-added");
+
+    public static final PipelinePhase VIEWER_REMOVED = new PipelinePhase("viewer-removed");
+
     /**
      * Called during layout resolution phase before {@link #FIRST_RENDER} phase.
      * In this pipeline phase the pipeline interceptor subject is a {@link IFRenderContext}.
