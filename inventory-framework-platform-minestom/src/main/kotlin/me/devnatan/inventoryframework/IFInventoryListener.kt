@@ -54,7 +54,7 @@ internal class IFInventoryListener(
         val context: IFRenderContext = viewer.activeContext
         val clickedComponent =
             context.getComponentsAt(event.slot).stream()
-                .filter { obj: me.devnatan.inventoryframework.component.Component -> obj.isVisible }
+                .filter { it.isVisible }
                 .findFirst()
                 .getOrNull()
         val clickedContainer =
