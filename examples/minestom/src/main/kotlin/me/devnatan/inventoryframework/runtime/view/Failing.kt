@@ -12,12 +12,13 @@ import net.minestom.server.item.Material
 class Failing : View() {
     var state: MutableState<Int> = mutableState(0)
 
-    override fun onInit(config: ViewConfigBuilder) {
-        config.size(1)
-        config.cancelOnClick()
-        config.title("Failing Inventory")
-        config.layout("  R   C  ")
-    }
+    override fun onInit(config: ViewConfigBuilder): Unit =
+        with(config) {
+            size(1)
+            cancelOnClick()
+            title("Failing Inventory")
+            layout("  R   C  ")
+        }
 
     override fun onFirstRender(render: RenderContext) {
         render.layoutSlot('R')

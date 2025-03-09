@@ -27,11 +27,15 @@ class SimplePagination : View() {
             },
         )
 
-    override fun onInit(config: ViewConfigBuilder) {
-        config.cancelOnClick()
-        config.size(3)
-        config.title("Simple Pagination")
-        config.layout("OOOOOOOOO", "OOOOOOOOO", "  P   N  ")
+    override fun onInit(config: ViewConfigBuilder): Unit = with(config) {
+        cancelOnClick()
+        size(3)
+        title("Simple Pagination")
+        layout(
+            "OOOOOOOOO",
+            "OOOOOOOOO",
+            "  P   N  "
+        )
     }
 
     override fun onFirstRender(render: RenderContext) {

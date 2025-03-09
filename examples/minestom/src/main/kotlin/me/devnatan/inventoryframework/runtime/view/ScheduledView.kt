@@ -11,16 +11,16 @@ import net.minestom.server.item.Material
 class ScheduledView : View() {
     val counter = mutableState(0)
 
-    override fun onInit(config: ViewConfigBuilder) {
-        config.cancelOnClick()
-        config.size(3)
-        config.title("Simple Pagination")
-        config.layout(
+    override fun onInit(config: ViewConfigBuilder): Unit = with(config) {
+        cancelOnClick()
+        size(3)
+        title("Simple Pagination")
+        layout(
             "         ",
             "    C    ",
             "B        ",
         )
-        config.scheduleUpdate(20)
+        scheduleUpdate(20)
     }
 
     override fun onFirstRender(render: RenderContext) {
