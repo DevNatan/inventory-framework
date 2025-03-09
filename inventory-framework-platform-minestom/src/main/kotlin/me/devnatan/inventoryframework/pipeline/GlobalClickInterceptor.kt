@@ -10,7 +10,10 @@ import net.minestom.server.event.inventory.InventoryPreClickEvent
  * If the click is canceled, this interceptor ends the pipeline immediately.
  */
 class GlobalClickInterceptor : PipelineInterceptor<VirtualView> {
-    override fun intercept(pipeline: PipelineContext<VirtualView>, subject: VirtualView) {
+    override fun intercept(
+        pipeline: PipelineContext<VirtualView>,
+        subject: VirtualView,
+    ) {
         if (subject !is SlotClickContext) return
 
         val event: InventoryPreClickEvent = subject.clickOrigin

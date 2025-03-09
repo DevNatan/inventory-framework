@@ -3,8 +3,7 @@ package me.devnatan.inventoryframework.runtime
 import net.kyori.adventure.text.Component
 import net.minestom.server.item.ItemStack
 import net.minestom.server.item.Material
-import java.util.*
-
+import java.util.Random
 
 object ExampleUtil {
     @JvmStatic
@@ -22,7 +21,10 @@ object ExampleUtil {
     }
 
     @JvmStatic
-    fun displayItem(material: Material, displayName: String): ItemStack {
+    fun displayItem(
+        material: Material,
+        displayName: String,
+    ): ItemStack {
         return ItemStack.of(material).withCustomName(Component.text(displayName))
     }
 }

@@ -32,7 +32,7 @@ class MinestomIemComponentBuilder private constructor(
     updateOnClick: Boolean,
     watchingStates: Set<State<*>>,
     isManagedExternally: Boolean,
-    displayCondition: Predicate<Context>?
+    displayCondition: Predicate<Context>?,
 ) : DefaultComponentBuilder<MinestomIemComponentBuilder, Context>(
         reference,
         data,
@@ -41,8 +41,9 @@ class MinestomIemComponentBuilder private constructor(
         updateOnClick,
         watchingStates,
         isManagedExternally,
-        displayCondition
-    ), ItemComponentBuilder<MinestomIemComponentBuilder, Context>,
+        displayCondition,
+    ),
+    ItemComponentBuilder<MinestomIemComponentBuilder, Context>,
     ComponentFactory {
     private var slot: Int
     private var item: ItemStack?
@@ -64,7 +65,7 @@ class MinestomIemComponentBuilder private constructor(
         false,
         LinkedHashSet<State<*>>(),
         false,
-        null
+        null,
     )
 
     init {
@@ -76,13 +77,15 @@ class MinestomIemComponentBuilder private constructor(
     }
 
     override fun toString(): String {
-        return ("BukkitItemComponentBuilder{"
-                + "slot=" + slot
-                + ", item=" + item
-                + ", renderHandler=" + renderHandler
-                + ", clickHandler=" + clickHandler
-                + ", updateHandler=" + updateHandler
-                + "} " + super.toString())
+        return (
+            "BukkitItemComponentBuilder{" +
+                "slot=" + slot +
+                ", item=" + item +
+                ", renderHandler=" + renderHandler +
+                ", clickHandler=" + clickHandler +
+                ", updateHandler=" + updateHandler +
+                "} " + super.toString()
+        )
     }
 
     override fun isContainedWithin(position: Int): Boolean {
@@ -97,7 +100,10 @@ class MinestomIemComponentBuilder private constructor(
         return this
     }
 
-    override fun withSlot(row: Int, column: Int): MinestomIemComponentBuilder {
+    override fun withSlot(
+        row: Int,
+        column: Int,
+    ): MinestomIemComponentBuilder {
         val container: ViewContainer = (root as IFRenderContext).getContainer()
         return withSlot(SlotConverter.convertSlot(row, column, container.getRowsCount(), container.getColumnsCount()))
     }
@@ -201,7 +207,7 @@ class MinestomIemComponentBuilder private constructor(
             isManagedExternally,
             updateOnClick,
             false,
-            reference
+            reference,
         )
     }
 
@@ -220,7 +226,7 @@ class MinestomIemComponentBuilder private constructor(
             updateOnClick,
             watchingStates,
             isManagedExternally,
-            displayCondition
+            displayCondition,
         )
     }
 }

@@ -11,15 +11,14 @@ import net.minestom.server.command.builder.arguments.Argument
 import net.minestom.server.command.builder.arguments.ArgumentType
 import net.minestom.server.command.builder.suggestion.SuggestionEntry
 import net.minestom.server.entity.Player
-import java.util.*
 
 class IFExampleCommand(private val viewFrame: ViewFrame) : Command("ifexample") {
-
-    private val availableViews = mapOf(
-        "failing" to Failing::class.java,
-        "simple-pagination" to SimplePagination::class.java,
-        "scheduled" to ScheduledView::class.java
-    );
+    private val availableViews =
+        mapOf(
+            "failing" to Failing::class.java,
+            "simple-pagination" to SimplePagination::class.java,
+            "scheduled" to ScheduledView::class.java,
+        )
 
     private val arg: Argument<String> =
         ArgumentType.String("view").setSuggestionCallback { _, _, suggestion ->
@@ -32,7 +31,10 @@ class IFExampleCommand(private val viewFrame: ViewFrame) : Command("ifexample") 
         addSyntax({ sender, ctx -> onCommand(sender, ctx) }, arg)
     }
 
-    private fun onCommand(sender: CommandSender, ctx: CommandContext) {
+    private fun onCommand(
+        sender: CommandSender,
+        ctx: CommandContext,
+    ) {
         if (sender !is Player) {
             sender.sendMessage("This command can only be executed by players.")
             return

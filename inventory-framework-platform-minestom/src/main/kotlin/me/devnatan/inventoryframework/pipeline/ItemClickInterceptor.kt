@@ -9,7 +9,10 @@ import net.minestom.server.event.inventory.InventoryPreClickEvent
  * Intercepted when a player clicks on an item the view container.
  */
 class ItemClickInterceptor : PipelineInterceptor<VirtualView> {
-    override fun intercept(pipeline: PipelineContext<VirtualView>, subject: VirtualView) {
+    override fun intercept(
+        pipeline: PipelineContext<VirtualView>,
+        subject: VirtualView,
+    ) {
         if (subject !is SlotClickContext) return
 
         val event: InventoryPreClickEvent = subject.clickOrigin

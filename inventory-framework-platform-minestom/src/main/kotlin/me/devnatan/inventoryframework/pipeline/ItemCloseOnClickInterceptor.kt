@@ -10,7 +10,10 @@ import net.minestom.server.event.inventory.InventoryPreClickEvent
  * closed when the item is clicked.
  */
 class ItemCloseOnClickInterceptor : PipelineInterceptor<VirtualView> {
-    override fun intercept(pipeline: PipelineContext<VirtualView>, subject: VirtualView) {
+    override fun intercept(
+        pipeline: PipelineContext<VirtualView>,
+        subject: VirtualView,
+    ) {
         if (subject !is SlotClickContext) return
 
         val event: InventoryPreClickEvent = subject.clickOrigin

@@ -23,10 +23,11 @@ class Failing : View() {
         render.layoutSlot('R')
             .onRender { ctx: SlotRenderContext ->
                 if (state[ctx] == 0) {
-                    ctx.item = displayItem(
-                        Material.DIAMOND,
-                        "Click me to fail"
-                    )
+                    ctx.item =
+                        displayItem(
+                            Material.DIAMOND,
+                            "Click me to fail",
+                        )
                 } else {
                     throw IllegalStateException("This item cannot be rendered")
                 }

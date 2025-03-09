@@ -31,6 +31,9 @@ spotless {
         removeUnusedImports()
         palantirJavaFormat()
     }
+    kotlin {
+        ktlint()
+    }
 }
 
 tasks.register("lint") {

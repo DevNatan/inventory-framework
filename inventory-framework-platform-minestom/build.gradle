@@ -1,5 +1,3 @@
-import org.apache.tools.ant.filters.ReplaceTokens
-
 plugins {
     alias(libs.plugins.shadowjar)
     alias(libs.plugins.kotlin)

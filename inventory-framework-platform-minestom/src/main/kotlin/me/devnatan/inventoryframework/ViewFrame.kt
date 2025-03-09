@@ -14,13 +14,13 @@ import org.jetbrains.annotations.ApiStatus.Experimental
 import java.util.function.UnaryOperator
 
 class ViewFrame private constructor(private val parentNode: EventNode<in EntityEvent>) : IFViewFrame<ViewFrame, View>() {
-
-    private val featureInstaller: FeatureInstaller<ViewFrame> = DefaultFeatureInstaller(
-        this
-    )
-
+    private val featureInstaller: FeatureInstaller<ViewFrame> =
+        DefaultFeatureInstaller(
+            this,
+        )
 
     // region Opening
+
     /**
      * Opens a view to a player.
      *
@@ -28,7 +28,10 @@ class ViewFrame private constructor(private val parentNode: EventNode<in EntityE
      * @param player    The player that the view will be open to.
      * @return The id of the newly created [IFContext].
      */
-    fun open(viewClass: Class<out View>, player: Player): String {
+    fun open(
+        viewClass: Class<out View>,
+        player: Player,
+    ): String {
         return open(viewClass, player, null)
     }
 
@@ -40,7 +43,11 @@ class ViewFrame private constructor(private val parentNode: EventNode<in EntityE
      * @param initialData The initial data.
      * @return The id of the newly created [IFContext].
      */
-    fun open(viewClass: Class<out View>, player: Player, initialData: Any?): String {
+    fun open(
+        viewClass: Class<out View>,
+        player: Player,
+        initialData: Any?,
+    ): String {
         return open(viewClass, listOf(player), initialData)
     }
 
@@ -59,7 +66,10 @@ class ViewFrame private constructor(private val parentNode: EventNode<in EntityE
      * @return The id of the newly created [IFContext].
      */
     @Experimental
-    fun open(viewClass: Class<out View>, players: Collection<Player>): String {
+    fun open(
+        viewClass: Class<out View>,
+        players: Collection<Player>,
+    ): String {
         return open(viewClass, players, null)
     }
 
@@ -82,7 +92,7 @@ class ViewFrame private constructor(private val parentNode: EventNode<in EntityE
     fun open(
         viewClass: Class<out View>,
         players: Collection<Player>,
-        initialData: Any?
+        initialData: Any?,
     ): String {
         return internalOpen(viewClass, players, initialData)
     }
@@ -99,7 +109,9 @@ class ViewFrame private constructor(private val parentNode: EventNode<in EntityE
      */
     @Experimental
     fun openActive(
-        viewClass: Class<out View>, contextId: String, player: Player
+        viewClass: Class<out View>,
+        contextId: String,
+        player: Player,
     ) {
         openActive(viewClass, contextId, player, null)
     }
@@ -120,7 +132,7 @@ class ViewFrame private constructor(private val parentNode: EventNode<in EntityE
         viewClass: Class<out View>,
         contextId: String,
         player: Player,
-        initialData: Any?
+        initialData: Any?,
     ) {
         internalOpenActiveContext(viewClass, contextId, player, initialData)
     }
@@ -136,7 +148,10 @@ class ViewFrame private constructor(private val parentNode: EventNode<in EntityE
      * @param player Who the context will be open to.
      */
     @Experimental
-    fun openEndless(endlessContextInfo: EndlessContextInfo, player: Player) {
+    fun openEndless(
+        endlessContextInfo: EndlessContextInfo,
+        player: Player,
+    ) {
         openEndless(endlessContextInfo, player, null)
     }
 
@@ -153,13 +168,15 @@ class ViewFrame private constructor(private val parentNode: EventNode<in EntityE
      */
     @Experimental
     fun openEndless(
-        endlessContextInfo: EndlessContextInfo, player: Player, initialData: Any?
+        endlessContextInfo: EndlessContextInfo,
+        player: Player,
+        initialData: Any?,
     ) {
         openActive(
             endlessContextInfo.view.javaClass as Class<out View>,
             endlessContextInfo.contextId,
             player,
-            initialData
+            initialData,
         )
     }
 
@@ -201,17 +218,19 @@ class ViewFrame private constructor(private val parentNode: EventNode<in EntityE
             } catch (exception: RuntimeException) {
                 view.isInitialized = false
                 LOGGER.severe(
-                        String.format(
-                            "An error occurred while enabling view %s: %s",
-                            view.javaClass.name, exception
-                        )
-                    )
+                    String.format(
+                        "An error occurred while enabling view %s: %s",
+                        view.javaClass.name,
+                        exception,
+                    ),
+                )
                 exception.printStackTrace()
             }
         }
     }
 
     // endregion
+
     /**
      * *** This is an internal inventory-framework API that should not be used from outside of
      * this library. No compatibility guarantees are provided. ***
@@ -229,9 +248,10 @@ class ViewFrame private constructor(private val parentNode: EventNode<in EntityE
      * @param <C>       The feature configuration type.
      * @param <R>       The feature value instance type.
      * @return An instance of the installed feature.
-    </R></C> */
+     </R></C> */
     fun <C, R> install(
-        feature: Feature<C, R, ViewFrame>, configure: UnaryOperator<C>
+        feature: Feature<C, R, ViewFrame>,
+        configure: UnaryOperator<C>,
     ): ViewFrame {
         featureInstaller.install(feature, configure)
         IFDebug.debug("Feature %s installed", feature.name())
@@ -272,9 +292,11 @@ class ViewFrame private constructor(private val parentNode: EventNode<in EntityE
         private const val PLUGIN_FQN = "me.devnatan.inventoryframework.runtime.InventoryFramework"
 
         private const val RELOCATION_MESSAGE =
-            ("Inventory Framework is running as a shaded non-relocated library. It's extremely recommended that "
-                    + "you relocate the library package. Learn more about on docs: "
-                    + "https://github.com/DevNatan/inventory-framework/wiki/Installation#preventing-library-conflicts")
+            (
+                "Inventory Framework is running as a shaded non-relocated library. It's extremely recommended that " +
+                    "you relocate the library package. Learn more about on docs: " +
+                    "https://github.com/DevNatan/inventory-framework/wiki/Installation#preventing-library-conflicts"
+            )
 
         init {
             PlatformUtils.setFactory(MinestomElementFactory())

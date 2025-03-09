@@ -9,9 +9,6 @@ import me.devnatan.inventoryframework.runtime.view.SimplePagination
 import net.minestom.server.MinecraftServer
 import net.minestom.server.coordinate.Pos
 import net.minestom.server.entity.PlayerSkin
-import net.minestom.server.event.Event
-import net.minestom.server.event.EventFilter
-import net.minestom.server.event.EventNode
 import net.minestom.server.event.player.AsyncPlayerConfigurationEvent
 import net.minestom.server.event.player.PlayerSkinInitEvent
 import net.minestom.server.event.player.PlayerSpawnEvent
@@ -22,7 +19,6 @@ import net.minestom.server.item.ItemStack
 import net.minestom.server.item.Material
 
 class SampleServer {
-
     init {
         val server = MinecraftServer.init()
         val instanceManager = MinecraftServer.getInstanceManager()
@@ -48,18 +44,19 @@ class SampleServer {
             event.player.inventory.addItemStack(ItemStack.of(Material.OAK_PLANKS, 64), TransactionOption.ALL)
         }
 
-        val viewFrame = ViewFrame.create(handler)
-            .with(
-                Failing(),
-                SimplePagination(),
-                ScheduledView())
-            .register()
+        val viewFrame =
+            ViewFrame.create(handler)
+                .with(
+                    Failing(),
+                    SimplePagination(),
+                    ScheduledView(),
+                )
+                .register()
 
         MinecraftServer.getCommandManager().register(
             IFExampleCommand(viewFrame),
             GamemodeCommand(viewFrame),
         )
-
 
         server.start("0.0.0.0", 25565)
     }

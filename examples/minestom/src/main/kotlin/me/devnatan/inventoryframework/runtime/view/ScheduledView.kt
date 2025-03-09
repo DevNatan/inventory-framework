@@ -7,10 +7,8 @@ import me.devnatan.inventoryframework.context.RenderContext
 import me.devnatan.inventoryframework.context.SlotClickContext
 import me.devnatan.inventoryframework.runtime.ExampleUtil
 import net.minestom.server.item.Material
-import java.time.Duration
 
 class ScheduledView : View() {
-
     val counter = mutableState(0)
 
     override fun onInit(config: ViewConfigBuilder) {
@@ -20,7 +18,8 @@ class ScheduledView : View() {
         config.layout(
             "         ",
             "    C    ",
-            "B        ")
+            "B        ",
+        )
         config.scheduleUpdate(20)
     }
 
@@ -34,5 +33,4 @@ class ScheduledView : View() {
             .displayIf(Context::canBack)
             .onClick(SlotClickContext::back)
     }
-
 }

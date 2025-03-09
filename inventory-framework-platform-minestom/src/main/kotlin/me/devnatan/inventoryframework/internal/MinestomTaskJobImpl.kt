@@ -4,8 +4,9 @@ import net.minestom.server.MinecraftServer
 import net.minestom.server.timer.Task
 import net.minestom.server.timer.TaskSchedule
 
-internal class MinestomTaskJobImpl(private val intervalInTicks: Int,
-                                   private val execution: Runnable
+internal class MinestomTaskJobImpl(
+    private val intervalInTicks: Int,
+    private val execution: Runnable,
 ) : Job {
     private var task: Task? = null
 
@@ -16,7 +17,7 @@ internal class MinestomTaskJobImpl(private val intervalInTicks: Int,
     override fun start() {
         if (isStarted) return
         val schedule = TaskSchedule.tick(intervalInTicks)
-        task = MinecraftServer.getSchedulerManager().scheduleTask( this::loop, schedule, schedule)
+        task = MinecraftServer.getSchedulerManager().scheduleTask(this::loop, schedule, schedule)
     }
 
     override fun cancel() {

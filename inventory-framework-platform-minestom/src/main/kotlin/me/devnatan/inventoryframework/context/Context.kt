@@ -39,7 +39,10 @@ interface Context : IFConfinedContext {
      * @param player The player to update the title.
      */
     @Experimental
-    fun updateTitleForPlayer(title: Component, player: Player)
+    fun updateTitleForPlayer(
+        title: Component,
+        player: Player,
+    )
 
     /**
      * Resets the container title only for the player current scope of execution to the initially

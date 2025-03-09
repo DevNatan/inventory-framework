@@ -3,14 +3,14 @@ package me.devnatan.inventoryframework
 import me.devnatan.inventoryframework.context.IFRenderContext
 import net.minestom.server.entity.Player
 import net.minestom.server.inventory.Inventory
-import java.util.*
+import java.util.Deque
+import java.util.LinkedList
 
 class MinestomViewer(val player: Player, private var activeContext: IFRenderContext?) : Viewer {
     private var selfContainer: ViewContainer? = null
     private val previousContexts: Deque<IFRenderContext> = LinkedList()
     private var lastInteractionInMillis: Long = 0
     private var transitioning = false
-
 
     override fun getActiveContext(): IFRenderContext {
         return activeContext!!
@@ -33,9 +33,15 @@ class MinestomViewer(val player: Player, private var activeContext: IFRenderCont
     }
 
     override fun getSelfContainer(): ViewContainer {
-        if (selfContainer == null) selfContainer = MinestomViewContainer(
-            player.openInventory as Inventory, getActiveContext().isShared(), ViewType.PLAYER, false
-        )
+        if (selfContainer == null) {
+            selfContainer =
+                MinestomViewContainer(
+                    player.openInventory as Inventory,
+                    getActiveContext().isShared(),
+                    ViewType.PLAYER,
+                    false,
+                )
+        }
         return selfContainer!!
     }
 
@@ -90,11 +96,13 @@ class MinestomViewer(val player: Player, private var activeContext: IFRenderCont
     }
 
     override fun toString(): String {
-        return ("BukkitViewer{"
-                + "player=" + player
-                + ", selfContainer=" + selfContainer
-                + ", lastInteractionInMillis=" + lastInteractionInMillis
-                + ", isTransitioning=" + transitioning
-                + "}")
+        return (
+            "BukkitViewer{" +
+                "player=" + player +
+                ", selfContainer=" + selfContainer +
+                ", lastInteractionInMillis=" + lastInteractionInMillis +
+                ", isTransitioning=" + transitioning +
+                "}"
+        )
     }
 }

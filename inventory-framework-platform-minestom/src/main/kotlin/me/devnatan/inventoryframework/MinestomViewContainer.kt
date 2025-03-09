@@ -7,11 +7,13 @@ import net.minestom.server.inventory.Inventory
 import net.minestom.server.inventory.InventoryType
 import net.minestom.server.inventory.PlayerInventory
 import net.minestom.server.item.ItemStack
-import java.util.*
+import java.util.Objects
 
 class MinestomViewContainer(
-    private val inventory: Inventory, shared: Boolean, private val type: ViewType,
-    private val proxied: Boolean
+    private val inventory: Inventory,
+    shared: Boolean,
+    private val type: ViewType,
+    private val proxied: Boolean,
 ) :
     ViewContainer {
     val isShared: Boolean = shared
@@ -25,14 +27,15 @@ class MinestomViewContainer(
     }
 
     override fun getTitle(): String {
-        val diffTitle: Boolean = inventory.viewers.stream()
-            .map { player ->
-                (player.openInventory as? Inventory)?.title
-                    ?.let { PlainTextComponentSerializer.plainText().serialize(it) } ?: ""
-            }
-            .distinct()
-            .findAny()
-            .isPresent
+        val diffTitle: Boolean =
+            inventory.viewers.stream()
+                .map { player ->
+                    (player.openInventory as? Inventory)?.title
+                        ?.let { PlainTextComponentSerializer.plainText().serialize(it) } ?: ""
+                }
+                .distinct()
+                .findAny()
+                .isPresent
 
         check(!(diffTitle && isShared)) { "Cannot get unique title of shared inventory" }
         val openInventory = inventory.viewers.first().openInventory
@@ -57,7 +60,10 @@ class MinestomViewContainer(
         return type.columns
     }
 
-    override fun renderItem(slot: Int, item: Any) {
+    override fun renderItem(
+        slot: Int,
+        item: Any,
+    ) {
         requireSupportedItem(item)
         inventory.setItemStack(slot, item as ItemStack)
     }
@@ -66,7 +72,11 @@ class MinestomViewContainer(
         inventory.setItemStack(slot, ItemStack.AIR)
     }
 
-    override fun matchesItem(slot: Int, item: Any?, exactly: Boolean): Boolean {
+    override fun matchesItem(
+        slot: Int,
+        item: Any?,
+        exactly: Boolean,
+    ): Boolean {
         requireSupportedItem(item)
         val target: ItemStack = inventory.getItemStack(slot) ?: return item == null
         if (item is ItemStack) return if (exactly) target == item else target.isSimilar(item as ItemStack)
@@ -82,7 +92,7 @@ class MinestomViewContainer(
         if (isSupportedItem(item)) return
 
         throw IllegalStateException(
-            "Unsupported item type: " + item!!.javaClass.name
+            "Unsupported item type: " + item!!.javaClass.name,
         )
     }
 
@@ -114,11 +124,17 @@ class MinestomViewContainer(
         return lastSlot
     }
 
-    override fun changeTitle(title: String?, target: Viewer) {
+    override fun changeTitle(
+        title: String?,
+        target: Viewer,
+    ) {
         changeTitle(title?.let { Component.text(it) } ?: Component.empty(), (target as MinestomViewer).player)
     }
 
-    fun changeTitle(title: Component, target: Player) {
+    fun changeTitle(
+        title: Component,
+        target: Player,
+    ) {
         val open: Inventory = target.openInventory as? Inventory ?: return
         if (inventory.inventoryType == InventoryType.CRAFTING || inventory.inventoryType == InventoryType.CRAFTER_3X3) return
         open.setTitle(title)
@@ -144,8 +160,8 @@ class MinestomViewContainer(
         if (this === o) return true
         if (o == null || javaClass != o.javaClass) return false
         val that = o as MinestomViewContainer
-        return isShared == that.isShared && inventory == that.inventory
-                && getType() == that.getType()
+        return isShared == that.isShared && inventory == that.inventory &&
+            getType() == that.getType()
     }
 
     override fun hashCode(): Int {

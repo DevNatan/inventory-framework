@@ -18,16 +18,15 @@ import kotlin.jvm.optionals.getOrNull
 
 internal class IFInventoryListener(
     private val viewFrame: ViewFrame,
-    handler: EventNode<in EntityEvent>
+    handler: EventNode<in EntityEvent>,
 ) {
-
     init {
-        val node = EventNode.type("IF", EventFilter.ENTITY)
-        { _, e -> e is Player && viewFrame.getViewer(e) != null }
-            .setPriority(10)
-            .addListener(PickupItemEvent::class.java, this::onItemPickup)
-            .addListener(InventoryPreClickEvent::class.java, this::onInventoryClick)
-            .addListener(InventoryCloseEvent::class.java, this::onInventoryClose)
+        val node =
+            EventNode.type("IF", EventFilter.ENTITY) { _, e -> e is Player && viewFrame.getViewer(e) != null }
+                .setPriority(10)
+                .addListener(PickupItemEvent::class.java, this::onItemPickup)
+                .addListener(InventoryPreClickEvent::class.java, this::onInventoryClick)
+                .addListener(InventoryCloseEvent::class.java, this::onInventoryClose)
         handler.addChild(node)
     }
 
@@ -53,18 +52,22 @@ internal class IFInventoryListener(
         }
 
         val context: IFRenderContext = viewer.activeContext
-        val clickedComponent = context.getComponentsAt(event.slot).stream()
+        val clickedComponent =
+            context.getComponentsAt(event.slot).stream()
                 .filter { obj: me.devnatan.inventoryframework.component.Component -> obj.isVisible }
                 .findFirst()
                 .getOrNull()
-        val clickedContainer = if (event.inventory is PlayerInventory)
-            viewer.selfContainer
-        else
-            context.getContainer()
+        val clickedContainer =
+            if (event.inventory is PlayerInventory) {
+                viewer.selfContainer
+            } else {
+                context.getContainer()
+            }
 
         val root: RootView = context.getRoot()
-        val clickContext: IFSlotClickContext = root.elementFactory
-            .createSlotClickContext(event.slot, viewer, clickedContainer, clickedComponent, event, false)
+        val clickContext: IFSlotClickContext =
+            root.elementFactory
+                .createSlotClickContext(event.slot, viewer, clickedContainer, clickedComponent, event, false)
 
         root.pipeline.execute(StandardPipelinePhases.CLICK, clickContext)
     }
