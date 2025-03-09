@@ -27,16 +27,17 @@ class SimplePagination : View() {
             },
         )
 
-    override fun onInit(config: ViewConfigBuilder): Unit = with(config) {
-        cancelOnClick()
-        size(3)
-        title("Simple Pagination")
-        layout(
-            "OOOOOOOOO",
-            "OOOOOOOOO",
-            "  P   N  "
-        )
-    }
+    override fun onInit(config: ViewConfigBuilder): Unit =
+        with(config) {
+            cancelOnClick()
+            size(3)
+            title("Simple Pagination")
+            layout(
+                "OOOOOOOOO",
+                "OOOOOOOOO",
+                "  P   N  ",
+            )
+        }
 
     override fun onFirstRender(render: RenderContext) {
         val previousItem = displayItem(Material.ARROW, "Previous")
