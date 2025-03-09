@@ -75,10 +75,13 @@ class MinestomViewContainer(
     ): Boolean {
         requireSupportedItem(item)
         val target: ItemStack = inventory.getItemStack(slot)
-        if (item is ItemStack) return if (exactly)
-            target == item
-        else
-            target.isSimilar(item)
+        if (item is ItemStack) {
+            return if (exactly) {
+                target == item
+            } else {
+                target.isSimilar(item)
+            }
+        }
 
         return false
     }
@@ -129,7 +132,8 @@ class MinestomViewContainer(
     ) {
         changeTitle(
             title?.let { Component.text(it) } ?: Component.empty(),
-            (target as MinestomViewer).player)
+            (target as MinestomViewer).player,
+        )
     }
 
     fun changeTitle(
