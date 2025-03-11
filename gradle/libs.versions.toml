@@ -5,10 +5,12 @@ paperSpigot = "1.20.1-R0.1-SNAPSHOT"
 junit = "5.10.1"
 mockito = "4.11.0"
 adventure-api = "4.14.0"
-kotlin = "2.0.21"
+kotlin = "2.1.0"
 plugin-shadowjar = "8.1.1"
 plugin-spotless = "6.25.0"
 plugin-bukkit = "0.6.0"
+minestom = "87f6524aeb"
+
 
 [libraries.spigot]
 module = "org.spigotmc:spigot-api"
@@ -41,6 +43,10 @@ version.ref = "mockito"
 [libraries.adventure-api]
 module = "net.kyori:adventure-api"
 version.ref = "adventure-api"
+
+[libraries.minestom]
+module = "net.minestom:minestom-snapshots"
+version.ref = "minestom"
 
 [plugins]
 shadowjar = { id = "com.github.johnrengelman.shadow", version.ref = "plugin-shadowjar" }

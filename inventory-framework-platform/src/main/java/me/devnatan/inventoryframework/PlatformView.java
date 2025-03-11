@@ -65,6 +65,10 @@ public abstract class PlatformView<
     private final StateAccess<TContext, TItem> stateAccess =
             new StateAccessImpl<>(this, getElementFactory(), stateRegistry);
 
+    protected PlatformView() {
+        super();
+    }
+
     // region Open & Close
     /**
      * Closes all contexts that are currently active in this view.

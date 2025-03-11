@@ -9,7 +9,9 @@ import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.Viewer;
 import org.jetbrains.annotations.NotNull;
 
-abstract class PlatformConfinedContext extends PlatformContext implements IFConfinedContext {
+public abstract class PlatformConfinedContext extends PlatformContext implements IFConfinedContext {
+
+    protected PlatformConfinedContext() {}
 
     @Override
     public abstract Viewer getViewer();

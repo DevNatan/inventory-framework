@@ -9,10 +9,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [Bukkit, Paper]
+        platform: [Bukkit, Paper, Minestom]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - uses: gradle/wrapper-validation-action@v1
       - uses: actions/setup-java@v2
         with:
@@ -31,7 +31,7 @@ jobs:
           arguments: inventory-framework-platform-${{ steps.vars.outputs.lowercase }}:shadowJar
           gradle-version: wrapper
       - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: inventory-framework-platform-${{ steps.vars.outputs.lowercase }}-${{ github.sha }}.jar
           path: inventory-framework-platform-${{ steps.vars.outputs.lowercase }}/build/libs/*.jar
