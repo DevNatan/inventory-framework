@@ -22,7 +22,7 @@ fun Project.configureMavenPublish() {
 
                 pom {
                     name.set("inventory-framework")
-                    description.set("Inventory Framework is a Bukkit Inventory API framework that allows you to create custom inventories with varied interaction treatments")
+                    description.set("Minecraft Inventory API framework")
                     url.set("https://github.com/DevNatan/inventory-framework")
                     inceptionYear.set("2020")
 
