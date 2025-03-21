@@ -12,7 +12,9 @@ import net.minestom.server.command.builder.arguments.ArgumentType
 import net.minestom.server.command.builder.suggestion.SuggestionEntry
 import net.minestom.server.entity.Player
 
-class IFExampleCommand(private val viewFrame: ViewFrame) : Command("ifexample") {
+class IFExampleCommand(
+    private val viewFrame: ViewFrame,
+) : Command("ifexample") {
     private val availableViews =
         mapOf(
             "failing" to Failing::class.java,

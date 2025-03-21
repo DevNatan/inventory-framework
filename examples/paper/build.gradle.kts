@@ -14,7 +14,7 @@ dependencies {
 
 tasks.shadowJar {
     archiveBaseName.set("inventory-framework-example")
-    archiveAppendix.set("bukkit")
+    archiveAppendix.set("paper")
 
     dependencies {
         exclude {
@@ -25,7 +25,7 @@ tasks.shadowJar {
 
 tasks.runServer {
     jvmArgs("-Dme.devnatan.inventoryframework.debug=true")
-    minecraftVersion("1.21.3")
+    minecraftVersion("1.21.4")
 }
 
 bukkit {
@@ -37,9 +37,8 @@ bukkit {
     apiVersion = "1.20"
     authors = listOf("SaiintBrisson", "DevNatan", "sasuked", "nicolube")
     commands {
-        create("ifexample") {
+        register("ifexample") {
             description = "This is a test command!"
-            permission = "ifexample.run"
             usage = "Opens example views"
         }
     }

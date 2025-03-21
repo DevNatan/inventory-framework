@@ -2,6 +2,7 @@ package me.devnatan.inventoryframework.runtime.commands;
 
 import me.devnatan.inventoryframework.ViewFrame;
 import me.devnatan.inventoryframework.runtime.view.AnvilInputSample;
+import me.devnatan.inventoryframework.runtime.view.AutoUpdate;
 import me.devnatan.inventoryframework.runtime.view.Failing;
 import me.devnatan.inventoryframework.runtime.view.SimplePagination;
 import org.bukkit.command.Command;
@@ -33,7 +34,7 @@ public class IFExampleCommandExecutor implements CommandExecutor {
 
         if (strings.length == 0) {
             commandSender.sendMessage("Usage: /ifexample <view>");
-            commandSender.sendMessage("Available views: anvil, failing, simple-pagination");
+            commandSender.sendMessage("Available views: anvil, failing, simple-pagination, auto-update");
             return false;
         }
 
@@ -54,7 +55,12 @@ public class IFExampleCommandExecutor implements CommandExecutor {
             return true;
         }
 
+        if (view.equalsIgnoreCase("auto-update")) {
+            viewFrame.open(AutoUpdate.class, player);
+            return true;
+        }
+
         commandSender.sendMessage("Unknown view: " + view);
-        return false;
+        return true;
     }
 }

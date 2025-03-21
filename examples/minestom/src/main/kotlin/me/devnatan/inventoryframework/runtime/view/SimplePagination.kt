@@ -42,11 +42,13 @@ class SimplePagination : View() {
     override fun onFirstRender(render: RenderContext) {
         val previousItem = displayItem(Material.ARROW, "Previous")
         val nextItem = displayItem(Material.ARROW, "Next")
-        render.layoutSlot('P', previousItem)
+        render
+            .layoutSlot('P', previousItem)
             .displayIf({ ctx -> state[ctx].canBack() })
             .updateOnStateChange(state)
             .onClick { ctx: SlotClickContext -> state[ctx].back() }
-        render.layoutSlot('N', nextItem)
+        render
+            .layoutSlot('N', nextItem)
             .displayIf({ ctx -> state[ctx].canAdvance() })
             .updateOnStateChange(state)
             .onClick { ctx: SlotClickContext -> state[ctx].advance() }

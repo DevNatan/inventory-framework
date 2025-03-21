@@ -10,9 +10,12 @@ import net.minestom.server.command.builder.suggestion.SuggestionEntry
 import net.minestom.server.entity.GameMode
 import net.minestom.server.entity.Player
 
-class GamemodeCommand(private val viewFrame: ViewFrame) : Command("gamemode") {
+class GamemodeCommand(
+    private val viewFrame: ViewFrame,
+) : Command("gamemode") {
     private val gamemodeArg: Argument<GameMode> =
-        ArgumentType.Enum("gameMode", GameMode::class.java)
+        ArgumentType
+            .Enum("gameMode", GameMode::class.java)
             .setSuggestionCallback { _, _, suggestion ->
                 for (gameMode in GameMode.entries) {
                     suggestion.addEntry(SuggestionEntry(gameMode.name.lowercase()))

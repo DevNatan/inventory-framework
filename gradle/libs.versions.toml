@@ -8,7 +8,7 @@ adventure-api = "4.19.0"
 kotlin = "2.1.0"
 plugin-shadowjar = "8.3.6"
 plugin-spotless = "7.0.2"
-plugin-bukkit = "0.6.0"
+plugin-bukkit = "0.7.1"
 minestom = "87f6524aeb"
 
 [libraries.spigot]
@@ -51,5 +51,5 @@ version.ref = "minestom"
 shadowjar = { id = "com.gradleup.shadow", version.ref = "plugin-shadowjar" }
 spotless = { id = "com.diffplug.spotless", version.ref = "plugin-spotless" }
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
-bukkit = { id = "net.minecrell.plugin-yml.bukkit", version.ref = "plugin-bukkit" }
+bukkit = { id = "de.eldoria.plugin-yml.bukkit", version.ref = "plugin-bukkit" }
 run-paper = { id = "xyz.jpenilla.run-paper", version =  "2.3.1" }

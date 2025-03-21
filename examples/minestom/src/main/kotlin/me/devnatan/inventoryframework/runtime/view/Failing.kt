@@ -21,7 +21,8 @@ class Failing : View() {
         }
 
     override fun onFirstRender(render: RenderContext) {
-        render.layoutSlot('R')
+        render
+            .layoutSlot('R')
             .onRender { ctx: SlotRenderContext ->
                 if (state[ctx] == 0) {
                     ctx.item =
@@ -32,13 +33,13 @@ class Failing : View() {
                 } else {
                     throw IllegalStateException("This item cannot be rendered")
                 }
-            }
-            .onClick { ctx: SlotClickContext ->
+            }.onClick { ctx: SlotClickContext ->
                 state[1] = ctx
                 ctx.update()
             }
 
-        render.layoutSlot('C', displayItem(Material.STONE, "Click me and I will fail"))
+        render
+            .layoutSlot('C', displayItem(Material.STONE, "Click me and I will fail"))
             .onClick { _ ->
                 throw IllegalStateException("This is a failing inventory")
             }

@@ -211,7 +211,12 @@ public abstract class IFViewFrame<S extends IFViewFrame<S, V>, V extends Platfor
         return new EndlessContextInfo(context, view);
     }
 
-    void addViewer(@NotNull Viewer viewer) {
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
+    public void addViewer(@NotNull Viewer viewer) {
         synchronized (viewerById) {
             viewerById.put(viewer.getId(), viewer);
         }
