@@ -202,8 +202,6 @@ public abstract class PlatformView<
             target.setInitialData(initialData);
         }
 
-        viewer.setActiveContext(target);
-
         final PlatformView root = (PlatformView) target.getRoot();
         root.onViewerAdded(target, viewer, initialData);
         target.addViewer(viewer);
@@ -218,6 +216,7 @@ public abstract class PlatformView<
             root.renderContext(target);
         }
 
+		viewer.setActiveContext(target);
         root.onResume(active, target);
         viewer.setSwitching(false);
     }
