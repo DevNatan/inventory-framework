@@ -36,6 +36,7 @@ public abstract class PlatformConfinedContext extends PlatformContext implements
         final Object data =
                 getConfig().isTransitiveInitialData() && mergeInitialData ? mergeInitialData(initialData) : initialData;
         getRoot().navigateTo(other, (IFRenderContext) this, getViewer(), data);
+
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})

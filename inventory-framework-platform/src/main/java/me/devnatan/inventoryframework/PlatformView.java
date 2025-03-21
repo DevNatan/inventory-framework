@@ -128,11 +128,11 @@ public abstract class PlatformView<
         if (targetContext == null) throw new IllegalArgumentException("Context not found: " + contextId);
         if (!targetContext.isActive()) throw new IllegalStateException("Invalidated");
 
-        targetContext.addViewer(viewer);
+		viewer.setActiveContext(targetContext);
+		onViewerAdded((TContext) targetContext, (TViewer) viewer.getPlatformInstance(), initialData);
+		targetContext.addViewer(viewer);
         getFramework().addViewer(viewer);
-        viewer.setActiveContext(targetContext);
         viewer.open(targetContext.getContainer());
-        onViewerAdded((TContext) targetContext, (TViewer) viewer.getPlatformInstance(), initialData);
     }
     // endregion
 
@@ -146,7 +146,10 @@ public abstract class PlatformView<
     public final void navigateTo(
             @NotNull Class<? extends PlatformView> target, @NotNull IFRenderContext origin, Object initialData) {
         final List<Viewer> viewers = origin.getViewers();
-        viewers.forEach(viewer -> setupNavigateTo(viewer, origin));
+        viewers.forEach(viewer -> {
+			viewer.setSwitching(true);
+			viewer.setPreviousContext(origin);
+		});
         getFramework().getRegisteredViewByType(target).open(viewers, initialData);
     }
 
@@ -161,8 +164,10 @@ public abstract class PlatformView<
             @NotNull IFRenderContext origin,
             @NotNull Viewer viewer,
             Object initialData) {
-        setupNavigateTo(viewer, origin);
+		viewer.setPreviousContext(origin);
+		viewer.setSwitching(true);
         getFramework().getRegisteredViewByType(target).open(Collections.singletonList(viewer), initialData);
+		viewer.setSwitching(false);
     }
 
     /**
@@ -183,10 +188,8 @@ public abstract class PlatformView<
     public final void back(@NotNull Viewer viewer, Object initialData) {
         final IFRenderContext active = viewer.getActiveContext();
         final IFRenderContext target = viewer.getPreviousContext();
-        viewer.unsetPreviousContext();
-        viewer.setTransitioning(true);
-        viewer.setActiveContext(target);
-        target.addViewer(viewer);
+		viewer.setPreviousContext(active);
+		viewer.setSwitching(true);
 
         if (initialData != null) {
             for (final Map.Entry<Long, StateValue> entry :
@@ -199,21 +202,25 @@ public abstract class PlatformView<
             target.setInitialData(initialData);
         }
 
-        if (target.getViewers().size() == 1) target.getContainer().open(viewer);
-        else {
-            final PlatformView root = (PlatformView) target.getRoot();
-            if (!root.hasContext(target.getId())) root.addContext(target);
+		viewer.setActiveContext(target);
 
-            root.renderContext(target);
-        }
+		final PlatformView root = (PlatformView) target.getRoot();
+		root.onViewerAdded(target, viewer, initialData);
+		target.addViewer(viewer);
 
-        ((PlatformView) target.getRoot()).onResume(active, target);
-        viewer.setTransitioning(false);
-    }
+		if (!root.hasContext(target.getId())) {
+			target.setActive(true);
+			root.addContext(target);
+		}
 
-    private void setupNavigateTo(@NotNull Viewer viewer, @NotNull IFRenderContext origin) {
-        viewer.setTransitioning(true);
-        viewer.setPreviousContext(origin);
+		if (target.getViewers().size() == 1)
+			target.getContainer().open(viewer);
+		else {
+			root.renderContext(target);
+		}
+
+		root.onResume(active, target);
+        viewer.setSwitching(false);
     }
     // endregion
 
@@ -281,7 +288,7 @@ public abstract class PlatformView<
         synchronized (getInternalContexts()) {
             getInternalContexts().add(context);
         }
-        IFDebug.debug("Context %s added to %s", context.getId(), getClass().getName());
+        IFDebug.debug("Context %s added to [%s] %s", context.getId(), context.getClass().getSimpleName(), getClass().getName());
     }
 
     /**
@@ -325,11 +332,8 @@ public abstract class PlatformView<
         getPipeline().execute(context);
         ((PlatformRenderContext<?, ?>) context).setRendered();
 
-        @SuppressWarnings("rawtypes")
-        final PlatformView view = (PlatformView) context.getRoot();
         context.getViewers().forEach(viewer -> {
             if (!context.getContainer().isProxied()) context.getContainer().open(viewer);
-            viewer.setTransitioning(false);
         });
         IFDebug.debug("Rendering context %s", context.getId());
     }
@@ -339,13 +343,11 @@ public abstract class PlatformView<
     public void removeAndTryInvalidateContext(@NotNull Viewer viewer, @NotNull TContext context) {
         context.removeViewer(viewer);
 
-        if (!viewer.isTransitioning())
+        if (!viewer.isSwitching())
             ((PlatformView) context.getRoot()).getFramework().removeViewer(viewer);
 
-        final IFRenderContext target =
-                viewer.isTransitioning() ? viewer.getPreviousContext() : viewer.getActiveContext();
-
-        if (target == null || target.isEndless()) return;
+        final IFRenderContext target = viewer.getCurrentContext();
+        if (target.isEndless()) return;
         if (target.getViewers().size() <= 1) {
             target.setActive(false);
             removeContext(target);
