@@ -12,20 +12,25 @@ public final class ScheduledUpdateStartInterceptor implements PipelineIntercepto
 
     @Override
     public void intercept(PipelineContext<VirtualView> pipeline, VirtualView subject) {
-        if (!(subject instanceof IFRenderContext)) return;
+        if (pipeline.getPhase() != StandardPipelinePhases.VIEWER_ADDED) return;
 
         final IFContext context = (IFContext) subject;
         final RootView root = context.getRoot();
         final long updateIntervalInTicks = context.getConfig().getUpdateIntervalInTicks();
 
-        if (updateIntervalInTicks == 0) return;
-        if (root.getScheduledUpdateJob() != null && root.getScheduledUpdateJob().isStarted()) return;
+        if (updateIntervalInTicks == 0) {
+			return;
+		}
+
+        if (root.getScheduledUpdateJob() != null && root.getScheduledUpdateJob().isStarted()) {
+			return;
+		}
 
         final Job updateJob = root.getElementFactory().scheduleJobInterval(root, updateIntervalInTicks, () -> {
             final List<IFContext> contextList = new ArrayList<>(root.getInternalContexts());
             contextList.stream().filter(IFContext::isActive).forEach(IFContext::update);
         });
-        updateJob.start();
-        root.setScheduledUpdateJob(updateJob);
+		root.setScheduledUpdateJob(updateJob);
+		updateJob.start();
     }
 }
