@@ -3,5 +3,5 @@ plugins {
     alias(libs.plugins.kotlin) apply false
 }
 
-group 'me.devnatan'
-version '3.2.0'
+group = "me.devnatan"
+version = "3.2.0"
