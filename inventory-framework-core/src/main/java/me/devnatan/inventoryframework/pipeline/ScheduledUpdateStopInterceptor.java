@@ -12,24 +12,24 @@ public final class ScheduledUpdateStopInterceptor implements PipelineInterceptor
         if (pipeline.getPhase() != StandardPipelinePhases.VIEWER_REMOVED) return;
 
         final IFCloseContext context = (IFCloseContext) subject;
-		final long updateIntervalInTicks = context.getConfig().getUpdateIntervalInTicks();
-		if (updateIntervalInTicks == 0) {
-			return;
-		}
+        final long updateIntervalInTicks = context.getConfig().getUpdateIntervalInTicks();
+        if (updateIntervalInTicks == 0) {
+            return;
+        }
 
-		final RootView root = context.getRoot();
+        final RootView root = context.getRoot();
         if (root.getScheduledUpdateJob() == null
                 || !root.getScheduledUpdateJob().isStarted()) {
-			return;
-		}
+            return;
+        }
 
         if (context.isCancelled() || !context.isActive()) {
-			return;
-		}
+            return;
+        }
 
         if (root.getInternalContexts().stream().filter(IFContext::isActive).count() > 1) {
-			return;
-		}
+            return;
+        }
 
         root.getScheduledUpdateJob().cancel();
     }

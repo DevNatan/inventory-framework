@@ -60,9 +60,9 @@ public final class StandardPipelinePhases {
      */
     public static final PipelinePhase INVALIDATION = new PipelinePhase("invalidation");
 
-	/** Called when a viewer is added to a context with {@link IFContext#addViewer(Viewer)}. */
+    /** Called when a viewer is added to a context with {@link IFContext#addViewer(Viewer)}. */
     public static final PipelinePhase VIEWER_ADDED = new PipelinePhase("viewer-added");
 
-	/** Called when a viewer is removed from a context with {@link IFContext#removeViewer(Viewer)}. */
+    /** Called when a viewer is removed from a context with {@link IFContext#removeViewer(Viewer)}. */
     public static final PipelinePhase VIEWER_REMOVED = new PipelinePhase("viewer-removed");
 }

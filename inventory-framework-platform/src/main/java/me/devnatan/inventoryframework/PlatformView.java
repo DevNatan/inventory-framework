@@ -128,9 +128,9 @@ public abstract class PlatformView<
         if (targetContext == null) throw new IllegalArgumentException("Context not found: " + contextId);
         if (!targetContext.isActive()) throw new IllegalStateException("Invalidated");
 
-		viewer.setActiveContext(targetContext);
-		onViewerAdded((TContext) targetContext, (TViewer) viewer.getPlatformInstance(), initialData);
-		targetContext.addViewer(viewer);
+        viewer.setActiveContext(targetContext);
+        onViewerAdded((TContext) targetContext, (TViewer) viewer.getPlatformInstance(), initialData);
+        targetContext.addViewer(viewer);
         getFramework().addViewer(viewer);
         viewer.open(targetContext.getContainer());
     }
@@ -147,9 +147,9 @@ public abstract class PlatformView<
             @NotNull Class<? extends PlatformView> target, @NotNull IFRenderContext origin, Object initialData) {
         final List<Viewer> viewers = origin.getViewers();
         viewers.forEach(viewer -> {
-			viewer.setSwitching(true);
-			viewer.setPreviousContext(origin);
-		});
+            viewer.setSwitching(true);
+            viewer.setPreviousContext(origin);
+        });
         getFramework().getRegisteredViewByType(target).open(viewers, initialData);
     }
 
@@ -164,10 +164,10 @@ public abstract class PlatformView<
             @NotNull IFRenderContext origin,
             @NotNull Viewer viewer,
             Object initialData) {
-		viewer.setPreviousContext(origin);
-		viewer.setSwitching(true);
+        viewer.setPreviousContext(origin);
+        viewer.setSwitching(true);
         getFramework().getRegisteredViewByType(target).open(Collections.singletonList(viewer), initialData);
-		viewer.setSwitching(false);
+        viewer.setSwitching(false);
     }
 
     /**
@@ -188,8 +188,8 @@ public abstract class PlatformView<
     public final void back(@NotNull Viewer viewer, Object initialData) {
         final IFRenderContext active = viewer.getActiveContext();
         final IFRenderContext target = viewer.getPreviousContext();
-		viewer.setPreviousContext(active);
-		viewer.setSwitching(true);
+        viewer.setPreviousContext(active);
+        viewer.setSwitching(true);
 
         if (initialData != null) {
             for (final Map.Entry<Long, StateValue> entry :
@@ -202,24 +202,23 @@ public abstract class PlatformView<
             target.setInitialData(initialData);
         }
 
-		viewer.setActiveContext(target);
+        viewer.setActiveContext(target);
 
-		final PlatformView root = (PlatformView) target.getRoot();
-		root.onViewerAdded(target, viewer, initialData);
-		target.addViewer(viewer);
+        final PlatformView root = (PlatformView) target.getRoot();
+        root.onViewerAdded(target, viewer, initialData);
+        target.addViewer(viewer);
 
-		if (!root.hasContext(target.getId())) {
-			target.setActive(true);
-			root.addContext(target);
-		}
+        if (!root.hasContext(target.getId())) {
+            target.setActive(true);
+            root.addContext(target);
+        }
 
-		if (target.getViewers().size() == 1)
-			target.getContainer().open(viewer);
-		else {
-			root.renderContext(target);
-		}
+        if (target.getViewers().size() == 1) target.getContainer().open(viewer);
+        else {
+            root.renderContext(target);
+        }
 
-		root.onResume(active, target);
+        root.onResume(active, target);
         viewer.setSwitching(false);
     }
     // endregion
@@ -288,7 +287,9 @@ public abstract class PlatformView<
         synchronized (getInternalContexts()) {
             getInternalContexts().add(context);
         }
-        IFDebug.debug("Context %s added to [%s] %s", context.getId(), context.getClass().getSimpleName(), getClass().getName());
+        IFDebug.debug(
+                "Context %s added to [%s] %s",
+                context.getId(), context.getClass().getSimpleName(), getClass().getName());
     }
 
     /**

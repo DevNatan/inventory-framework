@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 
@@ -116,6 +115,6 @@ public final class Pipeline<S> {
     public void execute(PipelinePhase phase, S subject) {
         final PipelineContext<S> context =
                 new PipelineContext<>(phase, interceptors.getOrDefault(phase, Collections.emptyList()));
-		context.execute(subject);
+        context.execute(subject);
     }
 }

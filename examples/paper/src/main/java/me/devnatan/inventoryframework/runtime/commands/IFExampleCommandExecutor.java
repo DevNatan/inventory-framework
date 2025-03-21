@@ -55,10 +55,10 @@ public class IFExampleCommandExecutor implements CommandExecutor {
             return true;
         }
 
-		if (view.equalsIgnoreCase("auto-update")) {
-			viewFrame.open(AutoUpdate.class, player);
-			return true;
-		}
+        if (view.equalsIgnoreCase("auto-update")) {
+            viewFrame.open(AutoUpdate.class, player);
+            return true;
+        }
 
         commandSender.sendMessage("Unknown view: " + view);
         return true;

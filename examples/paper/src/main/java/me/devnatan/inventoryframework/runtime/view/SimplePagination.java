@@ -42,8 +42,8 @@ public class SimplePagination extends View {
                 .updateOnStateChange(state)
                 .onClick((ctx) -> state.get(ctx).advance());
 
-		render.lastSlot(new ItemStack(Material.ARROW))
-			.displayIf(Context::canBack)
-			.onClick(Context::back);
+        render.lastSlot(new ItemStack(Material.ARROW))
+                .displayIf(Context::canBack)
+                .onClick(Context::back);
     }
 }

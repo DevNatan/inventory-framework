@@ -5,7 +5,6 @@ import java.util.List;
 import me.devnatan.inventoryframework.RootView;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.IFContext;
-import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.internal.Job;
 
 public final class ScheduledUpdateStartInterceptor implements PipelineInterceptor<VirtualView> {
@@ -19,18 +18,18 @@ public final class ScheduledUpdateStartInterceptor implements PipelineIntercepto
         final long updateIntervalInTicks = context.getConfig().getUpdateIntervalInTicks();
 
         if (updateIntervalInTicks == 0) {
-			return;
-		}
+            return;
+        }
 
         if (root.getScheduledUpdateJob() != null && root.getScheduledUpdateJob().isStarted()) {
-			return;
-		}
+            return;
+        }
 
         final Job updateJob = root.getElementFactory().scheduleJobInterval(root, updateIntervalInTicks, () -> {
             final List<IFContext> contextList = new ArrayList<>(root.getInternalContexts());
             contextList.stream().filter(IFContext::isActive).forEach(IFContext::update);
         });
-		root.setScheduledUpdateJob(updateJob);
-		updateJob.start();
+        root.setScheduledUpdateJob(updateJob);
+        updateJob.start();
     }
 }

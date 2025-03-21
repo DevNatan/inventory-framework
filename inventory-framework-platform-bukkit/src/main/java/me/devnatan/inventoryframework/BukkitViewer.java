@@ -31,16 +31,16 @@ public final class BukkitViewer implements Viewer {
         return activeContext;
     }
 
-	@Override
-	public @NotNull IFRenderContext getCurrentContext() {
-		IFRenderContext prevCtx = null;
-		if (isSwitching() && ((prevCtx = getPreviousContext()) == null))
-			throw new IllegalStateException("Previous context cannot be null when switching");
+    @Override
+    public @NotNull IFRenderContext getCurrentContext() {
+        IFRenderContext prevCtx = null;
+        if (isSwitching() && ((prevCtx = getPreviousContext()) == null))
+            throw new IllegalStateException("Previous context cannot be null when switching");
 
-		return prevCtx == null ? getActiveContext() : prevCtx;
-	}
+        return prevCtx == null ? getActiveContext() : prevCtx;
+    }
 
-	@Override
+    @Override
     public void setActiveContext(@NotNull IFRenderContext context) {
         this.activeContext = context;
     }
@@ -102,9 +102,9 @@ public final class BukkitViewer implements Viewer {
         return previousContexts.peekLast();
     }
 
-	@Override
+    @Override
     public void setPreviousContext(IFRenderContext previousContext) {
-		previousContexts.pollLast();
+        previousContexts.pollLast();
         previousContexts.add(previousContext);
     }
 

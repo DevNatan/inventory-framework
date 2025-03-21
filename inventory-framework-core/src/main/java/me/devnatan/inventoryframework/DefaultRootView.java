@@ -18,8 +18,17 @@ public abstract class DefaultRootView implements RootView {
 
     private final UUID id = UUID.randomUUID();
     private ViewConfig config;
-    private final Pipeline<VirtualView> pipeline =
-            new Pipeline<>(INIT, OPEN, VIEWER_ADDED, LAYOUT_RESOLUTION, FIRST_RENDER, UPDATE, CLICK, VIEWER_REMOVED, CLOSE, INVALIDATION);
+    private final Pipeline<VirtualView> pipeline = new Pipeline<>(
+            INIT,
+            OPEN,
+            VIEWER_ADDED,
+            LAYOUT_RESOLUTION,
+            FIRST_RENDER,
+            UPDATE,
+            CLICK,
+            VIEWER_REMOVED,
+            CLOSE,
+            INVALIDATION);
     private final Set<IFContext> contexts = newSetFromMap(synchronizedMap(new HashMap<>()));
     final StateRegistry stateRegistry = new StateRegistry();
     private Job scheduledUpdateJob;

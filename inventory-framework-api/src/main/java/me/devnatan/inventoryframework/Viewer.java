@@ -43,13 +43,13 @@ public interface Viewer {
     @NotNull
     IFRenderContext getActiveContext();
 
-	/**
-	 * <b><i> This is an internal inventory-framework API that should not be used from outside of
-	 * this library. No compatibility guarantees are provided. </i></b>
-	 */
-	@ApiStatus.Internal
-	@NotNull
-	IFRenderContext getCurrentContext();
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
+    @NotNull
+    IFRenderContext getCurrentContext();
 
     /**
      * <b><i> This is an internal inventory-framework API that should not be used from outside of

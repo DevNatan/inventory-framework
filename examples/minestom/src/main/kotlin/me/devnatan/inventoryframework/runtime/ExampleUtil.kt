@@ -24,7 +24,5 @@ object ExampleUtil {
     fun displayItem(
         material: Material,
         displayName: String,
-    ): ItemStack {
-        return ItemStack.of(material).withCustomName(Component.text(displayName))
-    }
+    ): ItemStack = ItemStack.of(material).withCustomName(Component.text(displayName))
 }

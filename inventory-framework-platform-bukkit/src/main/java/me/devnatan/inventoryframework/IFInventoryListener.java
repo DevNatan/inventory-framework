@@ -18,8 +18,6 @@ import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.inventory.PlayerInventory;
 
-import java.util.Objects;
-
 final class IFInventoryListener implements Listener {
 
     private final ViewFrame viewFrame;

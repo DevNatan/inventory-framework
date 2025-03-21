@@ -13,7 +13,7 @@ public class SamplePlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
-		System.out.println("ligoo");
+        System.out.println("ligoo");
         ViewFrame viewFrame = ViewFrame.create(this)
                 .install(AnvilInputFeature.AnvilInput)
                 .with(new AnvilInputSample(), new Failing(), new SimplePagination(), new AutoUpdate())
