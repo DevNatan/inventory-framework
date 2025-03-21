@@ -5,7 +5,7 @@ import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.IFCloseContext;
 import me.devnatan.inventoryframework.context.IFContext;
 
-public final class ScheduledUpdateAfterCloseInterceptor implements PipelineInterceptor<VirtualView> {
+public final class ScheduledUpdateStopInterceptor implements PipelineInterceptor<VirtualView> {
 
     @Override
     public void intercept(PipelineContext<VirtualView> pipeline, VirtualView subject) {

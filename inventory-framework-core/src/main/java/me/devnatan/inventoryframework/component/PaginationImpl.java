@@ -140,7 +140,6 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
         isLoading = true;
         simulateStateUpdate();
 
-        // TODO Do some error treatment here, even if we expect to the user to handle it
         return createProvidedNewSource().handle((result, exception) -> {
             if (exception != null) {
                 debug("[Pagination] An error occurred on data source computation: %s", exception.getMessage());

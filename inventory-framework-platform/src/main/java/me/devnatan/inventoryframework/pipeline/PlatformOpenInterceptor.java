@@ -90,6 +90,7 @@ public final class PlatformOpenInterceptor implements PipelineInterceptor<Virtua
             if (!viewer.isTransitioning()) viewer.setActiveContext(renderContext);
             // TODO Pass viewer object as parameter instead
             root.onViewerAdded(renderContext, viewer.getPlatformInstance(), renderContext.getInitialData());
+            root.getPipeline().execute(StandardPipelinePhases.VIEWER_ADDED, renderContext);
             renderContext.addViewer(viewer);
         }
 
