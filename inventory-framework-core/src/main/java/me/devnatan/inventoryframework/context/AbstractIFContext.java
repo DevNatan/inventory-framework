@@ -45,8 +45,10 @@ abstract class AbstractIFContext extends DefaultStateValueHost implements IFCont
             getIndexedViewers().put(viewer.getId(), viewer);
         }
 
-        IFDebug.debug(
-                "Viewer %s added to %s", viewer.getId(), getRoot().getClass().getName());
+		getRoot().getPipeline().execute(StandardPipelinePhases.VIEWER_ADDED, this);
+
+		IFDebug.debug(
+                "Viewer %s added to [%s] %s", viewer.getId(), getClass().getSimpleName(), getRoot().getClass().getName());
     }
 
     @Override
@@ -54,9 +56,14 @@ abstract class AbstractIFContext extends DefaultStateValueHost implements IFCont
         synchronized (getIndexedViewers()) {
             getIndexedViewers().remove(viewer.getId());
         }
-        IFDebug.debug(
-                "Viewer %s removed from %s",
-                viewer.getId(), getRoot().getClass().getName());
+
+		getRoot().getPipeline().execute(StandardPipelinePhases.VIEWER_REMOVED, this);
+
+		IFDebug.debug(
+                "Viewer %s removed from [%s] %s",
+                viewer.getId(),
+				getClass().getSimpleName(),
+				getRoot().getClass().getName());
     }
 
     @Override
