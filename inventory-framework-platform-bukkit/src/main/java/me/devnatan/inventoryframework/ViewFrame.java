@@ -248,7 +248,7 @@ public class ViewFrame extends IFViewFrame<ViewFrame, View> {
             try {
                 view.internalInitialization(this);
                 view.setInitialized(true);
-            } catch (final RuntimeException exception) {
+            } catch (final Throwable exception) {
                 view.setInitialized(false);
                 getOwner()
                         .getLogger()
