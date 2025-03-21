@@ -328,8 +328,6 @@ public abstract class PlatformView<
         @SuppressWarnings("rawtypes")
         final PlatformView view = (PlatformView) context.getRoot();
         context.getViewers().forEach(viewer -> {
-            if (viewer.isTransitioning()) viewer.setActiveContext(context);
-            view.getFramework().addViewer(viewer);
             if (!context.getContainer().isProxied()) context.getContainer().open(viewer);
             viewer.setTransitioning(false);
         });

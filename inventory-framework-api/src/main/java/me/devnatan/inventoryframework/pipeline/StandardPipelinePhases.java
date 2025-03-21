@@ -1,6 +1,7 @@
 package me.devnatan.inventoryframework.pipeline;
 
 import me.devnatan.inventoryframework.RootView;
+import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.context.IFCloseContext;
 import me.devnatan.inventoryframework.context.IFConfinedContext;
 import me.devnatan.inventoryframework.context.IFContext;
@@ -59,13 +60,9 @@ public final class StandardPipelinePhases {
      */
     public static final PipelinePhase INVALIDATION = new PipelinePhase("invalidation");
 
+	/** Called when a viewer is added to a context with {@link IFContext#addViewer(Viewer)}. */
     public static final PipelinePhase VIEWER_ADDED = new PipelinePhase("viewer-added");
 
+	/** Called when a viewer is removed from a context with {@link IFContext#removeViewer(Viewer)}. */
     public static final PipelinePhase VIEWER_REMOVED = new PipelinePhase("viewer-removed");
-
-    /**
-     * Called during layout resolution phase before {@link #FIRST_RENDER} phase.
-     * In this pipeline phase the pipeline interceptor subject is a {@link IFRenderContext}.
-     */
-    //    public static final PipelinePhase LAYOUT_RESOLUTION = new PipelinePhase("layout-resolution");
 }
