@@ -1,30 +1,29 @@
 
 plugins {
+    id("me.devnatan.inventoryframework.library")
     alias(libs.plugins.shadowjar)
     alias(libs.plugins.bukkit)
     alias(libs.plugins.run.paper)
 }
 
-apply from: '../../library.gradle'
-
 dependencies {
-    implementation projects.inventoryFrameworkPlatformBukkit
-    implementation projects.inventoryFrameworkAnvilInput
-    compileOnly libs.spigot
+    implementation(projects.inventoryFrameworkPlatformBukkit)
+    implementation(projects.inventoryFrameworkAnvilInput)
+    compileOnly(libs.spigot)
 }
 
-shadowJar {
-    archiveBaseName.set('inventory-framework-example')
-    archiveAppendix.set('bukkit')
+tasks.shadowJar {
+    archiveBaseName.set("inventory-framework-example")
+    archiveAppendix.set("bukkit")
 
     dependencies {
-        exclude(dependency {
+        exclude {
             it.moduleGroup == "org.jetbrains.kotlin"
-        })
+        }
     }
 }
 
-runServer {
+tasks.runServer {
     jvmArgs("-Dme.devnatan.inventoryframework.debug=true")
     minecraftVersion("1.21.3")
 }
@@ -32,16 +31,16 @@ runServer {
 bukkit {
     main = "me.devnatan.inventoryframework.runtime.SamplePlugin"
     name = "InventoryFrameworkExample"
-    version = project.version
+    version = project.version.toString()
     description = "Minecraft Inventory API framework sample plugin"
     website = "https://github.com/DevNatan/inventory-framework"
     apiVersion = "1.20"
-    authors = ['SaiintBrisson', 'DevNatan', 'sasuked', 'nicolube']
+    authors = listOf("SaiintBrisson", "DevNatan", "sasuked", "nicolube")
     commands {
-        ifexample {
-            description = 'This is a test command!'
-            permission = 'ifexample.run'
-            usage = 'Opens example views'
+        create("ifexample") {
+            description = "This is a test command!"
+            permission = "ifexample.run"
+            usage = "Opens example views"
         }
     }
 }
