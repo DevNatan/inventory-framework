@@ -7,8 +7,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 
 /**
@@ -99,7 +99,7 @@ public final class Pipeline<S> {
         interceptors.computeIfAbsent(phase, $ -> new ArrayList<>()).remove(interceptor);
     }
 
-    public void execute(@Nullable S subject) {
+    public void execute(S subject) {
         final List<PipelineInterceptor<S>> pipelineInterceptors = new LinkedList<>();
         for (final PipelinePhase phase : _phases) {
             final List<PipelineInterceptor<S>> interceptors = this.interceptors.get(phase);
@@ -113,9 +113,9 @@ public final class Pipeline<S> {
     }
 
     @TestOnly
-    public void execute(@NotNull PipelinePhase phase, @Nullable S subject) {
+    public void execute(PipelinePhase phase, S subject) {
         final PipelineContext<S> context =
                 new PipelineContext<>(phase, interceptors.getOrDefault(phase, Collections.emptyList()));
-        context.execute(subject);
+		context.execute(subject);
     }
 }

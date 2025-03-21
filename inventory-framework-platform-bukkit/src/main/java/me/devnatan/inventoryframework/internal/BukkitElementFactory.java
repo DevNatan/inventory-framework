@@ -144,8 +144,6 @@ public class BukkitElementFactory extends ElementFactory {
 
     @Override
     public Job scheduleJobInterval(@NotNull RootView root, long intervalInTicks, @NotNull Runnable execution) {
-        final View platformRoot = (View) root;
-        final ViewFrame platformFramework = (ViewFrame) platformRoot.getFramework();
-        return new BukkitTaskJobImpl(platformFramework.getOwner(), intervalInTicks, execution);
+        return new BukkitTaskJobImpl(((View) root).getFramework().getOwner(), intervalInTicks, execution);
     }
 }

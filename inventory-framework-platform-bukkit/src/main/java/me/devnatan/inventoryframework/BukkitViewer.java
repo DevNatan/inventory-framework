@@ -14,7 +14,7 @@ public final class BukkitViewer implements Viewer {
     private IFRenderContext activeContext;
     private Deque<IFRenderContext> previousContexts = new LinkedList<>();
     private long lastInteractionInMillis;
-    private boolean transitioning;
+    private boolean switching;
 
     public BukkitViewer(@NotNull Player player, IFRenderContext activeContext) {
         this.player = player;
@@ -31,7 +31,16 @@ public final class BukkitViewer implements Viewer {
         return activeContext;
     }
 
-    @Override
+	@Override
+	public @NotNull IFRenderContext getCurrentContext() {
+		IFRenderContext prevCtx = null;
+		if (isSwitching() && ((prevCtx = getPreviousContext()) == null))
+			throw new IllegalStateException("Previous context cannot be null when switching");
+
+		return prevCtx == null ? getActiveContext() : prevCtx;
+	}
+
+	@Override
     public void setActiveContext(@NotNull IFRenderContext context) {
         this.activeContext = context;
     }
@@ -79,13 +88,13 @@ public final class BukkitViewer implements Viewer {
     }
 
     @Override
-    public boolean isTransitioning() {
-        return transitioning;
+    public boolean isSwitching() {
+        return switching;
     }
 
     @Override
-    public void setTransitioning(boolean transitioning) {
-        this.transitioning = transitioning;
+    public void setSwitching(boolean switching) {
+        this.switching = switching;
     }
 
     @Override
@@ -93,14 +102,10 @@ public final class BukkitViewer implements Viewer {
         return previousContexts.peekLast();
     }
 
-    @Override
+	@Override
     public void setPreviousContext(IFRenderContext previousContext) {
+		previousContexts.pollLast();
         previousContexts.add(previousContext);
-    }
-
-    @Override
-    public void unsetPreviousContext() {
-        previousContexts.pollLast();
     }
 
     @Override
@@ -127,7 +132,7 @@ public final class BukkitViewer implements Viewer {
                 + "player=" + player
                 + ", selfContainer=" + selfContainer
                 + ", lastInteractionInMillis=" + lastInteractionInMillis
-                + ", isTransitioning=" + transitioning
+                + ", isTransitioning=" + switching
                 + "}";
     }
 }

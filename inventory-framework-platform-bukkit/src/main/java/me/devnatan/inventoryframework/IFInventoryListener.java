@@ -18,6 +18,8 @@ import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.inventory.PlayerInventory;
 
+import java.util.Objects;
+
 final class IFInventoryListener implements Listener {
 
     private final ViewFrame viewFrame;
@@ -66,7 +68,7 @@ final class IFInventoryListener implements Listener {
         final Viewer viewer = viewFrame.getViewer(player);
         if (viewer == null) return;
 
-        final IFRenderContext context = viewer.getActiveContext();
+        final IFRenderContext context = viewer.getCurrentContext();
         final RootView root = context.getRoot();
         final IFCloseContext closeContext = root.getElementFactory().createCloseContext(viewer, context);
 
