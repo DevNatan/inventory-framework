@@ -3,6 +3,7 @@ package me.devnatan.inventoryframework.runtime.view;
 import me.devnatan.inventoryframework.View;
 import me.devnatan.inventoryframework.ViewConfigBuilder;
 import me.devnatan.inventoryframework.component.Pagination;
+import me.devnatan.inventoryframework.context.Context;
 import me.devnatan.inventoryframework.context.RenderContext;
 import me.devnatan.inventoryframework.runtime.ExampleUtil;
 import me.devnatan.inventoryframework.state.State;
@@ -40,5 +41,9 @@ public class SimplePagination extends View {
                 .displayIf(() -> state.get(render).canAdvance())
                 .updateOnStateChange(state)
                 .onClick((ctx) -> state.get(ctx).advance());
+
+		render.lastSlot(new ItemStack(Material.ARROW))
+			.displayIf(Context::canBack)
+			.onClick(Context::back);
     }
 }
