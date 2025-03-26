@@ -52,6 +52,7 @@ class LibraryConventionPlugin : Plugin<Project> {
                 palantirJavaFormat()
             }
             kotlin {
+                ktfmt().kotlinlangStyle()
                 ktlint()
             }
         }
