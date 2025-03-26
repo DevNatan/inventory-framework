@@ -25,12 +25,14 @@ class ScheduledView : View() {
         }
 
     override fun onFirstRender(render: RenderContext) {
-        render.layoutSlot('C')
+        render
+            .layoutSlot('C')
             .onRender {
                 it.item = ExampleUtil.displayItem(Material.STONE, counter.increment(it).toString())
             }
 
-        render.layoutSlot('B', ExampleUtil.displayItem(Material.PAPER, "Back"))
+        render
+            .layoutSlot('B', ExampleUtil.displayItem(Material.PAPER, "Back"))
             .displayIf(Context::canBack)
             .onClick(SlotClickContext::back)
     }

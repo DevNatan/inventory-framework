@@ -48,6 +48,14 @@ public interface Viewer {
      * this library. No compatibility guarantees are provided. </i></b>
      */
     @ApiStatus.Internal
+    @NotNull
+    IFRenderContext getCurrentContext();
+
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
     void setActiveContext(@NotNull IFRenderContext context);
 
     /**
@@ -84,14 +92,14 @@ public interface Viewer {
      * this library. No compatibility guarantees are provided. </i></b>
      */
     @ApiStatus.Internal
-    boolean isTransitioning();
+    boolean isSwitching();
 
     /**
      * <b><i> This is an internal inventory-framework API that should not be used from outside of
      * this library. No compatibility guarantees are provided. </i></b>
      */
     @ApiStatus.Internal
-    void setTransitioning(boolean transitioning);
+    void setSwitching(boolean switching);
 
     /**
      * <b><i> This is an internal inventory-framework API that should not be used from outside of
@@ -106,13 +114,6 @@ public interface Viewer {
      */
     @ApiStatus.Internal
     void setPreviousContext(IFRenderContext context);
-
-    /**
-     * <b><i> This is an internal inventory-framework API that should not be used from outside of
-     * this library. No compatibility guarantees are provided. </i></b>
-     */
-    @ApiStatus.Internal
-    void unsetPreviousContext();
 
     /**
      * <b><i> This is an internal inventory-framework API that should not be used from outside of

@@ -66,7 +66,7 @@ final class IFInventoryListener implements Listener {
         final Viewer viewer = viewFrame.getViewer(player);
         if (viewer == null) return;
 
-        final IFRenderContext context = viewer.getActiveContext();
+        final IFRenderContext context = viewer.getCurrentContext();
         final RootView root = context.getRoot();
         final IFCloseContext closeContext = root.getElementFactory().createCloseContext(viewer, context);
 

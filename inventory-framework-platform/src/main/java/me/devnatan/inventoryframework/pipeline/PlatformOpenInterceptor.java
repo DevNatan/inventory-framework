@@ -54,7 +54,6 @@ public final class PlatformOpenInterceptor implements PipelineInterceptor<Virtua
         root.renderContext(render);
     }
 
-    @SuppressWarnings("unchecked")
     IFRenderContext createRenderContext(IFOpenContext openContext) {
         @SuppressWarnings("rawtypes")
         final PlatformView root = (PlatformView) openContext.getRoot();
@@ -86,15 +85,24 @@ public final class PlatformOpenInterceptor implements PipelineInterceptor<Virtua
         renderContext.setEndless(openContext.isEndless());
         openContext.getStateValues().forEach(renderContext::initializeState);
 
-        for (final Viewer viewer : openContext.getIndexedViewers().values()) {
-            if (!viewer.isTransitioning()) viewer.setActiveContext(renderContext);
-            // TODO Pass viewer object as parameter instead
-            root.onViewerAdded(renderContext, viewer.getPlatformInstance(), renderContext.getInitialData());
-            root.getPipeline().execute(StandardPipelinePhases.VIEWER_ADDED, renderContext);
-            renderContext.addViewer(viewer);
+        for (final Viewer viewer : renderContext.getIndexedViewers().values()) {
+            setupViewer(viewer, renderContext, root);
         }
+
+        final Viewer viewer = renderContext.getViewer();
+        if (viewer != null) setupViewer(viewer, renderContext, root);
 
         renderContext.setActive(true);
         return renderContext;
+    }
+
+    private void setupViewer(Viewer viewer, IFRenderContext context, PlatformView root) {
+        viewer.setActiveContext(context);
+
+        if (!viewer.isSwitching()) root.getFramework().addViewer(viewer);
+
+        // TODO Pass viewer object as parameter instead
+        root.onViewerAdded(context, viewer.getPlatformInstance(), context.getInitialData());
+        context.addViewer(viewer);
     }
 }

@@ -2,14 +2,7 @@ package me.devnatan.inventoryframework;
 
 import static java.util.Collections.newSetFromMap;
 import static java.util.Collections.synchronizedMap;
-import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.CLICK;
-import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.CLOSE;
-import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.FIRST_RENDER;
-import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.INIT;
-import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.INVALIDATION;
-import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.LAYOUT_RESOLUTION;
-import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.OPEN;
-import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.UPDATE;
+import static me.devnatan.inventoryframework.pipeline.StandardPipelinePhases.*;
 
 import java.util.*;
 import me.devnatan.inventoryframework.context.IFContext;
@@ -25,8 +18,17 @@ public abstract class DefaultRootView implements RootView {
 
     private final UUID id = UUID.randomUUID();
     private ViewConfig config;
-    private final Pipeline<VirtualView> pipeline =
-            new Pipeline<>(INIT, OPEN, LAYOUT_RESOLUTION, FIRST_RENDER, UPDATE, CLICK, CLOSE, INVALIDATION);
+    private final Pipeline<VirtualView> pipeline = new Pipeline<>(
+            INIT,
+            OPEN,
+            VIEWER_ADDED,
+            LAYOUT_RESOLUTION,
+            FIRST_RENDER,
+            UPDATE,
+            CLICK,
+            VIEWER_REMOVED,
+            CLOSE,
+            INVALIDATION);
     private final Set<IFContext> contexts = newSetFromMap(synchronizedMap(new HashMap<>()));
     final StateRegistry stateRegistry = new StateRegistry();
     private Job scheduledUpdateJob;

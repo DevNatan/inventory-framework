@@ -10,7 +10,13 @@ class MinestomViewer(val player: Player, private var activeContext: IFRenderCont
     private var selfContainer: ViewContainer? = null
     private val previousContexts: Deque<IFRenderContext> = LinkedList()
     private var lastInteractionInMillis: Long = 0
-    private var transitioning = false
+    private var switching = false
+
+    override fun getCurrentContext(): IFRenderContext = if (isSwitching()) {
+        getPreviousContext() ?: error("Previous context cannot be null when switching")
+    } else {
+        getActiveContext()
+    }
 
     override fun getActiveContext(): IFRenderContext {
         return activeContext!!
@@ -60,12 +66,12 @@ class MinestomViewer(val player: Player, private var activeContext: IFRenderCont
         return getLastInteractionInMillis() + configuredDelay >= System.currentTimeMillis()
     }
 
-    override fun isTransitioning(): Boolean {
-        return transitioning
+    override fun isSwitching(): Boolean {
+        return switching
     }
 
-    override fun setTransitioning(transitioning: Boolean) {
-        this.transitioning = transitioning
+    override fun setSwitching(switching: Boolean) {
+        this.switching = switching
     }
 
     override fun getPreviousContext(): IFRenderContext? {
@@ -73,11 +79,8 @@ class MinestomViewer(val player: Player, private var activeContext: IFRenderCont
     }
 
     override fun setPreviousContext(previousContext: IFRenderContext) {
-        previousContexts.add(previousContext)
-    }
-
-    override fun unsetPreviousContext() {
         previousContexts.pollLast()
+        previousContexts.add(previousContext)
     }
 
     override fun getPlatformInstance(): Any {
@@ -101,7 +104,7 @@ class MinestomViewer(val player: Player, private var activeContext: IFRenderCont
                 "player=" + player +
                 ", selfContainer=" + selfContainer +
                 ", lastInteractionInMillis=" + lastInteractionInMillis +
-                ", isTransitioning=" + transitioning +
+                ", isSwitching=" + switching +
                 "}"
         )
     }

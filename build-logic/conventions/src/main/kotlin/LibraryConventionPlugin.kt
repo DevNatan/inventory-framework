@@ -14,6 +14,9 @@ import org.gradle.kotlin.dsl.withType
 class LibraryConventionPlugin : Plugin<Project> {
 
     override fun apply(target: Project) = with(target) {
+        group = rootProject.group
+        version = rootProject.version
+
         configureJava()
         configureLint()
         setupDefaultDependencies()

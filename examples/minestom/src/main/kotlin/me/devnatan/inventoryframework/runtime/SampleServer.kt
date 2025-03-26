@@ -45,13 +45,13 @@ class SampleServer {
         }
 
         val viewFrame =
-            ViewFrame.create(handler)
+            ViewFrame
+                .create(handler)
                 .with(
                     Failing(),
                     SimplePagination(),
                     ScheduledView(),
-                )
-                .register()
+                ).register()
 
         MinecraftServer.getCommandManager().register(
             IFExampleCommand(viewFrame),
