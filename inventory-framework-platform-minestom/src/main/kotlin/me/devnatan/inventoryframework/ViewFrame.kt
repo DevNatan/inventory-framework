@@ -13,11 +13,10 @@ import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.annotations.ApiStatus.Experimental
 import java.util.function.UnaryOperator
 
-class ViewFrame private constructor(private val parentNode: EventNode<in EntityEvent>) : IFViewFrame<ViewFrame, View>() {
-    private val featureInstaller: FeatureInstaller<ViewFrame> =
-        DefaultFeatureInstaller(
-            this,
-        )
+class ViewFrame private constructor(
+    private val parentNode: EventNode<in EntityEvent>,
+) : IFViewFrame<ViewFrame, View>() {
+    private val featureInstaller: FeatureInstaller<ViewFrame> = DefaultFeatureInstaller(this)
 
     // region Opening
 
@@ -25,21 +24,19 @@ class ViewFrame private constructor(private val parentNode: EventNode<in EntityE
      * Opens a view to a player.
      *
      * @param viewClass The target view to be opened.
-     * @param player    The player that the view will be open to.
+     * @param player The player that the view will be open to.
      * @return The id of the newly created [IFContext].
      */
     fun open(
         viewClass: Class<out View>,
         player: Player,
-    ): String {
-        return open(viewClass, player, null)
-    }
+    ): String = open(viewClass, player, null)
 
     /**
      * Opens a view to a player with initial data.
      *
-     * @param viewClass   The target view to be opened.
-     * @param player      The player that the view will be open to.
+     * @param viewClass The target view to be opened.
+     * @param player The player that the view will be open to.
      * @param initialData The initial data.
      * @return The id of the newly created [IFContext].
      */
@@ -47,44 +44,36 @@ class ViewFrame private constructor(private val parentNode: EventNode<in EntityE
         viewClass: Class<out View>,
         player: Player,
         initialData: Any?,
-    ): String {
-        return open(viewClass, listOf(player), initialData)
-    }
+    ): String = open(viewClass, listOf(player), initialData)
 
     /**
      * Opens a view to more than one player.
      *
-     *
      * These players will see the same inventory and share the same context.
      *
-     *
-     * *** This API is experimental and is not subject to the general compatibility guarantees
-     * such API may be changed or may be removed completely in any further release. ***
+     * *** This API is experimental and is not subject to the general compatibility guarantees such
+     * API may be changed or may be removed completely in any further release. ***
      *
      * @param viewClass The target view to be opened.
-     * @param players   The players that the view will be open to.
+     * @param players The players that the view will be open to.
      * @return The id of the newly created [IFContext].
      */
     @Experimental
     fun open(
         viewClass: Class<out View>,
         players: Collection<Player>,
-    ): String {
-        return open(viewClass, players, null)
-    }
+    ): String = open(viewClass, players, null)
 
     /**
      * Opens a view to more than one player with initial data.
      *
-     *
      * These players will see the same inventory and share the same context.
      *
+     * *** This API is experimental and is not subject to the general compatibility guarantees such
+     * API may be changed or may be removed completely in any further release. ***
      *
-     * *** This API is experimental and is not subject to the general compatibility guarantees
-     * such API may be changed or may be removed completely in any further release. ***
-     *
-     * @param viewClass   The target view to be opened.
-     * @param players     The players that the view will be open to.
+     * @param viewClass The target view to be opened.
+     * @param players The players that the view will be open to.
      * @param initialData The initial data.
      * @return The id of the newly created [IFContext].
      */
@@ -93,16 +82,13 @@ class ViewFrame private constructor(private val parentNode: EventNode<in EntityE
         viewClass: Class<out View>,
         players: Collection<Player>,
         initialData: Any?,
-    ): String {
-        return internalOpen(viewClass, players, initialData)
-    }
+    ): String = internalOpen(viewClass, players, initialData)
 
     /**
      * Opens an already active context to a player.
      *
-     *
-     * *** This API is experimental and is not subject to the general compatibility guarantees
-     * such API may be changed or may be removed completely in any further release. ***
+     * *** This API is experimental and is not subject to the general compatibility guarantees such
+     * API may be changed or may be removed completely in any further release. ***
      *
      * @param contextId The id of the context.
      * @param player Who the context will be open to.
@@ -119,9 +105,8 @@ class ViewFrame private constructor(private val parentNode: EventNode<in EntityE
     /**
      * Opens an already active context to a player.
      *
-     *
-     * *** This API is experimental and is not subject to the general compatibility guarantees
-     * such API may be changed or may be removed completely in any further release. ***
+     * *** This API is experimental and is not subject to the general compatibility guarantees such
+     * API may be changed or may be removed completely in any further release. ***
      *
      * @param contextId The id of the context.
      * @param player Who the context will be open to.
@@ -140,9 +125,8 @@ class ViewFrame private constructor(private val parentNode: EventNode<in EntityE
     /**
      * Opens an already active context to a player.
      *
-     *
-     * *** This API is experimental and is not subject to the general compatibility guarantees
-     * such API may be changed or may be removed completely in any further release. ***
+     * *** This API is experimental and is not subject to the general compatibility guarantees such
+     * API may be changed or may be removed completely in any further release. ***
      *
      * @param endlessContextInfo The id of the context.
      * @param player Who the context will be open to.
@@ -158,9 +142,8 @@ class ViewFrame private constructor(private val parentNode: EventNode<in EntityE
     /**
      * Opens an already active context to a player.
      *
-     *
-     * *** This API is experimental and is not subject to the general compatibility guarantees
-     * such API may be changed or may be removed completely in any further release. ***
+     * *** This API is experimental and is not subject to the general compatibility guarantees such
+     * API may be changed or may be removed completely in any further release. ***
      *
      * @param endlessContextInfo The id of the context.
      * @param player Who the context will be open to.
@@ -232,23 +215,20 @@ class ViewFrame private constructor(private val parentNode: EventNode<in EntityE
     // endregion
 
     /**
-     * *** This is an internal inventory-framework API that should not be used from outside of
-     * this library. No compatibility guarantees are provided. ***
+     * *** This is an internal inventory-framework API that should not be used from outside of this
+     * library. No compatibility guarantees are provided. ***
      */
-    @ApiStatus.Internal
-    fun getViewer(player: Player): Viewer? {
-        return viewerById[player.uuid.toString()]
-    }
+    @ApiStatus.Internal fun getViewer(player: Player): Viewer? = viewerById[player.uuid.toString()]
 
     /**
      * Installs a feature.
      *
-     * @param feature   The feature to be installed.
+     * @param feature The feature to be installed.
      * @param configure The feature configuration.
-     * @param <C>       The feature configuration type.
-     * @param <R>       The feature value instance type.
-     * @return An instance of the installed feature.
-     </R></C> */
+     * @param <C> The feature configuration type.
+     * @param <R> The feature value instance type.
+     * @return An instance of the installed feature. </R></C>
+     */
     fun <C, R> install(
         feature: Feature<C, R, ViewFrame>,
         configure: UnaryOperator<C>,
@@ -272,17 +252,19 @@ class ViewFrame private constructor(private val parentNode: EventNode<in EntityE
     /**
      * Disables bStats metrics tracking.
      *
-     *
      * InventoryFramework use bStats metrics to obtain some information from servers that use it as
      * a library, such as: number of players, version, software, etc.
-     *
      *
      * **No sensitive information is tracked.**
      *
      * @return This view frame.
      */
     fun disableMetrics(): ViewFrame {
-        System.setProperty(BSTATS_SYSTEM_PROP, java.lang.Boolean.FALSE.toString())
+        System.setProperty(
+            BSTATS_SYSTEM_PROP,
+            java.lang.Boolean.FALSE
+                .toString(),
+        )
         return this
     }
 
@@ -308,10 +290,10 @@ class ViewFrame private constructor(private val parentNode: EventNode<in EntityE
          * @param owner The plugin that owns this view frame.
          * @return A new ViewFrame instance.
          */
-        fun create(parentNode: EventNode<in EntityEvent>): ViewFrame {
-            return ViewFrame(parentNode)
-        }
+        fun create(parentNode: EventNode<in EntityEvent>): ViewFrame = ViewFrame(parentNode)
 
-        private val LOGGER = java.util.logging.Logger.getLogger("IF")
+        private val LOGGER =
+            java.util.logging.Logger
+                .getLogger("IF")
     }
 }

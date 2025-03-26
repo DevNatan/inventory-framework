@@ -16,8 +16,10 @@ import java.util.UUID
 
 class CloseContext
     @ApiStatus.Internal
-    constructor(subject: Viewer, private val parent: IFRenderContext) :
-    PlatformConfinedContext(),
+    constructor(
+        subject: Viewer,
+        private val parent: IFRenderContext,
+    ) : PlatformConfinedContext(),
         IFCloseContext,
         Context {
         private val subject: Viewer = subject
@@ -39,49 +41,31 @@ class CloseContext
             getParent().resetTitleForPlayer(player)
         }
 
-        override fun isCancelled(): Boolean {
-            return cancelled
-        }
+        override fun isCancelled(): Boolean = cancelled
 
         override fun setCancelled(cancelled: Boolean) {
             this.cancelled = cancelled
         }
 
-        override fun getViewer(): Viewer {
-            return subject
-        }
+        override fun getViewer(): Viewer = subject
 
-        override fun getParent(): RenderContext {
-            return parent as RenderContext
-        }
+        override fun getParent(): RenderContext = parent as RenderContext
 
-        override fun getId(): UUID {
-            return getParent().id
-        }
+        override fun getId(): UUID = getParent().id
 
-        override fun getConfig(): ViewConfig {
-            return getParent().config
-        }
+        override fun getConfig(): ViewConfig = getParent().config
 
-        override fun getContainer(): ViewContainer {
-            return getParent().container
-        }
+        override fun getContainer(): ViewContainer = getParent().container
 
-        override fun getRoot(): View {
-            return getParent().getRoot()
-        }
+        override fun getRoot(): View = getParent().getRoot()
 
-        override fun getInitialData(): Any {
-            return getParent().initialData
-        }
+        override fun getInitialData(): Any = getParent().initialData
 
         override fun setInitialData(initialData: Any) {
             getParent().initialData = initialData
         }
 
-        override fun getStateValues(): @UnmodifiableView MutableMap<Long, StateValue>? {
-            return getParent().stateValues
-        }
+        override fun getStateValues(): @UnmodifiableView MutableMap<Long, StateValue>? = getParent().stateValues
 
         override fun initializeState(
             id: Long,
@@ -97,17 +81,11 @@ class CloseContext
             getParent().watchState(id, listener)
         }
 
-        override fun getRawStateValue(state: State<*>?): Any {
-            return getParent().getRawStateValue(state)
-        }
+        override fun getRawStateValue(state: State<*>?): Any = getParent().getRawStateValue(state)
 
-        override fun getInternalStateValue(state: State<*>): StateValue {
-            return getParent().getInternalStateValue(state)
-        }
+        override fun getInternalStateValue(state: State<*>): StateValue = getParent().getInternalStateValue(state)
 
-        override fun getUninitializedStateValue(stateId: Long): StateValue {
-            return getParent().getUninitializedStateValue(stateId)
-        }
+        override fun getUninitializedStateValue(stateId: Long): StateValue = getParent().getUninitializedStateValue(stateId)
 
         override fun updateState(
             id: Long,
@@ -116,14 +94,18 @@ class CloseContext
             getParent().updateState(id, value)
         }
 
-        override fun toString(): String {
-            return (
-                "CloseContext{" + "subject=" +
-                    subject + ", player=" +
-                    player + ", parent=" +
-                    parent + ", cancelled=" +
-                    cancelled + "} " +
+        override fun toString(): String =
+            (
+                "CloseContext{" +
+                    "subject=" +
+                    subject +
+                    ", player=" +
+                    player +
+                    ", parent=" +
+                    parent +
+                    ", cancelled=" +
+                    cancelled +
+                    "} " +
                     super.toString()
             )
-        }
     }

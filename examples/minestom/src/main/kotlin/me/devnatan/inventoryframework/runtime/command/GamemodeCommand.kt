@@ -14,13 +14,11 @@ class GamemodeCommand(
     private val viewFrame: ViewFrame,
 ) : Command("gamemode") {
     private val gamemodeArg: Argument<GameMode> =
-        ArgumentType
-            .Enum("gameMode", GameMode::class.java)
-            .setSuggestionCallback { _, _, suggestion ->
-                for (gameMode in GameMode.entries) {
-                    suggestion.addEntry(SuggestionEntry(gameMode.name.lowercase()))
-                }
+        ArgumentType.Enum("gameMode", GameMode::class.java).setSuggestionCallback { _, _, suggestion ->
+            for (gameMode in GameMode.entries) {
+                suggestion.addEntry(SuggestionEntry(gameMode.name.lowercase()))
             }
+        }
 
     init {
         setDefaultExecutor(::onCommand)

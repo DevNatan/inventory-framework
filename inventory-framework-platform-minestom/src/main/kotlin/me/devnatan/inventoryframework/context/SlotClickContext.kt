@@ -21,82 +21,53 @@ class SlotClickContext
         private val clickedComponent: Component?,
         val clickOrigin: InventoryPreClickEvent,
         private val combined: Boolean,
-    ) : SlotContext(slot, parent), IFSlotClickContext {
+    ) : SlotContext(slot, parent),
+        IFSlotClickContext {
         private var cancelled = false
 
         override val player: Player
-            /**
-             * The player who clicked on the slot.
-             */
+            /** The player who clicked on the slot. */
             get() = clickOrigin.player
 
         override val item: ItemStack
-            /**
-             * The item that was clicked.
-             */
+            /** The item that was clicked. */
             get() = clickOrigin.cursorItem
 
-        override fun getComponent(): Component? {
-            return clickedComponent
-        }
+        override fun getComponent(): Component? = clickedComponent
 
-        override fun getClickedContainer(): ViewContainer {
-            return clickedContainer
-        }
+        override fun getClickedContainer(): ViewContainer = clickedContainer
 
-        override fun isCancelled(): Boolean {
-            return cancelled
-        }
+        override fun isCancelled(): Boolean = cancelled
 
         override fun setCancelled(cancelled: Boolean) {
             this.cancelled = cancelled
             clickOrigin.isCancelled = cancelled
         }
 
-        override fun getPlatformEvent(): Any {
-            return clickOrigin
-        }
+        override fun getPlatformEvent(): Any = clickOrigin
 
-        override fun getClickedSlot(): Int {
-            return clickOrigin.slot
-        }
+        override fun getClickedSlot(): Int = clickOrigin.slot
 
-        override fun isLeftClick(): Boolean {
-            return clickOrigin.clickType == ClickType.LEFT_CLICK
-        }
+        override fun isLeftClick(): Boolean = clickOrigin.clickType == ClickType.LEFT_CLICK
 
-        override fun isRightClick(): Boolean {
-            return clickOrigin.clickType == ClickType.RIGHT_CLICK
-        }
+        override fun isRightClick(): Boolean = clickOrigin.clickType == ClickType.RIGHT_CLICK
 
-        override fun isMiddleClick(): Boolean {
-            return false
-        }
+        override fun isMiddleClick(): Boolean = false
 
         override fun isShiftClick(): Boolean {
             val clickType = clickOrigin.clickType
             return clickType == ClickType.SHIFT_CLICK
         }
 
-        override fun isKeyboardClick(): Boolean {
-            return clickOrigin.clickType == ClickType.CHANGE_HELD
-        }
+        override fun isKeyboardClick(): Boolean = clickOrigin.clickType == ClickType.CHANGE_HELD
 
-        override fun isOutsideClick(): Boolean {
-            return clickOrigin.slot < 0
-        }
+        override fun isOutsideClick(): Boolean = clickOrigin.slot < 0
 
-        override fun getClickIdentifier(): String {
-            return clickOrigin.clickType.name
-        }
+        override fun getClickIdentifier(): String = clickOrigin.clickType.name
 
-        override fun isOnEntityContainer(): Boolean {
-            return clickOrigin.inventory is PlayerInventory
-        }
+        override fun isOnEntityContainer(): Boolean = clickOrigin.inventory is PlayerInventory
 
-        override fun getViewer(): Viewer {
-            return whoClicked
-        }
+        override fun getViewer(): Viewer = whoClicked
 
         override fun closeForPlayer() {
             parent.closeForPlayer()
@@ -121,7 +92,5 @@ class SlotClickContext
             parent.resetTitleForPlayer()
         }
 
-        override fun isCombined(): Boolean {
-            return combined
-        }
+        override fun isCombined(): Boolean = combined
     }

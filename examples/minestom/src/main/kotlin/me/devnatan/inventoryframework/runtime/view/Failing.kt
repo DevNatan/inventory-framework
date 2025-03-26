@@ -25,11 +25,7 @@ class Failing : View() {
             .layoutSlot('R')
             .onRender { ctx: SlotRenderContext ->
                 if (state[ctx] == 0) {
-                    ctx.item =
-                        displayItem(
-                            Material.DIAMOND,
-                            "Click me to fail",
-                        )
+                    ctx.item = displayItem(Material.DIAMOND, "Click me to fail")
                 } else {
                     throw IllegalStateException("This item cannot be rendered")
                 }
@@ -38,10 +34,8 @@ class Failing : View() {
                 ctx.update()
             }
 
-        render
-            .layoutSlot('C', displayItem(Material.STONE, "Click me and I will fail"))
-            .onClick { _ ->
-                throw IllegalStateException("This is a failing inventory")
-            }
+        render.layoutSlot('C', displayItem(Material.STONE, "Click me and I will fail")).onClick { _ ->
+            throw IllegalStateException("This is a failing inventory")
+        }
     }
 }

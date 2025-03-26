@@ -37,9 +37,7 @@ import java.util.stream.Collectors
 class MinestomElementFactory : ElementFactory() {
     private var worksInCurrentPlatform: Boolean? = null
 
-    override fun createUninitializedRoot(): RootView {
-        return View()
-    }
+    override fun createUninitializedRoot(): RootView = View()
 
     // TODO Test it
     override fun createContainer(context: IFContext): ViewContainer {
@@ -81,13 +79,20 @@ class MinestomElementFactory : ElementFactory() {
                 ViewType.FURNACE -> InventoryType.FURNACE
                 ViewType.ANVIL -> InventoryType.ANVIL
                 ViewType.CRAFTING_TABLE -> InventoryType.CRAFTING
-                ViewType.DROPPER, ViewType.DROPPER -> InventoryType.WINDOW_3X3
+                ViewType.DROPPER,
+                ViewType.DROPPER,
+                -> InventoryType.WINDOW_3X3
                 ViewType.BREWING_STAND -> InventoryType.BREWING_STAND
                 ViewType.SHULKER_BOX -> InventoryType.SHULKER_BOX
                 else -> error("Unsupported type: $finalType")
             }
 
-        val inventory = Inventory(type, net.kyori.adventure.text.Component.empty())
+        val inventory =
+            Inventory(
+                type,
+                net.kyori.adventure.text.Component
+                    .empty(),
+            )
         return MinestomViewContainer(inventory, false, finalType, false)
     }
 
@@ -105,19 +110,20 @@ class MinestomElementFactory : ElementFactory() {
         subject: Viewer?,
         viewers: List<Viewer>,
         initialData: Any?,
-    ): IFOpenContext {
-        return OpenContext(
+    ): IFOpenContext =
+        OpenContext(
             root as View,
             subject,
-            viewers.stream().collect(
-                Collectors.toMap<Viewer, String, Viewer>(
-                    Function<Viewer, String> { obj: Viewer -> obj.getId() },
-                    Function.identity<Viewer>(),
+            viewers
+                .stream()
+                .collect(
+                    Collectors.toMap<Viewer, String, Viewer>(
+                        Function<Viewer, String> { obj: Viewer -> obj.getId() },
+                        Function.identity<Viewer>(),
+                    ),
                 ),
-            ),
             initialData,
         )
-    }
 
     override fun createRenderContext(
         id: UUID,
@@ -127,9 +133,7 @@ class MinestomElementFactory : ElementFactory() {
         viewers: Map<String, Viewer>,
         subject: Viewer,
         initialData: Any?,
-    ): IFRenderContext {
-        return RenderContext(id, root as View, config, container, viewers, subject, initialData)
-    }
+    ): IFRenderContext = RenderContext(id, root as View, config, container, viewers, subject, initialData)
 
     override fun createSlotClickContext(
         slotClicked: Int,
@@ -155,36 +159,24 @@ class MinestomElementFactory : ElementFactory() {
         slot: Int,
         parent: IFRenderContext,
         viewer: Viewer?,
-    ): IFSlotRenderContext {
-        return SlotRenderContext(slot, parent, viewer)
-    }
+    ): IFSlotRenderContext = SlotRenderContext(slot, parent, viewer)
 
     override fun createCloseContext(
         viewer: Viewer,
         parent: IFRenderContext,
-    ): IFCloseContext {
-        return CloseContext(viewer, parent)
-    }
+    ): IFCloseContext = CloseContext(viewer, parent)
 
-    override fun createComponentBuilder(root: VirtualView): ComponentBuilder<*, Context> {
-        return MinestomIemComponentBuilder(root)
-    }
+    override fun createComponentBuilder(root: VirtualView): ComponentBuilder<*, Context> = MinestomIemComponentBuilder(root)
 
-    override fun worksInCurrentPlatform(): Boolean {
-        return true
-    }
+    override fun worksInCurrentPlatform(): Boolean = true
 
-    override fun getLogger(): Logger {
-        return NoopLogger()
-    }
+    override fun getLogger(): Logger = NoopLogger()
 
     override fun scheduleJobInterval(
         root: RootView,
         intervalInTicks: Long,
         execution: Runnable,
-    ): Job {
-        return MinestomTaskJobImpl(intervalInTicks.toInt(), execution)
-    }
+    ): Job = MinestomTaskJobImpl(intervalInTicks.toInt(), execution)
 
     companion object {
         private val defaultType: ViewType = ViewType.CHEST

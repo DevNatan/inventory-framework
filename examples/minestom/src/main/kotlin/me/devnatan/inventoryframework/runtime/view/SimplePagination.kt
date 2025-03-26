@@ -20,9 +20,7 @@ class SimplePagination : View() {
             { _: Context, builder: MinestomIemComponentBuilder, index: Int, value: ItemStack ->
                 builder.withItem(value)
                 builder.onClick { ctx: SlotClickContext ->
-                    ctx.player.sendMessage(
-                        "You clicked on item $index",
-                    )
+                    ctx.player.sendMessage("You clicked on item $index")
                 }
             },
         )
@@ -32,11 +30,7 @@ class SimplePagination : View() {
             cancelOnClick()
             size(3)
             title("Simple Pagination")
-            layout(
-                "OOOOOOOOO",
-                "OOOOOOOOO",
-                "  P   N  ",
-            )
+            layout("OOOOOOOOO", "OOOOOOOOO", "  P   N  ")
         }
 
     override fun onFirstRender(render: RenderContext) {

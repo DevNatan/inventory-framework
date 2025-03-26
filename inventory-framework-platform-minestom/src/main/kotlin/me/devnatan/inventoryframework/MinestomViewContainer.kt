@@ -13,17 +13,12 @@ class MinestomViewContainer(
     shared: Boolean,
     private val type: ViewType,
     private val proxied: Boolean,
-) :
-    ViewContainer {
+) : ViewContainer {
     val isShared: Boolean = shared
 
-    fun getInventory(): Inventory {
-        return inventory
-    }
+    fun getInventory(): Inventory = inventory
 
-    override fun isProxied(): Boolean {
-        return proxied
-    }
+    override fun isProxied(): Boolean = proxied
 
     override fun getTitle(): String {
         val diffTitle: Boolean =
@@ -35,26 +30,21 @@ class MinestomViewContainer(
 
         check(!(diffTitle && isShared)) { "Cannot get unique title of shared inventory" }
         val openInventory = inventory.viewers.first().openInventory
-        return (openInventory as? Inventory)?.title
-            ?.let { PlainTextComponentSerializer.plainText().serialize(it) } ?: ""
+        return (openInventory as? Inventory)?.title?.let {
+            PlainTextComponentSerializer.plainText().serialize(it)
+        } ?: ""
     }
 
-    override fun getTitle(viewer: Viewer): String {
-        return ((viewer as MinestomViewer).player.openInventory as? Inventory)?.title
-            ?.let { PlainTextComponentSerializer.plainText().serialize(it) } ?: ""
-    }
+    override fun getTitle(viewer: Viewer): String =
+        ((viewer as MinestomViewer).player.openInventory as? Inventory)?.title?.let {
+            PlainTextComponentSerializer.plainText().serialize(it)
+        } ?: ""
 
-    override fun getType(): ViewType {
-        return type
-    }
+    override fun getType(): ViewType = type
 
-    override fun getRowsCount(): Int {
-        return size / columnsCount
-    }
+    override fun getRowsCount(): Int = size / columnsCount
 
-    override fun getColumnsCount(): Int {
-        return type.columns
-    }
+    override fun getColumnsCount(): Int = type.columns
 
     override fun renderItem(
         slot: Int,
@@ -86,33 +76,21 @@ class MinestomViewContainer(
         return false
     }
 
-    override fun isSupportedItem(item: Any?): Boolean {
-        return item == null || item is ItemStack
-    }
+    override fun isSupportedItem(item: Any?): Boolean = item == null || item is ItemStack
 
     private fun requireSupportedItem(item: Any?) {
         if (isSupportedItem(item)) return
 
-        throw IllegalStateException(
-            "Unsupported item type: " + item!!.javaClass.name,
-        )
+        throw IllegalStateException("Unsupported item type: " + item!!.javaClass.name)
     }
 
-    override fun hasItem(slot: Int): Boolean {
-        return !inventory.getItemStack(slot).isAir
-    }
+    override fun hasItem(slot: Int): Boolean = !inventory.getItemStack(slot).isAir
 
-    override fun getSize(): Int {
-        return inventory.size
-    }
+    override fun getSize(): Int = inventory.size
 
-    override fun getSlotsCount(): Int {
-        return size - 1
-    }
+    override fun getSlotsCount(): Int = size - 1
 
-    override fun getFirstSlot(): Int {
-        return 0
-    }
+    override fun getFirstSlot(): Int = 0
 
     override fun getLastSlot(): Int {
         val resultSlots = getType().resultSlots
@@ -141,7 +119,12 @@ class MinestomViewContainer(
         target: Player,
     ) {
         val open: Inventory = target.openInventory as? Inventory ?: return
-        if (inventory.inventoryType == InventoryType.CRAFTING || inventory.inventoryType == InventoryType.CRAFTER_3X3) return
+        if (
+            inventory.inventoryType == InventoryType.CRAFTING ||
+            inventory.inventoryType == InventoryType.CRAFTER_3X3
+        ) {
+            return
+        }
         open.title = title
     }
 
@@ -166,15 +149,12 @@ class MinestomViewContainer(
         if (this === other) return true
         if (other == null || javaClass != other.javaClass) return false
         val that = other as MinestomViewContainer
-        return isShared == that.isShared && inventory == that.inventory &&
+        return isShared == that.isShared &&
+            inventory == that.inventory &&
             getType() == that.getType()
     }
 
-    override fun hashCode(): Int {
-        return Objects.hash(inventory, isShared, getType())
-    }
+    override fun hashCode(): Int = Objects.hash(inventory, isShared, getType())
 
-    override fun toString(): String {
-        return "BukkitViewContainer{inventory=$inventory, shared=$isShared, type=$type}"
-    }
+    override fun toString(): String = "BukkitViewContainer{inventory=$inventory, shared=$isShared, type=$type}"
 }

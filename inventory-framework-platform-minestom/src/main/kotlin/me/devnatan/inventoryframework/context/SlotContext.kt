@@ -24,37 +24,23 @@ abstract class SlotContext
         Context {
         abstract val item: ItemStack
 
-        override fun getParent(): RenderContext {
-            return parent as RenderContext
-        }
+        override fun getParent(): RenderContext = parent as RenderContext
 
-        override fun getSlot(): Int {
-            return slot
-        }
+        override fun getSlot(): Int = slot
 
         override fun setSlot(slot: Int) {
             this.slot = slot
         }
 
-        override fun getIndexedViewers(): Map<String, Viewer> {
-            return getParent().indexedViewers
-        }
+        override fun getIndexedViewers(): Map<String, Viewer> = getParent().indexedViewers
 
-        override fun getTitle(): String {
-            return getParent().title
-        }
+        override fun getTitle(): String = getParent().title
 
-        override fun getComponents(): @UnmodifiableView MutableList<Component> {
-            return getParent().components
-        }
+        override fun getComponents(): @UnmodifiableView MutableList<Component> = getParent().components
 
-        override fun getInternalComponents(): List<Component> {
-            return getParent().internalComponents
-        }
+        override fun getInternalComponents(): List<Component> = getParent().internalComponents
 
-        override fun getComponentsAt(position: Int): List<Component> {
-            return getParent().getComponentsAt(position)
-        }
+        override fun getComponentsAt(position: Int): List<Component> = getParent().getComponentsAt(position)
 
         override fun addComponent(component: Component) {
             getParent().addComponent(component)
@@ -83,24 +69,26 @@ abstract class SlotContext
             clickedSlot: Int,
             combined: Boolean,
         ) {
-            getParent().performClickInComponent(component, viewer, clickedContainer, platformEvent, clickedSlot, combined)
+            getParent()
+                .performClickInComponent(
+                    component,
+                    viewer,
+                    clickedContainer,
+                    platformEvent,
+                    clickedSlot,
+                    combined,
+                )
         }
 
         override fun update() {
             getParent().update()
         }
 
-        override fun getRawStateValue(state: State<*>?): Any {
-            return getParent().getRawStateValue(state)
-        }
+        override fun getRawStateValue(state: State<*>?): Any = getParent().getRawStateValue(state)
 
-        override fun getInternalStateValue(state: State<*>): StateValue {
-            return getParent().getInternalStateValue(state)
-        }
+        override fun getInternalStateValue(state: State<*>): StateValue = getParent().getInternalStateValue(state)
 
-        override fun getUninitializedStateValue(stateId: Long): StateValue {
-            return getParent().getUninitializedStateValue(stateId)
-        }
+        override fun getUninitializedStateValue(stateId: Long): StateValue = getParent().getUninitializedStateValue(stateId)
 
         override fun initializeState(
             id: Long,
@@ -123,25 +111,15 @@ abstract class SlotContext
             getParent().watchState(id, listener)
         }
 
-        override fun getId(): UUID {
-            return getParent().id
-        }
+        override fun getId(): UUID = getParent().id
 
-        override fun getConfig(): ViewConfig {
-            return getParent().config
-        }
+        override fun getConfig(): ViewConfig = getParent().config
 
-        override fun getContainer(): ViewContainer {
-            return getParent().container
-        }
+        override fun getContainer(): ViewContainer = getParent().container
 
-        override fun getRoot(): View {
-            return getParent().getRoot()
-        }
+        override fun getRoot(): View = getParent().getRoot()
 
-        override fun getInitialData(): Any {
-            return getParent().initialData
-        }
+        override fun getInitialData(): Any = getParent().initialData
 
         override fun setInitialData(initialData: Any) {
             getParent().initialData = initialData
@@ -161,17 +139,13 @@ abstract class SlotContext
             getParent().resetTitleForPlayer(player)
         }
 
-        override fun isActive(): Boolean {
-            return getParent().isActive
-        }
+        override fun isActive(): Boolean = getParent().isActive
 
         override fun setActive(active: Boolean) {
             getParent().isActive = active
         }
 
-        override fun isEndless(): Boolean {
-            return getParent().isEndless
-        }
+        override fun isEndless(): Boolean = getParent().isEndless
 
         override fun setEndless(endless: Boolean) {
             getParent().isEndless = endless
@@ -185,7 +159,5 @@ abstract class SlotContext
             getParent().back(initialData)
         }
 
-        override fun canBack(): Boolean {
-            return getParent().canBack()
-        }
+        override fun canBack(): Boolean = getParent().canBack()
     }
