@@ -695,6 +695,11 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
     }
 
     @Override
+    public List<?> source() {
+        return currSource;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
