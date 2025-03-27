@@ -9,8 +9,12 @@ import org.jetbrains.annotations.ApiStatus
 
 class SlotRenderContext
     @ApiStatus.Internal
-    constructor(slot: Int, parent: IFRenderContext, private val viewer: Viewer?) :
-    SlotContext(slot, parent), IFSlotRenderContext {
+    constructor(
+        slot: Int,
+        parent: IFRenderContext,
+        private val viewer: Viewer?,
+    ) : SlotContext(slot, parent),
+        IFSlotRenderContext {
         override val player: Player = (viewer as MinestomViewer).player
 
         override var item: ItemStack = ItemStack.AIR
@@ -18,13 +22,9 @@ class SlotRenderContext
         private var changed = false
         private var forceUpdate = false
 
-        override fun getResult(): ItemStack {
-            return item
-        }
+        override fun getResult(): ItemStack = item
 
-        override fun isCancelled(): Boolean {
-            return cancelled
-        }
+        override fun isCancelled(): Boolean = cancelled
 
         override fun setCancelled(cancelled: Boolean) {
             this.cancelled = cancelled
@@ -34,29 +34,21 @@ class SlotRenderContext
             item = ItemStack.AIR
         }
 
-        override fun hasChanged(): Boolean {
-            return changed
-        }
+        override fun hasChanged(): Boolean = changed
 
         override fun setChanged(changed: Boolean) {
             this.changed = changed
         }
 
-        override fun isForceUpdate(): Boolean {
-            return forceUpdate
-        }
+        override fun isForceUpdate(): Boolean = forceUpdate
 
         override fun setForceUpdate(forceUpdate: Boolean) {
             this.forceUpdate = forceUpdate
         }
 
-        override fun isOnEntityContainer(): Boolean {
-            return container.isEntityContainer
-        }
+        override fun isOnEntityContainer(): Boolean = container.isEntityContainer
 
-        override fun getViewer(): Viewer? {
-            return viewer
-        }
+        override fun getViewer(): Viewer? = viewer
 
         override fun closeForPlayer() {
             parent.closeForPlayer()

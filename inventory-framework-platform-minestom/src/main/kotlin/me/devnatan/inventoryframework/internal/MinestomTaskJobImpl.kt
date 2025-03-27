@@ -10,9 +10,7 @@ internal class MinestomTaskJobImpl(
 ) : Job {
     private var task: Task? = null
 
-    override fun isStarted(): Boolean {
-        return task != null
-    }
+    override fun isStarted(): Boolean = task != null
 
     override fun start() {
         if (isStarted) return

@@ -40,23 +40,25 @@ class SampleServer {
             event.skin = PlayerSkin.fromUsername(event.player.username)
         }
         handler.addListener(PlayerSpawnEvent::class.java) { event ->
-            event.player.inventory.addItemStacks(ExampleUtil.getRandomItems(20), TransactionOption.ALL)
-            event.player.inventory.addItemStack(ItemStack.of(Material.OAK_PLANKS, 64), TransactionOption.ALL)
+            event.player.inventory.addItemStacks(
+                ExampleUtil.getRandomItems(20),
+                TransactionOption.ALL,
+            )
+            event.player.inventory.addItemStack(
+                ItemStack.of(Material.OAK_PLANKS, 64),
+                TransactionOption.ALL,
+            )
         }
 
         val viewFrame =
             ViewFrame
                 .create(handler)
-                .with(
-                    Failing(),
-                    SimplePagination(),
-                    ScheduledView(),
-                ).register()
+                .with(Failing(), SimplePagination(), ScheduledView())
+                .register()
 
-        MinecraftServer.getCommandManager().register(
-            IFExampleCommand(viewFrame),
-            GamemodeCommand(viewFrame),
-        )
+        MinecraftServer
+            .getCommandManager()
+            .register(IFExampleCommand(viewFrame), GamemodeCommand(viewFrame))
 
         server.start("0.0.0.0", 25565)
     }

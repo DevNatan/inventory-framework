@@ -9,6 +9,7 @@ import org.gradle.external.javadoc.JavadocMemberLevel
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.getByType
+import org.gradle.kotlin.dsl.kotlin
 import org.gradle.kotlin.dsl.withType
 
 class LibraryConventionPlugin : Plugin<Project> {
@@ -51,6 +52,7 @@ class LibraryConventionPlugin : Plugin<Project> {
                 palantirJavaFormat()
             }
             kotlin {
+                ktfmt().kotlinlangStyle()
                 ktlint()
             }
         }
@@ -67,9 +69,14 @@ class LibraryConventionPlugin : Plugin<Project> {
         dependencies.apply {
             add("compileOnly", libs.findLibrary("jetbrains-annotations").get())
             add("testCompileOnly", libs.findLibrary("jetbrains-annotations").get())
-            add("testRuntimeOnly", libs.findLibrary("junit-engine").get())
-            add("testImplementation", libs.findLibrary("junit-api").get())
+            add("testImplementation", platform(libs.findLibrary("junit-bom").get()))
+            add("testImplementation", libs.findLibrary("junit-jupiter").get())
+            add("testRuntimeOnly", libs.findLibrary("junit-launcher").get())
             add("testImplementation", libs.findLibrary("mockito-core").get())
+        }
+
+        tasks.withType<Test> {
+            useJUnitPlatform()
         }
     }
 }

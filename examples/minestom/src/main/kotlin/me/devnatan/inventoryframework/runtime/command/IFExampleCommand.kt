@@ -24,9 +24,7 @@ class IFExampleCommand(
 
     private val arg: Argument<String> =
         ArgumentType.String("view").setSuggestionCallback { _, _, suggestion ->
-            availableViews.keys.forEach {
-                suggestion.addEntry(SuggestionEntry(it))
-            }
+            availableViews.keys.forEach { suggestion.addEntry(SuggestionEntry(it)) }
         }
 
     init {

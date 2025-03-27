@@ -13,18 +13,21 @@ private const val SECONDS_TO_TICKS_DIV = 20L
  *
  * @param interval The interval.
  * @return This configuration builder.
- * @see <a href="https://github.com/DevNatan/inventory-framework/wiki/scheduled-updates">Scheduled Updates on Wiki</a>
+ * @see <a href="https://github.com/DevNatan/inventory-framework/wiki/scheduled-updates">Scheduled
+ *   Updates on Wiki</a>
  */
 public fun ViewConfigBuilder.scheduleUpdate(interval: Duration): ViewConfigBuilder =
-    scheduleUpdate(interval.inWholeSeconds.takeIf { value -> value > 0 }?.div(SECONDS_TO_TICKS_DIV) ?: 0)
+    scheduleUpdate(
+        interval.inWholeSeconds.takeIf { value -> value > 0 }?.div(SECONDS_TO_TICKS_DIV) ?: 0,
+    )
 
 /**
  * Waits a fixed delay before any player interaction.
  *
  * Interactions called before delay completion are cancelled.
  *
- * ***This API is experimental and is not subject to the general compatibility guarantees
- * such API may be changed or may be removed completely in any further release.***
+ * ***This API is experimental and is not subject to the general compatibility guarantees such API
+ * may be changed or may be removed completely in any further release.***
  *
  * @param interactionDelay Duration of the interaction delay or `null` to reset.
  * @return This configuration builder.

@@ -16,15 +16,13 @@ import java.util.concurrent.CompletableFuture
 /**
  * Creates a new open context instance.
  *
+ * *** This is an internal inventory-framework API that should not be used from outside of this
+ * library. No compatibility guarantees are provided. ***
  *
- * *** This is an internal inventory-framework API that should not be used from outside of
- * this library. No compatibility guarantees are provided. ***
- *
- * @param root        Root view that will be owner of the upcoming render context.
- * @param subject     The viewer that is opening the view.
- * @param viewers     Who'll be the viewers of this context, if this parameter is provided it
- * means that this context is a shared context.
- * Must be provided even in non-shared context cases.
+ * @param root Root view that will be owner of the upcoming render context.
+ * @param subject The viewer that is opening the view.
+ * @param viewers Who'll be the viewers of this context, if this parameter is provided it means that
+ *   this context is a shared context. Must be provided even in non-shared context cases.
  * @param initialData Initial data provided by the user.
  */
 class OpenContext
@@ -34,7 +32,9 @@ class OpenContext
         private val subject: Viewer?,
         private val viewers: Map<String, Viewer>,
         private var initialData: Any?,
-    ) : PlatformConfinedContext(), IFOpenContext, Context {
+    ) : PlatformConfinedContext(),
+        IFOpenContext,
+        Context {
         private var container: ViewContainer? = null
 
         // --- Inherited ---
@@ -59,6 +59,7 @@ class OpenContext
                 tryThrowDoNotWorkWithSharedContext("getAllPlayers()")
                 return field
             }
+
         private var cancelled = false
 
         init {
@@ -67,10 +68,7 @@ class OpenContext
         }
 
         override val allPlayers: List<Player>
-            get() =
-                getViewers().stream()
-                    .map { viewer -> (viewer as MinestomViewer).player }
-                    .toList()
+            get() = getViewers().stream().map { viewer -> (viewer as MinestomViewer).player }.toList()
 
         override fun updateTitleForPlayer(
             title: Component,
@@ -87,33 +85,21 @@ class OpenContext
             modifyConfig().title(null)
         }
 
-        override fun isCancelled(): Boolean {
-            return cancelled
-        }
+        override fun isCancelled(): Boolean = cancelled
 
         override fun setCancelled(cancelled: Boolean) {
             this.cancelled = cancelled
         }
 
-        override fun getAsyncOpenJob(): CompletableFuture<Void>? {
-            return waitTask
-        }
+        override fun getAsyncOpenJob(): CompletableFuture<Void>? = waitTask
 
-        override fun getRoot(): View {
-            return root
-        }
+        override fun getRoot(): View = root
 
-        override fun getIndexedViewers(): Map<String, Viewer> {
-            return viewers
-        }
+        override fun getIndexedViewers(): Map<String, Viewer> = viewers
 
-        override fun getId(): UUID {
-            return id
-        }
+        override fun getId(): UUID = id
 
-        override fun getInitialData(): Any? {
-            return initialData
-        }
+        override fun getInitialData(): Any? = initialData
 
         override fun setInitialData(initialData: Any?) {
             this.initialData = initialData
@@ -123,13 +109,12 @@ class OpenContext
             this.waitTask = task
         }
 
-        override fun getConfig(): ViewConfig {
-            return if (inheritedConfigBuilder == null) {
+        override fun getConfig(): ViewConfig =
+            if (inheritedConfigBuilder == null) {
                 getRoot().config
             } else {
                 Objects.requireNonNull<ViewConfig>(modifiedConfig, "Modified config cannot be null")
             }
-        }
 
         override fun getModifiedConfig(): ViewConfig? {
             if (inheritedConfigBuilder == null) return null
@@ -148,9 +133,7 @@ class OpenContext
             return subject
         }
 
-        override fun getContainer(): ViewContainer? {
-            return container
-        }
+        override fun getContainer(): ViewContainer? = container
 
         override fun setContainer(container: ViewContainer) {
             this.container = container

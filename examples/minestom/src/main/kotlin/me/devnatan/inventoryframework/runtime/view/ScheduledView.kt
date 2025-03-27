@@ -16,20 +16,14 @@ class ScheduledView : View() {
             cancelOnClick()
             size(3)
             title("Simple Pagination")
-            layout(
-                "         ",
-                "    C    ",
-                "B        ",
-            )
+            layout("         ", "    C    ", "B        ")
             scheduleUpdate(20)
         }
 
     override fun onFirstRender(render: RenderContext) {
-        render
-            .layoutSlot('C')
-            .onRender {
-                it.item = ExampleUtil.displayItem(Material.STONE, counter.increment(it).toString())
-            }
+        render.layoutSlot('C').onRender {
+            it.item = ExampleUtil.displayItem(Material.STONE, counter.increment(it).toString())
+        }
 
         render
             .layoutSlot('B', ExampleUtil.displayItem(Material.PAPER, "Back"))

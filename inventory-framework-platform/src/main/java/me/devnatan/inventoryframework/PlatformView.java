@@ -216,7 +216,7 @@ public abstract class PlatformView<
             root.renderContext(target);
         }
 
-		viewer.setActiveContext(target);
+        viewer.setActiveContext(target);
         root.onResume(active, target);
         viewer.setSwitching(false);
     }

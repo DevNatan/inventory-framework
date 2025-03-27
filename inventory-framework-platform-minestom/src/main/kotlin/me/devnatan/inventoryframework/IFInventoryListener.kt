@@ -22,8 +22,10 @@ internal class IFInventoryListener(
 ) {
     init {
         val node =
-            EventNode.type("IF", EventFilter.ENTITY) { _, e -> e is Player && viewFrame.getViewer(e) != null }
-                .setPriority(10)
+            EventNode
+                .type("IF", EventFilter.ENTITY) { _, e ->
+                    e is Player && viewFrame.getViewer(e) != null
+                }.setPriority(10)
                 .addListener(PickupItemEvent::class.java, this::onItemPickup)
                 .addListener(InventoryPreClickEvent::class.java, this::onInventoryClick)
                 .addListener(InventoryCloseEvent::class.java, this::onInventoryClose)
@@ -43,7 +45,10 @@ internal class IFInventoryListener(
             event.isCancelled = context.config.getOptionValue(ViewConfig.CANCEL_ON_DROP)
             return
         }
-        if (event.clickType == ClickType.LEFT_DRAGGING || event.clickType == ClickType.RIGHT_DRAGGING) {
+        if (
+            event.clickType == ClickType.LEFT_DRAGGING ||
+            event.clickType == ClickType.RIGHT_DRAGGING
+        ) {
             val context: IFContext = viewer.activeContext
             if (!context.config.isOptionSet(ViewConfig.CANCEL_ON_DRAG)) return
 
@@ -53,7 +58,9 @@ internal class IFInventoryListener(
 
         val context: IFRenderContext = viewer.activeContext
         val clickedComponent =
-            context.getComponentsAt(event.slot).stream()
+            context
+                .getComponentsAt(event.slot)
+                .stream()
                 .filter { it.isVisible }
                 .findFirst()
                 .getOrNull()
@@ -66,8 +73,14 @@ internal class IFInventoryListener(
 
         val root: RootView = context.getRoot()
         val clickContext: IFSlotClickContext =
-            root.elementFactory
-                .createSlotClickContext(event.slot, viewer, clickedContainer, clickedComponent, event, false)
+            root.elementFactory.createSlotClickContext(
+                event.slot,
+                viewer,
+                clickedContainer,
+                clickedComponent,
+                event,
+                false,
+            )
 
         root.pipeline.execute(StandardPipelinePhases.CLICK, clickContext)
     }

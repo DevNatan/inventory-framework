@@ -1,5 +1,6 @@
 plugins {
     id("me.devnatan.inventoryframework.library")
+    kotlin("jvm")
     alias(libs.plugins.shadowjar)
 }
 

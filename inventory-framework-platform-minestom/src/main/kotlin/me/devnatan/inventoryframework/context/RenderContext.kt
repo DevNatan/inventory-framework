@@ -24,8 +24,7 @@ class RenderContext
         viewers: Map<String, Viewer>,
         subject: Viewer,
         initialData: Any?,
-    ) :
-    PlatformRenderContext<MinestomIemComponentBuilder, Context>(
+    ) : PlatformRenderContext<MinestomIemComponentBuilder, Context>(
             id,
             root,
             config,
@@ -41,14 +40,10 @@ class RenderContext
                 return field
             }
 
-        override fun getRoot(): View {
-            return root as View
-        }
+        override fun getRoot(): View = root as View
 
         override val allPlayers: List<Player>
-            get() =
-                viewers.stream()
-                    .map { viewer -> (viewer as MinestomViewer).player }.toList()
+            get() = viewers.stream().map { viewer -> (viewer as MinestomViewer).player }.toList()
 
         override fun updateTitleForPlayer(
             title: Component,
@@ -70,14 +65,12 @@ class RenderContext
         fun slot(
             slot: Int,
             item: ItemStack,
-        ): MinestomIemComponentBuilder {
-            return slot(slot).withItem(item)
-        }
+        ): MinestomIemComponentBuilder = slot(slot).withItem(item)
 
         /**
          * Adds an item at the specific column and ROW (X, Y) in that context's container.
          *
-         * @param row    The row (Y) in which the item will be positioned.
+         * @param row The row (Y) in which the item will be positioned.
          * @param column The column (X) in which the item will be positioned.
          * @return An item builder to configure the item.
          */
@@ -85,9 +78,7 @@ class RenderContext
             row: Int,
             column: Int,
             item: ItemStack?,
-        ): MinestomIemComponentBuilder {
-            return slot(row, column).withItem(item)
-        }
+        ): MinestomIemComponentBuilder = slot(row, column).withItem(item)
 
         /**
          * Sets an item in the first slot of this context's container.
@@ -95,9 +86,7 @@ class RenderContext
          * @param item The item that'll be set.
          * @return An item builder to configure the item.
          */
-        fun firstSlot(item: ItemStack?): MinestomIemComponentBuilder {
-            return firstSlot().withItem(item)
-        }
+        fun firstSlot(item: ItemStack?): MinestomIemComponentBuilder = firstSlot().withItem(item)
 
         /**
          * Sets an item in the last slot of this context's container.
@@ -105,9 +94,7 @@ class RenderContext
          * @param item The item that'll be set.
          * @return An item builder to configure the item.
          */
-        fun lastSlot(item: ItemStack?): MinestomIemComponentBuilder {
-            return lastSlot().withItem(item)
-        }
+        fun lastSlot(item: ItemStack?): MinestomIemComponentBuilder = lastSlot().withItem(item)
 
         /**
          * Adds an item in the next available slot of this context's container.
@@ -115,37 +102,28 @@ class RenderContext
          * @param item The item that'll be added.
          * @return An item builder to configure the item.
          */
-        fun availableSlot(item: ItemStack?): MinestomIemComponentBuilder {
-            return availableSlot().withItem(item)
-        }
+        fun availableSlot(item: ItemStack?): MinestomIemComponentBuilder = availableSlot().withItem(item)
 
         /**
          * Defines the item that will represent a character provided in the context layout.
          *
          * @param character The layout character target.
-         * @param item      The item that'll represent the layout character.
+         * @param item The item that'll represent the layout character.
          * @return An item builder to configure the item.
          */
         fun layoutSlot(
             character: Char,
             item: ItemStack?,
-        ): MinestomIemComponentBuilder {
-            return layoutSlot(character).withItem(item)
-        }
+        ): MinestomIemComponentBuilder = layoutSlot(character).withItem(item)
 
         /**
-         *
-         * *** This API is experimental and is not subject to the general compatibility guarantees
-         * such API may be changed or may be removed completely in any further release. ***
+         * *** This API is experimental and is not subject to the general compatibility guarantees such
+         * API may be changed or may be removed completely in any further release. ***
          */
         @ApiStatus.Experimental
-        fun resultSlot(item: ItemStack?): MinestomIemComponentBuilder {
-            return resultSlot().withItem(item)
-        }
+        fun resultSlot(item: ItemStack?): MinestomIemComponentBuilder = resultSlot().withItem(item)
 
-        override fun createBuilder(): MinestomIemComponentBuilder {
-            return MinestomIemComponentBuilder(this)
-        }
+        override fun createBuilder(): MinestomIemComponentBuilder = MinestomIemComponentBuilder(this)
 
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
@@ -155,11 +133,7 @@ class RenderContext
             return player == that.player
         }
 
-        override fun hashCode(): Int {
-            return Objects.hash(super.hashCode(), player)
-        }
+        override fun hashCode(): Int = Objects.hash(super.hashCode(), player)
 
-        override fun toString(): String {
-            return "RenderContext{" + "player=" + player + "} " + super.toString()
-        }
+        override fun toString(): String = "RenderContext{" + "player=" + player + "} " + super.toString()
     }

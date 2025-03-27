@@ -16,12 +16,19 @@ import net.minestom.server.MinecraftServer
 import net.minestom.server.entity.Player
 import org.jetbrains.annotations.ApiStatus.OverrideOnly
 
-/**
- * Bukkit platform [PlatformView] implementation.
- */
+/** Bukkit platform [PlatformView] implementation. */
 @OverrideOnly
 open class View :
-    PlatformView<ViewFrame, Player, MinestomIemComponentBuilder, Context, OpenContext, CloseContext, RenderContext, SlotClickContext>() {
+    PlatformView<
+        ViewFrame,
+        Player,
+        MinestomIemComponentBuilder,
+        Context,
+        OpenContext,
+        CloseContext,
+        RenderContext,
+        SlotClickContext,
+    >() {
     public override fun registerPlatformInterceptors() {
         val pipeline: Pipeline<in VirtualView> = pipeline
         pipeline.intercept(StandardPipelinePhases.CLICK, ItemClickInterceptor())
