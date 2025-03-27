@@ -213,6 +213,9 @@ public interface Pagination extends ComponentComposition, StateValue {
     @ApiStatus.Experimental
     void forceUpdate();
 
+    /** Returns the source of truth of the current pagination. */
+    List<?> source();
+
     /**
      * Gets all elements in a given page index based of the specified source.
      *
