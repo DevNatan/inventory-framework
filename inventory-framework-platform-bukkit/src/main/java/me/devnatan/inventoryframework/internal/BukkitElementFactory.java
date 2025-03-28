@@ -39,7 +39,7 @@ public class BukkitElementFactory extends ElementFactory {
         checkInventoryTypeSupport(finalType);
 
         final int size = finalType.normalize(config.getSize());
-        if (size != 0 && !finalType.isExtendable())
+        if (size != 0 && !finalType.isExtendable() && context.getConfig().getLayout() == null)
             throw new IllegalArgumentException(String.format(
                     "Only \"%s\" type can have a custom size,"
                             + " \"%s\" always have a size of %d. Remove the parameter that specifies the size"
