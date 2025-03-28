@@ -232,6 +232,15 @@ public final class ViewConfigBuilder {
         return this;
     }
 
+    /**
+     * Cancels click, pickup, drop and drag interactions with the view.
+     *
+     * @return This configuration builder.
+     */
+    public ViewConfigBuilder cancelInteractions() {
+        return cancelOnClick().cancelOnPickup().cancelOnDrop().cancelOnDrag();
+    }
+
     public ViewConfig build() {
         final Map<ViewConfig.Option<?>, Object> optionsMap = getOptions().stream()
                 .map(option -> new AbstractMap.SimpleImmutableEntry<ViewConfig.Option<?>, Object>(
