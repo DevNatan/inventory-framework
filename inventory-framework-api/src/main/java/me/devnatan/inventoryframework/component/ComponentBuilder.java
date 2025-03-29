@@ -78,10 +78,7 @@ public interface ComponentBuilder<S extends ComponentBuilder<S, C>, C extends IF
      *
      * @param states The state to watch.
      * @return This component builder.
-     * @deprecated Use {@link #updateOnStateChange(State)} instead.
      */
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "3.2.0")
     S watch(State<?>... states);
 
     /**
