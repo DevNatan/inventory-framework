@@ -9,7 +9,7 @@ kotlin = "2.1.0"
 plugin-shadowjar = "8.3.6"
 plugin-spotless = "7.0.2"
 plugin-bukkit = "0.7.1"
-minestom = "87f6524aeb"
+minestom = "1058d88552"
 
 [libraries.spigot]
 module = "org.spigotmc:spigot-api"
