@@ -14,11 +14,13 @@ public final class LayoutSlot {
     private final char character;
     private final IntFunction<ComponentFactory> factory;
     private final int[] positions;
+	private final boolean fill;
 
-    public LayoutSlot(char character, @Nullable IntFunction<ComponentFactory> factory, int[] positions) {
+    public LayoutSlot(char character, @Nullable IntFunction<ComponentFactory> factory, int[] positions, boolean fill) {
         this.character = character;
         this.factory = factory;
         this.positions = positions;
+		this.fill = fill;
     }
 
     public char getCharacter() {
@@ -30,8 +32,12 @@ public final class LayoutSlot {
     }
 
     public LayoutSlot withFactory(@Nullable IntFunction<ComponentFactory> factory) {
-        return new LayoutSlot(character, factory, positions);
+        return new LayoutSlot(character, factory, positions, fill);
     }
+
+	public LayoutSlot withFill(boolean fill) {
+		return new LayoutSlot(character, factory, positions, fill);
+	}
 
     public int[] getPositions() {
         return positions;
@@ -40,6 +46,10 @@ public final class LayoutSlot {
     public boolean isDefinedByTheUser() {
         return factory != null;
     }
+
+	public boolean isToFill() {
+		return fill;
+	}
 
     @Override
     public boolean equals(Object o) {
@@ -57,6 +67,6 @@ public final class LayoutSlot {
     @Override
     public String toString() {
         return "LayoutSlot{" + "character=" + character + ", factory=" + factory + ", positions="
-                + Arrays.toString(positions) + '}';
+                + Arrays.toString(positions) + ", fill=" + fill + "}";
     }
 }
