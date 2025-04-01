@@ -20,8 +20,7 @@ class GlobalClickInterceptor : PipelineInterceptor<VirtualView> {
 
         // inherit cancellation so we can un-cancel it
         subject.isCancelled =
-            event.isCancelled ||
-            subject.config.isOptionSet(ViewConfig.CANCEL_ON_CLICK, true)
+            (event.isCancelled || subject.config.isOptionSet(ViewConfig.CANCEL_ON_CLICK, true))
         subject.root.onClick(subject)
     }
 }
