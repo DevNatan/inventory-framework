@@ -36,11 +36,19 @@ public class SimplePagination extends View {
         render.layoutSlot('P', previousItem)
                 .displayIf(() -> state.get(render).canBack())
                 .updateOnStateChange(state)
-                .onClick((ctx) -> state.get(ctx).back());
+                .onClick((ctx) -> {
+                    Pagination pagination = state.get(ctx);
+                    pagination.back();
+                    ctx.updateTitleForPlayer("Simple Pagination (" + pagination.currentPage() + ")");
+                });
         render.layoutSlot('N', nextItem)
                 .displayIf(() -> state.get(render).canAdvance())
                 .updateOnStateChange(state)
-                .onClick((ctx) -> state.get(ctx).advance());
+                .onClick((ctx) -> {
+                    Pagination pagination = state.get(ctx);
+                    pagination.advance();
+                    ctx.updateTitleForPlayer("Simple Pagination (" + pagination.currentPage() + ")");
+                });
 
         render.lastSlot(new ItemStack(Material.ARROW))
                 .displayIf(Context::canBack)

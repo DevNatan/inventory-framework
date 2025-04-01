@@ -21,6 +21,8 @@
  */
 package me.devnatan.inventoryframework.runtime.thirdparty;
 
+import static me.devnatan.inventoryframework.runtime.thirdparty.ReflectionUtils.*;
+
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 import java.lang.invoke.MethodHandle;
@@ -40,18 +42,14 @@ import org.bukkit.inventory.InventoryView;
 @SuppressWarnings({"ConstantConditions", "CallToPrintStackTrace"})
 public final class InventoryUpdate {
 
-    // Classes
-    private static final Class<?> CRAFT_PLAYER;
     private static final Class<?> CHAT_MESSAGE;
     private static final Class<?> PACKET_PLAY_OUT_OPEN_WINDOW;
     private static final Class<?> I_CHAT_BASE_COMPONENT;
     public static final Class<?> CONTAINER;
     private static final Class<?> CONTAINERS;
-    public static final Class<?> ENTITY_PLAYER;
     private static final Class<?> I_CHAT_MUTABLE_COMPONENT;
 
     // Methods
-    private static final MethodHandle getHandle;
     public static final MethodHandle getBukkitView;
     private static final MethodHandle literal;
 
@@ -67,24 +65,21 @@ public final class InventoryUpdate {
     private static final MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
 
     private static final Set<String> UNOPENABLES = Sets.newHashSet("CRAFTING", "CREATIVE", "PLAYER");
-    private static final boolean SUPPORTS_19 = ReflectionUtils.supports(19);
+    private static final boolean SUPPORTS_19 = McVersion.supports(19);
     private static final Object[] DUMMY_COLOR_MODIFIERS = new Object[0];
 
     static {
         // Initialize classes.
-        CRAFT_PLAYER = ReflectionUtils.getCraftClass("entity.CraftPlayer");
         CHAT_MESSAGE = SUPPORTS_19 ? null : ReflectionUtils.getNMSClass("network.chat", "ChatMessage");
         PACKET_PLAY_OUT_OPEN_WINDOW = ReflectionUtils.getNMSClass("network.protocol.game", "PacketPlayOutOpenWindow");
         I_CHAT_BASE_COMPONENT = ReflectionUtils.getNMSClass("network.chat", "IChatBaseComponent");
         // Check if we use containers, otherwise, can throw errors on older versions.
         CONTAINERS = useContainers() ? ReflectionUtils.getNMSClass("world.inventory", "Containers") : null;
-        ENTITY_PLAYER = ReflectionUtils.getNMSClass("server.level", "EntityPlayer");
         CONTAINER = ReflectionUtils.getNMSClass("world.inventory", "Container");
         I_CHAT_MUTABLE_COMPONENT =
                 SUPPORTS_19 ? ReflectionUtils.getNMSClass("network.chat", "IChatMutableComponent") : null;
 
         // Initialize methods.
-        getHandle = getMethod(CRAFT_PLAYER, "getHandle", MethodType.methodType(ENTITY_PLAYER));
         getBukkitView = getMethod(CONTAINER, "getBukkitView", MethodType.methodType(InventoryView.class));
         literal = SUPPORTS_19
                 ? getMethod(
@@ -122,7 +117,7 @@ public final class InventoryUpdate {
                 newTitle = newTitle.substring(0, 32);
             }
 
-            if (ReflectionUtils.supports(20)) {
+            if (McVersion.supports(20)) {
                 InventoryView open = player.getOpenInventory();
                 if (UNOPENABLES.contains(open.getType().name())) return;
                 open.setTitle(newTitle);
@@ -131,7 +126,7 @@ public final class InventoryUpdate {
 
             // Get EntityPlayer from CraftPlayer.
             Object craftPlayer = CRAFT_PLAYER.cast(player);
-            Object entityPlayer = getHandle.invoke(craftPlayer);
+            Object entityPlayer = GET_HANDLE.invoke(craftPlayer);
 
             // Create new title.
             Object title = createTitleComponent(newTitle);
@@ -194,7 +189,7 @@ public final class InventoryUpdate {
     }
 
     public static Object createTitleComponent(Object text) throws Throwable {
-        if (ReflectionUtils.supports(19)) {
+        if (McVersion.supports(19)) {
             return literal.invoke(text);
         } else {
             return chatMessage.invoke(text, DUMMY_COLOR_MODIFIERS);

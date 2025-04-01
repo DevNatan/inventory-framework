@@ -6,9 +6,6 @@ import org.bukkit.Bukkit;
 public class McVersion implements Comparable<McVersion> {
 
     private static final McVersion CURRENT_VERSION;
-    private static final McVersion v1_17 = new McVersion(1, 17);
-    public static final McVersion v1_21_1 = new McVersion(1, 21, 1);
-    public static final McVersion v1_21_3 = new McVersion(1, 21, 3);
 
     static {
         final int currentMajor = Integer.parseInt(Bukkit.getBukkitVersion().split("\\.")[0]);
@@ -52,10 +49,6 @@ public class McVersion implements Comparable<McVersion> {
      */
     public static McVersion current() {
         return CURRENT_VERSION;
-    }
-
-    public boolean hasVersionInNmsPackageName() {
-        return !this.isAtLeast(v1_17);
     }
 
     public boolean isAtLeast(final McVersion other) {
@@ -124,5 +117,30 @@ public class McVersion implements Comparable<McVersion> {
 
     public boolean isAtLeast(final int major, final int minor) {
         return this.isAtLeast(new McVersion(major, minor));
+    }
+
+    /**
+     * Checks whether the server version is equal or greater than the given version.
+     *
+     * @param minorNumber the version to compare the server version with.
+     * @return true if the version is equal or newer, otherwise false.
+     * @see #CURRENT_VERSION
+     * @since 4.0.0
+     */
+    public static boolean supports(int minorNumber) {
+        return CURRENT_VERSION.isAtLeast(1, minorNumber);
+    }
+
+    /**
+     * Checks whether the server version is equal or greater than the given version.
+     *
+     * @param minorNumber the version to compare the server version with.
+     * @param patchNumber the version to compare the server version with.
+     * @return true if the version is equal or newer, otherwise false.
+     * @see #CURRENT_VERSION
+     * @since 4.0.0
+     */
+    public static boolean supports(int minorNumber, int patchNumber) {
+        return CURRENT_VERSION.isAtLeast(1, minorNumber, patchNumber);
     }
 }

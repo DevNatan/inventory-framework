@@ -1,7 +1,6 @@
 package me.devnatan.inventoryframework;
 
 import static me.devnatan.inventoryframework.runtime.thirdparty.InventoryUpdate.CONTAINER;
-import static me.devnatan.inventoryframework.runtime.thirdparty.InventoryUpdate.ENTITY_PLAYER;
 import static me.devnatan.inventoryframework.runtime.thirdparty.InventoryUpdate.createTitleComponent;
 import static me.devnatan.inventoryframework.runtime.thirdparty.InventoryUpdate.getConstructor;
 import static me.devnatan.inventoryframework.runtime.thirdparty.InventoryUpdate.getContainerOrName;
@@ -11,12 +10,14 @@ import static me.devnatan.inventoryframework.runtime.thirdparty.InventoryUpdate.
 import static me.devnatan.inventoryframework.runtime.thirdparty.InventoryUpdate.setField;
 import static me.devnatan.inventoryframework.runtime.thirdparty.InventoryUpdate.setFieldHandle;
 import static me.devnatan.inventoryframework.runtime.thirdparty.InventoryUpdate.useContainers;
+import static me.devnatan.inventoryframework.runtime.thirdparty.ReflectionUtils.ENTITY_PLAYER;
 import static me.devnatan.inventoryframework.runtime.thirdparty.ReflectionUtils.getNMSClass;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodType;
 import java.util.Objects;
 import me.devnatan.inventoryframework.runtime.thirdparty.InventoryUpdate;
+import me.devnatan.inventoryframework.runtime.thirdparty.McVersion;
 import me.devnatan.inventoryframework.runtime.thirdparty.ReflectionUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -114,7 +115,7 @@ class AnvilInputNMS {
             SET_PLAYER_ACTIVE_CONTAINER.invoke(entityPlayer, anvilContainer);
             CONTAINER_WINDOW_ID.invoke(anvilContainer, windowId);
 
-            if (ReflectionUtils.supports(19)) {
+            if (McVersion.supports(19)) {
                 INIT_MENU.invoke(entityPlayer, anvilContainer);
             } else {
                 ADD_CONTAINER_SLOT_LISTENER.invoke(anvilContainer, player);
