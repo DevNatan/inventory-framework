@@ -10,14 +10,15 @@ fun Project.configureMavenPublish() {
     plugins.apply("maven-publish")
     plugins.apply("signing")
 
-    val isReleaseVersion = !project.version.toString().endsWith("SNAPSHOT")
+    val publicationVersion = project.version.toString() + "-SNAPSHOT"
+    val isReleaseVersion = !publicationVersion.endsWith("SNAPSHOT")
 
     configure<PublishingExtension> {
         publications {
             create<MavenPublication>("javaOSSRH") {
                 groupId = rootProject.group.toString()
                 artifactId = project.name
-                version = rootProject.version.toString()
+                version = publicationVersion
                 from(components.named("java").get())
 
                 pom {
