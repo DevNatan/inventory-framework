@@ -53,9 +53,9 @@ fun Project.configureMavenPublish() {
                 name = "OSSRH"
                 url = uri(
                     if (isReleaseVersion)
-                        "https://central.sonatype.com/repository/maven-snapshots/"
-                    else
                         "https://ossrh-staging-api.central.sonatype.com/service/local/"
+                    else
+                        "https://central.sonatype.com/repository/maven-snapshots/"
                 )
                 credentials {
                     username = findProperty("ossrh.username") as String? ?: System.getenv("OSSRH_USERNAME")
