@@ -3,12 +3,9 @@ import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.create
-import org.gradle.kotlin.dsl.the
-import org.gradle.plugins.signing.SigningExtension
 
 fun Project.configureMavenPublish() {
     plugins.apply("maven-publish")
-    plugins.apply("signing")
 
     val publicationVersion = project.version.toString() + "-SNAPSHOT"
     val isReleaseVersion = !publicationVersion.endsWith("SNAPSHOT")
@@ -64,15 +61,5 @@ fun Project.configureMavenPublish() {
                 }
             }
         }
-    }
-
-    configure<SigningExtension> {
-        isRequired = isReleaseVersion && gradle.taskGraph.hasTask("publish")
-        useInMemoryPgpKeys(
-            findProperty("signing.keyId") as String? ?: System.getenv("OSSRH_SIGNING_KEY"),
-            findProperty("signing.password") as String? ?: System.getenv("OSSRH_SIGNING_PASSWORD")
-        )
-
-        sign(the<PublishingExtension>().publications.named("javaOSSRH").get())
     }
 }
