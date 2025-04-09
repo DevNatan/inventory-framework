@@ -98,10 +98,10 @@ abstract class SlotContext
         }
 
         override fun updateState(
-            id: Long,
+            state: State<*>,
             value: Any,
         ) {
-            getParent().updateState(id, value)
+            getParent().updateState(state, value)
         }
 
         override fun watchState(

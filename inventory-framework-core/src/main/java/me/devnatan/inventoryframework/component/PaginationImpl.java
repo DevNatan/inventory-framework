@@ -438,7 +438,7 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
      */
     private void simulateStateUpdate() {
         debug("[Pagination] State update simulation triggered on %d", getState().internalId());
-        host.updateState(getState().internalId(), this);
+        host.updateState(getState(), this);
     }
 
     @Override
