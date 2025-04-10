@@ -60,13 +60,13 @@ public class DefaultStateValueHost implements StateValueHost {
     }
 
     @Override
-    public void updateState(long id, Object value) {
-        final StateValue stateValue = getUninitializedStateValue(id);
+    public void updateState(State<?> state, Object value) {
+        final StateValue stateValue = getInternalStateValue(state);
         final Object oldValue = stateValue.get();
         stateValue.set(value);
 
         final Object newValue = stateValue.get();
-        IFDebug.debug("State %s updated (oldValue = %s, newValue = %s)", id, oldValue, newValue);
+        IFDebug.debug("State %s updated (oldValue = %s, newValue = %s)", state.internalId(), oldValue, newValue);
         callListeners(stateValue, listener -> listener.stateValueSet(this, stateValue, oldValue, newValue));
     }
 

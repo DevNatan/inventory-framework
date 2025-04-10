@@ -16,6 +16,6 @@ public final class MutableGenericStateImpl<T> extends BaseState<T> implements Mu
 
     @Override
     public void set(T value, @NotNull StateValueHost host) {
-        host.updateState(internalId(), value);
+        host.updateState(this, value);
     }
 }

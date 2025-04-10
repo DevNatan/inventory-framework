@@ -128,8 +128,8 @@ public abstract class SlotContext extends PlatformContext implements IFSlotConte
     }
 
     @Override
-    public final void updateState(long id, Object value) {
-        getParent().updateState(id, value);
+    public final void updateState(State<?> state, Object value) {
+        getParent().updateState(state, value);
     }
 
     @Override

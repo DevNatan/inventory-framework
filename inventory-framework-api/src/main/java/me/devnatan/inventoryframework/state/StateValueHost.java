@@ -61,11 +61,11 @@ public interface StateValueHost {
      * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
      * this library. No compatibility guarantees are provided.</i></b>
      *
-     * @param id    The state id.
+     * @param state The target state to update.
      * @param value The new state value.
      */
     @ApiStatus.Internal
-    void updateState(long id, Object value);
+    void updateState(State<?> state, Object value);
 
     @ApiStatus.Internal
     void watchState(long id, StateWatcher listener);
