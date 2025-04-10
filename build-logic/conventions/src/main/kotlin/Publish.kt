@@ -8,7 +8,6 @@ fun Project.configureMavenPublish() {
     plugins.apply("maven-publish")
 
     val publicationVersion = project.version.toString() + "-SNAPSHOT"
-    val isReleaseVersion = !publicationVersion.endsWith("SNAPSHOT")
 
     configure<PublishingExtension> {
         publications {
@@ -49,15 +48,10 @@ fun Project.configureMavenPublish() {
         repositories {
             maven {
                 name = "OSSRH"
-                url = uri(
-                    if (isReleaseVersion)
-                        "https://ossrh-staging-api.central.sonatype.com/service/local/"
-                    else
-                        "https://central.sonatype.com/repository/maven-snapshots/"
-                )
+                url = uri("https://central.sonatype.com/api/v1/publisher/maven")
                 credentials {
                     username = findProperty("ossrh.username") as String? ?: System.getenv("OSSRH_USERNAME")
-                    password = findProperty("ossrh.password") as String? ?: System.getenv("OSSRH_PASSWORD")
+                    password = findProperty("ossrh.token") as String? ?: System.getenv("OSSRH_TOKEN")
                 }
             }
         }
