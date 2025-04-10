@@ -30,7 +30,7 @@ jobs:
                   settings-path: ${{ github.workspace }}
 
             - name: Set up Gradle
-              uses: actions/setup-java@v4
+              uses: gradle/actions/setup-gradle@v4
 
             - name: Publish to Maven Central
               run: ./gradlew publishToMavenCentral --stacktrace --no-configuration-cache
