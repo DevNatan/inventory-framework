@@ -4,10 +4,6 @@ plugins {
     alias(libs.plugins.shadowjar)
 }
 
-inventoryFramework {
-    publish = true
-}
-
 dependencies {
     api(projects.inventoryFrameworkPlatform)
     compileOnly(libs.minestom)

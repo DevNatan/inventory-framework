@@ -1,6 +1,6 @@
 plugins {
-    id("me.devnatan.inventoryframework.library")
     alias(libs.plugins.kotlin)
+    id("me.devnatan.inventoryframework.library")
 }
 
 inventoryFramework {

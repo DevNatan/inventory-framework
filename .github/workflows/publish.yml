@@ -5,6 +5,12 @@ on:
     types: [published]
   workflow_dispatch:
 
+env:
+  MAVEN_CENTRAL_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+  MAVEN_CENTRAL_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
+  SIGNING_KEY: ${{ secrets.OSSRH_SIGNING_KEY }}
+  SIGNING_PASSWORD: ${{ secrets.OSSRH_SIGNING_PASSWORD }}
+
 jobs:
     build:
         runs-on: ubuntu-latest
@@ -12,26 +18,26 @@ jobs:
             contents: read
             packages: write
         steps:
-            - uses: actions/checkout@v3
-            - name: Set up JDK
-              uses: actions/setup-java@v3
+            - name: Checkout Application Repository
+              uses: actions/checkout@v4
+
+            - name: Set up JDK 21
+              uses: actions/setup-java@v4
               with:
                   java-version: '21'
                   distribution: 'temurin'
                   server-id: github
                   settings-path: ${{ github.workspace }}
-            - name: Build with Gradle
-              uses: gradle/gradle-build-action@cd3cedc781988c804f626f4cd2dc51d0bdf02a12
-              with:
-                  arguments: build -x check
-            - name: Publish
-              uses: gradle/gradle-build-action@cd3cedc781988c804f626f4cd2dc51d0bdf02a12
-              with:
-                  arguments: publish
+
+            - name: Set up Gradle
+              uses: actions/setup-java@v4
+
+            - name: Publish to Maven Central
+              run: ./gradlew publishToMavenCentral --stacktrace --no-configuration-cache
               env:
                   USERNAME: ${{ github.actor }}
                   TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                  OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-                  OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
-                  OSSRH_SIGNING_KEY: ${{ secrets.OSSRH_SIGNING_KEY }}
-                  OSSRH_SIGNING_PASSWORD: ${{ secrets.OSSRH_SIGNING_PASSWORD }}
+                  MAVEN_CENTRAL_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+                  MAVEN_CENTRAL_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
+                  SIGNING_KEY: ${{ secrets.OSSRH_SIGNING_KEY }}
+                  SIGNING_PASSWORD: ${{ secrets.OSSRH_SIGNING_PASSWORD }}

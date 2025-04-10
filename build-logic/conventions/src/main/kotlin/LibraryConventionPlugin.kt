@@ -9,7 +9,6 @@ import org.gradle.external.javadoc.JavadocMemberLevel
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.getByType
-import org.gradle.kotlin.dsl.kotlin
 import org.gradle.kotlin.dsl.withType
 
 class LibraryConventionPlugin : Plugin<Project> {
@@ -25,7 +24,8 @@ class LibraryConventionPlugin : Plugin<Project> {
         val extension = project.extensions.create<InventoryFrameworkExtension>("inventoryFramework")
         project.afterEvaluate {
             if (extension.publish.get()) {
-                configureMavenPublish()
+                plugins.apply("com.vanniktech.maven.publish.base")
+                configureInventoryFrameworkPublication()
             }
         }
     }
