@@ -21,6 +21,8 @@
  */
 package me.devnatan.inventoryframework.runtime.thirdparty;
 
+import static me.devnatan.inventoryframework.runtime.thirdparty.McVersion.supports;
+
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
@@ -99,7 +101,7 @@ public final class ReflectionUtils {
      * The raw minor version number.
      * E.g. {@code v1_17_R1} to {@code 17}
      *
-     * @see #supports(int)
+     * @see McVersion#supports(int)
      * @since 4.0.0
      */
     public static final int MINOR_NUMBER = McVersion.current().getMinor();
@@ -147,36 +149,39 @@ public final class ReflectionUtils {
      * <p>
      * This is also where the famous player {@code ping} field comes from!
      */
-    private static final MethodHandle GET_HANDLE;
+    public static final MethodHandle GET_HANDLE;
     /**
      * Sends a packet to the player's client through a {@code NetworkManager} which
      * is where {@code ProtocolLib} controls packets by injecting channels!
      */
     private static final MethodHandle SEND_PACKET;
 
+    /**
+     * The class for the NMS CraftPlayer.
+     */
+    public static final Class<?> CRAFT_PLAYER;
+
+    /**
+     * The class for the NMS EntityPlayer.
+     */
+    public static final Class<?> ENTITY_PLAYER;
+
     static {
-        Class<?> entityPlayer = getNMSClass("server.level", "EntityPlayer");
-        Class<?> craftPlayer = getCraftClass("entity.CraftPlayer");
+        ENTITY_PLAYER = getNMSClass("server.level", "EntityPlayer");
+        CRAFT_PLAYER = getCraftClass("entity.CraftPlayer");
         Class<?> playerConnection = getNMSClass("server.network", "PlayerConnection");
 
         MethodHandles.Lookup lookup = MethodHandles.lookup();
         MethodHandle sendPacket = null, getHandle = null, connection = null;
 
         try {
-            if (McVersion.current().equals(McVersion.v1_21_3))
-                connection = lookup.findGetter(entityPlayer, "f", playerConnection);
-            else
-                connection = lookup.findGetter(
-                        entityPlayer, v(20, "c").v(17, "b").orElse("playerConnection"), playerConnection);
+            connection = lookup.findGetter(
+                    ENTITY_PLAYER, v(21, 3, "f").v(20, "c").v(17, "b").orElse("playerConnection"), playerConnection);
 
-            getHandle = lookup.findVirtual(craftPlayer, "getHandle", MethodType.methodType(entityPlayer));
+            getHandle = lookup.findVirtual(CRAFT_PLAYER, "getHandle", MethodType.methodType(ENTITY_PLAYER));
 
-            final VersionHandler<String> methodVersion;
-
-            if (McVersion.current().getMinor() == 21) methodVersion = v(21, "send");
-            // MC 1.20.2 obfuscated sendPacket is "b"
-            else if (supportsMC1202()) methodVersion = v(20, "b");
-            else methodVersion = v(18, "a");
+            final VersionHandler<String> methodVersion =
+                    v(21, "send").v(20, "b").v(18, "a");
 
             sendPacket = lookup.findVirtual(
                     playerConnection,
@@ -201,22 +206,20 @@ public final class ReflectionUtils {
      * This method is purely for readability.
      * No performance is gained.
      *
-     * @since 5.0.0
+     * @since 3.3.0
      */
-    public static <T> VersionHandler<T> v(int version, T handle) {
-        return new VersionHandler<>(version, handle);
+    public static <T> VersionHandler<T> v(int minor, int patch, T handle) {
+        return new VersionHandler<>(minor, patch, handle);
     }
 
     /**
-     * Checks whether the server version is equal or greater than the given version.
+     * This method is purely for readability.
+     * No performance is gained.
      *
-     * @param minorNumber the version to compare the server version with.
-     * @return true if the version is equal or newer, otherwise false.
-     * @see #MINOR_NUMBER
-     * @since 4.0.0
+     * @since 5.0.0
      */
-    public static boolean supports(int minorNumber) {
-        return MINOR_NUMBER >= minorNumber;
+    public static <T> VersionHandler<T> v(int version, T handle) {
+        return new VersionHandler<>(version, 0, handle);
     }
 
     /**
@@ -289,28 +292,36 @@ public final class ReflectionUtils {
     }
 
     public static final class VersionHandler<T> {
-        private int version;
+        private int minor;
+        private int patch;
         private T handle;
 
-        private VersionHandler(int version, T handle) {
-            if (supports(version)) {
-                this.version = version;
+        private VersionHandler(int minor, int patch, T handle) {
+            if (supports(minor)) {
+                this.minor = minor;
+                this.patch = patch;
                 this.handle = handle;
             }
         }
 
         public VersionHandler<T> v(int version, T handle) {
-            if (version == this.version)
-                throw new IllegalArgumentException("Cannot have duplicate version handles for version: " + version);
-            if (version > this.version && supports(version)) {
-                this.version = version;
+            return v(minor, version, handle);
+        }
+
+        public VersionHandler<T> v(int minor, int patch, T handle) {
+            if (minor == this.minor && patch == this.patch)
+                throw new IllegalArgumentException(
+                        "Cannot have duplicate version handles for version: 1." + minor + '.' + patch);
+            if (((minor == this.minor && patch > this.patch) || minor > this.minor) && supports(minor, patch)) {
+                this.minor = minor;
+                this.patch = patch;
                 this.handle = handle;
             }
             return this;
         }
 
         public T orElse(T handle) {
-            return this.version == 0 ? handle : this.handle;
+            return this.minor == 0 ? handle : this.handle;
         }
     }
 }
