@@ -160,7 +160,6 @@ public abstract class IFViewFrame<S extends IFViewFrame<S, V>, V extends Platfor
                 .map(player -> view.getElementFactory().createViewer(player, null))
                 .collect(Collectors.toList());
 
-        convertedViewers.forEach(Viewer::close);
         return view.open(convertedViewers, initialData);
     }
 
