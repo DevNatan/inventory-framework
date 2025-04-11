@@ -34,7 +34,7 @@ public final class RenderContext extends PlatformRenderContext<BukkitItemCompone
             @NotNull UUID id,
             @NotNull View root,
             @NotNull ViewConfig config,
-            @NotNull ViewContainer container,
+            ViewContainer container,
             @NotNull Map<String, Viewer> viewers,
             Viewer subject,
             Object initialData) {

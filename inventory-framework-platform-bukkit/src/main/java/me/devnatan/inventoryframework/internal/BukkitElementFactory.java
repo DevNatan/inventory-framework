@@ -78,7 +78,7 @@ public class BukkitElementFactory extends ElementFactory {
             @NotNull UUID id,
             @NotNull RootView root,
             @NotNull ViewConfig config,
-            @NotNull ViewContainer container,
+            ViewContainer container,
             @NotNull Map<String, Viewer> viewers,
             Viewer subject,
             Object initialData) {
