@@ -62,6 +62,8 @@ final class IFInventoryListener implements Listener {
     public void onInventoryClose(final InventoryCloseEvent event) {
         if (!(event.getPlayer() instanceof Player)) return;
 
+        if (!(event.getInventory().getHolder() instanceof IFRenderContext)) return;
+
         final Player player = (Player) event.getPlayer();
         final Viewer viewer = viewFrame.getViewer(player);
         if (viewer == null) return;
