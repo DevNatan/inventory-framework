@@ -10,7 +10,7 @@ jobs:
     - name: Checkout Application Repository
       uses: actions/checkout@v4
       with:
-        fetch-tags: true
+        fetch-depth: 0
 
     - name: Setup Java
       uses: actions/setup-java@v4
@@ -30,7 +30,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-tags: true
+          fetch-depth: 0
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
