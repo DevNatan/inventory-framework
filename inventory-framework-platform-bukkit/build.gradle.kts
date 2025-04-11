@@ -6,6 +6,7 @@ plugins {
 
 inventoryFramework {
     publish = true
+    generateVersionFile = true
 }
 
 dependencies {

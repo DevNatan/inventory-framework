@@ -117,7 +117,7 @@ public final class AnvilInputFeature implements Feature<AnvilInputConfig, Void, 
             final ItemStack ingredientItem = requireNonNull(clickedInventory.getItem(INGREDIENT_SLOT));
             final ItemMeta ingredientMeta = requireNonNull(ingredientItem.getItemMeta());
             ingredientMeta.setDisplayName(text);
-            context.updateState(anvilInput.internalId(), text);
+            context.updateState(anvilInput, text);
             ingredientItem.setItemMeta(ingredientMeta);
 
             if (config.closeOnSelect) {
@@ -189,7 +189,7 @@ public final class AnvilInputFeature implements Feature<AnvilInputConfig, Void, 
             if (item == null || item.getType() == Material.AIR) return;
 
             final String input = requireNonNull(item.getItemMeta()).getDisplayName();
-            context.updateState(anvilInput.internalId(), input);
+            context.updateState(anvilInput, input);
         });
     }
 }

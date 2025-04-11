@@ -132,8 +132,8 @@ public class CloseContext extends PlatformConfinedContext implements IFCloseCont
     }
 
     @Override
-    public final void updateState(long id, Object value) {
-        getParent().updateState(id, value);
+    public final void updateState(State<?> state, Object value) {
+        getParent().updateState(state, value);
     }
 
     @Override
