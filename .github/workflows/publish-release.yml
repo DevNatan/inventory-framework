@@ -1,14 +1,8 @@
-name: Publish package
+name: Publish Release
 
 on:
   push:
     tags: [ 'v*.*.*' ]
-
-env:
-  ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.OSSRH_USERNAME }}
-  ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.OSSRH_TOKEN }}
-  ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.OSSRH_SIGNING_KEY }}
-  ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.OSSRH_SIGNING_PASSWORD }}
 
 jobs:
     build:
@@ -30,12 +24,10 @@ jobs:
             - name: Set up Gradle
               uses: gradle/actions/setup-gradle@v4
 
-            - name: Publish to Maven Central
+            - name: Publish Release to Maven Central
               run: ./gradlew publishAndReleaseToMavenCentral -Pversion=${{ github.ref_name }} --no-daemon --stacktrace --no-configuration-cache
               env:
-                  USERNAME: ${{ github.actor }}
-                  TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                  MAVEN_CENTRAL_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-                  MAVEN_CENTRAL_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
-                  SIGNING_KEY: ${{ secrets.OSSRH_SIGNING_KEY }}
-                  SIGNING_PASSWORD: ${{ secrets.OSSRH_SIGNING_PASSWORD }}
+                  ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.OSSRH_USERNAME }}
+                  ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.OSSRH_TOKEN }}
+                  ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.OSSRH_SIGNING_KEY }}
+                  ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.OSSRH_SIGNING_PASSWORD }}
