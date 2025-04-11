@@ -4,6 +4,7 @@ import java.util.HashMap;
 import me.devnatan.inventoryframework.*;
 import me.devnatan.inventoryframework.context.IFOpenContext;
 import me.devnatan.inventoryframework.context.IFRenderContext;
+import me.devnatan.inventoryframework.context.PlatformRenderContext;
 import me.devnatan.inventoryframework.exception.InvalidLayoutException;
 import me.devnatan.inventoryframework.internal.ElementFactory;
 import org.jetbrains.annotations.NotNull;
@@ -70,18 +71,19 @@ public final class PlatformOpenInterceptor implements PipelineInterceptor<Virtua
 
         final ElementFactory elementFactory = root.getElementFactory();
 
-        ViewContainer createdContainer = openContext.getContainer();
-        if (createdContainer == null) createdContainer = elementFactory.createContainer(openContext);
-
         final IFRenderContext renderContext = elementFactory.createRenderContext(
                 openContext.getId(),
                 root,
                 openContext.getConfig(),
-                createdContainer,
+                null,
                 new HashMap<>(),
                 openContext.isShared() ? null : openContext.getViewer(),
                 openContext.getInitialData());
 
+        ViewContainer createdContainer = openContext.getContainer();
+        if (createdContainer == null) createdContainer = elementFactory.createContainer(renderContext);
+
+        ((PlatformRenderContext) renderContext).setContainer(createdContainer);
         renderContext.setEndless(openContext.isEndless());
         openContext.getStateValues().forEach(renderContext::initializeState);
 

@@ -37,7 +37,7 @@ public abstract class PlatformRenderContext<T extends ItemComponentBuilder<T, C>
     private final Viewer subject;
 
     // --- Inherited ---
-    private final ViewContainer container;
+    private ViewContainer container;
     private boolean rendered;
 
     // --- Properties ---
@@ -49,7 +49,7 @@ public abstract class PlatformRenderContext<T extends ItemComponentBuilder<T, C>
             @NotNull UUID id,
             @NotNull PlatformView root,
             @NotNull ViewConfig config,
-            @NotNull ViewContainer container,
+            ViewContainer container,
             @NotNull Map<String, Viewer> viewers,
             Viewer subject,
             Object initialData) {
@@ -231,6 +231,11 @@ public abstract class PlatformRenderContext<T extends ItemComponentBuilder<T, C>
     @Override
     public final @NotNull ViewContainer getContainer() {
         return container;
+    }
+
+    @ApiStatus.Internal
+    public void setContainer(ViewContainer container) {
+        this.container = container;
     }
 
     @Override

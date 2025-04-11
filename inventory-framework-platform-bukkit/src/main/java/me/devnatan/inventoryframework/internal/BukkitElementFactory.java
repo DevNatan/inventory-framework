@@ -31,7 +31,6 @@ public class BukkitElementFactory extends ElementFactory {
         return new View();
     }
 
-    // TODO Test it
     @Override
     public @NotNull ViewContainer createContainer(@NotNull IFContext context) {
         final ViewConfig config = context.getConfig();
@@ -49,8 +48,7 @@ public class BukkitElementFactory extends ElementFactory {
                     finalType.getMaxSize(),
                     context.getRoot().getClass().getName()));
 
-        final InventoryHolder holder =
-                context.getRoot() instanceof InventoryHolder ? (InventoryHolder) context.getRoot() : null;
+        final InventoryHolder holder = context instanceof InventoryHolder ? (InventoryHolder) context : null;
         final Inventory inventory =
                 InventoryFactory.current().createInventory(holder, finalType, size, config.getTitle());
 
@@ -80,7 +78,7 @@ public class BukkitElementFactory extends ElementFactory {
             @NotNull UUID id,
             @NotNull RootView root,
             @NotNull ViewConfig config,
-            @NotNull ViewContainer container,
+            ViewContainer container,
             @NotNull Map<String, Viewer> viewers,
             Viewer subject,
             Object initialData) {
