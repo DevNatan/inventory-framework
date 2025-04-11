@@ -9,6 +9,8 @@ jobs:
     steps:
     - name: Checkout Application Repository
       uses: actions/checkout@v4
+      with:
+        fetch-tags: true
 
     - name: Setup Java
       uses: actions/setup-java@v4
@@ -27,6 +29,8 @@ jobs:
       - build
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-tags: true
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
