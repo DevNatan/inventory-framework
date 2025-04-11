@@ -5,10 +5,10 @@ on:
     tags: [ 'v*.*.*' ]
 
 env:
-  MAVEN_CENTRAL_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-  MAVEN_CENTRAL_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
-  SIGNING_KEY: ${{ secrets.OSSRH_SIGNING_KEY }}
-  SIGNING_PASSWORD: ${{ secrets.OSSRH_SIGNING_PASSWORD }}
+  ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.OSSRH_USERNAME }}
+  ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.OSSRH_TOKEN }}
+  ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.OSSRH_SIGNING_KEY }}
+  ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.OSSRH_SIGNING_PASSWORD }}
 
 jobs:
     build:
