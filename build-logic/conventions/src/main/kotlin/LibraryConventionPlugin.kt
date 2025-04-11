@@ -11,7 +11,7 @@ import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.withType
 
-class LibraryConventionPlugin : Plugin<Project> {
+internal class LibraryConventionPlugin : Plugin<Project> {
 
     override fun apply(target: Project) = with(target) {
         group = rootProject.group
@@ -23,8 +23,10 @@ class LibraryConventionPlugin : Plugin<Project> {
 
         val extension = project.extensions.create<InventoryFrameworkExtension>("inventoryFramework")
         project.afterEvaluate {
+            if (extension.generateVersionFile.get())
+                registerGenerateVersionFileTask()
+
             if (extension.publish.get()) {
-                plugins.apply("com.vanniktech.maven.publish.base")
                 configureInventoryFrameworkPublication()
             }
         }
@@ -50,6 +52,7 @@ class LibraryConventionPlugin : Plugin<Project> {
             java {
                 removeUnusedImports()
                 palantirJavaFormat()
+                targetExclude("build/generated/sources/ifversion/**/*.java")
             }
             kotlin {
                 ktfmt().kotlinlangStyle()

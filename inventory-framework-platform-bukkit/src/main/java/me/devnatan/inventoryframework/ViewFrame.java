@@ -13,6 +13,7 @@ import me.devnatan.inventoryframework.feature.Feature;
 import me.devnatan.inventoryframework.feature.FeatureInstaller;
 import me.devnatan.inventoryframework.internal.BukkitElementFactory;
 import me.devnatan.inventoryframework.internal.PlatformUtils;
+import me.devnatan.inventoryframework.runtime.InventoryFramework;
 import me.devnatan.inventoryframework.runtime.thirdparty.Metrics;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -25,7 +26,7 @@ public class ViewFrame extends IFViewFrame<ViewFrame, View> {
 
     private static final String BSTATS_SYSTEM_PROP = "inventory-framework.enable-bstats";
     private static final int BSTATS_PROJECT_ID = 15518;
-    private static final String PLUGIN_FQN = "me.devnatan.inventoryframework.runtime.InventoryFramework";
+    private static final String PLUGIN_FQN = InventoryFramework.class.getName();
 
     private static final String RELOCATION_MESSAGE =
             "Inventory Framework is running as a shaded non-relocated library. It's extremely recommended that "

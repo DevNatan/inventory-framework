@@ -1,9 +1,8 @@
 name: Publish package
 
 on:
-  release:
-    types: [published]
-  workflow_dispatch:
+  push:
+    tags: [ 'v*.*.*' ]
 
 env:
   MAVEN_CENTRAL_USERNAME: ${{ secrets.OSSRH_USERNAME }}
@@ -16,7 +15,6 @@ jobs:
         runs-on: ubuntu-latest
         permissions:
             contents: read
-            packages: write
         steps:
             - name: Checkout Application Repository
               uses: actions/checkout@v4
@@ -33,7 +31,7 @@ jobs:
               uses: gradle/actions/setup-gradle@v4
 
             - name: Publish to Maven Central
-              run: ./gradlew publishAndReleaseToMavenCentral --no-daemon --stacktrace --no-configuration-cache
+              run: ./gradlew publishAndReleaseToMavenCentral -Pversion=${{ github.ref_name }} --no-daemon --stacktrace --no-configuration-cache
               env:
                   USERNAME: ${{ github.actor }}
                   TOKEN: ${{ secrets.GITHUB_TOKEN }}
