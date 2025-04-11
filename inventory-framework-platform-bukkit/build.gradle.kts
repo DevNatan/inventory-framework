@@ -1,6 +1,3 @@
-import com.vanniktech.maven.publish.JavaLibrary
-import com.vanniktech.maven.publish.JavadocJar
-
 plugins {
     id("me.devnatan.inventoryframework.library")
     alias(libs.plugins.shadowjar)
@@ -9,6 +6,7 @@ plugins {
 
 inventoryFramework {
     publish = true
+    generateVersionFile = true
 }
 
 dependencies {
