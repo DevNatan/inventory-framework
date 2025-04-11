@@ -270,15 +270,6 @@ class ViewFrame private constructor(
 
     companion object {
         private const val BSTATS_SYSTEM_PROP = "inventory-framework.enable-bstats"
-        private const val BSTATS_PROJECT_ID = 15518
-        private const val PLUGIN_FQN = "me.devnatan.inventoryframework.runtime.InventoryFramework"
-
-        private const val RELOCATION_MESSAGE =
-            (
-                "Inventory Framework is running as a shaded non-relocated library. It's extremely recommended that " +
-                    "you relocate the library package. Learn more about on docs: " +
-                    "https://github.com/DevNatan/inventory-framework/wiki/Installation#preventing-library-conflicts"
-            )
 
         init {
             PlatformUtils.setFactory(MinestomElementFactory())
