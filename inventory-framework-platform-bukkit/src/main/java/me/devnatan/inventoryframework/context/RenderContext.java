@@ -13,12 +13,15 @@ import me.devnatan.inventoryframework.ViewContainer;
 import me.devnatan.inventoryframework.Viewer;
 import me.devnatan.inventoryframework.component.BukkitItemComponentBuilder;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public final class RenderContext extends PlatformRenderContext<BukkitItemComponentBuilder, Context> implements Context {
+public final class RenderContext extends PlatformRenderContext<BukkitItemComponentBuilder, Context>
+        implements Context, InventoryHolder {
 
     private final Player player;
 
@@ -162,5 +165,10 @@ public final class RenderContext extends PlatformRenderContext<BukkitItemCompone
     @Override
     public String toString() {
         return "RenderContext{" + "player=" + player + "} " + super.toString();
+    }
+
+    @Override
+    public @NotNull Inventory getInventory() {
+        return ((BukkitViewContainer) getContainerOrThrow()).getInventory();
     }
 }
