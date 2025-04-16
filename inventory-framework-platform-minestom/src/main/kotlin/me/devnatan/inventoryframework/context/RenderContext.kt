@@ -20,7 +20,7 @@ class RenderContext
         id: UUID,
         root: View,
         config: ViewConfig,
-        container: ViewContainer,
+        container: ViewContainer?,
         viewers: Map<String, Viewer>,
         subject: Viewer,
         initialData: Any?,
