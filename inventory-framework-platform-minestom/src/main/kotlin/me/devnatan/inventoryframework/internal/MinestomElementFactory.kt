@@ -129,7 +129,7 @@ class MinestomElementFactory : ElementFactory() {
         id: UUID,
         root: RootView,
         config: ViewConfig,
-        container: ViewContainer,
+        container: ViewContainer?,
         viewers: Map<String, Viewer>,
         subject: Viewer,
         initialData: Any?,
