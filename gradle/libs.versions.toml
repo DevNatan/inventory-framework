@@ -1,7 +1,7 @@
 [versions]
 jetbrains-annotations = "26.0.2"
 # Do not update Spigot/Paper to 1.21, InventoryView changed from class to interface type
-# Dynamic Title Update feature will throw a a IncompatibleClassChangeError due to that change
+# Dynamic Title Update feature throws IncompatibleClassChangeError due to that
 # Feel free to implement a workaround on InventoryUpdate.java if u need to use a 1.21+ specific API
 spigot = "1.20.6-R0.1-SNAPSHOT"
 paperSpigot = "1.20.6-R0.1-SNAPSHOT"
