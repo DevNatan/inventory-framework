@@ -39,13 +39,7 @@ import me.devnatan.inventoryframework.pipeline.ScheduledUpdateStopInterceptor;
 import me.devnatan.inventoryframework.pipeline.StandardPipelinePhases;
 import me.devnatan.inventoryframework.pipeline.UpdateInterceptor;
 import me.devnatan.inventoryframework.pipeline.ViewerLastInteractionTrackerInterceptor;
-import me.devnatan.inventoryframework.state.InitialDataStateValue;
-import me.devnatan.inventoryframework.state.MutableIntState;
-import me.devnatan.inventoryframework.state.MutableState;
-import me.devnatan.inventoryframework.state.State;
-import me.devnatan.inventoryframework.state.StateAccess;
-import me.devnatan.inventoryframework.state.StateAccessImpl;
-import me.devnatan.inventoryframework.state.StateValue;
+import me.devnatan.inventoryframework.state.*;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -764,6 +758,12 @@ public abstract class PlatformView<
             @NotNull Function<TContext, CompletableFuture<List<T>>> sourceProvider) {
         requireNotInitialized();
         return stateAccess.buildLazyAsyncPaginationState(sourceProvider);
+    }
+
+    @Override
+    public TimerState timerState(long intervalInTicks) {
+        requireNotInitialized();
+        return stateAccess.timerState(intervalInTicks);
     }
     // endregion
 }
