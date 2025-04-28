@@ -4,7 +4,7 @@ jetbrains-annotations = "26.0.2"
 # Dynamic Title Update feature throws IncompatibleClassChangeError due to that
 # Feel free to implement a workaround on InventoryUpdate.java if u need to use a 1.21+ specific API
 spigot = "1.20.6-R0.1-SNAPSHOT"
-paperSpigot = "1.20.6-R0.1-SNAPSHOT"
+paperSpigot = "1.21.5-R0.1-SNAPSHOT"
 junit = "5.12.2"
 mockito = "4.11.0"
 adventure-api = "4.19.0"
