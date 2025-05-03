@@ -174,6 +174,19 @@ public interface StateAccess<
     <T> MutableState<T> initialState(@NotNull String key);
 
     /**
+     * Creates a new unmodifiable timer state.
+     *
+     * @param intervalInTicks Ticks to schedule the timer to run.
+     * <p>
+     * <b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     *
+     * @return A new unmodifiable timer state.
+     */
+    @ApiStatus.Experimental
+    TimerState timerState(long intervalInTicks);
+
+    /**
      * Creates a new immutable pagination with static data source.
      *
      * @param sourceProvider The data source for pagination.
