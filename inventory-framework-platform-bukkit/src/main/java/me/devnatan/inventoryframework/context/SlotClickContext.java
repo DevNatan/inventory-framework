@@ -128,7 +128,6 @@ public class SlotClickContext extends SlotContext implements IFSlotClickContext 
     }
 
     @Override
-    @NotNull
     public final String getClickIdentifier() {
         return getClickOrigin().getClick().name();
     }
