@@ -1,6 +1,7 @@
 package me.devnatan.inventoryframework.pipeline;
 
 import java.util.List;
+import me.devnatan.inventoryframework.IFDebug;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.VisibleForTesting;
 
@@ -40,6 +41,9 @@ public class PipelineContext<S> {
             final PipelineInterceptor<S> nextInterceptor = safeInterceptors.get(pointer);
             index = pointer + 1;
 
+            IFDebug.debug(
+                    "Interception loop #%d: %s",
+                    index, nextInterceptor.getClass().getName());
             nextInterceptor.intercept(this, subject);
         } while (true);
     }
