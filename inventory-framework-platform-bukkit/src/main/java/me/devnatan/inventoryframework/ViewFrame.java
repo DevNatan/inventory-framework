@@ -5,7 +5,9 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.function.UnaryOperator;
+import java.util.stream.Collectors;
 import me.devnatan.inventoryframework.context.EndlessContextInfo;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.feature.DefaultFeatureInstaller;
@@ -108,7 +110,11 @@ public class ViewFrame extends IFViewFrame<ViewFrame, View> {
             @NotNull Class<? extends View> viewClass,
             @NotNull Collection<? extends Player> players,
             Object initialData) {
-        return internalOpen(viewClass, players, initialData);
+        return internalOpen(
+                viewClass,
+                players.stream()
+                        .collect(Collectors.toMap(player -> player.getUniqueId().toString(), Function.identity())),
+                initialData);
     }
 
     /**
