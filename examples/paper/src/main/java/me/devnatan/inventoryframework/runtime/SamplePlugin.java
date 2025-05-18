@@ -21,6 +21,6 @@ public class SamplePlugin extends JavaPlugin {
                 .register();
 
         getCommand("ifexample").setExecutor(new IFExampleCommandExecutor(viewFrame));
-		getServer().getPluginManager().registerEvents(new PigListener(viewFrame), this);
-	}
+        getServer().getPluginManager().registerEvents(new PigListener(viewFrame), this);
+    }
 }
