@@ -111,7 +111,7 @@ public final class BukkitViewContainer implements ViewContainer {
         try {
             return inventory.getItem(slot) != null;
         } catch (final ArrayIndexOutOfBoundsException ignored) {
-            // just supress AIOOBE here, we cannot check if it matches container constraints
+            // just supress AIOOBE here, we cannot check if slot matches container constraints
             // by `size >= 0 && size <= getLastSlot()` because some containers are not aligned
             // "aligned" mean inventory types that are a perfect grid like chest NxN
             return false;
