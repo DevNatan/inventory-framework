@@ -10,7 +10,7 @@ mockito = "4.11.0"
 adventure-api = "4.21.0"
 kotlin = "2.1.0"
 plugin-shadowjar = "8.3.6"
-plugin-spotless = "7.0.3"
+plugin-spotless = "7.0.4"
 plugin-bukkit = "0.7.1"
 minestom = "87f6524aeb"
 
