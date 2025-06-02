@@ -6,7 +6,7 @@ import me.devnatan.inventoryframework.View
 import me.devnatan.inventoryframework.ViewConfig
 import me.devnatan.inventoryframework.ViewContainer
 import me.devnatan.inventoryframework.Viewer
-import me.devnatan.inventoryframework.component.MinestomIemComponentBuilder
+import me.devnatan.inventoryframework.component.MinestomItemComponentBuilder
 import net.kyori.adventure.text.Component
 import net.minestom.server.entity.Player
 import net.minestom.server.item.ItemStack
@@ -24,7 +24,7 @@ class RenderContext
         viewers: Map<String, Viewer>,
         subject: Viewer,
         initialData: Any?,
-    ) : PlatformRenderContext<MinestomIemComponentBuilder, Context>(
+    ) : PlatformRenderContext<MinestomItemComponentBuilder, Context>(
             id,
             root,
             config,
@@ -65,7 +65,7 @@ class RenderContext
         fun slot(
             slot: Int,
             item: ItemStack,
-        ): MinestomIemComponentBuilder = slot(slot).withItem(item)
+        ): MinestomItemComponentBuilder = slot(slot).withItem(item)
 
         /**
          * Adds an item at the specific column and ROW (X, Y) in that context's container.
@@ -78,7 +78,7 @@ class RenderContext
             row: Int,
             column: Int,
             item: ItemStack?,
-        ): MinestomIemComponentBuilder = slot(row, column).withItem(item)
+        ): MinestomItemComponentBuilder = slot(row, column).withItem(item)
 
         /**
          * Sets an item in the first slot of this context's container.
@@ -86,7 +86,7 @@ class RenderContext
          * @param item The item that'll be set.
          * @return An item builder to configure the item.
          */
-        fun firstSlot(item: ItemStack?): MinestomIemComponentBuilder = firstSlot().withItem(item)
+        fun firstSlot(item: ItemStack?): MinestomItemComponentBuilder = firstSlot().withItem(item)
 
         /**
          * Sets an item in the last slot of this context's container.
@@ -94,7 +94,7 @@ class RenderContext
          * @param item The item that'll be set.
          * @return An item builder to configure the item.
          */
-        fun lastSlot(item: ItemStack?): MinestomIemComponentBuilder = lastSlot().withItem(item)
+        fun lastSlot(item: ItemStack?): MinestomItemComponentBuilder = lastSlot().withItem(item)
 
         /**
          * Adds an item in the next available slot of this context's container.
@@ -102,7 +102,7 @@ class RenderContext
          * @param item The item that'll be added.
          * @return An item builder to configure the item.
          */
-        fun availableSlot(item: ItemStack?): MinestomIemComponentBuilder = availableSlot().withItem(item)
+        fun availableSlot(item: ItemStack?): MinestomItemComponentBuilder = availableSlot().withItem(item)
 
         /**
          * Defines the item that will represent a character provided in the context layout.
@@ -114,16 +114,16 @@ class RenderContext
         fun layoutSlot(
             character: Char,
             item: ItemStack?,
-        ): MinestomIemComponentBuilder = layoutSlot(character).withItem(item)
+        ): MinestomItemComponentBuilder = layoutSlot(character).withItem(item)
 
         /**
          * *** This API is experimental and is not subject to the general compatibility guarantees such
          * API may be changed or may be removed completely in any further release. ***
          */
         @ApiStatus.Experimental
-        fun resultSlot(item: ItemStack?): MinestomIemComponentBuilder = resultSlot().withItem(item)
+        fun resultSlot(item: ItemStack?): MinestomItemComponentBuilder = resultSlot().withItem(item)
 
-        override fun createBuilder(): MinestomIemComponentBuilder = MinestomIemComponentBuilder(this)
+        override fun createBuilder(): MinestomItemComponentBuilder = MinestomItemComponentBuilder(this)
 
         override fun equals(other: Any?): Boolean {
             if (this === other) return true

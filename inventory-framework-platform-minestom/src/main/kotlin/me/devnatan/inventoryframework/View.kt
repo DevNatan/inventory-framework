@@ -1,6 +1,6 @@
 package me.devnatan.inventoryframework
 
-import me.devnatan.inventoryframework.component.MinestomIemComponentBuilder
+import me.devnatan.inventoryframework.component.MinestomItemComponentBuilder
 import me.devnatan.inventoryframework.context.CloseContext
 import me.devnatan.inventoryframework.context.Context
 import me.devnatan.inventoryframework.context.OpenContext
@@ -22,7 +22,7 @@ open class View :
     PlatformView<
         ViewFrame,
         Player,
-        MinestomIemComponentBuilder,
+        MinestomItemComponentBuilder,
         Context,
         OpenContext,
         CloseContext,
