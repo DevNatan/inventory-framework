@@ -1,6 +1,6 @@
 package me.devnatan.inventoryframework
 
-import me.devnatan.inventoryframework.component.MinestomIemComponentBuilder
+import me.devnatan.inventoryframework.component.MinestomItemComponentBuilder
 import me.devnatan.inventoryframework.context.CloseContext
 import me.devnatan.inventoryframework.context.Context
 import me.devnatan.inventoryframework.context.OpenContext
@@ -16,13 +16,13 @@ import net.minestom.server.MinecraftServer
 import net.minestom.server.entity.Player
 import org.jetbrains.annotations.ApiStatus.OverrideOnly
 
-/** Bukkit platform [PlatformView] implementation. */
+/** Minestom platform [PlatformView] implementation. */
 @OverrideOnly
 open class View :
     PlatformView<
         ViewFrame,
         Player,
-        MinestomIemComponentBuilder,
+        MinestomItemComponentBuilder,
         Context,
         OpenContext,
         CloseContext,
