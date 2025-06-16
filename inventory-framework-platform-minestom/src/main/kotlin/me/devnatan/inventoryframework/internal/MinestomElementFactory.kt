@@ -11,7 +11,7 @@ import me.devnatan.inventoryframework.Viewer
 import me.devnatan.inventoryframework.VirtualView
 import me.devnatan.inventoryframework.component.Component
 import me.devnatan.inventoryframework.component.ComponentBuilder
-import me.devnatan.inventoryframework.component.MinestomIemComponentBuilder
+import me.devnatan.inventoryframework.component.MinestomItemComponentBuilder
 import me.devnatan.inventoryframework.context.CloseContext
 import me.devnatan.inventoryframework.context.Context
 import me.devnatan.inventoryframework.context.IFCloseContext
@@ -166,7 +166,7 @@ class MinestomElementFactory : ElementFactory() {
         parent: IFRenderContext,
     ): IFCloseContext = CloseContext(viewer, parent)
 
-    override fun createComponentBuilder(root: VirtualView): ComponentBuilder<*, Context> = MinestomIemComponentBuilder(root)
+    override fun createComponentBuilder(root: VirtualView): ComponentBuilder<*, Context> = MinestomItemComponentBuilder(root)
 
     override fun worksInCurrentPlatform(): Boolean = true
 
