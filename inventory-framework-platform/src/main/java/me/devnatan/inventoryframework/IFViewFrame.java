@@ -1,11 +1,6 @@
 package me.devnatan.inventoryframework;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import me.devnatan.inventoryframework.context.EndlessContextInfo;
@@ -154,11 +149,15 @@ public abstract class IFViewFrame<S extends IFViewFrame<S, V>, V extends Platfor
      * @return The id of the newly created {@link IFContext}.
      */
     protected final String internalOpen(
-            @NotNull Class<? extends V> viewClass, @NotNull Collection<?> viewers, Object initialData) {
+            @NotNull Class<? extends V> viewClass, @NotNull Map<String, ?> viewers, Object initialData) {
         final V view = getRegisteredViewByType(viewClass);
-        final List<Viewer> convertedViewers = viewers.stream()
-                .map(player -> view.getElementFactory().createViewer(player, null))
-                .collect(Collectors.toList());
+        final List<Viewer> convertedViewers = viewers.values().stream()
+                .map(o -> view.getElementFactory().createViewer(o, null))
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        convertedViewers.removeIf(viewer -> viewerById.containsKey(viewer.getId()));
+
+        if (convertedViewers.isEmpty()) return null;
 
         return view.open(convertedViewers, initialData);
     }

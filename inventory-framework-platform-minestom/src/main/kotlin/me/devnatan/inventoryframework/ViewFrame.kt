@@ -82,7 +82,7 @@ class ViewFrame private constructor(
         viewClass: Class<out View>,
         players: Collection<Player>,
         initialData: Any?,
-    ): String = internalOpen(viewClass, players, initialData)
+    ): String = internalOpen(viewClass, players.associateBy { it.uuid.toString() }, initialData)
 
     /**
      * Opens an already active context to a player.
