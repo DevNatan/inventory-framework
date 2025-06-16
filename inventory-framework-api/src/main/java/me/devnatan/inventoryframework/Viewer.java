@@ -40,7 +40,6 @@ public interface Viewer {
      * this library. No compatibility guarantees are provided. </i></b>
      */
     @ApiStatus.Internal
-    @NotNull
     IFRenderContext getActiveContext();
 
     /**
