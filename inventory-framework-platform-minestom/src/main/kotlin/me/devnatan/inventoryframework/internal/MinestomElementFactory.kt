@@ -79,9 +79,7 @@ class MinestomElementFactory : ElementFactory() {
                 ViewType.FURNACE -> InventoryType.FURNACE
                 ViewType.ANVIL -> InventoryType.ANVIL
                 ViewType.CRAFTING_TABLE -> InventoryType.CRAFTING
-                ViewType.DROPPER,
-                ViewType.DROPPER,
-                -> InventoryType.WINDOW_3X3
+                ViewType.DROPPER -> InventoryType.WINDOW_3X3
                 ViewType.BREWING_STAND -> InventoryType.BREWING_STAND
                 ViewType.SHULKER_BOX -> InventoryType.SHULKER_BOX
                 else -> error("Unsupported type: $finalType")
