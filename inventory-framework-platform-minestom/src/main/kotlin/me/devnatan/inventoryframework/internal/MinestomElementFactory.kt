@@ -26,6 +26,7 @@ import me.devnatan.inventoryframework.context.SlotClickContext
 import me.devnatan.inventoryframework.context.SlotRenderContext
 import me.devnatan.inventoryframework.logging.Logger
 import me.devnatan.inventoryframework.logging.NoopLogger
+import net.kyori.adventure.text.Component.text
 import net.minestom.server.entity.Player
 import net.minestom.server.event.inventory.InventoryPreClickEvent
 import net.minestom.server.inventory.Inventory
@@ -88,8 +89,11 @@ class MinestomElementFactory : ElementFactory() {
         val inventory =
             Inventory(
                 type,
-                net.kyori.adventure.text.Component
-                    .empty(),
+                when (val title = config.title) {
+                    is net.kyori.adventure.text.Component -> title
+                    null -> net.kyori.adventure.text.Component.empty()
+                    else -> text(title.toString())
+                }
             )
         return MinestomViewContainer(inventory, false, finalType, false)
     }
