@@ -5,11 +5,11 @@ jetbrains-annotations = "26.0.2"
 # Feel free to implement a workaround on InventoryUpdate.java if u need to use a 1.21+ specific API
 spigot = "1.20.6-R0.1-SNAPSHOT"
 paperSpigot = "1.20.6-R0.1-SNAPSHOT"
-junit = "5.12.2"
+junit = "5.13.1"
 mockito = "4.11.0"
-adventure-api = "4.21.0"
+adventure-api = "4.23.0"
 kotlin = "2.1.0"
-plugin-shadowjar = "8.3.6"
+plugin-shadowjar = "8.3.7"
 plugin-spotless = "7.0.4"
 plugin-bukkit = "0.7.1"
 minestom = "b39badc77b"
@@ -58,4 +58,4 @@ spotless = { id = "com.diffplug.spotless", version.ref = "plugin-spotless" }
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 bukkit = { id = "de.eldoria.plugin-yml.bukkit", version.ref = "plugin-bukkit" }
 run-paper = { id = "xyz.jpenilla.run-paper", version =  "2.3.1" }
-publish = { id = "com.vanniktech.maven.publish.base", version = "0.32.0" }
+publish = { id = "com.vanniktech.maven.publish.base", version = "0.33.0" }
