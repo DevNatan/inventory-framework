@@ -5,7 +5,7 @@ jetbrains-annotations = "26.0.2"
 # Feel free to implement a workaround on InventoryUpdate.java if u need to use a 1.21+ specific API
 spigot = "1.20.6-R0.1-SNAPSHOT"
 paperSpigot = "1.20.6-R0.1-SNAPSHOT"
-junit = "5.13.1"
+junit = "5.13.2"
 mockito = "4.11.0"
 adventure-api = "4.23.0"
 kotlin = "2.1.0"
