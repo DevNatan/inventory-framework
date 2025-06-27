@@ -11,7 +11,7 @@ import me.devnatan.inventoryframework.Viewer
 import me.devnatan.inventoryframework.VirtualView
 import me.devnatan.inventoryframework.component.Component
 import me.devnatan.inventoryframework.component.ComponentBuilder
-import me.devnatan.inventoryframework.component.MinestomIemComponentBuilder
+import me.devnatan.inventoryframework.component.MinestomItemComponentBuilder
 import me.devnatan.inventoryframework.context.CloseContext
 import me.devnatan.inventoryframework.context.Context
 import me.devnatan.inventoryframework.context.IFCloseContext
@@ -26,6 +26,7 @@ import me.devnatan.inventoryframework.context.SlotClickContext
 import me.devnatan.inventoryframework.context.SlotRenderContext
 import me.devnatan.inventoryframework.logging.Logger
 import me.devnatan.inventoryframework.logging.NoopLogger
+import net.kyori.adventure.text.Component.text
 import net.minestom.server.entity.Player
 import net.minestom.server.event.inventory.InventoryPreClickEvent
 import net.minestom.server.inventory.Inventory
@@ -79,9 +80,7 @@ class MinestomElementFactory : ElementFactory() {
                 ViewType.FURNACE -> InventoryType.FURNACE
                 ViewType.ANVIL -> InventoryType.ANVIL
                 ViewType.CRAFTING_TABLE -> InventoryType.CRAFTING
-                ViewType.DROPPER,
-                ViewType.DROPPER,
-                -> InventoryType.WINDOW_3X3
+                ViewType.DROPPER -> InventoryType.WINDOW_3X3
                 ViewType.BREWING_STAND -> InventoryType.BREWING_STAND
                 ViewType.SHULKER_BOX -> InventoryType.SHULKER_BOX
                 else -> error("Unsupported type: $finalType")
@@ -90,8 +89,11 @@ class MinestomElementFactory : ElementFactory() {
         val inventory =
             Inventory(
                 type,
-                net.kyori.adventure.text.Component
-                    .empty(),
+                when (val title = config.title) {
+                    is net.kyori.adventure.text.Component -> title
+                    null -> net.kyori.adventure.text.Component.empty()
+                    else -> text(title.toString())
+                }
             )
         return MinestomViewContainer(inventory, false, finalType, false)
     }
@@ -166,7 +168,7 @@ class MinestomElementFactory : ElementFactory() {
         parent: IFRenderContext,
     ): IFCloseContext = CloseContext(viewer, parent)
 
-    override fun createComponentBuilder(root: VirtualView): ComponentBuilder<*, Context> = MinestomIemComponentBuilder(root)
+    override fun createComponentBuilder(root: VirtualView): ComponentBuilder<*, Context> = MinestomItemComponentBuilder(root)
 
     override fun worksInCurrentPlatform(): Boolean = true
 

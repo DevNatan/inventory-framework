@@ -18,7 +18,7 @@ import java.util.function.Consumer
 import java.util.function.Predicate
 import java.util.function.Supplier
 
-class MinestomIemComponentBuilder
+class MinestomItemComponentBuilder
     private constructor(
         private val root: VirtualView,
         slot: Int,
@@ -34,7 +34,7 @@ class MinestomIemComponentBuilder
         watchingStates: Set<State<*>>,
         isManagedExternally: Boolean,
         displayCondition: Predicate<Context>?,
-    ) : DefaultComponentBuilder<MinestomIemComponentBuilder, Context>(
+    ) : DefaultComponentBuilder<MinestomItemComponentBuilder, Context>(
             reference,
             data,
             cancelOnClick,
@@ -44,7 +44,7 @@ class MinestomIemComponentBuilder
             isManagedExternally,
             displayCondition,
         ),
-        ItemComponentBuilder<MinestomIemComponentBuilder, Context>,
+        ItemComponentBuilder<MinestomItemComponentBuilder, Context>,
         ComponentFactory {
         private var slot: Int
         private var item: ItemStack?
@@ -99,7 +99,7 @@ class MinestomIemComponentBuilder
         override fun isContainedWithin(position: Int): Boolean = position == slot
 
         /** {@inheritDoc} */
-        override fun withSlot(slot: Int): MinestomIemComponentBuilder {
+        override fun withSlot(slot: Int): MinestomItemComponentBuilder {
             this.slot = slot
             return this
         }
@@ -107,7 +107,7 @@ class MinestomIemComponentBuilder
         override fun withSlot(
             row: Int,
             column: Int,
-        ): MinestomIemComponentBuilder {
+        ): MinestomItemComponentBuilder {
             val container: ViewContainer = (root as IFRenderContext).getContainer()
             return withSlot(
                 SlotConverter.convertSlot(
@@ -126,7 +126,7 @@ class MinestomIemComponentBuilder
          * @param item The new fallback item stack.
          * @return This item builder.
          */
-        fun withItem(item: ItemStack?): MinestomIemComponentBuilder {
+        fun withItem(item: ItemStack?): MinestomItemComponentBuilder {
             this.item = item
             return this
         }
@@ -140,7 +140,7 @@ class MinestomIemComponentBuilder
          * @return This item builder.
          */
         @Suppress("UNCHECKED_CAST")
-        fun onRender(renderHandler: Consumer<in SlotRenderContext>?): MinestomIemComponentBuilder {
+        fun onRender(renderHandler: Consumer<in SlotRenderContext>?): MinestomItemComponentBuilder {
             this.renderHandler = renderHandler as? Consumer<in IFSlotRenderContext>
             return this
         }
@@ -153,7 +153,7 @@ class MinestomIemComponentBuilder
          * @param renderFactory The render handler.
          * @return This item builder.
          */
-        fun renderWith(renderFactory: Supplier<ItemStack>): MinestomIemComponentBuilder =
+        fun renderWith(renderFactory: Supplier<ItemStack>): MinestomItemComponentBuilder =
             onRender { render: SlotRenderContext ->
                 render.item = renderFactory.get()
             }
@@ -168,7 +168,7 @@ class MinestomIemComponentBuilder
          * @return This item builder.
          */
         @Suppress("UNCHECKED_CAST")
-        fun onClick(clickHandler: Consumer<in SlotClickContext>?): MinestomIemComponentBuilder {
+        fun onClick(clickHandler: Consumer<in SlotClickContext>?): MinestomItemComponentBuilder {
             this.clickHandler = clickHandler as? Consumer<in IFSlotClickContext>
             return this
         }
@@ -182,7 +182,7 @@ class MinestomIemComponentBuilder
          * @param clickHandler The click handler.
          * @return This item builder.
          */
-        fun onClick(clickHandler: Runnable?): MinestomIemComponentBuilder =
+        fun onClick(clickHandler: Runnable?): MinestomItemComponentBuilder =
             onClick(
                 if (clickHandler == null) {
                     null
@@ -198,7 +198,7 @@ class MinestomIemComponentBuilder
          * @return This item builder.
          */
         @Suppress("UNCHECKED_CAST")
-        fun onUpdate(updateHandler: Consumer<SlotContext>?): MinestomIemComponentBuilder {
+        fun onUpdate(updateHandler: Consumer<SlotContext>?): MinestomItemComponentBuilder {
             this.updateHandler = updateHandler as? Consumer<in IFSlotContext>
             return this
         }
@@ -221,8 +221,8 @@ class MinestomIemComponentBuilder
                 reference,
             )
 
-        override fun copy(): MinestomIemComponentBuilder =
-            MinestomIemComponentBuilder(
+        override fun copy(): MinestomItemComponentBuilder =
+            MinestomItemComponentBuilder(
                 root,
                 slot,
                 item,

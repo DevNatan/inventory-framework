@@ -2,7 +2,7 @@ package me.devnatan.inventoryframework.runtime.view
 
 import me.devnatan.inventoryframework.View
 import me.devnatan.inventoryframework.ViewConfigBuilder
-import me.devnatan.inventoryframework.component.MinestomIemComponentBuilder
+import me.devnatan.inventoryframework.component.MinestomItemComponentBuilder
 import me.devnatan.inventoryframework.component.Pagination
 import me.devnatan.inventoryframework.context.Context
 import me.devnatan.inventoryframework.context.RenderContext
@@ -17,7 +17,7 @@ class SimplePagination : View() {
     private val state: State<Pagination> =
         lazyPaginationState(
             { _ -> getRandomItems(123).toMutableList() },
-            { _: Context, builder: MinestomIemComponentBuilder, index: Int, value: ItemStack ->
+            { _: Context, builder: MinestomItemComponentBuilder, index: Int, value: ItemStack ->
                 builder.withItem(value)
                 builder.onClick { ctx: SlotClickContext ->
                     ctx.player.sendMessage("You clicked on item $index")

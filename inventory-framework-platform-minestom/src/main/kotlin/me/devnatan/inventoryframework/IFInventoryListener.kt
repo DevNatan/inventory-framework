@@ -13,7 +13,7 @@ import net.minestom.server.event.inventory.InventoryPreClickEvent
 import net.minestom.server.event.item.PickupItemEvent
 import net.minestom.server.event.trait.EntityEvent
 import net.minestom.server.inventory.PlayerInventory
-import net.minestom.server.inventory.click.ClickType
+import net.minestom.server.inventory.click.Click
 import kotlin.jvm.optionals.getOrNull
 
 internal class IFInventoryListener(
@@ -38,7 +38,7 @@ internal class IFInventoryListener(
         val player = event.player
         val viewer = viewFrame.getViewer(player) ?: return
 
-        if (event.clickType == ClickType.DROP) {
+        if (event.click is Click.DropSlot) {
             val context: IFContext = viewer.activeContext
             if (!context.config.isOptionSet(ViewConfig.CANCEL_ON_DROP)) return
 
@@ -46,8 +46,8 @@ internal class IFInventoryListener(
             return
         }
         if (
-            event.clickType == ClickType.LEFT_DRAGGING ||
-            event.clickType == ClickType.RIGHT_DRAGGING
+            event.click is Click.LeftDrag ||
+            event.click is Click.RightDrag
         ) {
             val context: IFContext = viewer.activeContext
             if (!context.config.isOptionSet(ViewConfig.CANCEL_ON_DRAG)) return
