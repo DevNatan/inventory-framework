@@ -7,9 +7,14 @@ inventoryFramework {
     publish = true
 }
 
+repositories {
+    maven("https://repo.tcoded.com/releases")
+}
+
 dependencies {
     compileOnly(libs.paperSpigot)
     implementation(projects.inventoryFrameworkPlatformBukkit)
+    implementation(libs.folialib)
 }
 
 java {
