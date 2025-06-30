@@ -176,7 +176,9 @@ public final class ReflectionUtils {
 
         try {
             connection = lookup.findGetter(
-                    ENTITY_PLAYER, v(21, 3, "f").v(20, "c").v(17, "b").orElse("playerConnection"), playerConnection);
+                    ENTITY_PLAYER,
+                    v(21, 3, "f").v(20, "c").v(17, "b").v(21, 6, "g").orElse("playerConnection"),
+                    playerConnection);
 
             getHandle = lookup.findVirtual(CRAFT_PLAYER, "getHandle", MethodType.methodType(ENTITY_PLAYER));
 
