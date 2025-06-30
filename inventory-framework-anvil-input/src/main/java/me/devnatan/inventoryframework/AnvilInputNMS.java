@@ -50,7 +50,6 @@ class AnvilInputNMS {
         try {
             ANVIL = Objects.requireNonNull(
                     getNMSClass("world.inventory", "ContainerAnvil"), "ContainerAnvil NMS class not found");
-            IFDebug.debug(Objects.toString(ANVIL));
 
             final Class<?> playerInventoryClass = getNMSClass("world.entity.player", "PlayerInventory");
 
