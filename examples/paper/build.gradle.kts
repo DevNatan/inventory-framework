@@ -25,7 +25,7 @@ tasks.shadowJar {
 
 tasks.runServer {
     jvmArgs("-Dme.devnatan.inventoryframework.debug=true")
-    minecraftVersion("1.21.4")
+    minecraftVersion("1.21.7")
 }
 
 bukkit {
