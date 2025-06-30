@@ -13,6 +13,7 @@ plugin-shadowjar = "8.3.7"
 plugin-spotless = "7.0.4"
 plugin-bukkit = "0.7.1"
 minestom = "b39badc77b"
+folialib = "0.5.1"
 
 [libraries.spigot]
 module = "org.spigotmc:spigot-api"
@@ -51,6 +52,10 @@ version.ref = "adventure-api"
 [libraries.minestom]
 module = "net.minestom:minestom-snapshots"
 version.ref = "minestom"
+
+[libraries.folialib]
+module = "com.tcoded:FoliaLib"
+version.ref = "folialib"
 
 [plugins]
 shadowjar = { id = "com.gradleup.shadow", version.ref = "plugin-shadowjar" }
