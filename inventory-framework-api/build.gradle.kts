@@ -8,6 +8,7 @@ inventoryFramework {
 }
 
 dependencies {
+    compileOnly(kotlin("stdlib"))
     compileOnly(libs.adventure.api)
 }
 
