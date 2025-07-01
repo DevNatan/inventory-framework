@@ -9,5 +9,6 @@ inventoryFramework {
 
 dependencies {
     compileOnly(libs.spigot)
+    compileOnly(kotlin("stdlib"))
     compileOnlyApi(projects.inventoryFrameworkPlatformBukkit)
 }
