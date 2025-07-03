@@ -1,10 +1,7 @@
 package me.devnatan.inventoryframework.runtime.commands;
 
 import me.devnatan.inventoryframework.ViewFrame;
-import me.devnatan.inventoryframework.runtime.view.AnvilInputSample;
-import me.devnatan.inventoryframework.runtime.view.AutoUpdate;
-import me.devnatan.inventoryframework.runtime.view.Failing;
-import me.devnatan.inventoryframework.runtime.view.SimplePagination;
+import me.devnatan.inventoryframework.runtime.view.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -57,6 +54,11 @@ public class IFExampleCommandExecutor implements CommandExecutor {
 
         if (view.equalsIgnoreCase("auto-update")) {
             viewFrame.open(AutoUpdate.class, player);
+            return true;
+        }
+
+        if (view.equalsIgnoreCase("auto-update-advanced")) {
+            viewFrame.open(AutoUpdateAdvanced.class, player);
             return true;
         }
 

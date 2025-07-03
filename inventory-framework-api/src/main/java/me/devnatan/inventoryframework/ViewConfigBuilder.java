@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import me.devnatan.inventoryframework.exception.InvalidLayoutException;
+import me.devnatan.inventoryframework.state.TimerState;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -31,6 +32,7 @@ public final class ViewConfigBuilder {
     private String[] layout = null;
     private final Set<ViewConfig.Modifier> modifiers = new HashSet<>();
     private long updateIntervalInTicks, interactionDelayInMillis;
+    private TimerState updateIntervalState;
     private boolean transitiveInitialData;
 
     /**
@@ -197,6 +199,19 @@ public final class ViewConfigBuilder {
      */
     public ViewConfigBuilder scheduleUpdate(long intervalInTicks) {
         this.updateIntervalInTicks = intervalInTicks;
+        return this;
+    }
+
+    /**
+     * Schedules the view to update every fixed interval.
+     *
+     * @param timerState The
+     * @return This configuration builder.
+     * @see <a href="https://github.com/DevNatan/inventory-framework/wiki/scheduled-updates">Scheduled Updates on Wiki</a>
+     */
+    @ApiStatus.Experimental
+    public ViewConfigBuilder scheduleUpdate(TimerState timerState) {
+        this.updateIntervalState = timerState;
         return this;
     }
 
