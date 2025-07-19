@@ -14,7 +14,6 @@ repositories {
 dependencies {
     compileOnly(libs.paperSpigot)
     implementation(projects.inventoryFrameworkPlatformBukkit)
-    implementation(libs.folialib)
 }
 
 java {

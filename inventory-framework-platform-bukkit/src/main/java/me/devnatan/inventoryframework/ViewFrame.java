@@ -38,10 +38,6 @@ public class ViewFrame extends IFViewFrame<ViewFrame, View> {
     private final Plugin owner;
     private final FeatureInstaller<ViewFrame> featureInstaller = new DefaultFeatureInstaller<>(this);
 
-    static {
-        PlatformUtils.setFactory(new BukkitElementFactory());
-    }
-
     private ViewFrame(Plugin owner) {
         this.owner = owner;
     }
@@ -191,6 +187,7 @@ public class ViewFrame extends IFViewFrame<ViewFrame, View> {
     public final ViewFrame register() {
         if (isRegistered()) throw new IllegalStateException("This view frame is already registered");
 
+        PlatformUtils.setFactory(new BukkitElementFactory(getOwner()));
         tryEnableMetrics();
         checkRelocationIssues();
         setRegistered(true);
