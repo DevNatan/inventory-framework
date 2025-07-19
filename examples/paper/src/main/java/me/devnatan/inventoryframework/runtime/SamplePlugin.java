@@ -9,7 +9,6 @@ import me.devnatan.inventoryframework.runtime.view.AnvilInputSample;
 import me.devnatan.inventoryframework.runtime.view.AutoUpdate;
 import me.devnatan.inventoryframework.runtime.view.Failing;
 import me.devnatan.inventoryframework.runtime.view.SimplePagination;
-import me.devnatan.inventoryframework.runtime.view.*;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class SamplePlugin extends JavaPlugin {
