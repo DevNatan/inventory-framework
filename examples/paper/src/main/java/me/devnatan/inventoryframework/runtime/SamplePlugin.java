@@ -15,13 +15,14 @@ public class SamplePlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        System.out.println("ligoo");
         ViewFrame viewFrame = ViewFrame.create(this)
                 .install(AnvilInputFeature.AnvilInput)
                 .with(new AnvilInputSample(), new Failing(), new SimplePagination(), new AutoUpdate())
                 .register();
 
-        getCommand("ifexample").setExecutor(new IFExampleCommandExecutor(viewFrame));
+        IFExampleCommandExecutor command = new IFExampleCommandExecutor(viewFrame);
+        getCommand("ifexample").setExecutor(command);
+        getCommand("ifexample").setTabCompleter(command);
         getServer().getPluginManager().registerEvents(new PigListener(viewFrame), this);
     }
 }
