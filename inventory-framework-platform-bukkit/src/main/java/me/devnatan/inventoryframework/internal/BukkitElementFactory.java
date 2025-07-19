@@ -132,6 +132,8 @@ public class BukkitElementFactory extends ElementFactory {
     public synchronized boolean worksInCurrentPlatform() {
         if (worksInCurrentPlatform != null) return worksInCurrentPlatform;
 
+        if (foliaLib.isFolia()) return true;
+
         try {
             Class.forName("org.bukkit.Bukkit");
             worksInCurrentPlatform = true;
