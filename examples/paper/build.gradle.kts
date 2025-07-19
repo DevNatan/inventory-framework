@@ -3,7 +3,7 @@ plugins {
     id("me.devnatan.inventoryframework.library")
     alias(libs.plugins.shadowjar)
     alias(libs.plugins.bukkit)
-    alias(libs.plugins.run.paper)
+    alias(libs.plugins.runPaper)
 }
 
 dependencies {
@@ -27,7 +27,7 @@ runPaper.folia.registerTask()
 
 tasks.runServer {
     jvmArgs("-Dme.devnatan.inventoryframework.debug=true")
-    minecraftVersion("1.21.6")
+    minecraftVersion("1.21.5")
 }
 
 bukkit {
@@ -38,6 +38,8 @@ bukkit {
     website = "https://github.com/DevNatan/inventory-framework"
     apiVersion = "1.20"
     authors = listOf("SaiintBrisson", "DevNatan", "sasuked", "nicolube")
+    foliaSupported = true
+
     commands {
         register("ifexample") {
             description = "This is a test command!"

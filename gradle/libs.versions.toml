@@ -62,5 +62,5 @@ shadowjar = { id = "com.gradleup.shadow", version.ref = "plugin-shadowjar" }
 spotless = { id = "com.diffplug.spotless", version.ref = "plugin-spotless" }
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 bukkit = { id = "de.eldoria.plugin-yml.bukkit", version.ref = "plugin-bukkit" }
-run-paper = { id = "xyz.jpenilla.run-paper", version =  "2.3.1" }
+runPaper = { id = "xyz.jpenilla.run-paper", version =  "2.3.1" }
 publish = { id = "com.vanniktech.maven.publish.base", version = "0.33.0" }

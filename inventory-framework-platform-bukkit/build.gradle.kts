@@ -39,4 +39,5 @@ bukkit {
     website = "https://github.com/DevNatan/inventory-framework"
     apiVersion = "1.20"
     authors = listOf("SaiintBrisson", "DevNatan", "sasuked")
+    foliaSupported = true
 }
