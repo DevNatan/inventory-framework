@@ -23,9 +23,11 @@ tasks.shadowJar {
     }
 }
 
+runPaper.folia.registerTask()
+
 tasks.runServer {
     jvmArgs("-Dme.devnatan.inventoryframework.debug=true")
-    minecraftVersion("1.21.7")
+    minecraftVersion("1.21.6")
 }
 
 bukkit {
