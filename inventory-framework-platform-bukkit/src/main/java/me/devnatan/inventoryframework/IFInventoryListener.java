@@ -13,9 +13,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.server.PluginDisableEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.PlayerInventory;
 
 final class IFInventoryListener implements Listener {
@@ -62,7 +64,9 @@ final class IFInventoryListener implements Listener {
     public void onInventoryClose(final InventoryCloseEvent event) {
         if (!(event.getPlayer() instanceof Player)) return;
 
-        if (!(event.getInventory().getHolder() instanceof IFRenderContext)) return;
+        final Inventory inventory = event.getInventory();
+        if (inventory.getType() != InventoryType.ANVIL /* Anvil Input support */
+                && !(event.getInventory().getHolder() instanceof IFRenderContext)) return;
 
         final Player player = (Player) event.getPlayer();
         final Viewer viewer = viewFrame.getViewer(player);
