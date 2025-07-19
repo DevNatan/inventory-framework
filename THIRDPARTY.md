@@ -9,3 +9,4 @@ This document contains a list of third-party libraries that Inventory Framework 
 * [Gradle Shadow](https://github.com/johnrengelman/shadow). Apache 2.0 license.
 * [Kyori's Adventure](https://github.com/KyoriPowered/adventure). MIT license.
 * [PaperSpigot](https://github.com/PaperMC/Paper). GPL-3.0 license.
+* [FoliaLib](https://github.com/TechnicallyCoded/FoliaLib). MIT license.
