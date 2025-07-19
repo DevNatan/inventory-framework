@@ -28,12 +28,13 @@ public final class StateAccessImpl<
         implements StateAccess<Context, ItemBuilder> {
 
     private final Object caller;
-    private final ElementFactory elementFactory;
+    private final Supplier<ElementFactory> elementFactoryProvider;
     private final StateRegistry stateRegistry;
 
-    public StateAccessImpl(Object caller, ElementFactory elementFactory, StateRegistry stateRegistry) {
+    public StateAccessImpl(
+            Object caller, Supplier<ElementFactory> elementFactoryProvider, StateRegistry stateRegistry) {
         this.caller = caller;
-        this.elementFactory = elementFactory;
+        this.elementFactoryProvider = elementFactoryProvider;
         this.stateRegistry = stateRegistry;
     }
 
@@ -186,42 +187,42 @@ public final class StateAccessImpl<
     public final <T> PaginationStateBuilder<Context, ItemBuilder, T> buildPaginationState(
             @NotNull List<? super T> sourceProvider) {
         return new PaginationStateBuilder<>(
-                this.elementFactory, sourceProvider, this::createPaginationState, false, false);
+                elementFactoryProvider, sourceProvider, this::createPaginationState, false, false);
     }
 
     @Override
     public final <T> PaginationStateBuilder<Context, ItemBuilder, T> buildComputedPaginationState(
             @NotNull Function<Context, List<? super T>> sourceProvider) {
         return new PaginationStateBuilder<>(
-                this.elementFactory, sourceProvider, this::createPaginationState, false, true);
+                elementFactoryProvider, sourceProvider, this::createPaginationState, false, true);
     }
 
     @Override
     public final <T> PaginationStateBuilder<Context, ItemBuilder, T> buildComputedAsyncPaginationState(
             @NotNull Function<Context, CompletableFuture<List<T>>> sourceProvider) {
         return new PaginationStateBuilder<>(
-                this.elementFactory, sourceProvider, this::createPaginationState, true, true);
+                elementFactoryProvider, sourceProvider, this::createPaginationState, true, true);
     }
 
     @Override
     public final <T> PaginationStateBuilder<Context, ItemBuilder, T> buildLazyPaginationState(
             @NotNull Supplier<List<? super T>> sourceProvider) {
         return new PaginationStateBuilder<>(
-                this.elementFactory, sourceProvider, this::createPaginationState, false, false);
+                elementFactoryProvider, sourceProvider, this::createPaginationState, false, false);
     }
 
     @Override
     public final <T> PaginationStateBuilder<Context, ItemBuilder, T> buildLazyPaginationState(
             @NotNull Function<Context, List<? super T>> sourceProvider) {
         return new PaginationStateBuilder<>(
-                this.elementFactory, sourceProvider, this::createPaginationState, false, false);
+                elementFactoryProvider, sourceProvider, this::createPaginationState, false, false);
     }
 
     @Override
     public final <T> PaginationStateBuilder<Context, ItemBuilder, T> buildLazyAsyncPaginationState(
             @NotNull Function<Context, CompletableFuture<List<T>>> sourceProvider) {
         return new PaginationStateBuilder<>(
-                this.elementFactory, sourceProvider, this::createPaginationState, true, false);
+                elementFactoryProvider, sourceProvider, this::createPaginationState, true, false);
     }
 
     protected final <V> State<Pagination> createPaginationState(

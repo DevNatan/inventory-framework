@@ -17,6 +17,7 @@ dependencies {
     testRuntimeOnly(libs.spigot)
     testImplementation(projects.inventoryFrameworkApi)
     testImplementation(projects.inventoryFrameworkTest)
+    implementation(libs.folialib)
 }
 
 tasks.shadowJar {
@@ -38,4 +39,5 @@ bukkit {
     website = "https://github.com/DevNatan/inventory-framework"
     apiVersion = "1.20"
     authors = listOf("SaiintBrisson", "DevNatan", "sasuked")
+    foliaSupported = true
 }

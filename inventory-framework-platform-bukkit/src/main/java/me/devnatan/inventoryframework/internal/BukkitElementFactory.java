@@ -2,6 +2,7 @@ package me.devnatan.inventoryframework.internal;
 
 import static me.devnatan.inventoryframework.runtime.util.InventoryUtils.checkInventoryTypeSupport;
 
+import com.tcoded.folialib.FoliaLib;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -18,6 +19,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,6 +27,12 @@ public class BukkitElementFactory extends ElementFactory {
 
     private static final ViewType defaultType = ViewType.CHEST;
     private Boolean worksInCurrentPlatform = null;
+
+    private final FoliaLib foliaLib;
+
+    public BukkitElementFactory(Plugin plugin) {
+        this.foliaLib = new FoliaLib(plugin);
+    }
 
     @Override
     public @NotNull RootView createUninitializedRoot() {
@@ -124,6 +132,8 @@ public class BukkitElementFactory extends ElementFactory {
     public synchronized boolean worksInCurrentPlatform() {
         if (worksInCurrentPlatform != null) return worksInCurrentPlatform;
 
+        if (foliaLib.isFolia()) return true;
+
         try {
             Class.forName("org.bukkit.Bukkit");
             worksInCurrentPlatform = true;
@@ -142,6 +152,6 @@ public class BukkitElementFactory extends ElementFactory {
 
     @Override
     public Job scheduleJobInterval(@NotNull RootView root, long intervalInTicks, @NotNull Runnable execution) {
-        return new BukkitTaskJobImpl(((View) root).getFramework().getOwner(), intervalInTicks, execution);
+        return new BukkitTaskJobImpl(foliaLib.getScheduler(), intervalInTicks, execution);
     }
 }

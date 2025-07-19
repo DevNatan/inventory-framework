@@ -2,6 +2,7 @@ package me.devnatan.inventoryframework.component;
 
 import java.util.function.BiConsumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.internal.ElementFactory;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
@@ -11,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 public final class PaginationStateBuilder<
         Context extends IFContext, Builder extends ItemComponentBuilder<Builder, Context> & ComponentFactory, V> {
 
-    private final ElementFactory internalElementFactory;
+    private final Supplier<ElementFactory> internalElementFactoryProvider;
     private final Object sourceProvider;
     private final Function<PaginationStateBuilder<Context, Builder, V>, State<Pagination>> internalStateFactory;
     private char layoutTarget = LayoutSlot.FILLED_RESERVED_CHAR;
@@ -20,12 +21,12 @@ public final class PaginationStateBuilder<
     private final boolean async, computed;
 
     public PaginationStateBuilder(
-            ElementFactory internalElementFactory,
+            Supplier<ElementFactory> internalElementFactoryProvider,
             Object sourceProvider,
             Function<PaginationStateBuilder<Context, Builder, V>, State<Pagination>> internalStateFactory,
             boolean async,
             boolean computed) {
-        this.internalElementFactory = internalElementFactory;
+        this.internalElementFactoryProvider = internalElementFactoryProvider;
         this.internalStateFactory = internalStateFactory;
         this.sourceProvider = sourceProvider;
         this.async = async;
@@ -65,7 +66,7 @@ public final class PaginationStateBuilder<
             @NotNull PaginationValueConsumer<Context, Builder, V> elementConsumer) {
         this.paginationElementFactory = (pagination, index, slot, value) -> {
             Context context = (Context) pagination.getRoot();
-            Builder builder = (Builder) internalElementFactory.createComponentBuilder(pagination);
+            Builder builder = (Builder) internalElementFactoryProvider.get().createComponentBuilder(pagination);
             builder.withSlot(slot).withExternallyManaged(true);
             elementConsumer.accept(context, builder, index, value);
             return builder;

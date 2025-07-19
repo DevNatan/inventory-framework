@@ -13,6 +13,7 @@ plugin-shadowjar = "8.3.7"
 plugin-spotless = "7.0.4"
 plugin-bukkit = "0.7.1"
 minestom = "b39badc77b"
+folialib = "0.5.1"
 
 [libraries.spigot]
 module = "org.spigotmc:spigot-api"
@@ -52,10 +53,14 @@ version.ref = "adventure-api"
 module = "net.minestom:minestom-snapshots"
 version.ref = "minestom"
 
+[libraries.folialib]
+module = "com.tcoded:FoliaLib"
+version.ref = "folialib"
+
 [plugins]
 shadowjar = { id = "com.gradleup.shadow", version.ref = "plugin-shadowjar" }
 spotless = { id = "com.diffplug.spotless", version.ref = "plugin-spotless" }
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 bukkit = { id = "de.eldoria.plugin-yml.bukkit", version.ref = "plugin-bukkit" }
-run-paper = { id = "xyz.jpenilla.run-paper", version =  "2.3.1" }
+runPaper = { id = "xyz.jpenilla.run-paper", version =  "2.3.1" }
 publish = { id = "com.vanniktech.maven.publish.base", version = "0.33.0" }

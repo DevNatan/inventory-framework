@@ -1,5 +1,9 @@
 package me.devnatan.inventoryframework.runtime.commands;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import me.devnatan.inventoryframework.View;
 import me.devnatan.inventoryframework.ViewFrame;
 import me.devnatan.inventoryframework.runtime.view.AnvilInputSample;
 import me.devnatan.inventoryframework.runtime.view.AutoUpdate;
@@ -8,10 +12,18 @@ import me.devnatan.inventoryframework.runtime.view.SimplePagination;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class IFExampleCommandExecutor implements CommandExecutor {
+public class IFExampleCommandExecutor implements CommandExecutor, TabCompleter {
+
+    private static final Map<String, Class<? extends View>> views = Map.of(
+            "anvil", AnvilInputSample.class,
+            "failing", Failing.class,
+            "simple-pagination", SimplePagination.class,
+            "auto-update", AutoUpdate.class);
 
     private final ViewFrame viewFrame;
 
@@ -38,29 +50,22 @@ public class IFExampleCommandExecutor implements CommandExecutor {
             return false;
         }
 
-        String view = strings[0].toLowerCase();
-
-        if (view.equalsIgnoreCase("anvil")) {
-            viewFrame.open(AnvilInputSample.class, player);
+        Class<? extends View> viewClass = views.get(strings[0].toLowerCase());
+        if (viewClass != null) {
+            viewFrame.open(viewClass, player);
             return true;
         }
 
-        if (view.equalsIgnoreCase("failing")) {
-            viewFrame.open(Failing.class, player);
-            return true;
-        }
-
-        if (view.equalsIgnoreCase("simple-pagination")) {
-            viewFrame.open(SimplePagination.class, player);
-            return true;
-        }
-
-        if (view.equalsIgnoreCase("auto-update")) {
-            viewFrame.open(AutoUpdate.class, player);
-            return true;
-        }
-
-        commandSender.sendMessage("Unknown view: " + view);
+        commandSender.sendMessage("Unknown view: " + strings[0]);
         return true;
+    }
+
+    @Override
+    public @Nullable List<String> onTabComplete(
+            @NotNull CommandSender commandSender,
+            @NotNull Command command,
+            @NotNull String s,
+            @NotNull String[] strings) {
+        return new ArrayList<>(views.keySet());
     }
 }

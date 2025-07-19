@@ -63,7 +63,7 @@ public abstract class PlatformView<
     private TFramework framework;
     private boolean initialized;
     private final StateAccess<TContext, TItem> stateAccess =
-            new StateAccessImpl<>(this, getElementFactory(), stateRegistry);
+            new StateAccessImpl<>(this, this::getElementFactory, stateRegistry);
 
     protected PlatformView() {
         super();
