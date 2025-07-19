@@ -64,8 +64,7 @@ class SlotClickContext
 
         override fun isShiftClick(): Boolean {
             val clickType = clickOrigin.click
-            return clickType is Click.LeftShift ||
-                clickType is Click.RightShift
+            return clickType is Click.LeftShift || clickType is Click.RightShift
         }
 
         override fun isKeyboardClick(): Boolean = clickOrigin.click is Click.HotbarSwap

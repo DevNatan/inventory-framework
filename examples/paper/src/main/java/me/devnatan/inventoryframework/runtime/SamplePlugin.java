@@ -4,6 +4,7 @@ import me.devnatan.inventoryframework.AnvilInputFeature;
 import me.devnatan.inventoryframework.ViewFrame;
 import me.devnatan.inventoryframework.runtime.commands.IFExampleCommandExecutor;
 import me.devnatan.inventoryframework.runtime.listener.PigListener;
+import me.devnatan.inventoryframework.runtime.view.*;
 import me.devnatan.inventoryframework.runtime.view.AnvilInputSample;
 import me.devnatan.inventoryframework.runtime.view.AutoUpdate;
 import me.devnatan.inventoryframework.runtime.view.Failing;
