@@ -25,7 +25,7 @@ class BukkitTaskJobImpl implements Job {
     public void start() {
         if (isStarted()) return;
 
-		// TODO Attach context to this Job and use entity scheduler instead of global one
+        // TODO Attach context to this Job and use entity scheduler instead of global one
         task = scheduler.runTimer(this::loop, intervalInTicks, intervalInTicks);
     }
 
