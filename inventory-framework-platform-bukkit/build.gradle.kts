@@ -9,6 +9,10 @@ inventoryFramework {
     generateVersionFile = true
 }
 
+repositories {
+    maven("https://repo.tcoded.com/releases")
+}
+
 dependencies {
     api(projects.inventoryFrameworkPlatform)
     runtimeOnly(projects.inventoryFrameworkAnvilInput)
