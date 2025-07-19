@@ -45,10 +45,7 @@ internal class IFInventoryListener(
             event.isCancelled = context.config.getOptionValue(ViewConfig.CANCEL_ON_DROP)
             return
         }
-        if (
-            event.click is Click.LeftDrag ||
-            event.click is Click.RightDrag
-        ) {
+        if (event.click is Click.LeftDrag || event.click is Click.RightDrag) {
             val context: IFContext = viewer.activeContext
             if (!context.config.isOptionSet(ViewConfig.CANCEL_ON_DRAG)) return
 

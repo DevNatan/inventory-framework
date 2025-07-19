@@ -1,30 +1,30 @@
 package me.devnatan.inventoryframework.internal;
 
-import org.bukkit.plugin.Plugin;
-import org.bukkit.scheduler.BukkitTask;
+import com.tcoded.folialib.impl.PlatformScheduler;
+import com.tcoded.folialib.wrapper.task.WrappedTask;
 
 class BukkitTaskJobImpl implements Job {
 
-    private final Plugin plugin;
+    private final PlatformScheduler scheduler;
     private final long intervalInTicks;
     private final Runnable execution;
-    private BukkitTask task;
+    private WrappedTask task;
 
-    public BukkitTaskJobImpl(Plugin plugin, long intervalInTicks, Runnable execution) {
-        this.plugin = plugin;
+    public BukkitTaskJobImpl(PlatformScheduler scheduler, long intervalInTicks, Runnable execution) {
+        this.scheduler = scheduler;
         this.intervalInTicks = intervalInTicks;
         this.execution = execution;
     }
 
     @Override
     public boolean isStarted() {
-        return task != null;
+        return task != null && !task.isCancelled();
     }
 
     @Override
     public void start() {
         if (isStarted()) return;
-        task = plugin.getServer().getScheduler().runTaskTimer(plugin, this::loop, intervalInTicks, intervalInTicks);
+        task = scheduler.runTimer(this::loop, intervalInTicks, intervalInTicks);
     }
 
     @Override

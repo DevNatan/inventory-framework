@@ -17,6 +17,7 @@ dependencies {
     testRuntimeOnly(libs.spigot)
     testImplementation(projects.inventoryFrameworkApi)
     testImplementation(projects.inventoryFrameworkTest)
+    implementation(libs.folialib)
 }
 
 tasks.shadowJar {
