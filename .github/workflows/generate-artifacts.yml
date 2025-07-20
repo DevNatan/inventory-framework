@@ -9,7 +9,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [Bukkit, Paper, Minestom, Folia]
+        platform: [Bukkit, Paper, Minestom]
     runs-on: ubuntu-latest
     steps:
 
