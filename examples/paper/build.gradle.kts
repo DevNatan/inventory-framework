@@ -36,7 +36,7 @@ bukkit {
     version = project.version.toString()
     description = "Minecraft Inventory API framework sample plugin"
     website = "https://github.com/DevNatan/inventory-framework"
-    apiVersion = "1.20"
+    apiVersion = "1.13"
     authors = listOf("SaiintBrisson", "DevNatan", "sasuked", "nicolube")
     foliaSupported = true
 
