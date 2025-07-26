@@ -2,6 +2,7 @@ package me.devnatan.inventoryframework.pipeline;
 
 import static me.devnatan.inventoryframework.ViewConfig.CANCEL_ON_CLICK;
 
+import me.devnatan.inventoryframework.IFDebug;
 import me.devnatan.inventoryframework.VirtualView;
 import me.devnatan.inventoryframework.context.SlotClickContext;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -15,7 +16,10 @@ public final class GlobalClickInterceptor implements PipelineInterceptor<Virtual
 
     @Override
     public void intercept(@NotNull PipelineContext<VirtualView> pipeline, @NotNull VirtualView subject) {
-        if (!(subject instanceof SlotClickContext)) return;
+        if (!(subject instanceof SlotClickContext)) {
+            IFDebug.debug("Cannot handle global click: not a SlotClickContext");
+            return;
+        }
 
         final SlotClickContext context = (SlotClickContext) subject;
         final InventoryClickEvent event = context.getClickOrigin();
