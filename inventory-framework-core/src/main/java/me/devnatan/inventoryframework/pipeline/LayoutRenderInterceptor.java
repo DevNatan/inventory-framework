@@ -25,15 +25,23 @@ public final class LayoutRenderInterceptor implements PipelineInterceptor<Virtua
                 continue;
             }
 
-            int iterationIndex = 0;
-            for (final int slot : layoutSlot.getPositions()) {
-                final ComponentFactory componentFactory = factory.apply(iterationIndex++);
-                if (componentFactory instanceof ItemComponentBuilder)
-                    ((ItemComponentBuilder<?, ?>) componentFactory).withSlot(slot);
-
-                final Component component = componentFactory.create();
-                renderContext.addComponent(component);
-            }
+			if (layoutSlot.isToFill()) {
+				int iterationIndex = 0;
+				for (final int slot : layoutSlot.getPositions()) {
+					renderContext.addComponent(createComponent(slot, iterationIndex++, factory));
+				}
+			} else {
+				final int nextAvailableSlot = layoutSlot.
+				renderContext.addComponent(createComponent(nextAvailableSlot, 0 /* TODO not supported for now */, factory));
+			}
         }
     }
+
+	private Component createComponent(int slot, int index, IntFunction<ComponentFactory> factory) {
+		final ComponentFactory componentFactory = factory.apply(index);
+		if (componentFactory instanceof ItemComponentBuilder)
+			((ItemComponentBuilder<?, ?>) componentFactory).withSlot(slot);
+
+		return componentFactory.create();
+	}
 }
