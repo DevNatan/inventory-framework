@@ -251,7 +251,7 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
 
         int iterationIndex = 0;
         for (final int position : targetLayoutSlot.getPositions()) {
-            final Object value = pageContents.get(iterationIndex++);
+            final Object value = pageContents.get(iterationIndex);
 
             try {
                 final ComponentFactory factory = elementFactory.create(this, iterationIndex, position, value);
@@ -268,7 +268,7 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
                 exception.printStackTrace();
             }
 
-            if (iterationIndex == elementsLen) break;
+            if (iterationIndex++ == elementsLen) break;
         }
     }
 
@@ -390,6 +390,7 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
 
     @Override
     public void render(@NotNull IFSlotRenderContext context) {
+		System.out.println("[debug] PaginationImpl: render(...)");
         if (!initialized) {
             setVisible(true);
             final IFRenderContext root = context.getParent();
@@ -403,6 +404,7 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
     }
 
     private void renderChild(IFSlotRenderContext context) {
+		System.out.println("[debug] PaginationImpl: rendering child");
         getInternalComponents().forEach(context::renderComponent);
     }
 
