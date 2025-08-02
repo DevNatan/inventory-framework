@@ -5,6 +5,7 @@ import static me.devnatan.inventoryframework.IFDebug.debug;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
@@ -244,31 +245,60 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
      * @param pageContents Elements of the current page.
      */
     private void addComponentsForLayeredPagination(IFRenderContext context, List<?> pageContents) {
-        final LayoutSlot targetLayoutSlot = getLayoutSlotForCurrentTarget(context);
-        final int elementsLen = pageContents.size();
-        debug("[Pagination] Elements count: %d elements", elementsLen);
-        debug("[Pagination] Iterating over '%c' layout target", targetLayoutSlot.getCharacter());
+        final LayoutSlot layoutSlot = getLayoutSlotForCurrentTarget(context);
+        debug("[Pagination] Is layout slot defined by the user? %b", layoutSlot.isDefinedByTheUser());
 
-        int iterationIndex = 0;
-        for (final int position : targetLayoutSlot.getPositions()) {
-            final Object value = pageContents.get(iterationIndex++);
+        final int contentSize = pageContents.size();
+        debug("[Pagination] Elements count: %d elements", contentSize);
+        debug("[Pagination] Iterating over '%c' layout target", layoutSlot.getCharacter());
+
+        int index = 0;
+        for (final int layoutPosition : layoutSlot.getPositions()) {
+            if (index >= contentSize) {
+                // A layout slot defined by the user mean the user probably want to add a placeholder
+                // item to fill empty slots that couldn't be reached by the pagination. Happens when
+                // using pagination and #layoutSlot with the same character as the pagination.
+                if (layoutSlot.isDefinedByTheUser()) {
+                    final ComponentFactory componentFactory =
+                            layoutSlot.getFactory().apply(index);
+
+                    if (componentFactory instanceof ItemComponentBuilder) {
+                        final ItemComponentBuilder<?, ?> itemBuilder = (ItemComponentBuilder<?, ?>) componentFactory;
+
+                        // In normal scenarios item position are set in LayoutRenderInterceptor
+                        // but since it uses the same layout target as a Pagination component,
+                        // This is the same behavior as `PaginationStateBuilder#elementFactory`.
+                        itemBuilder.withSlot(layoutPosition);
+
+                        // Marking as "externally managed" prevents other components from modifying
+                        // this item accidentally.
+                        itemBuilder.withExternallyManaged(true);
+                    }
+
+                    final Component component = componentFactory.create();
+
+                    debug(() -> "  @ placeholder %d (index %d) = %s", layoutPosition, index, component.toString());
+                    getInternalComponents().add(component);
+                    index++;
+                    continue;
+                }
+
+                break; // EOF
+            }
 
             try {
-                final ComponentFactory factory = elementFactory.create(this, iterationIndex, position, value);
+                final Object paginatedValue = pageContents.get(index);
+                final ComponentFactory factory = elementFactory.create(this, index, layoutPosition, paginatedValue);
                 final Component component = factory.create();
 
-                debug(
-                        () -> "  @ added %d (index %d) = %s",
-                        position,
-                        iterationIndex,
-                        component.getClass().getSimpleName());
+                debug(() -> "  @ added %d (index %d) = %s", layoutPosition, index, component.toString());
                 getInternalComponents().add(component);
             } catch (final Exception exception) {
-                debug(() -> "  @ failed to add %d (index %d) = %s", position, iterationIndex, exception.getMessage());
+                debug(() -> "  @ failed to add %d (index %d) = %s", layoutPosition, index, exception.getMessage());
                 exception.printStackTrace();
             }
 
-            if (iterationIndex == elementsLen) break;
+            index++;
         }
     }
 
@@ -298,11 +328,12 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
 
         final Optional<LayoutSlot> layoutSlotOptional = context.getLayoutSlots().stream()
                 .filter(layoutSlot -> layoutSlot.getCharacter() == getLayoutTarget())
-                .findFirst();
+                .max(Comparator.comparing(LayoutSlot::isDefinedByTheUser));
 
-        if (!layoutSlotOptional.isPresent())
+        if (!layoutSlotOptional.isPresent()) {
             // TODO more detailed error message
             throw new IllegalArgumentException(String.format("Layout slot target not found: %c", getLayoutTarget()));
+        }
 
         return (currentLayoutSlot = layoutSlotOptional.get());
     }
@@ -458,7 +489,7 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
     }
 
     @Override
-    public @UnmodifiableView Set<State<?>> getWatchingStates() {
+    public @UnmodifiableView Set<me.devnatan.inventoryframework.state.State<?>> getWatchingStates() {
         return Collections.emptySet();
     }
 
