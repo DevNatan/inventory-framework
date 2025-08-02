@@ -121,21 +121,28 @@ abstract class AbstractIFContext extends DefaultStateValueHost implements IFCont
 
     @Override
     public void renderComponent(@NotNull Component component) {
-        if (!component.shouldRender(this)) {
-            component.setVisible(false);
-
-            final Optional<Component> overlapOptional = getOverlappingComponentToRender(this, component);
-            if (overlapOptional.isPresent()) {
-                Component overlap = overlapOptional.get();
-                renderComponent(overlap);
-
-                if (overlap.isVisible()) return;
-            }
-
-            component.clear(this);
+        if (component.shouldRender(this)) {
+            IFDebug.debug("Rendering component...: %s", component);
+            component.render(createSlotRenderContext(component, false));
             return;
         }
-        component.render(createSlotRenderContext(component, false));
+
+        component.setVisible(false);
+
+        final Optional<Component> overlapOptional = getOverlappingComponentToRender(this, component);
+        if (overlapOptional.isPresent()) {
+            Component overlap = overlapOptional.get();
+            renderComponent(overlap);
+
+            if (overlap.isVisible()) {
+                IFDebug.debug(
+                        "Component was not rendered due to overlapping component (component = %s, overlap = %s)",
+                        component, overlap);
+                return;
+            }
+        }
+
+        component.clear(this);
     }
 
     private Optional<Component> getOverlappingComponentToRender(ComponentContainer container, Component subject) {
