@@ -1,6 +1,5 @@
 package me.devnatan.inventoryframework.context;
 
-import static java.lang.String.format;
 import static me.devnatan.inventoryframework.utils.SlotConverter.convertSlot;
 
 import java.util.ArrayList;
@@ -168,8 +167,6 @@ public abstract class PlatformRenderContext<T extends ItemComponentBuilder<T, C>
      * @return An item builder to configure the item.
      */
     public final @NotNull T layoutSlot(char character) {
-        requireNonReservedLayoutCharacter(character);
-
         // TODO More detailed exception message
         final LayoutSlot layoutSlot = getLayoutSlots().stream()
                 .filter(value -> value.getCharacter() == character)
@@ -191,8 +188,6 @@ public abstract class PlatformRenderContext<T extends ItemComponentBuilder<T, C>
      * @param character The layout character target.
      */
     public final void layoutSlot(char character, @NotNull BiConsumer<Integer, T> factory) {
-        requireNonReservedLayoutCharacter(character);
-
         // TODO More detailed exception message
         final LayoutSlot layoutSlot = getLayoutSlots().stream()
                 .filter(value -> value.getCharacter() == character)
@@ -354,19 +349,6 @@ public abstract class PlatformRenderContext<T extends ItemComponentBuilder<T, C>
             throw new IllegalStateException(String.format(
                     "Non-aligned container type %s cannot use row-column slots, use absolute %s instead",
                     getContainer().getType().getIdentifier(), "#slot(n)"));
-    }
-
-    /**
-     * Checks if the character is a reserved layout character.
-     *
-     * @param character The character to be checked.
-     * @throws IllegalArgumentException If the given character is a reserved layout character.
-     */
-    private void requireNonReservedLayoutCharacter(char character) {
-        if (character == LayoutSlot.FILLED_RESERVED_CHAR)
-            throw new IllegalArgumentException(format(
-                    "The '%c' character cannot be used because it is only available for backwards compatibility. Please use another character.",
-                    character));
     }
     // endregion
 }
