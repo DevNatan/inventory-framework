@@ -22,9 +22,12 @@ public final class AvailableSlotInterceptor implements PipelineInterceptor<Virtu
         final IFRenderContext context = (IFRenderContext) subject;
         if (context.getAvailableSlotFactories() == null) return;
 
-        final List<ComponentFactory> slotComponents = context.getConfig().getLayout() == null
-                ? resolveFromInitialSlot(context)
-                : resolveFromLayoutSlot(context);
+        final List<ComponentFactory> slotComponents;
+        if (context.getConfig().getLayout() == null) {
+            slotComponents = resolveFromInitialSlot(context);
+        } else {
+            slotComponents = resolveFromLayoutSlot(context);
+        }
 
         slotComponents.forEach(componentFactory -> context.addComponent(componentFactory.create()));
     }
