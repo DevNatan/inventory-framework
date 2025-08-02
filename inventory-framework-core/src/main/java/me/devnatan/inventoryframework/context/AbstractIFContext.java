@@ -122,7 +122,6 @@ abstract class AbstractIFContext extends DefaultStateValueHost implements IFCont
     @Override
     public void renderComponent(@NotNull Component component) {
         if (component.shouldRender(this)) {
-            IFDebug.debug("Rendering component...: %s", component);
             component.render(createSlotRenderContext(component, false));
             return;
         }

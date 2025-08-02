@@ -219,7 +219,7 @@ public interface Pagination extends ComponentComposition, StateValue {
      *
      * @param index The page index.
      * @param pageSize Number of elements that each page can have.
-     * @param pagesCount Pre-calculated total number of pages available (set zero if not available).
+     * @param pagesCount Total number of pages available (zero if not available) [exclusive].
      * @param src   The source to split.
      * @return All elements in a page.
      * @throws IndexOutOfBoundsException If the specified index is {@code < 0} or
