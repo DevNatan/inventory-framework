@@ -265,9 +265,9 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
                     if (componentFactory instanceof ItemComponentBuilder) {
                         final ItemComponentBuilder<?, ?> itemBuilder = (ItemComponentBuilder<?, ?>) componentFactory;
 
-                        // In normal scenarios they their position in LayoutRenderInterceptor.
-                        // But since it uses the same layout target as a Pagination component,
-                        // This is the same behavior as `PaginationStateBuilder#elementFactory`
+                        // In normal scenarios item position are set in LayoutRenderInterceptor
+                        // but since it uses the same layout target as a Pagination component,
+                        // This is the same behavior as `PaginationStateBuilder#elementFactory`.
                         itemBuilder.withSlot(layoutPosition);
 
                         // Marking as "externally managed" prevents other components from modifying
