@@ -40,6 +40,7 @@ class AnvilInputNMS {
     private static final MethodHandle SET_PLAYER_ACTIVE_CONTAINER;
     private static final MethodHandle ADD_CONTAINER_SLOT_LISTENER;
     private static final MethodHandle INIT_MENU;
+	private static final MethodHandle GET_TOP_INVENTORY;
 
     // FIELDS
     private static final MethodHandle CONTAINER_CHECK_REACHABLE;
@@ -73,6 +74,8 @@ class AnvilInputNMS {
             ADD_CONTAINER_SLOT_LISTENER = getMethod(
                     CONTAINER, "a", MethodType.methodType(void.class, getNMSClass("world.inventory.ICrafting")));
             INIT_MENU = getMethod(ENTITY_PLAYER, "a", MethodType.methodType(void.class, CONTAINER));
+
+			GET_TOP_INVENTORY = getMethod(InventoryView.class, "getTopInventory", MethodType.methodType(Inventory.class));
         } catch (Exception exception) {
             throw new RuntimeException(
                     "Unsupported version for Anvil Input feature: " + ReflectionUtils.getVersionInformation(),
@@ -92,8 +95,7 @@ class AnvilInputNMS {
             final Object anvilContainer = ANVIL_CONSTRUCTOR.invoke(windowId, GET_PLAYER_INVENTORY.invoke(entityPlayer));
             CONTAINER_CHECK_REACHABLE.invoke(anvilContainer, false);
 
-            final AnvilInventory inventory = (AnvilInventory)
-                    ((InventoryView) InventoryUpdate.getBukkitView.invoke(anvilContainer)).getTopInventory();
+            final AnvilInventory inventory = (AnvilInventory) GET_TOP_INVENTORY.invoke(InventoryUpdate.getBukkitView.invoke(anvilContainer));
 
             inventory.setMaximumRepairCost(0);
 
