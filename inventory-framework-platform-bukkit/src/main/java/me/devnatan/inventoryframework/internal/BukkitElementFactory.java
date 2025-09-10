@@ -17,6 +17,7 @@ import me.devnatan.inventoryframework.logging.Logger;
 import me.devnatan.inventoryframework.logging.NoopLogger;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.plugin.Plugin;
@@ -119,8 +120,8 @@ public class BukkitElementFactory extends ElementFactory {
     }
 
     @Override
-    public IFCloseContext createCloseContext(@NotNull Viewer viewer, @NotNull IFRenderContext parent) {
-        return new CloseContext(viewer, parent);
+    public IFCloseContext createCloseContext(@NotNull Viewer viewer, @NotNull IFRenderContext parent, @NotNull Object closeOrigin) {
+        return new CloseContext(viewer, parent, (InventoryCloseEvent) closeOrigin);
     }
 
     @Override

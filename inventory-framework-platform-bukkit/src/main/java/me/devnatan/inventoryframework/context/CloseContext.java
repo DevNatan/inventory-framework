@@ -12,6 +12,7 @@ import me.devnatan.inventoryframework.state.State;
 import me.devnatan.inventoryframework.state.StateValue;
 import me.devnatan.inventoryframework.state.StateWatcher;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
@@ -21,15 +22,22 @@ public class CloseContext extends PlatformConfinedContext implements IFCloseCont
     private final Viewer subject;
     private final Player player;
     private final IFRenderContext parent;
+	private final InventoryCloseEvent closeOrigin;
 
     private boolean cancelled;
 
     @ApiStatus.Internal
-    public CloseContext(@NotNull Viewer subject, @NotNull IFRenderContext parent) {
+    public CloseContext(@NotNull Viewer subject, @NotNull IFRenderContext parent, @NotNull InventoryCloseEvent closeOrigin) {
         this.subject = subject;
         this.player = ((BukkitViewer) subject).getPlayer();
         this.parent = parent;
+		this.closeOrigin = closeOrigin;
     }
+
+	@Override
+	public Object getPlatformEvent() {
+		return closeOrigin;
+	}
 
     // TODO Needs documentation
     public final @NotNull Player getPlayer() {

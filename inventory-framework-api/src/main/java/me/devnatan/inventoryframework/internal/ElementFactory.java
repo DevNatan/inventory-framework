@@ -76,7 +76,7 @@ public abstract class ElementFactory {
      * @param viewer The viewer that is currently the subject of the event of close.
      * @return A new close context instance.
      */
-    public abstract IFCloseContext createCloseContext(@NotNull Viewer viewer, @NotNull IFRenderContext parent);
+    public abstract IFCloseContext createCloseContext(@NotNull Viewer viewer, @NotNull IFRenderContext parent, @NotNull Object origin);
 
     /**
      * Creates a new platform builder instance.
