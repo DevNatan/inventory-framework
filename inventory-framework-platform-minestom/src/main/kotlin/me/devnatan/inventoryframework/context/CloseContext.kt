@@ -10,6 +10,7 @@ import me.devnatan.inventoryframework.state.StateValue
 import me.devnatan.inventoryframework.state.StateWatcher
 import net.kyori.adventure.text.Component
 import net.minestom.server.entity.Player
+import net.minestom.server.event.inventory.InventoryCloseEvent
 import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.annotations.UnmodifiableView
 import java.util.UUID
@@ -19,6 +20,7 @@ class CloseContext
     constructor(
         subject: Viewer,
         private val parent: IFRenderContext,
+        val origin: InventoryCloseEvent
     ) : PlatformConfinedContext(),
         IFCloseContext,
         Context {
@@ -26,6 +28,8 @@ class CloseContext
         override val player: Player = (subject as MinestomViewer).player
 
         private var cancelled = false
+
+        override fun getPlatformEvent(): Any = origin
 
         override val allPlayers: List<Player>
             get() = getParent().allPlayers

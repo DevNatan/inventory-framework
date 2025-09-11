@@ -28,6 +28,7 @@ import me.devnatan.inventoryframework.logging.Logger
 import me.devnatan.inventoryframework.logging.NoopLogger
 import net.kyori.adventure.text.Component.text
 import net.minestom.server.entity.Player
+import net.minestom.server.event.inventory.InventoryCloseEvent
 import net.minestom.server.event.inventory.InventoryPreClickEvent
 import net.minestom.server.inventory.Inventory
 import net.minestom.server.inventory.InventoryType
@@ -165,10 +166,7 @@ class MinestomElementFactory : ElementFactory() {
         viewer: Viewer?,
     ): IFSlotRenderContext = SlotRenderContext(slot, parent, viewer)
 
-    override fun createCloseContext(
-        viewer: Viewer,
-        parent: IFRenderContext,
-    ): IFCloseContext = CloseContext(viewer, parent)
+    override fun createCloseContext(viewer: Viewer, parent: IFRenderContext, origin: Any): IFCloseContext = CloseContext(viewer, parent,origin as InventoryCloseEvent)
 
     override fun createComponentBuilder(root: VirtualView): ComponentBuilder<*, Context> = MinestomItemComponentBuilder(root)
 
