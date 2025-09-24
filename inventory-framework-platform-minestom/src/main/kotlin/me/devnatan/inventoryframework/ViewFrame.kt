@@ -30,7 +30,7 @@ class ViewFrame private constructor(
     fun open(
         viewClass: Class<out View>,
         player: Player,
-    ): String = open(viewClass, player, null)
+    ): String? = open(viewClass, player, null)
 
     /**
      * Opens a view to a player with initial data.
@@ -44,7 +44,7 @@ class ViewFrame private constructor(
         viewClass: Class<out View>,
         player: Player,
         initialData: Any?,
-    ): String = open(viewClass, listOf(player), initialData)
+    ): String? = open(viewClass, listOf(player), initialData)
 
     /**
      * Opens a view to more than one player.
@@ -62,7 +62,7 @@ class ViewFrame private constructor(
     fun open(
         viewClass: Class<out View>,
         players: Collection<Player>,
-    ): String = open(viewClass, players, null)
+    ): String? = open(viewClass, players, null)
 
     /**
      * Opens a view to more than one player with initial data.
@@ -82,7 +82,7 @@ class ViewFrame private constructor(
         viewClass: Class<out View>,
         players: Collection<Player>,
         initialData: Any?,
-    ): String = internalOpen(viewClass, players.associateBy { it.uuid.toString() }, initialData)
+    ): String? = internalOpen(viewClass, players.associateBy { it.uuid.toString() }, initialData)
 
     /**
      * Opens an already active context to a player.
