@@ -20,7 +20,7 @@ class CloseContext
     constructor(
         subject: Viewer,
         private val parent: IFRenderContext,
-        val origin: InventoryCloseEvent
+        val origin: InventoryCloseEvent,
     ) : PlatformConfinedContext(),
         IFCloseContext,
         Context {

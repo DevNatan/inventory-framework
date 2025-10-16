@@ -166,7 +166,11 @@ class MinestomElementFactory : ElementFactory() {
         viewer: Viewer?,
     ): IFSlotRenderContext = SlotRenderContext(slot, parent, viewer)
 
-    override fun createCloseContext(viewer: Viewer, parent: IFRenderContext, origin: Any): IFCloseContext = CloseContext(viewer, parent,origin as InventoryCloseEvent)
+    override fun createCloseContext(
+        viewer: Viewer,
+        parent: IFRenderContext,
+        origin: Any,
+    ): IFCloseContext = CloseContext(viewer, parent, origin as InventoryCloseEvent)
 
     override fun createComponentBuilder(root: VirtualView): ComponentBuilder<*, Context> = MinestomItemComponentBuilder(root)
 
