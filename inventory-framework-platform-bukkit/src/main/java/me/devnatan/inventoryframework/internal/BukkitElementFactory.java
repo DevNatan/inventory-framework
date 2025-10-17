@@ -120,7 +120,8 @@ public class BukkitElementFactory extends ElementFactory {
     }
 
     @Override
-    public IFCloseContext createCloseContext(@NotNull Viewer viewer, @NotNull IFRenderContext parent, @NotNull Object closeOrigin) {
+    public IFCloseContext createCloseContext(
+            @NotNull Viewer viewer, @NotNull IFRenderContext parent, @NotNull Object closeOrigin) {
         return new CloseContext(viewer, parent, (InventoryCloseEvent) closeOrigin);
     }
 

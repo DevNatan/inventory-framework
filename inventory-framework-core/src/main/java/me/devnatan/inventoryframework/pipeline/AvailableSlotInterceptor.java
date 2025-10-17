@@ -119,6 +119,7 @@ public final class AvailableSlotInterceptor implements PipelineInterceptor<Virtu
 
     private boolean isSlotNotAvailableForAutoFilling(IFRenderContext context, int slot) {
         if (!context.getContainer().getType().canPlayerInteractOn(slot)) return true;
+        if (context.getContainer().getSize() >= slot) return false;
 
         // fast path -- check for already rendered items
         if (context.getContainer().hasItem(slot)) return true;

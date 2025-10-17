@@ -96,11 +96,12 @@ public class MockElementFactory extends ElementFactory {
     }
 
     @Override
-    public IFCloseContext createCloseContext(@NotNull Viewer viewer, @NotNull IFRenderContext parent, @NotNull Object origin) {
+    public IFCloseContext createCloseContext(
+            @NotNull Viewer viewer, @NotNull IFRenderContext parent, @NotNull Object origin) {
         IFCloseContext mock = mock(IFCloseContext.class);
         when(mock.getViewer()).thenReturn(viewer);
         when(mock.getParent()).thenReturn(parent);
-		when(mock.getPlatformEvent()).thenReturn(origin);
+        when(mock.getPlatformEvent()).thenReturn(origin);
         return mock;
     }
 

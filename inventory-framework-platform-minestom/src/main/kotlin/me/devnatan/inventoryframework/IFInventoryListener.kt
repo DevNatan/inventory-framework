@@ -88,7 +88,8 @@ internal class IFInventoryListener(
 
         val context: IFRenderContext = viewer.activeContext
         val root: RootView = context.getRoot()
-        val closeContext: IFCloseContext = root.elementFactory.createCloseContext(viewer, context, event)
+        val closeContext: IFCloseContext =
+            root.elementFactory.createCloseContext(viewer, context, event)
 
         root.pipeline.execute(StandardPipelinePhases.CLOSE, closeContext)
     }

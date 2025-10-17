@@ -22,22 +22,23 @@ public class CloseContext extends PlatformConfinedContext implements IFCloseCont
     private final Viewer subject;
     private final Player player;
     private final IFRenderContext parent;
-	private final InventoryCloseEvent closeOrigin;
+    private final InventoryCloseEvent closeOrigin;
 
     private boolean cancelled;
 
     @ApiStatus.Internal
-    public CloseContext(@NotNull Viewer subject, @NotNull IFRenderContext parent, @NotNull InventoryCloseEvent closeOrigin) {
+    public CloseContext(
+            @NotNull Viewer subject, @NotNull IFRenderContext parent, @NotNull InventoryCloseEvent closeOrigin) {
         this.subject = subject;
         this.player = ((BukkitViewer) subject).getPlayer();
         this.parent = parent;
-		this.closeOrigin = closeOrigin;
+        this.closeOrigin = closeOrigin;
     }
 
-	@Override
-	public Object getPlatformEvent() {
-		return closeOrigin;
-	}
+    @Override
+    public Object getPlatformEvent() {
+        return closeOrigin;
+    }
 
     // TODO Needs documentation
     public final @NotNull Player getPlayer() {
