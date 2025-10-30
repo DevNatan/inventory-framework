@@ -120,7 +120,7 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
                 currentPageIndex(), reuseLazy, isStatic(), isComputed(), forceUpdated);
 
         if ((isStatic() || reuseLazy) && !isComputed() && !forceUpdated) {
-            // For unknown reasons already initialized but source is null, external modification?
+            // Already initialized but source is null?? External modification?
             if (initialized && currSource == null)
                 throw new IllegalStateException("User provided pagination source cannot be null");
             else {
