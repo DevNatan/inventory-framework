@@ -40,6 +40,7 @@ import me.devnatan.inventoryframework.pipeline.StandardPipelinePhases;
 import me.devnatan.inventoryframework.pipeline.UpdateInterceptor;
 import me.devnatan.inventoryframework.pipeline.ViewerLastInteractionTrackerInterceptor;
 import me.devnatan.inventoryframework.state.*;
+import me.devnatan.inventoryframework.state.timer.TimerState;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 

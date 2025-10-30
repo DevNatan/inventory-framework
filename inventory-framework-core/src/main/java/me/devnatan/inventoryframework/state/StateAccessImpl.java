@@ -14,6 +14,7 @@ import me.devnatan.inventoryframework.component.PaginationStateBuilder;
 import me.devnatan.inventoryframework.component.PaginationValueConsumer;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.internal.ElementFactory;
+import me.devnatan.inventoryframework.state.timer.TimerState;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 

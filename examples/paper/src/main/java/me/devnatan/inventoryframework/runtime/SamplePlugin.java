@@ -22,7 +22,7 @@ public class SamplePlugin extends JavaPlugin {
                         new Failing(),
                         new SimplePagination(),
                         new AutoUpdate(),
-                        new AutoUpdateAdvanced())
+                        new TimerView())
                 .register();
 
         IFExampleCommandExecutor command = new IFExampleCommandExecutor(viewFrame);

@@ -11,6 +11,7 @@ import me.devnatan.inventoryframework.component.PaginationStateBuilder;
 import me.devnatan.inventoryframework.component.PaginationValueConsumer;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.context.IFOpenContext;
+import me.devnatan.inventoryframework.state.timer.TimerState;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -184,7 +185,7 @@ public interface StateAccess<
      * @return A new unmodifiable timer state.
      */
     @ApiStatus.Experimental
-    TimerState timerState(long intervalInTicks);
+	TimerState timerState(long intervalInTicks);
 
     /**
      * Creates a new immutable pagination with static data source.

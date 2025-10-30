@@ -17,7 +17,7 @@ import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.context.IFSlotRenderContext;
 import me.devnatan.inventoryframework.logging.Logger;
-import me.devnatan.inventoryframework.state.TimerState;
+import me.devnatan.inventoryframework.state.timer.TimerState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

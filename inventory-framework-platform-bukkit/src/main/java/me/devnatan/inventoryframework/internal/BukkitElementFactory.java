@@ -15,7 +15,7 @@ import me.devnatan.inventoryframework.component.ComponentBuilder;
 import me.devnatan.inventoryframework.context.*;
 import me.devnatan.inventoryframework.logging.Logger;
 import me.devnatan.inventoryframework.logging.NoopLogger;
-import me.devnatan.inventoryframework.state.TimerState;
+import me.devnatan.inventoryframework.state.timer.TimerState;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;

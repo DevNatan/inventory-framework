@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import me.devnatan.inventoryframework.exception.InvalidLayoutException;
-import me.devnatan.inventoryframework.state.TimerState;
+import me.devnatan.inventoryframework.state.timer.TimerState;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
