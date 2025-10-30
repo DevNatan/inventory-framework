@@ -43,6 +43,14 @@ final class IFInventoryListener implements Listener {
         final Viewer viewer = viewFrame.getViewer(player);
         if (viewer == null) return;
 
+        if (viewer.isInteractionsLocked()) {
+            IFDebug.debug("Interaction locked at listener level %s", player.getName());
+            event.setCancelled(true);
+            return;
+        }
+
+        viewer.setInteractionsLocked(true);
+
         final IFRenderContext context = viewer.getActiveContext();
         final Component clickedComponent = context.getComponentsAt(event.getRawSlot()).stream()
                 .filter(Component::isVisible)
@@ -57,6 +65,8 @@ final class IFInventoryListener implements Listener {
                 .createSlotClickContext(event.getRawSlot(), viewer, clickedContainer, clickedComponent, event, false);
 
         root.getPipeline().execute(StandardPipelinePhases.CLICK, clickContext);
+
+        viewer.setInteractionsLocked(false);
     }
 
     @SuppressWarnings("unused")
@@ -72,11 +82,15 @@ final class IFInventoryListener implements Listener {
         final Viewer viewer = viewFrame.getViewer(player);
         if (viewer == null) return;
 
+        viewer.setInteractionsLocked(true);
+
         final IFRenderContext context = viewer.getCurrentContext();
         final RootView root = context.getRoot();
         final IFCloseContext closeContext = root.getElementFactory().createCloseContext(viewer, context, event);
 
         root.getPipeline().execute(StandardPipelinePhases.CLOSE, closeContext);
+
+        viewer.setInteractionsLocked(false);
     }
 
     @SuppressWarnings("deprecation")

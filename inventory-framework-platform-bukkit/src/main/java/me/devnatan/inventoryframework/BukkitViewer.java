@@ -14,7 +14,7 @@ public final class BukkitViewer implements Viewer {
     private IFRenderContext activeContext;
     private Deque<IFRenderContext> previousContexts = new LinkedList<>();
     private long lastInteractionInMillis;
-    private boolean switching;
+    private boolean switching, interactionsLocked;
 
     public BukkitViewer(@NotNull Player player, IFRenderContext activeContext) {
         this.player = player;
@@ -95,6 +95,16 @@ public final class BukkitViewer implements Viewer {
     @Override
     public void setSwitching(boolean switching) {
         this.switching = switching;
+    }
+
+    @Override
+    public boolean isInteractionsLocked() {
+        return interactionsLocked || isBlockedByInteractionDelay();
+    }
+
+    @Override
+    public void setInteractionsLocked(boolean interactionsLocked) {
+        this.interactionsLocked = interactionsLocked;
     }
 
     @Override

@@ -14,6 +14,7 @@ class MinestomViewer(
     private val previousContexts: Deque<IFRenderContext> = LinkedList()
     private var lastInteractionInMillis: Long = 0
     private var switching = false
+    private var interactionsLocked = false
 
     override fun getCurrentContext(): IFRenderContext =
         if (isSwitching()) {
@@ -69,6 +70,12 @@ class MinestomViewer(
 
     override fun setSwitching(switching: Boolean) {
         this.switching = switching
+    }
+
+    override fun isInteractionsLocked(): Boolean = interactionsLocked || isBlockedByInteractionDelay
+
+    override fun setInteractionsLocked(interactionsLocked: Boolean) {
+        this.interactionsLocked = interactionsLocked
     }
 
     override fun getPreviousContext(): IFRenderContext? = previousContexts.peekLast()

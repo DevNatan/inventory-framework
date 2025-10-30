@@ -105,6 +105,20 @@ public interface Viewer {
      * this library. No compatibility guarantees are provided. </i></b>
      */
     @ApiStatus.Internal
+    boolean isInteractionsLocked();
+
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
+    void setInteractionsLocked(boolean interactionsLocked);
+
+    /**
+     * <b><i> This is an internal inventory-framework API that should not be used from outside of
+     * this library. No compatibility guarantees are provided. </i></b>
+     */
+    @ApiStatus.Internal
     IFRenderContext getPreviousContext();
 
     /**

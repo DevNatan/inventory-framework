@@ -109,7 +109,8 @@ abstract class AbstractIFContext extends DefaultStateValueHost implements IFCont
 
     private IFSlotRenderContext createSlotRenderContext(@NotNull Component component, boolean force) {
         if (!(this instanceof IFRenderContext))
-            throw new InventoryFrameworkException("Slot render context cannot be created from non-render parent");
+            throw new InventoryFrameworkException("Slot render context cannot be created from non-render parent: "
+                    + getClass().getName());
 
         final IFRenderContext renderContext = (IFRenderContext) this;
         final IFSlotRenderContext slotRender = getRoot()
