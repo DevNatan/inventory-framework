@@ -22,7 +22,7 @@ jobs:
       uses: gradle/actions/setup-gradle@v4
 
     - name: Build with Gradle
-      run: ./gradlew build
+      run: ./gradlew build -x check
   test:
     runs-on: ubuntu-latest
     needs:
