@@ -17,7 +17,12 @@ public class SamplePlugin extends JavaPlugin {
     public void onEnable() {
         ViewFrame viewFrame = ViewFrame.create(this)
                 .install(AnvilInputFeature.AnvilInput)
-                .with(new AnvilInputSample(), new Failing(), new SimplePagination(), new AutoUpdate())
+                .with(
+                        new AnvilInputSample(),
+                        new Failing(),
+                        new SimplePagination(),
+                        new AutoUpdate(),
+                        new TimerSample())
                 .register();
 
         IFExampleCommandExecutor command = new IFExampleCommandExecutor(viewFrame);
