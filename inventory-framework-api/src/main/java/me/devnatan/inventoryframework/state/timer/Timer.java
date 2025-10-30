@@ -6,6 +6,8 @@ public interface Timer {
 
 	long currentInterval();
 
+	void changeInterval(long interval);
+
 	boolean isPaused();
 
 	boolean pause();
