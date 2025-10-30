@@ -2,6 +2,8 @@ package me.devnatan.inventoryframework.state.timer;
 
 public interface Timer {
 
+	void loop();
+
 	long initialInterval();
 
 	long currentInterval();
