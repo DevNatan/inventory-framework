@@ -692,6 +692,14 @@ public abstract class PlatformView<
         return stateAccess.computedPaginationState(sourceProvider, valueConsumer);
     }
 
+	@Override
+	public final <T> State<Pagination> computedPaginationState(
+		@NotNull Supplier<List<? super T>> sourceProvider,
+		@NotNull PaginationValueConsumer<TContext, TItem, T> valueConsumer) {
+		requireNotInitialized();
+		return stateAccess.computedPaginationState(sourceProvider, valueConsumer);
+	}
+
     @Override
     public final <T> State<Pagination> computedAsyncPaginationState(
             @NotNull Function<TContext, CompletableFuture<List<T>>> sourceProvider,
@@ -737,6 +745,13 @@ public abstract class PlatformView<
         requireNotInitialized();
         return stateAccess.buildComputedPaginationState(sourceProvider);
     }
+
+	@Override
+	public final <T> PaginationStateBuilder<TContext, TItem, T> buildComputedPaginationState(
+		@NotNull Supplier<List<? super T>> sourceProvider) {
+		requireNotInitialized();
+		return stateAccess.buildComputedPaginationState(sourceProvider);
+	}
 
     @Override
     public final <T> PaginationStateBuilder<TContext, TItem, T> buildComputedAsyncPaginationState(
