@@ -6,7 +6,10 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BooleanSupplier;
+import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
+
 import me.devnatan.inventoryframework.Ref;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.state.State;
@@ -16,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
 public abstract class DefaultComponentBuilder<S extends ComponentBuilder<S, C>, C extends IFContext>
         implements ComponentBuilder<S, C> {
 
+	protected Function<? extends IFContext, String> keyFactory;
     protected Ref<Component> reference;
     protected Map<String, Object> data;
     protected boolean cancelOnClick, closeOnClick, updateOnClick;
@@ -24,6 +28,7 @@ public abstract class DefaultComponentBuilder<S extends ComponentBuilder<S, C>, 
     protected Predicate<C> displayCondition;
 
     protected DefaultComponentBuilder(
+			Function<? extends IFContext, String> keyFactory,
             Ref<Component> reference,
             Map<String, Object> data,
             boolean cancelOnClick,
@@ -32,6 +37,7 @@ public abstract class DefaultComponentBuilder<S extends ComponentBuilder<S, C>, 
             Set<State<?>> watchingStates,
             boolean isManagedExternally,
             Predicate<C> displayCondition) {
+		this.keyFactory = keyFactory;
         this.reference = reference;
         this.data = data;
         this.cancelOnClick = cancelOnClick;
@@ -122,4 +128,20 @@ public abstract class DefaultComponentBuilder<S extends ComponentBuilder<S, C>, 
     public S hideIf(BooleanSupplier condition) {
         return displayIf(condition == null ? null : () -> !condition.getAsBoolean());
     }
+
+	@Override
+	public S identifiedAs(String key) {
+		return identifiedAs(() -> key);
+	}
+
+	@Override
+	public S identifiedAs(Supplier<String> key) {
+		return identifiedAs(__ -> key.get());
+	}
+
+	@Override
+	public S identifiedAs(Function<C, String> keyFactory) {
+		this.keyFactory = keyFactory;
+		return (S) this;
+	}
 }
