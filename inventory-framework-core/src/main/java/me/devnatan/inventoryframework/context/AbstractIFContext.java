@@ -114,7 +114,7 @@ abstract class AbstractIFContext extends DefaultStateValueHost implements IFCont
         final IFRenderContext renderContext = (IFRenderContext) this;
         final IFSlotRenderContext slotRender = getRoot()
                 .getElementFactory()
-                .createSlotRenderContext(component.getPosition(), renderContext, renderContext.getViewer());
+                .createSlotRenderContext(component.getPosition(), renderContext, renderContext.getViewer(), component);
         slotRender.setForceUpdate(force);
         return slotRender;
     }

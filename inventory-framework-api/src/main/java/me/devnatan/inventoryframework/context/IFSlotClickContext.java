@@ -17,8 +17,6 @@ public interface IFSlotClickContext extends IFSlotContext, IFConfinedContext {
     @NotNull
     ViewContainer getClickedContainer();
 
-    Component getComponent();
-
     int getClickedSlot();
 
     /**

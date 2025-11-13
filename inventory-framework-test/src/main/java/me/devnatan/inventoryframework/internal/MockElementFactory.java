@@ -86,12 +86,13 @@ public class MockElementFactory extends ElementFactory {
 
     @Override
     public IFSlotRenderContext createSlotRenderContext(
-            int slot, @NotNull IFRenderContext parent, @Nullable Viewer viewer) {
+            int slot, @NotNull IFRenderContext parent, @Nullable Viewer viewer, Component component) {
         IFSlotRenderContext mock = mock(IFSlotRenderContext.class);
         when(mock.getSlot()).thenReturn(slot);
         when(mock.getParent()).thenReturn(parent);
         when(mock.getViewer()).thenReturn(viewer);
         when(mock.getContainer()).then(ignored -> parent.getContainer());
+		when(mock.getComponent()).then(component);
         return mock;
     }
 

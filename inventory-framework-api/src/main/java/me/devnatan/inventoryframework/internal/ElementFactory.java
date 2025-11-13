@@ -68,7 +68,7 @@ public abstract class ElementFactory {
             boolean combined);
 
     public abstract IFSlotRenderContext createSlotRenderContext(
-            int slot, @NotNull IFRenderContext parent, @Nullable Viewer viewer);
+            int slot, @NotNull IFRenderContext parent, @Nullable Viewer viewer, Component component);
 
     /**
      * Creates a new close context for the current platform.
