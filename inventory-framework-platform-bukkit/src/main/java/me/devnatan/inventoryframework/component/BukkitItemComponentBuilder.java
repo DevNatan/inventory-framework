@@ -22,9 +22,6 @@ import org.jetbrains.annotations.Nullable;
 public final class BukkitItemComponentBuilder extends DefaultComponentBuilder<BukkitItemComponentBuilder, Context>
         implements ItemComponentBuilder<BukkitItemComponentBuilder, Context>, ComponentFactory {
 
-    private static final Function<IFContext, String> RANDOM_KEY_FACTORY =
-            __ -> UUID.randomUUID().toString();
-
     private final VirtualView root;
     private int slot;
     private ItemStack item;

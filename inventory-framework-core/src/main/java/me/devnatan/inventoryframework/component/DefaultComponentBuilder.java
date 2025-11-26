@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.function.BooleanSupplier;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -17,6 +18,9 @@ import org.jetbrains.annotations.NotNull;
 @SuppressWarnings("unchecked")
 public abstract class DefaultComponentBuilder<S extends ComponentBuilder<S, C>, C extends IFContext>
         implements ComponentBuilder<S, C> {
+
+	protected static final Function<IFContext, String> RANDOM_KEY_FACTORY =
+		__ -> UUID.randomUUID().toString();
 
     protected Function<? extends IFContext, String> keyFactory;
     protected Ref<Component> reference;

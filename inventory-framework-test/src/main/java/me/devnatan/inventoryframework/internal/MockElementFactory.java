@@ -92,7 +92,7 @@ public class MockElementFactory extends ElementFactory {
         when(mock.getParent()).thenReturn(parent);
         when(mock.getViewer()).thenReturn(viewer);
         when(mock.getContainer()).then(ignored -> parent.getContainer());
-        when(mock.getComponent()).then(component);
+        when(mock.getComponent()).thenReturn(component);
         return mock;
     }
 

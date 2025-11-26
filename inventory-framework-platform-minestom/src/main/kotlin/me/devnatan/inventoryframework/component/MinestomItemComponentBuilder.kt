@@ -4,6 +4,7 @@ import me.devnatan.inventoryframework.Ref
 import me.devnatan.inventoryframework.ViewContainer
 import me.devnatan.inventoryframework.VirtualView
 import me.devnatan.inventoryframework.context.Context
+import me.devnatan.inventoryframework.context.IFContext
 import me.devnatan.inventoryframework.context.IFRenderContext
 import me.devnatan.inventoryframework.context.IFSlotClickContext
 import me.devnatan.inventoryframework.context.IFSlotContext
@@ -16,13 +17,14 @@ import me.devnatan.inventoryframework.utils.SlotConverter
 import net.minestom.server.item.ItemStack
 import java.util.UUID
 import java.util.function.Consumer
+import java.util.function.Function
 import java.util.function.Predicate
 import java.util.function.Supplier
 
 class MinestomItemComponentBuilder
     private constructor(
         private val root: VirtualView,
-        key: String?,
+        keyFactory: Function<out IFContext, String>?,
         slot: Int,
         item: ItemStack?,
         renderHandler: Consumer<in IFSlotRenderContext>?,
@@ -37,7 +39,7 @@ class MinestomItemComponentBuilder
         isManagedExternally: Boolean,
         displayCondition: Predicate<Context>?,
     ) : DefaultComponentBuilder<MinestomItemComponentBuilder, Context>(
-            key,
+            keyFactory,
             reference,
             data,
             cancelOnClick,
@@ -59,7 +61,7 @@ class MinestomItemComponentBuilder
             root: VirtualView,
         ) : this(
             root = root,
-            key = null,
+            keyFactory = null,
             slot = -1,
             item = null,
             renderHandler = null,
@@ -207,29 +209,33 @@ class MinestomItemComponentBuilder
             return this
         }
 
-        override fun create(): Component =
-            ItemComponent(
-                key ?: UUID.randomUUID().toString(),
-                root,
-                slot,
-                item,
-                cancelOnClick,
-                closeOnClick,
-                displayCondition,
-                renderHandler,
-                updateHandler,
-                clickHandler,
-                watchingStates,
-                isManagedExternally,
-                updateOnClick,
-                false,
-                reference,
+        override fun create(): Component {
+            val componentKeyProvider =
+                if (keyFactory == null) RANDOM_KEY_FACTORY else keyFactory
+
+            return ItemComponent(
+                /* keyFactory = */ componentKeyProvider,
+                /* root = */ root,
+                /* position = */ slot,
+                /* stack = */ item,
+                /* cancelOnClick = */ cancelOnClick,
+                /* closeOnClick = */ closeOnClick,
+                /* displayCondition = */ displayCondition,
+                /* renderHandler = */ renderHandler,
+                /* updateHandler = */ updateHandler,
+                /* clickHandler = */ clickHandler,
+                /* watching = */ watchingStates,
+                /* isManagedExternally = */ isManagedExternally,
+                /* updateOnClick = */ updateOnClick,
+                /* isVisible = */ false,
+                /* reference = */ reference,
             )
+        }
 
         override fun copy(): MinestomItemComponentBuilder =
             MinestomItemComponentBuilder(
                 root = root,
-                key = key,
+                keyFactory = keyFactory,
                 slot = slot,
                 item = item,
                 renderHandler = renderHandler,
