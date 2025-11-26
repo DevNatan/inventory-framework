@@ -2,6 +2,7 @@ package me.devnatan.inventoryframework.component;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import me.devnatan.inventoryframework.Ref;
 import me.devnatan.inventoryframework.context.IFContext;
@@ -14,10 +15,11 @@ public class TestItemComponentBuilder extends DefaultComponentBuilder<TestItemCo
     int slot;
 
     public TestItemComponentBuilder() {
-        this(null, null, false, false, false, null, false, null);
+        this(null, null, null, false, false, false, null, false, null);
     }
 
     protected TestItemComponentBuilder(
+			Function<? extends IFContext, String> keyFactory,
             Ref<Component> referenceKey,
             Map<String, Object> data,
             boolean cancelOnClick,
@@ -27,6 +29,7 @@ public class TestItemComponentBuilder extends DefaultComponentBuilder<TestItemCo
             boolean isManagedExternally,
             Predicate<IFContext> displayCondition) {
         super(
+				keyFactory,
                 referenceKey,
                 data,
                 cancelOnClick,
