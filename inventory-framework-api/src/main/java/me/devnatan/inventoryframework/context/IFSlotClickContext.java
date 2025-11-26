@@ -1,7 +1,6 @@
 package me.devnatan.inventoryframework.context;
 
 import me.devnatan.inventoryframework.ViewContainer;
-import me.devnatan.inventoryframework.component.Component;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 

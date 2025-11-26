@@ -3,12 +3,9 @@ package me.devnatan.inventoryframework.component;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
-import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
-
 import me.devnatan.inventoryframework.InventoryFrameworkException;
 import me.devnatan.inventoryframework.Ref;
 import me.devnatan.inventoryframework.VirtualView;
@@ -35,11 +32,11 @@ public class ItemComponent implements Component, InteractionHandler {
     private final boolean updateOnClick;
     private final Ref<Component> reference;
 
-	private boolean isVisible;
-	private String lastKey;
+    private boolean isVisible;
+    private String lastKey;
 
-	public ItemComponent(
-			Function<? extends IFContext, String> keyFactory,
+    public ItemComponent(
+            Function<? extends IFContext, String> keyFactory,
             VirtualView root,
             int position,
             Object stack,
@@ -54,8 +51,8 @@ public class ItemComponent implements Component, InteractionHandler {
             boolean updateOnClick,
             boolean isVisible,
             Ref<Component> reference) {
-		//noinspection unchecked
-		this.keyFactory = (Function<IFContext, String>) keyFactory;
+        //noinspection unchecked
+        this.keyFactory = (Function<IFContext, String>) keyFactory;
         this.root = root;
         this.position = position;
         this.stack = stack;
@@ -74,12 +71,12 @@ public class ItemComponent implements Component, InteractionHandler {
 
     @Override
     public String getKey() {
-		return lastKey;
+        return lastKey;
     }
 
-	public String useKey(IFContext context) {
-		return lastKey = keyFactory.apply(context);
-	}
+    public String useKey(IFContext context) {
+        return lastKey = keyFactory.apply(context);
+    }
 
     @NotNull
     @Override
@@ -194,14 +191,14 @@ public class ItemComponent implements Component, InteractionHandler {
     public void updated(@NotNull IFSlotRenderContext context) {
         if (context.isCancelled()) return;
 
-		// Not a force update, item is not dynamic (`onRender` or `displayIf` not set)
-		if (!context.isForceUpdate()) {
-			final boolean staticItem = displayCondition == null && getRenderHandler() == null;
-			if (staticItem) return;
+        // Not a force update, item is not dynamic (`onRender` or `displayIf` not set)
+        if (!context.isForceUpdate()) {
+            final boolean staticItem = displayCondition == null && getRenderHandler() == null;
+            if (staticItem) return;
 
-			// Item is dynamic but key hasn't changed
-			if (Objects.equals(lastKey, useKey(context))) return;
-		}
+            // Item is dynamic but key hasn't changed
+            if (Objects.equals(lastKey, useKey(context))) return;
+        }
 
         if (isVisible() && getUpdateHandler() != null) {
             getUpdateHandler().accept(context);

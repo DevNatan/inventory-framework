@@ -15,7 +15,7 @@ public class SlotRenderContext extends SlotContext implements IFSlotRenderContex
 
     private final Player player;
     private final Viewer viewer;
-	private final Component component;
+    private final Component component;
     private ItemStack item;
     private boolean cancelled;
     private boolean changed;
@@ -26,15 +26,15 @@ public class SlotRenderContext extends SlotContext implements IFSlotRenderContex
         super(slot, parent);
         this.viewer = viewer;
         this.player = viewer == null ? null : ((BukkitViewer) viewer).getPlayer();
-		this.component = component;
+        this.component = component;
     }
 
-	@Override
-	public final Component getComponent() {
-		return component;
-	}
+    @Override
+    public final Component getComponent() {
+        return component;
+    }
 
-	@Override
+    @Override
     public final @UnknownNullability Player getPlayer() {
         return player;
     }

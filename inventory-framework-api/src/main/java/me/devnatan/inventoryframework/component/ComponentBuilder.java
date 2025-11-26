@@ -4,7 +4,6 @@ import java.util.function.BooleanSupplier;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-
 import me.devnatan.inventoryframework.Ref;
 import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.state.State;
@@ -166,24 +165,24 @@ public interface ComponentBuilder<S extends ComponentBuilder<S, C>, C extends IF
      */
     S hideIf(Predicate<C> condition);
 
-	/**
-	 * *** This API is experimental and is not subject to the general compatibility guarantees such
-	 * API may be changed or may be removed completely in any further release. ***
-	 */
-	@ApiStatus.Experimental
-	S identifiedBy(String key);
+    /**
+     * *** This API is experimental and is not subject to the general compatibility guarantees such
+     * API may be changed or may be removed completely in any further release. ***
+     */
+    @ApiStatus.Experimental
+    S identifiedBy(String key);
 
-	/**
-	 * *** This API is experimental and is not subject to the general compatibility guarantees such
-	 * API may be changed or may be removed completely in any further release. ***
-	 */
-	@ApiStatus.Experimental
-	S identifiedBy(Supplier<String> keyProvider);
+    /**
+     * *** This API is experimental and is not subject to the general compatibility guarantees such
+     * API may be changed or may be removed completely in any further release. ***
+     */
+    @ApiStatus.Experimental
+    S identifiedBy(Supplier<String> keyProvider);
 
-	/**
-	 * *** This API is experimental and is not subject to the general compatibility guarantees such
-	 * API may be changed or may be removed completely in any further release. ***
-	 */
-	@ApiStatus.Experimental
-	S identifiedBy(Function<C, String> keyProvider);
+    /**
+     * *** This API is experimental and is not subject to the general compatibility guarantees such
+     * API may be changed or may be removed completely in any further release. ***
+     */
+    @ApiStatus.Experimental
+    S identifiedBy(Function<C, String> keyProvider);
 }

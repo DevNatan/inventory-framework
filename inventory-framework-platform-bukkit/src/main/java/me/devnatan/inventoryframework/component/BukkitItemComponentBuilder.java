@@ -16,14 +16,14 @@ import me.devnatan.inventoryframework.context.*;
 import me.devnatan.inventoryframework.state.State;
 import me.devnatan.inventoryframework.utils.SlotConverter;
 import org.bukkit.inventory.ItemStack;
-import org.checkerframework.checker.units.qual.C;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public final class BukkitItemComponentBuilder extends DefaultComponentBuilder<BukkitItemComponentBuilder, Context>
         implements ItemComponentBuilder<BukkitItemComponentBuilder, Context>, ComponentFactory {
 
-	private static final Function<IFContext, String> RANDOM_KEY_FACTORY = __ -> UUID.randomUUID().toString();
+    private static final Function<IFContext, String> RANDOM_KEY_FACTORY =
+            __ -> UUID.randomUUID().toString();
 
     private final VirtualView root;
     private int slot;
@@ -34,7 +34,7 @@ public final class BukkitItemComponentBuilder extends DefaultComponentBuilder<Bu
 
     public BukkitItemComponentBuilder(VirtualView root) {
         this(
-				null,
+                null,
                 root,
                 -1,
                 null,
@@ -52,7 +52,7 @@ public final class BukkitItemComponentBuilder extends DefaultComponentBuilder<Bu
     }
 
     private BukkitItemComponentBuilder(
-			Function<? extends IFContext, String> keyFactory,
+            Function<? extends IFContext, String> keyFactory,
             VirtualView root,
             int slot,
             ItemStack item,
@@ -68,7 +68,7 @@ public final class BukkitItemComponentBuilder extends DefaultComponentBuilder<Bu
             boolean isManagedExternally,
             Predicate<Context> displayCondition) {
         super(
-				keyFactory,
+                keyFactory,
                 reference,
                 data,
                 cancelOnClick,
@@ -196,11 +196,10 @@ public final class BukkitItemComponentBuilder extends DefaultComponentBuilder<Bu
 
     @Override
     public @NotNull Component create() {
-		final Function<? extends IFContext, String> componentKeyProvider = keyFactory == null
-			? RANDOM_KEY_FACTORY
-			: keyFactory;
+        final Function<? extends IFContext, String> componentKeyProvider =
+                keyFactory == null ? RANDOM_KEY_FACTORY : keyFactory;
         return new ItemComponent(
-				componentKeyProvider,
+                componentKeyProvider,
                 root,
                 slot,
                 item,
@@ -220,7 +219,7 @@ public final class BukkitItemComponentBuilder extends DefaultComponentBuilder<Bu
     @Override
     public BukkitItemComponentBuilder copy() {
         return new BukkitItemComponentBuilder(
-				keyFactory,
+                keyFactory,
                 root,
                 slot,
                 item,
