@@ -196,13 +196,8 @@ public class ItemComponent implements Component, InteractionHandler {
             final boolean staticItem = displayCondition == null && getRenderHandler() == null;
             if (staticItem) return;
 
-			String key = null;
-			final boolean firstRender = lastKey == null
-				&& (key = useKey(context)) != null
-				&& keyFactory != null;
-
-			// Item is dynamic but key hasn't changed
-			if (!firstRender && Objects.equals(lastKey, key)) return;
+            // Item is dynamic but key hasn't changed
+            if (Objects.equals(lastKey, useKey(context))) return;
         }
 
         if (isVisible() && getUpdateHandler() != null) {
