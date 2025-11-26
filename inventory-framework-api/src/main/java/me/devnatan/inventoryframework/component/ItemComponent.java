@@ -74,10 +74,6 @@ public class ItemComponent implements Component, InteractionHandler {
         return lastKey;
     }
 
-    public String useKey(IFContext context) {
-        return lastKey = keyFactory.apply(context);
-    }
-
     @NotNull
     @Override
     public VirtualView getRoot() {
@@ -144,6 +140,8 @@ public class ItemComponent implements Component, InteractionHandler {
 
     @Override
     public void render(@NotNull IFSlotRenderContext context) {
+        if (keyFactory != null) lastKey = keyFactory.apply(context);
+
         if (getRenderHandler() != null) {
             final int initialSlot = getPosition();
 
@@ -191,14 +189,13 @@ public class ItemComponent implements Component, InteractionHandler {
     public void updated(@NotNull IFSlotRenderContext context) {
         if (context.isCancelled()) return;
 
-        // Not a force update, item is not dynamic (`onRender` or `displayIf` not set)
-        if (!context.isForceUpdate()) {
-            final boolean staticItem = displayCondition == null && getRenderHandler() == null;
-            if (staticItem) return;
+        boolean isWatchingAnyState =
+                getWatchingStates() != null && !getWatching().isEmpty();
 
-            // Item is dynamic but key hasn't changed
-            if (Objects.equals(lastKey, useKey(context))) return;
-        }
+        if (!isWatchingAnyState
+                && keyFactory != null
+                && lastKey != null
+                && Objects.equals(lastKey, keyFactory.apply(context))) return;
 
         if (isVisible() && getUpdateHandler() != null) {
             getUpdateHandler().accept(context);

@@ -15,7 +15,6 @@ import me.devnatan.inventoryframework.context.SlotRenderContext
 import me.devnatan.inventoryframework.state.State
 import me.devnatan.inventoryframework.utils.SlotConverter
 import net.minestom.server.item.ItemStack
-import java.util.UUID
 import java.util.function.Consumer
 import java.util.function.Function
 import java.util.function.Predicate
@@ -210,25 +209,39 @@ class MinestomItemComponentBuilder
         }
 
         override fun create(): Component {
-            val componentKeyProvider =
-                if (keyFactory == null) RANDOM_KEY_FACTORY else keyFactory
+            val componentKeyProvider = if (keyFactory == null) RANDOM_KEY_FACTORY else keyFactory
 
             return ItemComponent(
-                /* keyFactory = */ componentKeyProvider,
-                /* root = */ root,
-                /* position = */ slot,
-                /* stack = */ item,
-                /* cancelOnClick = */ cancelOnClick,
-                /* closeOnClick = */ closeOnClick,
-                /* displayCondition = */ displayCondition,
-                /* renderHandler = */ renderHandler,
-                /* updateHandler = */ updateHandler,
-                /* clickHandler = */ clickHandler,
-                /* watching = */ watchingStates,
-                /* isManagedExternally = */ isManagedExternally,
-                /* updateOnClick = */ updateOnClick,
-                /* isVisible = */ false,
-                /* reference = */ reference,
+                // keyFactory =
+                componentKeyProvider,
+                // root =
+                root,
+                // position =
+                slot,
+                // stack =
+                item,
+                // cancelOnClick =
+                cancelOnClick,
+                // closeOnClick =
+                closeOnClick,
+                // displayCondition =
+                displayCondition,
+                // renderHandler =
+                renderHandler,
+                // updateHandler =
+                updateHandler,
+                // clickHandler =
+                clickHandler,
+                // watching =
+                watchingStates,
+                // isManagedExternally =
+                isManagedExternally,
+                // updateOnClick =
+                updateOnClick,
+                // isVisible =
+                false,
+                // reference =
+                reference,
             )
         }
 

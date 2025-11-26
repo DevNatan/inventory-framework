@@ -19,8 +19,8 @@ import org.jetbrains.annotations.NotNull;
 public abstract class DefaultComponentBuilder<S extends ComponentBuilder<S, C>, C extends IFContext>
         implements ComponentBuilder<S, C> {
 
-	protected static final Function<IFContext, String> RANDOM_KEY_FACTORY =
-		__ -> UUID.randomUUID().toString();
+    protected static final Function<IFContext, String> RANDOM_KEY_FACTORY =
+            __ -> UUID.randomUUID().toString();
 
     protected Function<? extends IFContext, String> keyFactory;
     protected Ref<Component> reference;
