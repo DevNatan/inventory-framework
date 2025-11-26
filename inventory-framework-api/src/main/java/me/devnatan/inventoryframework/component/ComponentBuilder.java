@@ -171,19 +171,19 @@ public interface ComponentBuilder<S extends ComponentBuilder<S, C>, C extends IF
 	 * API may be changed or may be removed completely in any further release. ***
 	 */
 	@ApiStatus.Experimental
-	S identifiedAs(String key);
+	S identifiedBy(String key);
 
 	/**
 	 * *** This API is experimental and is not subject to the general compatibility guarantees such
 	 * API may be changed or may be removed completely in any further release. ***
 	 */
 	@ApiStatus.Experimental
-	S identifiedAs(Supplier<String> keyProvider);
+	S identifiedBy(Supplier<String> keyProvider);
 
 	/**
 	 * *** This API is experimental and is not subject to the general compatibility guarantees such
 	 * API may be changed or may be removed completely in any further release. ***
 	 */
 	@ApiStatus.Experimental
-	S identifiedAs(Function<C, String> keyProvider);
+	S identifiedBy(Function<C, String> keyProvider);
 }

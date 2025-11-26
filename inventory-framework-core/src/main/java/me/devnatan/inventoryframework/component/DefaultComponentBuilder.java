@@ -130,17 +130,17 @@ public abstract class DefaultComponentBuilder<S extends ComponentBuilder<S, C>, 
     }
 
 	@Override
-	public S identifiedAs(String key) {
-		return identifiedAs(() -> key);
+	public S identifiedBy(String key) {
+		return identifiedBy(() -> key);
 	}
 
 	@Override
-	public S identifiedAs(Supplier<String> key) {
-		return identifiedAs(__ -> key.get());
+	public S identifiedBy(Supplier<String> key) {
+		return identifiedBy(__ -> key.get());
 	}
 
 	@Override
-	public S identifiedAs(Function<C, String> keyFactory) {
+	public S identifiedBy(Function<C, String> keyFactory) {
 		this.keyFactory = keyFactory;
 		return (S) this;
 	}
