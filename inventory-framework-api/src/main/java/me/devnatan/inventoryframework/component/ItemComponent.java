@@ -33,7 +33,7 @@ public class ItemComponent implements Component, InteractionHandler {
     private final Ref<Component> reference;
 
     private boolean isVisible;
-    private String lastKey;
+    private volatile String lastKey;
 
     public ItemComponent(
             Function<? extends IFContext, String> keyFactory,
