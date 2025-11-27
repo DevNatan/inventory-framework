@@ -33,7 +33,7 @@ public class ItemComponent implements Component, InteractionHandler {
     private final Ref<Component> reference;
 
     private boolean isVisible;
-    private String lastKey;
+    private volatile String lastKey;
 
     public ItemComponent(
             Function<? extends IFContext, String> keyFactory,
@@ -193,7 +193,6 @@ public class ItemComponent implements Component, InteractionHandler {
                 getWatchingStates() != null && !getWatching().isEmpty();
 
         if (!isWatchingAnyState
-                && keyFactory != null
                 && lastKey != null
                 && Objects.equals(lastKey, keyFactory.apply(context))) return;
 
