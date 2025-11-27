@@ -316,9 +316,7 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
 
     private int[] reorderLayoutPositionsVertically(int[] positions, ViewContainer container) {
         int cols = container.getColumnsCount();
-        int rows = container.getRowsCount();
 
-        // Transformar todos os slots em uma matriz [row][col]
         List<int[]> coords = new ArrayList<>(positions.length);
         for (int pos : positions) {
             int row = pos / cols;
@@ -326,14 +324,12 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
             coords.add(new int[] {row, col, pos});
         }
 
-        // Agora ordenar por colunas primeiro, depois linhas
-        coords.sort(Comparator.comparingInt((int[] a) -> a[1]) // coluna primeiro
-                .thenComparingInt(a -> a[0])); // depois linha
+        coords.sort(Comparator.comparingInt((int[] a) -> a[1])
+                .thenComparingInt(a -> a[0]));
 
-        // Extrair apenas o slot original na ordem nova
         int[] reordered = new int[positions.length];
         for (int i = 0; i < coords.size(); i++) {
-            reordered[i] = coords.get(i)[2]; // pega o slot
+            reordered[i] = coords.get(i)[2];
         }
 
         return reordered;
