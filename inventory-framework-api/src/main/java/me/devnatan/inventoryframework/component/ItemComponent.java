@@ -193,7 +193,6 @@ public class ItemComponent implements Component, InteractionHandler {
                 getWatchingStates() != null && !getWatching().isEmpty();
 
         if (!isWatchingAnyState
-                && keyFactory != null
                 && lastKey != null
                 && Objects.equals(lastKey, keyFactory.apply(context))) return;
 
