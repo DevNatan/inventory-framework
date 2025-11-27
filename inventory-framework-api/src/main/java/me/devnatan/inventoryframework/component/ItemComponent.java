@@ -140,7 +140,7 @@ public class ItemComponent implements Component, InteractionHandler {
 
     @Override
     public void render(@NotNull IFSlotRenderContext context) {
-        if (keyFactory != null) lastKey = keyFactory.apply(context);
+        lastKey = keyFactory.apply(context);
 
         if (getRenderHandler() != null) {
             final int initialSlot = getPosition();
