@@ -313,16 +313,18 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
 
         final int rows = layout.length;
         final int cols = layout[0].length();
+        final int totalSlots = rows * cols;
 
-        List<Integer> present = new ArrayList<>();
-
-        for (int p : positions) present.add(p);
+        boolean[] present = new boolean[totalSlots];
+        for (int p : positions) {
+            if (p >= 0 && p < totalSlots) present[p] = true;
+        }
 
         List<Integer> rowMajor = new ArrayList<>(positions.length);
         for (int r = 0; r < rows; r++) {
             for (int c = 0; c < cols; c++) {
                 int slot = r * cols + c;
-                if (present.contains(slot)) rowMajor.add(slot);
+                if (present[slot]) rowMajor.add(slot);
             }
         }
 
@@ -330,37 +332,109 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
         for (int c = 0; c < cols; c++) {
             for (int r = 0; r < rows; r++) {
                 int slot = r * cols + c;
-                if (present.contains(slot)) colMajor.add(slot);
+                if (present[slot]) colMajor.add(slot);
             }
         }
 
         if (orientation == Orientation.HORIZONTAL) {
             return listToIntArray(rowMajor);
         }
-
         if (orientation == Orientation.VERTICAL) {
             return listToIntArray(colMajor);
         }
-
         if (orientation == Orientation.ALTERNATING_ROWS) {
             return interleaveList(rowMajor);
         }
-
         if (orientation == Orientation.ALTERNATING_COLUMNS) {
             return interleaveList(colMajor);
         }
 
+        if (orientation == Orientation.TOP_BOTTOM_LEFT_RIGHT) {
+            boolean[] added = new boolean[totalSlots];
+            List<Integer> out = new ArrayList<>(positions.length);
+
+            for (int c = 0; c < cols; c++) {
+                if (c == 0 || c == 2 || c == 4 || c == 6 || c == 8) {
+                    // top -> bottom
+                    for (int r = 0; r < rows; r++) {
+                        int slot = r * cols + c;
+                        if (slot >= 0 && slot < totalSlots && present[slot] && !added[slot]) {
+                            out.add(slot);
+                            added[slot] = true;
+                        }
+                    }
+                } else {
+                    // bottom -> top
+                    for (int r = rows - 1; r >= 0; r--) {
+                        int slot = r * cols + c;
+                        if (slot >= 0 && slot < totalSlots && present[slot] && !added[slot]) {
+                            out.add(slot);
+                            added[slot] = true;
+                        }
+                    }
+                }
+            }
+
+            if (out.size() < positions.length) {
+                for (int rmSlot : rowMajor) {
+                    if (!added[rmSlot]) {
+                        out.add(rmSlot);
+                        added[rmSlot] = true;
+                    }
+                }
+            }
+
+            return listToIntArray(out);
+        }
+
+        if (orientation == Orientation.STEPPED) {
+            boolean[] added = new boolean[totalSlots];
+            List<Integer> out = new ArrayList<>(positions.length);
+
+            for (int c = 0; c < cols; c++) {
+                if (c % 2 != 0) {
+                    // top -> bottom
+                    for (int r = 0; r < rows; r++) {
+                        int slot = r * cols + c;
+                        if (slot >= 0 && slot < totalSlots && present[slot] && !added[slot]) {
+                            out.add(slot);
+                            added[slot] = true;
+                        }
+                    }
+                } else {
+                    // bottom -> top
+                    for (int r = rows - 1; r >= 0; r--) {
+                        int slot = r * cols + c;
+                        if (slot >= 0 && slot < totalSlots && present[slot] && !added[slot]) {
+                            out.add(slot);
+                            added[slot] = true;
+                        }
+                    }
+                }
+            }
+
+            if (out.size() < positions.length) {
+                for (int rmSlot : rowMajor) {
+                    if (!added[rmSlot]) {
+                        out.add(rmSlot);
+                        added[rmSlot] = true;
+                    }
+                }
+            }
+
+            return listToIntArray(out);
+        }
+
+        // fallback
         return positions;
     }
 
-    /** Convert List<Integer> to int[] */
     private int[] listToIntArray(List<Integer> list) {
         int[] out = new int[list.size()];
         for (int i = 0; i < list.size(); i++) out[i] = list.get(i);
         return out;
     }
 
-    /** Interleave list as: first, last, second, penultimate, ... */
     private int[] interleaveList(List<Integer> list) {
         int n = list.size();
         int[] out = new int[n];

@@ -256,14 +256,6 @@ public interface Pagination extends ComponentComposition, StateValue {
      * Sets the orientation that defines how layout slots will be traversed
      * when producing paginated components.
      *
-     * <p>The orientation determines the fill direction of the layout grid:
-     * <ul>
-     *   <li>{@link Orientation#HORIZONTAL} → row-major ordering</li>
-     *   <li>{@link Orientation#VERTICAL} → column-major ordering</li>
-     *   <li>{@link Orientation#MIXED_ROW_MAJOR} → horizontal traversal by clusters</li>
-     *   <li>{@link Orientation#MIXED_COLUMN_MAJOR} → vertical traversal by clusters</li>
-     * </ul>
-     *
      * <p>This setting does not affect the page size — only the ordering of
      * component placement inside the layout.</p>
      *
@@ -308,18 +300,6 @@ public interface Pagination extends ComponentComposition, StateValue {
         HORIZONTAL,
 
         /**
-         * Mixed column-major ordering.
-         *
-         * <p>Slots are traversed vertically (top to bottom, left to right),
-         * but processed sequence-by-sequence. A "sequence" is a contiguous group
-         * of valid slots ('O') in the layout.</p>
-         *
-         * <p>This mode preserves logical grouping while following a
-         * vertical reading direction.</p>
-         */
-        MIXED,
-
-        /**
          * Iterates slot positions using an alternating row-major traversal.
          * Elements are interleaved from both ends of the row-major ordered list:
          * <pre>
@@ -344,5 +324,17 @@ public interface Pagination extends ComponentComposition, StateValue {
          * </pre>
          */
         ALTERNATING_COLUMNS,
+
+        /**
+         * Mixed column-major ordering.
+         *
+         * <p>Slots are traversed vertically (top to bottom, left to right),
+         * but processed sequence-by-sequence. A "sequence" is a contiguous group
+         * of valid slots in the layout.</p>
+         *
+         * <p>This mode preserves logical grouping while following a
+         * vertical reading direction.</p>
+         */
+        TOP_BOTTOM_LEFT_RIGHT;
     }
 }
