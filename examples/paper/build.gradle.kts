@@ -27,7 +27,7 @@ runPaper.folia.registerTask()
 
 tasks.runServer {
     jvmArgs("-Dme.devnatan.inventoryframework.debug=true")
-    minecraftVersion("1.21.5")
+    minecraftVersion("1.21.10")
 }
 
 bukkit {
