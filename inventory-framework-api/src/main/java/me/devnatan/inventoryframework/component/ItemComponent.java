@@ -188,14 +188,13 @@ public class ItemComponent implements Component, InteractionHandler {
     @Override
     public void updated(@NotNull IFSlotRenderContext context) {
         if (context.isCancelled()) return;
-
-        boolean isWatchingAnyState =
-                getWatchingStates() != null && !getWatching().isEmpty();
-
-        if (!isWatchingAnyState
+        // Key-based skip optimization should always take precedence
+        if (keyFactory != null
                 && lastKey != null
                 && Objects.equals(lastKey, keyFactory.apply(context))) return;
 
+        boolean isWatchingAnyState =
+                getWatchingStates() != null && !getWatching().isEmpty();
         if (isVisible() && getUpdateHandler() != null) {
             getUpdateHandler().accept(context);
             if (context.isCancelled()) return;
