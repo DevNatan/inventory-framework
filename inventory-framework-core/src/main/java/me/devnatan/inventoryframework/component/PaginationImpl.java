@@ -387,45 +387,6 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
             return listToIntArray(out);
         }
 
-        if (orientation == Orientation.STEPPED) {
-            boolean[] added = new boolean[totalSlots];
-            List<Integer> out = new ArrayList<>(positions.length);
-
-            for (int c = 0; c < cols; c++) {
-                if (c % 2 != 0) {
-                    // top -> bottom
-                    for (int r = 0; r < rows; r++) {
-                        int slot = r * cols + c;
-                        if (slot >= 0 && slot < totalSlots && present[slot] && !added[slot]) {
-                            out.add(slot);
-                            added[slot] = true;
-                        }
-                    }
-                } else {
-                    // bottom -> top
-                    for (int r = rows - 1; r >= 0; r--) {
-                        int slot = r * cols + c;
-                        if (slot >= 0 && slot < totalSlots && present[slot] && !added[slot]) {
-                            out.add(slot);
-                            added[slot] = true;
-                        }
-                    }
-                }
-            }
-
-            if (out.size() < positions.length) {
-                for (int rmSlot : rowMajor) {
-                    if (!added[rmSlot]) {
-                        out.add(rmSlot);
-                        added[rmSlot] = true;
-                    }
-                }
-            }
-
-            return listToIntArray(out);
-        }
-
-        // fallback
         return positions;
     }
 
