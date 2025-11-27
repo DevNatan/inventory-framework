@@ -5,6 +5,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import me.devnatan.inventoryframework.Ref;
@@ -29,6 +30,7 @@ public final class BukkitItemComponentBuilder extends DefaultComponentBuilder<Bu
 
     public BukkitItemComponentBuilder(VirtualView root) {
         this(
+                null,
                 root,
                 -1,
                 null,
@@ -46,6 +48,7 @@ public final class BukkitItemComponentBuilder extends DefaultComponentBuilder<Bu
     }
 
     private BukkitItemComponentBuilder(
+            Function<? extends IFContext, String> keyFactory,
             VirtualView root,
             int slot,
             ItemStack item,
@@ -61,6 +64,7 @@ public final class BukkitItemComponentBuilder extends DefaultComponentBuilder<Bu
             boolean isManagedExternally,
             Predicate<Context> displayCondition) {
         super(
+                keyFactory,
                 reference,
                 data,
                 cancelOnClick,
@@ -188,7 +192,10 @@ public final class BukkitItemComponentBuilder extends DefaultComponentBuilder<Bu
 
     @Override
     public @NotNull Component create() {
+        final Function<? extends IFContext, String> componentKeyProvider =
+                keyFactory == null ? RANDOM_KEY_FACTORY : keyFactory;
         return new ItemComponent(
+                componentKeyProvider,
                 root,
                 slot,
                 item,
@@ -208,6 +215,7 @@ public final class BukkitItemComponentBuilder extends DefaultComponentBuilder<Bu
     @Override
     public BukkitItemComponentBuilder copy() {
         return new BukkitItemComponentBuilder(
+                keyFactory,
                 root,
                 slot,
                 item,

@@ -164,7 +164,8 @@ class MinestomElementFactory : ElementFactory() {
         slot: Int,
         parent: IFRenderContext,
         viewer: Viewer?,
-    ): IFSlotRenderContext = SlotRenderContext(slot, parent, viewer)
+        component: Component,
+    ): IFSlotRenderContext = SlotRenderContext(slot, parent, viewer, component)
 
     override fun createCloseContext(
         viewer: Viewer,

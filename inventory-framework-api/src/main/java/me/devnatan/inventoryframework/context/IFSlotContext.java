@@ -1,8 +1,10 @@
 package me.devnatan.inventoryframework.context;
 
 import me.devnatan.inventoryframework.ViewContainer;
+import me.devnatan.inventoryframework.component.Component;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.UnknownNullability;
 
 /**
  * Represents a context in which there is a specific slot related to it, the main context
@@ -59,4 +61,16 @@ public interface IFSlotContext extends IFContext {
      */
     @NotNull
     ViewContainer getContainer();
+
+	/**
+	 * The component associated with this slot context.
+	 *
+	 * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
+	 * this library. No compatibility guarantees are provided.</i></b>
+	 *
+	 * @return The component associated with this slot context.
+	 */
+    @ApiStatus.Internal
+    @UnknownNullability
+    Component getComponent();
 }

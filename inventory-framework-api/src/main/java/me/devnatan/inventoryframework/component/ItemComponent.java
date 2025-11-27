@@ -3,8 +3,8 @@ package me.devnatan.inventoryframework.component;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
-import java.util.UUID;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import me.devnatan.inventoryframework.InventoryFrameworkException;
 import me.devnatan.inventoryframework.Ref;
@@ -17,7 +17,7 @@ import org.jetbrains.annotations.UnmodifiableView;
 // TODO Make this render abstract and remove `getResult` (Object) from IFSlotRenderContext
 public class ItemComponent implements Component, InteractionHandler {
 
-    private final String key = UUID.randomUUID().toString();
+    private final Function<IFContext, String> keyFactory;
     private final VirtualView root;
     private int position;
     private final Object stack;
@@ -30,10 +30,13 @@ public class ItemComponent implements Component, InteractionHandler {
     private final Set<State<?>> watching;
     private final boolean isManagedExternally;
     private final boolean updateOnClick;
-    private boolean isVisible;
     private final Ref<Component> reference;
 
+    private boolean isVisible;
+    private volatile String lastKey;
+
     public ItemComponent(
+            Function<? extends IFContext, String> keyFactory,
             VirtualView root,
             int position,
             Object stack,
@@ -48,6 +51,8 @@ public class ItemComponent implements Component, InteractionHandler {
             boolean updateOnClick,
             boolean isVisible,
             Ref<Component> reference) {
+        //noinspection unchecked
+        this.keyFactory = (Function<IFContext, String>) keyFactory;
         this.root = root;
         this.position = position;
         this.stack = stack;
@@ -66,7 +71,7 @@ public class ItemComponent implements Component, InteractionHandler {
 
     @Override
     public String getKey() {
-        return key;
+        return lastKey;
     }
 
     @NotNull
@@ -135,6 +140,8 @@ public class ItemComponent implements Component, InteractionHandler {
 
     @Override
     public void render(@NotNull IFSlotRenderContext context) {
+        lastKey = keyFactory.apply(context);
+
         if (getRenderHandler() != null) {
             final int initialSlot = getPosition();
 
@@ -181,10 +188,15 @@ public class ItemComponent implements Component, InteractionHandler {
     @Override
     public void updated(@NotNull IFSlotRenderContext context) {
         if (context.isCancelled()) return;
+        // Key-based skip optimization should always take precedence
+        if (keyFactory != null
+                && lastKey != null) {
+            String currentKey = keyFactory.apply(context);
+            if (Objects.equals(lastKey, currentKey)) return;
+        }
 
-        // Static item with no `displayIf` must not even reach the update handler
-        if (!context.isForceUpdate() && displayCondition == null && getRenderHandler() == null) return;
-
+        boolean isWatchingAnyState =
+                getWatchingStates() != null && !getWatching().isEmpty();
         if (isVisible() && getUpdateHandler() != null) {
             getUpdateHandler().accept(context);
             if (context.isCancelled()) return;

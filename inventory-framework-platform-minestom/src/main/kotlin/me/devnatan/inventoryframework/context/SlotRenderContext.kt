@@ -3,9 +3,11 @@ package me.devnatan.inventoryframework.context
 import me.devnatan.inventoryframework.MinestomViewer
 import me.devnatan.inventoryframework.RootView
 import me.devnatan.inventoryframework.Viewer
+import me.devnatan.inventoryframework.component.Component
 import net.minestom.server.entity.Player
 import net.minestom.server.item.ItemStack
 import org.jetbrains.annotations.ApiStatus
+import org.jetbrains.annotations.UnknownNullability
 
 class SlotRenderContext
     @ApiStatus.Internal
@@ -13,6 +15,7 @@ class SlotRenderContext
         slot: Int,
         parent: IFRenderContext,
         private val viewer: Viewer?,
+        private val _component: Component,
     ) : SlotContext(slot, parent),
         IFSlotRenderContext {
         override val player: Player = (viewer as MinestomViewer).player
@@ -47,6 +50,8 @@ class SlotRenderContext
         }
 
         override fun isOnEntityContainer(): Boolean = container.isEntityContainer
+
+        override fun getComponent(): @UnknownNullability Component = _component
 
         override fun getViewer(): Viewer? = viewer
 

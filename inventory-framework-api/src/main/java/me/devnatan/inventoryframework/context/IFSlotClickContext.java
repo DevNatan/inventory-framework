@@ -1,7 +1,6 @@
 package me.devnatan.inventoryframework.context;
 
 import me.devnatan.inventoryframework.ViewContainer;
-import me.devnatan.inventoryframework.component.Component;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,8 +15,6 @@ public interface IFSlotClickContext extends IFSlotContext, IFConfinedContext {
     // TODO needs documentation
     @NotNull
     ViewContainer getClickedContainer();
-
-    Component getComponent();
 
     int getClickedSlot();
 

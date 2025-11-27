@@ -4,6 +4,7 @@ import me.devnatan.inventoryframework.Ref
 import me.devnatan.inventoryframework.ViewContainer
 import me.devnatan.inventoryframework.VirtualView
 import me.devnatan.inventoryframework.context.Context
+import me.devnatan.inventoryframework.context.IFContext
 import me.devnatan.inventoryframework.context.IFRenderContext
 import me.devnatan.inventoryframework.context.IFSlotClickContext
 import me.devnatan.inventoryframework.context.IFSlotContext
@@ -15,12 +16,14 @@ import me.devnatan.inventoryframework.state.State
 import me.devnatan.inventoryframework.utils.SlotConverter
 import net.minestom.server.item.ItemStack
 import java.util.function.Consumer
+import java.util.function.Function
 import java.util.function.Predicate
 import java.util.function.Supplier
 
 class MinestomItemComponentBuilder
     private constructor(
         private val root: VirtualView,
+        keyFactory: Function<out IFContext, String>?,
         slot: Int,
         item: ItemStack?,
         renderHandler: Consumer<in IFSlotRenderContext>?,
@@ -35,6 +38,7 @@ class MinestomItemComponentBuilder
         isManagedExternally: Boolean,
         displayCondition: Predicate<Context>?,
     ) : DefaultComponentBuilder<MinestomItemComponentBuilder, Context>(
+            keyFactory,
             reference,
             data,
             cancelOnClick,
@@ -55,20 +59,21 @@ class MinestomItemComponentBuilder
         constructor(
             root: VirtualView,
         ) : this(
-            root,
-            -1,
-            null,
-            null,
-            null,
-            null,
-            null,
-            HashMap<String, Any>(),
-            false,
-            false,
-            false,
-            LinkedHashSet<State<*>>(),
-            false,
-            null,
+            root = root,
+            keyFactory = null,
+            slot = -1,
+            item = null,
+            renderHandler = null,
+            clickHandler = null,
+            updateHandler = null,
+            reference = null,
+            data = HashMap<String, Any>(),
+            cancelOnClick = false,
+            closeOnClick = false,
+            updateOnClick = false,
+            watchingStates = LinkedHashSet<State<*>>(),
+            isManagedExternally = false,
+            displayCondition = null,
         )
 
         init {
@@ -203,39 +208,59 @@ class MinestomItemComponentBuilder
             return this
         }
 
-        override fun create(): Component =
-            ItemComponent(
+        override fun create(): Component {
+            val componentKeyProvider = if (keyFactory == null) RANDOM_KEY_FACTORY else keyFactory
+
+            return ItemComponent(
+                // keyFactory =
+                componentKeyProvider,
+                // root =
                 root,
+                // position =
                 slot,
+                // stack =
                 item,
+                // cancelOnClick =
                 cancelOnClick,
+                // closeOnClick =
                 closeOnClick,
+                // displayCondition =
                 displayCondition,
+                // renderHandler =
                 renderHandler,
+                // updateHandler =
                 updateHandler,
+                // clickHandler =
                 clickHandler,
+                // watching =
                 watchingStates,
+                // isManagedExternally =
                 isManagedExternally,
+                // updateOnClick =
                 updateOnClick,
+                // isVisible =
                 false,
+                // reference =
                 reference,
             )
+        }
 
         override fun copy(): MinestomItemComponentBuilder =
             MinestomItemComponentBuilder(
-                root,
-                slot,
-                item,
-                renderHandler,
-                clickHandler,
-                updateHandler,
-                reference,
-                data,
-                cancelOnClick,
-                closeOnClick,
-                updateOnClick,
-                watchingStates,
-                isManagedExternally,
-                displayCondition,
+                root = root,
+                keyFactory = keyFactory,
+                slot = slot,
+                item = item,
+                renderHandler = renderHandler,
+                clickHandler = clickHandler,
+                updateHandler = updateHandler,
+                reference = reference,
+                data = data,
+                cancelOnClick = cancelOnClick,
+                closeOnClick = closeOnClick,
+                updateOnClick = updateOnClick,
+                watchingStates = watchingStates,
+                isManagedExternally = isManagedExternally,
+                displayCondition = displayCondition,
             )
     }
