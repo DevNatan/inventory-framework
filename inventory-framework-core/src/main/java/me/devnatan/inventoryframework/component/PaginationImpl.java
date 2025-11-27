@@ -3,7 +3,6 @@ package me.devnatan.inventoryframework.component;
 import static me.devnatan.inventoryframework.IFDebug.debug;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -252,20 +251,14 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
         LayoutSlot layoutSlot = getLayoutSlotForCurrentTarget(context);
         debug("[Pagination] Is layout slot defined by the user? %b", layoutSlot.isDefinedByTheUser());
 
-        if (orientation == Pagination.Orientation.VERTICAL) {
-            int[] verticallyOrdered =
-                    reorderLayoutPositionsVertically(layoutSlot.getPositions(), context.getContainer());
-            layoutSlot = layoutSlot.withPositions(verticallyOrdered);
-
-            debug("[Pagination] Reordered layout positions vertically: %s", Arrays.toString(verticallyOrdered));
-        }
-
         final int contentSize = pageContents.size();
         debug("[Pagination] Elements count: %d elements", contentSize);
         debug("[Pagination] Iterating over '%c' layout target", layoutSlot.getCharacter());
 
+        final int[] orderedPositions = computeSlotOrder(context, layoutSlot.getPositions());
+
         int index = 0;
-        for (final int layoutPosition : layoutSlot.getPositions()) {
+        for (final int layoutPosition : orderedPositions) {
             if (index >= contentSize) {
                 // A layout slot defined by the user mean the user probably want to add a placeholder
                 // item to fill empty slots that couldn't be reached by the pagination. Happens when
@@ -314,25 +307,69 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
         }
     }
 
-    private int[] reorderLayoutPositionsVertically(int[] positions, ViewContainer container) {
-        int cols = container.getColumnsCount();
+    private int[] computeSlotOrder(IFRenderContext context, int[] positions) {
+        Orientation orientation = getOrientation();
+        String[] layout = context.getConfig().getLayout();
 
-        List<int[]> coords = new ArrayList<>(positions.length);
-        for (int pos : positions) {
-            int row = pos / cols;
-            int col = pos % cols;
-            coords.add(new int[] {row, col, pos});
+        final int rows = layout.length;
+        final int cols = layout[0].length();
+
+        List<Integer> present = new ArrayList<>();
+
+        for (int p : positions) present.add(p);
+
+        List<Integer> rowMajor = new ArrayList<>(positions.length);
+        for (int r = 0; r < rows; r++) {
+            for (int c = 0; c < cols; c++) {
+                int slot = r * cols + c;
+                if (present.contains(slot)) rowMajor.add(slot);
+            }
         }
 
-        coords.sort(Comparator.comparingInt((int[] a) -> a[1])
-                .thenComparingInt(a -> a[0]));
-
-        int[] reordered = new int[positions.length];
-        for (int i = 0; i < coords.size(); i++) {
-            reordered[i] = coords.get(i)[2];
+        List<Integer> colMajor = new ArrayList<>(positions.length);
+        for (int c = 0; c < cols; c++) {
+            for (int r = 0; r < rows; r++) {
+                int slot = r * cols + c;
+                if (present.contains(slot)) colMajor.add(slot);
+            }
         }
 
-        return reordered;
+        if (orientation == Orientation.HORIZONTAL) {
+            return listToIntArray(rowMajor);
+        }
+
+        if (orientation == Orientation.VERTICAL) {
+            return listToIntArray(colMajor);
+        }
+
+        if (orientation == Orientation.ALTERNATING_ROWS) {
+            return interleaveList(rowMajor);
+        }
+
+        if (orientation == Orientation.ALTERNATING_COLUMNS) {
+            return interleaveList(colMajor);
+        }
+
+        return positions;
+    }
+
+    /** Convert List<Integer> to int[] */
+    private int[] listToIntArray(List<Integer> list) {
+        int[] out = new int[list.size()];
+        for (int i = 0; i < list.size(); i++) out[i] = list.get(i);
+        return out;
+    }
+
+    /** Interleave list as: first, last, second, penultimate, ... */
+    private int[] interleaveList(List<Integer> list) {
+        int n = list.size();
+        int[] out = new int[n];
+        int l = 0, r = n - 1, idx = 0;
+        while (l <= r) {
+            out[idx++] = list.get(l++);
+            if (l <= r) out[idx++] = list.get(r--);
+        }
+        return out;
     }
 
     /**

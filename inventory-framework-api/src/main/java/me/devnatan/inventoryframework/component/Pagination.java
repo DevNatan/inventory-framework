@@ -308,18 +308,6 @@ public interface Pagination extends ComponentComposition, StateValue {
         HORIZONTAL,
 
         /**
-         * Mixed row-major ordering.
-         *
-         * <p>Slots are traversed horizontally (left to right, top to bottom),
-         * but processed sequence-by-sequence. A "sequence" is a contiguous group
-         * of valid slots ('O') in the layout.</p>
-         *
-         * <p>This mode preserves logical grouping while still following a
-         * horizontal reading direction.</p>
-         */
-        MIXED_ROW_MAJOR,
-
-        /**
          * Mixed column-major ordering.
          *
          * <p>Slots are traversed vertically (top to bottom, left to right),
@@ -329,6 +317,32 @@ public interface Pagination extends ComponentComposition, StateValue {
          * <p>This mode preserves logical grouping while following a
          * vertical reading direction.</p>
          */
-        MIXED_COLUMN_MAJOR
+        MIXED,
+
+        /**
+         * Iterates slot positions using an alternating row-major traversal.
+         * Elements are interleaved from both ends of the row-major ordered list:
+         * <pre>
+         * first, last, second, penultimate, ...
+         * </pre>
+         *
+         * <p>Example for a 3×3 grid (row-major base order: 1–9):
+         * <pre>
+         * order = 1, 9, 2, 8, 3, 7, 4, 6, 5
+         * </pre>
+         */
+        ALTERNATING_ROWS,
+
+        /**
+         * Iterates slot positions using an alternating column-major traversal.
+         * This variant applies the same interleaving strategy as {@link #ALTERNATING_ROWS}
+         * but operates on the column-major base order.
+         *
+         * <p>Example for a 3×3 grid (column-major base order: 1–6):
+         * <pre>
+         * order = 1, 9, 4, 6, 7, 3, 2, 8, 5
+         * </pre>
+         */
+        ALTERNATING_COLUMNS,
     }
 }

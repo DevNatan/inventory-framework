@@ -33,7 +33,7 @@ public final class PaginationStateBuilder<
         this.sourceProvider = sourceProvider;
         this.async = async;
         this.computed = computed;
-        this.orientation = Pagination.Orientation.VERTICAL;
+        this.orientation = Pagination.Orientation.HORIZONTAL;
     }
 
     /**
