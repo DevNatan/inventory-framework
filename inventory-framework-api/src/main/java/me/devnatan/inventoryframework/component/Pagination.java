@@ -235,4 +235,12 @@ public interface Pagination extends ComponentComposition, StateValue {
         int toIndex = Math.min(fromIndex + pageSize, src.size());
         return src.subList(fromIndex, toIndex);
     }
+
+    Orientation getOrientation();
+
+    public enum Orientation {
+        VERTICAL,
+
+        HORIZONTAL,
+    }
 }

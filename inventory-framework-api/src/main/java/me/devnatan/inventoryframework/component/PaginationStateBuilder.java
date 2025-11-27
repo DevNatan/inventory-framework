@@ -7,6 +7,7 @@ import me.devnatan.inventoryframework.context.IFContext;
 import me.devnatan.inventoryframework.internal.ElementFactory;
 import me.devnatan.inventoryframework.internal.LayoutSlot;
 import me.devnatan.inventoryframework.state.State;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 public final class PaginationStateBuilder<
@@ -19,6 +20,7 @@ public final class PaginationStateBuilder<
     private PaginationElementFactory<V> paginationElementFactory;
     private BiConsumer<Context, Pagination> pageSwitchHandler;
     private final boolean async, computed;
+    private Pagination.Orientation orientation;
 
     public PaginationStateBuilder(
             Supplier<ElementFactory> internalElementFactoryProvider,
@@ -31,6 +33,7 @@ public final class PaginationStateBuilder<
         this.sourceProvider = sourceProvider;
         this.async = async;
         this.computed = computed;
+        this.orientation = Pagination.Orientation.HORIZONTAL;
     }
 
     /**
@@ -107,6 +110,23 @@ public final class PaginationStateBuilder<
     }
 
     /**
+     * Defines the pagination iteration order.
+     * Default value is {@link Pagination.Orientation#HORIZONTAL}.
+     *
+     * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     *
+     * @param orientation The pagination orientation.
+     * @return This pagination builder.
+     * @see <a href="https://github.com/DevNatan/inventory-framework/wiki/Pagination#pagination-orientation">Pagination Orientation on Wiki</a>
+     */
+    @ApiStatus.Experimental
+    public PaginationStateBuilder<Context, Builder, V> orientation(Pagination.Orientation orientation) {
+        this.orientation = orientation;
+        return this;
+    }
+
+    /**
      * Builds a pagination state based on this builder values.
      *
      * @return A new {@link Pagination} state.
@@ -143,5 +163,9 @@ public final class PaginationStateBuilder<
 
     public PaginationElementFactory<V> getPaginationElementFactory() {
         return paginationElementFactory;
+    }
+
+    public Pagination.Orientation getOrientation() {
+        return orientation;
     }
 }

@@ -41,6 +41,7 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
     private final Object sourceProvider;
     private final PaginationElementFactory<Object> elementFactory;
     private final BiConsumer<IFContext, Pagination> pageSwitchHandler;
+    private final Pagination.Orientation orientation;
 
     // --- Internal ---
     private int currPageIndex;
@@ -76,7 +77,8 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
             PaginationElementFactory<Object> elementFactory,
             BiConsumer<IFContext, Pagination> pageSwitchHandler,
             boolean isAsync,
-            boolean isComputed) {
+            boolean isComputed,
+            Pagination.Orientation orientation) {
         super(state);
         this.host = host;
         this.layoutTarget = layoutTarget;
@@ -89,6 +91,7 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
         this.isStatic = sourceProvider instanceof Collection;
         this.isLazy =
                 !isStatic && !isComputed && (sourceProvider instanceof Function || sourceProvider instanceof Supplier);
+        this.orientation = orientation;
     }
 
     /**
@@ -731,6 +734,11 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
     }
 
     @Override
+    public Orientation getOrientation() {
+        return orientation;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -741,7 +749,8 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
                 && isLazy() == that.isLazy()
                 && pageWasChanged == that.pageWasChanged
                 && Objects.equals(sourceProvider, that.sourceProvider)
-                && Objects.equals(pageSwitchHandler, that.pageSwitchHandler);
+                && Objects.equals(pageSwitchHandler, that.pageSwitchHandler)
+                && Objects.equals(orientation, that.orientation);
     }
 
     @Override
@@ -753,7 +762,8 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
                 currPageIndex,
                 getPageSize(),
                 isLazy(),
-                pageWasChanged);
+                pageWasChanged,
+                orientation);
     }
 
     @Override
@@ -769,7 +779,8 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
                 + isLazy + ", pageWasChanged="
                 + pageWasChanged + ", _srcFactory="
                 + _srcFactory + ", currSource="
-                + currSource + "} "
+                + currSource + ", orientation="
+                + orientation + "} "
                 + super.toString();
     }
 }
