@@ -62,14 +62,14 @@ public interface IFSlotContext extends IFContext {
     @NotNull
     ViewContainer getContainer();
 
-    /**
-     * The component placed at that slot.
-     *
-     * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
-     * this library. No compatibility guarantees are provided.</i></b>
-     *
-     * @return The component placed at that slot.
-     */
+	/**
+	 * The component associated with this slot context.
+	 *
+	 * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
+	 * this library. No compatibility guarantees are provided.</i></b>
+	 *
+	 * @return The component associated with this slot context.
+	 */
     @ApiStatus.Internal
     @UnknownNullability
     Component getComponent();
