@@ -235,4 +235,106 @@ public interface Pagination extends ComponentComposition, StateValue {
         int toIndex = Math.min(fromIndex + pageSize, src.size());
         return src.subList(fromIndex, toIndex);
     }
+
+    /**
+     * Returns the orientation used to determine how pagination slot positions
+     * are traversed when generating paginated components.
+     *
+     * <p>The orientation affects only the ordering of slot positions,
+     * not the page size. It controls whether items fill the pagination
+     * horizontally, vertically, or in one of the mixed cluster-based modes.</p>
+     *
+     * <b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     *
+     * @return the currently configured {@link Orientation}
+     */
+    @ApiStatus.Experimental
+    Orientation getOrientation();
+
+    /**
+     * Sets the orientation that defines how layout slots will be traversed
+     * when producing paginated components.
+     *
+     * <p>This setting does not affect the page size — only the ordering of
+     * component placement inside the layout.</p>
+     *
+     * <b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     *
+     * @param orientation the {@link Orientation} value to use
+     */
+    @ApiStatus.Experimental
+    void setOrientation(Orientation orientation);
+
+    enum Orientation {
+
+        /**
+         * Column-major ordering.
+         *
+         * <p>Slots are traversed from top to bottom within each column,
+         * and columns are processed from left to right.</p>
+         *
+         * <p>This is used for vertical progression:
+         * <pre>
+         * (r0,c0), (r1,c0), (r2,c0), ...
+         * (r0,c1), (r1,c1), (r2,c1), ...
+         * </pre>
+         * </p>
+         */
+        VERTICAL,
+
+        /**
+         * Row-major ordering.
+         *
+         * <p>Slots are traversed from left to right within each row,
+         * and rows are processed from top to bottom.</p>
+         *
+         * <p>This is the traditional horizontal progression:
+         * <pre>
+         * (r0,c0), (r0,c1), (r0,c2), ...
+         * (r1,c0), (r1,c1), (r1,c2), ...
+         * </pre>
+         * </p>
+         */
+        HORIZONTAL,
+
+        /**
+         * Iterates slot positions using an alternating row-major traversal.
+         * Elements are interleaved from both ends of the row-major ordered list:
+         * <pre>
+         * first, last, second, penultimate, ...
+         * </pre>
+         *
+         * <p>Example for a 3×3 grid (row-major base order: 1–9):
+         * <pre>
+         * order = 1, 9, 2, 8, 3, 7, 4, 6, 5
+         * </pre>
+         */
+        ALTERNATING_ROWS,
+
+        /**
+         * Iterates slot positions using an alternating column-major traversal.
+         * This variant applies the same interleaving strategy as {@link #ALTERNATING_ROWS}
+         * but operates on the column-major base order.
+         *
+         * <p>Example for a 3×3 grid (column-major base order: 1–6):
+         * <pre>
+         * order = 1, 9, 4, 6, 7, 3, 2, 8, 5
+         * </pre>
+         */
+        ALTERNATING_COLUMNS,
+
+        /**
+         * Mixed column-major ordering.
+         *
+         * <p>Slots are traversed vertically (top to bottom, left to right),
+         * but processed sequence-by-sequence. A "sequence" is a contiguous group
+         * of valid slots in the layout.</p>
+         *
+         * <p>This mode preserves logical grouping while following a
+         * vertical reading direction.</p>
+         */
+        TOP_BOTTOM_LEFT_RIGHT;
+    }
 }

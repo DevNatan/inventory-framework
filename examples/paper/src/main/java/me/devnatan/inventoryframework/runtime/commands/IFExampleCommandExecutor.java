@@ -1,6 +1,7 @@
 package me.devnatan.inventoryframework.runtime.commands;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import me.devnatan.inventoryframework.View;
@@ -8,6 +9,7 @@ import me.devnatan.inventoryframework.ViewFrame;
 import me.devnatan.inventoryframework.runtime.view.AnvilInputSample;
 import me.devnatan.inventoryframework.runtime.view.AutoUpdate;
 import me.devnatan.inventoryframework.runtime.view.Failing;
+import me.devnatan.inventoryframework.runtime.view.PaginationOrientation;
 import me.devnatan.inventoryframework.runtime.view.SimplePagination;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -19,11 +21,16 @@ import org.jetbrains.annotations.Nullable;
 
 public class IFExampleCommandExecutor implements CommandExecutor, TabCompleter {
 
-    private static final Map<String, Class<? extends View>> views = Map.of(
-            "anvil", AnvilInputSample.class,
-            "failing", Failing.class,
-            "simple-pagination", SimplePagination.class,
-            "auto-update", AutoUpdate.class);
+    private static final Map<String, Class<? extends View>> views;
+
+    static {
+        views = new HashMap<>();
+        views.put("anvil", AnvilInputSample.class);
+        views.put("failing", Failing.class);
+        views.put("simple-pagination", SimplePagination.class);
+        views.put("auto-update", AutoUpdate.class);
+        views.put("pagination", PaginationOrientation.class);
+    }
 
     private final ViewFrame viewFrame;
 
