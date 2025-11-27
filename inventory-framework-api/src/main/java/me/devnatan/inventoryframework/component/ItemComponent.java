@@ -190,8 +190,10 @@ public class ItemComponent implements Component, InteractionHandler {
         if (context.isCancelled()) return;
         // Key-based skip optimization should always take precedence
         if (keyFactory != null
-                && lastKey != null
-                && Objects.equals(lastKey, keyFactory.apply(context))) return;
+                && lastKey != null) {
+            String currentKey = keyFactory.apply(context);
+            if (Objects.equals(lastKey, currentKey)) return;
+        }
 
         boolean isWatchingAnyState =
                 getWatchingStates() != null && !getWatching().isEmpty();
