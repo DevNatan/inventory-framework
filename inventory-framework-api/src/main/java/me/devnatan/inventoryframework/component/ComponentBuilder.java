@@ -165,24 +165,48 @@ public interface ComponentBuilder<S extends ComponentBuilder<S, C>, C extends IF
      */
     S hideIf(Predicate<C> condition);
 
-    /**
-     * *** This API is experimental and is not subject to the general compatibility guarantees such
-     * API may be changed or may be removed completely in any further release. ***
-     */
+	/**
+	 * Identifies this component with a constant key.
+	 * <p>
+	 * Components with explicit keys are only re-rendered when their key changes.
+	 * This can be used to prevent unnecessary re-renders during updates.
+	 *
+	 * <p><b><i>This API is experimental and is not subject to the general compatibility guarantees.
+	 * It may be changed or removed completely in any further release.</i></b>
+	 *
+	 * @param key The constant key to identify this component
+	 * @return This component builder
+	 */
     @ApiStatus.Experimental
     S identifiedBy(String key);
 
-    /**
-     * *** This API is experimental and is not subject to the general compatibility guarantees such
-     * API may be changed or may be removed completely in any further release. ***
-     */
+	/**
+	 * Identifies this component with a key provided by a {@link Supplier}.
+	 * <p>
+	 * Components with explicit keys are only re-rendered when their key changes.
+	 * This can be used to prevent unnecessary re-renders during scheduled updates.
+	 *
+	 * <p><b><i>This API is experimental and is not subject to the general compatibility guarantees.
+	 * It may be changed or removed completely in any further release.</i></b>
+	 *
+	 * @param keyProvider A supplier that provides the key to identify this component.
+	 * @return This component builder.
+	 */
     @ApiStatus.Experimental
     S identifiedBy(Supplier<String> keyProvider);
 
-    /**
-     * *** This API is experimental and is not subject to the general compatibility guarantees such
-     * API may be changed or may be removed completely in any further release. ***
-     */
+	/**
+	 * Identifies this component with a key provided by a {@link Function} based on the context.
+	 * <p>
+	 * Components with explicit keys are only re-rendered when their key changes.
+	 * This can be used to prevent unnecessary re-renders during scheduled updates.
+	 *
+	 * <p><b><i>This API is experimental and is not subject to the general compatibility guarantees.
+	 * It may be changed or removed completely in any further release.</i></b>
+	 *
+	 * @param keyProvider A function that provides the key to identify this component based on the context.
+	 * @return This component builder.
+	 */
     @ApiStatus.Experimental
     S identifiedBy(Function<C, String> keyProvider);
 }
