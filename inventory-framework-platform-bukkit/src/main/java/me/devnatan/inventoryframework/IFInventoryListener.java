@@ -16,6 +16,7 @@ import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.PlayerInventory;
@@ -33,6 +34,19 @@ final class IFInventoryListener implements Listener {
         if (!event.getPlugin().getName().equals(viewFrame.getOwner().getName())) return;
 
         viewFrame.unregister();
+    }
+
+    @EventHandler(priority = EventPriority.LOW)
+    public void onPlayerQuit(PlayerQuitEvent event){
+        final Player player = (Player) event.getPlayer();
+        final Viewer viewer = viewFrame.getViewer(player);
+        if (viewer == null) return;
+
+        final IFRenderContext context = viewer.getCurrentContext();
+        final RootView root = context.getRoot();
+        final IFCloseContext closeContext = root.getElementFactory().createCloseContext(viewer, context, event);
+
+        root.getPipeline().execute(StandardPipelinePhases.CLOSE, closeContext);
     }
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
