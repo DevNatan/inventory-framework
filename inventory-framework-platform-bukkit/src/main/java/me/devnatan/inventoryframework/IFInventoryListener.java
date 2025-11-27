@@ -36,8 +36,8 @@ final class IFInventoryListener implements Listener {
         viewFrame.unregister();
     }
 
-    @EventHandler(priority = EventPriority.LOW)
-    public void onPlayerQuit(PlayerQuitEvent event){
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent event) {
         final Player player = (Player) event.getPlayer();
         final Viewer viewer = viewFrame.getViewer(player);
         if (viewer == null) return;
@@ -54,23 +54,33 @@ final class IFInventoryListener implements Listener {
         if (!(event.getWhoClicked() instanceof Player)) return;
 
         final Player player = (Player) event.getWhoClicked();
-        final Viewer viewer = viewFrame.getViewer(player);
-        if (viewer == null) return;
+        try {
+            final Viewer viewer = viewFrame.getViewer(player);
+            if (viewer == null) return;
 
-        final IFRenderContext context = viewer.getActiveContext();
-        final Component clickedComponent = context.getComponentsAt(event.getRawSlot()).stream()
-                .filter(Component::isVisible)
-                .findFirst()
-                .orElse(null);
-        final ViewContainer clickedContainer = event.getClickedInventory() instanceof PlayerInventory
-                ? viewer.getSelfContainer()
-                : context.getContainer();
+            final IFRenderContext context = viewer.getActiveContext();
+            final Component clickedComponent = context.getComponentsAt(event.getRawSlot()).stream()
+                    .filter(Component::isVisible)
+                    .findFirst()
+                    .orElse(null);
+            final ViewContainer clickedContainer = event.getClickedInventory() instanceof PlayerInventory
+                    ? viewer.getSelfContainer()
+                    : context.getContainer();
 
-        final RootView root = context.getRoot();
-        final IFSlotClickContext clickContext = root.getElementFactory()
-                .createSlotClickContext(event.getRawSlot(), viewer, clickedContainer, clickedComponent, event, false);
+            final RootView root = context.getRoot();
+            final IFSlotClickContext clickContext = root.getElementFactory()
+                    .createSlotClickContext(
+                            event.getRawSlot(), viewer, clickedContainer, clickedComponent, event, false);
 
-        root.getPipeline().execute(StandardPipelinePhases.CLICK, clickContext);
+            root.getPipeline().execute(StandardPipelinePhases.CLICK, clickContext);
+        } catch (Exception e) {
+            // TODO custom error handling to customize on error behavior
+            viewFrame
+                    .getOwner()
+                    .getLogger()
+                    .severe("An error occurred while processing an inventory click event: " + e.getMessage());
+            player.closeInventory();
+        }
     }
 
     @SuppressWarnings("unused")
