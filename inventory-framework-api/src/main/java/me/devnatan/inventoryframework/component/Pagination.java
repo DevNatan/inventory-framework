@@ -236,11 +236,99 @@ public interface Pagination extends ComponentComposition, StateValue {
         return src.subList(fromIndex, toIndex);
     }
 
+    /**
+     * Returns the orientation used to determine how pagination slot positions
+     * are traversed when generating paginated components.
+     *
+     * <p>The orientation affects only the ordering of slot positions,
+     * not the page size. It controls whether items fill the pagination
+     * horizontally, vertically, or in one of the mixed cluster-based modes.</p>
+     *
+     * <b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     *
+     * @return the currently configured {@link Orientation}
+     */
+    @ApiStatus.Experimental
     Orientation getOrientation();
 
-    public enum Orientation {
+    /**
+     * Sets the orientation that defines how layout slots will be traversed
+     * when producing paginated components.
+     *
+     * <p>The orientation determines the fill direction of the layout grid:
+     * <ul>
+     *   <li>{@link Orientation#HORIZONTAL} → row-major ordering</li>
+     *   <li>{@link Orientation#VERTICAL} → column-major ordering</li>
+     *   <li>{@link Orientation#MIXED_ROW_MAJOR} → horizontal traversal by clusters</li>
+     *   <li>{@link Orientation#MIXED_COLUMN_MAJOR} → vertical traversal by clusters</li>
+     * </ul>
+     *
+     * <p>This setting does not affect the page size — only the ordering of
+     * component placement inside the layout.</p>
+     *
+     * <b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     *
+     * @param orientation the {@link Orientation} value to use
+     */
+    @ApiStatus.Experimental
+    void setOrientation(Orientation orientation);
+
+    enum Orientation {
+
+        /**
+         * Column-major ordering.
+         *
+         * <p>Slots are traversed from top to bottom within each column,
+         * and columns are processed from left to right.</p>
+         *
+         * <p>This is used for vertical progression:
+         * <pre>
+         * (r0,c0), (r1,c0), (r2,c0), ...
+         * (r0,c1), (r1,c1), (r2,c1), ...
+         * </pre>
+         * </p>
+         */
         VERTICAL,
 
+        /**
+         * Row-major ordering.
+         *
+         * <p>Slots are traversed from left to right within each row,
+         * and rows are processed from top to bottom.</p>
+         *
+         * <p>This is the traditional horizontal progression:
+         * <pre>
+         * (r0,c0), (r0,c1), (r0,c2), ...
+         * (r1,c0), (r1,c1), (r1,c2), ...
+         * </pre>
+         * </p>
+         */
         HORIZONTAL,
+
+        /**
+         * Mixed row-major ordering.
+         *
+         * <p>Slots are traversed horizontally (left to right, top to bottom),
+         * but processed sequence-by-sequence. A "sequence" is a contiguous group
+         * of valid slots ('O') in the layout.</p>
+         *
+         * <p>This mode preserves logical grouping while still following a
+         * horizontal reading direction.</p>
+         */
+        MIXED_ROW_MAJOR,
+
+        /**
+         * Mixed column-major ordering.
+         *
+         * <p>Slots are traversed vertically (top to bottom, left to right),
+         * but processed sequence-by-sequence. A "sequence" is a contiguous group
+         * of valid slots ('O') in the layout.</p>
+         *
+         * <p>This mode preserves logical grouping while following a
+         * vertical reading direction.</p>
+         */
+        MIXED_COLUMN_MAJOR
     }
 }

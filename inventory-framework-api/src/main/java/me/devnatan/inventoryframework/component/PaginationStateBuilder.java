@@ -33,7 +33,7 @@ public final class PaginationStateBuilder<
         this.sourceProvider = sourceProvider;
         this.async = async;
         this.computed = computed;
-        this.orientation = Pagination.Orientation.HORIZONTAL;
+        this.orientation = Pagination.Orientation.VERTICAL;
     }
 
     /**
@@ -110,15 +110,24 @@ public final class PaginationStateBuilder<
     }
 
     /**
-     * Defines the pagination iteration order.
-     * Default value is {@link Pagination.Orientation#HORIZONTAL}.
+     * Defines the iteration order used by pagination.
+     * The default value is {@link Pagination.Orientation#HORIZONTAL}.
      *
-     * <p><b><i> This API is experimental and is not subject to the general compatibility guarantees
-     * such API may be changed or may be removed completely in any further release. </i></b>
+     * <p>This controls how layout slot positions are traversed when generating
+     * paginated components. The orientation affects only the ordering of the
+     * slot iteration.</p>
      *
-     * @param orientation The pagination orientation.
-     * @return This pagination builder.
-     * @see <a href="https://github.com/DevNatan/inventory-framework/wiki/Pagination#pagination-orientation">Pagination Orientation on Wiki</a>
+     * <p><b><i>This API is experimental and is not subject to the general
+     * compatibility guarantees. It may be changed or removed entirely
+     * in a future release.</i></b></p>
+     *
+     * @param orientation the pagination orientation to apply.
+     * @return this pagination builder.
+     *
+     * @see Pagination.Orientation
+     * @see <a href="https://github.com/DevNatan/inventory-framework/wiki/Pagination#pagination-orientation">
+     *      Pagination Orientation on Wiki
+     *      </a>
      */
     @ApiStatus.Experimental
     public PaginationStateBuilder<Context, Builder, V> orientation(Pagination.Orientation orientation) {

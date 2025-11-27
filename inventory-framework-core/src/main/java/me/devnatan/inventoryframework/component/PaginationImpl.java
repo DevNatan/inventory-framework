@@ -3,6 +3,7 @@ package me.devnatan.inventoryframework.component;
 import static me.devnatan.inventoryframework.IFDebug.debug;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -41,7 +42,7 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
     private final Object sourceProvider;
     private final PaginationElementFactory<Object> elementFactory;
     private final BiConsumer<IFContext, Pagination> pageSwitchHandler;
-    private final Pagination.Orientation orientation;
+    private Pagination.Orientation orientation;
 
     // --- Internal ---
     private int currPageIndex;
@@ -248,8 +249,16 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
      * @param pageContents Elements of the current page.
      */
     private void addComponentsForLayeredPagination(IFRenderContext context, List<?> pageContents) {
-        final LayoutSlot layoutSlot = getLayoutSlotForCurrentTarget(context);
+        LayoutSlot layoutSlot = getLayoutSlotForCurrentTarget(context);
         debug("[Pagination] Is layout slot defined by the user? %b", layoutSlot.isDefinedByTheUser());
+
+        if (orientation == Pagination.Orientation.VERTICAL) {
+            int[] verticallyOrdered =
+                    reorderLayoutPositionsVertically(layoutSlot.getPositions(), context.getContainer());
+            layoutSlot = layoutSlot.withPositions(verticallyOrdered);
+
+            debug("[Pagination] Reordered layout positions vertically: %s", Arrays.toString(verticallyOrdered));
+        }
 
         final int contentSize = pageContents.size();
         debug("[Pagination] Elements count: %d elements", contentSize);
@@ -303,6 +312,31 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
 
             index++;
         }
+    }
+
+    private int[] reorderLayoutPositionsVertically(int[] positions, ViewContainer container) {
+        int cols = container.getColumnsCount();
+        int rows = container.getRowsCount();
+
+        // Transformar todos os slots em uma matriz [row][col]
+        List<int[]> coords = new ArrayList<>(positions.length);
+        for (int pos : positions) {
+            int row = pos / cols;
+            int col = pos % cols;
+            coords.add(new int[] {row, col, pos});
+        }
+
+        // Agora ordenar por colunas primeiro, depois linhas
+        coords.sort(Comparator.comparingInt((int[] a) -> a[1]) // coluna primeiro
+                .thenComparingInt(a -> a[0])); // depois linha
+
+        // Extrair apenas o slot original na ordem nova
+        int[] reordered = new int[positions.length];
+        for (int i = 0; i < coords.size(); i++) {
+            reordered[i] = coords.get(i)[2]; // pega o slot
+        }
+
+        return reordered;
     }
 
     /**
@@ -736,6 +770,11 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
     @Override
     public Orientation getOrientation() {
         return orientation;
+    }
+
+    @Override
+    public void setOrientation(Orientation orientation) {
+        this.orientation = orientation;
     }
 
     @Override
