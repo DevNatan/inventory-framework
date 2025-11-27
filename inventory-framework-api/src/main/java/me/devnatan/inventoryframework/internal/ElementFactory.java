@@ -17,6 +17,7 @@ import me.devnatan.inventoryframework.context.IFRenderContext;
 import me.devnatan.inventoryframework.context.IFSlotClickContext;
 import me.devnatan.inventoryframework.context.IFSlotRenderContext;
 import me.devnatan.inventoryframework.logging.Logger;
+import me.devnatan.inventoryframework.state.timer.TimerState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -89,4 +90,6 @@ public abstract class ElementFactory {
     public abstract boolean worksInCurrentPlatform();
 
     public abstract Job scheduleJobInterval(@NotNull RootView root, long intervalInTicks, @NotNull Runnable execution);
+
+    public abstract TimerState createTimerState(long stateId, long intervalInTicks);
 }

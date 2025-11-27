@@ -15,6 +15,7 @@ import me.devnatan.inventoryframework.component.ComponentBuilder;
 import me.devnatan.inventoryframework.context.*;
 import me.devnatan.inventoryframework.logging.Logger;
 import me.devnatan.inventoryframework.logging.NoopLogger;
+import me.devnatan.inventoryframework.state.timer.TimerState;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -155,5 +156,10 @@ public class BukkitElementFactory extends ElementFactory {
     @Override
     public Job scheduleJobInterval(@NotNull RootView root, long intervalInTicks, @NotNull Runnable execution) {
         return new BukkitTaskJobImpl(foliaLib.getScheduler(), intervalInTicks, execution);
+    }
+
+    @Override
+    public TimerState createTimerState(long stateId, long intervalInTicks) {
+        return null;
     }
 }
