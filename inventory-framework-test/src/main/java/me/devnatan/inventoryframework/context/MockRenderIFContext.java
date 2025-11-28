@@ -109,6 +109,9 @@ public class MockRenderIFContext extends AbstractIFContext implements IFRenderCo
     public void updateTitleForEveryone(@NotNull String title) {}
 
     @Override
+    public void updateTitleForEveryone(@NotNull Object title) {}
+
+    @Override
     public void resetTitleForEveryone() {}
 
     @Override

@@ -66,7 +66,7 @@ public final class InventoryUpdate {
 
     private static final Set<String> UNOPENABLES = Sets.newHashSet("CRAFTING", "CREATIVE", "PLAYER");
     private static final boolean SUPPORTS_19 = McVersion.supports(19);
-    private static final Object[] DUMMY_COLOR_MODIFIERS = new Object[0];
+    public static final Object[] DUMMY_COLOR_MODIFIERS = new Object[0];
 
     static {
         // Initialize classes.
@@ -85,6 +85,10 @@ public final class InventoryUpdate {
                 ? getMethod(
                         I_CHAT_BASE_COMPONENT, "b", MethodType.methodType(I_CHAT_MUTABLE_COMPONENT, String.class), true)
                 : null;
+
+        System.out.println("SUPPORTS_19 = " + SUPPORTS_19);
+        System.out.println("CHAT_MESSAGE = " + CHAT_MESSAGE);
+        System.out.println("literal = " + literal);
 
         // Initialize constructors.
         chatMessage = SUPPORTS_19 ? null : getConstructor(CHAT_MESSAGE, String.class, Object[].class);
@@ -107,29 +111,26 @@ public final class InventoryUpdate {
      * @param newTitle the new title for the inventory.
      */
     @SuppressWarnings("UnstableApiUsage")
-    public static void updateInventory(Player player, String newTitle) {
+    public static void updateInventory(Player player, Object newTitle) {
         Preconditions.checkArgument(player != null, "Cannot update inventory to null player.");
 
         if (newTitle == null) newTitle = "";
 
         try {
-            if (newTitle.length() > 32) {
-                newTitle = newTitle.substring(0, 32);
+            if (newTitle instanceof String && ((String) newTitle).length() > 32) {
+                newTitle = ((String) newTitle).substring(0, 32);
             }
 
-            if (McVersion.supports(20)) {
+            if (newTitle instanceof String && McVersion.supports(20)) {
                 InventoryView open = player.getOpenInventory();
                 if (UNOPENABLES.contains(open.getType().name())) return;
-                open.setTitle(newTitle);
+                open.setTitle((String) newTitle);
                 return;
             }
 
             // Get EntityPlayer from CraftPlayer.
             Object craftPlayer = CRAFT_PLAYER.cast(player);
             Object entityPlayer = GET_HANDLE.invoke(craftPlayer);
-
-            // Create new title.
-            Object title = createTitleComponent(newTitle);
 
             // Get activeContainer from EntityPlayer.
             Object activeContainer = getActiveContainer(entityPlayer);
@@ -162,12 +163,31 @@ public final class InventoryUpdate {
                 return;
             }
 
-            Object object = getContainerOrName(container, type);
+            Object packet;
+            if (!(newTitle instanceof String)) {
+                final Class<?> menuTypeClass = Class.forName("net.minecraft.world.inventory.MenuType");
+                final Class<?> paperAdventure = Class.forName("io.papermc.paper.adventure.PaperAdventure");
+                final Class<?> componentClass = Class.forName("net.kyori.adventure.text.Component");
+                final Object minecraftComponent =
+                        paperAdventure.getMethod("asVanilla", componentClass).invoke(null, newTitle);
 
-            // Create packet.
-            Object packet = useContainers()
-                    ? packetPlayOutOpenWindow.invoke(windowId, object, title)
-                    : packetPlayOutOpenWindow.invoke(windowId, object, title, size);
+                // Bukkit uses uppercase "X", Minecraft uses lowercase "x"
+                // Bukkit: GENERIC_9X3 / Minecraft: GENERIC_9x3
+                final String minecraftEnumName = container.name().replace("X", "x");
+
+                final Object menuType =
+                        menuTypeClass.getField(minecraftEnumName).get(null);
+
+                packet = packetPlayOutOpenWindow.invoke(windowId, menuType, minecraftComponent);
+            } else {
+                // Create new title.
+                Object title = createTitleComponent(newTitle);
+                Object object = getContainerOrName(container, type);
+
+                packet = useContainers()
+                        ? packetPlayOutOpenWindow.invoke(windowId, object, title)
+                        : packetPlayOutOpenWindow.invoke(windowId, object, title, size);
+            }
 
             // Send packet sync.
             ReflectionUtils.sendPacketSync(player, packet);
@@ -391,9 +411,11 @@ public final class InventoryUpdate {
                 int version = ReflectionUtils.MINOR_NUMBER;
                 String name = (version == 14 && this == CARTOGRAPHY_TABLE) ? "CARTOGRAPHY" : name();
                 // Since 1.17, containers go from "a" to "x".
-                if (version > 16 && version <= 20) name = String.valueOf(alphabet[ordinal()]);
+                if (version > 16 && version <= 20) name = java.lang.String.valueOf(alphabet[ordinal()]);
+
                 Field field = CONTAINERS.getField(name);
                 return field.get(null);
+
             } catch (ReflectiveOperationException exception) {
                 exception.printStackTrace();
             }

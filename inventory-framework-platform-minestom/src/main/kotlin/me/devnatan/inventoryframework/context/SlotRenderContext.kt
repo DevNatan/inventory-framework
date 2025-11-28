@@ -74,6 +74,10 @@ class SlotRenderContext
             parent.updateTitleForPlayer(title)
         }
 
+        override fun updateTitleForPlayer(title: Any) {
+            parent.updateTitleForPlayer(title)
+        }
+
         override fun resetTitleForPlayer() {
             parent.resetTitleForPlayer()
         }

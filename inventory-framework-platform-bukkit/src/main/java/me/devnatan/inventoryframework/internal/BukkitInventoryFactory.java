@@ -4,7 +4,9 @@ import static java.util.Objects.requireNonNull;
 import static me.devnatan.inventoryframework.runtime.util.InventoryUtils.toInventoryType;
 
 import me.devnatan.inventoryframework.ViewType;
+import me.devnatan.inventoryframework.runtime.thirdparty.InventoryUpdate;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 
@@ -29,5 +31,14 @@ class BukkitInventoryFactory extends InventoryFactory {
                     : Bukkit.createInventory(holder, size, titleAsText);
         }
         return inventory;
+    }
+
+    @Override
+    public void setInventoryTitle(Player player, Object newTitle) {
+        if (!(newTitle instanceof String))
+            throw new UnsupportedOperationException(
+                    "Import inventory-framework-platform-paper to use Component as inventory title.");
+
+        InventoryUpdate.updateInventory(player, newTitle);
     }
 }

@@ -163,6 +163,11 @@ public class SlotClickContext extends SlotContext implements IFSlotClickContext 
     }
 
     @Override
+    public final void updateTitleForPlayer(@NotNull Object title) {
+        getParent().updateTitleForPlayer(title);
+    }
+
+    @Override
     public final void resetTitleForPlayer() {
         getParent().resetTitleForPlayer();
     }

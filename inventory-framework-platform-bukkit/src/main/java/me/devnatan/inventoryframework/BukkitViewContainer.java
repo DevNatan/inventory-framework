@@ -2,7 +2,7 @@ package me.devnatan.inventoryframework;
 
 import java.util.ArrayList;
 import java.util.Objects;
-import me.devnatan.inventoryframework.runtime.thirdparty.InventoryUpdate;
+import me.devnatan.inventoryframework.internal.InventoryFactory;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -147,12 +147,12 @@ public final class BukkitViewContainer implements ViewContainer {
     }
 
     @Override
-    public void changeTitle(@Nullable String title, @NotNull Viewer target) {
+    public void changeTitle(@Nullable Object title, @NotNull Viewer target) {
         changeTitle(title, ((BukkitViewer) target).getPlayer());
     }
 
-    public void changeTitle(@Nullable String title, @NotNull Player target) {
-        InventoryUpdate.updateInventory(target, title);
+    public void changeTitle(@Nullable Object title, @NotNull Player target) {
+        InventoryFactory.current().setInventoryTitle(target, title);
     }
 
     @Override

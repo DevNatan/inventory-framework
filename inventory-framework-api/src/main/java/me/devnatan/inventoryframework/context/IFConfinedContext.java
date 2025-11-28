@@ -56,8 +56,32 @@ public interface IFConfinedContext extends IFContext {
      * library developers to add support to your version.
      *
      * @param title The new container title.
+     * @see <a href="https://github.com/DevNatan/inventory-framework/wiki/navigating-between-views">Navigating between Views on Wiki</a>
      */
     void updateTitleForPlayer(@NotNull String title);
+
+    /**
+     * Updates the container title only for the player current scope of execution.
+     *
+     * <p>This should not be used before the container is opened, if you need to set the __initial
+     * title__ use {@link IFOpenContext#modifyConfig()} on open handler instead.
+     *
+     * <p>This method is version dependant, so it may be that your server version is not yet
+     * supported, if you try to use this method and fail (can fail silently), report it to the
+     * library developers to add support to your version.
+     * <p>
+     *
+     * <a href="https://github.com/KyoriPowered/adventure">Kyori's Adventure Text Component</a> is supported if your platform is PaperSpigot
+     * in a non-legacy version. Non-{@link String} titles will be converted to a plain text.
+     * <p>
+     * <b><i> This API is experimental and is not subject to the general compatibility guarantees
+     * such API may be changed or may be removed completely in any further release. </i></b>
+     *
+     * @param title The new container title.
+     * @see <a href="https://github.com/DevNatan/inventory-framework/wiki/dynamic-title-update">Dynamic Title Update on Wiki</a>
+     */
+    @ApiStatus.Experimental
+    void updateTitleForPlayer(@NotNull Object title);
 
     /**
      * Resets the container title only for the player current scope of execution to the initially

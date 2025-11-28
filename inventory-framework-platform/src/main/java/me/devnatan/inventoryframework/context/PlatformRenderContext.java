@@ -303,6 +303,12 @@ public abstract class PlatformRenderContext<T extends ItemComponentBuilder<T, C>
     }
 
     @Override
+    public void updateTitleForPlayer(@NotNull Object title) {
+        tryThrowDoNotWorkWithSharedContext("updateTitleForEveryone(Object)");
+        super.updateTitleForEveryone(title);
+    }
+
+    @Override
     public final void resetTitleForPlayer() {
         tryThrowDoNotWorkWithSharedContext("resetTitleForEveryone()");
         super.resetTitleForPlayer();

@@ -105,13 +105,15 @@ class MinestomViewContainer(
     }
 
     override fun changeTitle(
-        title: String?,
+        title: Any?,
         target: Viewer,
     ) {
-        changeTitle(
-            title?.let { Component.text(it) } ?: Component.empty(),
-            (target as MinestomViewer).player,
-        )
+        val newTitle =
+            title as? Component
+                ?: title?.let { raw -> Component.text(raw as String) }
+                ?: Component.empty()
+
+        changeTitle(newTitle, (target as MinestomViewer).player)
     }
 
     fun changeTitle(
