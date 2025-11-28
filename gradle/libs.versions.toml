@@ -11,7 +11,7 @@ adventure-api = "4.25.0"
 kotlin = "1.9.20"
 plugin-shadowjar = "8.3.8"
 plugin-spotless = "7.2.1"
-plugin-bukkit = "0.7.1"
+plugin-bukkit = "v0.8.0"
 minestom = "b39badc77b"
 folialib = "0.5.1"
 
