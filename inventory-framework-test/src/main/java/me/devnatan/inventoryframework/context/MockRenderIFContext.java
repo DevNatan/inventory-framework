@@ -69,6 +69,9 @@ public class MockRenderIFContext extends AbstractIFContext implements IFRenderCo
     public void updateTitleForPlayer(@NotNull String title) {}
 
     @Override
+    public void updateTitleForPlayer(@NotNull Object title) {}
+
+    @Override
     public void resetTitleForPlayer() {}
 
     @Override
