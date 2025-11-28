@@ -1,6 +1,6 @@
 plugins {
     `kotlin-dsl`
-    id("com.vanniktech.maven.publish.base") version "0.34.0" apply false
+    id("com.vanniktech.maven.publish.base") version "0.35.0" apply false
 }
 
 repositories {
