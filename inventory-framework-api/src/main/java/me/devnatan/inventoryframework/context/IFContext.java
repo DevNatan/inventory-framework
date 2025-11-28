@@ -231,7 +231,7 @@ public interface IFContext extends VirtualView, StateValueHost, ComponentContain
      * @param title The new container title (may be a String or a supported component type).
      */
     @ApiStatus.Experimental
-    void updateTitleForEveryoneExperimental(@NotNull Object title);
+    void updateTitleForEveryone(@NotNull Object title);
 
     /**
      * Updates the container title to all viewers in this context, to the initially defined title.
