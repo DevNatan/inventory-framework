@@ -407,7 +407,7 @@ public final class InventoryUpdate {
                 int version = ReflectionUtils.MINOR_NUMBER;
                 String name = (version == 14 && this == CARTOGRAPHY_TABLE) ? "CARTOGRAPHY" : name();
                 // Since 1.17, containers go from "a" to "x".
-                if (version > 16 && version <= 20) name = java.lang.String.valueOf(alphabet[ordinal()]);
+                if (version > 16 && version <= 20) name = String.valueOf(alphabet[ordinal()]);
 
                 Field field = CONTAINERS.getField(name);
                 return field.get(null);
