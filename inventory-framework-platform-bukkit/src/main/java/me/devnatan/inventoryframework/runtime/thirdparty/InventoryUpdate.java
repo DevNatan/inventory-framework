@@ -86,10 +86,6 @@ public final class InventoryUpdate {
                         I_CHAT_BASE_COMPONENT, "b", MethodType.methodType(I_CHAT_MUTABLE_COMPONENT, String.class), true)
                 : null;
 
-        System.out.println("SUPPORTS_19 = " + SUPPORTS_19);
-        System.out.println("CHAT_MESSAGE = " + CHAT_MESSAGE);
-        System.out.println("literal = " + literal);
-
         // Initialize constructors.
         chatMessage = SUPPORTS_19 ? null : getConstructor(CHAT_MESSAGE, String.class, Object[].class);
         packetPlayOutOpenWindow = (useContainers())
