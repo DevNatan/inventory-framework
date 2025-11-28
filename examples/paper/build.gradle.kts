@@ -10,8 +10,6 @@ dependencies {
     implementation(projects.inventoryFrameworkPlatformBukkit)
     implementation(projects.inventoryFrameworkAnvilInput)
     compileOnly(libs.spigot)
-    compileOnly(libs.adventure.api)
-    implementation(projects.inventoryFrameworkPlatformPaper)
 }
 
 tasks.shadowJar {
