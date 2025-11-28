@@ -81,7 +81,7 @@ public interface IFConfinedContext extends IFContext {
      * @see <a href="https://github.com/DevNatan/inventory-framework/wiki/dynamic-title-update">Dynamic Title Update on Wiki</a>
      */
     @ApiStatus.Experimental
-    void updateTitleComponentForPlayer(@NotNull Object titleComponent);
+    void updateTitleForPlayer(@NotNull Object titleComponent);
 
     /**
      * Resets the container title only for the player current scope of execution to the initially
