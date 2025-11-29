@@ -2,10 +2,17 @@ package me.devnatan.inventoryframework.internal;
 
 import me.devnatan.inventoryframework.IFDebug;
 import me.devnatan.inventoryframework.ViewType;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.jetbrains.annotations.ApiStatus;
 
-abstract class InventoryFactory {
+/**
+ * <b><i> This is an internal inventory-framework API that should not be used from outside of
+ * this library. No compatibility guarantees are provided. </i></b>
+ */
+@ApiStatus.Internal
+public abstract class InventoryFactory {
 
     protected static InventoryFactory instance;
 
@@ -35,4 +42,6 @@ abstract class InventoryFactory {
     }
 
     public abstract Inventory createInventory(InventoryHolder holder, ViewType type, int size, Object title);
+
+    public abstract void setInventoryTitle(Player player, Object newTitle);
 }

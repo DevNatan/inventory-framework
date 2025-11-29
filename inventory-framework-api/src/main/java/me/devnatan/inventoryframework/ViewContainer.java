@@ -81,7 +81,7 @@ public interface ViewContainer {
 
     void close(@NotNull Viewer viewer);
 
-    void changeTitle(@Nullable String title, @NotNull Viewer target);
+    void changeTitle(@Nullable Object title, @NotNull Viewer target);
 
     boolean isEntityContainer();
 

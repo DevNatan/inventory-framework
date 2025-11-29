@@ -48,10 +48,12 @@ public final class InventoryUpdate {
     public static final Class<?> CONTAINER;
     private static final Class<?> CONTAINERS;
     private static final Class<?> I_CHAT_MUTABLE_COMPONENT;
+    private static final Class<?> MINECRAFT_MENU_TYPE;
 
     // Methods
     public static final MethodHandle getBukkitView;
     private static final MethodHandle literal;
+    private static final MethodHandle asVanilla;
 
     // Constructors
     private static final MethodHandle chatMessage;
@@ -66,7 +68,7 @@ public final class InventoryUpdate {
 
     private static final Set<String> UNOPENABLES = Sets.newHashSet("CRAFTING", "CREATIVE", "PLAYER");
     private static final boolean SUPPORTS_19 = McVersion.supports(19);
-    private static final Object[] DUMMY_COLOR_MODIFIERS = new Object[0];
+    public static final Object[] DUMMY_COLOR_MODIFIERS = new Object[0];
 
     static {
         // Initialize classes.
@@ -78,6 +80,7 @@ public final class InventoryUpdate {
         CONTAINER = ReflectionUtils.getNMSClass("world.inventory", "Container");
         I_CHAT_MUTABLE_COMPONENT =
                 SUPPORTS_19 ? ReflectionUtils.getNMSClass("network.chat", "IChatMutableComponent") : null;
+        MINECRAFT_MENU_TYPE = getClassOrNull("net.minecraft.world.inventory.MenuType");
 
         // Initialize methods.
         getBukkitView = getMethod(CONTAINER, "getBukkitView", MethodType.methodType(InventoryView.class));
@@ -85,6 +88,17 @@ public final class InventoryUpdate {
                 ? getMethod(
                         I_CHAT_BASE_COMPONENT, "b", MethodType.methodType(I_CHAT_MUTABLE_COMPONENT, String.class), true)
                 : null;
+
+        final Class<?> paperAdventure = getClassOrNull("io.papermc.paper.adventure.PaperAdventure");
+        asVanilla = paperAdventure == null
+                ? null
+                : getMethod(
+                        paperAdventure,
+                        "asVanilla",
+                        MethodType.methodType(
+                                getClassOrNull("net.minecraft.network.chat.Component"),
+                                getClassOrNull("net.kyori.adventure.text.Component")),
+                        true);
 
         // Initialize constructors.
         chatMessage = SUPPORTS_19 ? null : getConstructor(CHAT_MESSAGE, String.class, Object[].class);
@@ -100,6 +114,14 @@ public final class InventoryUpdate {
         windowId = getField(CONTAINER, int.class, "windowId", "j", "containerId");
     }
 
+    private static Class<?> getClassOrNull(String className) {
+        try {
+            return Class.forName(className);
+        } catch (final ClassNotFoundException ignored) {
+        }
+        return null;
+    }
+
     /**
      * Update the player inventory, so you can change the title.
      *
@@ -107,29 +129,26 @@ public final class InventoryUpdate {
      * @param newTitle the new title for the inventory.
      */
     @SuppressWarnings("UnstableApiUsage")
-    public static void updateInventory(Player player, String newTitle) {
+    public static void updateInventory(Player player, Object newTitle) {
         Preconditions.checkArgument(player != null, "Cannot update inventory to null player.");
 
         if (newTitle == null) newTitle = "";
 
         try {
-            if (newTitle.length() > 32) {
-                newTitle = newTitle.substring(0, 32);
+            if (newTitle instanceof String && ((String) newTitle).length() > 32) {
+                newTitle = ((String) newTitle).substring(0, 32);
             }
 
-            if (McVersion.supports(20)) {
+            if (newTitle instanceof String && McVersion.supports(20)) {
                 InventoryView open = player.getOpenInventory();
                 if (UNOPENABLES.contains(open.getType().name())) return;
-                open.setTitle(newTitle);
+                open.setTitle((String) newTitle);
                 return;
             }
 
             // Get EntityPlayer from CraftPlayer.
             Object craftPlayer = CRAFT_PLAYER.cast(player);
             Object entityPlayer = GET_HANDLE.invoke(craftPlayer);
-
-            // Create new title.
-            Object title = createTitleComponent(newTitle);
 
             // Get activeContainer from EntityPlayer.
             Object activeContainer = getActiveContainer(entityPlayer);
@@ -162,12 +181,27 @@ public final class InventoryUpdate {
                 return;
             }
 
-            Object object = getContainerOrName(container, type);
+            Object packet;
+            if (!(newTitle instanceof String)) {
+                final Object minecraftComponent = asVanilla.invoke(newTitle);
 
-            // Create packet.
-            Object packet = useContainers()
-                    ? packetPlayOutOpenWindow.invoke(windowId, object, title)
-                    : packetPlayOutOpenWindow.invoke(windowId, object, title, size);
+                // Bukkit uses uppercase "X", Minecraft uses lowercase "x"
+                // Bukkit: GENERIC_9X3 / Minecraft: GENERIC_9x3
+                final String minecraftEnumName = container.name().replace("X", "x");
+
+                final Object menuType =
+                        MINECRAFT_MENU_TYPE.getField(minecraftEnumName).get(null);
+
+                packet = packetPlayOutOpenWindow.invoke(windowId, menuType, minecraftComponent);
+            } else {
+                // Create new title.
+                Object title = createTitleComponent(newTitle);
+                Object object = getContainerOrName(container, type);
+
+                packet = useContainers()
+                        ? packetPlayOutOpenWindow.invoke(windowId, object, title)
+                        : packetPlayOutOpenWindow.invoke(windowId, object, title, size);
+            }
 
             // Send packet sync.
             ReflectionUtils.sendPacketSync(player, packet);
@@ -392,8 +426,10 @@ public final class InventoryUpdate {
                 String name = (version == 14 && this == CARTOGRAPHY_TABLE) ? "CARTOGRAPHY" : name();
                 // Since 1.17, containers go from "a" to "x".
                 if (version > 16 && version <= 20) name = String.valueOf(alphabet[ordinal()]);
+
                 Field field = CONTAINERS.getField(name);
                 return field.get(null);
+
             } catch (ReflectiveOperationException exception) {
                 exception.printStackTrace();
             }
