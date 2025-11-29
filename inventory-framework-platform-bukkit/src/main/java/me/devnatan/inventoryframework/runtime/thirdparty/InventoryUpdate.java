@@ -48,10 +48,12 @@ public final class InventoryUpdate {
     public static final Class<?> CONTAINER;
     private static final Class<?> CONTAINERS;
     private static final Class<?> I_CHAT_MUTABLE_COMPONENT;
+    private static final Class<?> MINECRAFT_MENU_TYPE;
 
     // Methods
     public static final MethodHandle getBukkitView;
     private static final MethodHandle literal;
+    private static final MethodHandle asVanilla;
 
     // Constructors
     private static final MethodHandle chatMessage;
@@ -78,6 +80,7 @@ public final class InventoryUpdate {
         CONTAINER = ReflectionUtils.getNMSClass("world.inventory", "Container");
         I_CHAT_MUTABLE_COMPONENT =
                 SUPPORTS_19 ? ReflectionUtils.getNMSClass("network.chat", "IChatMutableComponent") : null;
+        MINECRAFT_MENU_TYPE = getClassOrNull("net.minecraft.world.inventory.MenuType");
 
         // Initialize methods.
         getBukkitView = getMethod(CONTAINER, "getBukkitView", MethodType.methodType(InventoryView.class));
@@ -85,6 +88,17 @@ public final class InventoryUpdate {
                 ? getMethod(
                         I_CHAT_BASE_COMPONENT, "b", MethodType.methodType(I_CHAT_MUTABLE_COMPONENT, String.class), true)
                 : null;
+
+        final Class<?> paperAdventure = getClassOrNull("io.papermc.paper.adventure.PaperAdventure");
+        asVanilla = paperAdventure == null
+                ? null
+                : getMethod(
+                        paperAdventure,
+                        "asVanilla",
+                        MethodType.methodType(
+                                getClassOrNull("net.minecraft.network.chat.Component"),
+                                getClassOrNull("net.kyori.adventure.text.Component")),
+                        true);
 
         // Initialize constructors.
         chatMessage = SUPPORTS_19 ? null : getConstructor(CHAT_MESSAGE, String.class, Object[].class);
@@ -98,6 +112,14 @@ public final class InventoryUpdate {
         activeContainer =
                 getField(ENTITY_PLAYER, CONTAINER, "activeContainer", "bR", "bV", "bW", "bU", "bP", "containerMenu");
         windowId = getField(CONTAINER, int.class, "windowId", "j", "containerId");
+    }
+
+    private static Class<?> getClassOrNull(String className) {
+        try {
+            return Class.forName(className);
+        } catch (final ClassNotFoundException ignored) {
+        }
+        return null;
     }
 
     /**
@@ -161,18 +183,14 @@ public final class InventoryUpdate {
 
             Object packet;
             if (!(newTitle instanceof String)) {
-                final Class<?> menuTypeClass = Class.forName("net.minecraft.world.inventory.MenuType");
-                final Class<?> paperAdventure = Class.forName("io.papermc.paper.adventure.PaperAdventure");
-                final Class<?> componentClass = Class.forName("net.kyori.adventure.text.Component");
-                final Object minecraftComponent =
-                        paperAdventure.getMethod("asVanilla", componentClass).invoke(null, newTitle);
+                final Object minecraftComponent = asVanilla.invoke(newTitle);
 
                 // Bukkit uses uppercase "X", Minecraft uses lowercase "x"
                 // Bukkit: GENERIC_9X3 / Minecraft: GENERIC_9x3
                 final String minecraftEnumName = container.name().replace("X", "x");
 
                 final Object menuType =
-                        menuTypeClass.getField(minecraftEnumName).get(null);
+                        MINECRAFT_MENU_TYPE.getField(minecraftEnumName).get(null);
 
                 packet = packetPlayOutOpenWindow.invoke(windowId, menuType, minecraftComponent);
             } else {
