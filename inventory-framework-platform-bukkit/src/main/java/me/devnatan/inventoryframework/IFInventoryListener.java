@@ -16,6 +16,7 @@ import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.PlayerInventory;
@@ -35,28 +36,51 @@ final class IFInventoryListener implements Listener {
         viewFrame.unregister();
     }
 
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        final Player player = (Player) event.getPlayer();
+        final Viewer viewer = viewFrame.getViewer(player);
+        if (viewer == null) return;
+
+        final IFRenderContext context = viewer.getCurrentContext();
+        final RootView root = context.getRoot();
+        final IFCloseContext closeContext = root.getElementFactory().createCloseContext(viewer, context, event);
+
+        root.getPipeline().execute(StandardPipelinePhases.CLOSE, closeContext);
+    }
+
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onInventoryClick(final InventoryClickEvent event) {
         if (!(event.getWhoClicked() instanceof Player)) return;
 
         final Player player = (Player) event.getWhoClicked();
-        final Viewer viewer = viewFrame.getViewer(player);
-        if (viewer == null) return;
+        try {
+            final Viewer viewer = viewFrame.getViewer(player);
+            if (viewer == null) return;
 
-        final IFRenderContext context = viewer.getActiveContext();
-        final Component clickedComponent = context.getComponentsAt(event.getRawSlot()).stream()
-                .filter(Component::isVisible)
-                .findFirst()
-                .orElse(null);
-        final ViewContainer clickedContainer = event.getClickedInventory() instanceof PlayerInventory
-                ? viewer.getSelfContainer()
-                : context.getContainer();
+            final IFRenderContext context = viewer.getActiveContext();
+            final Component clickedComponent = context.getComponentsAt(event.getRawSlot()).stream()
+                    .filter(Component::isVisible)
+                    .findFirst()
+                    .orElse(null);
+            final ViewContainer clickedContainer = event.getClickedInventory() instanceof PlayerInventory
+                    ? viewer.getSelfContainer()
+                    : context.getContainer();
 
-        final RootView root = context.getRoot();
-        final IFSlotClickContext clickContext = root.getElementFactory()
-                .createSlotClickContext(event.getRawSlot(), viewer, clickedContainer, clickedComponent, event, false);
+            final RootView root = context.getRoot();
+            final IFSlotClickContext clickContext = root.getElementFactory()
+                    .createSlotClickContext(
+                            event.getRawSlot(), viewer, clickedContainer, clickedComponent, event, false);
 
-        root.getPipeline().execute(StandardPipelinePhases.CLICK, clickContext);
+            root.getPipeline().execute(StandardPipelinePhases.CLICK, clickContext);
+        } catch (Exception e) {
+            // TODO custom error handling to customize on error behavior
+            viewFrame
+                    .getOwner()
+                    .getLogger()
+                    .severe("An error occurred while processing an inventory click event: " + e.getMessage());
+            player.closeInventory();
+        }
     }
 
     @SuppressWarnings("unused")

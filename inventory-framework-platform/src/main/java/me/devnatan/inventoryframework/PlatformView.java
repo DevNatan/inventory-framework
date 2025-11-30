@@ -11,7 +11,12 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import me.devnatan.inventoryframework.component.*;
+
+import me.devnatan.inventoryframework.component.ComponentFactory;
+import me.devnatan.inventoryframework.component.ItemComponentBuilder;
+import me.devnatan.inventoryframework.component.Pagination;
+import me.devnatan.inventoryframework.component.PaginationStateBuilder;
+import me.devnatan.inventoryframework.component.PaginationValueConsumer;
 import me.devnatan.inventoryframework.context.IFCloseContext;
 import me.devnatan.inventoryframework.context.IFConfinedContext;
 import me.devnatan.inventoryframework.context.IFContext;
@@ -70,6 +75,7 @@ public abstract class PlatformView<
     }
 
     // region Open & Close
+
     /**
      * Closes all contexts that are currently active in this view.
      */
@@ -111,32 +117,38 @@ public abstract class PlatformView<
     /**
      * Opens an already active context to a viewer.
      *
-     * @param contextId The id of the context.
-     * @param viewer The viewer to open the context to.
+     * @param contextId   The id of the context.
+     * @param viewer      The viewer to open the context to.
      * @param initialData Initial data.
      */
     @SuppressWarnings("unchecked")
     final void open(String contextId, Viewer viewer, Object initialData) {
-        IFRenderContext targetContext = null;
-        for (final IFContext context : getInternalContexts()) {
-            if (context.getId().toString().equals(contextId)) {
-                targetContext = (IFRenderContext) context;
-                break;
+        try {
+            IFRenderContext targetContext = null;
+            for (final IFContext context : getInternalContexts()) {
+                if (context.getId().toString().equals(contextId)) {
+                    targetContext = (IFRenderContext) context;
+                    break;
+                }
             }
+
+            if (targetContext == null) throw new IllegalArgumentException("Context not found: " + contextId);
+            if (!targetContext.isActive()) throw new IllegalStateException("Invalidated");
+
+            viewer.setActiveContext(targetContext);
+            onViewerAdded((TContext) targetContext, (TViewer) viewer.getPlatformInstance(), initialData);
+            targetContext.addViewer(viewer);
+            getFramework().addViewer(viewer);
+            viewer.open(targetContext.getContainer());
+        } catch (Exception e) {
+            viewer.close();
+            e.printStackTrace(); // todo use custom error handler
         }
-
-        if (targetContext == null) throw new IllegalArgumentException("Context not found: " + contextId);
-        if (!targetContext.isActive()) throw new IllegalStateException("Invalidated");
-
-        viewer.setActiveContext(targetContext);
-        onViewerAdded((TContext) targetContext, (TViewer) viewer.getPlatformInstance(), initialData);
-        targetContext.addViewer(viewer);
-        getFramework().addViewer(viewer);
-        viewer.open(targetContext.getContainer());
     }
     // endregion
 
     // region Navigation
+
     /**
      * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
      * this library. No compatibility guarantees are provided.</i></b>
@@ -236,6 +248,7 @@ public abstract class PlatformView<
     }
 
     // region Contexts
+
     /**
      * Returns the context that is linked to the specified viewer in this view.
      * <p>
@@ -387,14 +400,15 @@ public abstract class PlatformView<
     }
 
     // region Refs API
+
     /**
      * Creates a new unassigned reference instance.
      * <p>
      * <b><i> This API is experimental and is not subject to the general compatibility guarantees
      * such API may be changed or may be removed completely in any further release. </i></b>
      *
-     * @return A new unassigned {@link Ref} instance.
      * @param <E> Type of the element hold by this reference.
+     * @return A new unassigned {@link Ref} instance.
      * @see <a href="https://github.com/DevNatan/inventory-framework/wiki/refs-api">Refs API on Wiki</a>
      */
     @ApiStatus.Experimental
@@ -408,8 +422,8 @@ public abstract class PlatformView<
      * <b><i> This API is experimental and is not subject to the general compatibility guarantees
      * such API may be changed or may be removed completely in any further release. </i></b>
      *
-     * @return A new unassigned {@link Ref} instance.
      * @param <E> Type of the element hold by this reference.
+     * @return A new unassigned {@link Ref} instance.
      * @see <a href="https://github.com/DevNatan/inventory-framework/wiki/refs-api">Refs API on Wiki</a>
      */
     @ApiStatus.Experimental
@@ -419,6 +433,7 @@ public abstract class PlatformView<
     // endregion
 
     // region Public Platform Handlers
+
     /**
      * Called when the view is about to be configured, the returned object will be the view's
      * configuration.
@@ -516,9 +531,9 @@ public abstract class PlatformView<
      * <b><i> This API is experimental and is not subject to the general compatibility guarantees
      * such API may be changed or may be removed completely in any further release. </i></b>
      *
-     * @param context 	The context.
-     * @param viewer 	Who was added to the context.
-     * @param data    	Initial data set wen the viewer was added.
+     * @param context The context.
+     * @param viewer  Who was added to the context.
+     * @param data    Initial data set wen the viewer was added.
      */
     @ApiStatus.OverrideOnly
     @ApiStatus.Experimental
@@ -533,7 +548,7 @@ public abstract class PlatformView<
      * such API may be changed or may be removed completely in any further release. </i></b>
      *
      * @param context The context.
-     * @param viewer Who was removed from the context.
+     * @param viewer  Who was removed from the context.
      */
     @ApiStatus.OverrideOnly
     @ApiStatus.Experimental
@@ -541,6 +556,7 @@ public abstract class PlatformView<
     // endregion
 
     // region Internals
+
     /**
      * <p><b><i>This is an internal inventory-framework API that should not be used from outside of
      * this library. No compatibility guarantees are provided.</i></b>
