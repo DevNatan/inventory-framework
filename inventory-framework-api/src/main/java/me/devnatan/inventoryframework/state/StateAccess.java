@@ -199,6 +199,19 @@ public interface StateAccess<
             @NotNull Function<Context, List<? super T>> sourceProvider,
             @NotNull PaginationValueConsumer<Context, ItemBuilder, T> valueConsumer);
 
+	/**
+	 * Creates a new unmodifiable computed pagination state.
+	 *
+	 * @param sourceProvider Data source for pagination.
+	 * @param valueConsumer  Function for creating pagination items, this function is called for
+	 *                       each paged element (item) on a page.
+	 * @param <T>            The pagination data type.
+	 * @return A new unmodifiable pagination state.
+	 */
+	<T> State<Pagination> computedPaginationState(
+		@NotNull Supplier<List<? super T>> sourceProvider,
+		@NotNull PaginationValueConsumer<Context, ItemBuilder, T> valueConsumer);
+
     /**
      * Creates a new unmodifiable computed pagination state with asynchronous data source.
      * <p>
@@ -277,6 +290,16 @@ public interface StateAccess<
      */
     <T> PaginationStateBuilder<Context, ItemBuilder, T> buildComputedPaginationState(
             @NotNull Function<Context, List<? super T>> sourceProvider);
+
+	/**
+	 * Creates a new unmodifiable dynamic pagination state builder.
+	 *
+	 * @param sourceProvider The data source for pagination.
+	 * @param <T>            The pagination data type.
+	 * @return A new pagination state builder.
+	 */
+	<T> PaginationStateBuilder<Context, ItemBuilder, T> buildComputedPaginationState(
+		@NotNull Supplier<List<? super T>> sourceProvider);
 
     /**
      * Creates a new unmodifiable computed pagination state builder with asynchronous data source.

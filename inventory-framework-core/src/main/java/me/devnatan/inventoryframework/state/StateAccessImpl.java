@@ -139,13 +139,22 @@ public final class StateAccessImpl<
     }
 
     @Override
-    public final <T> State<Pagination> computedPaginationState(
+    public <T> State<Pagination> computedPaginationState(
             @NotNull Function<Context, List<? super T>> sourceProvider,
             @NotNull PaginationValueConsumer<Context, ItemBuilder, T> valueConsumer) {
         return this.buildComputedPaginationState(sourceProvider)
                 .elementFactory(valueConsumer)
                 .build();
     }
+
+	@Override
+	public <T> State<Pagination> computedPaginationState(
+		@NotNull Supplier<List<? super T>> sourceProvider,
+		@NotNull PaginationValueConsumer<Context, ItemBuilder, T> valueConsumer) {
+		return this.buildComputedPaginationState(sourceProvider)
+			.elementFactory(valueConsumer)
+			.build();
+	}
 
     @Override
     public final <T> State<Pagination> computedAsyncPaginationState(
@@ -191,11 +200,18 @@ public final class StateAccessImpl<
     }
 
     @Override
-    public final <T> PaginationStateBuilder<Context, ItemBuilder, T> buildComputedPaginationState(
+    public <T> PaginationStateBuilder<Context, ItemBuilder, T> buildComputedPaginationState(
             @NotNull Function<Context, List<? super T>> sourceProvider) {
         return new PaginationStateBuilder<>(
                 elementFactoryProvider, sourceProvider, this::createPaginationState, false, true);
     }
+
+	@Override
+	public <T> PaginationStateBuilder<Context, ItemBuilder, T> buildComputedPaginationState(
+		@NotNull Supplier<List<? super T>> sourceProvider) {
+		return new PaginationStateBuilder<>(
+			elementFactoryProvider, sourceProvider, this::createPaginationState, false, true);
+	}
 
     @Override
     public final <T> PaginationStateBuilder<Context, ItemBuilder, T> buildComputedAsyncPaginationState(
