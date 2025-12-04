@@ -33,6 +33,10 @@ public final class LayoutSlot {
         return new LayoutSlot(character, factory, positions);
     }
 
+    public LayoutSlot withPositions(int[] positions) {
+        return new LayoutSlot(character, factory, positions);
+    }
+
     public int[] getPositions() {
         return positions;
     }

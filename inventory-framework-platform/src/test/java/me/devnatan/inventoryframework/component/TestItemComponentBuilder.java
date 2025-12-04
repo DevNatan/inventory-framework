@@ -19,7 +19,7 @@ public class TestItemComponentBuilder extends DefaultComponentBuilder<TestItemCo
     }
 
     protected TestItemComponentBuilder(
-			Function<? extends IFContext, String> keyFactory,
+            Function<? extends IFContext, String> keyFactory,
             Ref<Component> referenceKey,
             Map<String, Object> data,
             boolean cancelOnClick,
@@ -29,7 +29,7 @@ public class TestItemComponentBuilder extends DefaultComponentBuilder<TestItemCo
             boolean isManagedExternally,
             Predicate<IFContext> displayCondition) {
         super(
-				keyFactory,
+                keyFactory,
                 referenceKey,
                 data,
                 cancelOnClick,

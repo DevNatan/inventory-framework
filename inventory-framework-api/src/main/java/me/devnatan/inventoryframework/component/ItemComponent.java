@@ -189,8 +189,7 @@ public class ItemComponent implements Component, InteractionHandler {
     public void updated(@NotNull IFSlotRenderContext context) {
         if (context.isCancelled()) return;
         // Key-based skip optimization should always take precedence
-        if (keyFactory != null
-                && lastKey != null) {
+        if (keyFactory != null && lastKey != null) {
             String currentKey = keyFactory.apply(context);
             if (Objects.equals(lastKey, currentKey)) return;
         }

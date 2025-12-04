@@ -24,7 +24,11 @@ public class ExampleUtil {
     }
 
     public static ItemStack displayItem(Material material, String displayName) {
-        ItemStack item = new ItemStack(material);
+        return displayItem(material, displayName, 1);
+    }
+
+    public static ItemStack displayItem(Material material, String displayName, int amount) {
+        ItemStack item = new ItemStack(material, amount);
         ItemMeta itemMeta = item.getItemMeta();
         itemMeta.setDisplayName(displayName);
         item.setItemMeta(itemMeta);

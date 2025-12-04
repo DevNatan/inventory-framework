@@ -213,6 +213,27 @@ public interface IFContext extends VirtualView, StateValueHost, ComponentContain
     void updateTitleForEveryone(@NotNull String title);
 
     /**
+     * Experimental: Updates the container title for everyone that's viewing it, supporting additional title types.
+     *
+     * <p>This should not be used before the container is opened. If you need to set the __initial
+     * title__, use {@link IFOpenContext#modifyConfig()} on open handler instead.
+     *
+     * <p>This method is version dependant, so it may be that your server version is not yet
+     * supported. If you try to use this method and it fails (can fail silently), report it to the
+     * library developers to add support for your version.
+     * <p>
+     * <a href="https://github.com/KyoriPowered/adventure">Kyori's Adventure Text Component</a> is supported if your platform is PaperSpigot
+     * in a non-legacy version. Non-{@link String} titles will be converted to plain text.
+     * <p>
+     * <b><i> This API is experimental and is not subject to the general compatibility guarantees.
+     * Such API may be changed or may be removed completely in any further release. </i></b>
+     *
+     * @param title The new container title (may be a String or a supported component type).
+     */
+    @ApiStatus.Experimental
+    void updateTitleForEveryone(@NotNull Object title);
+
+    /**
      * Updates the container title to all viewers in this context, to the initially defined title.
      * Must be used after {@link #updateTitleForEveryone(String)} to take effect.
      */

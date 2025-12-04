@@ -60,6 +60,11 @@ public abstract class PlatformContext extends AbstractIFContext {
     }
 
     @Override
+    public void updateTitleForEveryone(@NotNull Object title) {
+        for (final Viewer viewer : getViewers()) getContainerOrThrow().changeTitle(title, viewer);
+    }
+
+    @Override
     public final void resetTitleForEveryone() {
         for (final Viewer viewer : getViewers()) getContainerOrThrow().changeTitle(null, viewer);
     }

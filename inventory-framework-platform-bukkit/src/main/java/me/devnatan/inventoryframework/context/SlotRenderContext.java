@@ -120,6 +120,11 @@ public class SlotRenderContext extends SlotContext implements IFSlotRenderContex
     }
 
     @Override
+    public final void updateTitleForPlayer(@NotNull Object title) {
+        getParent().updateTitleForPlayer(title);
+    }
+
+    @Override
     public final void resetTitleForPlayer() {
         getParent().resetTitleForPlayer();
     }

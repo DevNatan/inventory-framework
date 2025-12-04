@@ -237,7 +237,8 @@ public final class StateAccessImpl<
                 (PaginationElementFactory) builder.getPaginationElementFactory(),
                 (BiConsumer) builder.getPageSwitchHandler(),
                 builder.isAsync(),
-                builder.isComputed());
+                builder.isComputed(),
+                builder.getOrientation());
         final State<Pagination> state = new PaginationState(id, factory);
         this.stateRegistry.registerState(state, caller);
 

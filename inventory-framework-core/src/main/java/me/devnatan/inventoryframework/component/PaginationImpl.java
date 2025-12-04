@@ -41,6 +41,7 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
     private final Object sourceProvider;
     private final PaginationElementFactory<Object> elementFactory;
     private final BiConsumer<IFContext, Pagination> pageSwitchHandler;
+    private Pagination.Orientation orientation;
 
     // --- Internal ---
     private int currPageIndex;
@@ -76,7 +77,8 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
             PaginationElementFactory<Object> elementFactory,
             BiConsumer<IFContext, Pagination> pageSwitchHandler,
             boolean isAsync,
-            boolean isComputed) {
+            boolean isComputed,
+            Pagination.Orientation orientation) {
         super(state);
         this.host = host;
         this.layoutTarget = layoutTarget;
@@ -89,6 +91,7 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
         this.isStatic = sourceProvider instanceof Collection;
         this.isLazy =
                 !isStatic && !isComputed && (sourceProvider instanceof Function || sourceProvider instanceof Supplier);
+        this.orientation = orientation;
     }
 
     /**
@@ -245,15 +248,17 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
      * @param pageContents Elements of the current page.
      */
     private void addComponentsForLayeredPagination(IFRenderContext context, List<?> pageContents) {
-        final LayoutSlot layoutSlot = getLayoutSlotForCurrentTarget(context);
+        LayoutSlot layoutSlot = getLayoutSlotForCurrentTarget(context);
         debug("[Pagination] Is layout slot defined by the user? %b", layoutSlot.isDefinedByTheUser());
 
         final int contentSize = pageContents.size();
         debug("[Pagination] Elements count: %d elements", contentSize);
         debug("[Pagination] Iterating over '%c' layout target", layoutSlot.getCharacter());
 
+        final int[] orderedPositions = computeSlotOrder(context, layoutSlot.getPositions());
+
         int index = 0;
-        for (final int layoutPosition : layoutSlot.getPositions()) {
+        for (final int layoutPosition : orderedPositions) {
             if (index >= contentSize) {
                 // A layout slot defined by the user mean the user probably want to add a placeholder
                 // item to fill empty slots that couldn't be reached by the pagination. Happens when
@@ -300,6 +305,106 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
 
             index++;
         }
+    }
+
+    private int[] computeSlotOrder(IFRenderContext context, int[] positions) {
+        Orientation orientation = getOrientation();
+        String[] layout = context.getConfig().getLayout();
+
+        final int rows = layout.length;
+        final int cols = layout[0].length();
+        final int totalSlots = rows * cols;
+
+        boolean[] present = new boolean[totalSlots];
+        for (int p : positions) {
+            if (p >= 0 && p < totalSlots) present[p] = true;
+        }
+
+        List<Integer> rowMajor = new ArrayList<>(positions.length);
+        for (int r = 0; r < rows; r++) {
+            for (int c = 0; c < cols; c++) {
+                int slot = r * cols + c;
+                if (present[slot]) rowMajor.add(slot);
+            }
+        }
+
+        List<Integer> colMajor = new ArrayList<>(positions.length);
+        for (int c = 0; c < cols; c++) {
+            for (int r = 0; r < rows; r++) {
+                int slot = r * cols + c;
+                if (present[slot]) colMajor.add(slot);
+            }
+        }
+
+        if (orientation == Orientation.HORIZONTAL) {
+            return listToIntArray(rowMajor);
+        }
+        if (orientation == Orientation.VERTICAL) {
+            return listToIntArray(colMajor);
+        }
+        if (orientation == Orientation.ALTERNATING_ROWS) {
+            return interleaveList(rowMajor);
+        }
+        if (orientation == Orientation.ALTERNATING_COLUMNS) {
+            return interleaveList(colMajor);
+        }
+
+        if (orientation == Orientation.TOP_BOTTOM_LEFT_RIGHT) {
+            boolean[] added = new boolean[totalSlots];
+            List<Integer> out = new ArrayList<>(positions.length);
+
+            for (int c = 0; c < cols; c++) {
+                if (c == 0 || c == 2 || c == 4 || c == 6 || c == 8) {
+                    // top -> bottom
+                    for (int r = 0; r < rows; r++) {
+                        int slot = r * cols + c;
+                        if (slot >= 0 && slot < totalSlots && present[slot] && !added[slot]) {
+                            out.add(slot);
+                            added[slot] = true;
+                        }
+                    }
+                } else {
+                    // bottom -> top
+                    for (int r = rows - 1; r >= 0; r--) {
+                        int slot = r * cols + c;
+                        if (slot >= 0 && slot < totalSlots && present[slot] && !added[slot]) {
+                            out.add(slot);
+                            added[slot] = true;
+                        }
+                    }
+                }
+            }
+
+            if (out.size() < positions.length) {
+                for (int rmSlot : rowMajor) {
+                    if (!added[rmSlot]) {
+                        out.add(rmSlot);
+                        added[rmSlot] = true;
+                    }
+                }
+            }
+
+            return listToIntArray(out);
+        }
+
+        return positions;
+    }
+
+    private int[] listToIntArray(List<Integer> list) {
+        int[] out = new int[list.size()];
+        for (int i = 0; i < list.size(); i++) out[i] = list.get(i);
+        return out;
+    }
+
+    private int[] interleaveList(List<Integer> list) {
+        int n = list.size();
+        int[] out = new int[n];
+        int l = 0, r = n - 1, idx = 0;
+        while (l <= r) {
+            out[idx++] = list.get(l++);
+            if (l <= r) out[idx++] = list.get(r--);
+        }
+        return out;
     }
 
     /**
@@ -731,6 +836,16 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
     }
 
     @Override
+    public Orientation getOrientation() {
+        return orientation;
+    }
+
+    @Override
+    public void setOrientation(Orientation orientation) {
+        this.orientation = orientation;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -741,7 +856,8 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
                 && isLazy() == that.isLazy()
                 && pageWasChanged == that.pageWasChanged
                 && Objects.equals(sourceProvider, that.sourceProvider)
-                && Objects.equals(pageSwitchHandler, that.pageSwitchHandler);
+                && Objects.equals(pageSwitchHandler, that.pageSwitchHandler)
+                && Objects.equals(orientation, that.orientation);
     }
 
     @Override
@@ -753,7 +869,8 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
                 currPageIndex,
                 getPageSize(),
                 isLazy(),
-                pageWasChanged);
+                pageWasChanged,
+                orientation);
     }
 
     @Override
@@ -769,7 +886,8 @@ public class PaginationImpl extends AbstractStateValue implements Pagination, In
                 + isLazy + ", pageWasChanged="
                 + pageWasChanged + ", _srcFactory="
                 + _srcFactory + ", currSource="
-                + currSource + "} "
+                + currSource + ", orientation="
+                + orientation + "} "
                 + super.toString();
     }
 }

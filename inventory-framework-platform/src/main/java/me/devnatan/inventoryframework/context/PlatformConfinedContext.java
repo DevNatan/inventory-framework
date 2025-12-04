@@ -75,6 +75,11 @@ public abstract class PlatformConfinedContext extends PlatformContext implements
     }
 
     @Override
+    public void updateTitleForPlayer(@NotNull Object title) {
+        getContainerOrThrow().changeTitle(title, getViewer());
+    }
+
+    @Override
     public void resetTitleForPlayer() {
         getContainerOrThrow().changeTitle(null, getViewer());
     }

@@ -3,9 +3,11 @@ package me.devnatan.inventoryframework.internal;
 import static java.util.Objects.requireNonNull;
 
 import me.devnatan.inventoryframework.ViewType;
+import me.devnatan.inventoryframework.runtime.thirdparty.InventoryUpdate;
 import me.devnatan.inventoryframework.runtime.util.InventoryUtils;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 
@@ -35,5 +37,15 @@ final class PaperInventoryFactory extends BukkitInventoryFactory {
                     : Bukkit.createInventory(holder, size, titleAsComponent);
         }
         return inventory;
+    }
+
+    @Override
+    public void setInventoryTitle(Player player, Object newTitle) {
+        if (newTitle instanceof Component) {
+            InventoryUpdate.updateInventory(player, newTitle);
+            return;
+        }
+
+        super.setInventoryTitle(player, newTitle);
     }
 }

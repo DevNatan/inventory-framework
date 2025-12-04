@@ -154,8 +154,8 @@ public class ViewConfig {
     }
 
     private <T> T merge(ViewConfig other, Function<ViewConfig, T> retriever, Function<T, Boolean> mergeCondition) {
-        T value = retriever.apply(other);
-        if (!mergeCondition.apply(value)) return retriever.apply(this);
+        T value = retriever.apply(this);
+        if (!mergeCondition.apply(value)) return retriever.apply(other);
         return value;
     }
 
